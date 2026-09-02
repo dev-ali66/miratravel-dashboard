@@ -24,11 +24,11 @@ export function VideoGalleryForm({
                 <FormSection
                     title="Video Gallery"
                     active={
-                        !!openSections["video"]
+                        !!openSections["video-gallery"]
                     }
                     onClick={() =>
                         toggleSection(
-                            "video"
+                            "video-gallery"
                         )
                     }
                 >

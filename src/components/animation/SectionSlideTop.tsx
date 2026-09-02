@@ -6,14 +6,31 @@ import { useRef } from "react"
 interface SectionSlideTopProps extends HTMLMotionProps<"div"> {
   children: ReactNode
   offset?: number
+  // When true the scroll-linked transforms are disabled and
+  // the children render normally (useful for admin previews).
+  disableEffects?: boolean
 }
 
 export const SectionSlideTop = ({
   children,
   offset = 150,
+  disableEffects = false,
   ...props
 }: SectionSlideTopProps) => {
   const sectionRef = useRef<HTMLDivElement>(null)
+
+  if (disableEffects) {
+    return (
+      <div
+        ref={sectionRef}
+        style={{ perspective: "1200px", overflow: "visible" }}
+        className="w-full"
+        {...(props as any)}
+      >
+        {children}
+      </div>
+    )
+  }
 
   const { scrollYProgress } = useScroll({
     target: sectionRef,
@@ -27,22 +44,9 @@ export const SectionSlideTop = ({
   const y = useTransform(scrollYProgress, [0, 0.4, 0.6, 1], [offset, 0, 0, -offset])
 
   return (
-    <div
-      ref={sectionRef}
-      style={{
-        perspective: "1200px",
-        overflow: "visible",
-      }}
-      className="w-full"
-    >
+    <div ref={sectionRef} style={{ perspective: "1200px", overflow: "visible" }} className="w-full">
       <motion.div
-        style={{
-          rotateX,
-          opacity,
-          scale,
-          y,
-          transformStyle: "preserve-3d",
-        }}
+        style={{ rotateX, opacity, scale, y, transformStyle: "preserve-3d" }}
         {...props}
       >
         {children}

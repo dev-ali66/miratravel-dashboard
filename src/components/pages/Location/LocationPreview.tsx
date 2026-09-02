@@ -30,13 +30,18 @@ export const LocationPreview = () => {
     return (
         <div className="w-full bg-[#f7f6f2] text-[#171717] text-sm md:text-base">
             {locationSectionOrder.map((key) => {
-                const SectionPreview =
-                    locationSectionRegistry[key].preview
+                const SectionPreview = locationSectionRegistry[key].preview
 
-                if (!SectionPreview) return null
+                // Render invisible placeholder for sections with no preview so
+                // DOM order matches the Form but no visual space is occupied.
+                if (!SectionPreview) {
+                    return <div key={key} data-section={key} style={{ display: "none" }} aria-hidden />
+                }
 
                 return (
-                    <SectionPreview key={key} draft={draft} />
+                    <section key={key} data-section={key} className="w-full">
+                        <SectionPreview draft={draft} />
+                    </section>
                 )
             })}
 

@@ -76,8 +76,8 @@ export function LocationEditorLayout() {
                     <aside
                         className="
                             w-full
-                            md:w-[30%]
-                            md:basis-[30%]
+                            md:w-[20%]
+                            md:basis-[20%]
                             min-w-0
                             flex-none
                             border-r
@@ -103,8 +103,8 @@ export function LocationEditorLayout() {
                         className="
                             hidden
                             md:flex
-                            md:w-[70%]
-                            md:basis-[70%]
+                            md:w-[80%]
+                            md:basis-[80%]
                             min-w-0
                             flex-1
                             bg-muted/30

@@ -21,164 +21,46 @@ export function BasicInfoForm({
     openSections,
     toggleSection,
 }: BasicInfoFormProps) {
+    const handleNameChange = (value: string) => {
+        updateField("name", value)
+
+        // Auto-generate slug for new drafts (no id)
+        if (!draft.id) {
+            const slug = String(value || "")
+                .trim()
+                .toLowerCase()
+                .replace(/\s+/g, "-")
+                .replace(/[^a-z0-9-]/g, "")
+
+            updateField("slug", slug)
+        }
+    }
 
     return (
-                <FormSection
-                    title="Basic Information"
-                    active={
-                        !!openSections["basic"]
-                    }
-                    onClick={() =>
-                        toggleSection(
-                            "basic"
-                        )
-                    }
-                >
-                    <div className="space-y-4">
-                        <Field
-                            label="Location Name"
-                            value={
-                                draft.name
-                            }
-                            onChange={(
-                                value
-                            ) =>
-                                updateField(
-                                    "name",
-                                    value
-                                )
-                            }
-                        />
+        <FormSection
+            title="Basic Information"
+            active={!!openSections["basic-info"]}
+            onClick={() => toggleSection("basic-info")}
+        >
+            <div className="space-y-4">
+                <Field label="Location Name" value={draft.name} onChange={handleNameChange} />
 
-                        <Field
-                            label="Slug"
-                            value={
-                                draft.slug
-                            }
-                            onChange={(
-                                value
-                            ) =>
-                                updateField(
-                                    "slug",
-                                    value
-                                )
-                            }
-                        />
+                <div>
+                    <label className="text-[11px] font-medium text-muted-foreground">Slug</label>
+                    <input
+                        value={draft.slug ?? ""}
+                        readOnly
+                        className="w-full rounded-lg border border-border/60 bg-background px-3 py-2 text-sm outline-none disabled:cursor-not-allowed"
+                    />
+                </div>
 
-                        <SelectField
-                            label="Type"
-                            value={
-                                draft.type
-                            }
-                            options={[
-                                ...LOCATION_TYPES,
-                            ]}
-                            onChange={(
-                                value
-                            ) =>
-                                updateField(
-                                    "type",
-                                    value
-                                )
-                            }
-                        />
-
-                        <ParentLocationSelect
-                            value={draft.parentId ?? null}
-                            currentName={draft.parent?.name}
-                            excludeId={draft.id}
-                            onChange={(id) =>
-                                updateField(
-                                    "parentId",
-                                    id
-                                )
-                            }
-                        />
-
-                        <Field
-                            label="Page Name"
-                            value={
-                                draft.data
-                                    .name
-                            }
-                            onChange={(
-                                value
-                            ) =>
-                                updateField(
-                                    "data.name",
-                                    value
-                                )
-                            }
-                        />
-
-                        <Field
-                            label="Title"
-                            value={
-                                draft.data
-                                    .title
-                            }
-                            onChange={(
-                                value
-                            ) =>
-                                updateField(
-                                    "data.title",
-                                    value
-                                )
-                            }
-                        />
-
-                        <Field
-                            label="Subtitle"
-                            value={
-                                draft.data
-                                    .subtitle
-                            }
-                            multiline
-                            onChange={(
-                                value
-                            ) =>
-                                updateField(
-                                    "data.subtitle",
-                                    value
-                                )
-                            }
-                        />
-
-                        <Field
-                            label="Short Description"
-                            value={
-                                draft.data
-                                    .shortDescription
-                            }
-                            multiline
-                            onChange={(
-                                value
-                            ) =>
-                                updateField(
-                                    "data.shortDescription",
-                                    value
-                                )
-                            }
-                        />
-
-                        <Field
-                            label="Description"
-                            value={
-                                draft.data
-                                    .description
-                            }
-                            multiline
-                            rows={6}
-                            onChange={(
-                                value
-                            ) =>
-                                updateField(
-                                    "data.description",
-                                    value
-                                )
-                            }
-                        />
-                    </div>
-                </FormSection>
+                <ParentLocationSelect
+                    value={draft.parentId ?? null}
+                    currentName={draft.parent?.name}
+                    excludeId={draft.id}
+                    onChange={(id) => updateField("parentId", id)}
+                />
+            </div>
+        </FormSection>
     )
 }

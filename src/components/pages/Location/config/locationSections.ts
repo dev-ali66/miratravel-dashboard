@@ -18,50 +18,50 @@ import type { ComponentType } from "react"
 import type { LocationData } from "../locationTypes"
 
 export type LocationFormSectionProps = {
-    draft: LocationData
-    updateField: (path: string, value: unknown) => void
-    openSections: Record<string, boolean>
-    toggleSection: (section: string) => void
+  draft: LocationData
+  updateField: (path: string, value: unknown) => void
+  openSections: Record<string, boolean>
+  toggleSection: (section: string) => void
 }
 
 export type LocationPreviewSectionProps = {
-    draft: LocationData | null
+  draft: LocationData | null
 }
 
 export type LocationSectionKey =
-    | "basic-info"
-    | "geo-data"
-    | "hero"
-    | "card"
-    | "why"
-    | "info"
-    | "essence"
-    | "statistics"
-    | "climate"
-    | "culture"
-    | "safety"
-    | "geography"
-    | "travel-info"
-    | "accommodation"
-    | "experiences"
-    | "practical-information"
-    | "faq"
-    | "image-gallery"
-    | "local-guide"
-    | "travel-insights"
-    | "video-gallery"
-    | "seo"
+  | "basic-info"
+  | "hero"
+  | "geo-data"
+  | "card"
+  | "why"
+  | "info"
+  | "essence"
+  | "statistics"
+  | "climate"
+  | "culture"
+  | "safety"
+  | "geography"
+  | "travel-info"
+  | "accommodation"
+  | "experiences"
+  | "practical-information"
+  | "faq"
+  | "image-gallery"
+  | "local-guide"
+  | "travel-insights"
+  | "video-gallery"
+  | "seo"
 
 type SectionRegistryEntry = {
-    label: string
-    form: ComponentType<LocationFormSectionProps>
-    /**
-     * null = this section has no public-facing detail preview
-     * (administrative-only sections: identifiers, geo metadata,
-     * SEO), or its content is rendered as part of another
-     * section's preview (see "culture" below).
-     */
-    preview: ComponentType<LocationPreviewSectionProps> | null
+  label: string
+  form: ComponentType<LocationFormSectionProps>
+  /**
+   * null = this section has no public-facing detail preview
+   * (administrative-only sections: identifiers, geo metadata,
+   * SEO), or its content is rendered as part of another
+   * section's preview (see "culture" below).
+   */
+  preview: ComponentType<LocationPreviewSectionProps> | null
 }
 
 /* =====================================================
@@ -119,124 +119,124 @@ import { VideoGalleryPreview } from "../sections/videoGallery/VideoGalleryPrevie
 ===================================================== */
 
 export const locationSectionRegistry: Record<
-    LocationSectionKey,
-    SectionRegistryEntry
+  LocationSectionKey,
+  SectionRegistryEntry
 > = {
-    "basic-info": {
-        label: "Basic Information",
-        form: BasicInfoForm,
-        preview: null, // identifiers/meta only, not part of the public preview
-    },
-    "geo-data": {
-        label: "Geo Information",
-        form: GeoDataForm,
-        preview: null,
-    },
-    hero: {
-        label: "Hero",
-        form: HeroForm,
-        preview: HeroPreview,
-    },
-    card: {
-        label: "Card",
-        form: CardForm,
-        preview: CardPreview,
-    },
-    why: {
-        label: "Why Visit",
-        form: WhyVisitForm,
-        preview: WhyVisitPreview,
-    },
-    info: {
-        label: "Info",
-        form: InfoForm,
-        preview: IntroInfoPreview,
-    },
-    essence: {
-        label: "Essence",
-        form: EssenceForm,
-        preview: EssencePreview,
-    },
-    statistics: {
-        label: "Statistics",
-        form: StatisticsForm,
-        preview: StatisticsPreview,
-    },
-    climate: {
-        label: "Climate",
-        form: ClimateForm,
-        // renders BOTH climate + culture (one combined visual
-        // block in the original design) — see "culture" below.
-        preview: ClimateCulturePreview,
-    },
-    culture: {
-        label: "Culture",
-        form: CultureForm,
-        // no separate preview: already rendered by "climate"'s
-        // ClimateCulturePreview, so this stays null to avoid a
-        // duplicate render of the same block.
-        preview: null,
-    },
-    safety: {
-        label: "Safety",
-        form: SafetyForm,
-        preview: SafetyPreview,
-    },
-    geography: {
-        label: "Geography",
-        form: GeographyForm,
-        preview: GeographyPreview,
-    },
-    "travel-info": {
-        label: "Travel Information",
-        form: TravelInfoForm,
-        preview: TravelInfoPreview,
-    },
-    accommodation: {
-        label: "Accommodation",
-        form: AccommodationStaysForm,
-        preview: AccommodationStaysPreview,
-    },
-    experiences: {
-        label: "Experiences",
-        form: ExperiencesForm,
-        preview: ExperiencesPreview,
-    },
-    "practical-information": {
-        label: "Practical Information",
-        form: PracticalInformationForm,
-        preview: PracticalInformationPreview,
-    },
-    faq: {
-        label: "FAQ",
-        form: FaqForm,
-        preview: FaqPreview,
-    },
-    "image-gallery": {
-        label: "Image Gallery",
-        form: ImageGalleryForm,
-        preview: ImageGalleryPreview,
-    },
-    "local-guide": {
-        label: "Local Guide",
-        form: LocalGuideForm,
-        preview: LocalGuidePreview,
-    },
-    "travel-insights": {
-        label: "Travel Insights",
-        form: TravelInsightsForm,
-        preview: TravelInsightsPreview,
-    },
-    "video-gallery": {
-        label: "Video Gallery",
-        form: VideoGalleryForm,
-        preview: VideoGalleryPreview,
-    },
-    seo: {
-        label: "SEO",
-        form: SeoForm,
-        preview: null,
-    },
+  "basic-info": {
+    label: "Basic Information",
+    form: BasicInfoForm,
+    preview: null, // identifiers/meta only, not part of the public preview
+  },
+  hero: {
+    label: "Hero",
+    form: HeroForm,
+    preview: HeroPreview,
+  },
+  "geo-data": {
+    label: "Geo Information",
+    form: GeoDataForm,
+    preview: null,
+  },
+  card: {
+    label: "Card",
+    form: CardForm,
+    preview: CardPreview,
+  },
+  why: {
+    label: "Why Visit",
+    form: WhyVisitForm,
+    preview: WhyVisitPreview,
+  },
+  info: {
+    label: "Info",
+    form: InfoForm,
+    preview: IntroInfoPreview,
+  },
+  essence: {
+    label: "Essence",
+    form: EssenceForm,
+    preview: EssencePreview,
+  },
+  statistics: {
+    label: "Statistics",
+    form: StatisticsForm,
+    preview: StatisticsPreview,
+  },
+  climate: {
+    label: "Climate",
+    form: ClimateForm,
+    // renders BOTH climate + culture (one combined visual
+    // block in the original design) — see "culture" below.
+    preview: ClimateCulturePreview,
+  },
+  culture: {
+    label: "Culture",
+    form: CultureForm,
+    // no separate preview: already rendered by "climate"'s
+    // ClimateCulturePreview, so this stays null to avoid a
+    // duplicate render of the same block.
+    preview: null,
+  },
+  safety: {
+    label: "Safety",
+    form: SafetyForm,
+    preview: SafetyPreview,
+  },
+  geography: {
+    label: "Geography",
+    form: GeographyForm,
+    preview: GeographyPreview,
+  },
+  "travel-info": {
+    label: "Travel Information",
+    form: TravelInfoForm,
+    preview: TravelInfoPreview,
+  },
+  accommodation: {
+    label: "Accommodation",
+    form: AccommodationStaysForm,
+    preview: AccommodationStaysPreview,
+  },
+  experiences: {
+    label: "Experiences",
+    form: ExperiencesForm,
+    preview: ExperiencesPreview,
+  },
+  "practical-information": {
+    label: "Practical Information",
+    form: PracticalInformationForm,
+    preview: PracticalInformationPreview,
+  },
+  faq: {
+    label: "FAQ",
+    form: FaqForm,
+    preview: FaqPreview,
+  },
+  "image-gallery": {
+    label: "Image Gallery",
+    form: ImageGalleryForm,
+    preview: ImageGalleryPreview,
+  },
+  "local-guide": {
+    label: "Local Guide",
+    form: LocalGuideForm,
+    preview: LocalGuidePreview,
+  },
+  "travel-insights": {
+    label: "Travel Insights",
+    form: TravelInsightsForm,
+    preview: TravelInsightsPreview,
+  },
+  "video-gallery": {
+    label: "Video Gallery",
+    form: VideoGalleryForm,
+    preview: VideoGalleryPreview,
+  },
+  seo: {
+    label: "SEO",
+    form: SeoForm,
+    preview: null,
+  },
 }
 
 /* =====================================================
@@ -244,26 +244,26 @@ export const locationSectionRegistry: Record<
 ===================================================== */
 
 export const locationSectionOrder: LocationSectionKey[] = [
-    "basic-info",
-    "geo-data",
-    "hero",
-    "card",
-    "why",
-    "info",
-    "essence",
-    "statistics",
-    "climate",
-    "culture",
-    "safety",
-    "geography",
-    "travel-info",
-    "accommodation",
-    "experiences",
-    "practical-information",
-    "faq",
-    "image-gallery",
-    "local-guide",
-    "travel-insights",
-    "video-gallery",
-    "seo",
+  "basic-info",
+  "hero",
+  "info",
+  "why",
+  "experiences",
+  "accommodation",
+  "travel-insights",
+  "practical-information",
+  "geo-data",
+  "card",
+  "essence",
+  "statistics",
+  "climate",
+  "culture",
+  "safety",
+  "geography",
+  "travel-info",
+  "faq",
+  "image-gallery",
+  "local-guide",
+  "video-gallery",
+  "seo",
 ]

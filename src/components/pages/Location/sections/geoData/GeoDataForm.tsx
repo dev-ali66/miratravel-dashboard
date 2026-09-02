@@ -25,11 +25,11 @@ export function GeoDataForm({
                 <FormSection
                     title="Geo Information"
                     active={
-                        !!openSections["geo"]
+                        !!openSections["geo-data"]
                     }
                     onClick={() =>
                         toggleSection(
-                            "geo"
+                            "geo-data"
                         )
                     }
                 >

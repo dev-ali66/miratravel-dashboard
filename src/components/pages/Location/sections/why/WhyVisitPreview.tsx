@@ -26,7 +26,7 @@ export function WhyVisitPreview({
 
     return (
         <section className="w-full">
-            <SectionSlideTop id="why-visit" className={`container mx-auto`}>
+            <SectionSlideTop id="why-visit" className={`container mx-auto`} disableEffects>
                 <div className="mx-auto flex w-full flex-col items-center justify-between xl:gap-10 lg:gap-8 md:gap-6 sm:gap-5 gap-4 lg:flex-row lg:items-center">
                     {/* Left Text Block */}
                     <motion.div className="flex w-full flex-col items-start lg:w-1/2 xl:w-[761px] 2xl:flex-1 xl:gap-[30.695px]">

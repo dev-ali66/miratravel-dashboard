@@ -39,11 +39,11 @@ export function PracticalInformationForm({
                 <FormSection
                     title="Practical Information"
                     active={
-                        !!openSections["practical"]
+                        !!openSections["practical-information"]
                     }
                     onClick={() =>
                         toggleSection(
-                            "practical"
+                            "practical-information"
                         )
                     }
                 >

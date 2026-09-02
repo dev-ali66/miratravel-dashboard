@@ -53,12 +53,16 @@ export function LocationForm({}: LocationFormProps) {
        crashes the form.
     ================================================= */
 
+    // When entering Add mode, initialize the draft once.
     useEffect(() => {
         if (!isEditMode) {
             resetDraft(structuredClone(emptyLocation))
-            return
         }
+    }, [isEditMode, resetDraft])
 
+    // When in Edit mode, normalize the fetched draft over defaults.
+    useEffect(() => {
+        if (!isEditMode) return
         if (!draft) return
 
         const normalizedDraft = mergeWithDefaults(
@@ -67,16 +71,17 @@ export function LocationForm({}: LocationFormProps) {
         )
 
         setDraft((current) => {
-            if (
-                JSON.stringify(current) ===
-                JSON.stringify(normalizedDraft)
-            ) {
-                return current
+            try {
+                if (JSON.stringify(current) === JSON.stringify(normalizedDraft)) {
+                    return current
+                }
+            } catch (e) {
+                // fall back to replacing if serialization fails
             }
 
             return normalizedDraft
         })
-    }, [draft, isEditMode, resetDraft, setDraft])
+    }, [draft, isEditMode, setDraft])
 
     if (isEditMode && isLoading) {
         return (
