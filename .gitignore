@@ -1,0 +1,63 @@
+# Dependencies
+node_modules/
+yarn.lock
+pnpm-lock.yaml
+bun.lockb
+
+# Production
+dist/
+build/
+out/
+.next/
+
+# Environment variables
+.env
+.env.local
+.env.*.local
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.DS_Store
+*.sublime-workspace
+
+# Logs
+logs/
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# OS
+Thumbs.db
+.DS_Store
+
+# Testing
+coverage/
+.nyc_output/
+
+# Misc
+.cache/
+.turbo/
+dist/
+.next/
+
+# Temporary files
+*.tmp
+*.bak
+*.swp
+
+# Module dependencies
+node_modules/
+
+# mira_frontend and mira_backend
+mira_frontend/node_modules/
+mira_backend/node_modules/
+mira_frontend/dist/
+mira_frontend/build/
+mira_frontend/.next/
+mira_backend/dist/
+mira_backend/build/
