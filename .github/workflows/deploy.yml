@@ -1,4 +1,4 @@
-name: Deploy
+name: Deploy Dashboard
 
 on:
   push:
@@ -38,17 +38,51 @@ jobs:
           host: ${{ secrets.VPS_HOST }}
           username: ${{ secrets.VPS_USER }}
           key: ${{ secrets.VPS_SSH_KEY }}
+          script_stop: true
 
           script: |
             set -e
 
-            echo "=== Deploying Dashboard ==="
+            echo "======================================"
+            echo "       Dashboard Deployment"
+            echo "======================================"
 
-            cd ${{ secrets.VPS_DASHBOARD_PATH }}
+            PROJECT_PATH="${{ secrets.VPS_DASHBOARD_PATH }}"
+            REPO_URL="${{ secrets.VPS_REPO_URL }}"
 
-            echo "=== Updating source code ==="
-            git fetch origin main
-            git reset --hard origin/main
+            echo "Project path: $PROJECT_PATH"
+
+            # Create project directory
+            mkdir -p "$PROJECT_PATH"
+
+            cd "$PROJECT_PATH"
+
+            echo "=== Checking Git repository ==="
+
+            if [ ! -d ".git" ]; then
+              echo "Git repository not found."
+              echo "=== Initializing repository ==="
+
+              # Remove existing files if any
+              find . -mindepth 1 -maxdepth 1 ! -name ".git" -exec rm -rf {} +
+
+              git init
+              git remote add origin "$REPO_URL"
+
+              echo "=== Fetching repository ==="
+              git fetch origin main
+
+              echo "=== Checking out main ==="
+              git checkout -B main origin/main
+
+            else
+              echo "Git repository already exists."
+
+              echo "=== Updating source code ==="
+              git fetch origin main
+              git reset --hard origin/main
+              git clean -fd
+            fi
 
             echo "=== Installing dependencies ==="
             npm ci
@@ -56,4 +90,16 @@ jobs:
             echo "=== Building dashboard ==="
             npm run build
 
+            echo "=== Verifying build ==="
+
+            if [ ! -f "dist/index.html" ]; then
+              echo "ERROR: dist/index.html not found!"
+              exit 1
+            fi
+
+            echo "=== Build successful ==="
+            ls -lah dist
+
+            echo "======================================"
             echo "✓ Dashboard deployment complete"
+            echo "======================================"
