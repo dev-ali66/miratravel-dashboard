@@ -97,6 +97,7 @@ import { SeoForm } from "../sections/seo/SeoForm"
 
 import { HeroPreview } from "../sections/hero/HeroPreview"
 import { CardPreview } from "../sections/card/CardPreview"
+import { GeoDataPreview } from "../sections/geoData/GeoDataPreview"
 import { WhyVisitPreview } from "../sections/why/WhyVisitPreview"
 import { IntroInfoPreview } from "../sections/info/IntroInfoPreview"
 import { EssencePreview } from "../sections/essence/EssencePreview"
@@ -135,7 +136,7 @@ export const locationSectionRegistry: Record<
   "geo-data": {
     label: "Geo Information",
     form: GeoDataForm,
-    preview: null,
+    preview: GeoDataPreview,
   },
   card: {
     label: "Card",
@@ -249,10 +250,10 @@ export const locationSectionOrder: LocationSectionKey[] = [
   "info",
   "why",
   "experiences",
+  "geo-data",
   "accommodation",
   "travel-insights",
   "practical-information",
-  "geo-data",
   "card",
   "essence",
   "statistics",

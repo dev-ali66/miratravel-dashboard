@@ -6,6 +6,7 @@ import {
 import { ArrowLeft } from "lucide-react"
 import { cn } from "@/lib/utils"
 
+import { ScaledWorkspace } from "@/components/shared/AutoScale"
 import { LocationPreview } from "./LocationPreview"
 import { LocationDraftProvider } from "./shared/LocationDraftContext"
 
@@ -117,11 +118,13 @@ export function LocationEditorLayout() {
                     >
                         <div
                             className={cn(
-                                "min-h-full w-full overflow-y-auto bg-background shadow-md",
+                                "min-h-full w-full overflow-hidden bg-background shadow-md",
                                 "rounded-lg border border-border/60"
                             )}
                         >
-                            <LocationPreview />
+                            <ScaledWorkspace className="h-full w-full">
+                                <LocationPreview />
+                            </ScaledWorkspace>
                         </div>
                     </section>
                 </LocationDraftProvider>
