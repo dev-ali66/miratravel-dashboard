@@ -3,9 +3,8 @@
    Auto-migrated from the legacy LocationForm.tsx monolith.
 ===================================================== */
 
-import { Field, SelectField, FormSection } from "../../shared/fields"
+import { Field, FormSection } from "../../shared/fields"
 import { ParentLocationSelect } from "../../shared/ParentLocationSelect"
-import { LOCATION_TYPES } from "../../locationTypes"
 import type { LocationData } from "../../locationTypes"
 
 export type BasicInfoFormProps = {
