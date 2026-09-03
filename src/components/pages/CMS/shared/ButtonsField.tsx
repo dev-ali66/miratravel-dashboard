@@ -1,10 +1,12 @@
 import { RepeaterList } from "./RepeaterList"
-import { TextField, SelectField } from "./FormControls"
+import { ColorField, TextField, SelectField } from "./FormControls"
 
 export interface CmsButton {
   label: string
   url: string
   style?: string
+  backgroundColor?: string
+  textColor?: string
 }
 
 interface ButtonsFieldProps {
@@ -51,6 +53,16 @@ export function ButtonsField({ label = "Buttons", value, onChange }: ButtonsFiel
               onChange={(v) => update({ ...item, style: v as CmsButton["style"] })}
               options={STYLE_OPTIONS}
               className="col-span-2"
+            />
+            <ColorField
+              label="Background color"
+              value={item.backgroundColor ?? "#1F3A1B"}
+              onChange={(v) => update({ ...item, backgroundColor: v })}
+            />
+            <ColorField
+              label="Text color"
+              value={item.textColor ?? "#FFFFFF"}
+              onChange={(v) => update({ ...item, textColor: v })}
             />
           </div>
         )}

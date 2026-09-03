@@ -320,6 +320,60 @@ export const HomeForm = () => {
               }
             />
 
+            <div className="grid grid-cols-1 gap-3 md:grid-cols-2">
+              <ColorField
+                label="Title line 1 color"
+                value={content.textColors?.titleLine1 ?? "#FFFFFF"}
+                onChange={(value) =>
+                  updateSectionContent(index, {
+                    textColors: {
+                      ...content.textColors,
+                      titleLine1: value,
+                    },
+                  })
+                }
+              />
+
+              <ColorField
+                label="Title line 2 color"
+                value={content.textColors?.titleLine2 ?? "#FFFFFF"}
+                onChange={(value) =>
+                  updateSectionContent(index, {
+                    textColors: {
+                      ...content.textColors,
+                      titleLine2: value,
+                    },
+                  })
+                }
+              />
+
+              <ColorField
+                label="Title highlight color"
+                value={content.textColors?.titleHighlight ?? "#C97B4A"}
+                onChange={(value) =>
+                  updateSectionContent(index, {
+                    textColors: {
+                      ...content.textColors,
+                      titleHighlight: value,
+                    },
+                  })
+                }
+              />
+
+              <ColorField
+                label="Description color"
+                value={content.textColors?.description ?? "#FFFFFF"}
+                onChange={(value) =>
+                  updateSectionContent(index, {
+                    textColors: {
+                      ...content.textColors,
+                      description: value,
+                    },
+                  })
+                }
+              />
+            </div>
+
           </div>
         </div>
 

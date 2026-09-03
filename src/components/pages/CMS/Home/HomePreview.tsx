@@ -1,4 +1,5 @@
 import { useCmsDraft } from "../shared/CmsDraftContext"
+import { ArrowUpRight } from "lucide-react"
 
 import type {
   HomeButton,
@@ -6,6 +7,12 @@ import type {
   HomeSection,
   HomeStoryItem,
 } from "./homeTypes"
+import { cn } from "@/lib/utils"
+
+const PREVIEW_IMAGE_SOURCE =
+  "https://images.unsplash.com/photo-1530789253388-582c481c54b0?auto=format&fit=crop&w=1200&q=85"
+const PREVIEW_VIDEO_SOURCE =
+  "https://cdn.coverr.co/videos/coverr-aerial-view-of-a-beach-1576/1080p.mp4"
 
 export const HomePreview = () => {
   const page = useCmsDraft<HomePageData>()
@@ -85,14 +92,23 @@ export const HomePreview = () => {
    */
 
   const renderButtons = (
-    buttons: HomeButton[] = []
+    buttons: HomeButton[] = [],
+    fullWidth = false,
+    alignRight = false,
+    mainButtonWidth = false
   ) => {
     if (!buttons.length) {
       return null
     }
 
     return (
-      <div className="mt-7 flex flex-wrap gap-3">
+      <div
+        className={cn(
+          "flex flex-row flex-wrap items-start gap-3",
+          fullWidth ? "w-full" : "mt-7",
+          alignRight && "justify-end"
+        )}
+      >
         {buttons.map(
           (button, index) => {
             const isPrimary =
@@ -102,28 +118,23 @@ export const HomePreview = () => {
               <a
                 key={`${button.label}-${index}`}
                 href={button.url || "#"}
-                className="
-                  inline-flex
-                  min-h-[38px]
-                  items-center
-                  justify-center
-                  px-7
-                  text-[10px]
-                  font-semibold
-                  uppercase
-                  tracking-[0.08em]
-                  transition-opacity
-                  hover:opacity-80
-                "
+                className={cn(
+                  "inline-flex min-h-[38px] items-center justify-center px-7 text-[10px] font-semibold uppercase tracking-[0.08em] transition-opacity hover:opacity-80",
+                  buttons.length === 1 && fullWidth && "w-full",
+                  mainButtonWidth && index === 0 && "w-full md:w-[230px]"
+                )}
                 style={{
                   backgroundColor:
-                    isPrimary
+                    button.backgroundColor ??
+                    (isPrimary
                       ? primaryColor
-                      : "transparent",
+                      : "transparent"),
 
-                  color: isPrimary
-                    ? lightText
-                    : primaryColor,
+                  color:
+                    button.textColor ??
+                    (isPrimary
+                      ? lightText
+                      : primaryColor),
 
                   border: isPrimary
                     ? "none"
@@ -164,13 +175,11 @@ export const HomePreview = () => {
           ${className}
         `}
       >
-        <div className="absolute inset-0 bg-gradient-to-br from-muted via-muted/60 to-background" />
-
-        <div className="absolute inset-0 flex items-center justify-center">
-          <span className="text-[9px] uppercase tracking-[0.18em] text-muted-foreground">
-            Image
-          </span>
-        </div>
+        <img
+          src={PREVIEW_IMAGE_SOURCE}
+          alt="Preview journey"
+          className="h-full w-full object-cover"
+        />
       </div>
     )
   }
@@ -185,6 +194,7 @@ export const HomePreview = () => {
     section: HomeSection
   ) => {
     const content = getContent(section)
+    const textColors = content.textColors ?? {}
 
     const video =
       section.bgVideos?.[0]
@@ -214,18 +224,18 @@ export const HomePreview = () => {
             BACKGROUND VIDEO
         ==================================================== */}
 
-        {section.showVideo && video?.url && (
+        {section.showVideo && (video?.url || PREVIEW_VIDEO_SOURCE) && (
           <video
-            src={video.url}
-            poster={image || undefined}
+            src={video?.url || PREVIEW_VIDEO_SOURCE}
+            poster={image || PREVIEW_IMAGE_SOURCE}
             autoPlay={
-              video.autoplay ?? true
+              video?.autoplay ?? true
             }
             muted={
-              video.muted ?? true
+              video?.muted ?? true
             }
             loop={
-              video.loop ?? true
+              video?.loop ?? true
             }
             playsInline
             className="
@@ -242,7 +252,7 @@ export const HomePreview = () => {
             BACKGROUND IMAGE FALLBACK
         ==================================================== */}
 
-        {!(section.showVideo && video?.url) && image && (
+        {!(section.showVideo && (video?.url || PREVIEW_VIDEO_SOURCE)) && image && (
           <img
             src={image}
             alt={imageAlt}
@@ -285,6 +295,9 @@ export const HomePreview = () => {
             md:px-14
             md:pb-16
           "
+          style={{
+            color: lightText,
+          }}
         >
           <div className="max-w-[680px]">
 
@@ -300,7 +313,9 @@ export const HomePreview = () => {
                   lg:text-[72px]
                 "
                 style={{
-                  color: lightText,
+                  color:
+                    textColors.titleLine1 ??
+                    lightText,
                 }}
               >
                 {content.titleLine1}
@@ -319,11 +334,15 @@ export const HomePreview = () => {
                   md:text-[60px]
                   lg:text-[72px]
                 "
+                style={{
+                  color: lightText,
+                }}
               >
                 {content.titleHighlight && (
                   <span
                     style={{
                       color:
+                        textColors.titleHighlight ??
                         accentColor,
                     }}
                   >
@@ -339,6 +358,7 @@ export const HomePreview = () => {
                     <span
                       style={{
                         color:
+                          textColors.titleLine2 ??
                           lightText,
                       }}
                     >
@@ -362,6 +382,7 @@ export const HomePreview = () => {
                 "
                 style={{
                   color:
+                    textColors.description ??
                     "rgba(255,255,255,0.82)",
                 }}
               >
@@ -370,7 +391,10 @@ export const HomePreview = () => {
             )}
 
             {renderButtons(
-              section.buttons
+              section.buttons,
+              false,
+              false,
+              true
             )}
           </div>
         </div>
@@ -389,9 +413,6 @@ export const HomePreview = () => {
   ) => {
     const content = getContent(section)
 
-    const trust =
-      content.trustBadge ?? {}
-
     return (
       <section
         className="
@@ -409,13 +430,13 @@ export const HomePreview = () => {
           color: darkText,
         }}
       >
-        <div className="mx-auto max-w-[1180px]">
+        <div className="mx-auto flex w-full max-w-[1680px] flex-col gap-14">
 
-          <div className="grid grid-cols-1 gap-12 lg:grid-cols-[0.8fr_1.2fr] lg:items-end">
+          <div className="flex flex-col items-start justify-between gap-8 lg:flex-row lg:items-end">
 
             {/* LEFT CONTENT */}
 
-            <div>
+            <div className="flex flex-col items-start gap-4">
 
               {content.eyebrow && (
                 <p
@@ -437,13 +458,16 @@ export const HomePreview = () => {
               {content.title && (
                 <h2
                   className="
-                    mt-4
-                    max-w-[600px]
+                    max-w-[700px]
                     font-serif
-                    text-[38px]
-                    leading-[1]
-                    tracking-[-1px]
-                    md:text-[52px]
+                    text-[24px]
+                    leading-[24px]
+                    md:text-[28px]
+                    md:leading-[28px]
+                    lg:text-[30px]
+                    lg:leading-[30px]
+                    xl:text-[40px]
+                    xl:leading-[40px]
                   "
                 >
                   {content.title}
@@ -451,85 +475,97 @@ export const HomePreview = () => {
               )}
 
               {content.subtitle && (
-                <p className="mt-5 max-w-[500px] text-[12px] leading-[1.7]">
+                <p className="text-[12px] leading-[1.7]">
                   {content.subtitle}
                 </p>
               )}
 
-              {content.description && (
-                <p className="mt-3 max-w-[550px] text-[11px] leading-[1.75] opacity-70">
-                  {content.description}
-                </p>
-              )}
+            </div>
 
-              {trust.source && (
-                <div className="mt-6 inline-flex items-center gap-3 rounded-full border px-4 py-2">
-                  <span className="text-[10px] font-semibold">
-                    {trust.source}
-                  </span>
+            {content.description && (
+              <p className="max-w-[558px] text-sm font-normal leading-8 opacity-70">
+                {content.description}
+              </p>
+            )}
+          </div>
 
-                  {trust.rating !==
-                    undefined && (
-                    <span
-                      className="text-[10px]"
+          {/* JOURNEY CARDS */}
+
+          <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
+
+            {[1, 2, 3].map(
+              (item) => (
+                <div
+                  key={item}
+                  className="group relative flex w-full flex-col overflow-hidden rounded-[8px] border border-border-muted/40 bg-neutral-100"
+                >
+                  <div className="relative h-[280px] w-full shrink-0 overflow-hidden rounded-sm md:h-[380px] lgx:h-[413px]">
+                    <DummyImage className="h-full w-full" />
+
+                    <div
+                      className="absolute left-4 top-4 z-10 rounded-full px-3 py-1 text-[10px] font-bold uppercase tracking-[0.08em]"
                       style={{
-                        color:
-                          accentColor,
+                        backgroundColor: "#FEF3C7",
+                        color: "#9A3412",
                       }}
                     >
-                      ★ {trust.rating}
-                    </span>
-                  )}
+                      Journey
+                    </div>
 
-                  {trust.text && (
-                    <span className="text-[10px] opacity-60">
-                      {trust.text}
-                    </span>
-                  )}
-                </div>
-              )}
+                    <div className="absolute right-4 top-4 z-10 flex h-8 w-8 items-center justify-center rounded-full border border-transparent bg-neutral-100 text-sm shadow-sm">
+                      ♡
+                    </div>
 
-              {renderButtons(
-                section.buttons
-              )}
-            </div>
-
-            {/* DUMMY JOURNEY CARDS */}
-
-            <div className="grid grid-cols-2 gap-3 md:grid-cols-3">
-
-              {[1, 2, 3].map(
-                (item) => (
-                  <div
-                    key={item}
-                    className="group"
-                  >
-                    <DummyImage className="aspect-[0.72]" />
-
-                    <div className="pt-3">
-                      <p
-                        className="text-[9px] uppercase tracking-[0.15em]"
-                        style={{
-                          color:
-                            accentColor,
-                        }}
-                      >
-                        Journey
-                      </p>
-
-                      <h3 className="mt-1 font-serif text-[18px] leading-tight">
-                        Journey title
-                      </h3>
-
-                      <p className="mt-1 text-[9px] opacity-55">
-                        Destination · Duration
-                      </p>
+                    <div className="absolute bottom-4 left-4 z-10 rounded-full bg-black/45 px-3 py-1 text-[10px] font-semibold uppercase tracking-[0.08em] text-white">
+                      7 days
                     </div>
                   </div>
-                )
-              )}
 
-            </div>
+                  <div className="flex flex-1 flex-col px-4 pb-5 pt-4">
+                    <h3 className="font-serif text-[21px] leading-tight text-secondary">
+                      Ancient Albania
+                    </h3>
+
+                    <p className="mt-2 text-xs leading-5 text-subtitle">
+                      A slow journey through mountain villages, old stone towns, and the Adriatic coast.
+                    </p>
+
+                    <div className="mt-5 flex items-center justify-between gap-2">
+                      <div className="flex flex-wrap gap-1.5">
+                        {[
+                          "History",
+                          "Culture",
+                          "Coast",
+                        ].map((tag) => (
+                          <span
+                            key={tag}
+                            className="rounded-[38px] border border-border-light px-2 py-1 text-[8px] uppercase tracking-[0.08em] text-subtitle"
+                          >
+                            {tag}
+                          </span>
+                        ))}
+                      </div>
+
+                      <span
+                        className="shrink-0 text-[11px] font-semibold"
+                        style={{ color: accentColor }}
+                      >
+                        From $1,890 ↗
+                      </span>
+                    </div>
+                  </div>
+                </div>
+              )
+            )}
+          </div>
+
+          <div className="flex w-full items-start">
+            {renderButtons(
+              section.buttons,
+              false,
+              false,
+              true
+            )}
           </div>
         </div>
       </section>
@@ -564,69 +600,66 @@ export const HomePreview = () => {
           color: darkText,
         }}
       >
-        <div className="mx-auto max-w-[1180px]">
+        <div className="mx-auto flex w-full flex-col items-center gap-14">
 
-          {content.eyebrow && (
-            <p
-              className="
-                text-[10px]
-                font-semibold
-                uppercase
-                tracking-[0.18em]
-              "
-              style={{
-                color:
-                  accentColor,
-              }}
-            >
-              {content.eyebrow}
-            </p>
-          )}
+          <div className="flex flex-col items-center gap-4 text-center">
+            {content.eyebrow && (
+              <p
+                className="text-[10px] font-semibold uppercase tracking-[0.18em]"
+                style={{ color: accentColor }}
+              >
+                {content.eyebrow}
+              </p>
+            )}
 
-          {content.title && (
-            <h2 className="mt-4 max-w-[700px] font-serif text-[38px] leading-[1] tracking-[-1px] md:text-[52px]">
-              {content.title}
-            </h2>
-          )}
+            {content.title && (
+              <h2 className="max-w-[900px] font-serif text-[32px] leading-tight tracking-[-1px] md:text-[52px]">
+                {content.title}
+              </h2>
+            )}
 
-          {content.subtitle && (
-            <p className="mt-5 max-w-[600px] text-[12px] leading-[1.7] opacity-70">
-              {content.subtitle}
-            </p>
-          )}
+            {content.subtitle && (
+              <p className="max-w-[700px] text-[12px] leading-[1.7] opacity-70 md:text-sm">
+                {content.subtitle}
+              </p>
+            )}
+          </div>
 
           {/* DUMMY DESTINATION CARDS */}
 
-          <div className="mt-12 grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-4">
+          <div className="grid w-full grid-cols-1 items-start gap-4 md:grid-cols-2 lg:grid-cols-3">
 
-            {[1, 2, 3, 4].map(
-              (item) => (
+            {[
+              "Croatia",
+              "Bosnia & Herzegovina",
+              "Albania",
+            ].map(
+              (name) => (
                 <div
-                  key={item}
-                  className="group"
+                  key={name}
+                  className="group flex w-full flex-col gap-8 rounded-[2px] border border-border-muted/40 bg-neutral-100 p-4 md:gap-9 md:p-[18px] xl:gap-10 xl:p-6"
                 >
-                  <DummyImage className="aspect-[0.78]" />
+                  <div className="relative h-[300px] w-full overflow-hidden rounded-[2px] md:h-[320px] lgx:h-[360px] xl:h-[394px]">
+                    <DummyImage className="h-full w-full" />
+                  </div>
 
-                  <div className="flex items-end justify-between border-b py-3">
-                    <div>
-                      <p
-                        className="text-[9px] uppercase tracking-[0.15em]"
-                        style={{
-                          color:
-                            accentColor,
-                        }}
-                      >
-                        Destination
-                      </p>
-
-                      <h3 className="mt-1 font-serif text-[21px]">
-                        Destination
+                  <div className="flex flex-col gap-4">
+                    <div className="flex items-center justify-between">
+                      <h3 className="font-serif text-[21px] text-primary md:text-[22px] xl:text-[24px]">
+                        {name}
                       </h3>
+
+                      <ArrowUpRight className="h-5 w-5 shrink-0 text-accent" />
                     </div>
 
-                    <span className="text-[10px] opacity-50">
-                      →
-                    </span>
+                    <p className="text-sm leading-[21px] text-subtitle md:text-[15px]">
+                      {name === "Croatia"
+                        ? "Adriatic coast, historic cities, island hopping..."
+                        : name === "Albania"
+                          ? "Riviera beaches, ancient ruins, mountain trails..."
+                          : "A destination where East meets West in the heart of the Balkans."
+                      }
+                    </p>
                   </div>
                 </div>
               )
@@ -634,9 +667,14 @@ export const HomePreview = () => {
 
           </div>
 
-          {renderButtons(
-            section.buttons
-          )}
+          <div className="flex w-full justify-center">
+            {renderButtons(
+              section.buttons,
+              false,
+              false,
+              true
+            )}
+          </div>
         </div>
       </section>
     )
@@ -662,6 +700,8 @@ export const HomePreview = () => {
     const imageAlt =
       getBackgroundImageAlt(section)
 
+    const storyImage = image || PREVIEW_IMAGE_SOURCE
+
     return (
       <section
         className="
@@ -679,68 +719,46 @@ export const HomePreview = () => {
           color: darkText,
         }}
       >
-        <div className="mx-auto max-w-[1180px]">
+        <div className="mx-auto flex w-full max-w-[1336px] flex-col items-center justify-center gap-[38px] lg:flex-row lg:gap-12 xl:gap-16">
 
-          <div className="grid grid-cols-1 gap-12 lg:grid-cols-[0.75fr_1.25fr]">
+          <div className="relative aspect-[776/661] w-full overflow-hidden lg:h-[375px] lg:w-[440px] lg:flex-none lg:aspect-auto lgx:h-[426px] lgx:w-[500px] xl:h-[661px] xl:w-[776px]">
+            <img
+              src={storyImage}
+              alt={imageAlt || "Mira Stories editorial"}
+              className="h-full w-full object-cover"
+            />
+          </div>
 
-            {/* CONTENT */}
+          {/* CONTENT */}
 
-            <div>
+          <div className="flex w-full flex-col items-start lg:flex-1 xl:w-[550px] xl:flex-none">
 
+            <div className="flex w-full flex-col items-start gap-6 md:gap-8 xl:gap-10">
               {content.eyebrow && (
                 <p
-                  className="
-                    text-[10px]
-                    font-semibold
-                    uppercase
-                    tracking-[0.18em]
-                  "
-                  style={{
-                    color:
-                      accentColor,
-                  }}
+                  className="text-sm font-normal uppercase tracking-[1.5px]"
+                  style={{ color: accentColor }}
                 >
                   {content.eyebrow}
                 </p>
               )}
 
               {content.title && (
-                <h2 className="mt-4 font-serif text-[38px] leading-[1] tracking-[-1px] md:text-[52px]">
+                <h2 className="max-w-[496px] font-serif text-[36px] font-semibold leading-[44px] tracking-[2px] text-card-title md:text-[52px] md:leading-[64px] xl:text-[64px] xl:leading-[80px]">
                   {content.title}
                 </h2>
               )}
 
               {content.description && (
-                <p className="mt-5 max-w-[470px] text-[11px] leading-[1.8] opacity-70">
+                <p className="w-full max-w-[550px] text-sm leading-6 text-subtitle md:text-[15px] md:leading-7 xl:text-base xl:leading-[30px]">
                   {content.description}
                 </p>
-              )}
-
-              {renderButtons(
-                section.buttons
               )}
             </div>
 
             {/* STORIES */}
 
-            <div>
-
-              {image ? (
-                <img
-                  src={image}
-                  alt={imageAlt}
-                  className="
-                    mb-7
-                    h-[300px]
-                    w-full
-                    object-cover
-                  "
-                />
-              ) : (
-                <DummyImage className="mb-7 h-[300px] w-full" />
-              )}
-
-              <div className="grid grid-cols-1 gap-x-8 sm:grid-cols-2">
+            <div className="mt-6 flex w-full flex-col gap-4 md:mt-8 md:gap-6 xl:mt-10 xl:gap-8">
 
                 {items.length
                   ? items.map(
@@ -754,15 +772,10 @@ export const HomePreview = () => {
                             item.url ||
                             "#"
                           }
-                          className="
-                            border-t
-                            py-5
-                            transition-opacity
-                            hover:opacity-60
-                          "
+                          className="group flex items-start gap-4 transition-opacity hover:opacity-60 md:gap-6 xl:gap-8"
                         >
                           <span
-                            className="text-[9px]"
+                            className="mt-0.5 text-sm text-muted transition-colors group-hover:text-accent"
                             style={{
                               color:
                                 accentColor,
@@ -778,18 +791,20 @@ export const HomePreview = () => {
                               )}
                           </span>
 
-                          <h3 className="mt-2 font-serif text-[21px] leading-tight">
+                          <div className="flex flex-col gap-1">
+                          <h3 className="font-serif text-base font-medium leading-5 text-card-title transition-colors group-hover:text-primary md:text-[18px] xl:text-[20px]">
                             {item.title ||
                               "Story title"}
                           </h3>
 
                           {item.subtitle && (
-                            <p className="mt-2 text-[10px] opacity-55">
+                            <p className="text-xs leading-[18px] text-muted md:text-[13px] xl:text-sm">
                               {
                                 item.subtitle
                               }
                             </p>
                           )}
+                          </div>
                         </a>
                       )
                     )
@@ -797,10 +812,10 @@ export const HomePreview = () => {
                       (item) => (
                         <div
                           key={item}
-                          className="border-t py-5"
+                          className="group flex items-start gap-4 md:gap-6 xl:gap-8"
                         >
                           <span
-                            className="text-[9px]"
+                            className="mt-0.5 text-sm text-muted"
                             style={{
                               color:
                                 accentColor,
@@ -814,19 +829,27 @@ export const HomePreview = () => {
                             )}
                           </span>
 
-                          <h3 className="mt-2 font-serif text-[21px]">
-                            Story title
-                          </h3>
+                          <div className="flex flex-col gap-1">
+                            <h3 className="font-serif text-base font-medium leading-5 text-card-title md:text-[18px] xl:text-[20px]">
+                              Story title
+                            </h3>
 
-                          <p className="mt-2 text-[10px] opacity-55">
-                            Story subtitle
-                          </p>
+                            <p className="text-xs leading-[18px] text-muted md:text-[13px] xl:text-sm">
+                              Story subtitle
+                            </p>
+                          </div>
                         </div>
                       )
                     )}
 
-              </div>
             </div>
+
+            {renderButtons(
+              section.buttons,
+              false,
+              false,
+              true
+            )}
           </div>
         </div>
       </section>
@@ -850,6 +873,9 @@ export const HomePreview = () => {
     const paragraphs =
       content.paragraphs ?? []
 
+    const whyMiraImage =
+      image?.url || PREVIEW_IMAGE_SOURCE
+
     return (
       <section
         className="
@@ -864,21 +890,21 @@ export const HomePreview = () => {
           color: lightText,
         }}
       >
-        <div className="grid grid-cols-1 md:grid-cols-2">
+        <div className="mx-auto flex w-full max-w-[1680px] flex-col items-start gap-12 px-7 py-16 md:px-14 md:py-24 lg:flex-row lg:items-center lg:gap-[70px] xl:gap-24">
 
           {/* LEFT */}
 
-          <div className="flex items-center px-7 py-16 md:px-14 md:py-24">
+          <div className="flex w-full flex-col items-start lg:flex-1">
 
-            <div className="max-w-[560px]">
+            <div className="flex w-full max-w-[760px] flex-col gap-9 md:gap-10 xl:gap-[47px]">
 
               {content.eyebrow && (
                 <p
                   className="
-                    text-[10px]
-                    font-semibold
+                    text-[18px]
+                    font-medium
                     uppercase
-                    tracking-[0.18em]
+                    tracking-[1.4px]
                   "
                   style={{
                     color:
@@ -890,12 +916,12 @@ export const HomePreview = () => {
               )}
 
               {content.title && (
-                <h2 className="mt-4 font-serif text-[38px] leading-[1] tracking-[-1px] md:text-[52px]">
+                <h2 className="font-serif text-[32px] font-normal leading-[44px] tracking-[2px] text-white sm:text-[38px] sm:leading-[52px] md:text-[44px] md:leading-[58px] xl:text-[48px] xl:leading-[64px]">
                   {content.title}
                 </h2>
               )}
 
-              <div className="mt-7 space-y-5">
+              <div className="flex flex-col gap-8 md:gap-9 lgx:gap-10 xl:gap-11">
 
                 {paragraphs.length
                   ? paragraphs.map(
@@ -905,7 +931,7 @@ export const HomePreview = () => {
                       ) => (
                         <p
                           key={index}
-                          className="text-[11px] leading-[1.8]"
+                          className="text-justify text-sm font-normal leading-[30px] tracking-[1.2px] md:text-[15px] md:leading-[34px] md:tracking-[1.6px] xl:leading-[37px] xl:tracking-[2px]"
                           style={{
                             color:
                               "rgba(255,255,255,0.76)",
@@ -919,11 +945,11 @@ export const HomePreview = () => {
                     )
                   : (
                     <>
-                      <p className="text-[11px] leading-[1.8] opacity-75">
+                      <p className="text-justify text-sm leading-[30px] opacity-75 md:text-[15px] md:leading-[34px]">
                         Your story content will appear here.
                       </p>
 
-                      <p className="text-[11px] leading-[1.8] opacity-75">
+                      <p className="text-justify text-sm leading-[30px] opacity-75 md:text-[15px] md:leading-[34px]">
                         This preview keeps the visual layout while the actual API content is loaded dynamically.
                       </p>
                     </>
@@ -933,7 +959,7 @@ export const HomePreview = () => {
 
               {content.signature && (
                 <p
-                  className="mt-8 text-[10px] font-semibold uppercase tracking-[0.12em]"
+                  className="font-serif text-sm tracking-[1.4px] md:text-[15px]"
                   style={{
                     color:
                       accentColor,
@@ -947,24 +973,12 @@ export const HomePreview = () => {
 
           {/* RIGHT IMAGE */}
 
-          <div className="min-h-[420px]">
-
-            {image?.url ? (
-              <img
-                src={image.url}
-                alt={
-                  image.alt ?? ""
-                }
-                className="
-                  h-full
-                  min-h-[420px]
-                  w-full
-                  object-cover
-                "
-              />
-            ) : (
-              <DummyImage className="h-full min-h-[420px] w-full" />
-            )}
+          <div className="relative aspect-square w-full overflow-hidden lg:w-[500px] lg:flex-none xl:h-[713px] xl:w-[713px]">
+            <img
+              src={whyMiraImage}
+              alt={image?.alt ?? "MIRA curated Balkan journey"}
+              className="h-full w-full object-cover"
+            />
 
           </div>
         </div>
@@ -989,6 +1003,8 @@ export const HomePreview = () => {
     const imageAlt =
       getBackgroundImageAlt(section)
 
+    const insightImage = image || PREVIEW_IMAGE_SOURCE
+
     return (
       <section
         className="
@@ -1006,19 +1022,31 @@ export const HomePreview = () => {
           color: darkText,
         }}
       >
-        <div className="mx-auto max-w-[1180px]">
+        <div className="mx-auto w-full max-w-[1680px]">
 
-          <div className="grid grid-cols-1 gap-10 lg:grid-cols-[0.75fr_1.25fr] lg:items-end">
+          <div className="flex flex-col items-center justify-center gap-6 md:gap-10 lg:flex-row lg:gap-12 xl:gap-16">
 
-            <div>
+            {/* SPOTLIGHT IMAGE */}
+
+            <div className="relative flex w-full items-center justify-center lg:w-1/2">
+              <img
+                src={insightImage}
+                alt={imageAlt || "Balkan Travel Insights"}
+                className="h-[400px] w-full object-cover md:h-[500px] lg:h-[520px] xl:h-[540px]"
+              />
+            </div>
+
+            {/* EDITORIAL CONTENT */}
+
+            <div className="flex w-full flex-col items-start justify-start gap-3 md:gap-3.5 lg:w-1/2 xl:gap-4">
 
               {content.eyebrow && (
                 <p
                   className="
-                    text-[10px]
-                    font-semibold
+                    text-xs
+                    font-normal
                     uppercase
-                    tracking-[0.18em]
+                    tracking-[1.4px]
                   "
                   style={{
                     color:
@@ -1030,41 +1058,58 @@ export const HomePreview = () => {
               )}
 
               {content.title && (
-                <h2 className="mt-4 font-serif text-[38px] leading-[1] tracking-[-1px] md:text-[52px]">
+                <h2 className="font-serif text-[38px] leading-tight tracking-[-1px] md:text-[52px]">
                   {content.title}
                 </h2>
               )}
 
+              {content.subtitle && (
+                <p className="max-w-[600px] text-sm font-normal leading-[22px] text-subtitle md:text-[15px] md:leading-6 xl:text-base xl:leading-[26px]">
+                  {content.subtitle}
+                </p>
+              )}
+
               {content.description && (
-                <p className="mt-5 max-w-[500px] text-[11px] leading-[1.8] opacity-70">
+                <p className="max-w-[500px] text-[11px] leading-[1.8] opacity-70">
                   {content.description}
                 </p>
               )}
 
-              {renderButtons(
-                section.buttons
-              )}
-            </div>
+              <div className="flex w-full flex-col items-start gap-4 py-5 md:gap-5 md:py-6 lg:gap-[22px] xl:gap-6">
+                <article className="w-full border-b border-border-neutral pb-5">
+                  <img
+                    src={insightImage}
+                    alt="Explore UNESCO Towns"
+                    className="h-44 w-full object-cover"
+                  />
 
-            {/* DUMMY ARTICLE CARDS */}
+                  <div className="pt-4">
+                    <p className="text-[9px] uppercase tracking-[0.15em]" style={{ color: accentColor }}>
+                      Heritage
+                    </p>
+                    <h3 className="mt-2 font-serif text-[22px] leading-tight">
+                      Explore UNESCO Towns: A Journey Through Time
+                    </h3>
+                    <p className="mt-2 text-[10px] leading-5 opacity-65">
+                      Discover the architectural marvels and hidden histories of the Balkans&apos; most preserved medieval settlements.
+                    </p>
+                  </div>
+                </article>
 
-            <div className="grid grid-cols-1 gap-3 sm:grid-cols-3">
-
-              {[1, 2, 3].map(
-                (item) => (
+                <div className="grid w-full grid-cols-1 gap-4 md:grid-cols-2 md:gap-5 xl:gap-6">
+                  {[
+                    ["Stays", "The Art of Balkan Hospitality", "Curated accommodations that define luxury through authenticity."],
+                    ["Culture", "Decoding the Stećci", "Mythology of the medieval tombstones and silent narratives."],
+                  ].map(([tag, title, description]) => (
                   <article
-                    key={item}
+                    key={title}
                     className="group"
                   >
-                    {image ? (
-                      <img
-                        src={image}
-                        alt={imageAlt}
-                        className="aspect-[0.9] w-full object-cover"
-                      />
-                    ) : (
-                      <DummyImage className="aspect-[0.9] w-full" />
-                    )}
+                    <img
+                      src={insightImage}
+                      alt={title}
+                      className="aspect-[0.9] w-full object-cover"
+                    />
 
                     <div className="border-b py-4">
 
@@ -1075,21 +1120,31 @@ export const HomePreview = () => {
                             accentColor,
                         }}
                       >
-                        Travel Insight
+                          {tag}
                       </p>
 
                       <h3 className="mt-2 font-serif text-[19px] leading-tight">
-                        Article title
+                        {title}
                       </h3>
 
                       <p className="mt-2 text-[9px] leading-[1.5] opacity-55">
-                        Article description
+                        {description}
                       </p>
 
                     </div>
                   </article>
-                )
-              )}
+                  ))}
+                </div>
+
+                <div className="pt-2">
+                  {renderButtons(
+                    section.buttons,
+                    false,
+                    false,
+                    true
+                  )}
+                </div>
+              </div>
 
             </div>
           </div>
@@ -1108,116 +1163,59 @@ export const HomePreview = () => {
     section: HomeSection
   ) => {
     const content = getContent(section)
-
-    const image =
-      getBackgroundImage(section)
-
-    const imageAlt =
-      getBackgroundImageAlt(section)
+    const image = getBackgroundImage(section)
+    const imageAlt = getBackgroundImageAlt(section)
+    const journeyImage = image || PREVIEW_IMAGE_SOURCE
 
     return (
       <section
-        className="
-          relative
-          w-full
-          overflow-hidden
-        "
+        className="w-full overflow-hidden"
         style={{
-          backgroundColor:
-            section.bgColor ??
-            primaryColor,
+          backgroundColor: section.bgColor ?? "#FBF9F5",
+          color: darkText,
         }}
       >
-
-        {/* IMAGE */}
-
-        {image && (
-          <img
-            src={image}
-            alt={imageAlt}
-            className="
-              absolute
-              inset-0
-              h-full
-              w-full
-              object-cover
-            "
-          />
-        )}
-
-        {/* OVERLAY */}
-
-        <div
-          className="absolute inset-0"
-          style={{
-            backgroundColor:
-              "rgba(31,58,27,0.78)",
-          }}
-        />
-
-        {/* CONTENT */}
-
-        <div className="relative z-10 mx-auto max-w-[1180px] px-7 py-20 md:px-14 md:py-28">
-
-          <div className="max-w-[720px]">
-
-            {content.titleLine1 && (
-              <h2
-                className="
-                  font-serif
-                  text-[40px]
-                  leading-[1]
-                  tracking-[-1px]
-                  md:text-[58px]
-                "
-                style={{
-                  color:
-                    lightText,
-                }}
-              >
-                {content.titleLine1}
-
-                {content.titleHighlight && (
-                  <>
-                    {" "}
-                    <span
-                      style={{
-                        color:
-                          accentColor,
-                      }}
-                    >
-                      {
-                        content.titleHighlight
-                      }
-                    </span>
-                  </>
+        <div className="mx-auto flex w-full flex-col-reverse items-center justify-between gap-10 py-16 sm:gap-12 md:py-24 lg:flex-row lg:items-center">
+          <div className="flex w-full flex-1 justify-start px-7 md:px-14 lg:justify-end xl:pl-36 xl:pr-14">
+            <div className="flex w-full max-w-[700px] flex-col items-start gap-8 md:gap-12 lg:gap-14 xl:gap-[68px]">
+              <div className="flex flex-col items-start gap-5 sm:gap-6">
+                {content.titleLine1 && (
+                  <h2
+                    className="font-serif text-[26px] font-semibold leading-[34px] tracking-[1px] md:text-[38px] md:leading-[48px] lg:text-[42px] lg:leading-[52px] xl:text-[50px] xl:leading-[60px]"
+                    style={{ color: darkText }}
+                  >
+                    {content.titleLine1}
+                    {content.titleHighlight && (
+                      <span style={{ color: accentColor }}>
+                        {" "}
+                        {content.titleHighlight}
+                      </span>
+                    )}
+                  </h2>
                 )}
-              </h2>
-            )}
 
-            {content.description && (
-              <p
-                className="
-                  mt-6
-                  max-w-[560px]
-                  text-[11px]
-                  leading-[1.8]
-                "
-                style={{
-                  color:
-                    "rgba(255,255,255,0.78)",
-                }}
-              >
-                {
-                  content.description
-                }
-              </p>
-            )}
+                {content.description && (
+                  <p
+                    className="max-w-[514px] text-sm leading-[18px] tracking-[1px] md:text-[15px] md:leading-5 xl:text-base xl:leading-[22px]"
+                    style={{ color: darkText, opacity: 0.7 }}
+                  >
+                    {content.description}
+                  </p>
+                )}
+              </div>
 
-            {renderButtons(
-              section.buttons
-            )}
+              {section.buttons?.length ? (
+                renderButtons(section.buttons, false, false, true)
+              ) : null}
+            </div>
+          </div>
 
+          <div className="flex w-full shrink-0 justify-end lg:w-1/2">
+            <img
+              src={journeyImage}
+              alt={imageAlt || "Let us design your journey"}
+              className="h-[260px] w-full object-cover md:h-[420px] lg:h-[460px] lgx:h-[490px] xl:h-[560px] 2xl:h-[580px]"
+            />
           </div>
         </div>
       </section>

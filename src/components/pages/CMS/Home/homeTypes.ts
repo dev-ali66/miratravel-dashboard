@@ -3,6 +3,8 @@ export interface HomeButton {
   url: string
   style?: string
   action?: string
+  backgroundColor?: string
+  textColor?: string
 }
 
 export interface HomeImage {
@@ -23,6 +25,12 @@ export interface HomeHeroContent {
   titleLine2?: string
   titleHighlight?: string
   description?: string
+  textColors?: {
+    titleLine1?: string
+    titleLine2?: string
+    titleHighlight?: string
+    description?: string
+  }
 }
 
 export interface HomeTrustBadge {
