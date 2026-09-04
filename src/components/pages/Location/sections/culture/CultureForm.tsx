@@ -3,8 +3,9 @@
    Auto-migrated from the legacy LocationForm.tsx monolith.
 ===================================================== */
 
-import { Field, ArrayField, FormSection } from "../../shared/fields"
+import { ColorField, Field, ArrayField, FormSection } from "../../shared/fields"
 import type { LocationData } from "../../locationTypes"
+import { emptyLocation } from "../../shared/emptyLocation"
 
 export type CultureFormProps = {
     draft: LocationData
@@ -19,6 +20,8 @@ export function CultureForm({
     openSections,
     toggleSection,
 }: CultureFormProps) {
+    const culture = draft.data?.culture ?? emptyLocation.data.culture
+    const style = culture.style ?? emptyLocation.data.culture.style ?? {}
 
     return (
                 <FormSection
@@ -36,9 +39,7 @@ export function CultureForm({
                         <Field
                             label="Description"
                             value={
-                                draft.data
-                                    .culture
-                                    .description
+                                    culture.description
                             }
                             multiline
                             onChange={(
@@ -54,9 +55,7 @@ export function CultureForm({
                         <ArrayField
                             label="Cuisine"
                             values={
-                                draft.data
-                                    .culture
-                                    .cuisine
+                                    culture.cuisine
                             }
                             onChange={(
                                 values
@@ -71,9 +70,7 @@ export function CultureForm({
                         <ArrayField
                             label="Languages"
                             values={
-                                draft.data
-                                    .culture
-                                    .majorLanguages
+                                    culture.majorLanguages
                             }
                             onChange={(
                                 values
@@ -88,9 +85,7 @@ export function CultureForm({
                         <ArrayField
                             label="Religions"
                             values={
-                                draft.data
-                                    .culture
-                                    .majorReligions
+                                    culture.majorReligions
                             }
                             onChange={(
                                 values
@@ -105,9 +100,7 @@ export function CultureForm({
                         <ArrayField
                             label="Festivals"
                             values={
-                                draft.data
-                                    .culture
-                                    .famousFestivals
+                                    culture.famousFestivals
                             }
                             onChange={(
                                 values
@@ -118,6 +111,20 @@ export function CultureForm({
                                 )
                             }
                         />
+
+                        <div className="space-y-4 border-t border-border/60 pt-4">
+                            <p className="text-[11px] font-semibold uppercase tracking-wide text-muted-foreground">
+                                Appearance
+                            </p>
+                            <div className="grid grid-cols-2 gap-3">
+                                <ColorField label="Background Color" value={style.backgroundColor ?? ""} onChange={(value) => updateField("data.culture.style.backgroundColor", value)} />
+                                <ColorField label="Icon Color" value={style.iconColor ?? ""} onChange={(value) => updateField("data.culture.style.iconColor", value)} />
+                                <ColorField label="Label Color" value={style.labelTextColor ?? ""} onChange={(value) => updateField("data.culture.style.labelTextColor", value)} />
+                                <ColorField label="Title Color" value={style.titleTextColor ?? ""} onChange={(value) => updateField("data.culture.style.titleTextColor", value)} />
+                                <ColorField label="Description Color" value={style.descriptionTextColor ?? ""} onChange={(value) => updateField("data.culture.style.descriptionTextColor", value)} />
+                                <ColorField label="Value Color" value={style.valueTextColor ?? ""} onChange={(value) => updateField("data.culture.style.valueTextColor", value)} />
+                            </div>
+                        </div>
                     </div>
                 </FormSection>
     )

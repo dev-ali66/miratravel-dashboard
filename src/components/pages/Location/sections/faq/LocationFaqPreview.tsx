@@ -5,15 +5,15 @@
 import type { LocationData, FAQItem } from "../../locationTypes"
 import { getLocationBasics, FALLBACK_IMAGE } from "../../shared/previewBasics"
 import { ChevronDown } from "lucide-react"
-import { useEffect, useState } from "react"
+import { useState } from "react"
 
-export type FaqPreviewProps = {
+export type LocationFaqProps = {
     draft: LocationData | null
 }
 
-export function FaqPreview({
+export function LocationFaqPreview({
     draft,
-}: FaqPreviewProps) {
+}: LocationFaqProps) {
     const { data } = getLocationBasics(draft)
 
     const faqSection = data.faq_section ?? {}
@@ -21,16 +21,11 @@ export function FaqPreview({
 
     const [openFaq, setOpenFaq] = useState<number | null>(0)
 
-    useEffect(() => {
-        if (faq.length === 0) {
-            setOpenFaq(null)
-            return
-        }
-
-        if (openFaq === null || openFaq >= faq.length) {
-            setOpenFaq(0)
-        }
-    }, [faq.length, openFaq])
+    const activeFaq = faq.length > 0 && openFaq !== null && openFaq < faq.length
+        ? openFaq
+        : faq.length > 0
+            ? 0
+            : null
 
     return (
         <>
@@ -38,7 +33,7 @@ export function FaqPreview({
             {faq.length > 0 && (
                 <section className="bg-[#171717] text-white">
 
-                    <div className="mx-auto max-w-[1400px] px-6 py-16 md:px-10 md:py-24">
+                    <div className="mx-auto max-w-350 px-6 py-16 md:px-10 md:py-24">
 
                         <div className="grid grid-cols-1 gap-12 md:grid-cols-[0.7fr_1.3fr]">
 
@@ -55,7 +50,7 @@ export function FaqPreview({
                                                 faqSection.title ||
                                                 "FAQ"
                                             }
-                                            className="h-[250px] w-full object-cover md:h-[300px]"
+                                            className="h-62.5 w-full object-cover md:h-75"
                                             onError={(e) => {
                                                 e.currentTarget.src =
                                                     FALLBACK_IMAGE
@@ -86,7 +81,7 @@ export function FaqPreview({
                                     ) => {
 
                                         const isOpen =
-                                            openFaq ===
+                                            activeFaq ===
                                             index
 
                                         return (

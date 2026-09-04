@@ -122,7 +122,7 @@ export function LocationEditorLayout() {
                                 "rounded-lg border border-border/60"
                             )}
                         >
-                            <ScaledWorkspace className="h-full w-full">
+                            <ScaledWorkspace >
                                 <LocationPreview />
                             </ScaledWorkspace>
                         </div>

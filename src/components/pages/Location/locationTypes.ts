@@ -163,6 +163,46 @@ export type LocationData = {
 
         sharedInfo?: {
             text?: string
+            style?: {
+                backgroundColor?: string
+                textColor?: string
+            }
+        }
+
+        regionGlance?: {
+            label: string
+            title: string
+            description: string
+            style?: {
+                backgroundColor?: string
+                labelTextColor?: string
+                titleTextColor?: string
+                descriptionTextColor?: string
+            }
+        }
+
+        regionCharacter?: {
+            label: string
+            title: string
+            items: Array<{
+                id: string
+                icon: string
+                iconImage?: string
+                title: string
+                description: string
+                href: string
+                linkText: string
+            }>
+            style?: {
+                backgroundColor?: string
+                borderColor?: string
+                labelTextColor?: string
+                titleTextColor?: string
+                descriptionTextColor?: string
+                iconColor?: string
+                hoverBackgroundColor?: string
+                linkTextColor?: string
+            }
         }
 
         /**
@@ -214,6 +254,11 @@ export type LocationData = {
         }
 
         statistics: {
+            facts?: Array<{
+                label: string
+                value: string
+                description: string
+            }>
             area: {
                 value: number
                 unit: string
@@ -225,6 +270,13 @@ export type LocationData = {
             population?: {
                 value: number
                 year: number
+            }
+            style?: {
+                backgroundColor?: string
+                labelTextColor?: string
+                valueTextColor?: string
+                descriptionTextColor?: string
+                borderColor?: string
             }
         }
 
@@ -239,6 +291,14 @@ export type LocationData = {
             majorLanguages: string[]
             majorReligions: string[]
             famousFestivals: string[]
+            style?: {
+                backgroundColor?: string
+                iconColor?: string
+                labelTextColor?: string
+                titleTextColor?: string
+                descriptionTextColor?: string
+                valueTextColor?: string
+            }
         }
 
         safety: {
@@ -256,6 +316,26 @@ export type LocationData = {
         }
 
         travelInfo: {
+            beforeTravel?: {
+                label: string
+                title: string
+                image: string
+                imageAlt: string
+                items: Array<{
+                    id: string
+                    title: string
+                    content: string
+                }>
+                style?: {
+                    backgroundColor?: string
+                    labelTextColor?: string
+                    titleTextColor?: string
+                    bodyTextColor?: string
+                    borderColor?: string
+                    iconColor?: string
+                }
+            }
+
             visa: {
                 description: string
             }

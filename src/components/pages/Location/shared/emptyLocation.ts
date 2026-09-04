@@ -78,6 +78,68 @@ export const emptyLocation: LocationData = {
             description: "",
         },
 
+        sharedInfo: {
+            text: "Add shared info details here.",
+            style: {
+                backgroundColor: "#FFFFFF",
+                textColor: "#C97B4A",
+            },
+        },
+
+        regionGlance: {
+            label: "REGION AT A GLANCE",
+            title: "A glimpse of the region",
+            description:
+                "Discover the landscapes, culture and places that shape this remarkable destination.",
+            style: {
+                backgroundColor: "#F7F6F2",
+                labelTextColor: "#C97B4A",
+                titleTextColor: "#1A2E2A",
+                descriptionTextColor: "#737373",
+            },
+        },
+
+        regionCharacter: {
+            label: "Character",
+            title: "What makes North Albania singular",
+            items: [
+                {
+                    id: "alpine-wilderness",
+                    icon: "mountain",
+                    title: "Untouched Alpine Wilderness",
+                    description: "The Accursed Mountains offer trekking with a frontier quality that the Alps lost generations ago, without the crowds.",
+                    href: "/destinations/albania/north-albania/wilderness",
+                    linkText: "Read More",
+                },
+                {
+                    id: "highland-culture",
+                    icon: "home",
+                    title: "Living Highland Culture",
+                    description: "Ancient highland traditions remain informally observed in remote villages, genuinely alive and part of daily life.",
+                    href: "/destinations/albania/north-albania/culture",
+                    linkText: "Read More",
+                },
+                {
+                    id: "slow-journeys",
+                    icon: "compass",
+                    title: "The Great Slow Journeys",
+                    description: "The Komani Lake ferry and Valbona-to-Theth trail remain unhurried experiences that are impossible to replicate.",
+                    href: "/destinations/albania/north-albania/slow-journeys",
+                    linkText: "Read More",
+                },
+            ],
+            style: {
+                backgroundColor: "#F7F6F2",
+                borderColor: "#DED9D2",
+                labelTextColor: "#C97B4A",
+                titleTextColor: "#1A2E2A",
+                descriptionTextColor: "#737373",
+                iconColor: "#C97B4A",
+                hoverBackgroundColor: "#D4D4D4",
+                linkTextColor: "#C97B4A",
+            },
+        },
+
         essence: {
             label: "The Essence of Albania",
             title: "A country that kept its secrets for fifty years",
@@ -124,6 +186,38 @@ export const emptyLocation: LocationData = {
         },
 
         statistics: {
+            facts: [
+                {
+                    label: "Highest Peak",
+                    value: "2,694 m",
+                    description: "Jezerca, Accursed Mountains",
+                },
+                {
+                    label: "Area Covered",
+                    value: "6,680 km²",
+                    description: "Shkodër & Kukës counties",
+                },
+                {
+                    label: "Language",
+                    value: "Gheg Albanian",
+                    description: "Italian among younger locals",
+                },
+                {
+                    label: "Best Access",
+                    value: "Shkodër",
+                    description: "3 hrs north of Tirana",
+                },
+                {
+                    label: "Trek Season",
+                    value: "May - Oct",
+                    description: "Peak window: Jul-Sep",
+                },
+                {
+                    label: "Currency",
+                    value: "Albanian Lek",
+                    description: "Cash only in mountains",
+                },
+            ],
             area: {
                 value: 0,
                 unit: "km²",
@@ -151,6 +245,14 @@ export const emptyLocation: LocationData = {
             majorLanguages: [],
             majorReligions: [],
             famousFestivals: [],
+            style: {
+                backgroundColor: "#171717",
+                iconColor: "#666666",
+                labelTextColor: "#666666",
+                titleTextColor: "#FFFFFF",
+                descriptionTextColor: "#8C8C8C",
+                valueTextColor: "#B3B3B3",
+            },
         },
 
         safety: {
@@ -169,6 +271,26 @@ export const emptyLocation: LocationData = {
         },
 
         travelInfo: {
+            beforeTravel: {
+                label: "BEFORE YOU TRAVEL",
+                title: "Everything you need to know before you go",
+                image: "",
+                imageAlt: "Travel landscape",
+                items: [
+                    { id: "getting-there", title: "Getting there", content: "Plan your route carefully and allow time for the journey." },
+                    { id: "what-to-pack", title: "What to pack", content: "Pack comfortable layers and essentials suited to the season." },
+                    { id: "local-customs", title: "Local customs", content: "A little local knowledge makes every journey more rewarding." },
+                ],
+                style: {
+                    backgroundColor: "#E9E7DF",
+                    labelTextColor: "#C97B4A",
+                    titleTextColor: "#1A1814",
+                    bodyTextColor: "#737373",
+                    borderColor: "rgba(41,37,32,0.15)",
+                    iconColor: "#737373",
+                },
+            },
+
             visa: {
                 description: "",
             },

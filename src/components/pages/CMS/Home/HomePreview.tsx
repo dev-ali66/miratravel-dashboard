@@ -8,19 +8,165 @@ import type {
   HomeStoryItem,
 } from "./homeTypes"
 import { cn } from "@/lib/utils"
+import { ImageShowPreview } from "@/components/shared/ImageShowPreview"
+import { VideoShowPreview } from "@/components/shared/VideoShowPreview"
 
 const PREVIEW_IMAGE_SOURCE =
   "https://images.unsplash.com/photo-1530789253388-582c481c54b0?auto=format&fit=crop&w=1200&q=85"
 const PREVIEW_VIDEO_SOURCE =
   "https://cdn.coverr.co/videos/coverr-aerial-view-of-a-beach-1576/1080p.mp4"
 
+const colorWithOpacity = (
+  color: string | undefined,
+  opacity: number | undefined
+) => {
+  if (!color || opacity === undefined || opacity >= 100) return color
+
+  const hexMatch = color.match(/^#([0-9a-f]{6})$/i)
+  if (hexMatch) {
+    const red = parseInt(hexMatch[1].slice(0, 2), 16)
+    const green = parseInt(hexMatch[1].slice(2, 4), 16)
+    const blue = parseInt(hexMatch[1].slice(4, 6), 16)
+    return `rgba(${red}, ${green}, ${blue}, ${opacity / 100})`
+  }
+
+  const rgbMatch = color.match(/^rgba?\(\s*(\d+)\s*,\s*(\d+)\s*,\s*(\d+)/i)
+  if (rgbMatch) {
+    return `rgba(${rgbMatch[1]}, ${rgbMatch[2]}, ${rgbMatch[3]}, ${opacity / 100})`
+  }
+
+  return color
+}
+
+const fieldCssStyle = (
+  style: {
+    textColor?: string
+    textOpacity?: number
+    backgroundColor?: string
+    backgroundOpacity?: number
+  } | undefined,
+  fallbackColor?: string
+) => ({
+  color: colorWithOpacity(style?.textColor ?? fallbackColor, style?.textOpacity),
+  backgroundColor: colorWithOpacity(style?.backgroundColor, style?.backgroundOpacity),
+})
+
+const DEFAULT_HOME_DATA: NonNullable<HomePageData["data"]> = {
+  page: "home",
+  theme: {
+    accentColor: "#C97B4A",
+    primaryColor: "#1F3A1B",
+    textColorDark: "#1A1A1A",
+    textColorLight: "#FFFFFF",
+  },
+  sections: [
+    {
+      key: "hero",
+      type: "hero",
+      order: 1,
+      backgroundType: "video",
+      showVideo: true,
+      bgImages: [{ url: PREVIEW_IMAGE_SOURCE, alt: "Aerial view of a coastal journey" }],
+      bgVideos: [{ url: PREVIEW_VIDEO_SOURCE, alt: "Aerial view of a coastal journey", autoplay: true, loop: true, muted: true }],
+      content: {
+        titleLine1: "Travel deeper.",
+        titleHighlight: "Feel more.",
+        titleLine2: "Live fully.",
+        description: "Thoughtfully designed journeys through the places that stay with you.",
+      },
+      buttons: [{ label: "Explore journeys", url: "#", style: "primary" }],
+    },
+    {
+      key: "explore_journeys",
+      type: "explore_journeys",
+      order: 2,
+      content: {
+        eyebrow: "Curated journeys",
+        title: "Go beyond the expected",
+        subtitle: "Discover the Balkans through a local lens.",
+        description: "Handpicked routes, meaningful encounters, and the freedom to travel at your own pace.",
+      },
+      buttons: [{ label: "View all journeys", url: "#", style: "primary" }],
+    },
+    {
+      key: "destinations",
+      type: "destinations",
+      order: 3,
+      content: {
+        eyebrow: "Our destinations",
+        title: "The Balkans, beautifully uncovered",
+        subtitle: "From Adriatic shores to mountain villages, find your next story.",
+      },
+      buttons: [{ label: "Explore destinations", url: "#", style: "primary" }],
+    },
+    {
+      key: "mira_stories",
+      type: "mira_stories",
+      order: 4,
+      bgImages: [{ url: PREVIEW_IMAGE_SOURCE, alt: "Mira travel story" }],
+      content: {
+        eyebrow: "Mira stories",
+        title: "Travel has a way of changing us",
+        description: "Meet the people, places, and moments behind the journeys we create.",
+      },
+      items: [
+        { index: "01", title: "The rhythm of island life", subtitle: "A story from the Adriatic" },
+        { index: "02", title: "Along the mountain road", subtitle: "Finding the quiet places" },
+        { index: "03", title: "A table set for strangers", subtitle: "The taste of home" },
+      ],
+    },
+    {
+      key: "why_mira",
+      type: "why_mira",
+      order: 5,
+      sideImages: [{ url: PREVIEW_IMAGE_SOURCE, alt: "Mira curated Balkan journey" }],
+      content: {
+        eyebrow: "Why Mira",
+        title: "We believe the best journeys feel personal",
+        paragraphs: [
+          "We create journeys for curious travellers who want to see more than the highlights. Every itinerary is shaped around your interests, your rhythm, and the details that make a place feel real.",
+          "With local knowledge and thoughtful planning, we make exploring the Balkans feel effortless and deeply rewarding.",
+        ],
+        signature: "The Mira team",
+      },
+    },
+    {
+      key: "travel_insights",
+      type: "travel_insights",
+      order: 6,
+      bgImages: [{ url: PREVIEW_IMAGE_SOURCE, alt: "Balkan travel insights" }],
+      content: {
+        eyebrow: "Travel insights",
+        title: "Ideas for going further",
+        subtitle: "Stories and inspiration for your next Balkan adventure.",
+        description: "A closer look at the places, traditions, and experiences worth making time for.",
+      },
+      buttons: [{ label: "Read all stories", url: "#", style: "primary" }],
+    },
+    {
+      key: "custom_journey_cta",
+      type: "custom_journey_cta",
+      order: 7,
+      bgImages: [{ url: PREVIEW_IMAGE_SOURCE, alt: "A custom journey through the Balkans" }],
+      content: {
+        titleLine1: "Your journey should be",
+        titleHighlight: "uniquely yours.",
+        description: "Tell us what inspires you and we will shape a journey around it.",
+      },
+      buttons: [{ label: "Start planning", url: "#", style: "primary" }],
+    },
+  ],
+}
+
 export const HomePreview = () => {
   const page = useCmsDraft<HomePageData>()
 
-  const data = page?.data
+  const data = page?.data ?? DEFAULT_HOME_DATA
 
-  const theme = data?.theme ?? {}
-  const sections = data?.sections ?? []
+  const theme = data.theme ?? DEFAULT_HOME_DATA.theme ?? {}
+  const sections = data.sections?.length
+    ? data.sections
+    : DEFAULT_HOME_DATA.sections ?? []
 
   /*
    * ============================================================
@@ -175,10 +321,10 @@ export const HomePreview = () => {
           ${className}
         `}
       >
-        <img
+        <ImageShowPreview
           src={PREVIEW_IMAGE_SOURCE}
           alt="Preview journey"
-          className="h-full w-full object-cover"
+          className="h-full w-full"
         />
       </div>
     )
@@ -205,6 +351,17 @@ export const HomePreview = () => {
     const imageAlt =
       getBackgroundImageAlt(section)
 
+    const backgroundType =
+      section.backgroundType ??
+      (section.showVideo
+        ? "video"
+        : image
+          ? "image"
+          : "color")
+
+    const shouldShowVideo = backgroundType === "video"
+    const shouldShowImage = backgroundType === "image"
+
     return (
       <section
         className="
@@ -215,36 +372,28 @@ export const HomePreview = () => {
           md:min-h-[680px]
         "
         style={{
-          backgroundColor:
-            section.bgColor ??
-            "#0F2A2E",
+            backgroundColor:
+              section.bgColor ??
+              "#0F2A2E",
         }}
       >
         {/* ====================================================
             BACKGROUND VIDEO
         ==================================================== */}
 
-        {section.showVideo && (video?.url || PREVIEW_VIDEO_SOURCE) && (
-          <video
+        {shouldShowVideo && (
+          <VideoShowPreview
             src={video?.url || PREVIEW_VIDEO_SOURCE}
             poster={image || PREVIEW_IMAGE_SOURCE}
-            autoPlay={
-              video?.autoplay ?? true
-            }
-            muted={
-              video?.muted ?? true
-            }
-            loop={
-              video?.loop ?? true
-            }
-            playsInline
-            className="
-              absolute
-              inset-0
-              h-full
-              w-full
-              object-cover
-            "
+            alt={video?.alt || "Hero background video"}
+            mode="background"
+            className="h-full w-full"
+            autoplay={video?.autoplay ?? true}
+            muted={video?.muted ?? true}
+            loop={video?.loop ?? true}
+            opacity={video?.opacity ?? 100}
+            overlayColor={video?.overlayColor}
+            overlayOpacity={video?.overlayOpacity}
           />
         )}
 
@@ -252,17 +401,15 @@ export const HomePreview = () => {
             BACKGROUND IMAGE FALLBACK
         ==================================================== */}
 
-        {!(section.showVideo && (video?.url || PREVIEW_VIDEO_SOURCE)) && image && (
-          <img
-            src={image}
-            alt={imageAlt}
-            className="
-              absolute
-              inset-0
-              h-full
-              w-full
-              object-cover
-            "
+        {shouldShowImage && (
+          <ImageShowPreview
+            src={image || PREVIEW_IMAGE_SOURCE}
+            alt={imageAlt || "Hero background"}
+            mode="background"
+            className="h-full w-full"
+            opacity={section.bgImages?.[0]?.opacity ?? 100}
+            overlayColor={section.bgImages?.[0]?.overlayColor}
+            overlayOpacity={section.bgImages?.[0]?.overlayOpacity}
           />
         )}
 
@@ -313,9 +460,7 @@ export const HomePreview = () => {
                   lg:text-[72px]
                 "
                 style={{
-                  color:
-                    textColors.titleLine1 ??
-                    lightText,
+                  ...fieldCssStyle(content.titleLine1Style, textColors.titleLine1 ?? lightText),
                 }}
               >
                 {content.titleLine1}
@@ -334,17 +479,11 @@ export const HomePreview = () => {
                   md:text-[60px]
                   lg:text-[72px]
                 "
-                style={{
-                  color: lightText,
-                }}
+                style={fieldCssStyle(content.titleLine2Style, lightText)}
               >
                 {content.titleHighlight && (
                   <span
-                    style={{
-                      color:
-                        textColors.titleHighlight ??
-                        accentColor,
-                    }}
+                    style={fieldCssStyle(content.titleHighlightStyle, textColors.titleHighlight ?? accentColor)}
                   >
                     {
                       content.titleHighlight
@@ -356,11 +495,7 @@ export const HomePreview = () => {
                   <>
                     {" "}
                     <span
-                      style={{
-                        color:
-                          textColors.titleLine2 ??
-                          lightText,
-                      }}
+                      style={fieldCssStyle(content.titleLine2Style, textColors.titleLine2 ?? lightText)}
                     >
                       {
                         content.titleLine2
@@ -380,11 +515,7 @@ export const HomePreview = () => {
                   leading-[1.75]
                   md:text-[12px]
                 "
-                style={{
-                  color:
-                    textColors.description ??
-                    "rgba(255,255,255,0.82)",
-                }}
+                style={fieldCssStyle(content.descriptionStyle, textColors.description ?? "rgba(255,255,255,0.82)")}
               >
                 {content.description}
               </p>
@@ -412,11 +543,25 @@ export const HomePreview = () => {
     section: HomeSection
   ) => {
     const content = getContent(section)
+    const image = section.bgImages?.[0]
+    const video = section.bgVideos?.[0]
+    const backgroundType =
+      section.backgroundType ??
+      (section.showVideo
+        ? "video"
+        : image?.url
+          ? "image"
+          : "color")
+
+    const shouldShowVideo = backgroundType === "video"
+    const shouldShowImage = backgroundType === "image"
 
     return (
       <section
         className="
+          relative
           w-full
+          overflow-hidden
           px-7
           py-16
           md:px-14
@@ -430,7 +575,39 @@ export const HomePreview = () => {
           color: darkText,
         }}
       >
-        <div className="mx-auto flex w-full max-w-[1680px] flex-col gap-14">
+        {shouldShowVideo && (
+          <VideoShowPreview
+            src={video?.url || PREVIEW_VIDEO_SOURCE}
+            poster={image?.url || PREVIEW_IMAGE_SOURCE}
+            alt={video?.alt || "Explore Journeys background video"}
+            mode="background"
+            className="h-full w-full"
+            autoplay
+            muted
+            loop={video?.loop ?? true}
+            opacity={video?.opacity ?? 100}
+            overlayColor={video?.overlayColor}
+            overlayOpacity={video?.overlayOpacity}
+          />
+        )}
+
+        {shouldShowImage && (
+          <ImageShowPreview
+            src={image?.url || PREVIEW_IMAGE_SOURCE}
+            alt={image?.alt || "Explore Journeys background"}
+            mode="background"
+            className="h-full w-full"
+            opacity={image?.opacity ?? 100}
+            overlayColor={image?.overlayColor}
+            overlayOpacity={image?.overlayOpacity}
+          />
+        )}
+
+        {(shouldShowVideo || shouldShowImage) && (
+          <div className="absolute inset-0 bg-white/70" />
+        )}
+
+        <div className="relative z-10 mx-auto flex w-full max-w-[1680px] flex-col gap-14">
 
           <div className="flex flex-col items-start justify-between gap-8 lg:flex-row lg:items-end">
 
@@ -722,10 +899,13 @@ export const HomePreview = () => {
         <div className="mx-auto flex w-full max-w-[1336px] flex-col items-center justify-center gap-[38px] lg:flex-row lg:gap-12 xl:gap-16">
 
           <div className="relative aspect-[776/661] w-full overflow-hidden lg:h-[375px] lg:w-[440px] lg:flex-none lg:aspect-auto lgx:h-[426px] lgx:w-[500px] xl:h-[661px] xl:w-[776px]">
-            <img
+            <ImageShowPreview
               src={storyImage}
               alt={imageAlt || "Mira Stories editorial"}
-              className="h-full w-full object-cover"
+              className="h-full w-full"
+              opacity={section.bgImages?.[0]?.opacity ?? 100}
+              overlayColor={section.bgImages?.[0]?.overlayColor}
+              overlayOpacity={section.bgImages?.[0]?.overlayOpacity}
             />
           </div>
 
@@ -974,10 +1154,13 @@ export const HomePreview = () => {
           {/* RIGHT IMAGE */}
 
           <div className="relative aspect-square w-full overflow-hidden lg:w-[500px] lg:flex-none xl:h-[713px] xl:w-[713px]">
-            <img
+            <ImageShowPreview
               src={whyMiraImage}
               alt={image?.alt ?? "MIRA curated Balkan journey"}
-              className="h-full w-full object-cover"
+              className="h-full w-full"
+              opacity={image?.opacity ?? 100}
+              overlayColor={image?.overlayColor}
+              overlayOpacity={image?.overlayOpacity}
             />
 
           </div>
@@ -1029,10 +1212,13 @@ export const HomePreview = () => {
             {/* SPOTLIGHT IMAGE */}
 
             <div className="relative flex w-full items-center justify-center lg:w-1/2">
-              <img
+              <ImageShowPreview
                 src={insightImage}
                 alt={imageAlt || "Balkan Travel Insights"}
                 className="h-[400px] w-full object-cover md:h-[500px] lg:h-[520px] xl:h-[540px]"
+                opacity={section.bgImages?.[0]?.opacity ?? 100}
+                overlayColor={section.bgImages?.[0]?.overlayColor}
+                overlayOpacity={section.bgImages?.[0]?.overlayOpacity}
               />
             </div>
 
@@ -1077,10 +1263,13 @@ export const HomePreview = () => {
 
               <div className="flex w-full flex-col items-start gap-4 py-5 md:gap-5 md:py-6 lg:gap-[22px] xl:gap-6">
                 <article className="w-full border-b border-border-neutral pb-5">
-                  <img
+                  <ImageShowPreview
                     src={insightImage}
                     alt="Explore UNESCO Towns"
-                    className="h-44 w-full object-cover"
+                    className="h-44 w-full"
+                    opacity={section.bgImages?.[0]?.opacity ?? 100}
+                    overlayColor={section.bgImages?.[0]?.overlayColor}
+                    overlayOpacity={section.bgImages?.[0]?.overlayOpacity}
                   />
 
                   <div className="pt-4">
@@ -1105,10 +1294,13 @@ export const HomePreview = () => {
                     key={title}
                     className="group"
                   >
-                    <img
+                    <ImageShowPreview
                       src={insightImage}
                       alt={title}
-                      className="aspect-[0.9] w-full object-cover"
+                      className="aspect-[0.9] w-full"
+                      opacity={section.bgImages?.[0]?.opacity ?? 100}
+                      overlayColor={section.bgImages?.[0]?.overlayColor}
+                      overlayOpacity={section.bgImages?.[0]?.overlayOpacity}
                     />
 
                     <div className="border-b py-4">
@@ -1211,10 +1403,13 @@ export const HomePreview = () => {
           </div>
 
           <div className="flex w-full shrink-0 justify-end lg:w-1/2">
-            <img
+            <ImageShowPreview
               src={journeyImage}
               alt={imageAlt || "Let us design your journey"}
-              className="h-[260px] w-full object-cover md:h-[420px] lg:h-[460px] lgx:h-[490px] xl:h-[560px] 2xl:h-[580px]"
+              className="h-[260px] w-full md:h-[420px] lg:h-[460px] lgx:h-[490px] xl:h-[560px] 2xl:h-[580px]"
+              opacity={section.bgImages?.[0]?.opacity ?? 100}
+              overlayColor={section.bgImages?.[0]?.overlayColor}
+              overlayOpacity={section.bgImages?.[0]?.overlayOpacity}
             />
           </div>
         </div>
@@ -1298,6 +1493,89 @@ export const HomePreview = () => {
           </div>
         )
       )}
+
+      {/* FOOTER */}
+      <footer className="w-full self-stretch bg-primary flex flex-col relative overflow-hidden">
+        {/* Top Main Section: Brand + Navigation */}
+        <div className="w-full pt-14 md:pt-20 xl:pt-[100px] xl:pb-[50px] md:pb-10 pb-7">
+          <div className="flex flex-col lg:flex-row justify-between items-start gap-12 lg:gap-8 xl:gap-20 w-full px-7 md:px-14">
+            {/* Brand Column */}
+            <div className="w-full lg:w-[350px] shrink-0 flex flex-col items-start text-left">
+              <p className="text-accent font-semibold text-sm tracking-[1.4px] uppercase md:text-base">MIRA</p>
+              <p className="text-neutral-300 text-sm md:text-[15px] xl:text-base font-normal leading-5 xl:leading-[22px] mt-5 md:mt-6 xl:mt-[30px]">
+                Your Trusted partner for world-class travel experiences across 50+ destinations.
+              </p>
+              <div className="flex items-center justify-start gap-3.5 xl:mt-13 md:mt-8 mt-4">
+                {['facebook', 'instagram', 'twitter', 'linkedin'].map((social) => (
+                  <a
+                    key={social}
+                    href="#"
+                    className="xl:size-9 md:size-8 size-7 bg-neutral-300/10 hover:bg-neutral-300/15 flex items-center justify-center transition-all duration-300"
+                    aria-label={`Follow on ${social}`}
+                  >
+                    <span className="text-neutral-100 text-xs">◉</span>
+                  </a>
+                ))}
+              </div>
+            </div>
+
+            {/* Navigation Columns */}
+            <div className="w-full flex-1 grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-8 md:gap-10 items-start">
+              {[
+                {
+                  title: 'Explore',
+                  links: ['Destinations', 'Journeys', 'Travel Insights', 'Mira Stories'],
+                },
+                {
+                  title: 'About',
+                  links: ['About Mira', 'Why Mira', 'How we work', 'Contact'],
+                },
+                {
+                  title: 'Plan',
+                  links: ['Start a travel request', 'Financial protection', 'FAQ'],
+                },
+                {
+                  title: 'Company',
+                  links: ['Privacy', 'Cookies', 'Terms and conditions', 'Complaints procedure'],
+                },
+              ].map((col) => (
+                <div key={col.title} className="flex flex-col gap-4 md:gap-5 xl:gap-8 min-w-0">
+                  <h3 className="text-neutral-300 font-semibold text-base md:text-lg lg:text-sm xl:text-[22px] leading-4 md:leading-[18px] xl:leading-[22px] tracking-[1px]">
+                    {col.title}
+                  </h3>
+                  <ul className="flex flex-col gap-2 md:gap-3 xl:gap-4">
+                    {col.links.map((link) => (
+                      <li key={link}>
+                        <a href="#" className="text-neutral-200 xl:text-neutral-100 text-xs md:text-sm lg:text-[15px] font-normal hover:text-neutral-100 transition-colors">
+                          {link}
+                        </a>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+
+        {/* Newsletter Section */}
+        <div className="w-full py-5 border-t border-b border-neutral-200/16 flex flex-col md:flex-row items-center justify-between gap-5 md:gap-4 px-7 md:px-14">
+          <div className="flex flex-wrap items-center justify-center gap-3 text-center md:text-left font-normal text-sm md:text-[15px] xl:text-base leading-5">
+            <span className="text-neutral-200/90">Stay up to date:</span>
+            <a href="#" className="text-accent font-medium hover:opacity-90 transition-opacity">
+              Subscribe to the Newsletter →
+            </a>
+          </div>
+          <div className="flex flex-wrap items-center justify-center gap-3 md:gap-4">
+            <span className="text-neutral-300 text-xs md:text-sm font-normal">Partner Badges</span>
+          </div>
+        </div>
+
+        {/* Bottom Copyright */}
+        <div className="w-full py-6 md:py-8 px-7 md:px-14 text-center text-neutral-300 text-xs md:text-sm">
+          <p>&copy; 2024 MIRA. All rights reserved.</p>
+        </div>
+      </footer>
     </div>
   )
 }

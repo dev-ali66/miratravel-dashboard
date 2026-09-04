@@ -35,6 +35,9 @@ export type LocationSectionKey =
   | "card"
   | "why"
   | "info"
+  | "shared-info"
+  | "region-glance"
+  | "region-character"
   | "essence"
   | "statistics"
   | "climate"
@@ -74,6 +77,9 @@ import { HeroForm } from "../sections/hero/HeroForm"
 import { CardForm } from "../sections/card/CardForm"
 import { WhyVisitForm } from "../sections/why/WhyVisitForm"
 import { InfoForm } from "../sections/info/InfoForm"
+import SharedInfoForm from "../shared/SharedInfoForm"
+import RegionGlanceForm from "../sections/regionGlance/RegionGlanceForm"
+import RegionCharacterForm from "../sections/regionCharacter/RegionCharacterForm"
 import { EssenceForm } from "../sections/essence/EssenceForm"
 import { StatisticsForm } from "../sections/statistics/StatisticsForm"
 import { ClimateForm } from "../sections/climate/ClimateForm"
@@ -84,7 +90,7 @@ import { TravelInfoForm } from "../sections/travelInfo/TravelInfoForm"
 import { ExperiencesForm } from "../sections/experiences/ExperiencesForm"
 import { AccommodationStaysForm } from "../sections/accommodation/AccommodationStaysForm"
 import { PracticalInformationForm } from "../sections/practicalInformation/PracticalInformationForm"
-import { FaqForm } from "../sections/faq/FaqForm"
+import { LocationFaqForm } from "../sections/faq/LocationFaqForm"
 import { ImageGalleryForm } from "../sections/imageGallery/ImageGalleryForm"
 import { LocalGuideForm } from "../sections/localGuide/LocalGuideForm"
 import { TravelInsightsForm } from "../sections/travelInsights/TravelInsightsForm"
@@ -100,20 +106,24 @@ import { CardPreview } from "../sections/card/CardPreview"
 import { GeoDataPreview } from "../sections/geoData/GeoDataPreview"
 import { WhyVisitPreview } from "../sections/why/WhyVisitPreview"
 import { IntroInfoPreview } from "../sections/info/IntroInfoPreview"
+import SharedInfoPreview from "../shared/SharedInfoPreview"
+import RegionGlancePreview from "../sections/regionGlance/RegionGlancePreview"
+import RegionCharacterPreview from "../sections/regionCharacter/RegionCharacterPreview"
 import { EssencePreview } from "../sections/essence/EssencePreview"
 import { StatisticsPreview } from "../sections/statistics/StatisticsPreview"
 import { ClimateCulturePreview } from "../sections/climate/ClimateCulturePreview"
+import CulturePreview from "../sections/culture/CulturePreview"
 import { SafetyPreview } from "../sections/safety/SafetyPreview"
 import { GeographyPreview } from "../sections/geography/GeographyPreview"
 import { TravelInfoPreview } from "../sections/travelInfo/TravelInfoPreview"
 import { ExperiencesPreview } from "../sections/experiences/ExperiencesPreview"
 import { AccommodationStaysPreview } from "../sections/accommodation/AccommodationStaysPreview"
 import { PracticalInformationPreview } from "../sections/practicalInformation/PracticalInformationPreview"
-import { FaqPreview } from "../sections/faq/FaqPreview"
 import { ImageGalleryPreview } from "../sections/imageGallery/ImageGalleryPreview"
 import { LocalGuidePreview } from "../sections/localGuide/LocalGuidePreview"
 import { TravelInsightsPreview } from "../sections/travelInsights/TravelInsightsPreview"
 import { VideoGalleryPreview } from "../sections/videoGallery/VideoGalleryPreview"
+import { LocationFaqPreview } from "../sections/faq/LocationFaqPreview"
 
 /* =====================================================
    REGISTRY
@@ -153,6 +163,21 @@ export const locationSectionRegistry: Record<
     form: InfoForm,
     preview: IntroInfoPreview,
   },
+  "shared-info": {
+    label: "Shared Info",
+    form: SharedInfoForm,
+    preview: SharedInfoPreview,
+  },
+  "region-glance": {
+    label: "Region Glance",
+    form: RegionGlanceForm,
+    preview: RegionGlancePreview,
+  },
+  "region-character": {
+    label: "Region Character",
+    form: RegionCharacterForm,
+    preview: RegionCharacterPreview,
+  },
   essence: {
     label: "Essence",
     form: EssenceForm,
@@ -166,17 +191,12 @@ export const locationSectionRegistry: Record<
   climate: {
     label: "Climate",
     form: ClimateForm,
-    // renders BOTH climate + culture (one combined visual
-    // block in the original design) — see "culture" below.
     preview: ClimateCulturePreview,
   },
   culture: {
     label: "Culture",
     form: CultureForm,
-    // no separate preview: already rendered by "climate"'s
-    // ClimateCulturePreview, so this stays null to avoid a
-    // duplicate render of the same block.
-    preview: null,
+    preview: CulturePreview,
   },
   safety: {
     label: "Safety",
@@ -210,8 +230,8 @@ export const locationSectionRegistry: Record<
   },
   faq: {
     label: "FAQ",
-    form: FaqForm,
-    preview: FaqPreview,
+    form: LocationFaqForm,
+    preview: LocationFaqPreview,
   },
   "image-gallery": {
     label: "Image Gallery",
@@ -251,18 +271,26 @@ export const locationSectionOrder: LocationSectionKey[] = [
   "why",
   "experiences",
   "geo-data",
+  "shared-info",
   "accommodation",
   "travel-insights",
   "practical-information",
-  "card",
+
   "essence",
   "statistics",
-  "climate",
+  "region-glance",
+  "region-character",
+  "travel-info",
+
+  "faq",
+
+
   "culture",
+  "card",
+
+  "climate",
   "safety",
   "geography",
-  "travel-info",
-  "faq",
   "image-gallery",
   "local-guide",
   "video-gallery",

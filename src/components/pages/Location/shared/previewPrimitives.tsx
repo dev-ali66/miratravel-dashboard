@@ -83,12 +83,18 @@ type CultureRowProps = {
     icon: ElementType
     label: string
     values: string[]
+    iconColor?: string
+    labelColor?: string
+    valueColor?: string
 }
 
 export function CultureRow({
     icon: Icon,
     label,
     values,
+    iconColor,
+    labelColor,
+    valueColor,
 }: CultureRowProps) {
     if (!values.length) {
         return null
@@ -97,15 +103,15 @@ export function CultureRow({
     return (
         <div className="flex gap-4">
 
-            <Icon className="mt-0.5 h-4 w-4 shrink-0 text-white/30" />
+            <Icon className="mt-0.5 h-4 w-4 shrink-0" style={{ color: iconColor }} />
 
             <div>
 
-                <p className="text-[9px] text-white/30">
+                <p className="text-[9px]" style={{ color: labelColor }}>
                     {label}
                 </p>
 
-                <p className="mt-2 text-sm leading-6 text-white/70">
+                <p className="mt-2 text-sm leading-6" style={{ color: valueColor }}>
                     {values.join(" · ")}
                 </p>
 

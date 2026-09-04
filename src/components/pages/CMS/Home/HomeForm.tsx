@@ -8,15 +8,11 @@ import { useCmsPage } from "../shared/useCmsPage"
 import { SaveBar } from "../shared/SaveBar"
 
 import {
-  TextField,
-  TextAreaField,
   ColorField,
+  DynamicStyledField,
 } from "../shared/FormControls"
 
 import { ButtonsField } from "../shared/ButtonsField"
-
-import { ImageUploadField } from "@/components/shared/ImageUploadField"
-import { VideoUploadField } from "@/components/shared/VideoUploadField"
 
 import type {
   HomeButton,
@@ -25,6 +21,44 @@ import type {
   HomeSection,
   HomeVideo,
 } from "./homeTypes"
+
+import type { FieldStyle, ValidationRules } from "../shared/FormControls"
+
+interface TextFieldProps {
+  label: string
+  value: string | number | undefined
+  onChange: (value: string | number) => void
+  placeholder?: string
+  hint?: string
+  validation?: ValidationRules
+  onValidChange?: (isValid: boolean) => void
+  enableStyle?: boolean
+  style?: FieldStyle
+  onStyleChange?: (style: FieldStyle) => void
+}
+
+interface TextAreaFieldProps extends TextFieldProps { rows?: number; maxLength?: number }
+
+interface MediaFieldProps {
+  label: string
+  value?: string
+  fieldName?: string
+  onChange: (value: string) => void
+  opacity?: number
+  onOpacityChange?: (value: number) => void
+  overlayColor?: string
+  onOverlayColorChange?: (value: string) => void
+  overlayOpacity?: number
+  onOverlayOpacityChange?: (value: number) => void
+}
+
+type ImageUploadFieldProps = MediaFieldProps
+type VideoUploadFieldProps = MediaFieldProps
+
+const TextField = (props: TextFieldProps) => <DynamicStyledField type="text" {...props} />
+const TextAreaField = (props: TextAreaFieldProps) => <DynamicStyledField type="textarea" {...props} />
+const ImageUploadField = (props: ImageUploadFieldProps) => <DynamicStyledField type="image" {...props} />
+const VideoUploadField = (props: VideoUploadFieldProps) => <DynamicStyledField type="video" {...props} />
 
 export const HomeForm = () => {
   const {
@@ -111,9 +145,9 @@ export const HomeForm = () => {
         (section, sectionIndex) =>
           sectionIndex === index
             ? {
-                ...section,
-                ...patch,
-              }
+              ...section,
+              ...patch,
+            }
             : section
       )
 
@@ -248,6 +282,23 @@ export const HomeForm = () => {
     const bgVideo =
       section.bgVideos?.[0] ?? {}
 
+    const backgroundType =
+      section.backgroundType ??
+      (section.showVideo
+        ? "video"
+        : section.bgImages?.[0]?.url
+          ? "image"
+          : "color")
+
+    const selectBackgroundType = (
+      type: "image" | "video" | "color"
+    ) => {
+      updateSection(index, {
+        backgroundType: type,
+        showVideo: type === "video",
+      })
+    }
+
     return (
       <div className="flex flex-col gap-5">
 
@@ -273,6 +324,11 @@ export const HomeForm = () => {
                   }
                 )
               }
+              enableStyle
+              style={content.titleLine1Style}
+              onStyleChange={(style) =>
+                updateSectionContent(index, { titleLine1Style: style })
+              }
             />
 
             <TextField
@@ -287,6 +343,11 @@ export const HomeForm = () => {
                     titleLine2: value,
                   }
                 )
+              }
+              enableStyle
+              style={content.titleLine2Style}
+              onStyleChange={(style) =>
+                updateSectionContent(index, { titleLine2Style: style })
               }
             />
 
@@ -303,6 +364,11 @@ export const HomeForm = () => {
                   }
                 )
               }
+              enableStyle
+              style={content.titleHighlightStyle}
+              onStyleChange={(style) =>
+                updateSectionContent(index, { titleHighlightStyle: style })
+              }
             />
 
             <TextAreaField
@@ -318,62 +384,12 @@ export const HomeForm = () => {
                   }
                 )
               }
+              enableStyle
+              style={content.descriptionStyle}
+              onStyleChange={(style) =>
+                updateSectionContent(index, { descriptionStyle: style })
+              }
             />
-
-            <div className="grid grid-cols-1 gap-3 md:grid-cols-2">
-              <ColorField
-                label="Title line 1 color"
-                value={content.textColors?.titleLine1 ?? "#FFFFFF"}
-                onChange={(value) =>
-                  updateSectionContent(index, {
-                    textColors: {
-                      ...content.textColors,
-                      titleLine1: value,
-                    },
-                  })
-                }
-              />
-
-              <ColorField
-                label="Title line 2 color"
-                value={content.textColors?.titleLine2 ?? "#FFFFFF"}
-                onChange={(value) =>
-                  updateSectionContent(index, {
-                    textColors: {
-                      ...content.textColors,
-                      titleLine2: value,
-                    },
-                  })
-                }
-              />
-
-              <ColorField
-                label="Title highlight color"
-                value={content.textColors?.titleHighlight ?? "#C97B4A"}
-                onChange={(value) =>
-                  updateSectionContent(index, {
-                    textColors: {
-                      ...content.textColors,
-                      titleHighlight: value,
-                    },
-                  })
-                }
-              />
-
-              <ColorField
-                label="Description color"
-                value={content.textColors?.description ?? "#FFFFFF"}
-                onChange={(value) =>
-                  updateSectionContent(index, {
-                    textColors: {
-                      ...content.textColors,
-                      description: value,
-                    },
-                  })
-                }
-              />
-            </div>
-
           </div>
         </div>
 
@@ -386,221 +402,187 @@ export const HomeForm = () => {
 
           <div className="flex flex-col gap-4">
 
-            {/* BACKGROUND COLOR */}
-
-            <ColorField
-              label="Background color"
-              value={
-                section.bgColor ??
-                "#0F2A2E"
-              }
-              onChange={(value) =>
-                updateSection(index, {
-                  bgColor: value,
-                })
-              }
-            />
-
-            {/* BACKGROUND IMAGE */}
-
-            <div className="rounded-md border border-border/40 p-3">
-              <p className="mb-3 text-[11px] font-semibold text-foreground">
-                Background Image
+            <div className="flex flex-col gap-3">
+              <p className="text-[11px] font-semibold text-foreground">
+                Background Type
               </p>
 
-              <div className="flex flex-col gap-3">
-
-                <ImageUploadField
-                  label="Background image"
-                  value={
-                    bgImage.url ?? ""
-                  }
-                  fieldName="homeHeroImage"
-                  onChange={(value) => {
-                    updateSectionImages(
-                      index,
-                      [
-                        {
-                          ...bgImage,
-                          url: value,
-                        },
-                      ]
-                    )
-                  }}
-                />
-
-                <TextField
-                  label="Image alt text"
-                  value={
-                    bgImage.alt ?? ""
-                  }
-                  onChange={(value) => {
-                    updateSectionImages(
-                      index,
-                      [
-                        {
-                          ...bgImage,
-                          alt: value,
-                        },
-                      ]
-                    )
-                  }}
-                />
-
-                <TextField
-                  label="Device"
-                  value={
-                    bgImage.device ??
-                    "desktop"
-                  }
-                  onChange={(value) => {
-                    updateSectionImages(
-                      index,
-                      [
-                        {
-                          ...bgImage,
-                          device: value,
-                        },
-                      ]
-                    )
-                  }}
-                />
-
-              </div>
+              {([
+                ["image", "Show Background Image"],
+                ["video", "Show Background Video"],
+                ["color", "Show Background Color"],
+              ] as const).map(([type, label]) => (
+                <label key={type} className="flex items-center gap-2 text-sm">
+                  <input
+                    type="radio"
+                    name={`hero-background-${index}`}
+                    checked={backgroundType === type}
+                    onChange={() => selectBackgroundType(type)}
+                  />
+                  {label}
+                </label>
+              ))}
             </div>
 
-            {/* BACKGROUND VIDEO */}
+            {backgroundType === "color" && (
+              <ColorField
+                label="Background color"
+                value={section.bgColor ?? "#0F2A2E"}
+                onChange={(value) => updateSection(index, { bgColor: value })}
+              />
+            )}
 
-            <div className="rounded-md border border-border/40 p-3">
-              <p className="mb-1 text-[11px] font-semibold text-foreground">
-                Background Video
-              </p>
+            {backgroundType === "image" && (
+              <div className="rounded-md border border-border/40 p-3">
+                <p className="mb-3 text-[11px] font-semibold text-foreground">
+                  Background Image
+                </p>
 
-              <p className="mb-3 text-[10px] text-muted-foreground">
-                Upload a video to use as the Hero background.
-              </p>
+                <div className="flex flex-col gap-3">
 
-              <div className="flex flex-col gap-4">
-
-                <VideoUploadField
-                  label="Hero background video"
-                  value={
-                    bgVideo.url ?? ""
-                  }
-                  fieldName="homeHeroVideo"
-                  onChange={(value) => {
-                    updateSectionVideos(
-                      index,
-                      [
-                        {
-                          ...bgVideo,
-                          url: value,
-                        },
-                      ]
-                    )
-                  }}
-                />
-
-                <label className="flex items-center gap-2 text-sm">
-                  <input
-                    type="checkbox"
-                    checked={
-                      section.showVideo ?? false
+                  <ImageUploadField
+                    label="Background image"
+                    value={
+                      bgImage.url ?? ""
                     }
-                    onChange={(event) =>
-                      updateSection(index, {
-                        showVideo:
-                          event.target.checked,
-                      })
+                    opacity={bgImage.opacity ?? 100}
+                    onOpacityChange={(value) =>
+                      updateSectionImages(index, [{ ...bgImage, opacity: value }])
+                    }
+                    overlayColor={bgImage.overlayColor ?? "#000000"}
+                    onOverlayColorChange={(value) =>
+                      updateSectionImages(index, [{ ...bgImage, overlayColor: value }])
+                    }
+                    overlayOpacity={bgImage.overlayOpacity ?? 0}
+                    onOverlayOpacityChange={(value) =>
+                      updateSectionImages(index, [{ ...bgImage, overlayOpacity: value }])
+                    }
+                    fieldName="homeHeroImage"
+                    onChange={(value) => {
+                      updateSectionImages(
+                        index,
+                        [
+                          {
+                            ...bgImage,
+                            url: value,
+                          },
+                        ]
+                      )
+                    }}
+                  />
+
+                  <TextField
+                    label="Image alt text"
+                    value={
+                      bgImage.alt ?? ""
+                    }
+                    onChange={(value) => {
+                      updateSectionImages(
+                        index,
+                        [
+                          {
+                            ...bgImage,
+                            alt: value,
+                          },
+                        ]
+                      )
+                    }}
+                  />
+
+                </div>
+              </div>
+            )}
+
+            {backgroundType === "video" && (
+              <div className="rounded-md border border-border/40 p-3">
+                <p className="mb-1 text-[11px] font-semibold text-foreground">
+                  Background Video
+                </p>
+
+                <p className="mb-3 text-[10px] text-muted-foreground">
+                  Upload a video to use as the Hero background.
+                </p>
+
+                <div className="flex flex-col gap-4">
+
+                  <VideoUploadField
+                    label="Hero background video"
+                    value={
+                      bgVideo.url ?? ""
+                    }
+                    opacity={bgVideo.opacity ?? 100}
+                    onOpacityChange={(value) =>
+                      updateSectionVideos(index, [{ ...bgVideo, opacity: value }])
+                    }
+                    overlayColor={bgVideo.overlayColor ?? "#000000"}
+                    onOverlayColorChange={(value) =>
+                      updateSectionVideos(index, [{ ...bgVideo, overlayColor: value }])
+                    }
+                    overlayOpacity={bgVideo.overlayOpacity ?? 0}
+                    onOverlayOpacityChange={(value) =>
+                      updateSectionVideos(index, [{ ...bgVideo, overlayOpacity: value }])
+                    }
+                    fieldName="homeHeroVideo"
+                    onChange={(value) => {
+                      updateSectionVideos(
+                        index,
+                        [
+                          {
+                            ...bgVideo,
+                            url: value,
+                          },
+                        ]
+                      )
+                    }}
+                  />
+
+                  <TextField
+                    label="Video alt text"
+                    value={bgVideo.alt ?? ""}
+                    onChange={(value) =>
+                      updateSectionVideos(index, [{ ...bgVideo, alt: value }])
                     }
                   />
 
-                  Show Video
-                </label>
+                  <div className="flex flex-col gap-2 md:flex-row md:items-center md:gap-4">
+                    <label className="flex items-center gap-2 text-sm">
 
-                {/* VIDEO SETTINGS */}
+                      <input
+                        type="checkbox"
+                        checked={bgVideo.loop ?? true}
+                        onChange={(event) =>
+                          updateSectionVideos(index, [{ ...bgVideo, loop: event.target.checked }])
+                        }
+                      />
+                      Loop
+                    </label>
 
-                <div className="grid grid-cols-1 gap-3 md:grid-cols-3">
+                    <label className="flex items-center gap-2 text-sm">
+                      <input
+                        type="checkbox"
+                        checked={bgVideo.autoplay ?? true}
+                        onChange={(event) =>
+                          updateSectionVideos(index, [{ ...bgVideo, autoplay: event.target.checked }])
+                        }
+                      />
+                      Autoplay
+                    </label>
 
-                  <label className="flex items-center gap-2 text-sm">
-                    <input
-                      type="checkbox"
-                      checked={
-                        bgVideo.autoplay ??
-                        true
-                      }
-                      onChange={(event) =>
-                        updateSectionVideos(
-                          index,
-                          [
-                            {
-                              ...bgVideo,
-                              autoplay:
-                                event.target
-                                  .checked,
-                            },
-                          ]
-                        )
-                      }
-                    />
-
-                    Autoplay
-                  </label>
-
-                  <label className="flex items-center gap-2 text-sm">
-                    <input
-                      type="checkbox"
-                      checked={
-                        bgVideo.loop ??
-                        true
-                      }
-                      onChange={(event) =>
-                        updateSectionVideos(
-                          index,
-                          [
-                            {
-                              ...bgVideo,
-                              loop:
-                                event.target
-                                  .checked,
-                            },
-                          ]
-                        )
-                      }
-                    />
-
-                    Loop
-                  </label>
-
-                  <label className="flex items-center gap-2 text-sm">
-                    <input
-                      type="checkbox"
-                      checked={
-                        bgVideo.muted ??
-                        true
-                      }
-                      onChange={(event) =>
-                        updateSectionVideos(
-                          index,
-                          [
-                            {
-                              ...bgVideo,
-                              muted:
-                                event.target
-                                  .checked,
-                            },
-                          ]
-                        )
-                      }
-                    />
-
-                    Muted
-                  </label>
+                    <label className="flex items-center gap-2 text-sm">
+                      <input
+                        type="checkbox"
+                        checked={bgVideo.muted ?? true}
+                        onChange={(event) =>
+                          updateSectionVideos(index, [{ ...bgVideo, muted: event.target.checked }])
+                        }
+                      />
+                      Muted
+                    </label>
+                  </div>
 
                 </div>
-
               </div>
-            </div>
+            )}
 
           </div>
         </div>
@@ -642,8 +624,24 @@ export const HomeForm = () => {
     const content =
       (section.content ?? {}) as any
 
-    const trustBadge =
-      content.trustBadge ?? {}
+    const bgImage = section.bgImages?.[0] ?? {}
+    const bgVideo = section.bgVideos?.[0] ?? {}
+    const backgroundType =
+      section.backgroundType ??
+      (section.showVideo
+        ? "video"
+        : bgImage.url
+          ? "image"
+          : "color")
+
+    const selectBackgroundType = (
+      type: "image" | "video" | "color"
+    ) => {
+      updateSection(index, {
+        backgroundType: type,
+        showVideo: type === "video",
+      })
+    }
 
     return (
       <div className="flex flex-col gap-5">
@@ -720,85 +718,154 @@ export const HomeForm = () => {
 
         <div className="rounded-md border border-border/50 p-3">
           <p className="mb-3 text-xs font-semibold uppercase tracking-wide text-muted-foreground">
-            Trust Badge
+            Background
           </p>
 
-          <div className="flex flex-col gap-3">
+          <div className="flex flex-col gap-4">
+            <div className="flex flex-col gap-3">
+              <p className="text-[11px] font-semibold text-foreground">
+                Background Type
+              </p>
 
-            <TextField
-              label="Text"
-              value={
-                trustBadge.text ?? ""
-              }
-              onChange={(value) =>
-                updateSectionContent(
-                  index,
-                  {
-                    trustBadge: {
-                      ...trustBadge,
-                      text: value,
-                    },
-                  }
-                )
-              }
-            />
+              {([
+                ["image", "Show Background Image"],
+                ["video", "Show Background Video"],
+                ["color", "Show Background Color"],
+              ] as const).map(([type, label]) => (
+                <label key={type} className="flex items-center gap-2 text-sm">
+                  <input
+                    type="radio"
+                    name={`explore-journeys-background-${index}`}
+                    checked={backgroundType === type}
+                    onChange={() => selectBackgroundType(type)}
+                  />
+                  {label}
+                </label>
+              ))}
+            </div>
 
-            <TextField
-              label="Source"
-              value={
-                trustBadge.source ?? ""
-              }
-              onChange={(value) =>
-                updateSectionContent(
-                  index,
-                  {
-                    trustBadge: {
-                      ...trustBadge,
-                      source: value,
-                    },
-                  }
-                )
-              }
-            />
+            {backgroundType === "color" && (
+              <ColorField
+                label="Background color"
+                value={section.bgColor ?? "#FBF9F5"}
+                onChange={(value) => updateSection(index, { bgColor: value })}
+              />
+            )}
 
-            <TextField
-              label="Rating"
-              value={
-                trustBadge.rating
-                  ?.toString() ?? ""
-              }
-              onChange={(value) =>
-                updateSectionContent(
-                  index,
-                  {
-                    trustBadge: {
-                      ...trustBadge,
-                      rating:
-                        Number(value) || 0,
-                    },
-                  }
-                )
-              }
-            />
+            {backgroundType === "image" && (
+              <div className="rounded-md border border-border/40 p-3">
+                <p className="mb-3 text-[11px] font-semibold text-foreground">
+                  Background Image
+                </p>
 
-            <TextField
-              label="URL"
-              value={
-                trustBadge.url ?? ""
-              }
-              onChange={(value) =>
-                updateSectionContent(
-                  index,
-                  {
-                    trustBadge: {
-                      ...trustBadge,
-                      url: value,
-                    },
-                  }
-                )
-              }
-            />
+                <div className="flex flex-col gap-3">
+                  <ImageUploadField
+                    label="Background image"
+                    value={bgImage.url ?? ""}
+                    opacity={bgImage.opacity ?? 100}
+                    onOpacityChange={(value) =>
+                      updateSectionImages(index, [{ ...bgImage, opacity: value }])
+                    }
+                    overlayColor={bgImage.overlayColor ?? "#000000"}
+                    onOverlayColorChange={(value) =>
+                      updateSectionImages(index, [{ ...bgImage, overlayColor: value }])
+                    }
+                    overlayOpacity={bgImage.overlayOpacity ?? 0}
+                    onOverlayOpacityChange={(value) =>
+                      updateSectionImages(index, [{ ...bgImage, overlayOpacity: value }])
+                    }
+                    fieldName="homeExploreJourneysImage"
+                    onChange={(value) =>
+                      updateSectionImages(index, [{ ...bgImage, url: value }])
+                    }
+                  />
 
+                  <TextField
+                    label="Image alt text"
+                    value={bgImage.alt ?? ""}
+                    onChange={(value) =>
+                      updateSectionImages(index, [{ ...bgImage, alt: value }])
+                    }
+                  />
+                </div>
+              </div>
+            )}
+
+            {backgroundType === "video" && (
+              <div className="rounded-md border border-border/40 p-3">
+                <p className="mb-1 text-[11px] font-semibold text-foreground">
+                  Background Video
+                </p>
+
+                <p className="mb-3 text-[10px] text-muted-foreground">
+                  Upload a video to use as the Explore Journeys background.
+                </p>
+
+                <div className="flex flex-col gap-4">
+                  <VideoUploadField
+                    label="Background video"
+                    value={bgVideo.url ?? ""}
+                    opacity={bgVideo.opacity ?? 100}
+                    onOpacityChange={(value) =>
+                      updateSectionVideos(index, [{ ...bgVideo, opacity: value }])
+                    }
+                    overlayColor={bgVideo.overlayColor ?? "#000000"}
+                    onOverlayColorChange={(value) =>
+                      updateSectionVideos(index, [{ ...bgVideo, overlayColor: value }])
+                    }
+                    overlayOpacity={bgVideo.overlayOpacity ?? 0}
+                    onOverlayOpacityChange={(value) =>
+                      updateSectionVideos(index, [{ ...bgVideo, overlayOpacity: value }])
+                    }
+                    fieldName="homeExploreJourneysVideo"
+                    onChange={(value) =>
+                      updateSectionVideos(index, [{ ...bgVideo, url: value }])
+                    }
+                  />
+
+                  <TextField
+                    label="Video alt text"
+                    value={bgVideo.alt ?? ""}
+                    onChange={(value) =>
+                      updateSectionVideos(index, [{ ...bgVideo, alt: value }])
+                    }
+                  />
+
+                  <label className="flex items-center gap-2 text-sm">
+                    <input
+                      type="checkbox"
+                      checked={bgVideo.loop ?? true}
+                      onChange={(event) =>
+                        updateSectionVideos(index, [{ ...bgVideo, loop: event.target.checked }])
+                      }
+                    />
+                    Loop
+                  </label>
+
+                  <label className="flex items-center gap-2 text-sm">
+                    <input
+                      type="checkbox"
+                      checked={bgVideo.autoplay ?? true}
+                      onChange={(event) =>
+                        updateSectionVideos(index, [{ ...bgVideo, autoplay: event.target.checked }])
+                      }
+                    />
+                    Autoplay
+                  </label>
+
+                  <label className="flex items-center gap-2 text-sm">
+                    <input
+                      type="checkbox"
+                      checked={bgVideo.muted ?? true}
+                      onChange={(event) =>
+                        updateSectionVideos(index, [{ ...bgVideo, muted: event.target.checked }])
+                      }
+                    />
+                    Muted
+                  </label>
+                </div>
+              </div>
+            )}
           </div>
         </div>
 
@@ -1065,7 +1132,7 @@ export const HomeForm = () => {
 
                         updated[itemIndex] = {
                           ...updated[
-                            itemIndex
+                          itemIndex
                           ],
                           index: value,
                         }
@@ -1090,7 +1157,7 @@ export const HomeForm = () => {
 
                         updated[itemIndex] = {
                           ...updated[
-                            itemIndex
+                          itemIndex
                           ],
                           title: value,
                         }
@@ -1115,7 +1182,7 @@ export const HomeForm = () => {
 
                         updated[itemIndex] = {
                           ...updated[
-                            itemIndex
+                          itemIndex
                           ],
                           subtitle: value,
                         }
@@ -1140,7 +1207,7 @@ export const HomeForm = () => {
 
                         updated[itemIndex] = {
                           ...updated[
-                            itemIndex
+                          itemIndex
                           ],
                           url: value,
                         }
@@ -1171,6 +1238,18 @@ export const HomeForm = () => {
             label="Background image"
             value={
               image.url ?? ""
+            }
+            opacity={image.opacity ?? 100}
+            onOpacityChange={(value) =>
+              updateSectionImages(index, [{ ...image, opacity: value }])
+            }
+            overlayColor={image.overlayColor ?? "#000000"}
+            onOverlayColorChange={(value) =>
+              updateSectionImages(index, [{ ...image, overlayColor: value }])
+            }
+            overlayOpacity={image.overlayOpacity ?? 0}
+            onOverlayOpacityChange={(value) =>
+              updateSectionImages(index, [{ ...image, overlayOpacity: value }])
             }
             fieldName="homeMiraStoriesImage"
             onChange={(value) =>
@@ -1329,9 +1408,8 @@ export const HomeForm = () => {
               ) => (
                 <TextAreaField
                   key={paragraphIndex}
-                  label={`Paragraph ${
-                    paragraphIndex + 1
-                  }`}
+                  label={`Paragraph ${paragraphIndex + 1
+                    }`}
                   value={
                     paragraph ?? ""
                   }
@@ -1388,6 +1466,24 @@ export const HomeForm = () => {
               label="Side image"
               value={
                 sideImage.url ?? ""
+              }
+              opacity={sideImage.opacity ?? 100}
+              onOpacityChange={(value) =>
+                updateSection(index, {
+                  sideImages: [{ ...sideImage, opacity: value }],
+                })
+              }
+              overlayColor={sideImage.overlayColor ?? "#000000"}
+              onOverlayColorChange={(value) =>
+                updateSection(index, {
+                  sideImages: [{ ...sideImage, overlayColor: value }],
+                })
+              }
+              overlayOpacity={sideImage.overlayOpacity ?? 0}
+              onOverlayOpacityChange={(value) =>
+                updateSection(index, {
+                  sideImages: [{ ...sideImage, overlayOpacity: value }],
+                })
               }
               fieldName="homeWhyMiraImage"
               onChange={(value) =>
@@ -1536,6 +1632,18 @@ export const HomeForm = () => {
               label="Background image"
               value={
                 image.url ?? ""
+              }
+              opacity={image.opacity ?? 100}
+              onOpacityChange={(value) =>
+                updateSectionImages(index, [{ ...image, opacity: value }])
+              }
+              overlayColor={image.overlayColor ?? "#000000"}
+              onOverlayColorChange={(value) =>
+                updateSectionImages(index, [{ ...image, overlayColor: value }])
+              }
+              overlayOpacity={image.overlayOpacity ?? 0}
+              onOverlayOpacityChange={(value) =>
+                updateSectionImages(index, [{ ...image, overlayOpacity: value }])
               }
               fieldName="homeTravelInsightsImage"
               onChange={(value) =>
@@ -1699,6 +1807,18 @@ export const HomeForm = () => {
               value={
                 image.url ?? ""
               }
+              opacity={image.opacity ?? 100}
+              onOpacityChange={(value) =>
+                updateSectionImages(index, [{ ...image, opacity: value }])
+              }
+              overlayColor={image.overlayColor ?? "#000000"}
+              onOverlayColorChange={(value) =>
+                updateSectionImages(index, [{ ...image, overlayColor: value }])
+              }
+              overlayOpacity={image.overlayOpacity ?? 0}
+              onOverlayOpacityChange={(value) =>
+                updateSectionImages(index, [{ ...image, overlayOpacity: value }])
+              }
               fieldName="homeCustomJourneyImage"
               onChange={(value) =>
                 updateSectionImages(
@@ -1841,279 +1961,285 @@ export const HomeForm = () => {
 
       <div className="flex flex-col gap-6 p-4">
 
-        {/* SEO */}
+        {openSections.__legacyTopPanels && (
+          <>
 
-        <div className="rounded-lg border border-border/60 p-3">
+            {/* SEO */}
 
-          <p className="mb-3 text-xs font-semibold uppercase tracking-wide text-muted-foreground">
-            SEO Metadata
-          </p>
+            <div className="rounded-lg border border-border/60 p-3">
 
-          <div className="flex flex-col gap-3">
+              <p className="mb-3 text-xs font-semibold uppercase tracking-wide text-muted-foreground">
+                SEO Metadata
+              </p>
 
-            <TextField
-              label="Meta title"
-              value={
-                page?.metadata?.title ?? ""
-              }
-              onChange={(value) =>
-                setPage({
-                  ...page,
-                  name:
-                    page?.name ?? "Home",
+              <div className="flex flex-col gap-3">
 
-                  metadata: {
-                    ...(page?.metadata ?? {}),
-                    title: value,
-                  },
+                <TextField
+                  label="Meta title"
+                  value={
+                    page?.metadata?.title ?? ""
+                  }
+                  onChange={(value) =>
+                    setPage({
+                      ...page,
+                      name:
+                        page?.name ?? "Home",
 
-                  data: {
-                    ...(page?.data ?? {}),
-                  },
-                })
-              }
-            />
+                      metadata: {
+                        ...(page?.metadata ?? {}),
+                        title: value,
+                      },
 
-            <TextAreaField
-              label="Meta description"
-              value={
-                page?.metadata?.description ??
-                ""
-              }
-              onChange={(value) =>
-                setPage({
-                  ...page,
-                  name:
-                    page?.name ?? "Home",
+                      data: {
+                        ...(page?.data ?? {}),
+                      },
+                    })
+                  }
+                />
 
-                  metadata: {
-                    ...(page?.metadata ?? {}),
-                    description: value,
-                  },
+                <TextAreaField
+                  label="Meta description"
+                  value={
+                    page?.metadata?.description ??
+                    ""
+                  }
+                  onChange={(value) =>
+                    setPage({
+                      ...page,
+                      name:
+                        page?.name ?? "Home",
 
-                  data: {
-                    ...(page?.data ?? {}),
-                  },
-                })
-              }
-            />
+                      metadata: {
+                        ...(page?.metadata ?? {}),
+                        description: value,
+                      },
 
-            <TextField
-              label="Keywords (comma separated)"
-              value={
-                page?.metadata?.keywords?.join(
-                  ", "
-                ) ?? ""
-              }
-              onChange={(value) =>
-                setPage({
-                  ...page,
-                  name:
-                    page?.name ?? "Home",
+                      data: {
+                        ...(page?.data ?? {}),
+                      },
+                    })
+                  }
+                />
 
-                  metadata: {
-                    ...(page?.metadata ?? {}),
+                <TextField
+                  label="Keywords (comma separated)"
+                  value={
+                    page?.metadata?.keywords?.join(
+                      ", "
+                    ) ?? ""
+                  }
+                  onChange={(value) =>
+                    setPage({
+                      ...page,
+                      name:
+                        page?.name ?? "Home",
 
-                    keywords: value
-                      .split(",")
-                      .map(
-                        (item) =>
-                          item.trim()
-                      )
-                      .filter(Boolean),
-                  },
+                      metadata: {
+                        ...(page?.metadata ?? {}),
 
-                  data: {
-                    ...(page?.data ?? {}),
-                  },
-                })
-              }
-            />
+                        keywords: value
+                          .split(",")
+                          .map(
+                            (item) =>
+                              item.trim()
+                          )
+                          .filter(Boolean),
+                      },
 
-            <TextField
-              label="Canonical URL"
-              value={
-                page?.metadata?.canonicalUrl ??
-                ""
-              }
-              onChange={(value) =>
-                setPage({
-                  ...page,
-                  name:
-                    page?.name ?? "Home",
+                      data: {
+                        ...(page?.data ?? {}),
+                      },
+                    })
+                  }
+                />
 
-                  metadata: {
-                    ...(page?.metadata ?? {}),
-                    canonicalUrl: value,
-                  },
+                <TextField
+                  label="Canonical URL"
+                  value={
+                    page?.metadata?.canonicalUrl ??
+                    ""
+                  }
+                  onChange={(value) =>
+                    setPage({
+                      ...page,
+                      name:
+                        page?.name ?? "Home",
 
-                  data: {
-                    ...(page?.data ?? {}),
-                  },
-                })
-              }
-            />
+                      metadata: {
+                        ...(page?.metadata ?? {}),
+                        canonicalUrl: value,
+                      },
 
-            <div className="flex flex-col gap-2">
+                      data: {
+                        ...(page?.data ?? {}),
+                      },
+                    })
+                  }
+                />
 
-              <span className="text-sm font-medium">
-                Robots
-              </span>
+                <div className="flex flex-col gap-2">
 
-              <div className="flex items-center gap-5">
+                  <span className="text-sm font-medium">
+                    Robots
+                  </span>
 
-                <label className="flex items-center gap-2 text-sm">
-                  <input
-                    type="checkbox"
-                    checked={
-                      page?.metadata?.robots
-                        ?.index ?? true
-                    }
-                    onChange={(event) =>
-                      setPage({
-                        ...page,
-                        name:
-                          page?.name ??
-                          "Home",
+                  <div className="flex items-center gap-5">
 
-                        metadata: {
-                          ...(page?.metadata ??
-                            {}),
+                    <label className="flex items-center gap-2 text-sm">
+                      <input
+                        type="checkbox"
+                        checked={
+                          page?.metadata?.robots
+                            ?.index ?? true
+                        }
+                        onChange={(event) =>
+                          setPage({
+                            ...page,
+                            name:
+                              page?.name ??
+                              "Home",
 
-                          robots: {
-                            ...(page
-                              ?.metadata
-                              ?.robots ??
-                              {}),
+                            metadata: {
+                              ...(page?.metadata ??
+                                {}),
 
-                            index:
-                              event.target
-                                .checked,
-                          },
-                        },
+                              robots: {
+                                ...(page
+                                  ?.metadata
+                                  ?.robots ??
+                                  {}),
 
-                        data: {
-                          ...(page?.data ??
-                            {}),
-                        },
-                      })
-                    }
-                  />
+                                index:
+                                  event.target
+                                    .checked,
+                              },
+                            },
 
-                  Index
-                </label>
+                            data: {
+                              ...(page?.data ??
+                                {}),
+                            },
+                          })
+                        }
+                      />
 
-                <label className="flex items-center gap-2 text-sm">
-                  <input
-                    type="checkbox"
-                    checked={
-                      page?.metadata?.robots
-                        ?.follow ?? true
-                    }
-                    onChange={(event) =>
-                      setPage({
-                        ...page,
-                        name:
-                          page?.name ??
-                          "Home",
+                      Index
+                    </label>
 
-                        metadata: {
-                          ...(page?.metadata ??
-                            {}),
+                    <label className="flex items-center gap-2 text-sm">
+                      <input
+                        type="checkbox"
+                        checked={
+                          page?.metadata?.robots
+                            ?.follow ?? true
+                        }
+                        onChange={(event) =>
+                          setPage({
+                            ...page,
+                            name:
+                              page?.name ??
+                              "Home",
 
-                          robots: {
-                            ...(page
-                              ?.metadata
-                              ?.robots ??
-                              {}),
+                            metadata: {
+                              ...(page?.metadata ??
+                                {}),
 
-                            follow:
-                              event.target
-                                .checked,
-                          },
-                        },
+                              robots: {
+                                ...(page
+                                  ?.metadata
+                                  ?.robots ??
+                                  {}),
 
-                        data: {
-                          ...(page?.data ??
-                            {}),
-                        },
-                      })
-                    }
-                  />
+                                follow:
+                                  event.target
+                                    .checked,
+                              },
+                            },
 
-                  Follow
-                </label>
+                            data: {
+                              ...(page?.data ??
+                                {}),
+                            },
+                          })
+                        }
+                      />
+
+                      Follow
+                    </label>
+
+                  </div>
+                </div>
 
               </div>
             </div>
 
-          </div>
-        </div>
+            {/* GLOBAL THEME */}
 
-        {/* GLOBAL THEME */}
+            <div className="rounded-lg border border-border/60 p-3">
 
-        <div className="rounded-lg border border-border/60 p-3">
+              <p className="mb-3 text-xs font-semibold uppercase tracking-wide text-muted-foreground">
+                Home Theme
+              </p>
 
-          <p className="mb-3 text-xs font-semibold uppercase tracking-wide text-muted-foreground">
-            Home Theme
-          </p>
+              <div className="flex flex-col gap-3">
 
-          <div className="flex flex-col gap-3">
+                <ColorField
+                  label="Accent color"
+                  value={
+                    theme.accentColor ??
+                    "#C97B4A"
+                  }
+                  onChange={(value) =>
+                    updateTheme({
+                      accentColor: value,
+                    })
+                  }
+                />
 
-            <ColorField
-              label="Accent color"
-              value={
-                theme.accentColor ??
-                "#C97B4A"
-              }
-              onChange={(value) =>
-                updateTheme({
-                  accentColor: value,
-                })
-              }
-            />
+                <ColorField
+                  label="Primary color"
+                  value={
+                    theme.primaryColor ??
+                    "#1F3A1B"
+                  }
+                  onChange={(value) =>
+                    updateTheme({
+                      primaryColor: value,
+                    })
+                  }
+                />
 
-            <ColorField
-              label="Primary color"
-              value={
-                theme.primaryColor ??
-                "#1F3A1B"
-              }
-              onChange={(value) =>
-                updateTheme({
-                  primaryColor: value,
-                })
-              }
-            />
+                <ColorField
+                  label="Dark text color"
+                  value={
+                    theme.textColorDark ??
+                    "#1A1A1A"
+                  }
+                  onChange={(value) =>
+                    updateTheme({
+                      textColorDark: value,
+                    })
+                  }
+                />
 
-            <ColorField
-              label="Dark text color"
-              value={
-                theme.textColorDark ??
-                "#1A1A1A"
-              }
-              onChange={(value) =>
-                updateTheme({
-                  textColorDark: value,
-                })
-              }
-            />
+                <ColorField
+                  label="Light text color"
+                  value={
+                    theme.textColorLight ??
+                    "#FFFFFF"
+                  }
+                  onChange={(value) =>
+                    updateTheme({
+                      textColorLight: value,
+                    })
+                  }
+                />
 
-            <ColorField
-              label="Light text color"
-              value={
-                theme.textColorLight ??
-                "#FFFFFF"
-              }
-              onChange={(value) =>
-                updateTheme({
-                  textColorLight: value,
-                })
-              }
-            />
+              </div>
+            </div>
 
-          </div>
-        </div>
+          </>
+        )}
 
         {/* HOME SECTIONS */}
 
@@ -2143,7 +2269,7 @@ export const HomeForm = () => {
               ) => {
                 const isOpen =
                   openSections[
-                    section.key
+                  section.key
                   ] ?? false
 
                 const actualIndex =
@@ -2203,7 +2329,7 @@ export const HomeForm = () => {
                         >
                           {String(
                             section.order ??
-                              index + 1
+                            index + 1
                           ).padStart(
                             2,
                             "0"
@@ -2252,6 +2378,118 @@ export const HomeForm = () => {
               }
             )}
 
+        </div>
+
+        <div className="overflow-hidden rounded-lg border border-border/60">
+          <button
+            type="button"
+            onClick={() => toggleSection("seo")}
+            className="flex w-full items-center justify-between gap-3 px-4 py-3 text-left transition-colors hover:bg-muted/40"
+          >
+            <span className="text-sm font-semibold">SEO Metadata</span>
+            {openSections.seo ? (
+              <ChevronUp className="h-4 w-4 shrink-0 text-muted-foreground" />
+            ) : (
+              <ChevronDown className="h-4 w-4 shrink-0 text-muted-foreground" />
+            )}
+          </button>
+
+          {openSections.seo && (
+            <div className="flex flex-col gap-3 border-t border-border/60 p-4">
+              <TextField
+                label="Meta title"
+                value={page?.metadata?.title ?? ""}
+                onChange={(value) =>
+                  setPage({
+                    ...page,
+                    name: page?.name ?? "Home",
+                    metadata: { ...(page?.metadata ?? {}), title: value },
+                    data: { ...(page?.data ?? {}) },
+                  })
+                }
+              />
+              <TextAreaField
+                label="Meta description"
+                value={page?.metadata?.description ?? ""}
+                onChange={(value) =>
+                  setPage({
+                    ...page,
+                    name: page?.name ?? "Home",
+                    metadata: { ...(page?.metadata ?? {}), description: value },
+                    data: { ...(page?.data ?? {}) },
+                  })
+                }
+              />
+              <TextField
+                label="Keywords (comma separated)"
+                value={page?.metadata?.keywords?.join(", ") ?? ""}
+                onChange={(value) =>
+                  setPage({
+                    ...page,
+                    name: page?.name ?? "Home",
+                    metadata: {
+                      ...(page?.metadata ?? {}),
+                      keywords: value.split(",").map((item) => item.trim()).filter(Boolean),
+                    },
+                    data: { ...(page?.data ?? {}) },
+                  })
+                }
+              />
+              <TextField
+                label="Canonical URL"
+                value={page?.metadata?.canonicalUrl ?? ""}
+                onChange={(value) =>
+                  setPage({
+                    ...page,
+                    name: page?.name ?? "Home",
+                    metadata: { ...(page?.metadata ?? {}), canonicalUrl: value },
+                    data: { ...(page?.data ?? {}) },
+                  })
+                }
+              />
+              <div className="flex flex-col gap-2">
+                <span className="text-sm font-medium">Robots</span>
+                <div className="flex items-center gap-5">
+                  <label className="flex items-center gap-2 text-sm">
+                    <input
+                      type="checkbox"
+                      checked={page?.metadata?.robots?.index ?? true}
+                      onChange={(event) =>
+                        setPage({
+                          ...page,
+                          name: page?.name ?? "Home",
+                          metadata: {
+                            ...(page?.metadata ?? {}),
+                            robots: { ...(page?.metadata?.robots ?? {}), index: event.target.checked },
+                          },
+                          data: { ...(page?.data ?? {}) },
+                        })
+                      }
+                    />
+                    Index
+                  </label>
+                  <label className="flex items-center gap-2 text-sm">
+                    <input
+                      type="checkbox"
+                      checked={page?.metadata?.robots?.follow ?? true}
+                      onChange={(event) =>
+                        setPage({
+                          ...page,
+                          name: page?.name ?? "Home",
+                          metadata: {
+                            ...(page?.metadata ?? {}),
+                            robots: { ...(page?.metadata?.robots ?? {}), follow: event.target.checked },
+                          },
+                          data: { ...(page?.data ?? {}) },
+                        })
+                      }
+                    />
+                    Follow
+                  </label>
+                </div>
+              </div>
+            </div>
+          )}
         </div>
 
       </div>

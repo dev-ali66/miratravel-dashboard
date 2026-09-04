@@ -11,13 +11,20 @@ export interface HomeImage {
   url?: string
   alt?: string
   device?: string
+  opacity?: number
+  overlayColor?: string
+  overlayOpacity?: number
 }
 
 export interface HomeVideo {
   url?: string
+  alt?: string
   autoplay?: boolean
   loop?: boolean
   muted?: boolean
+  opacity?: number
+  overlayColor?: string
+  overlayOpacity?: number
 }
 
 export interface HomeHeroContent {
@@ -92,6 +99,9 @@ export interface HomeSection {
   order?: number
 
   bgColor?: string
+
+  /** Hero background mode. Only one mode can be active at a time. */
+  backgroundType?: "image" | "video" | "color"
   
   /** When true the hero will render the video instead of the background image */
   showVideo?: boolean

@@ -8,19 +8,19 @@ import { Plus, Trash2 } from "lucide-react"
 import type { LocationData, FAQItem } from "../../locationTypes"
 import { updateArrayItem } from "../../shared/arrayItemHelpers"
 
-export type FaqFormProps = {
+export type LocationFaqFormProps = {
     draft: LocationData
     updateField: (path: string, value: unknown) => void
     openSections: Record<string, boolean>
     toggleSection: (section: string) => void
 }
 
-export function FaqForm({
+export function LocationFaqForm({
     draft,
     updateField,
     openSections,
     toggleSection,
-}: FaqFormProps) {
+}: LocationFaqFormProps) {
 
     const updateFAQ = (
         index: number,
