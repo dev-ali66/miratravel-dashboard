@@ -42,6 +42,7 @@ export type UniversalMultimediaFormProps = {
   imageLabel?: string
   imageFieldName?: string
   imageAltStyleKey?: string
+  showImageAltField?: boolean
 
   video?: MediaItem
   onVideoChange?: (next: MediaItem) => void
@@ -50,6 +51,7 @@ export type UniversalMultimediaFormProps = {
   videoHint?: string
   videoFieldName?: string
   videoAltStyleKey?: string
+  showVideoAltField?: boolean
   showVideoSwitches?: boolean
   allowImage?: boolean
   allowVideo?: boolean
@@ -81,6 +83,7 @@ export function UniversalMultimediaForm({
   imageLabel = "Background image",
   imageFieldName = "homeBackgroundImage",
   imageAltStyleKey,
+  showImageAltField = true,
   video,
   onVideoChange,
   videoTitle = "Background Video",
@@ -88,6 +91,7 @@ export function UniversalMultimediaForm({
   videoHint,
   videoFieldName = "homeBackgroundVideo",
   videoAltStyleKey,
+  showVideoAltField = true,
   showVideoSwitches = true,
   allowImage = true,
   allowVideo = true,
@@ -277,21 +281,23 @@ export function UniversalMultimediaForm({
                 onChange={(value) => applyImageChange({ ...resolvedImage, url: value })}
               />
 
-              <DynamicStyledField
-                type="text"
-                label="Image alt text"
-                value={normalizeTextValue(resolvedImage.alt) ?? ""}
-                onChange={(value) =>
-                  applyImageChange({ ...resolvedImage, alt: normalizeTextValue(value) })
-                }
-                enableStyle={!!imageAltStyleKey}
-                style={imageAltStyleKey ? content[imageAltStyleKey] : undefined}
-                onStyleChange={
-                  imageAltStyleKey
-                    ? (style) => updateSectionContent({ [imageAltStyleKey]: style })
-                    : undefined
-                }
-              />
+              {showImageAltField && (
+                <DynamicStyledField
+                  type="text"
+                  label="Image alt text"
+                  value={normalizeTextValue(resolvedImage.alt) ?? ""}
+                  onChange={(value) =>
+                    applyImageChange({ ...resolvedImage, alt: normalizeTextValue(value) })
+                  }
+                  enableStyle={!!imageAltStyleKey}
+                  style={imageAltStyleKey ? content[imageAltStyleKey] : undefined}
+                  onStyleChange={
+                    imageAltStyleKey
+                      ? (style) => updateSectionContent({ [imageAltStyleKey]: style })
+                      : undefined
+                  }
+                />
+              )}
             </div>
           </div>
         )}
@@ -320,21 +326,23 @@ export function UniversalMultimediaForm({
                 onChange={(value) => applyVideoChange({ ...resolvedVideo, url: value })}
               />
 
-              <DynamicStyledField
-                type="text"
-                label="Video alt text"
-                value={normalizeTextValue(resolvedVideo.alt) ?? ""}
-                onChange={(value) =>
-                  applyVideoChange({ ...resolvedVideo, alt: normalizeTextValue(value) })
-                }
-                enableStyle={!!videoAltStyleKey}
-                style={videoAltStyleKey ? content[videoAltStyleKey] : undefined}
-                onStyleChange={
-                  videoAltStyleKey
-                    ? (style) => updateSectionContent({ [videoAltStyleKey]: style })
-                    : undefined
-                }
-              />
+              {showVideoAltField && (
+                <DynamicStyledField
+                  type="text"
+                  label="Video alt text"
+                  value={normalizeTextValue(resolvedVideo.alt) ?? ""}
+                  onChange={(value) =>
+                    applyVideoChange({ ...resolvedVideo, alt: normalizeTextValue(value) })
+                  }
+                  enableStyle={!!videoAltStyleKey}
+                  style={videoAltStyleKey ? content[videoAltStyleKey] : undefined}
+                  onStyleChange={
+                    videoAltStyleKey
+                      ? (style) => updateSectionContent({ [videoAltStyleKey]: style })
+                      : undefined
+                  }
+                />
+              )}
 
               {showVideoSwitches && (
                 <div className="flex flex-col gap-2 md:flex-row md:items-center md:gap-4">

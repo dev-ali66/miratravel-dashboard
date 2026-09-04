@@ -1,3 +1,5 @@
+import { useState } from "react"
+
 import { useCmsPage } from "../shared/useCmsPage"
 import { SaveBar } from "../shared/SaveBar"
 
@@ -8,6 +10,7 @@ import {
 } from "../shared/FormControls"
 
 import { RepeaterList } from "../shared/RepeaterList"
+import { CollapsibleSectionCard } from "../shared/CollapsibleSectionCard"
 
 import { ImageUploadField } from "@/components/shared/ImageUploadField"
 
@@ -18,6 +21,19 @@ import type {
 } from "./faqTypes"
 
 export const FaqForm = () => {
+  const [openSections, setOpenSections] = useState<
+    Record<string, boolean>
+  >({
+    seo: true,
+  })
+
+  const toggleSection = (key: string) => {
+    setOpenSections((current) => ({
+      ...current,
+      [key]: !current[key],
+    }))
+  }
+
   const {
     page,
     setPage,
@@ -224,12 +240,28 @@ export const FaqForm = () => {
       />
 
       <div className="flex flex-col gap-6 p-4">
+        <div className="px-1">
+          <p className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">
+            FAQ Sections
+          </p>
+
+          <p className="mt-1 text-[11px] text-muted-foreground">
+            Click a section to expand or collapse its settings.
+          </p>
+        </div>
 
         {/* =========================
             SEO METADATA
         ========================== */}
 
-        <div className="rounded-lg border border-border/60 p-3">
+        <CollapsibleSectionCard
+          title="SEO Metadata"
+          meta="seo"
+          indexLabel="01"
+          isOpen={openSections.seo ?? false}
+          onToggle={() => toggleSection("seo")}
+        >
+          <div className="rounded-lg border border-border/60 p-3">
 
           <p className="mb-3 text-xs font-semibold text-foreground">
             SEO Metadata
@@ -262,13 +294,21 @@ export const FaqForm = () => {
             />
 
           </div>
-        </div>
+          </div>
+        </CollapsibleSectionCard>
 
         {/* =========================
             FAQ CONTENT
         ========================== */}
 
-        <div className="rounded-lg border border-border/60 p-3">
+        <CollapsibleSectionCard
+          title="FAQ Content"
+          meta="content"
+          indexLabel="02"
+          isOpen={openSections.content ?? false}
+          onToggle={() => toggleSection("content")}
+        >
+          <div className="rounded-lg border border-border/60 p-3">
 
           <p className="mb-3 text-xs font-semibold text-foreground">
             FAQ Content
@@ -325,13 +365,21 @@ export const FaqForm = () => {
             />
 
           </div>
-        </div>
+          </div>
+        </CollapsibleSectionCard>
 
         {/* =========================
             BACKGROUND
         ========================== */}
 
-        <div className="rounded-lg border border-border/60 p-3">
+        <CollapsibleSectionCard
+          title="Background"
+          meta="background"
+          indexLabel="03"
+          isOpen={openSections.background ?? false}
+          onToggle={() => toggleSection("background")}
+        >
+          <div className="rounded-lg border border-border/60 p-3">
 
           <p className="mb-3 text-xs font-semibold text-foreground">
             Background
@@ -367,13 +415,21 @@ export const FaqForm = () => {
             />
 
           </div>
-        </div>
+          </div>
+        </CollapsibleSectionCard>
 
         {/* =========================
             HEADER APPEARANCE
         ========================== */}
 
-        <div className="rounded-lg border border-border/60 p-3">
+        <CollapsibleSectionCard
+          title="Header Appearance"
+          meta="header appearance"
+          indexLabel="04"
+          isOpen={openSections.headerAppearance ?? false}
+          onToggle={() => toggleSection("headerAppearance")}
+        >
+          <div className="rounded-lg border border-border/60 p-3">
 
           <p className="mb-3 text-xs font-semibold text-foreground">
             Header Appearance
@@ -450,13 +506,21 @@ export const FaqForm = () => {
             />
 
           </div>
-        </div>
+          </div>
+        </CollapsibleSectionCard>
 
         {/* =========================
             FAQ APPEARANCE
         ========================== */}
 
-        <div className="rounded-lg border border-border/60 p-3">
+        <CollapsibleSectionCard
+          title="FAQ Appearance"
+          meta="faq appearance"
+          indexLabel="05"
+          isOpen={openSections.faqAppearance ?? false}
+          onToggle={() => toggleSection("faqAppearance")}
+        >
+          <div className="rounded-lg border border-border/60 p-3">
 
           <p className="mb-3 text-xs font-semibold text-foreground">
             FAQ Appearance
@@ -571,13 +635,21 @@ export const FaqForm = () => {
             />
 
           </div>
-        </div>
+          </div>
+        </CollapsibleSectionCard>
 
         {/* =========================
             QUESTIONS
         ========================== */}
 
-        <div className="rounded-lg border border-border/60 p-3">
+        <CollapsibleSectionCard
+          title="Questions"
+          meta="items"
+          indexLabel="06"
+          isOpen={openSections.questions ?? false}
+          onToggle={() => toggleSection("questions")}
+        >
+          <div className="rounded-lg border border-border/60 p-3">
 
           <p className="mb-3 text-xs font-semibold text-foreground">
             Questions
@@ -674,7 +746,8 @@ export const FaqForm = () => {
             )}
           />
 
-        </div>
+          </div>
+        </CollapsibleSectionCard>
 
       </div>
     </div>

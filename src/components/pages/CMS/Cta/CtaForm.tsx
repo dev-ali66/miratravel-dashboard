@@ -1,3 +1,5 @@
+import { useState } from "react"
+
 import { useCmsPage } from "../shared/useCmsPage"
 import { SaveBar } from "../shared/SaveBar"
 import {
@@ -6,10 +8,24 @@ import {
   ColorField,
 } from "../shared/FormControls"
 import { ButtonsField } from "../shared/ButtonsField"
+import { CollapsibleSectionCard } from "../shared/CollapsibleSectionCard"
 import { ImageUploadField } from "@/components/shared/ImageUploadField"
 import type { CtaPageData } from "./ctaTypes"
 
 export const CtaForm = () => {
+  const [openSections, setOpenSections] = useState<
+    Record<string, boolean>
+  >({
+    seo: true,
+  })
+
+  const toggleSection = (key: string) => {
+    setOpenSections((current) => ({
+      ...current,
+      [key]: !current[key],
+    }))
+  }
+
   const {
     page,
     setPage,
@@ -128,11 +144,27 @@ export const CtaForm = () => {
       />
 
       <div className="flex flex-col gap-6 p-4">
+        <div className="px-1">
+          <p className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">
+            CTA Sections
+          </p>
+
+          <p className="mt-1 text-[11px] text-muted-foreground">
+            Click a section to expand or collapse its settings.
+          </p>
+        </div>
 
         {/* ====================================================
             SEO METADATA
         ===================================================== */}
-        <div className="rounded-lg border border-border/60 p-3">
+        <CollapsibleSectionCard
+          title="SEO Metadata"
+          meta="seo"
+          indexLabel="01"
+          isOpen={openSections.seo ?? false}
+          onToggle={() => toggleSection("seo")}
+        >
+          <div className="rounded-lg border border-border/60 p-3">
 
           <div className="mb-3 text-xs font-semibold uppercase tracking-wide text-muted-foreground">
             SEO Metadata
@@ -350,11 +382,19 @@ export const CtaForm = () => {
 
           </div>
         </div>
+        </CollapsibleSectionCard>
 
         {/* ====================================================
             CTA CONTENT
         ===================================================== */}
-        <div className="rounded-lg border border-border/60 p-3">
+        <CollapsibleSectionCard
+          title="CTA Content"
+          meta="content"
+          indexLabel="02"
+          isOpen={openSections.content ?? false}
+          onToggle={() => toggleSection("content")}
+        >
+          <div className="rounded-lg border border-border/60 p-3">
 
           <div className="mb-3 text-xs font-semibold uppercase tracking-wide text-muted-foreground">
             CTA Content
@@ -540,11 +580,19 @@ export const CtaForm = () => {
 
           </div>
         </div>
+        </CollapsibleSectionCard>
 
         {/* ====================================================
             BACKGROUND
         ===================================================== */}
-        <div className="rounded-lg border border-border/60 p-3">
+        <CollapsibleSectionCard
+          title="Background"
+          meta="background"
+          indexLabel="03"
+          isOpen={openSections.background ?? false}
+          onToggle={() => toggleSection("background")}
+        >
+          <div className="rounded-lg border border-border/60 p-3">
 
           <div className="mb-3 text-xs font-semibold uppercase tracking-wide text-muted-foreground">
             Background
@@ -682,11 +730,19 @@ export const CtaForm = () => {
 
           </div>
         </div>
+        </CollapsibleSectionCard>
 
         {/* ====================================================
             BUTTONS
         ===================================================== */}
-        <div className="rounded-lg border border-border/60 p-3">
+        <CollapsibleSectionCard
+          title="Buttons"
+          meta="buttons"
+          indexLabel="04"
+          isOpen={openSections.buttons ?? false}
+          onToggle={() => toggleSection("buttons")}
+        >
+          <div className="rounded-lg border border-border/60 p-3">
 
           <div className="mb-3 text-xs font-semibold uppercase tracking-wide text-muted-foreground">
             Buttons
@@ -735,6 +791,7 @@ export const CtaForm = () => {
           />
 
         </div>
+        </CollapsibleSectionCard>
 
       </div>
     </div>
