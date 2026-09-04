@@ -95,17 +95,10 @@ export function CMSEditorLayout() {
         </div>
       </header>
 
-      {/* =========================
-                    Main Content
-                    Desktop: 20% Editor / 80% Preview
-                    Mobile: Stacked
-                ========================== */}
       <main className="relative flex flex-1 flex-col overflow-hidden md:flex-row">
         <CmsDraftProvider key={pageSlug}>
-          {/* =========================
-                            Editor
-                        ========================== */}
-          <aside className="relative z-10 flex w-full min-w-0 flex-none flex-col overflow-hidden border-b border-border/60 bg-card/50 shadow-[0_4px_24px_rgba(0,0,0,0.02)] md:w-[20%] md:basis-[20%] md:border-r md:border-b-0 md:shadow-[4px_0_24px_rgba(0,0,0,0.02)]">
+        
+          <aside className="relative z-10 flex w-full min-w-0 flex-none flex-col overflow-hidden border-b border-border/60 bg-card/50 shadow-[0_4px_24px_rgba(0,0,0,0.02)] md:w-[30%] md:basis-[30%] md:border-r md:border-b-0 md:shadow-[4px_0_24px_rgba(0,0,0,0.02)]">
             <div className="custom-scrollbar flex-1 overflow-y-auto">
               <Outlet />
             </div>

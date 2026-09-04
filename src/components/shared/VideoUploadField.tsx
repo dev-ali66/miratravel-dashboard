@@ -12,14 +12,14 @@ import {
 import { cn } from "@/lib/utils"
 import { ColorField, NumberField } from "@/components/pages/CMS/shared/FormControls"
 
-interface VideoUploadFieldProps
+export interface VideoUploadFieldProps
     extends Omit<
         React.HTMLAttributes<HTMLDivElement>,
         "onChange"
     > {
     label: string
-    value: string
-    fieldName: string
+    value?: string
+    fieldName?: string
     onChange: (value: string) => void
     opacity?: number
     onOpacityChange?: (value: number) => void
@@ -32,7 +32,7 @@ interface VideoUploadFieldProps
 export function VideoUploadField({
     label,
     value,
-    fieldName,
+    fieldName = "",
     onChange,
     opacity = 100,
     onOpacityChange,
@@ -244,3 +244,6 @@ export function VideoUploadField({
         </div>
     )
 }
+
+export { VideoUploadField as VideoUploader }
+export type { VideoUploadFieldProps as VideoUploaderProps }

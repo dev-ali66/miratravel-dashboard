@@ -2,14 +2,13 @@ import { useCmsPage } from "../shared/useCmsPage"
 import { SaveBar } from "../shared/SaveBar"
 
 import {
+  DynamicStyledField,
   TextField,
   TextAreaField,
   ColorField,
 } from "../shared/FormControls"
 
 import { RepeaterList } from "../shared/RepeaterList"
-
-import { ImageUploadField } from "@/components/shared/ImageUploadField"
 
 import type {
   FooterCertification,
@@ -129,12 +128,14 @@ export const FooterForm = () => {
               }
             />
 
-            <ImageUploadField
+            <DynamicStyledField
+              type="image"
               label="Background image"
               value={
                 theme.backgroundImage ??
                 ""
               }
+              fieldName="footerBackgroundImage"
               onChange={(value) =>
                 updateTheme({
                   backgroundImage: value,
@@ -357,9 +358,11 @@ export const FooterForm = () => {
 
           <div className="flex flex-col gap-3">
 
-            <ImageUploadField
+            <DynamicStyledField
+              type="image"
               label="Logo"
               value={logo.url ?? ""}
+              fieldName="footerBrandLogo"
               onChange={(value) =>
                 updateContent({
                   brand: {
@@ -707,11 +710,13 @@ export const FooterForm = () => {
 
                   <div className="flex flex-col gap-3">
 
-                    <ImageUploadField
+                    <DynamicStyledField
+                      type="image"
                       label="Icon"
                       value={
                         link.icon ?? ""
                       }
+                      fieldName="footerSocialIcon"
                       onChange={(value) =>
                         updateLink({
                           ...link,
@@ -1033,12 +1038,14 @@ export const FooterForm = () => {
                   }
                 />
 
-                <ImageUploadField
+                <DynamicStyledField
+                  type="image"
                   label="Image"
                   value={
                     certification.image ??
                     ""
                   }
+                  fieldName="footerCertificationImage"
                   onChange={(value) =>
                     updateCertification({
                       ...certification,

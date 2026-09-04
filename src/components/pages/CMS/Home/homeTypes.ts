@@ -27,11 +27,21 @@ export interface HomeVideo {
   overlayOpacity?: number
 }
 
+export interface HomeMultimedia extends HomeImage {
+  type?: "image" | "video" | "color"
+  autoplay?: boolean
+  loop?: boolean
+  muted?: boolean
+  imageData?: HomeMultimedia
+  videoData?: HomeMultimedia
+}
+
 export interface HomeHeroContent {
   titleLine1?: string
   titleLine2?: string
   titleHighlight?: string
   description?: string
+  backgroundMultimedia?: HomeMultimedia
   textColors?: {
     titleLine1?: string
     titleLine2?: string
@@ -53,12 +63,14 @@ export interface HomeExploreJourneysContent {
   subtitle?: string
   description?: string
   trustBadge?: HomeTrustBadge
+  backgroundMultimedia?: HomeMultimedia
 }
 
 export interface HomeDestinationsContent {
   title?: string
   eyebrow?: string
   subtitle?: string
+  backgroundMultimedia?: HomeMultimedia
 }
 
 export interface HomeStoryItem {
@@ -72,6 +84,9 @@ export interface HomeMiraStoriesContent {
   title?: string
   eyebrow?: string
   description?: string
+  backgroundMultimedia?: HomeMultimedia
+  leftSideMultimedia?: HomeMultimedia
+  rightSideMultimedia?: HomeMultimedia
 }
 
 export interface HomeWhyMiraContent {
@@ -79,18 +94,22 @@ export interface HomeWhyMiraContent {
   eyebrow?: string
   signature?: string
   paragraphs?: string[]
+  backgroundMultimedia?: HomeMultimedia
+  rightSideMultimedia?: HomeMultimedia
 }
 
 export interface HomeTravelInsightsContent {
   title?: string
   eyebrow?: string
   description?: string
+  backgroundMultimedia?: HomeMultimedia
 }
 
 export interface HomeCustomJourneyCtaContent {
   titleLine1?: string
   titleHighlight?: string
   description?: string
+  backgroundMultimedia?: HomeMultimedia
 }
 
 export interface HomeSection {

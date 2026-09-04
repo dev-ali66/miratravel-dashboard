@@ -1,10 +1,5 @@
 import * as React from "react"
-import { useEffect, useRef, useState } from "react"
-import { Image as ImageIcon, Loader2, Trash2, Upload, Video as VideoIcon } from "lucide-react"
-import { useImageUpload } from "@/hooks/cms/useImageUpload"
-import { useVideoUpload } from "@/hooks/cms/useVideoUpload"
-import { removeFiles } from "@/services/fileUpload"
-import { Button } from "@/components/ui/button"
+import { useEffect, useState } from "react"
 import { Input } from "@/components/ui/input"
 import { Textarea } from "@/components/ui/textarea"
 import { Label } from "@/components/ui/label"
@@ -15,9 +10,17 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select"
+import { ImageUploadField } from "@/components/shared/ImageUploadField"
+import { VideoUploadField as VideoUploader } from "@/components/shared/VideoUploadField"
 import { cn } from "@/lib/utils"
 
-interface BaseProps {
+/*
+ * ============================================================
+ * COMMON / BASE PROPS & TYPES
+ * ============================================================
+ */
+
+export interface BaseProps {
   label: string
   hint?: string
   className?: string
@@ -30,11 +33,24 @@ export interface FieldStyle {
   backgroundOpacity?: number
 }
 
-interface StyledFieldProps {
+export interface StyledFieldProps {
   enableStyle?: boolean
   style?: FieldStyle
   onStyleChange?: (style: FieldStyle) => void
 }
+
+export interface NormalFieldValidation {
+  required?: boolean
+  minLength?: number
+  maxLength?: number
+  min?: number // for number type
+  max?: number // for number type
+  pattern?: RegExp | string // regex validation for text/textarea
+  patternMessage?: string // custom error message when regex fails
+  custom?: (value: string | number) => string | undefined
+}
+
+export type ValidationRules = NormalFieldValidation
 
 const updateFieldStyle = (
   style: FieldStyle | undefined,
@@ -59,77 +75,112 @@ export function FieldWrapper({
   )
 }
 
-interface TextFieldProps extends BaseProps, StyledFieldProps {
+/*
+ * ============================================================
+ * COLOR FIELD (SINGLE SOURCE OF TRUTH)
+ * ============================================================
+ */
+
+export interface ColorFieldProps extends BaseProps {
   value: string
   onChange: (value: string) => void
-  placeholder?: string
 }
 
-export function TextField({ value, onChange, placeholder, enableStyle, style, onStyleChange, ...rest }: TextFieldProps) {
-  return (
-    <FieldWrapper {...rest}>
-      <Input
-        value={value ?? ""}
-        placeholder={placeholder}
-        onChange={(e) => onChange(e.target.value)}
-      />
-      {enableStyle && onStyleChange && (
-        <FieldStyleControls style={style} onStyleChange={onStyleChange} />
-      )}
-    </FieldWrapper>
+const parseColor = (value: string) => {
+  const hexMatch = value?.match(
+    /^#([0-9a-fA-F]{3}|[0-9a-fA-F]{6})([0-9a-fA-F]{2})?$/
   )
-}
 
-interface NumberFieldProps extends BaseProps, StyledFieldProps {
-  value: number | undefined
-  onChange: (value: number) => void
-  placeholder?: string
-}
+  if (hexMatch) {
+    const hex =
+      hexMatch[1].length === 3
+        ? hexMatch[1]
+            .split("")
+            .map((part) => part + part)
+            .join("")
+        : hexMatch[1]
 
-export function NumberField({ value, onChange, placeholder, enableStyle, style, onStyleChange, ...rest }: NumberFieldProps) {
-  return (
-    <FieldWrapper {...rest}>
-      <Input
-        type="number"
-        value={value ?? ""}
-        placeholder={placeholder}
-        onChange={(e) => onChange(Number(e.target.value))}
-      />
-      {enableStyle && onStyleChange && (
-        <FieldStyleControls style={style} onStyleChange={onStyleChange} />
-      )}
-    </FieldWrapper>
+    return {
+      hex: `#${hex}`,
+      opacity: hexMatch[2] ? parseInt(hexMatch[2], 16) / 255 : 1,
+    }
+  }
+
+  const rgbMatch = value?.match(
+    /^rgba?\(\s*(\d+)\s*,\s*(\d+)\s*,\s*(\d+)(?:\s*,\s*([\d.]+))?\s*\)$/i
   )
+
+  if (rgbMatch) {
+    const red = Number(rgbMatch[1])
+    const green = Number(rgbMatch[2])
+    const blue = Number(rgbMatch[3])
+
+    return {
+      hex: `#${[red, green, blue]
+        .map((part) => part.toString(16).padStart(2, "0"))
+        .join("")}`,
+      opacity: rgbMatch[4] ? Math.max(0, Math.min(1, Number(rgbMatch[4]))) : 1,
+    }
+  }
+
+  return { hex: "#000000", opacity: 1 }
 }
 
-interface TextAreaFieldProps extends BaseProps, StyledFieldProps {
-  value: string
-  onChange: (value: string) => void
-  placeholder?: string
-  rows?: number
+const formatColor = (hex: string, opacity: number) => {
+  if (opacity >= 1) return hex
+
+  const red = parseInt(hex.slice(1, 3), 16)
+  const green = parseInt(hex.slice(3, 5), 16)
+  const blue = parseInt(hex.slice(5, 7), 16)
+
+  return `rgba(${red}, ${green}, ${blue}, ${Number(opacity.toFixed(2))})`
 }
 
-export function TextAreaField({
-  value,
-  onChange,
-  placeholder,
-  rows = 3,
-  enableStyle,
-  style,
-  onStyleChange,
-  ...rest
-}: TextAreaFieldProps) {
+export function ColorField({ value, onChange, ...rest }: ColorFieldProps) {
+  const parsedColor = parseColor(value || "")
+  const opacityPercent = Math.round(parsedColor.opacity * 100)
+
   return (
     <FieldWrapper {...rest}>
-      <Textarea
-        value={value ?? ""}
-        placeholder={placeholder}
-        rows={rows}
-        onChange={(e) => onChange(e.target.value)}
-      />
-      {enableStyle && onStyleChange && (
-        <FieldStyleControls style={style} onStyleChange={onStyleChange} />
-      )}
+      <div className="flex flex-col gap-2">
+        <div className="flex items-center gap-2">
+          <input
+            type="color"
+            value={parsedColor.hex}
+            onChange={(e) =>
+              onChange(formatColor(e.target.value, parsedColor.opacity))
+            }
+            className="h-10 w-10 shrink-0 cursor-pointer rounded border border-input bg-transparent p-1"
+          />
+          <Input
+            value={value ?? ""}
+            onChange={(e) => onChange(e.target.value)}
+            placeholder="#000000"
+            className="font-mono"
+          />
+        </div>
+
+        <div className="flex items-center gap-3">
+          <span className="w-16 shrink-0 text-xs text-muted-foreground">
+            Opacity
+          </span>
+          <input
+            type="range"
+            min="0"
+            max="100"
+            value={opacityPercent}
+            onChange={(e) =>
+              onChange(
+                formatColor(parsedColor.hex, Number(e.target.value) / 100)
+              )
+            }
+            className="w-full accent-primary"
+          />
+          <span className="w-10 text-right text-xs font-mono text-muted-foreground">
+            {opacityPercent}%
+          </span>
+        </div>
+      </div>
     </FieldWrapper>
   )
 }
@@ -161,106 +212,332 @@ export function FieldStyleControls({
   )
 }
 
-interface ColorFieldProps extends BaseProps {
-  value: string
+/*
+ * ============================================================
+ * VALIDATION LOGIC
+ * ============================================================
+ */
+
+const getValidationError = (
+  value: string | number | undefined,
+  validation?: NormalFieldValidation,
+  type?: string
+): string | undefined => {
+  if (!validation) return undefined
+
+  const strValue = value === undefined || value === null ? "" : String(value)
+  const isValueEmpty = strValue.trim() === ""
+
+  if (validation.required && isValueEmpty) {
+    return "This field is required"
+  }
+
+  if (!isValueEmpty) {
+    if (
+      validation.minLength !== undefined &&
+      strValue.length < validation.minLength
+    ) {
+      return `Minimum ${validation.minLength} characters required`
+    }
+    if (
+      validation.maxLength !== undefined &&
+      strValue.length > validation.maxLength
+    ) {
+      return `Maximum ${validation.maxLength} characters allowed`
+    }
+
+    if (
+      type === "number" ||
+      validation.min !== undefined ||
+      validation.max !== undefined
+    ) {
+      const num = Number(value)
+      if (!isNaN(num)) {
+        if (validation.min !== undefined && num < validation.min) {
+          return `Minimum value is ${validation.min}`
+        }
+        if (validation.max !== undefined && num > validation.max) {
+          return `Maximum value is ${validation.max}`
+        }
+      }
+    }
+
+    if (validation.pattern) {
+      const regex =
+        typeof validation.pattern === "string"
+          ? new RegExp(validation.pattern)
+          : validation.pattern
+      regex.lastIndex = 0
+      if (!regex.test(strValue)) {
+        return validation.patternMessage ?? "Invalid format"
+      }
+    }
+  }
+
+  if (validation.custom) {
+    return validation.custom(value ?? "")
+  }
+
+  return undefined
+}
+
+/*
+ * ============================================================
+ * DISCRIMINATED UNION PROPS
+ * ============================================================
+ */
+
+type BaseContainerProps = Omit<
+  React.HTMLAttributes<HTMLDivElement>,
+  "onChange" | "style"
+> & {
+  label: string
+  hint?: string
+  className?: string
+}
+
+interface StylableBaseProps extends BaseContainerProps {
+  validation?: NormalFieldValidation
+  onValidChange?: (isValid: boolean) => void
+  enableStyle?: boolean
+  style?: FieldStyle
+  onStyleChange?: (style: FieldStyle) => void
+}
+
+export interface DynamicTextFieldProps extends StylableBaseProps {
+  type: "text"
+  value: string | number | undefined
   onChange: (value: string) => void
+  placeholder?: string
+  checked?: never
+  options?: never
+  rows?: never
 }
 
-const parseColor = (value: string) => {
-  const hexMatch = value?.match(/^#([0-9a-fA-F]{3}|[0-9a-fA-F]{6})([0-9a-fA-F]{2})?$/)
-
-  if (hexMatch) {
-    const hex = hexMatch[1].length === 3
-      ? hexMatch[1].split("").map((part) => part + part).join("")
-      : hexMatch[1]
-
-    return {
-      hex: `#${hex}`,
-      opacity: hexMatch[2] ? parseInt(hexMatch[2], 16) / 255 : 1,
-    }
-  }
-
-  const rgbMatch = value?.match(/^rgba?\(\s*(\d+)\s*,\s*(\d+)\s*,\s*(\d+)(?:\s*,\s*([\d.]+))?\s*\)$/i)
-
-  if (rgbMatch) {
-    const red = Number(rgbMatch[1])
-    const green = Number(rgbMatch[2])
-    const blue = Number(rgbMatch[3])
-
-    return {
-      hex: `#${[red, green, blue].map((part) => part.toString(16).padStart(2, "0")).join("")}`,
-      opacity: rgbMatch[4] ? Math.max(0, Math.min(1, Number(rgbMatch[4]))) : 1,
-    }
-  }
-
-  return { hex: "#000000", opacity: 1 }
+export interface DynamicNumberFieldProps extends StylableBaseProps {
+  type: "number"
+  value: string | number | undefined
+  onChange: (value: string) => void
+  placeholder?: string
+  min?: number
+  max?: number
+  step?: number | string
+  checked?: never
+  options?: never
+  rows?: never
 }
 
-const formatColor = (hex: string, opacity: number) => {
-  if (opacity >= 1) return hex
-
-  const red = parseInt(hex.slice(1, 3), 16)
-  const green = parseInt(hex.slice(3, 5), 16)
-  const blue = parseInt(hex.slice(5, 7), 16)
-
-  return `rgba(${red}, ${green}, ${blue}, ${Number(opacity.toFixed(2))})`
+export interface DynamicTextAreaFieldProps extends StylableBaseProps {
+  type: "textarea"
+  value: string | number | undefined
+  onChange: (value: string) => void
+  placeholder?: string
+  rows?: number
+  maxLength?: number
+  checked?: never
+  options?: never
 }
 
-export function ColorField({ value, onChange, ...rest }: ColorFieldProps) {
-  const parsedColor = parseColor(value || "")
-  const opacityPercent = Math.round(parsedColor.opacity * 100)
+export interface DynamicSelectFieldProps extends StylableBaseProps {
+  type: "select"
+  value: string | undefined
+  onChange: (value: string) => void
+  options: { value: string; label: string }[]
+  placeholder?: string
+  checked?: never
+  rows?: never
+}
+
+export interface DynamicSwitchFieldProps extends BaseContainerProps {
+  type: "switch"
+  checked: boolean
+  onChange: (checked: boolean) => void
+  value?: never
+  options?: never
+  rows?: never
+  enableStyle?: never
+  style?: never
+  onStyleChange?: never
+  validation?: never
+  onValidChange?: never
+}
+
+export interface DynamicImageFieldProps extends BaseContainerProps {
+  type: "image"
+  value?: string
+  fieldName?: string
+  onChange: (value: string) => void
+  opacity?: number
+  onOpacityChange?: (value: number) => void
+  overlayColor?: string
+  onOverlayColorChange?: (value: string) => void
+  overlayOpacity?: number
+  onOverlayOpacityChange?: (value: number) => void
+  checked?: never
+  options?: never
+  rows?: never
+  enableStyle?: never
+  style?: never
+  onStyleChange?: never
+  validation?: never
+  onValidChange?: never
+}
+
+export interface DynamicVideoFieldProps extends BaseContainerProps {
+  type: "video"
+  value?: string
+  fieldName?: string
+  onChange: (value: string) => void
+  opacity?: number
+  onOpacityChange?: (value: number) => void
+  overlayColor?: string
+  onOverlayColorChange?: (value: string) => void
+  overlayOpacity?: number
+  onOverlayOpacityChange?: (value: number) => void
+  checked?: never
+  options?: never
+  rows?: never
+  enableStyle?: never
+  style?: never
+  onStyleChange?: never
+  validation?: never
+  onValidChange?: never
+}
+
+export type DynamicStyledFieldProps =
+  | DynamicTextFieldProps
+  | DynamicNumberFieldProps
+  | DynamicTextAreaFieldProps
+  | DynamicSelectFieldProps
+  | DynamicSwitchFieldProps
+  | DynamicImageFieldProps
+  | DynamicVideoFieldProps
+
+/*
+ * ============================================================
+ * INTERNAL FIELD IMPLEMENTATIONS
+ * ============================================================
+ */
+
+function DynamicTextualField(
+  props:
+    | DynamicTextFieldProps
+    | DynamicNumberFieldProps
+    | DynamicTextAreaFieldProps
+) {
+  const {
+    type,
+    label,
+    value,
+    onChange,
+    placeholder,
+    hint,
+    validation,
+    onValidChange,
+    enableStyle,
+    style,
+    onStyleChange,
+    className,
+    ...rest
+  } = props
+
+  const [touched, setTouched] = useState(false)
+  const error = getValidationError(value, validation, type)
+
+  useEffect(() => {
+    onValidChange?.(!error)
+  }, [error, onValidChange])
 
   return (
-    <FieldWrapper {...rest}>
-      <div className="flex flex-col gap-2">
-        <div className="flex items-center gap-2">
-        <input
-          type="color"
-          value={parsedColor.hex}
-          onChange={(e) => onChange(formatColor(e.target.value, parsedColor.opacity))}
-          className="h-10 w-10 shrink-0 cursor-pointer rounded border border-input bg-transparent p-1"
-        />
-        <Input
-          value={value ?? ""}
-          onChange={(e) => onChange(e.target.value)}
-          placeholder="#000000"
-          className="font-mono"
-        />
-        </div>
+    <div className={cn("flex flex-col gap-1.5", className)} {...rest}>
+      {label && (
+        <Label className="text-xs font-semibold text-foreground">{label}</Label>
+      )}
 
-        <div className="flex items-center gap-3">
-          <span className="w-16 shrink-0 text-xs text-muted-foreground">Opacity</span>
-          <input
-            type="range"
-            min="0"
-            max="100"
-            value={opacityPercent}
-            onChange={(e) =>
-              onChange(formatColor(parsedColor.hex, Number(e.target.value) / 100))
-            }
-            className="w-full accent-primary"
-          />
-          <span className="w-10 text-right text-xs font-mono text-muted-foreground">
-            {opacityPercent}%
-          </span>
+      {type === "textarea" ? (
+        <Textarea
+          value={value ?? ""}
+          placeholder={placeholder}
+          rows={props.rows ?? 3}
+          maxLength={validation?.maxLength ?? props.maxLength}
+          onChange={(e) => onChange(e.target.value)}
+          onBlur={() => setTouched(true)}
+        />
+      ) : type === "number" ? (
+        <Input
+          type="number"
+          value={value ?? ""}
+          placeholder={placeholder}
+          min={validation?.min ?? props.min}
+          max={validation?.max ?? props.max}
+          step={props.step}
+          onChange={(e) => onChange(e.target.value)}
+          onBlur={() => setTouched(true)}
+        />
+      ) : (
+        <Input
+          type="text"
+          value={value ?? ""}
+          placeholder={placeholder}
+          onChange={(e) => onChange(e.target.value)}
+          onBlur={() => setTouched(true)}
+        />
+      )}
+
+      {touched && error ? (
+        <p className="text-xs text-destructive">{error}</p>
+      ) : hint ? (
+        <p className="text-[11px] text-muted-foreground">{hint}</p>
+      ) : null}
+
+      {enableStyle && onStyleChange && (
+        <div className="mt-1">
+          <FieldStyleControls style={style} onStyleChange={onStyleChange} />
         </div>
-      </div>
-    </FieldWrapper>
+      )}
+    </div>
   )
 }
 
-interface SelectFieldProps extends BaseProps {
-  value: string
-  onChange: (value: string) => void
-  options: { value: string; label: string }[]
-}
+function DynamicSelectFieldComponent(props: DynamicSelectFieldProps) {
+  const {
+    label,
+    value,
+    onChange,
+    options,
+    placeholder,
+    hint,
+    validation,
+    onValidChange,
+    enableStyle,
+    style,
+    onStyleChange,
+    className,
+    ...rest
+  } = props
 
-export function SelectField({ value, onChange, options, ...rest }: SelectFieldProps) {
+  const [touched, setTouched] = useState(false)
+  const error = getValidationError(value, validation, "select")
+
+  useEffect(() => {
+    onValidChange?.(!error)
+  }, [error, onValidChange])
+
   return (
-    <FieldWrapper {...rest}>
-      <Select value={value} onValueChange={onChange}>
-        <SelectTrigger className="w-full">
-          <SelectValue placeholder="Select" />
+    <div className={cn("flex flex-col gap-1.5", className)} {...rest}>
+      {label && (
+        <Label className="text-xs font-semibold text-foreground">{label}</Label>
+      )}
+
+      <Select
+        value={value ?? ""}
+        onValueChange={(val) => {
+          onChange(val)
+          setTouched(true)
+        }}
+      >
+        <SelectTrigger className="w-full" onBlur={() => setTouched(true)}>
+          <SelectValue placeholder={placeholder ?? "Select"} />
         </SelectTrigger>
         <SelectContent>
           {options.map((opt) => (
@@ -270,18 +547,33 @@ export function SelectField({ value, onChange, options, ...rest }: SelectFieldPr
           ))}
         </SelectContent>
       </Select>
-    </FieldWrapper>
+
+      {touched && error ? (
+        <p className="text-xs text-destructive">{error}</p>
+      ) : hint ? (
+        <p className="text-[11px] text-muted-foreground">{hint}</p>
+      ) : null}
+
+      {enableStyle && onStyleChange && (
+        <div className="mt-1">
+          <FieldStyleControls style={style} onStyleChange={onStyleChange} />
+        </div>
+      )}
+    </div>
   )
 }
 
-interface SwitchFieldProps extends BaseProps {
-  checked: boolean
-  onChange: (checked: boolean) => void
-}
+function DynamicSwitchFieldComponent(props: DynamicSwitchFieldProps) {
+  const { label, checked, onChange, hint, className, ...rest } = props
 
-export function SwitchField({ checked, onChange, label, hint, className }: SwitchFieldProps) {
   return (
-    <div className={cn("flex items-center justify-between gap-3 py-1", className)}>
+    <div
+      className={cn(
+        "flex items-center justify-between gap-3 py-1",
+        className
+      )}
+      {...rest}
+    >
       <div>
         <Label className="text-xs font-semibold text-foreground">{label}</Label>
         {hint && <p className="text-[11px] text-muted-foreground">{hint}</p>}
@@ -307,224 +599,153 @@ export function SwitchField({ checked, onChange, label, hint, className }: Switc
   )
 }
 
-export interface ValidationRules {
-  required?: boolean
-  minLength?: number
-  maxLength?: number
-  min?: number
-  max?: number
-  pattern?: RegExp | string
-  patternMessage?: string
-  custom?: (value: string | number) => string | undefined
-}
-
-interface TextualFieldProps extends BaseProps {
-  type: "text" | "number" | "textarea"
-  value: string | number | undefined
-  onChange: (value: string | number) => void
-  placeholder?: string
-  rows?: number
-  min?: number
-  max?: number
-  maxLength?: number
-  validation?: ValidationRules
-  onValidChange?: (isValid: boolean) => void
-  enableStyle?: boolean
-  style?: FieldStyle
-  onStyleChange?: (style: FieldStyle) => void
-}
-
-interface MediaFieldProps extends BaseProps {
-  type: "image" | "video"
-  value?: string
-  fieldName?: string
-  onChange: (value: string) => void
-  opacity?: number
-  onOpacityChange?: (value: number) => void
-  overlayColor?: string
-  onOverlayColorChange?: (value: string) => void
-  overlayOpacity?: number
-  onOverlayOpacityChange?: (value: number) => void
-}
-
-export type DynamicStyledFieldProps = TextualFieldProps | MediaFieldProps
-
-const getValidationError = (
-  value: string | number | undefined,
-  rules?: ValidationRules
-) => {
-  if (!rules) return undefined
-
-  const textValue = value === undefined ? "" : String(value)
-  if (rules.required && textValue.trim() === "") return "This field is required"
-  if (rules.minLength !== undefined && textValue.length < rules.minLength) {
-    return `Minimum ${rules.minLength} characters required`
-  }
-  if (rules.maxLength !== undefined && textValue.length > rules.maxLength) {
-    return `Maximum ${rules.maxLength} characters allowed`
-  }
-  if (typeof value === "number" && rules.min !== undefined && value < rules.min) {
-    return `Minimum value is ${rules.min}`
-  }
-  if (typeof value === "number" && rules.max !== undefined && value > rules.max) {
-    return `Maximum value is ${rules.max}`
-  }
-  if (rules.pattern && textValue !== "") {
-    const pattern = typeof rules.pattern === "string" ? new RegExp(rules.pattern) : rules.pattern
-    pattern.lastIndex = 0
-    if (!pattern.test(textValue)) return rules.patternMessage ?? "Invalid format"
-  }
-  return rules.custom?.(value ?? "")
-}
-
-function DynamicMediaField({ field }: { field: MediaFieldProps }) {
+function DynamicImageFieldComponent(props: DynamicImageFieldProps) {
   const {
-    type,
+    label,
     value,
-    fieldName = "",
+    fieldName,
     onChange,
-    opacity = 100,
+    opacity,
     onOpacityChange,
-    overlayColor = "#000000",
+    overlayColor,
     onOverlayColorChange,
-    overlayOpacity = 0,
+    overlayOpacity,
     onOverlayOpacityChange,
-  } = field
-  const { mutate: uploadImage, isPending: isImageUploading } = useImageUpload()
-  const { mutate: uploadVideo, isPending: isVideoUploading } = useVideoUpload()
-  const fileInputRef = useRef<HTMLInputElement>(null)
-  const [isRemoving, setIsRemoving] = useState(false)
-  const isUploading = type === "image" ? isImageUploading : isVideoUploading
-
-  const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const file = event.target.files?.[0]
-    if (!file) return
-
-    const upload = type === "image" ? uploadImage : uploadVideo
-    upload(
-      { file, fieldName, fileRemove: value ? [value] : [] },
-      {
-        onSuccess: (response) => {
-          const uploadedFiles = response.data?.[fieldName]
-          if (uploadedFiles?.[0]) onChange(uploadedFiles[0])
-        },
-      }
-    )
-    event.target.value = ""
-  }
-
-  const handleRemove = async (event: React.MouseEvent) => {
-    event.stopPropagation()
-    if (!value || isRemoving) return
-
-    try {
-      setIsRemoving(true)
-      await removeFiles([value])
-      onChange("")
-    } finally {
-      setIsRemoving(false)
-    }
-  }
+    className,
+    ...rest
+  } = props
 
   return (
-    <>
-      <div
-        className={cn(
-          "relative flex w-full items-center justify-center rounded-xl border-2 border-dashed border-border p-2 cursor-pointer transition-colors hover:bg-muted/50",
-          type === "image" ? "h-45" : "h-55",
-          isUploading && "pointer-events-none opacity-50"
-        )}
-        onClick={() => fileInputRef.current?.click()}
-      >
-        <input
-          type="file"
-          accept={type === "image" ? "image/*" : "video/*"}
-          className="hidden"
-          ref={fileInputRef}
-          onChange={handleFileChange}
-        />
-        {isUploading ? (
-          <div className="flex flex-col items-center gap-2">
-            <Loader2 className="size-6 animate-spin text-primary" />
-            <span className="text-sm font-medium">Uploading...</span>
-          </div>
-        ) : value ? (
-          <div className={cn("group relative flex h-full w-full items-center justify-center overflow-hidden rounded-lg", type === "image" ? "bg-muted/10" : "bg-black")}>
-            {type === "image" ? (
-              <img src={value} alt="Preview" style={{ opacity: opacity / 100 }} className="h-full w-full object-cover transition-opacity duration-300" />
-            ) : (
-              <video src={value} style={{ opacity: opacity / 100 }} className="h-full w-full object-cover transition-opacity duration-300" controls muted playsInline onClick={(event) => event.stopPropagation()} />
-            )}
-            {overlayOpacity > 0 && <div className="pointer-events-none absolute inset-0 z-10" style={{ backgroundColor: overlayColor, opacity: overlayOpacity / 100 }} />}
-            <Button type="button" variant="destructive" disabled={isRemoving || isUploading} aria-label={`Delete ${type}`} className="absolute left-3 top-3 z-30 size-9 rounded-full p-0 shadow-md" onClick={handleRemove}>
-              {isRemoving ? <Loader2 className="size-4 animate-spin" /> : <Trash2 className="size-4" />}
-            </Button>
-            <div className="pointer-events-none absolute inset-0 z-20 flex items-center justify-center opacity-0 transition-opacity duration-300 group-hover:opacity-100">
-              <Button type="button" variant="secondary" className="pointer-events-auto gap-2 rounded-full px-6 shadow-md" onClick={(event) => { event.stopPropagation(); fileInputRef.current?.click() }}>
-                <div className="h-2 w-2 rounded-full bg-primary" />
-                Change {type === "image" ? "Image" : "Video"}
-              </Button>
-            </div>
-          </div>
-        ) : (
-          <div className="flex flex-col items-center gap-2 text-muted-foreground">
-            {type === "image" ? <ImageIcon className="h-8 w-8 opacity-50" /> : <VideoIcon className="h-8 w-8 opacity-50" />}
-            <Upload className="mb-2 h-8 w-8 opacity-50" />
-            <span className="text-sm font-medium">Click to upload {type}</span>
-            {type === "video" && <span className="text-xs text-muted-foreground/70">MP4, WebM, MOV</span>}
-          </div>
-        )}
-      </div>
-      {value && onOpacityChange && (
-        <div className="flex flex-col gap-1.5">
-          <Label className="text-xs font-semibold text-foreground">{type === "image" ? "Image" : "Video"} opacity (%)</Label>
-          <Input type="number" min={0} max={100} value={opacity} onChange={(event) => onOpacityChange(Math.max(0, Math.min(100, Number(event.target.value))))} />
-        </div>
-      )}
-      {value && onOverlayColorChange && onOverlayOpacityChange && (
-        <div className="flex flex-col gap-3">
-          <ColorField label="Overlay color" value={overlayColor} onChange={onOverlayColorChange} />
-          <div className="flex items-center gap-3">
-            <Label className="w-28 shrink-0 text-xs font-semibold text-foreground">Overlay opacity</Label>
-            <input type="range" min="0" max="100" value={overlayOpacity} onChange={(event) => onOverlayOpacityChange(Number(event.target.value))} className="w-full accent-primary" />
-            <span className="w-10 text-right text-xs font-mono text-muted-foreground">{overlayOpacity}%</span>
-          </div>
-        </div>
-      )}
-    </>
+    <ImageUploadField
+      label={label}
+      value={value}
+      fieldName={fieldName}
+      onChange={onChange}
+      opacity={opacity}
+      onOpacityChange={onOpacityChange}
+      overlayColor={overlayColor}
+      onOverlayColorChange={onOverlayColorChange}
+      overlayOpacity={overlayOpacity}
+      onOverlayOpacityChange={onOverlayOpacityChange}
+      className={className}
+      {...rest}
+    />
   )
 }
 
-export function DynamicStyledField(field: DynamicStyledFieldProps) {
-  const [touched, setTouched] = useState(false)
-  const isMedia = field.type === "image" || field.type === "video"
-  const textualField = field as TextualFieldProps
-  const error = isMedia ? undefined : getValidationError(textualField.value, textualField.validation)
-  const onValidChange = isMedia ? undefined : textualField.onValidChange
-
-  useEffect(() => {
-    onValidChange?.(!error)
-  }, [error, onValidChange])
-
-  if (isMedia) {
-    return (
-      <FieldWrapper label={field.label} className={field.className}>
-        <DynamicMediaField field={field} />
-      </FieldWrapper>
-    )
-  }
+function DynamicVideoFieldComponent(props: DynamicVideoFieldProps) {
+  const {
+    label,
+    value,
+    fieldName,
+    onChange,
+    opacity,
+    onOpacityChange,
+    overlayColor,
+    onOverlayColorChange,
+    overlayOpacity,
+    onOverlayOpacityChange,
+    className,
+    ...rest
+  } = props
 
   return (
-    <FieldWrapper label={textualField.label} hint={undefined} className={textualField.className}>
-      {textualField.type === "textarea" ? (
-        <Textarea value={textualField.value ?? ""} placeholder={textualField.placeholder} rows={textualField.rows ?? 3} maxLength={textualField.maxLength} onChange={(event) => textualField.onChange(event.target.value)} onBlur={() => setTouched(true)} />
-      ) : textualField.type === "number" ? (
-        <Input type="number" value={textualField.value ?? ""} placeholder={textualField.placeholder} min={textualField.min} max={textualField.max} onChange={(event) => textualField.onChange(Number(event.target.value))} onBlur={() => setTouched(true)} />
-      ) : (
-        <Input type="text" value={textualField.value ?? ""} placeholder={textualField.placeholder} onChange={(event) => textualField.onChange(event.target.value)} onBlur={() => setTouched(true)} />
-      )}
-      {touched && error ? <p className="text-xs text-red-500">{error}</p> : textualField.hint && <p className="text-[11px] text-muted-foreground">{textualField.hint}</p>}
-      {textualField.enableStyle && textualField.onStyleChange && <FieldStyleControls style={textualField.style} onStyleChange={textualField.onStyleChange} />}
-    </FieldWrapper>
+    <VideoUploader
+      label={label}
+      value={value}
+      fieldName={fieldName}
+      onChange={onChange}
+      opacity={opacity}
+      onOpacityChange={onOpacityChange}
+      overlayColor={overlayColor}
+      onOverlayColorChange={onOverlayColorChange}
+      overlayOpacity={overlayOpacity}
+      onOverlayOpacityChange={onOverlayOpacityChange}
+      className={className}
+      {...rest}
+    />
   )
 }
+
+/*
+ * ============================================================
+ * SINGLE UNIFIED DYNAMIC STYLED FIELD
+ * ============================================================
+ */
+
+export function DynamicStyledField(props: DynamicStyledFieldProps) {
+  switch (props.type) {
+    case "text":
+    case "number":
+    case "textarea":
+      return <DynamicTextualField {...props} />
+    case "select":
+      return <DynamicSelectFieldComponent {...props} />
+    case "switch":
+      return <DynamicSwitchFieldComponent {...props} />
+    case "image":
+      return <DynamicImageFieldComponent {...props} />
+    case "video":
+      return <DynamicVideoFieldComponent {...props} />
+    default:
+      return null
+  }
+}
+
+/*
+ * ============================================================
+ * LEGACY EXPORTS (BACKWARD COMPATIBILITY)
+ * ============================================================
+ */
+
+export type TextFieldProps = Omit<DynamicTextFieldProps, "type"> &
+  StyledFieldProps
+
+export function TextField(props: TextFieldProps) {
+  return <DynamicStyledField type="text" {...props} />
+}
+
+export type NumberFieldProps = Omit<
+  DynamicNumberFieldProps,
+  "type" | "onChange" | "value"
+> &
+  StyledFieldProps & {
+    value: number | undefined
+    onChange: (value: number) => void
+  }
+
+export function NumberField({
+  value,
+  onChange,
+  ...rest
+}: NumberFieldProps) {
+  return (
+    <DynamicStyledField
+      type="number"
+      value={value}
+      onChange={(val) => onChange(Number(val))}
+      {...rest}
+    />
+  )
+}
+
+export type TextAreaFieldProps = Omit<DynamicTextAreaFieldProps, "type"> &
+  StyledFieldProps
+
+export function TextAreaField(props: TextAreaFieldProps) {
+  return <DynamicStyledField type="textarea" {...props} />
+}
+
+export type SelectFieldProps = Omit<DynamicSelectFieldProps, "type"> &
+  StyledFieldProps
+
+export function SelectField(props: SelectFieldProps) {
+  return <DynamicStyledField type="select" {...props} />
+}
+
+export type SwitchFieldProps = Omit<DynamicSwitchFieldProps, "type">
+
+export function SwitchField(props: SwitchFieldProps) {
+  return <DynamicStyledField type="switch" {...props} />
+}
+
