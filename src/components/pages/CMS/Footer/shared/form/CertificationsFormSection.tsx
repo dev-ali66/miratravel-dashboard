@@ -7,11 +7,7 @@ import type { FooterFormSectionProps } from "./sectionTypes"
 export const CertificationsFormSection = ({
   context,
 }: FooterFormSectionProps) => {
-  const {
-    content,
-    updateContent,
-    TextField,
-  } = context
+  const { content, updateContent, TextField } = context
 
   const certifications = content.certifications ?? []
 
@@ -25,33 +21,23 @@ export const CertificationsFormSection = ({
         items={certifications}
         onChange={(newCertifications) =>
           updateContent({
-            certifications:
-              newCertifications,
+            certifications: newCertifications,
           })
         }
         addLabel="Add certification"
         emptyLabel="No certifications."
-        itemLabel={(item) =>
-          item.name ||
-          "Untitled certification"
-        }
+        itemLabel={(item) => item.name || "Untitled certification"}
         newItem={() => ({
           name: "",
           image: "",
           url: "",
           alt: "",
         })}
-        renderItem={(
-          certification,
-          updateCertification
-        ) => (
+        renderItem={(certification, updateCertification) => (
           <div className="flex flex-col gap-3">
             <TextField
               label="Name"
-              value={
-                certification.name ??
-                ""
-              }
+              value={certification.name ?? ""}
               onChange={(value) =>
                 updateCertification({
                   ...certification,
@@ -63,10 +49,7 @@ export const CertificationsFormSection = ({
             <DynamicStyledField
               type="image"
               label="Image"
-              value={
-                certification.image ??
-                ""
-              }
+              value={certification.image ?? ""}
               fieldName="footerCertificationImage"
               onChange={(value) =>
                 updateCertification({
@@ -78,10 +61,7 @@ export const CertificationsFormSection = ({
 
             <TextField
               label="Alt text"
-              value={
-                certification.alt ??
-                ""
-              }
+              value={certification.alt ?? ""}
               onChange={(value) =>
                 updateCertification({
                   ...certification,
@@ -92,10 +72,7 @@ export const CertificationsFormSection = ({
 
             <TextField
               label="URL"
-              value={
-                certification.url ??
-                ""
-              }
+              value={certification.url ?? ""}
               onChange={(value) =>
                 updateCertification({
                   ...certification,

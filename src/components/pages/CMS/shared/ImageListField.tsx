@@ -35,8 +35,14 @@ export function ImageListField({
         onChange={onChange}
         addLabel="Add image"
         emptyLabel="No images added."
-        itemLabel={(item) => item.alt || (withDevice ? item.device : undefined) || "Image"}
-        newItem={() => ({ url: "", alt: "", device: withDevice ? "desktop" : undefined })}
+        itemLabel={(item) =>
+          item.alt || (withDevice ? item.device : undefined) || "Image"
+        }
+        newItem={() => ({
+          url: "",
+          alt: "",
+          device: withDevice ? "desktop" : undefined,
+        })}
         renderItem={(item, update) => (
           <div className="flex flex-col gap-2">
             <ImageUploadField
@@ -54,7 +60,9 @@ export function ImageListField({
               <SelectField
                 label="Device"
                 value={item.device ?? "desktop"}
-                onChange={(v) => update({ ...item, device: v as CmsImage["device"] })}
+                onChange={(v) =>
+                  update({ ...item, device: v as CmsImage["device"] })
+                }
                 options={DEVICE_OPTIONS}
               />
             )}

@@ -5,7 +5,7 @@ import {
   CircleHelp,
   Mail,
   Megaphone,
-} from "lucide-react";
+} from "lucide-react"
 
 export const CMS_ITEMS = [
   {
@@ -38,4 +38,4 @@ export const CMS_ITEMS = [
     slug: "cta",
     icon: Megaphone,
   },
-] as const;
+] as const

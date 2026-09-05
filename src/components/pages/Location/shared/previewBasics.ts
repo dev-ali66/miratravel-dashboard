@@ -11,29 +11,18 @@
 import type { LocationData } from "../locationTypes"
 
 export const FALLBACK_IMAGE =
-    "https://images.unsplash.com/photo-1500530855697-b586d89ba3ee?auto=format&fit=crop&w=1800&q=80"
+  "https://images.unsplash.com/photo-1500530855697-b586d89ba3ee?auto=format&fit=crop&w=1800&q=80"
 
 export const FALLBACK_TEXT = "Information not available."
 
-export function getLocationBasics(
-    draft: LocationData | null | undefined
-) {
-    const data = draft?.data ?? ({} as LocationData["data"])
+export function getLocationBasics(draft: LocationData | null | undefined) {
+  const data = draft?.data ?? ({} as LocationData["data"])
 
-    const name =
-        data.name ||
-        draft?.name ||
-        "Location"
+  const name = data.name || draft?.name || "Location"
 
-    const subtitle =
-        data.subtitle ||
-        data.shortDescription ||
-        FALLBACK_TEXT
+  const subtitle = data.subtitle || data.shortDescription || FALLBACK_TEXT
 
-    const description =
-        data.description ||
-        data.shortDescription ||
-        FALLBACK_TEXT
+  const description = data.description || data.shortDescription || FALLBACK_TEXT
 
-    return { data, name, subtitle, description }
+  return { data, name, subtitle, description }
 }

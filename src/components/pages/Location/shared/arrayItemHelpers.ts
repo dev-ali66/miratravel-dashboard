@@ -9,18 +9,18 @@
 ===================================================== */
 
 export function updateArrayItem<T>(
-    array: T[],
-    index: number,
-    field: keyof T,
-    value: unknown,
-    onChange: (next: T[]) => void
+  array: T[],
+  index: number,
+  field: keyof T,
+  value: unknown,
+  onChange: (next: T[]) => void
 ) {
-    const next = [...array]
+  const next = [...array]
 
-    next[index] = {
-        ...next[index],
-        [field]: value,
-    } as T
+  next[index] = {
+    ...next[index],
+    [field]: value,
+  } as T
 
-    onChange(next)
+  onChange(next)
 }

@@ -1,4 +1,4 @@
-import { UniversalMultimediaForm } from "../../../Home/shared/form/UniversalMultimediaForm"
+import { UniversalMultimediaForm } from "../../../shared/UniversalMultimediaForm"
 
 type FooterUniversalImageFieldProps = {
   sectionTitle?: string
@@ -7,10 +7,7 @@ type FooterUniversalImageFieldProps = {
   imageFieldName: string
   url?: string
   alt?: string
-  onChange: (next: {
-    url: string
-    alt?: string
-  }) => void
+  onChange: (next: { url: string; alt?: string }) => void
   showImageAltField?: boolean
 }
 
@@ -40,14 +37,8 @@ export const FooterUniversalImageField = ({
       }}
       onImageChange={(next) =>
         onChange({
-          url:
-            typeof next.url === "string"
-              ? next.url
-              : "",
-          alt:
-            typeof next.alt === "string"
-              ? next.alt
-              : undefined,
+          url: typeof next.url === "string" ? next.url : "",
+          alt: typeof next.alt === "string" ? next.alt : undefined,
         })
       }
       imageTitle={imageTitle}

@@ -1,11 +1,10 @@
 import { useState } from "react"
-import {
-  ChevronDown,
-  ChevronUp,
-} from "lucide-react"
+import { ChevronDown, ChevronUp } from "lucide-react"
 
 import { useCmsPage } from "../shared/useCmsPage"
 import { SaveBar } from "../shared/SaveBar"
+import { SeoForm } from "../shared/SeoForm"
+import { CollapsibleSectionCard } from "../shared/CollapsibleSectionCard"
 
 import {
   DynamicStyledField,
@@ -13,14 +12,15 @@ import {
   type TextFieldProps as SharedTextFieldProps,
 } from "../shared/FormControls"
 
-import { footerFormSectionOrder, footerFormSectionRegistry } from "./config/footerSections"
+import {
+  footerFormSectionOrder,
+  footerFormSectionRegistry,
+} from "./config/footerSections"
 import type { FooterPageData } from "./footerTypes"
 import type { FooterFormSectionContext } from "./shared/form/sectionTypes"
 
 export const FooterForm = () => {
-  const [openSections, setOpenSections] = useState<
-    Record<string, boolean>
-  >({
+  const [openSections, setOpenSections] = useState<Record<string, boolean>>({
     [footerFormSectionOrder[0] ?? "footer_appearance"]: true,
   })
 
@@ -43,25 +43,15 @@ export const FooterForm = () => {
     return key.replaceAll("_", " ")
   }
 
-  const {
-    page,
-    setPage,
-    isLoading,
-    isSaving,
-    save,
-  } = useCmsPage<FooterPageData>(
-    "footer",
-    "Footer"
-  )
+  const { page, setPage, isLoading, isSaving, save } =
+    useCmsPage<FooterPageData>("footer", "Footer")
 
   const data = page?.data
 
   const theme = data?.theme ?? {}
   const content = data?.content ?? {}
 
-  const updateData = (
-    patch: Partial<NonNullable<FooterPageData["data"]>>
-  ) => {
+  const updateData = (patch: Partial<NonNullable<FooterPageData["data"]>>) => {
     setPage({
       ...page,
       data: {
@@ -72,9 +62,7 @@ export const FooterForm = () => {
   }
 
   const updateTheme = (
-    patch: Partial<
-      NonNullable<FooterPageData["data"]>["theme"]
-    >
+    patch: Partial<NonNullable<FooterPageData["data"]>["theme"]>
   ) => {
     updateData({
       theme: {
@@ -85,9 +73,7 @@ export const FooterForm = () => {
   }
 
   const updateContent = (
-    patch: Partial<
-      NonNullable<FooterPageData["data"]>["content"]
-    >
+    patch: Partial<NonNullable<FooterPageData["data"]>["content"]>
   ) => {
     updateData({
       content: {
@@ -127,7 +113,7 @@ export const FooterForm = () => {
       <div className="flex flex-col gap-6 p-4">
         <div className="flex flex-col gap-3">
           <div className="px-1">
-            <p className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">
+            <p className="text-xs font-semibold tracking-wide text-muted-foreground uppercase">
               Footer Sections
             </p>
 
@@ -137,11 +123,9 @@ export const FooterForm = () => {
           </div>
 
           {footerFormSectionOrder.map((key, index) => {
-            const sectionEntry =
-              footerFormSectionRegistry[key]
+            const sectionEntry = footerFormSectionRegistry[key]
 
-            const FormSection =
-              sectionEntry.form
+            const FormSection = sectionEntry.form
 
             return (
               <div
@@ -150,16 +134,12 @@ export const FooterForm = () => {
               >
                 <button
                   type="button"
-                  onClick={() =>
-                    toggleSection(key)
-                  }
+                  onClick={() => toggleSection(key)}
                   className="flex w-full items-center justify-between gap-3 px-4 py-3 text-left transition-colors hover:bg-muted/40"
                 >
                   <div className="flex min-w-0 items-center gap-3">
                     <span className="flex h-7 min-w-7 items-center justify-center rounded-md bg-muted px-2 text-[10px] font-semibold text-muted-foreground">
-                      {sectionIndexLabel(
-                        index
-                      )}
+                      {sectionIndexLabel(index)}
                     </span>
 
                     <div className="min-w-0">
@@ -168,9 +148,7 @@ export const FooterForm = () => {
                       </p>
 
                       <p className="truncate text-[10px] text-muted-foreground">
-                        {sectionKeyLabel(
-                          key
-                        )}
+                        {sectionKeyLabel(key)}
                       </p>
                     </div>
                   </div>
@@ -184,16 +162,37 @@ export const FooterForm = () => {
 
                 {isOpen(key) && (
                   <div className="border-t border-border/60 p-4">
-                    <FormSection
-                      context={
-                        sectionContext
-                      }
-                    />
+                    <FormSection context={sectionContext} />
                   </div>
                 )}
               </div>
             )
           })}
+
+          <CollapsibleSectionCard
+            title="SEO Metadata"
+            meta="seo"
+            indexLabel="SEO"
+            isOpen={isOpen("seo")}
+            onToggle={() => toggleSection("seo")}
+          >
+            <SeoForm
+              metadata={page?.metadata}
+              onChange={(metadata) =>
+                setPage({
+                  ...page,
+                  metadata: {
+                    ...metadata,
+                    title: metadata.title ?? "",
+                    description: metadata.description ?? "",
+                  },
+                  data: {
+                    ...(page?.data ?? {}),
+                  },
+                })
+              }
+            />
+          </CollapsibleSectionCard>
         </div>
       </div>
     </div>

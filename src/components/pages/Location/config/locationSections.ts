@@ -95,7 +95,6 @@ import { ImageGalleryForm } from "../sections/imageGallery/ImageGalleryForm"
 import { LocalGuideForm } from "../sections/localGuide/LocalGuideForm"
 import { TravelInsightsForm } from "../sections/travelInsights/TravelInsightsForm"
 import { VideoGalleryForm } from "../sections/videoGallery/VideoGalleryForm"
-import { SeoForm } from "../sections/seo/SeoForm"
 
 /* =====================================================
    PREVIEW IMPORTS
@@ -124,6 +123,7 @@ import { LocalGuidePreview } from "../sections/localGuide/LocalGuidePreview"
 import { TravelInsightsPreview } from "../sections/travelInsights/TravelInsightsPreview"
 import { VideoGalleryPreview } from "../sections/videoGallery/VideoGalleryPreview"
 import { LocationFaqPreview } from "../sections/faq/LocationFaqPreview"
+import { SeoForm } from "../sections/seo/SeoForm"
 
 /* =====================================================
    REGISTRY
@@ -283,16 +283,14 @@ export const locationSectionOrder: LocationSectionKey[] = [
   "travel-info",
 
   "faq",
-
-
-  "culture",
   "card",
 
-  "climate",
-  "safety",
-  "geography",
-  "image-gallery",
-  "local-guide",
-  "video-gallery",
+  // "culture",
+  // "climate",
+  // "safety",
+  // "geography",
+  // "image-gallery",
+  // "local-guide",
+  // "video-gallery",
   "seo",
 ]

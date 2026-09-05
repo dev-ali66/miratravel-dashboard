@@ -1,5 +1,5 @@
-import { useDeleteUser } from "@/hooks/users/useDeleteUser";
-import { type UserItem } from "@/hooks/users/useGetUsers";
+import { useDeleteUser } from "@/hooks/users/useDeleteUser"
+import { type UserItem } from "@/hooks/users/useGetUsers"
 import {
   Dialog,
   DialogContent,
@@ -7,22 +7,22 @@ import {
   DialogFooter,
   DialogHeader,
   DialogTitle,
-} from "@/components/ui/dialog";
-import { Button } from "@/components/ui/button";
+} from "@/components/ui/dialog"
+import { Button } from "@/components/ui/button"
 
 interface DeleteUserModalProps {
-  user: UserItem | null;
-  onClose: () => void;
+  user: UserItem | null
+  onClose: () => void
 }
 
 export default function DeleteUserModal({
   user,
   onClose,
 }: DeleteUserModalProps) {
-  const { mutate: deleteUser, isPending: isDeleting } = useDeleteUser();
+  const { mutate: deleteUser, isPending: isDeleting } = useDeleteUser()
 
   const handleDeleteConfirm = () => {
-    if (!user) return;
+    if (!user) return
 
     deleteUser(
       {
@@ -32,27 +32,22 @@ export default function DeleteUserModal({
       {
         onSuccess: () => onClose(),
       }
-    );
-  };
+    )
+  }
 
   const displayName = user?.firstName
     ? `${user.firstName} ${user.lastName || ""}`.trim()
-    : user?.email || "this user";
+    : user?.email || "this user"
 
   return (
-    <Dialog
-      open={!!user}
-      onOpenChange={(open) => !open && onClose()}
-    >
+    <Dialog open={!!user} onOpenChange={(open) => !open && onClose()}>
       <DialogContent>
         <DialogHeader>
           <DialogTitle>Delete User</DialogTitle>
 
           <DialogDescription>
             Are you sure you want to delete{" "}
-            <span className="font-semibold text-foreground">
-              {displayName}
-            </span>
+            <span className="font-semibold text-foreground">{displayName}</span>
             ? This action cannot be undone.
           </DialogDescription>
         </DialogHeader>
@@ -78,5 +73,5 @@ export default function DeleteUserModal({
         </DialogFooter>
       </DialogContent>
     </Dialog>
-  );
+  )
 }

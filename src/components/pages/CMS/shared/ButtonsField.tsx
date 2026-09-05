@@ -22,7 +22,11 @@ const STYLE_OPTIONS = [
   { value: "link", label: "Link" },
 ]
 
-export function ButtonsField({ label = "Buttons", value, onChange }: ButtonsFieldProps) {
+export function ButtonsField({
+  label = "Buttons",
+  value,
+  onChange,
+}: ButtonsFieldProps) {
   return (
     <div className="flex flex-col gap-2">
       <p className="text-xs font-semibold text-foreground">{label}</p>
@@ -50,7 +54,9 @@ export function ButtonsField({ label = "Buttons", value, onChange }: ButtonsFiel
             <SelectField
               label="Style"
               value={item.style ?? "primary"}
-              onChange={(v) => update({ ...item, style: v as CmsButton["style"] })}
+              onChange={(v) =>
+                update({ ...item, style: v as CmsButton["style"] })
+              }
               options={STYLE_OPTIONS}
               className="col-span-2"
             />

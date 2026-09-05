@@ -1,5 +1,6 @@
-import { ColorField, DynamicStyledField } from "../../../shared/FormControls"
-import type { HomeSection } from "../../homeTypes"
+import { useEffect } from "react"
+import { ColorField, DynamicStyledField, TextField } from "./FormControls"
+import type { HomeSection } from "../Home/homeTypes"
 
 type BackgroundType = "image" | "video" | "color"
 
@@ -34,6 +35,7 @@ export type UniversalMultimediaFormProps = {
   enableTypeSelector?: boolean
   backgroundType?: BackgroundType
   onBackgroundTypeChange?: (type: BackgroundType) => void
+  onColorChange?: (color: string) => void
   backgroundTypeStyleKey?: string
 
   image?: MediaItem
@@ -76,13 +78,12 @@ export function UniversalMultimediaForm({
   enableTypeSelector = true,
   backgroundType,
   onBackgroundTypeChange,
-  backgroundTypeStyleKey,
+  onColorChange,
   image,
   onImageChange,
   imageTitle = "Background Image",
   imageLabel = "Background image",
   imageFieldName = "homeBackgroundImage",
-  imageAltStyleKey,
   showImageAltField = true,
   video,
   onVideoChange,
@@ -90,34 +91,61 @@ export function UniversalMultimediaForm({
   videoLabel = "Background video",
   videoHint,
   videoFieldName = "homeBackgroundVideo",
-  videoAltStyleKey,
   showVideoAltField = true,
   showVideoSwitches = true,
   allowImage = true,
   allowVideo = true,
 }: UniversalMultimediaFormProps) {
+  const safeContent = (content ?? {}) as Record<string, any>
+  const safeSection = (section ?? {}) as any
+
   const contentMedia = contentMediaKey
-    ? ((content[contentMediaKey] ?? {}) as MediaItem & { type?: BackgroundType })
+    ? ((safeContent[contentMediaKey] ?? {}) as MediaItem & {
+        type?: BackgroundType
+      })
     : undefined
+
+  // Guarantee that if a contentMediaKey is configured, it is never absent from the draft.
+  useEffect(() => {
+    if (contentMediaKey && safeContent[contentMediaKey] === undefined) {
+      updateSectionContent({
+        [contentMediaKey]: {
+          type: backgroundType ?? "image",
+          url: null,
+          alt: null,
+          color: null,
+          imageData: {
+            url: null,
+            alt: null,
+            overlayOpacity: null,
+          },
+          videoData: {
+            url: null,
+            alt: null,
+          },
+        },
+      })
+    }
+  }, [contentMediaKey])
 
   const resolvedImage =
     image ??
     contentMedia?.imageData ??
     contentMedia ??
-    section.bgImages?.[0] ??
+    safeSection.bgImages?.[0] ??
     {}
   const resolvedVideo =
     video ??
     contentMedia?.videoData ??
     contentMedia ??
-    section.bgVideos?.[0] ??
+    safeSection.bgVideos?.[0] ??
     {}
 
   const resolvedType: BackgroundType =
     backgroundType ??
     contentMedia?.type ??
-    section.backgroundType ??
-    (section.showVideo ? "video" : resolvedImage.url ? "image" : "color")
+    safeSection.backgroundType ??
+    (safeSection.showVideo ? "video" : resolvedImage.url ? "image" : "color")
 
   const currentType = enableTypeSelector ? resolvedType : undefined
 
@@ -128,12 +156,27 @@ export function UniversalMultimediaForm({
     }
 
     if (contentMediaKey) {
+      const resolvedUrl =
+        type === "video"
+          ? (contentMedia?.videoData?.url ?? null)
+          : type === "image"
+            ? (contentMedia?.imageData?.url ?? null)
+            : null
+      const resolvedAlt =
+        type === "video"
+          ? (contentMedia?.videoData?.alt ?? null)
+          : type === "image"
+            ? (contentMedia?.imageData?.alt ?? null)
+            : null
+
       updateSectionContent({
         [contentMediaKey]: {
           ...(contentMedia ?? {}),
           type,
-          imageData: contentMedia?.imageData ?? (contentMedia ?? {}),
-          videoData: contentMedia?.videoData ?? (contentMedia ?? {}),
+          url: resolvedUrl,
+          alt: resolvedAlt,
+          imageData: contentMedia?.imageData ?? { url: null, alt: null },
+          videoData: contentMedia?.videoData ?? { url: null, alt: null },
         },
       })
       return
@@ -145,23 +188,32 @@ export function UniversalMultimediaForm({
     })
   }
 
-  const showColor = showColorPicker && (!enableTypeSelector || currentType === "color")
-  const showImage = allowImage && (!enableTypeSelector || currentType === "image")
-  const showVideo = allowVideo && (!enableTypeSelector || currentType === "video")
+  const showColor =
+    showColorPicker && (!enableTypeSelector || currentType === "color")
+  const showImage =
+    allowImage && (!enableTypeSelector || currentType === "image")
+  const showVideo =
+    allowVideo && (!enableTypeSelector || currentType === "video")
 
-  const resolvedColor =
-    contentMediaKey
-      ? (contentMedia?.color ?? defaultColor)
-      : (section.bgColor ?? defaultColor)
+  const resolvedColor = contentMediaKey
+    ? (contentMedia?.color ?? defaultColor)
+    : (safeSection.bgColor ?? defaultColor)
 
   const applyColorChange = (nextColor: string) => {
+    if (onColorChange) {
+      onColorChange(nextColor)
+      return
+    }
+
     if (contentMediaKey) {
       updateSectionContent({
         [contentMediaKey]: {
           ...(contentMedia ?? {}),
-          color: nextColor,
-          imageData: contentMedia?.imageData ?? (contentMedia ?? {}),
-          videoData: contentMedia?.videoData ?? (contentMedia ?? {}),
+          type: "color",
+          color: nextColor || null,
+          url: null,
+          imageData: contentMedia?.imageData ?? { url: null, alt: null },
+          videoData: contentMedia?.videoData ?? { url: null, alt: null },
         },
       })
       return
@@ -177,17 +229,25 @@ export function UniversalMultimediaForm({
     }
 
     if (contentMediaKey) {
+      const resolvedUrl = next.url || null
+      const resolvedAlt = next.alt || null
       const nextImageData = {
-        ...(contentMedia?.imageData ?? contentMedia ?? {}),
+        ...(contentMedia?.imageData ?? {}),
         ...next,
+        url: resolvedUrl,
+        alt: resolvedAlt,
       }
       updateSectionContent({
         [contentMediaKey]: {
-          ...(contentMedia ?? {}),
           type: "image",
+          url: resolvedUrl,
+          alt: resolvedAlt,
+          opacity: next.opacity ?? 100,
+          overlayColor: next.overlayColor ?? null,
+          overlayOpacity: next.overlayOpacity ?? 0,
+          color: next.color ?? null,
           imageData: nextImageData,
-          videoData: contentMedia?.videoData ?? (contentMedia ?? {}),
-          ...next,
+          videoData: contentMedia?.videoData ?? { url: null, alt: null },
         },
       })
       return
@@ -203,17 +263,25 @@ export function UniversalMultimediaForm({
     }
 
     if (contentMediaKey) {
+      const resolvedUrl = next.url || null
+      const resolvedAlt = next.alt || null
       const nextVideoData = {
-        ...(contentMedia?.videoData ?? contentMedia ?? {}),
+        ...(contentMedia?.videoData ?? {}),
         ...next,
+        url: resolvedUrl,
+        alt: resolvedAlt,
       }
       updateSectionContent({
         [contentMediaKey]: {
-          ...(contentMedia ?? {}),
           type: "video",
+          url: resolvedUrl,
+          alt: resolvedAlt,
+          opacity: next.opacity ?? 100,
+          overlayColor: next.overlayColor ?? null,
+          overlayOpacity: next.overlayOpacity ?? 0,
+          color: next.color ?? null,
           videoData: nextVideoData,
-          imageData: contentMedia?.imageData ?? (contentMedia ?? {}),
-          ...next,
+          imageData: contentMedia?.imageData ?? { url: null, alt: null },
         },
       })
       return
@@ -224,7 +292,7 @@ export function UniversalMultimediaForm({
 
   return (
     <div className="rounded-md border border-border/50 p-3">
-      <p className="mb-3 text-xs font-semibold uppercase tracking-wide text-muted-foreground">
+      <p className="mb-3 text-xs font-semibold tracking-wide text-muted-foreground uppercase">
         {sectionTitle}
       </p>
 
@@ -235,13 +303,6 @@ export function UniversalMultimediaForm({
             label="Background Type"
             value={currentType}
             onChange={(value) => handleTypeChange(value as BackgroundType)}
-            enableStyle={!!backgroundTypeStyleKey}
-            style={backgroundTypeStyleKey ? content[backgroundTypeStyleKey] : undefined}
-            onStyleChange={
-              backgroundTypeStyleKey
-                ? (style) => updateSectionContent({ [backgroundTypeStyleKey]: style })
-                : undefined
-            }
             options={[
               { value: "image", label: "Show Background Image" },
               { value: "video", label: "Show Background Video" },
@@ -260,7 +321,9 @@ export function UniversalMultimediaForm({
 
         {showImage && (
           <div className="rounded-md border border-border/40 p-3">
-            <p className="mb-3 text-[11px] font-semibold text-foreground">{imageTitle}</p>
+            <p className="mb-3 text-[11px] font-semibold text-foreground">
+              {imageTitle}
+            </p>
 
             <div className="flex flex-col gap-3">
               <DynamicStyledField
@@ -268,7 +331,9 @@ export function UniversalMultimediaForm({
                 label={imageLabel}
                 value={resolvedImage.url ?? ""}
                 opacity={resolvedImage.opacity ?? 100}
-                onOpacityChange={(value) => applyImageChange({ ...resolvedImage, opacity: value })}
+                onOpacityChange={(value) =>
+                  applyImageChange({ ...resolvedImage, opacity: value })
+                }
                 overlayColor={resolvedImage.overlayColor ?? "#000000"}
                 onOverlayColorChange={(value) =>
                   applyImageChange({ ...resolvedImage, overlayColor: value })
@@ -278,23 +343,20 @@ export function UniversalMultimediaForm({
                   applyImageChange({ ...resolvedImage, overlayOpacity: value })
                 }
                 fieldName={imageFieldName}
-                onChange={(value) => applyImageChange({ ...resolvedImage, url: value })}
+                onChange={(value) =>
+                  applyImageChange({ ...resolvedImage, url: value })
+                }
               />
 
               {showImageAltField && (
-                <DynamicStyledField
-                  type="text"
+                <TextField
                   label="Image alt text"
                   value={normalizeTextValue(resolvedImage.alt) ?? ""}
                   onChange={(value) =>
-                    applyImageChange({ ...resolvedImage, alt: normalizeTextValue(value) })
-                  }
-                  enableStyle={!!imageAltStyleKey}
-                  style={imageAltStyleKey ? content[imageAltStyleKey] : undefined}
-                  onStyleChange={
-                    imageAltStyleKey
-                      ? (style) => updateSectionContent({ [imageAltStyleKey]: style })
-                      : undefined
+                    applyImageChange({
+                      ...resolvedImage,
+                      alt: normalizeTextValue(value),
+                    })
                   }
                 />
               )}
@@ -304,8 +366,14 @@ export function UniversalMultimediaForm({
 
         {showVideo && (
           <div className="rounded-md border border-border/40 p-3">
-            <p className="mb-1 text-[11px] font-semibold text-foreground">{videoTitle}</p>
-            {videoHint && <p className="mb-3 text-[10px] text-muted-foreground">{videoHint}</p>}
+            <p className="mb-1 text-[11px] font-semibold text-foreground">
+              {videoTitle}
+            </p>
+            {videoHint && (
+              <p className="mb-3 text-[10px] text-muted-foreground">
+                {videoHint}
+              </p>
+            )}
 
             <div className="flex flex-col gap-4">
               <DynamicStyledField
@@ -313,7 +381,9 @@ export function UniversalMultimediaForm({
                 label={videoLabel}
                 value={resolvedVideo.url ?? ""}
                 opacity={resolvedVideo.opacity ?? 100}
-                onOpacityChange={(value) => applyVideoChange({ ...resolvedVideo, opacity: value })}
+                onOpacityChange={(value) =>
+                  applyVideoChange({ ...resolvedVideo, opacity: value })
+                }
                 overlayColor={resolvedVideo.overlayColor ?? "#000000"}
                 onOverlayColorChange={(value) =>
                   applyVideoChange({ ...resolvedVideo, overlayColor: value })
@@ -323,23 +393,20 @@ export function UniversalMultimediaForm({
                   applyVideoChange({ ...resolvedVideo, overlayOpacity: value })
                 }
                 fieldName={videoFieldName}
-                onChange={(value) => applyVideoChange({ ...resolvedVideo, url: value })}
+                onChange={(value) =>
+                  applyVideoChange({ ...resolvedVideo, url: value })
+                }
               />
 
               {showVideoAltField && (
-                <DynamicStyledField
-                  type="text"
+                <TextField
                   label="Video alt text"
                   value={normalizeTextValue(resolvedVideo.alt) ?? ""}
                   onChange={(value) =>
-                    applyVideoChange({ ...resolvedVideo, alt: normalizeTextValue(value) })
-                  }
-                  enableStyle={!!videoAltStyleKey}
-                  style={videoAltStyleKey ? content[videoAltStyleKey] : undefined}
-                  onStyleChange={
-                    videoAltStyleKey
-                      ? (style) => updateSectionContent({ [videoAltStyleKey]: style })
-                      : undefined
+                    applyVideoChange({
+                      ...resolvedVideo,
+                      alt: normalizeTextValue(value),
+                    })
                   }
                 />
               )}
@@ -350,19 +417,25 @@ export function UniversalMultimediaForm({
                     type="switch"
                     label="Loop"
                     checked={resolvedVideo.loop ?? true}
-                    onChange={(checked) => applyVideoChange({ ...resolvedVideo, loop: checked })}
+                    onChange={(checked) =>
+                      applyVideoChange({ ...resolvedVideo, loop: checked })
+                    }
                   />
                   <DynamicStyledField
                     type="switch"
                     label="Autoplay"
                     checked={resolvedVideo.autoplay ?? true}
-                    onChange={(checked) => applyVideoChange({ ...resolvedVideo, autoplay: checked })}
+                    onChange={(checked) =>
+                      applyVideoChange({ ...resolvedVideo, autoplay: checked })
+                    }
                   />
                   <DynamicStyledField
                     type="switch"
                     label="Muted"
                     checked={resolvedVideo.muted ?? true}
-                    onChange={(checked) => applyVideoChange({ ...resolvedVideo, muted: checked })}
+                    onChange={(checked) =>
+                      applyVideoChange({ ...resolvedVideo, muted: checked })
+                    }
                   />
                 </div>
               )}

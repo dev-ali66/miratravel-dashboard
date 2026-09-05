@@ -7,6 +7,7 @@ export type AddCmsPayload = {
   id?: string
   name?: string
   slug: string
+  metadata?: Record<string, any>
   data: Record<string, any>
 }
 

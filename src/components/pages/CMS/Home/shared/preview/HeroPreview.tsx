@@ -3,8 +3,10 @@ import type { ReactNode } from "react"
 import { fieldCssStyle } from "./fieldStyle"
 import { UniversalMultimediaPreview } from "./UniversalMultimediaPreview"
 
-const PREVIEW_IMAGE_SOURCE = "https://images.unsplash.com/photo-1530789253388-582c481c54b0?auto=format&fit=crop&w=1200&q=85"
-const PREVIEW_VIDEO_SOURCE = "https://cdn.coverr.co/videos/coverr-aerial-view-of-a-beach-1576/1080p.mp4"
+const PREVIEW_IMAGE_SOURCE =
+  "https://images.unsplash.com/photo-1530789253388-582c481c54b0?auto=format&fit=crop&w=1200&q=85"
+const PREVIEW_VIDEO_SOURCE =
+  "https://cdn.coverr.co/videos/coverr-aerial-view-of-a-beach-1576/1080p.mp4"
 
 export type HeroPreviewProps = {
   section: HomeSection
@@ -18,19 +20,33 @@ export type HeroPreviewProps = {
   ) => ReactNode
 }
 
-export function HeroPreview({ section, accentColor, lightText, renderButtons }: HeroPreviewProps) {
+export function HeroPreview({
+  section,
+  accentColor,
+  lightText,
+  renderButtons,
+}: HeroPreviewProps) {
   const content = (section.content ?? {}) as Record<string, any>
   const textColors = content.textColors ?? {}
-  const backgroundMultimedia = (content.backgroundMultimedia ?? {}) as Record<string, any>
+  const backgroundMultimedia = (content.backgroundMultimedia ?? {}) as Record<
+    string,
+    any
+  >
   const sectionBackgroundImage = section.bgImages?.[0]
   const sectionBackgroundVideo = section.bgVideos?.[0]
   const backgroundType =
     backgroundMultimedia.type ??
     section.backgroundType ??
-    (section.showVideo ? "video" : backgroundMultimedia.url || sectionBackgroundImage?.url ? "image" : "color")
+    (section.showVideo
+      ? "video"
+      : backgroundMultimedia.url || sectionBackgroundImage?.url
+        ? "image"
+        : "color")
 
-  const backgroundImageData = backgroundMultimedia.imageData ?? backgroundMultimedia
-  const backgroundVideoData = backgroundMultimedia.videoData ?? backgroundMultimedia
+  const backgroundImageData =
+    backgroundMultimedia.imageData ?? backgroundMultimedia
+  const backgroundVideoData =
+    backgroundMultimedia.videoData ?? backgroundMultimedia
 
   return (
     <section
@@ -40,9 +56,17 @@ export function HeroPreview({ section, accentColor, lightText, renderButtons }: 
       <UniversalMultimediaPreview
         multimedia={
           backgroundType === "video"
-            ? { ...sectionBackgroundVideo, ...backgroundVideoData, type: "video" }
+            ? {
+                ...sectionBackgroundVideo,
+                ...backgroundVideoData,
+                type: "video",
+              }
             : backgroundType === "image"
-              ? { ...sectionBackgroundImage, ...backgroundImageData, type: "image" }
+              ? {
+                  ...sectionBackgroundImage,
+                  ...backgroundImageData,
+                  type: "image",
+                }
               : { color: backgroundMultimedia.color, type: "color" }
         }
         fallbackImageSrc={PREVIEW_IMAGE_SOURCE}
@@ -57,7 +81,8 @@ export function HeroPreview({ section, accentColor, lightText, renderButtons }: 
       <div
         className="absolute inset-0"
         style={{
-          background: "linear-gradient(90deg, rgba(0,0,0,0.58) 0%, rgba(0,0,0,0.22) 55%, rgba(0,0,0,0.05) 100%)",
+          background:
+            "linear-gradient(90deg, rgba(0,0,0,0.58) 0%, rgba(0,0,0,0.22) 55%, rgba(0,0,0,0.05) 100%)",
         }}
       />
 
@@ -66,10 +91,10 @@ export function HeroPreview({ section, accentColor, lightText, renderButtons }: 
         style={{ color: lightText }}
       >
         <div className="max-w-[680px]">
-          {(content.titleLine1 || content.titleHighlight || content.titleLine2) && (
-            <h1
-              className="font-serif text-[40px] font-medium leading-[0.94] tracking-[-1.5px] md:text-[60px] lg:text-[72px]"
-            >
+          {(content.titleLine1 ||
+            content.titleHighlight ||
+            content.titleLine2) && (
+            <h1 className="font-serif text-[40px] leading-[0.94] font-medium tracking-[-1.5px] md:text-[60px] lg:text-[72px]">
               {content.titleLine1 && (
                 <span
                   className="block"
@@ -87,7 +112,8 @@ export function HeroPreview({ section, accentColor, lightText, renderButtons }: 
                   {content.titleHighlight && (
                     <span
                       style={fieldCssStyle(
-                        content.homeHeroTitleHighlightStyle ?? content.titleHighlightStyle,
+                        content.homeHeroTitleHighlightStyle ??
+                          content.titleHighlightStyle,
                         textColors.titleHighlight ?? accentColor
                       )}
                     >
@@ -100,7 +126,8 @@ export function HeroPreview({ section, accentColor, lightText, renderButtons }: 
                       {content.titleHighlight ? " " : ""}
                       <span
                         style={fieldCssStyle(
-                          content.homeHeroTitleLine2Style ?? content.titleLine2Style,
+                          content.homeHeroTitleLine2Style ??
+                            content.titleLine2Style,
                           textColors.titleLine2 ?? lightText
                         )}
                       >

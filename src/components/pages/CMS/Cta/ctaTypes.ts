@@ -1,3 +1,5 @@
+import type { FieldStyle } from "../shared/FormControls"
+
 export interface CtaButton {
   label: string
   url: string
@@ -28,6 +30,12 @@ export interface CtaPageData {
       ctaLeftImage: string
       alt: string
     }
+    backgroundMultimedia?: Record<string, any>
+    rightMultimedia?: Record<string, any>
+    eyebrowStyle?: FieldStyle
+    titleLine1Style?: FieldStyle
+    titleHighlightStyle?: FieldStyle
+    descriptionStyle?: FieldStyle
     buttons: CtaButton[]
   }
 }

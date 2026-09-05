@@ -49,13 +49,9 @@ export function useImageUpload() {
 
     onSuccess: (res) => {
       if (res.success !== false) {
-        toast.success(
-          res.message || "Image uploaded successfully"
-        )
+        toast.success(res.message || "Image uploaded successfully")
       } else {
-        toast.error(
-          res.message || "Failed to upload image"
-        )
+        toast.error(res.message || "Failed to upload image")
       }
     },
 

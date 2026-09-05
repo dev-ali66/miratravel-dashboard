@@ -1,6 +1,6 @@
 import type { HomeSection } from "../../homeTypes"
 import { DynamicStyledField } from "../../../shared/FormControls"
-import { UniversalMultimediaForm } from "./UniversalMultimediaForm"
+import { UniversalMultimediaForm } from "../../../shared/UniversalMultimediaForm"
 
 export type WhyMiraFormProps = {
   section: HomeSection
@@ -21,12 +21,17 @@ export function WhyMiraForm({
   return (
     <div className="flex flex-col gap-5">
       <div className="rounded-md border border-border/50 p-3">
-        <p className="mb-3 text-xs font-semibold uppercase tracking-wide text-muted-foreground">Content</p>
+        <p className="mb-3 text-xs font-semibold tracking-wide text-muted-foreground uppercase">
+          Content
+        </p>
         <div className="flex flex-col gap-3">
-          <DynamicStyledField type="text"
+          <DynamicStyledField
+            type="text"
             label="Eyebrow"
             value={content.eyebrow ?? ""}
-            onChange={(value) => updateSectionContent(index, { eyebrow: value })}
+            onChange={(value) =>
+              updateSectionContent(index, { eyebrow: value })
+            }
             enableStyle
             style={content.homeWhyMiraEyebrowStyle}
             onStyleChange={(style) =>
@@ -34,7 +39,8 @@ export function WhyMiraForm({
             }
           />
 
-          <DynamicStyledField type="text"
+          <DynamicStyledField
+            type="text"
             label="Title"
             value={content.title ?? ""}
             onChange={(value) => updateSectionContent(index, { title: value })}
@@ -45,10 +51,13 @@ export function WhyMiraForm({
             }
           />
 
-          <DynamicStyledField type="text"
+          <DynamicStyledField
+            type="text"
             label="Signature"
             value={content.signature ?? ""}
-            onChange={(value) => updateSectionContent(index, { signature: value })}
+            onChange={(value) =>
+              updateSectionContent(index, { signature: value })
+            }
             enableStyle
             style={content.homeWhyMiraSignatureStyle}
             onStyleChange={(style) =>
@@ -57,7 +66,8 @@ export function WhyMiraForm({
           />
 
           {paragraphs.map((paragraph: string, paragraphIndex: number) => (
-            <DynamicStyledField type="textarea"
+            <DynamicStyledField
+              type="textarea"
               key={paragraphIndex}
               label={`Paragraph ${paragraphIndex + 1}`}
               value={paragraph ?? ""}

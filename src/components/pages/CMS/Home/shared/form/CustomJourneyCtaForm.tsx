@@ -1,7 +1,7 @@
 import type { HomeSection } from "../../homeTypes"
 import { DynamicStyledField } from "../../../shared/FormControls"
 import { ButtonsField } from "../../../shared/ButtonsField"
-import { UniversalMultimediaForm } from "./UniversalMultimediaForm"
+import { UniversalMultimediaForm } from "../../../shared/UniversalMultimediaForm"
 
 export type CustomJourneyCtaFormProps = {
   section: HomeSection
@@ -24,38 +24,55 @@ export function CustomJourneyCtaForm({
   return (
     <div className="flex flex-col gap-5">
       <div className="rounded-md border border-border/50 p-3">
-        <p className="mb-3 text-xs font-semibold uppercase tracking-wide text-muted-foreground">CTA Content</p>
+        <p className="mb-3 text-xs font-semibold tracking-wide text-muted-foreground uppercase">
+          CTA Content
+        </p>
         <div className="flex flex-col gap-3">
-          <DynamicStyledField type="text"
+          <DynamicStyledField
+            type="text"
             label="Title line 1"
             value={content.titleLine1 ?? ""}
-            onChange={(value) => updateSectionContent(index, { titleLine1: value })}
+            onChange={(value) =>
+              updateSectionContent(index, { titleLine1: value })
+            }
             enableStyle
             style={content.homeCustomJourneyCtaTitleLine1Style}
             onStyleChange={(style) =>
-              updateSectionContent(index, { homeCustomJourneyCtaTitleLine1Style: style })
+              updateSectionContent(index, {
+                homeCustomJourneyCtaTitleLine1Style: style,
+              })
             }
           />
 
-          <DynamicStyledField type="text"
+          <DynamicStyledField
+            type="text"
             label="Title highlight"
             value={content.titleHighlight ?? ""}
-            onChange={(value) => updateSectionContent(index, { titleHighlight: value })}
+            onChange={(value) =>
+              updateSectionContent(index, { titleHighlight: value })
+            }
             enableStyle
             style={content.homeCustomJourneyCtaTitleHighlightStyle}
             onStyleChange={(style) =>
-              updateSectionContent(index, { homeCustomJourneyCtaTitleHighlightStyle: style })
+              updateSectionContent(index, {
+                homeCustomJourneyCtaTitleHighlightStyle: style,
+              })
             }
           />
 
-          <DynamicStyledField type="textarea"
+          <DynamicStyledField
+            type="textarea"
             label="Description"
             value={content.description ?? ""}
-            onChange={(value) => updateSectionContent(index, { description: value })}
+            onChange={(value) =>
+              updateSectionContent(index, { description: value })
+            }
             enableStyle
             style={content.homeCustomJourneyCtaDescriptionStyle}
             onStyleChange={(style) =>
-              updateSectionContent(index, { homeCustomJourneyCtaDescriptionStyle: style })
+              updateSectionContent(index, {
+                homeCustomJourneyCtaDescriptionStyle: style,
+              })
             }
           />
         </div>
@@ -78,7 +95,9 @@ export function CustomJourneyCtaForm({
       />
 
       <div className="rounded-md border border-border/50 p-3">
-        <p className="mb-3 text-xs font-semibold uppercase tracking-wide text-muted-foreground">Button</p>
+        <p className="mb-3 text-xs font-semibold tracking-wide text-muted-foreground uppercase">
+          Button
+        </p>
         <ButtonsField
           value={section.buttons ?? []}
           onChange={(buttons) => updateSectionButtons(index, buttons)}

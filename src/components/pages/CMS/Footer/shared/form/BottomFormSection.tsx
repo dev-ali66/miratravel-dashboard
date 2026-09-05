@@ -2,16 +2,8 @@ import { ColorField } from "../../../shared/FormControls"
 
 import type { FooterFormSectionProps } from "./sectionTypes"
 
-export const BottomFormSection = ({
-  context,
-}: FooterFormSectionProps) => {
-  const {
-    theme,
-    content,
-    updateTheme,
-    updateContent,
-    TextField,
-  } = context
+export const BottomFormSection = ({ context }: FooterFormSectionProps) => {
+  const { theme, content, updateTheme, updateContent, TextField } = context
 
   return (
     <div className="rounded-lg border border-border/60 p-3">
@@ -22,9 +14,7 @@ export const BottomFormSection = ({
       <div className="flex flex-col gap-3">
         <TextField
           label="Copyright text"
-          value={
-            content.copyright ?? ""
-          }
+          value={content.copyright ?? ""}
           onChange={(value) =>
             updateContent({
               copyright: value,
@@ -34,10 +24,7 @@ export const BottomFormSection = ({
 
         <ColorField
           label="Bottom text color"
-          value={
-            theme.bottomTextColor ??
-            "rgba(255,255,255,0.60)"
-          }
+          value={theme.bottomTextColor ?? "rgba(255,255,255,0.60)"}
           onChange={(value) =>
             updateTheme({
               bottomTextColor: value,

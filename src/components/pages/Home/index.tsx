@@ -21,44 +21,48 @@ export default function Home() {
       {/* Header section */}
       <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
         <SlideRight>
-          <h1 className="text-3xl font-bold tracking-tight text-foreground">Dashboard</h1>
-          <p className="text-muted-foreground mt-1">Welcome back, here's what's happening today.</p>
+          <h1 className="text-3xl font-bold tracking-tight text-foreground">
+            Dashboard
+          </h1>
+          <p className="mt-1 text-muted-foreground">
+            Welcome back, here's what's happening today.
+          </p>
         </SlideRight>
 
-        <SlideLeft className="flex items-center gap-3 flex-wrap">
+        <SlideLeft className="flex flex-wrap items-center gap-3">
           {/* <DashboardTabs activeTab={activeTab} onChange={setActiveTab} /> */}
-          
+
           <DateRangePicker />
           <DownloadReportButton />
         </SlideLeft>
       </div>
 
       {/* {activeTab === "Overview" && ( */}
-        <div className="flex flex-col gap-8 animate-fade-in">
-          {/* Stats Cards */}
-          <StatCards />
+      <div className="animate-fade-in flex flex-col gap-8">
+        {/* Stats Cards */}
+        <StatCards />
 
-          <AlertsCard />
+        <AlertsCard />
 
-          {/* Main Content Grid 1 */}
-          <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-7">
-            <OverviewChart className="md:col-span-2 lg:col-span-4" />
-            <RecentActivity className="md:col-span-2 lg:col-span-3" />
-          </div>
-
-          {/* Main Content Grid 2 */}
-          <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-7">
-            <MonthlyBookingsChart className="md:col-span-2 lg:col-span-4" />
-            <BookingStatus className="md:col-span-2 lg:col-span-3" />
-          </div>
-
-          {/* Main Content Grid 3 */}
-          <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-7">
-            <InstructorRatings className="md:col-span-2 lg:col-span-3" />
-          </div>
+        {/* Main Content Grid 1 */}
+        <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-7">
+          <OverviewChart className="md:col-span-2 lg:col-span-4" />
+          <RecentActivity className="md:col-span-2 lg:col-span-3" />
         </div>
+
+        {/* Main Content Grid 2 */}
+        <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-7">
+          <MonthlyBookingsChart className="md:col-span-2 lg:col-span-4" />
+          <BookingStatus className="md:col-span-2 lg:col-span-3" />
+        </div>
+
+        {/* Main Content Grid 3 */}
+        <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-7">
+          <InstructorRatings className="md:col-span-2 lg:col-span-3" />
+        </div>
+      </div>
       {/* )} */}
-{/* 
+      {/* 
       {activeTab === "Analytics" && (
         <AnalyticsTab />
       )}

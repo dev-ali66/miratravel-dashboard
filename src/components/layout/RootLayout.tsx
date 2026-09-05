@@ -2,7 +2,6 @@ import { Outlet } from "react-router-dom"
 import Sidebar, { type SectionProps } from "./Sidebar"
 
 export function RootLayout() {
-
   const sections: SectionProps[] = [
     {
       title: "Menu Principal",
@@ -12,17 +11,23 @@ export function RootLayout() {
         { href: "/requests", label: "Requests", icon: "requests" as any },
         { href: "/cms", label: "CMS", icon: "cms" },
         { href: "/location", label: "Locations", icon: "locations" },
-        { href: "/privacy-policy", label: "Privacy Policy", icon: "privacy" as any },
-        { href: "/terms-of-service", label: "Terms of Service", icon: "terms" as any },
+        {
+          href: "/privacy-policy",
+          label: "Privacy Policy",
+          icon: "privacy" as any,
+        },
+        {
+          href: "/terms-of-service",
+          label: "Terms of Service",
+          icon: "terms" as any,
+        },
       ],
     },
     {
       title: "Account",
-      items: [
-        { href: "/logout", label: "Logout", icon: "logout" }
-      ]
-    }
-  ];
+      items: [{ href: "/logout", label: "Logout", icon: "logout" }],
+    },
+  ]
   return (
     <div className="flex min-h-svh">
       <div className="flex-1">

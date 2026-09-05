@@ -2,7 +2,11 @@ import { SlideBottom, SlideLeft } from "@/components/animation"
 import { Star } from "lucide-react"
 import { useGetDashboardStatistics } from "@/hooks/analysis/useGetDashboardStatistics"
 
-export default function InstructorRatings({ className }: { className?: string }) {
+export default function InstructorRatings({
+  className,
+}: {
+  className?: string
+}) {
   const { data } = useGetDashboardStatistics()
   const instructorRatings = data?.instructorRatings
   const topInstructors = instructorRatings?.topInstructors ?? []
@@ -10,21 +14,29 @@ export default function InstructorRatings({ className }: { className?: string })
   return (
     <SlideBottom
       delay={0.6}
-      className={`rounded-xl border border-border bg-card p-6 shadow-sm flex flex-col ${className || ""}`}
+      className={`flex flex-col rounded-xl border border-border bg-card p-6 shadow-sm ${className || ""}`}
     >
       <div className="mb-6 flex items-start justify-between">
         <div>
-          <h3 className="text-lg font-semibold tracking-tight text-foreground">Instructor Ratings</h3>
-          <p className="text-sm text-muted-foreground mt-1">Platform average & top instructors</p>
+          <h3 className="text-lg font-semibold tracking-tight text-foreground">
+            Instructor Ratings
+          </h3>
+          <p className="mt-1 text-sm text-muted-foreground">
+            Platform average & top instructors
+          </p>
         </div>
       </div>
 
-      <div className="flex items-center gap-6 rounded-xl bg-muted/40 p-4 mb-6">
+      <div className="mb-6 flex items-center gap-6 rounded-xl bg-muted/40 p-4">
         <div className="flex flex-col items-center justify-center">
-          <span className="text-4xl font-bold text-foreground">{instructorRatings?.averageRating?.toFixed(1) ?? "0.0"}</span>
-          <span className="text-xs font-medium text-muted-foreground mt-1">Out of 5.0</span>
+          <span className="text-4xl font-bold text-foreground">
+            {instructorRatings?.averageRating?.toFixed(1) ?? "0.0"}
+          </span>
+          <span className="mt-1 text-xs font-medium text-muted-foreground">
+            Out of 5.0
+          </span>
         </div>
-        <div className="flex flex-col gap-1.5 flex-1">
+        <div className="flex flex-1 flex-col gap-1.5">
           <div className="flex text-amber-500">
             {Array.from({ length: 5 }, (_, index) => {
               const ratingValue = instructorRatings?.averageRating ?? 0
@@ -40,12 +52,13 @@ export default function InstructorRatings({ className }: { className?: string })
             })}
           </div>
           <span className="text-sm font-medium text-muted-foreground">
-            Based on {instructorRatings?.totalReviews?.toLocaleString() ?? 0} total reviews
+            Based on {instructorRatings?.totalReviews?.toLocaleString() ?? 0}{" "}
+            total reviews
           </span>
         </div>
       </div>
 
-      <div className="flex-1 flex flex-col gap-4">
+      <div className="flex flex-1 flex-col gap-4">
         {topInstructors.map((instructor, index) => (
           <SlideLeft
             key={instructor.id}
@@ -53,7 +66,7 @@ export default function InstructorRatings({ className }: { className?: string })
             className="flex items-center justify-between"
           >
             <div className="flex items-center gap-3">
-              <div className="flex size-10 items-center justify-center rounded-full bg-primary/10 text-primary font-semibold text-sm">
+              <div className="flex size-10 items-center justify-center rounded-full bg-primary/10 text-sm font-semibold text-primary">
                 {instructor.name
                   .split(" ")
                   .map((part) => part[0])
@@ -62,15 +75,21 @@ export default function InstructorRatings({ className }: { className?: string })
                   .toUpperCase()}
               </div>
               <div className="flex flex-col">
-                <span className="text-sm font-semibold text-foreground">{instructor.name}</span>
-                <span className="text-xs text-muted-foreground">{instructor.reviews} Reviews</span>
+                <span className="text-sm font-semibold text-foreground">
+                  {instructor.name}
+                </span>
+                <span className="text-xs text-muted-foreground">
+                  {instructor.reviews} Reviews
+                </span>
               </div>
             </div>
 
             <div className="flex items-center gap-3">
-              <div className="flex items-center gap-1 bg-amber-500/10 text-amber-600 dark:text-amber-400 px-2 py-1 rounded-md">
+              <div className="flex items-center gap-1 rounded-md bg-amber-500/10 px-2 py-1 text-amber-600 dark:text-amber-400">
                 <Star className="size-3.5 fill-current" />
-                <span className="text-xs font-bold">{instructor.rating.toFixed(1)}</span>
+                <span className="text-xs font-bold">
+                  {instructor.rating.toFixed(1)}
+                </span>
               </div>
             </div>
           </SlideLeft>

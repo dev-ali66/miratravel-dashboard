@@ -3,70 +3,90 @@
    Auto-migrated from the legacy LocationForm.tsx monolith.
 ===================================================== */
 
-import { Field, ImageField, FormSection } from "../../shared/fields"
+import { DynamicStyledField, FormSection } from "../../shared/fields"
+import { UniversalMultimediaForm } from "../../../CMS/shared/UniversalMultimediaForm"
+import { ButtonsField } from "../../../CMS/shared/ButtonsField"
 import type { LocationData } from "../../locationTypes"
 
 export type CardFormProps = {
-    draft: LocationData
-    updateField: (path: string, value: unknown) => void
-    openSections: Record<string, boolean>
-    toggleSection: (section: string) => void
+  draft: LocationData
+  updateField: (path: string, value: unknown) => void
+  openSections: Record<string, boolean>
+  toggleSection: (section: string) => void
 }
 
 export function CardForm({
-    draft,
-    updateField,
-    openSections,
-    toggleSection,
+  draft,
+  updateField,
+  openSections,
+  toggleSection,
 }: CardFormProps) {
-    return (
-        <FormSection
-            title="Card"
-            active={!!openSections["card"]}
-            onClick={() => toggleSection("card")}
-        >
-            <div className="space-y-4">
-                <Field
-                    label="Title"
-                    value={draft.data.card.title}
-                    onChange={(value) =>
-                        updateField("data.card.title", value)
-                    }
-                />
+  return (
+    <FormSection
+      title="Card"
+      active={!!openSections["card"]}
+      onClick={() => toggleSection("card")}
+    >
+      <div className="space-y-4">
+        <DynamicStyledField
+          type="text"
+          label="Title"
+          value={draft.data.card.title ?? ""}
+          onChange={(value: string) => updateField("data.card.title", value)}
+          enableStyle
+          style={(draft.data.card as any).titleStyle}
+          onStyleChange={(style) => updateField("data.card.titleStyle", style)}
+        />
 
-                <Field
-                    label="Subtitle"
-                    value={draft.data.card.subtitle}
-                    multiline
-                    onChange={(value) =>
-                        updateField("data.card.subtitle", value)
-                    }
-                />
+        <DynamicStyledField
+          type="textarea"
+          label="Subtitle"
+          value={draft.data.card.subtitle ?? ""}
+          onChange={(value: string) => updateField("data.card.subtitle", value)}
+          enableStyle
+          style={(draft.data.card as any).subtitleStyle}
+          onStyleChange={(style) =>
+            updateField("data.card.subtitleStyle", style)
+          }
+        />
 
-                <ImageField
-                    label="Background Image"
-                    value={draft.data.card.background_image}
-                    onChange={(value) =>
-                        updateField("data.card.background_image", value)
-                    }
-                />
+        <UniversalMultimediaForm
+          section={draft.data.card as any}
+          content={draft.data.card as Record<string, any>}
+          updateSection={(patch) =>
+            updateField("data.card", { ...draft.data.card, ...patch })
+          }
+          updateSectionContent={(patch) =>
+            updateField("data.card", { ...draft.data.card, ...patch })
+          }
+          contentMediaKey="backgroundMultimedia"
+          backgroundType={draft.data.card.backgroundMultimedia?.type}
+          sectionTitle="Card Background"
+          showColorPicker
+          colorLabel="Card background color"
+          defaultColor="#FFFFFF"
+          imageTitle="Card Background Image"
+          imageLabel="Card background image"
+          imageFieldName="locationCardBackgroundImage"
+          videoTitle="Card Background Video"
+          videoLabel="Card background video"
+          videoFieldName="locationCardBackgroundVideo"
+          showImageAltField
+          showVideoAltField
+          showVideoSwitches
+        />
 
-                <Field
-                    label="Button Label"
-                    value={draft.data.card.button.label}
-                    onChange={(value) =>
-                        updateField("data.card.button.label", value)
-                    }
-                />
-
-                <Field
-                    label="Button URL"
-                    value={draft.data.card.button.url}
-                    onChange={(value) =>
-                        updateField("data.card.button.url", value)
-                    }
-                />
-            </div>
-        </FormSection>
-    )
+        <ButtonsField
+          value={[draft.data.card.button]}
+          onChange={(buttons) => {
+            const button = buttons[0] ?? { label: "", url: "" }
+            updateField("data.card.button", {
+              ...draft.data.card.button,
+              ...button,
+            })
+          }}
+        />
+      </div>
+    </FormSection>
+  )
 }

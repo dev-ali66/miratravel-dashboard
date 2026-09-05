@@ -15,8 +15,17 @@ export default defineConfig({
 
   server: {
     host: "0.0.0.0",
-    allowedHosts: [
-      "maricela-lineny-iliana.ngrok-free.dev",
-    ],
+    allowedHosts: ["maricela-lineny-iliana.ngrok-free.dev"],
+    watch: {
+      ignored: [
+        "**/backend/**",
+        "**/frontend/**",
+        "**/.next/**",
+        "**/mira_*/**",
+        "**/.git/**",
+        "**/dist/**",
+        "**/node_modules/**",
+      ],
+    },
   },
 })

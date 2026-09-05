@@ -1,6 +1,11 @@
 import type { ComponentType, ReactNode } from "react"
 
-import type { HomeButton, HomeImage, HomeSection, HomeVideo } from "../homeTypes"
+import type {
+  HomeButton,
+  HomeImage,
+  HomeSection,
+  HomeVideo,
+} from "../homeTypes"
 
 import { HeroForm } from "../shared/form/HeroForm"
 import { ExploreJourneysForm } from "../shared/form/ExploreJourneysForm"
@@ -56,43 +61,44 @@ export type SectionRegistryEntry = {
   preview: ComponentType<HomePreviewSectionProps>
 }
 
-export const homeSectionRegistry: Record<HomeSectionKey, SectionRegistryEntry> = {
-  hero: {
-    label: "Hero",
-    form: HeroForm,
-    preview: HeroPreview,
-  },
-  explore_journeys: {
-    label: "Explore Journeys",
-    form: ExploreJourneysForm,
-    preview: ExploreJourneysPreview,
-  },
-  destinations: {
-    label: "Destinations",
-    form: DestinationsForm,
-    preview: DestinationsPreview,
-  },
-  mira_stories: {
-    label: "Mira Stories",
-    form: MiraStoriesForm,
-    preview: MiraStoriesPreview,
-  },
-  why_mira: {
-    label: "Why Mira",
-    form: WhyMiraForm,
-    preview: WhyMiraPreview,
-  },
-  travel_insights: {
-    label: "Travel Insights",
-    form: TravelInsightsForm,
-    preview: TravelInsightsPreview,
-  },
-  custom_journey_cta: {
-    label: "Custom Journey CTA",
-    form: CustomJourneyCtaForm,
-    preview: CustomJourneyCtaPreview,
-  },
-}
+export const homeSectionRegistry: Record<HomeSectionKey, SectionRegistryEntry> =
+  {
+    hero: {
+      label: "Hero",
+      form: HeroForm,
+      preview: HeroPreview,
+    },
+    explore_journeys: {
+      label: "Explore Journeys",
+      form: ExploreJourneysForm,
+      preview: ExploreJourneysPreview,
+    },
+    destinations: {
+      label: "Destinations",
+      form: DestinationsForm,
+      preview: DestinationsPreview,
+    },
+    mira_stories: {
+      label: "Mira Stories",
+      form: MiraStoriesForm,
+      preview: MiraStoriesPreview,
+    },
+    why_mira: {
+      label: "Why Mira",
+      form: WhyMiraForm,
+      preview: WhyMiraPreview,
+    },
+    travel_insights: {
+      label: "Travel Insights",
+      form: TravelInsightsForm,
+      preview: TravelInsightsPreview,
+    },
+    custom_journey_cta: {
+      label: "Custom Journey CTA",
+      form: CustomJourneyCtaForm,
+      preview: CustomJourneyCtaPreview,
+    },
+  }
 
 export const homeSectionOrder: HomeSectionKey[] = [
   "hero",

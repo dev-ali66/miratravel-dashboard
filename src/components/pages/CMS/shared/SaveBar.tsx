@@ -9,12 +9,20 @@ interface SaveBarProps {
   isLoading?: boolean
 }
 
-export function SaveBar({ title, description, onSave, isSaving, isLoading }: SaveBarProps) {
+export function SaveBar({
+  title,
+  description,
+  onSave,
+  isSaving,
+  isLoading,
+}: SaveBarProps) {
   return (
     <div className="sticky top-0 z-10 flex items-center justify-between gap-3 border-b border-border/60 bg-card/95 px-4 py-3 backdrop-blur">
       <div>
         <h2 className="text-sm font-bold text-foreground">{title}</h2>
-        {description && <p className="text-[11px] text-muted-foreground">{description}</p>}
+        {description && (
+          <p className="text-[11px] text-muted-foreground">{description}</p>
+        )}
       </div>
       <Button
         type="button"

@@ -1,13 +1,14 @@
 import type { ReactNode } from "react"
 
-import type {
-  FooterContent,
-  FooterSocialLink,
-} from "../../footerTypes"
+import type { FooterContent, FooterSocialLink } from "../../footerTypes"
 
 export type FooterResolvedTheme = {
   backgroundColor: string
   backgroundImage?: string
+  backgroundVideo?: string
+  backgroundMultimedia?: Record<string, any>
+  navbarBrandMultimedia?: Record<string, any>
+  footerBrandMultimedia?: Record<string, any>
   textColor: string
   headingColor: string
   mutedTextColor: string
@@ -28,9 +29,7 @@ export type FooterResolvedTheme = {
 export type FooterPreviewSectionContext = {
   theme: FooterResolvedTheme
   content: FooterContent
-  renderSocialIcon: (
-    link: FooterSocialLink
-  ) => ReactNode
+  renderSocialIcon: (link: FooterSocialLink) => ReactNode
 }
 
 export type FooterPreviewSectionProps = {

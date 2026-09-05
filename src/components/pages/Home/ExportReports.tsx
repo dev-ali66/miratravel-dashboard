@@ -30,19 +30,23 @@ const availableReports = [
 
 export default function ExportReports({ className }: { className?: string }) {
   return (
-    <SlideLeft 
+    <SlideLeft
       delay={0.4}
-      className={`rounded-xl border border-border bg-card p-6 shadow-sm flex flex-col ${className || ''}`}
+      className={`flex flex-col rounded-xl border border-border bg-card p-6 shadow-sm ${className || ""}`}
     >
       <div className="mb-6">
-        <h3 className="text-lg font-semibold tracking-tight text-foreground">Available Reports</h3>
-        <p className="text-sm text-muted-foreground mt-1">Generate and download detailed reports</p>
+        <h3 className="text-lg font-semibold tracking-tight text-foreground">
+          Available Reports
+        </h3>
+        <p className="mt-1 text-sm text-muted-foreground">
+          Generate and download detailed reports
+        </p>
       </div>
 
-      <div className="flex flex-col gap-4 flex-1">
+      <div className="flex flex-1 flex-col gap-4">
         {availableReports.map((report, i) => (
-          <div 
-            key={i} 
+          <div
+            key={i}
             className="group flex items-start gap-4 rounded-lg border border-border/50 p-4 transition-all hover:border-primary/50 hover:bg-muted/30"
           >
             <div className="flex size-10 shrink-0 items-center justify-center rounded-lg bg-primary/10 text-primary">
@@ -50,15 +54,17 @@ export default function ExportReports({ className }: { className?: string }) {
             </div>
             <div className="flex-1">
               <div className="flex items-center justify-between">
-                <h4 className="text-sm font-semibold text-foreground">{report.title}</h4>
-                <span className="text-xs font-medium px-2 py-0.5 rounded-full bg-secondary text-secondary-foreground">
+                <h4 className="text-sm font-semibold text-foreground">
+                  {report.title}
+                </h4>
+                <span className="rounded-full bg-secondary px-2 py-0.5 text-xs font-medium text-secondary-foreground">
                   {report.type}
                 </span>
               </div>
-              <p className="text-xs text-muted-foreground mt-1 leading-relaxed">
+              <p className="mt-1 text-xs leading-relaxed text-muted-foreground">
                 {report.description}
               </p>
-              <button className="mt-3 flex items-center gap-1.5 text-xs font-semibold text-primary hover:text-primary/80 transition-colors">
+              <button className="mt-3 flex items-center gap-1.5 text-xs font-semibold text-primary transition-colors hover:text-primary/80">
                 <Download className="size-3.5" />
                 Generate {report.type}
               </button>

@@ -121,7 +121,7 @@ export interface HomeSection {
 
   /** Hero background mode. Only one mode can be active at a time. */
   backgroundType?: "image" | "video" | "color"
-  
+
   /** When true the hero will render the video instead of the background image */
   showVideo?: boolean
 

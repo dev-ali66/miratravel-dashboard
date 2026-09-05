@@ -176,7 +176,7 @@ export function ColorField({ value, onChange, ...rest }: ColorFieldProps) {
             }
             className="w-full accent-primary"
           />
-          <span className="w-10 text-right text-xs font-mono text-muted-foreground">
+          <span className="w-10 text-right font-mono text-xs text-muted-foreground">
             {opacityPercent}%
           </span>
         </div>
@@ -297,6 +297,7 @@ type BaseContainerProps = Omit<
 }
 
 interface StylableBaseProps extends BaseContainerProps {
+  disabled?: boolean
   validation?: NormalFieldValidation
   onValidChange?: (isValid: boolean) => void
   enableStyle?: boolean
@@ -336,6 +337,20 @@ export interface DynamicTextAreaFieldProps extends StylableBaseProps {
   maxLength?: number
   checked?: never
   options?: never
+}
+
+export interface DynamicColorFieldProps extends BaseContainerProps {
+  type: "color"
+  value: string
+  onChange: (value: string) => void
+  checked?: never
+  options?: never
+  rows?: never
+  enableStyle?: never
+  style?: never
+  onStyleChange?: never
+  validation?: never
+  onValidChange?: never
 }
 
 export interface DynamicSelectFieldProps extends StylableBaseProps {
@@ -408,6 +423,7 @@ export type DynamicStyledFieldProps =
   | DynamicTextFieldProps
   | DynamicNumberFieldProps
   | DynamicTextAreaFieldProps
+  | DynamicColorFieldProps
   | DynamicSelectFieldProps
   | DynamicSwitchFieldProps
   | DynamicImageFieldProps
@@ -460,6 +476,7 @@ function DynamicTextualField(
           placeholder={placeholder}
           rows={props.rows ?? 3}
           maxLength={validation?.maxLength ?? props.maxLength}
+          disabled={props.disabled}
           onChange={(e) => onChange(e.target.value)}
           onBlur={() => setTouched(true)}
         />
@@ -471,6 +488,7 @@ function DynamicTextualField(
           min={validation?.min ?? props.min}
           max={validation?.max ?? props.max}
           step={props.step}
+          disabled={props.disabled}
           onChange={(e) => onChange(e.target.value)}
           onBlur={() => setTouched(true)}
         />
@@ -479,6 +497,7 @@ function DynamicTextualField(
           type="text"
           value={value ?? ""}
           placeholder={placeholder}
+          disabled={props.disabled}
           onChange={(e) => onChange(e.target.value)}
           onBlur={() => setTouched(true)}
         />
@@ -563,15 +582,19 @@ function DynamicSelectFieldComponent(props: DynamicSelectFieldProps) {
   )
 }
 
+function DynamicColorFieldComponent({
+  type: _type,
+  ...props
+}: DynamicColorFieldProps) {
+  return <ColorField {...props} />
+}
+
 function DynamicSwitchFieldComponent(props: DynamicSwitchFieldProps) {
   const { label, checked, onChange, hint, className, ...rest } = props
 
   return (
     <div
-      className={cn(
-        "flex items-center justify-between gap-3 py-1",
-        className
-      )}
+      className={cn("flex items-center justify-between gap-3 py-1", className)}
       {...rest}
     >
       <div>
@@ -679,6 +702,8 @@ export function DynamicStyledField(props: DynamicStyledFieldProps) {
     case "number":
     case "textarea":
       return <DynamicTextualField {...props} />
+    case "color":
+      return <DynamicColorFieldComponent {...props} />
     case "select":
       return <DynamicSelectFieldComponent {...props} />
     case "switch":
@@ -714,11 +739,7 @@ export type NumberFieldProps = Omit<
     onChange: (value: number) => void
   }
 
-export function NumberField({
-  value,
-  onChange,
-  ...rest
-}: NumberFieldProps) {
+export function NumberField({ value, onChange, ...rest }: NumberFieldProps) {
   return (
     <DynamicStyledField
       type="number"
@@ -748,4 +769,3 @@ export type SwitchFieldProps = Omit<DynamicSwitchFieldProps, "type">
 export function SwitchField(props: SwitchFieldProps) {
   return <DynamicStyledField type="switch" {...props} />
 }
-

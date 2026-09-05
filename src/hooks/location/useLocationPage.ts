@@ -1,201 +1,154 @@
-import {
-    useCallback,
-    useEffect,
-} from "react"
+import { useCallback, useEffect } from "react"
 
-
-
-import {
-    useAddLocation,
-} from "./useAddLocation"
+import { useAddLocation } from "./useAddLocation"
 import { useLocationDraft } from "@/components/pages/Location/shared/LocationDraftContext"
 import { useGetLocationById } from "./useGetLocationById"
 import type { LocationData } from "@/components/pages/Location/locationTypes"
 import { mergeWithDefaults } from "@/components/pages/Location/shared/mergeWithDefaults"
 import { emptyLocation } from "@/components/pages/Location/shared/emptyLocation"
 
-export function useLocationPage(
-    locationId?: string,
-    _slug?: string
-) {
-    const isEditMode =
-        Boolean(locationId)
+import { normalizeLocationPayload } from "@/components/pages/Location/shared/normalizeLocationPayload"
 
-    const {
-        draft,
-        setDraft,
-        resetDraft,
-    } = useLocationDraft()
+export function useLocationPage(locationId?: string, _slug?: string) {
+  const isEditMode = Boolean(locationId)
 
-    const {
-        data: locationResponse,
-        isLoading,
-        isError,
-        error,
-    } = useGetLocationById(
-        locationId
-    )
+  const { draft, setDraft, resetDraft } = useLocationDraft()
 
-    const {
-        mutate: saveLocation,
-        isPending: isSaving,
-    } = useAddLocation()
+  const {
+    data: locationResponse,
+    isLoading,
+    isError,
+    error,
+  } = useGetLocationById(locationId)
 
-    /**
-     * ==========================================
-     * LOAD EDIT DATA
-     * ==========================================
-     */
+  const { mutate: saveLocation, isPending: isSaving } = useAddLocation()
 
-    useEffect(() => {
-        if (!isEditMode) return
-        if (isLoading) return
+  /**
+   * ==========================================
+   * LOAD EDIT DATA
+   * ==========================================
+   */
 
-        const rawData = locationResponse?.data
+  useEffect(() => {
+    if (!isEditMode) return
+    if (isLoading) return
 
-        const location = Array.isArray(rawData)
-            ? rawData[0]
-            : rawData
+    const rawData = locationResponse?.data
 
-        if (location) {
-            setDraft(
-                mergeWithDefaults(
-                    emptyLocation,
-                    location as LocationData
-                ) as LocationData
-            )
-        }
-    }, [
-        isEditMode,
-        isLoading,
-        locationResponse,
-        setDraft,
-    ])
+    const location = Array.isArray(rawData) ? rawData[0] : rawData
 
-    /**
-     * ==========================================
-     * UPDATE FIELD
-     * ==========================================
-     */
-
-    const updateField = useCallback(
-        (
-            path: string,
-            value: unknown
-        ) => {
-            setDraft((current) => {
-                if (!current) {
-                    return current
-                }
-
-                const next =
-                    structuredClone(current)
-
-                const keys =
-                    path.split(".")
-
-                let target: any = next
-
-                keys
-                    .slice(0, -1)
-                    .forEach((key) => {
-                        if (
-                            target[key] ===
-                            undefined ||
-                            target[key] === null
-                        ) {
-                            target[key] = {}
-                        }
-
-                        target =
-                            target[key]
-                    })
-
-                target[
-                    keys[keys.length - 1]
-                ] = value
-
-                return next
-            })
-        },
-        [setDraft]
-    )
-
-    /**
-     * ==========================================
-     * SAVE
-     * ==========================================
-     */
-
-    const save = useCallback(() => {
-        if (!draft) return
-
-        /**
-         * EDIT
-         *
-         * id থাকলে backend update করবে
-         */
-        if (isEditMode) {
-            saveLocation({
-                ...draft,
-                id: locationId,
-            })
-
-            return
-        }
-
-        /**
-         * CREATE
-         *
-         * id পাঠানো হবে না
-         */
-        const {
-            id: _id,
-            ...createPayload
-        } = draft
-
-        saveLocation(
-            createPayload
-        )
-    }, [
-        draft,
-        isEditMode,
-        locationId,
-        saveLocation,
-    ])
-
-    /**
-     * ==========================================
-     * RESET
-     * ==========================================
-     */
-
-    const reset = useCallback(
-        (value?: LocationData) => {
-            resetDraft(value)
-        },
-        [resetDraft]
-    )
-
-    return {
-        draft,
-
-        setDraft,
-
-        updateField,
-
-        reset,
-
-        save,
-
-        isEditMode,
-
-        isLoading,
-
-        isError,
-
-        error,
-
-        isSaving,
+    if (location) {
+      setDraft(
+        mergeWithDefaults(
+          emptyLocation,
+          location as LocationData
+        ) as LocationData
+      )
     }
+  }, [isEditMode, isLoading, locationResponse, setDraft])
+
+  /**
+   * ==========================================
+   * UPDATE FIELD
+   * ==========================================
+   */
+
+  const updateField = useCallback(
+    (path: string, value: unknown) => {
+      setDraft((current) => {
+        if (!current) {
+          return current
+        }
+
+        const next = structuredClone(current)
+
+        const keys = path.split(".")
+
+        let target: any = next
+
+        keys.slice(0, -1).forEach((key) => {
+          if (target[key] === undefined || target[key] === null) {
+            target[key] = {}
+          }
+
+          target = target[key]
+        })
+
+        target[keys[keys.length - 1]] = value === undefined ? null : value
+
+        return next
+      })
+    },
+    [setDraft]
+  )
+
+  /**
+   * ==========================================
+   * SAVE
+   * ==========================================
+   */
+
+  const save = useCallback(() => {
+    if (!draft) return
+
+    const normalizedDraft = normalizeLocationPayload(draft)
+
+    /**
+     * EDIT
+     *
+     * id থাকলে backend update করবে
+     */
+    if (isEditMode) {
+      saveLocation({
+        ...normalizedDraft,
+        id: locationId,
+      })
+
+      return
+    }
+
+    /**
+     * CREATE
+     *
+     * id পাঠানো হবে না
+     */
+    const { id: _id, ...createPayload } = normalizedDraft
+
+    saveLocation(createPayload)
+  }, [draft, isEditMode, locationId, saveLocation])
+
+  /**
+   * ==========================================
+   * RESET
+   * ==========================================
+   */
+
+  const reset = useCallback(
+    (value?: LocationData) => {
+      resetDraft(value)
+    },
+    [resetDraft]
+  )
+
+  return {
+    draft,
+
+    setDraft,
+
+    updateField,
+
+    reset,
+
+    save,
+
+    isEditMode,
+
+    isLoading,
+
+    isError,
+
+    error,
+
+    isSaving,
+  }
 }

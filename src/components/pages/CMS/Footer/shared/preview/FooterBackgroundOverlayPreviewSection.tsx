@@ -4,13 +4,10 @@ export const FooterBackgroundOverlayPreviewSection = ({
   context,
 }: FooterPreviewSectionProps) => {
   const {
-    theme: {
-      backgroundImage,
-      backgroundColor,
-    },
+    theme: { backgroundImage, backgroundMultimedia, backgroundColor },
   } = context
 
-  if (!backgroundImage) {
+  if (!backgroundImage && !backgroundMultimedia) {
     return null
   }
 

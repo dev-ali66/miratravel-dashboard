@@ -1,29 +1,17 @@
 import { ColorField } from "../../../shared/FormControls"
 import { RepeaterList } from "../../../shared/RepeaterList"
 
-import type {
-  FooterColumn,
-  FooterColumnLink,
-} from "../../footerTypes"
+import type { FooterColumn, FooterColumnLink } from "../../footerTypes"
 import type { FooterFormSectionProps } from "./sectionTypes"
 
-export const LinkColumnsFormSection = ({
-  context,
-}: FooterFormSectionProps) => {
-  const {
-    theme,
-    content,
-    updateContent,
-    TextField,
-  } = context
+export const LinkColumnsFormSection = ({ context }: FooterFormSectionProps) => {
+  const { theme, content, updateContent, TextField } = context
 
   const columns = content.columns ?? []
 
   return (
     <div className="rounded-lg border border-border/60 p-3">
-      <p className="mb-3 text-xs font-semibold text-foreground">
-        Link Columns
-      </p>
+      <p className="mb-3 text-xs font-semibold text-foreground">Link Columns</p>
 
       <RepeaterList<FooterColumn>
         items={columns}
@@ -34,20 +22,13 @@ export const LinkColumnsFormSection = ({
         }
         addLabel="Add column"
         emptyLabel="No columns."
-        itemLabel={(column) =>
-          column.title || "Untitled column"
-        }
+        itemLabel={(column) => column.title || "Untitled column"}
         newItem={() => ({
           title: "",
-          titleColor:
-            theme.headingColor ??
-            "#FFFFFF",
+          titleColor: theme.headingColor ?? "#FFFFFF",
           links: [],
         })}
-        renderItem={(
-          column,
-          updateColumn
-        ) => (
+        renderItem={(column, updateColumn) => (
           <div className="flex flex-col gap-3">
             <TextField
               label="Column title"
@@ -62,11 +43,7 @@ export const LinkColumnsFormSection = ({
 
             <ColorField
               label="Column title color"
-              value={
-                column.titleColor ??
-                theme.headingColor ??
-                "#FFFFFF"
-              }
+              value={column.titleColor ?? theme.headingColor ?? "#FFFFFF"}
               onChange={(value) =>
                 updateColumn({
                   ...column,
@@ -85,18 +62,12 @@ export const LinkColumnsFormSection = ({
               }
               addLabel="Add link"
               emptyLabel="No links."
-              itemLabel={(link) =>
-                link.label ||
-                "Untitled link"
-              }
+              itemLabel={(link) => link.label || "Untitled link"}
               newItem={() => ({
                 label: "",
                 url: "",
               })}
-              renderItem={(
-                link,
-                updateLink
-              ) => (
+              renderItem={(link, updateLink) => (
                 <div className="grid grid-cols-1 gap-2 md:grid-cols-2">
                   <TextField
                     label="Label"

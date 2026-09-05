@@ -4,83 +4,104 @@
    intentionally has no CMS fields.
 ===================================================== */
 
-import { ColorField, Field, FormSection } from "../../shared/fields"
+import { DynamicStyledField, FormSection } from "../../shared/fields"
+import { UniversalMultimediaForm } from "../../../CMS/shared/UniversalMultimediaForm"
 import type { LocationData } from "../../locationTypes"
 import { emptyLocation } from "../../shared/emptyLocation"
 
 export type RegionGlanceFormProps = {
-    draft: LocationData
-    updateField: (path: string, value: unknown) => void
-    openSections: Record<string, boolean>
-    toggleSection: (section: string) => void
+  draft: LocationData
+  updateField: (path: string, value: unknown) => void
+  openSections: Record<string, boolean>
+  toggleSection: (section: string) => void
 }
 
 export function RegionGlanceForm({
-    draft,
-    updateField,
-    openSections,
-    toggleSection,
+  draft,
+  updateField,
+  openSections,
+  toggleSection,
 }: RegionGlanceFormProps) {
-    const glance = {
-        ...emptyLocation.data.regionGlance,
-        ...draft.data.regionGlance,
-    }
-    const style = glance.style ?? {}
+  const glance = {
+    ...emptyLocation.data.regionGlance,
+    ...draft.data.regionGlance,
+  }
 
-    return (
-        <FormSection
-            title="Region Glance"
-            active={!!openSections["region-glance"]}
-            onClick={() => toggleSection("region-glance")}
-        >
-            <div className="space-y-4">
-                <Field
-                    label="Label"
-                    value={glance.label}
-                    onChange={(value) => updateField("data.regionGlance.label", value)}
-                />
-                <Field
-                    label="Title"
-                    value={glance.title}
-                    onChange={(value) => updateField("data.regionGlance.title", value)}
-                />
-                <Field
-                    label="Description"
-                    value={glance.description}
-                    multiline
-                    onChange={(value) => updateField("data.regionGlance.description", value)}
-                />
+  return (
+    <FormSection
+      title="Region Glance"
+      active={!!openSections["region-glance"]}
+      onClick={() => toggleSection("region-glance")}
+    >
+      <div className="space-y-4">
+        <DynamicStyledField
+          type="text"
+          label="Label"
+          value={glance.label ?? ""}
+          onChange={(value: string) =>
+            updateField("data.regionGlance.label", value)
+          }
+          enableStyle
+          style={(glance as any).labelStyle}
+          onStyleChange={(style) =>
+            updateField("data.regionGlance.labelStyle", style)
+          }
+        />
+        <DynamicStyledField
+          type="text"
+          label="Title"
+          value={glance.title ?? ""}
+          onChange={(value: string) =>
+            updateField("data.regionGlance.title", value)
+          }
+          enableStyle
+          style={(glance as any).titleStyle}
+          onStyleChange={(style) =>
+            updateField("data.regionGlance.titleStyle", style)
+          }
+        />
+        <DynamicStyledField
+          type="textarea"
+          label="Description"
+          value={glance.description ?? ""}
+          onChange={(value: string) =>
+            updateField("data.regionGlance.description", value)
+          }
+          enableStyle
+          style={(glance as any).descriptionStyle}
+          onStyleChange={(style) =>
+            updateField("data.regionGlance.descriptionStyle", style)
+          }
+        />
 
-                <div className="space-y-4 border-t border-border/60 pt-4">
-                    <p className="text-[11px] font-semibold uppercase tracking-wide text-muted-foreground">
-                        Appearance
-                    </p>
-                    <div className="grid grid-cols-2 gap-3">
-                        <ColorField
-                            label="Section Background"
-                            value={style.backgroundColor ?? ""}
-                            onChange={(value) => updateField("data.regionGlance.style.backgroundColor", value)}
-                        />
-                        <ColorField
-                            label="Label Color"
-                            value={style.labelTextColor ?? ""}
-                            onChange={(value) => updateField("data.regionGlance.style.labelTextColor", value)}
-                        />
-                        <ColorField
-                            label="Title Color"
-                            value={style.titleTextColor ?? ""}
-                            onChange={(value) => updateField("data.regionGlance.style.titleTextColor", value)}
-                        />
-                        <ColorField
-                            label="Description Color"
-                            value={style.descriptionTextColor ?? ""}
-                            onChange={(value) => updateField("data.regionGlance.style.descriptionTextColor", value)}
-                        />
-                    </div>
-                </div>
-            </div>
-        </FormSection>
-    )
+        <UniversalMultimediaForm
+          section={glance as any}
+          content={glance as Record<string, any>}
+          updateSection={(patch) =>
+            updateField("data.regionGlance", { ...glance, ...patch })
+          }
+          updateSectionContent={(patch) =>
+            updateField("data.regionGlance", { ...glance, ...patch })
+          }
+          contentMediaKey="backgroundMultimedia"
+          backgroundType={(glance as any).backgroundMultimedia?.type}
+          backgroundTypeStyleKey="locationRegionGlanceBackgroundTypeStyle"
+          sectionTitle="Background"
+          showColorPicker
+          colorLabel="Background color"
+          defaultColor="#F7F6F2"
+          imageTitle="Background Image"
+          imageLabel="Background image"
+          imageFieldName="locationRegionGlanceBackgroundImage"
+          videoTitle="Background Video"
+          videoLabel="Background video"
+          videoFieldName="locationRegionGlanceBackgroundVideo"
+          showImageAltField
+          showVideoSwitches
+        />
+      </div>
+    </FormSection>
+  )
 }
 
 export default RegionGlanceForm

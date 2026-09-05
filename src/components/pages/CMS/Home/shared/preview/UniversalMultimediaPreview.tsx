@@ -7,6 +7,8 @@ export type UniversalMultimediaValue = {
   color?: string
   url?: string
   alt?: string
+  imageData?: UniversalMultimediaValue
+  videoData?: UniversalMultimediaValue
   opacity?: number
   overlayColor?: string
   overlayOpacity?: number
@@ -38,50 +40,65 @@ export function UniversalMultimediaPreview({
   containerClassName,
   overlayClassName,
 }: UniversalMultimediaPreviewProps) {
+  const resolvedMultimedia = multimedia
+    ? {
+        ...multimedia,
+        ...(multimedia.type === "video"
+          ? multimedia.videoData
+          : multimedia.imageData),
+        type: multimedia.type,
+      }
+    : undefined
+
   const resolvedType =
-    multimedia?.type ??
-    (multimedia?.url
-      ? fallbackVideoSrc && multimedia?.autoplay !== undefined
+    resolvedMultimedia?.type ??
+    (resolvedMultimedia?.url
+      ? fallbackVideoSrc && resolvedMultimedia?.autoplay !== undefined
         ? "video"
         : "image"
       : "color")
 
-  const shouldShowOverlay = !!overlayClassName && (resolvedType === "image" || resolvedType === "video")
+  const shouldShowOverlay =
+    !!overlayClassName && (resolvedType === "image" || resolvedType === "video")
 
   return (
     <div className={cn("relative", containerClassName)}>
       {resolvedType === "video" ? (
         <VideoShowPreview
-          src={multimedia?.url || fallbackVideoSrc || ""}
+          src={resolvedMultimedia?.url || fallbackVideoSrc || ""}
           poster={fallbackImageSrc}
-          alt={multimedia?.alt || fallbackAlt}
+          alt={resolvedMultimedia?.alt || fallbackAlt}
           mode={mode === "background" ? "background" : undefined}
           className={cn("h-full w-full", className)}
-          autoplay={multimedia?.autoplay ?? true}
-          muted={multimedia?.muted ?? true}
-          loop={multimedia?.loop ?? true}
-          opacity={multimedia?.opacity ?? 100}
-          overlayColor={multimedia?.overlayColor}
-          overlayOpacity={multimedia?.overlayOpacity}
+          autoplay={resolvedMultimedia?.autoplay ?? true}
+          muted={resolvedMultimedia?.muted ?? true}
+          loop={resolvedMultimedia?.loop ?? true}
+          opacity={resolvedMultimedia?.opacity ?? 100}
+          overlayColor={resolvedMultimedia?.overlayColor}
+          overlayOpacity={resolvedMultimedia?.overlayOpacity}
         />
       ) : resolvedType === "image" ? (
         <ImageShowPreview
-          src={multimedia?.url || fallbackImageSrc || ""}
-          alt={multimedia?.alt || fallbackAlt}
+          src={resolvedMultimedia?.url || fallbackImageSrc || ""}
+          alt={resolvedMultimedia?.alt || fallbackAlt}
           mode={mode === "background" ? "background" : undefined}
           className={cn("h-full w-full", className)}
-          opacity={multimedia?.opacity ?? 100}
-          overlayColor={multimedia?.overlayColor}
-          overlayOpacity={multimedia?.overlayOpacity}
+          opacity={resolvedMultimedia?.opacity ?? 100}
+          overlayColor={resolvedMultimedia?.overlayColor}
+          overlayOpacity={resolvedMultimedia?.overlayOpacity}
         />
       ) : (
         <div
           className={cn("h-full w-full", className)}
-          style={{ backgroundColor: multimedia?.color ?? fallbackColor }}
+          style={{
+            backgroundColor: resolvedMultimedia?.color ?? fallbackColor,
+          }}
         />
       )}
 
-      {shouldShowOverlay && <div className={cn("absolute inset-0", overlayClassName)} />}
+      {shouldShowOverlay && (
+        <div className={cn("absolute inset-0", overlayClassName)} />
+      )}
     </div>
   )
 }

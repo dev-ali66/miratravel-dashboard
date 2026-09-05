@@ -17,12 +17,8 @@ export type FooterTextAreaFieldRenderer = (
 export type FooterFormSectionContext = {
   theme: FooterTheme
   content: FooterContent
-  updateTheme: (
-    patch: Partial<FooterTheme>
-  ) => void
-  updateContent: (
-    patch: Partial<FooterContent>
-  ) => void
+  updateTheme: (patch: Partial<FooterTheme>) => void
+  updateContent: (patch: Partial<FooterContent>) => void
   TextField: FooterTextFieldRenderer
   TextAreaField: FooterTextAreaFieldRenderer
 }

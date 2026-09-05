@@ -4,20 +4,14 @@ import { useAddCms } from "@/hooks/cms/useAddCms"
 import { useSetCmsDraft } from "./CmsDraftContext"
 
 export function useCmsPage<
-  T extends { data?: Record<string, any> }
->(
-  slug: string,
-  name: string
-) {
-  const {
-    data: cmsData,
-    isLoading,
-  } = useGetCmsBySlug(slug)
+  T extends {
+    data?: Record<string, any>
+    metadata?: unknown
+  },
+>(slug: string, name: string) {
+  const { data: cmsData, isLoading } = useGetCmsBySlug(slug)
 
-  const {
-    mutate: saveCms,
-    isPending: isSaving,
-  } = useAddCms()
+  const { mutate: saveCms, isPending: isSaving } = useAddCms()
 
   const setDraft = useSetCmsDraft<T>()
 
@@ -35,23 +29,39 @@ export function useCmsPage<
     }
   }, [page, setDraft])
 
-
   const save = () => {
     if (!page) return
 
     const existingCms = cmsData?.data
-    const pageData = page.data ?? {}
+    const pageData = { ...(page.data ?? {}) }
+    delete pageData.metadata
+    const metadata = page.metadata
+      ? {
+          ...(page.metadata as Record<string, any>),
+          robots: {
+            ...(((page.metadata as Record<string, any>).robots ?? {}) as Record<
+              string,
+              any
+            >),
+            index: (page.metadata as Record<string, any>).robots?.index ?? true,
+            follow:
+              (page.metadata as Record<string, any>).robots?.follow ?? true,
+          },
+        }
+      : undefined
 
     if (existingCms?.id) {
       saveCms({
         id: existingCms.id,
         slug,
+        metadata,
         data: pageData,
       })
     } else {
       saveCms({
         name,
         slug,
+        metadata,
         data: pageData,
       })
     }

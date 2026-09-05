@@ -1,7 +1,7 @@
 import type { HomeSection } from "../../homeTypes"
 import { DynamicStyledField } from "../../../shared/FormControls"
 import { ButtonsField } from "../../../shared/ButtonsField"
-import { UniversalMultimediaForm } from "./UniversalMultimediaForm"
+import { UniversalMultimediaForm } from "../../../shared/UniversalMultimediaForm"
 
 export type HeroFormProps = {
   section: HomeSection
@@ -25,15 +25,18 @@ export function HeroForm({
   return (
     <div className="flex flex-col gap-5">
       <div className="rounded-md border border-border/50 p-3">
-        <p className="mb-3 text-xs font-semibold uppercase tracking-wide text-muted-foreground">
+        <p className="mb-3 text-xs font-semibold tracking-wide text-muted-foreground uppercase">
           Hero Content
         </p>
 
         <div className="flex flex-col gap-3">
-          <DynamicStyledField type="text"
+          <DynamicStyledField
+            type="text"
             label="Title line 1"
             value={content.titleLine1 ?? ""}
-            onChange={(value: string) => updateSectionContent(index, { titleLine1: value })}
+            onChange={(value: string) =>
+              updateSectionContent(index, { titleLine1: value })
+            }
             enableStyle
             style={content.homeHeroTitleStyle ?? content.titleLine1Style}
             onStyleChange={(style) =>
@@ -44,12 +47,17 @@ export function HeroForm({
             }
           />
 
-          <DynamicStyledField type="text"
+          <DynamicStyledField
+            type="text"
             label="Title highlight"
             value={content.titleHighlight ?? ""}
-            onChange={(value: string) => updateSectionContent(index, { titleHighlight: value })}
+            onChange={(value: string) =>
+              updateSectionContent(index, { titleHighlight: value })
+            }
             enableStyle
-            style={content.homeHeroTitleHighlightStyle ?? content.titleHighlightStyle}
+            style={
+              content.homeHeroTitleHighlightStyle ?? content.titleHighlightStyle
+            }
             onStyleChange={(style) =>
               updateSectionContent(index, {
                 homeHeroTitleHighlightStyle: style,
@@ -58,10 +66,13 @@ export function HeroForm({
             }
           />
 
-          <DynamicStyledField type="text"
+          <DynamicStyledField
+            type="text"
             label="Title line 2"
             value={content.titleLine2 ?? ""}
-            onChange={(value: string) => updateSectionContent(index, { titleLine2: value })}
+            onChange={(value: string) =>
+              updateSectionContent(index, { titleLine2: value })
+            }
             enableStyle
             style={content.homeHeroTitleLine2Style ?? content.titleLine2Style}
             onStyleChange={(style) =>
@@ -72,10 +83,13 @@ export function HeroForm({
             }
           />
 
-          <DynamicStyledField type="textarea"
+          <DynamicStyledField
+            type="textarea"
             label="Description"
             value={content.description ?? ""}
-            onChange={(value: string) => updateSectionContent(index, { description: value })}
+            onChange={(value: string) =>
+              updateSectionContent(index, { description: value })
+            }
             enableStyle
             style={content.homeHeroDescriptionStyle ?? content.descriptionStyle}
             onStyleChange={(style) =>
@@ -111,7 +125,7 @@ export function HeroForm({
       />
 
       <div className="rounded-md border border-border/50 p-3">
-        <p className="mb-3 text-xs font-semibold uppercase tracking-wide text-muted-foreground">
+        <p className="mb-3 text-xs font-semibold tracking-wide text-muted-foreground uppercase">
           Buttons
         </p>
 

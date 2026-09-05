@@ -5,11 +5,7 @@ import type { FooterFormSectionProps } from "./sectionTypes"
 export const SocialAppearanceFormSection = ({
   context,
 }: FooterFormSectionProps) => {
-  const {
-    theme,
-    updateTheme,
-    TextField,
-  } = context
+  const { theme, updateTheme, TextField } = context
 
   return (
     <div className="rounded-lg border border-border/60 p-3">
@@ -18,17 +14,14 @@ export const SocialAppearanceFormSection = ({
       </p>
 
       <p className="mb-3 text-[11px] text-muted-foreground">
-        Global social settings. Individual social items can
-        override these values.
+        Global social settings. Individual social items can override these
+        values.
       </p>
 
       <div className="flex flex-col gap-3">
         <ColorField
           label="Background color"
-          value={
-            theme.socialBackgroundColor ??
-            "rgba(255,255,255,0.10)"
-          }
+          value={theme.socialBackgroundColor ?? "rgba(255,255,255,0.10)"}
           onChange={(value) =>
             updateTheme({
               socialBackgroundColor: value,
@@ -38,10 +31,7 @@ export const SocialAppearanceFormSection = ({
 
         <ColorField
           label="Icon / text color"
-          value={
-            theme.socialTextColor ??
-            "#FFFFFF"
-          }
+          value={theme.socialTextColor ?? "#FFFFFF"}
           onChange={(value) =>
             updateTheme({
               socialTextColor: value,
@@ -51,10 +41,7 @@ export const SocialAppearanceFormSection = ({
 
         <ColorField
           label="Border color"
-          value={
-            theme.socialBorderColor ??
-            "transparent"
-          }
+          value={theme.socialBorderColor ?? "transparent"}
           onChange={(value) =>
             updateTheme({
               socialBorderColor: value,
@@ -64,10 +51,7 @@ export const SocialAppearanceFormSection = ({
 
         <ColorField
           label="Hover background color"
-          value={
-            theme.socialHoverBackgroundColor ??
-            "rgba(255,255,255,0.18)"
-          }
+          value={theme.socialHoverBackgroundColor ?? "rgba(255,255,255,0.18)"}
           onChange={(value) =>
             updateTheme({
               socialHoverBackgroundColor: value,
@@ -77,10 +61,7 @@ export const SocialAppearanceFormSection = ({
 
         <ColorField
           label="Hover icon / text color"
-          value={
-            theme.socialHoverTextColor ??
-            "#FFFFFF"
-          }
+          value={theme.socialHoverTextColor ?? "#FFFFFF"}
           onChange={(value) =>
             updateTheme({
               socialHoverTextColor: value,
@@ -90,10 +71,7 @@ export const SocialAppearanceFormSection = ({
 
         <TextField
           label="Icon size"
-          value={
-            theme.socialIconSize ??
-            "14px"
-          }
+          value={theme.socialIconSize ?? "14px"}
           onChange={(value) =>
             updateTheme({
               socialIconSize: value,
@@ -103,10 +81,7 @@ export const SocialAppearanceFormSection = ({
 
         <TextField
           label="Item size"
-          value={
-            theme.socialItemSize ??
-            "32px"
-          }
+          value={theme.socialItemSize ?? "32px"}
           onChange={(value) =>
             updateTheme({
               socialItemSize: value,
@@ -116,10 +91,7 @@ export const SocialAppearanceFormSection = ({
 
         <TextField
           label="Border radius"
-          value={
-            theme.socialBorderRadius ??
-            "4px"
-          }
+          value={theme.socialBorderRadius ?? "4px"}
           onChange={(value) =>
             updateTheme({
               socialBorderRadius: value,
@@ -129,10 +101,7 @@ export const SocialAppearanceFormSection = ({
 
         <TextField
           label="Gap"
-          value={
-            theme.socialGap ??
-            "8px"
-          }
+          value={theme.socialGap ?? "8px"}
           onChange={(value) =>
             updateTheme({
               socialGap: value,

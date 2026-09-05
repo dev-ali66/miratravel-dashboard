@@ -3,7 +3,8 @@
    Simple form to edit shared info text used by previews.
 ===================================================== */
 
-import { ColorField, Field, FormSection } from "./fields"
+import { DynamicStyledField, FormSection } from "./fields"
+import { UniversalMultimediaForm } from "../../CMS/shared/UniversalMultimediaForm"
 import type { LocationData } from "../locationTypes"
 
 export type SharedInfoFormProps = {
@@ -13,34 +14,66 @@ export type SharedInfoFormProps = {
   toggleSection: (section: string) => void
 }
 
-export function SharedInfoForm({ draft, updateField, openSections, toggleSection }: SharedInfoFormProps) {
+export function SharedInfoForm({
+  draft,
+  updateField,
+  openSections,
+  toggleSection,
+}: SharedInfoFormProps) {
+  const sharedInfo = draft.data.sharedInfo ?? {}
+
   return (
-    <FormSection title="Shared Info" active={!!openSections["shared-info"]} onClick={() => toggleSection("shared-info")}>
+    <FormSection
+      title="Shared Info"
+      active={!!openSections["shared-info"]}
+      onClick={() => toggleSection("shared-info")}
+    >
       <div className="space-y-4">
-        <Field
+        <DynamicStyledField
+          type="textarea"
           label="Text"
-          value={draft.data.sharedInfo?.text || "Add shared info details here."}
-          multiline
-          onChange={(value) => updateField("data.sharedInfo.text", value)}
+          value={sharedInfo.text || "Add shared info details here."}
+          onChange={(value: string) =>
+            updateField("data.sharedInfo.text", value)
+          }
+          enableStyle
+          style={sharedInfo.textStyle ?? undefined}
+          onStyleChange={(style) =>
+            updateField("data.sharedInfo.textStyle", style)
+          }
         />
 
-        <div className="grid grid-cols-2 gap-3">
-          <ColorField
-            label="Background Color"
-            value={draft.data.sharedInfo?.style?.backgroundColor ?? ""}
-            onChange={(value) =>
-              updateField("data.sharedInfo.style.backgroundColor", value)
-            }
-          />
-
-          <ColorField
-            label="Text Color"
-            value={draft.data.sharedInfo?.style?.textColor ?? ""}
-            onChange={(value) =>
-              updateField("data.sharedInfo.style.textColor", value)
-            }
-          />
-        </div>
+        <UniversalMultimediaForm
+          section={sharedInfo as any}
+          content={sharedInfo as Record<string, any>}
+          updateSection={(patch) =>
+            updateField("data.sharedInfo", {
+              ...sharedInfo,
+              ...patch,
+            })
+          }
+          updateSectionContent={(patch) =>
+            updateField("data.sharedInfo", {
+              ...sharedInfo,
+              ...patch,
+            })
+          }
+          contentMediaKey="backgroundMultimedia"
+          backgroundType={(sharedInfo as any)?.backgroundMultimedia?.type}
+          backgroundTypeStyleKey="locationSharedInfoBackgroundTypeStyle"
+          sectionTitle="Shared Info Background"
+          showColorPicker
+          colorLabel="Background color"
+          defaultColor="#F7F6F2"
+          imageTitle="Background Image"
+          imageLabel="Background image"
+          imageFieldName="locationSharedInfoBackgroundImage"
+          videoTitle="Background Video"
+          videoLabel="Background video"
+          videoFieldName="locationSharedInfoBackgroundVideo"
+          showImageAltField
+          showVideoSwitches
+        />
       </div>
     </FormSection>
   )

@@ -1,8 +1,5 @@
 import type { ReactNode } from "react"
-import {
-  ChevronDown,
-  ChevronUp,
-} from "lucide-react"
+import { ChevronDown, ChevronUp } from "lucide-react"
 
 type CollapsibleSectionCardProps = {
   title: string
@@ -36,9 +33,7 @@ export const CollapsibleSectionCard = ({
           )}
 
           <div className="min-w-0">
-            <p className="text-sm font-semibold">
-              {title}
-            </p>
+            <p className="text-sm font-semibold">{title}</p>
 
             {meta && (
               <p className="truncate text-[10px] text-muted-foreground">
@@ -56,9 +51,7 @@ export const CollapsibleSectionCard = ({
       </button>
 
       {isOpen && (
-        <div className="border-t border-border/60 p-4">
-          {children}
-        </div>
+        <div className="border-t border-border/60 p-4">{children}</div>
       )}
     </div>
   )

@@ -1,8 +1,19 @@
 import { RepeaterList } from "./RepeaterList"
-import { TextField, TextAreaField, NumberField, SwitchField } from "./FormControls"
+import {
+  TextField,
+  TextAreaField,
+  NumberField,
+  SwitchField,
+} from "./FormControls"
 import { ImageUploadField } from "@/components/shared/ImageUploadField"
 
-export type ItemFieldType = "text" | "textarea" | "number" | "image" | "tags" | "boolean"
+export type ItemFieldType =
+  | "text"
+  | "textarea"
+  | "number"
+  | "image"
+  | "tags"
+  | "boolean"
 
 export interface ItemFieldConfig {
   key: string
@@ -50,14 +61,20 @@ export function GenericItemsField({
                       label={field.label}
                       value={value?.url ?? ""}
                       onChange={(url) =>
-                        update({ ...item, [field.key]: { ...(value ?? {}), url } })
+                        update({
+                          ...item,
+                          [field.key]: { ...(value ?? {}), url },
+                        })
                       }
                     />
                     <TextField
                       label={`${field.label} alt text`}
                       value={value?.alt ?? ""}
                       onChange={(alt) =>
-                        update({ ...item, [field.key]: { ...(value ?? {}), alt } })
+                        update({
+                          ...item,
+                          [field.key]: { ...(value ?? {}), alt },
+                        })
                       }
                     />
                   </div>
@@ -105,7 +122,10 @@ export function GenericItemsField({
                     key={field.key}
                     label={field.label}
                     value={Array.isArray(value) ? value.join(", ") : ""}
-                    placeholder={field.placeholder ?? "Comma separated, e.g. NATURE, CULTURE"}
+                    placeholder={
+                      field.placeholder ??
+                      "Comma separated, e.g. NATURE, CULTURE"
+                    }
                     onChange={(v) =>
                       update({
                         ...item,

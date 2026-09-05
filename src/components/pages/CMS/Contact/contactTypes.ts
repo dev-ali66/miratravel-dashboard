@@ -1,3 +1,5 @@
+import type { FieldStyle } from "../shared/FormControls"
+
 export interface ContactMetadata {
   title: string
   description: string
@@ -17,6 +19,7 @@ export interface ContactButton {
   url: string
   style?: string
   action?: string
+  apiUrl?: string
 }
 
 export interface ContactVideo {
@@ -49,6 +52,8 @@ export interface ContactFieldOption {
 
 export interface ContactField {
   id: string
+  name?: string
+  mediaUrl?: string
   type: string
   label: string
   placeholder?: string
@@ -56,6 +61,21 @@ export interface ContactField {
   row?: number
   icon?: string
   options?: ContactFieldOption[]
+  pattern?: string
+  minLength?: number
+  maxLength?: number
+  min?: number
+  max?: number
+  errorMessage?: string
+  requiredErrorMessage?: string
+  labelStyle?: FieldStyle
+  nameStyle?: FieldStyle
+  placeholderStyle?: FieldStyle
+  requiredErrorStyle?: FieldStyle
+  errorStyle?: FieldStyle
+  fieldStyle?: FieldStyle
+  mediaType?: "image" | "video" | "file" | "multimedia"
+  allowedExtensions?: string
 }
 
 export interface ContactSectionContent {
@@ -64,7 +84,17 @@ export interface ContactSectionContent {
   titleLine1?: string
   titleLine2?: string
   description?: string
-  paragraphs?: string[]
+  contentMultimedia?: Record<string, any>
+  leftMultimedia?: Record<string, any>
+  sideMultimedia?: Record<string, any>
+  contactHeroEyebrowStyle?: FieldStyle
+  contactHeroTitleLine1Style?: FieldStyle
+  contactHeroTitleLine2Style?: FieldStyle
+  contactHeroDescriptionStyle?: FieldStyle
+  contactStepsTitleStyle?: FieldStyle
+  contactSectionEyebrowStyle?: FieldStyle
+  contactSectionTitleStyle?: FieldStyle
+  contactSectionDescriptionStyle?: FieldStyle
 }
 
 export interface ContactSection {
@@ -72,7 +102,6 @@ export interface ContactSection {
   type: string
   order: number
   bgColor?: string
-
 
   bgImages?: ContactImage
 
@@ -87,6 +116,7 @@ export interface ContactSection {
   sideImages?: ContactImage[]
 
   buttons?: ContactButton[]
+  contactMultimedia?: Record<string, any>
 }
 
 export interface ContactPageData {

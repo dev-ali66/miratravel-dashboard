@@ -5,8 +5,10 @@ import type { HomeSection } from "../../homeTypes"
 import { fieldCssStyle } from "./fieldStyle"
 import { UniversalMultimediaPreview } from "./UniversalMultimediaPreview"
 
-const PREVIEW_IMAGE_SOURCE = "https://images.unsplash.com/photo-1530789253388-582c481c54b0?auto=format&fit=crop&w=1200&q=85"
-const PREVIEW_VIDEO_SOURCE = "https://cdn.coverr.co/videos/coverr-aerial-view-of-a-beach-1576/1080p.mp4"
+const PREVIEW_IMAGE_SOURCE =
+  "https://images.unsplash.com/photo-1530789253388-582c481c54b0?auto=format&fit=crop&w=1200&q=85"
+const PREVIEW_VIDEO_SOURCE =
+  "https://cdn.coverr.co/videos/coverr-aerial-view-of-a-beach-1576/1080p.mp4"
 
 export type DestinationsPreviewProps = {
   section: HomeSection
@@ -27,20 +29,33 @@ export function DestinationsPreview({
   renderButtons,
 }: DestinationsPreviewProps) {
   const content = (section.content ?? {}) as Record<string, any>
-  const backgroundMultimedia = (content.backgroundMultimedia ?? {}) as Record<string, any>
+  const backgroundMultimedia = (content.backgroundMultimedia ?? {}) as Record<
+    string,
+    any
+  >
   const backgroundImage = section.bgImages?.[0]
   const backgroundVideo = section.bgVideos?.[0]
   const backgroundType =
     backgroundMultimedia.type ??
     section.backgroundType ??
-    (section.showVideo ? "video" : backgroundMultimedia.url || backgroundImage?.url ? "image" : "color")
+    (section.showVideo
+      ? "video"
+      : backgroundMultimedia.url || backgroundImage?.url
+        ? "image"
+        : "color")
 
-  const backgroundImageData = backgroundMultimedia.imageData ?? backgroundMultimedia
-  const backgroundVideoData = backgroundMultimedia.videoData ?? backgroundMultimedia
+  const backgroundImageData =
+    backgroundMultimedia.imageData ?? backgroundMultimedia
+  const backgroundVideoData =
+    backgroundMultimedia.videoData ?? backgroundMultimedia
 
   const DummyImage = ({ className = "" }: { className?: string }) => (
     <div className={`relative overflow-hidden bg-muted ${className}`}>
-      <ImageShowPreview src={PREVIEW_IMAGE_SOURCE} alt="Preview journey" className="h-full w-full" />
+      <ImageShowPreview
+        src={PREVIEW_IMAGE_SOURCE}
+        alt="Preview journey"
+        className="h-full w-full"
+      />
     </div>
   )
 
@@ -74,8 +89,11 @@ export function DestinationsPreview({
         <div className="flex flex-col items-center gap-4 text-center">
           {content.eyebrow && (
             <p
-              className="text-[10px] font-semibold uppercase tracking-[0.18em]"
-              style={fieldCssStyle(content.homeDestinationEyebrowStyle, accentColor)}
+              className="text-[10px] font-semibold tracking-[0.18em] uppercase"
+              style={fieldCssStyle(
+                content.homeDestinationEyebrowStyle,
+                accentColor
+              )}
             >
               {content.eyebrow}
             </p>
@@ -93,7 +111,10 @@ export function DestinationsPreview({
           {content.subtitle && (
             <p
               className="max-w-[700px] text-[12px] leading-[1.7] opacity-70 md:text-sm"
-              style={fieldCssStyle(content.homeDestinationSubtitleStyle, darkText)}
+              style={fieldCssStyle(
+                content.homeDestinationSubtitleStyle,
+                darkText
+              )}
             >
               {content.subtitle}
             </p>
@@ -101,16 +122,12 @@ export function DestinationsPreview({
         </div>
 
         <div className="grid w-full grid-cols-1 items-start gap-4 md:grid-cols-2 lg:grid-cols-3">
-          {[
-            "Croatia",
-            "Bosnia & Herzegovina",
-            "Albania",
-          ].map((name) => (
+          {["Croatia", "Bosnia & Herzegovina", "Albania"].map((name) => (
             <div
               key={name}
-              className="group flex w-full flex-col gap-8 rounded-[2px] border border-border-muted/40 bg-neutral-100 p-4 md:gap-9 md:p-[18px] xl:gap-10 xl:p-6"
+              className="group border-border-muted/40 flex w-full flex-col gap-8 rounded-[2px] border bg-neutral-100 p-4 md:gap-9 md:p-[18px] xl:gap-10 xl:p-6"
             >
-              <div className="relative h-[300px] w-full overflow-hidden rounded-[2px] md:h-[320px] lgx:h-[360px] xl:h-[394px]">
+              <div className="lgx:h-[360px] relative h-[300px] w-full overflow-hidden rounded-[2px] md:h-[320px] xl:h-[394px]">
                 <DummyImage className="h-full w-full" />
               </div>
 
@@ -123,7 +140,7 @@ export function DestinationsPreview({
                   <ArrowUpRight className="h-5 w-5 shrink-0 text-accent" />
                 </div>
 
-                <p className="text-sm leading-[21px] text-subtitle md:text-[15px]">
+                <p className="text-subtitle text-sm leading-[21px] md:text-[15px]">
                   {name === "Croatia"
                     ? "Adriatic coast, historic cities, island hopping..."
                     : name === "Albania"
@@ -135,7 +152,9 @@ export function DestinationsPreview({
           ))}
         </div>
 
-        <div className="flex w-full justify-center">{renderButtons(section.buttons, false, false, true)}</div>
+        <div className="flex w-full justify-center">
+          {renderButtons(section.buttons, false, false, true)}
+        </div>
       </div>
     </section>
   )

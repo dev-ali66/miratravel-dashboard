@@ -12,55 +12,49 @@
 import { apiPrivate } from "@/lib/api-client"
 
 export interface FileUploadResponse {
-    success: boolean
-    code: number
-    message: string
-    data: Record<string, string[]>
+  success: boolean
+  code: number
+  message: string
+  data: Record<string, string[]>
 }
 
 export async function uploadFile(
-    file: File,
-    fieldName: string
+  file: File,
+  fieldName: string
 ): Promise<string> {
-    const formData = new FormData()
+  const formData = new FormData()
 
-    formData.append(fieldName, file)
+  formData.append(fieldName, file)
 
-    const { data } = await apiPrivate.post<FileUploadResponse>(
-        "/file-upload",
-        formData,
-        {
-            headers: {
-                "Content-Type": "multipart/form-data",
-            },
-        }
-    )
-
-    const url = data?.data?.[fieldName]?.[0]
-
-    if (!url) {
-        throw new Error(
-            "Upload successful but file URL was not returned."
-        )
+  const { data } = await apiPrivate.post<FileUploadResponse>(
+    "/file-upload",
+    formData,
+    {
+      headers: {
+        "Content-Type": "multipart/form-data",
+      },
     }
+  )
 
-    return url
+  const url = data?.data?.[fieldName]?.[0]
+
+  if (!url) {
+    throw new Error("Upload successful but file URL was not returned.")
+  }
+
+  return url
 }
 
 export async function removeFiles(urls: string[]) {
-    if (!urls.length) return
+  if (!urls.length) return
 
-    const formData = new FormData()
+  const formData = new FormData()
 
-    formData.append("fileRemove", JSON.stringify(urls))
+  formData.append("fileRemove", JSON.stringify(urls))
 
-    return apiPrivate.post(
-        "/file-upload",
-        formData,
-        {
-            headers: {
-                "Content-Type": "multipart/form-data",
-            },
-        }
-    )
+  return apiPrivate.post("/file-upload", formData, {
+    headers: {
+      "Content-Type": "multipart/form-data",
+    },
+  })
 }

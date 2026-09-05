@@ -1,9 +1,9 @@
-import UserListTable from "./UserListTable";
+import UserListTable from "./UserListTable"
 
 export default function UserListPage() {
-    return (
-        <div>
-            <UserListTable />
-        </div>
-    )
+  return (
+    <div>
+      <UserListTable />
+    </div>
+  )
 }

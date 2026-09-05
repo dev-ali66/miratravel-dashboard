@@ -3,6 +3,11 @@
 @import "shadcn/tailwind.css";
 @import "@fontsource-variable/geist";
 
+.contact-form-preview-field::placeholder {
+  color: var(--form-field-placeholder);
+  opacity: 1;
+}
+
 @custom-variant dark (&:is(.dark *));
 
 @theme inline {

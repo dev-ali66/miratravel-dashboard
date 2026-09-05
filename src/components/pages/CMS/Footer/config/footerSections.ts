@@ -95,14 +95,12 @@ export const footerPreviewSectionRegistry: Record<
   background_image: {
     label: "Background Image",
     placement: "outer",
-    preview:
-      FooterBackgroundImagePreviewSection,
+    preview: FooterBackgroundImagePreviewSection,
   },
   background_overlay: {
     label: "Background Overlay",
     placement: "outer",
-    preview:
-      FooterBackgroundOverlayPreviewSection,
+    preview: FooterBackgroundOverlayPreviewSection,
   },
   top: {
     label: "Top",
@@ -112,8 +110,7 @@ export const footerPreviewSectionRegistry: Record<
   newsletter_certifications: {
     label: "Newsletter + Certifications",
     placement: "inner",
-    preview:
-      FooterNewsletterCertificationsPreviewSection,
+    preview: FooterNewsletterCertificationsPreviewSection,
   },
   copyright: {
     label: "Copyright",

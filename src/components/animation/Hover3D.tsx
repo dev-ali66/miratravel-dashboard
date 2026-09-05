@@ -9,7 +9,11 @@ interface Hover3DProps {
   tiltMax?: number
 }
 
-export const Hover3D = ({ children, className, tiltMax = 10 }: Hover3DProps) => {
+export const Hover3D = ({
+  children,
+  className,
+  tiltMax = 10,
+}: Hover3DProps) => {
   const x = useMotionValue(0)
   const y = useMotionValue(0)
 

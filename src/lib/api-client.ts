@@ -53,4 +53,7 @@ const handleErrorResponse = (error: AxiosError) => {
 }
 
 apiPublic.interceptors.response.use((response) => response, handleErrorResponse)
-apiPrivate.interceptors.response.use((response) => response, handleErrorResponse)
+apiPrivate.interceptors.response.use(
+  (response) => response,
+  handleErrorResponse
+)

@@ -2,35 +2,40 @@ import { RichTextEditor } from "@/components/shared/RichTextEditor"
 import type { PolicyPart } from "./types"
 
 interface PrivacyPolicyEditorProps {
-    currentPart: PolicyPart;
-    activeTab: string;
-    onContentChange: (newContent: string) => void;
+  currentPart: PolicyPart
+  activeTab: string
+  onContentChange: (newContent: string) => void
 }
 
 export function PrivacyPolicyEditor({
-    currentPart,
-    activeTab,
-    onContentChange
+  currentPart,
+  activeTab,
+  onContentChange,
 }: PrivacyPolicyEditorProps) {
-    return (
-        <div className="rounded-2xl border border-border/60 bg-background/50 backdrop-blur-xl overflow-hidden p-6 shadow-sm space-y-4">
-            <div className="border-b border-border/40 pb-3 flex flex-col sm:flex-row sm:items-center justify-between gap-2">
-                <div>
-                    <h2 className="text-lg font-bold text-foreground">{currentPart.fullTitle}</h2>
-                    <p className="text-xs text-muted-foreground mt-0.5">Edit the rich text content for {currentPart.tabTitle.toLowerCase()} below.</p>
-                </div>
-                <div className="text-xs font-semibold bg-primary/10 text-primary px-3 py-1 rounded-full self-start sm:self-center">
-                    Active Tab: {currentPart.tabTitle}
-                </div>
-            </div>
-            
-            <RichTextEditor 
-                key={activeTab}
-                value={currentPart.content} 
-                onChange={onContentChange} 
-                className="min-h-100"
-                canvasClassName="max-h-[65vh]"
-            />
+  return (
+    <div className="space-y-4 overflow-hidden rounded-2xl border border-border/60 bg-background/50 p-6 shadow-sm backdrop-blur-xl">
+      <div className="flex flex-col justify-between gap-2 border-b border-border/40 pb-3 sm:flex-row sm:items-center">
+        <div>
+          <h2 className="text-lg font-bold text-foreground">
+            {currentPart.fullTitle}
+          </h2>
+          <p className="mt-0.5 text-xs text-muted-foreground">
+            Edit the rich text content for {currentPart.tabTitle.toLowerCase()}{" "}
+            below.
+          </p>
         </div>
-    );
+        <div className="self-start rounded-full bg-primary/10 px-3 py-1 text-xs font-semibold text-primary sm:self-center">
+          Active Tab: {currentPart.tabTitle}
+        </div>
+      </div>
+
+      <RichTextEditor
+        key={activeTab}
+        value={currentPart.content}
+        onChange={onContentChange}
+        className="min-h-100"
+        canvasClassName="max-h-[65vh]"
+      />
+    </div>
+  )
 }

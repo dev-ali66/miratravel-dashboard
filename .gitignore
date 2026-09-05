@@ -53,11 +53,11 @@ dist/
 # Module dependencies
 node_modules/
 
-# mira_frontend and mira_backend
-mira_frontend/node_modules/
-mira_backend/node_modules/
-mira_frontend/dist/
-mira_frontend/build/
-mira_frontend/.next/
-mira_backend/dist/
-mira_backend/build/
+# External / Sub-project directories
+backend/
+frontend/
+mira_backend/
+mira_backend_v1/
+mira_frontend/
+
+

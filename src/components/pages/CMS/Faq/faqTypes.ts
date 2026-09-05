@@ -1,3 +1,5 @@
+import type { FieldStyle } from "../shared/FormControls"
+
 export interface FaqItem {
   id: string
   order: number
@@ -13,11 +15,31 @@ export interface FaqBackgroundImage {
   position: string
 }
 
+export interface FaqBackgroundMultimedia {
+  type?: "image" | "video" | "color"
+  color?: string
+  url?: string
+  alt?: string
+  imageData?: FaqBackgroundMultimedia
+  videoData?: FaqBackgroundMultimedia
+  opacity?: number
+  overlayColor?: string
+  overlayOpacity?: number
+  autoplay?: boolean
+  loop?: boolean
+  muted?: boolean
+}
+
 export interface FaqContent {
   title: string
   eyebrow: string
   subtitle: string
   description: string
+  faqContentTitleStyle?: FieldStyle
+  faqContentEyebrowStyle?: FieldStyle
+  faqContentSubtitleStyle?: FieldStyle
+  faqContentDescriptionStyle?: FieldStyle
+  contentMultimedia?: FaqBackgroundMultimedia
 }
 
 export interface FaqStyles {
@@ -53,6 +75,12 @@ export interface FaqPageData {
   metadata: {
     title: string
     description: string
+    keywords?: string[]
+    canonicalUrl?: string
+    robots?: {
+      index?: boolean
+      follow?: boolean
+    }
   }
 
   data: {
@@ -67,6 +95,7 @@ export interface FaqPageData {
 
     bgImages: FaqBackgroundImage[]
     bgVideos: unknown[]
+    backgroundMultimedia?: FaqBackgroundMultimedia
     buttons: unknown[]
 
     content: FaqContent

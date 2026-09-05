@@ -5,7 +5,7 @@ export const DESIGN_HEIGHT = 1080
 
 export function useViewportScale(
   designWidth = DESIGN_WIDTH,
-  designHeight = DESIGN_HEIGHT,
+  designHeight = DESIGN_HEIGHT
 ) {
   const [scale, setScale] = React.useState(() => {
     if (typeof window === "undefined") {

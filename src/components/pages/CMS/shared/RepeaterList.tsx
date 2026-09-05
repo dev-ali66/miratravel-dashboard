@@ -1,4 +1,10 @@
-import { Plus, Trash2, ChevronUp, ChevronDown, GripVertical } from "lucide-react"
+import {
+  Plus,
+  Trash2,
+  ChevronUp,
+  ChevronDown,
+  GripVertical,
+} from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { cn } from "@/lib/utils"
 
@@ -6,7 +12,11 @@ interface RepeaterListProps<T> {
   items: T[]
   onChange: (items: T[]) => void
   /** Renders the fields for a single item. Call `update` with the new item value on any edit. */
-  renderItem: (item: T, update: (value: T) => void, index: number) => React.ReactNode
+  renderItem: (
+    item: T,
+    update: (value: T) => void,
+    index: number
+  ) => React.ReactNode
   newItem: () => T
   addLabel?: string
   emptyLabel?: string
@@ -53,7 +63,10 @@ export function RepeaterList<T>({
       )}
 
       {safeItems.map((item, index) => (
-        <div key={index} className="rounded-lg border border-border/60 bg-muted/20 p-3">
+        <div
+          key={index}
+          className="rounded-lg border border-border/60 bg-muted/20 p-3"
+        >
           <div className="mb-2 flex items-center justify-between gap-2">
             <div className="flex items-center gap-1.5 text-[11px] font-semibold text-muted-foreground">
               <GripVertical className="h-3.5 w-3.5" />

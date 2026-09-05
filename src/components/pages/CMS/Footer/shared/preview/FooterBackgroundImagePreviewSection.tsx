@@ -1,25 +1,30 @@
 import type { FooterPreviewSectionProps } from "./sectionTypes"
+import { UniversalMultimediaPreview } from "../../../Home/shared/preview/UniversalMultimediaPreview"
 
 export const FooterBackgroundImagePreviewSection = ({
   context,
 }: FooterPreviewSectionProps) => {
   const {
-    theme: {
-      backgroundImage,
-    },
+    theme: { backgroundImage, backgroundVideo, backgroundMultimedia },
   } = context
 
-  if (!backgroundImage) {
+  const multimedia = backgroundMultimedia
+
+  if (!multimedia && !backgroundImage && !backgroundVideo) {
     return null
   }
 
   return (
-    <div
-      className="absolute inset-0 bg-cover bg-center bg-no-repeat"
-      style={{
-        backgroundImage:
-          `url(${backgroundImage})`,
-      }}
+    <UniversalMultimediaPreview
+      multimedia={
+        multimedia ?? {
+          type: backgroundVideo ? "video" : "image",
+          url: backgroundVideo ?? backgroundImage,
+        }
+      }
+      mode="background"
+      className="absolute inset-0"
+      containerClassName="absolute inset-0"
     />
   )
 }

@@ -3,10 +3,7 @@ import type { FooterPreviewSectionProps } from "./sectionTypes"
 export const FooterCopyrightPreviewSection = ({
   context,
 }: FooterPreviewSectionProps) => {
-  const {
-    theme,
-    content,
-  } = context
+  const { theme, content } = context
 
   if (!content.copyright) {
     return null
@@ -14,21 +11,15 @@ export const FooterCopyrightPreviewSection = ({
 
   return (
     <div
-      className="
-        border-t
-        py-4
-        text-center
-      "
+      className="border-t py-4 text-center"
       style={{
-        borderColor:
-          theme.borderColor,
+        borderColor: theme.borderColor,
       }}
     >
       <p
         className="text-[9px]"
         style={{
-          color:
-            theme.bottomTextColor,
+          color: theme.bottomTextColor,
         }}
       >
         {content.copyright}

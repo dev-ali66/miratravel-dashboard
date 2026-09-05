@@ -1,21 +1,45 @@
-import {
-  useEffect,
-  useMemo,
-  useState,
-} from "react"
+import { useEffect, useMemo, useState } from "react"
 
 import { Plus } from "lucide-react"
 
 import { useCmsDraft } from "../shared/CmsDraftContext"
 
-import type {
-  FaqPageData,
-  FaqStyles,
-} from "./faqTypes"
+import type { FaqPageData, FaqStyles } from "./faqTypes"
+import type { FieldStyle } from "../shared/FormControls"
+import { UniversalMultimediaPreview } from "../Home/shared/preview/UniversalMultimediaPreview"
 
-export const FaqPreview = () => {
-  const page =
-    useCmsDraft<FaqPageData>()
+const colorWithOpacity = (
+  color: string | undefined,
+  opacity: number | undefined
+) => {
+  if (!color || opacity === undefined || opacity >= 100) return color
+
+  const hexMatch = color.match(/^#([0-9a-f]{6})$/i)
+  if (!hexMatch) return color
+
+  const red = parseInt(hexMatch[1].slice(0, 2), 16)
+  const green = parseInt(hexMatch[1].slice(2, 4), 16)
+  const blue = parseInt(hexMatch[1].slice(4, 6), 16)
+
+  return `rgba(${red}, ${green}, ${blue}, ${opacity / 100})`
+}
+
+const contentCssStyle = (
+  style: FieldStyle | undefined,
+  fallbackColor: string
+) => ({
+  color: colorWithOpacity(
+    style?.textColor ?? fallbackColor,
+    style?.textOpacity
+  ),
+  backgroundColor: colorWithOpacity(
+    style?.backgroundColor,
+    style?.backgroundOpacity
+  ),
+})
+
+export const FaqContentPreview = () => {
+  const page = useCmsDraft<FaqPageData>()
 
   const data = page?.data
 
@@ -24,30 +48,18 @@ export const FaqPreview = () => {
   ========================== */
 
   const sortedItems = useMemo(() => {
-    return [...(data?.items ?? [])].sort(
-      (a, b) =>
-        a.order - b.order
-    )
+    return [...(data?.items ?? [])].sort((a, b) => a.order - b.order)
   }, [data?.items])
 
   /* =========================
      DEFAULT OPEN
   ========================== */
 
-  const defaultOpenIndex =
-    useMemo(() => {
-      return sortedItems.findIndex(
-        (item) =>
-          item.isOpenByDefault
-      )
-    }, [sortedItems])
+  const defaultOpenIndex = useMemo(() => {
+    return sortedItems.findIndex((item) => item.isOpenByDefault)
+  }, [sortedItems])
 
-  const [
-    openIndex,
-    setOpenIndex,
-  ] = useState(
-    defaultOpenIndex
-  )
+  const [openIndex, setOpenIndex] = useState(defaultOpenIndex)
 
   /*
    * Update preview immediately
@@ -55,9 +67,7 @@ export const FaqPreview = () => {
    */
 
   useEffect(() => {
-    setOpenIndex(
-      defaultOpenIndex
-    )
+    setOpenIndex(defaultOpenIndex)
   }, [defaultOpenIndex])
 
   if (!page || !data) {
@@ -68,106 +78,103 @@ export const FaqPreview = () => {
      BACKGROUND IMAGE
   ========================== */
 
-  const backgroundImage =
-    data.bgImages?.find(
-      (image) =>
-        image.position ===
-        "background"
-    )?.url
+  const backgroundImage = data.bgImages?.find(
+    (image) => image.position === "background"
+  )?.url
+  const backgroundMultimedia = data.backgroundMultimedia
 
   /* =========================
      DEFAULT STYLES
   ========================== */
 
-  const styles: FaqStyles =
-    data.styles ?? {
-      page: {
-        backgroundColor:
-          data.bgColor ||
-          "#FBF6EE",
+  const styles: FaqStyles = data.styles ?? {
+    page: {
+      backgroundColor: data.bgColor || "#FBF6EE",
 
-        textColor:
-          "#171717",
-      },
+      textColor: "#171717",
+    },
 
-      header: {
-        backgroundColor:
-          "transparent",
+    header: {
+      backgroundColor: "transparent",
 
-        eyebrowColor:
-          "#737373",
+      eyebrowColor: "#737373",
 
-        titleColor:
-          "#171717",
+      titleColor: "#171717",
 
-        subtitleColor:
-          "#737373",
+      subtitleColor: "#737373",
 
-        descriptionColor:
-          "#737373",
-      },
+      descriptionColor: "#737373",
+    },
 
-      faq: {
-        itemBackgroundColor:
-          "#FFFFFF",
+    faq: {
+      itemBackgroundColor: "#FFFFFF",
 
-        itemBorderColor:
-          "#E5E5E5",
+      itemBorderColor: "#E5E5E5",
 
-        questionColor:
-          "#171717",
+      questionColor: "#171717",
 
-        answerColor:
-          "#737373",
+      answerColor: "#737373",
 
-        iconColor:
-          "#737373",
+      iconColor: "#737373",
 
-        openBackgroundColor:
-          "#F5F5F5",
+      openBackgroundColor: "#F5F5F5",
 
-        openQuestionColor:
-          "#111111",
+      openQuestionColor: "#111111",
 
-        openAnswerColor:
-          "#555555",
-      },
-    }
+      openAnswerColor: "#555555",
+    },
+  }
 
   /* =========================
      TITLE
   ========================== */
 
   const title =
-    data.content?.title ||
-    data.title ||
-    "Frequently Asked Questions"
+    data.content?.title || data.title || "Frequently Asked Questions"
+  const contentMultimedia = data.content?.contentMultimedia
+
+  const eyebrowStyle = contentCssStyle(
+    data.content?.faqContentEyebrowStyle,
+    styles.header.eyebrowColor
+  )
+  const titleStyle = contentCssStyle(
+    data.content?.faqContentTitleStyle,
+    styles.header.titleColor
+  )
+  const subtitleStyle = contentCssStyle(
+    data.content?.faqContentSubtitleStyle,
+    styles.header.subtitleColor
+  )
+  const descriptionStyle = contentCssStyle(
+    data.content?.faqContentDescriptionStyle,
+    styles.header.descriptionColor
+  )
 
   return (
     <div
       className="relative min-h-full overflow-hidden"
       style={{
-        backgroundColor:
-          styles.page
-            .backgroundColor,
+        backgroundColor: styles.page.backgroundColor,
 
-        color:
-          styles.page.textColor,
+        color: styles.page.textColor,
       }}
     >
-
       {/* =========================
           BACKGROUND IMAGE
       ========================== */}
 
-      {backgroundImage && (
+      {(backgroundMultimedia || backgroundImage) && (
         <>
-          <div
-            className="absolute inset-0 bg-cover bg-center"
-            style={{
-              backgroundImage:
-                `url(${backgroundImage})`,
-            }}
+          <UniversalMultimediaPreview
+            multimedia={
+              backgroundMultimedia ?? {
+                type: "image",
+                url: backgroundImage,
+              }
+            }
+            mode="background"
+            className="absolute inset-0"
+            containerClassName="absolute inset-0"
           />
 
           {/* Color overlay */}
@@ -175,9 +182,7 @@ export const FaqPreview = () => {
           <div
             className="absolute inset-0"
             style={{
-              backgroundColor:
-                styles.page
-                  .backgroundColor,
+              backgroundColor: styles.page.backgroundColor,
 
               opacity: 0.75,
             }}
@@ -190,46 +195,44 @@ export const FaqPreview = () => {
       ========================== */}
 
       <div className="relative mx-auto w-full max-w-3xl px-6 py-14">
-
         {/* =========================
             HEADER
         ========================== */}
 
         <div
-          className="mx-auto max-w-2xl rounded-2xl p-6 text-center"
+          className="relative mx-auto max-w-2xl overflow-hidden rounded-2xl p-6 text-center"
           style={{
-            backgroundColor:
-              styles.header
-                .backgroundColor,
+            backgroundColor: styles.header.backgroundColor,
           }}
         >
+          {contentMultimedia && (
+            <UniversalMultimediaPreview
+              multimedia={contentMultimedia}
+              mode="background"
+              className="absolute inset-0 z-0"
+              containerClassName="absolute inset-0 z-0"
+            />
+          )}
 
           {/* EYEBROW */}
 
           {data.content?.eyebrow && (
             <p
-              className="mb-3 text-[10px] font-semibold uppercase tracking-[0.2em]"
+              className="relative z-10 mb-3 text-[10px] font-semibold tracking-[0.2em] uppercase"
               style={{
-                color:
-                  styles.header
-                    .eyebrowColor,
+                ...eyebrowStyle,
               }}
             >
-              {
-                data.content
-                  .eyebrow
-              }
+              {data.content.eyebrow}
             </p>
           )}
 
           {/* TITLE */}
 
           <h1
-            className="font-serif text-3xl font-bold tracking-tight"
+            className="relative z-10 font-serif text-3xl font-bold tracking-tight"
             style={{
-              color:
-                styles.header
-                  .titleColor,
+              ...titleStyle,
             }}
           >
             {title}
@@ -239,17 +242,12 @@ export const FaqPreview = () => {
 
           {data.content?.subtitle && (
             <p
-              className="mt-3 text-sm leading-6"
+              className="relative z-10 mt-3 text-sm leading-6"
               style={{
-                color:
-                  styles.header
-                    .subtitleColor,
+                ...subtitleStyle,
               }}
             >
-              {
-                data.content
-                  .subtitle
-              }
+              {data.content.subtitle}
             </p>
           )}
 
@@ -257,20 +255,14 @@ export const FaqPreview = () => {
 
           {data.content?.description && (
             <p
-              className="mt-2 text-xs leading-5"
+              className="relative z-10 mt-2 text-xs leading-5"
               style={{
-                color:
-                  styles.header
-                    .descriptionColor,
+                ...descriptionStyle,
               }}
             >
-              {
-                data.content
-                  .description
-              }
+              {data.content.description}
             </p>
           )}
-
         </div>
 
         {/* =========================
@@ -278,145 +270,95 @@ export const FaqPreview = () => {
         ========================== */}
 
         <div className="mx-auto mt-10 flex max-w-2xl flex-col gap-3">
-
           {sortedItems.length > 0 ? (
+            sortedItems.map((item, index) => {
+              const isOpen = openIndex === index
 
-            sortedItems.map(
-              (item, index) => {
+              const itemBackground = isOpen
+                ? styles.faq.openBackgroundColor
+                : styles.faq.itemBackgroundColor
 
-                const isOpen =
-                  openIndex === index
+              const questionColor = isOpen
+                ? styles.faq.openQuestionColor
+                : styles.faq.questionColor
 
-                const itemBackground =
-                  isOpen
-                    ? styles.faq
-                        .openBackgroundColor
-                    : styles.faq
-                        .itemBackgroundColor
+              const answerColor = isOpen
+                ? styles.faq.openAnswerColor
+                : styles.faq.answerColor
 
-                const questionColor =
-                  isOpen
-                    ? styles.faq
-                        .openQuestionColor
-                    : styles.faq
-                        .questionColor
+              return (
+                <div
+                  key={item.id}
+                  className="overflow-hidden rounded-xl shadow-sm transition-all duration-200 hover:shadow-md"
+                  style={{
+                    backgroundColor: itemBackground,
 
-                const answerColor =
-                  isOpen
-                    ? styles.faq
-                        .openAnswerColor
-                    : styles.faq
-                        .answerColor
+                    border: `1px solid ${styles.faq.itemBorderColor}`,
+                  }}
+                >
+                  {/* QUESTION */}
 
-                return (
-                  <div
-                    key={item.id}
-                    className="overflow-hidden rounded-xl shadow-sm transition-all duration-200 hover:shadow-md"
-                    style={{
-                      backgroundColor:
-                        itemBackground,
-
-                      border:
-                        `1px solid ${styles.faq.itemBorderColor}`,
-                    }}
+                  <button
+                    type="button"
+                    onClick={() => setOpenIndex(isOpen ? -1 : index)}
+                    className="flex w-full items-center justify-between gap-4 px-5 py-4 text-left"
                   >
-
-                    {/* QUESTION */}
-
-                    <button
-                      type="button"
-                      onClick={() =>
-                        setOpenIndex(
-                          isOpen
-                            ? -1
-                            : index
-                        )
-                      }
-                      className="flex w-full items-center justify-between gap-4 px-5 py-4 text-left"
+                    <span
+                      className="text-sm font-medium"
+                      style={{
+                        color: questionColor,
+                      }}
                     >
+                      {item.question?.trim() || "Untitled question"}
+                    </span>
 
-                      <span
-                        className="text-sm font-medium"
+                    <Plus
+                      className={`h-4 w-4 shrink-0 transition-transform duration-200 ${
+                        isOpen ? "rotate-45" : ""
+                      }`}
+                      style={{
+                        color: styles.faq.iconColor,
+                      }}
+                    />
+                  </button>
+
+                  {/* ANSWER */}
+
+                  {isOpen && (
+                    <div className="px-5 pb-5">
+                      <p
+                        className="text-xs leading-5"
                         style={{
-                          color:
-                            questionColor,
+                          color: answerColor,
                         }}
                       >
-                        {
-                          item.question?.trim() ||
-                          "Untitled question"
-                        }
-                      </span>
-
-                      <Plus
-                        className={`h-4 w-4 shrink-0 transition-transform duration-200 ${
-                          isOpen
-                            ? "rotate-45"
-                            : ""
-                        }`}
-                        style={{
-                          color:
-                            styles.faq
-                              .iconColor,
-                        }}
-                      />
-
-                    </button>
-
-                    {/* ANSWER */}
-
-                    {isOpen && (
-                      <div className="px-5 pb-5">
-
-                        <p
-                          className="text-xs leading-5"
-                          style={{
-                            color:
-                              answerColor,
-                          }}
-                        >
-                          {
-                            item.answer?.trim() ||
-                            "Answer coming soon — fill this in on the left."
-                          }
-                        </p>
-
-                      </div>
-                    )}
-
-                  </div>
-                )
-              }
-            )
-
+                        {item.answer?.trim() ||
+                          "Answer coming soon — fill this in on the left."}
+                      </p>
+                    </div>
+                  )}
+                </div>
+              )
+            })
           ) : (
-
             <div
               className="rounded-xl px-6 py-10 text-center"
               style={{
-                backgroundColor:
-                  styles.faq
-                    .itemBackgroundColor,
+                backgroundColor: styles.faq.itemBackgroundColor,
 
-                border:
-                  `1px dashed ${styles.faq.itemBorderColor}`,
+                border: `1px dashed ${styles.faq.itemBorderColor}`,
               }}
             >
               <p
                 className="text-sm"
                 style={{
-                  color:
-                    styles.faq
-                      .answerColor,
+                  color: styles.faq.answerColor,
                 }}
               >
-                No FAQ questions
-                added yet.
+                No FAQ questions added yet.
               </p>
             </div>
-
           )}
-
         </div>
 
         {/* =========================
@@ -427,19 +369,12 @@ export const FaqPreview = () => {
           <p
             className="mt-4 text-center text-[10px]"
             style={{
-              color:
-                styles.faq
-                  .answerColor,
+              color: styles.faq.answerColor,
             }}
           >
-            {
-              sortedItems.length
-            }{" "}
-            frequently asked
-            questions
+            {sortedItems.length} frequently asked questions
           </p>
         )}
-
       </div>
     </div>
   )

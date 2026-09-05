@@ -1,12 +1,10 @@
 import { useState } from "react"
-import {
-  ChevronDown,
-  ChevronUp,
-} from "lucide-react"
+import { ChevronDown, ChevronUp } from "lucide-react"
 
 import { useCmsPage } from "../shared/useCmsPage"
 import { SaveBar } from "../shared/SaveBar"
-import { SeoForm } from "./shared/form/SeoForm"
+import { SeoForm } from "../shared/SeoForm"
+import { CollapsibleSectionCard } from "../shared/CollapsibleSectionCard"
 
 import type {
   HomeButton,
@@ -23,13 +21,7 @@ const getHomeSectionEntry = (key: string) => {
 }
 
 export const HomeForm = () => {
-  const {
-    page,
-    setPage,
-    isLoading,
-    isSaving,
-    save,
-  } = useCmsPage<HomePageData>(
+  const { page, setPage, isLoading, isSaving, save } = useCmsPage<HomePageData>(
     "home",
     "Home"
   )
@@ -43,10 +35,9 @@ export const HomeForm = () => {
    * ============================================================
    */
 
-  const [openSections, setOpenSections] =
-    useState<Record<string, boolean>>({
-      hero: true,
-    })
+  const [openSections, setOpenSections] = useState<Record<string, boolean>>({
+    hero: true,
+  })
 
   const toggleSection = (key: string) => {
     setOpenSections((current) => ({
@@ -61,11 +52,7 @@ export const HomeForm = () => {
    * ============================================================
    */
 
-  const updateData = (
-    patch: Partial<
-      NonNullable<HomePageData["data"]>
-    >
-  ) => {
+  const updateData = (patch: Partial<NonNullable<HomePageData["data"]>>) => {
     setPage({
       ...page,
       name: page?.name ?? "Home",
@@ -81,69 +68,47 @@ export const HomeForm = () => {
     })
   }
 
-  const updateSection = (
-    index: number,
-    patch: Partial<HomeSection>
-  ) => {
-    const currentSections =
-      data?.sections ?? []
+  const updateSection = (index: number, patch: Partial<HomeSection>) => {
+    const currentSections = data?.sections ?? []
 
-    const updatedSections =
-      currentSections.map(
-        (section, sectionIndex) =>
-          sectionIndex === index
-            ? {
-              ...section,
-              ...patch,
-            }
-            : section
-      )
+    const updatedSections = currentSections.map((section, sectionIndex) =>
+      sectionIndex === index
+        ? {
+            ...section,
+            ...patch,
+          }
+        : section
+    )
 
     updateData({
       sections: updatedSections,
     })
   }
 
-  const updateSectionContent = (
-    index: number,
-    patch: Record<string, any>
-  ) => {
-    const section =
-      sections[index]
+  const updateSectionContent = (index: number, patch: Record<string, any>) => {
+    const section = sections[index]
 
     updateSection(index, {
       content: {
-        ...(section?.content as Record<
-          string,
-          any
-        >),
+        ...(section?.content as Record<string, any>),
         ...patch,
       } as HomeSection["content"],
     })
   }
 
-  const updateSectionButtons = (
-    index: number,
-    buttons: HomeButton[]
-  ) => {
+  const updateSectionButtons = (index: number, buttons: HomeButton[]) => {
     updateSection(index, {
       buttons,
     })
   }
 
-  const updateSectionImages = (
-    index: number,
-    images: HomeImage[]
-  ) => {
+  const updateSectionImages = (index: number, images: HomeImage[]) => {
     updateSection(index, {
       bgImages: images,
     })
   }
 
-  const updateSectionVideos = (
-    index: number,
-    videos: HomeVideo[]
-  ) => {
+  const updateSectionVideos = (index: number, videos: HomeVideo[]) => {
     updateSection(index, {
       bgVideos: videos,
     })
@@ -167,9 +132,7 @@ export const HomeForm = () => {
         />
 
         <div className="flex items-center justify-center p-10">
-          <p className="text-sm text-muted-foreground">
-            Loading Home data...
-          </p>
+          <p className="text-sm text-muted-foreground">Loading Home data...</p>
         </div>
       </div>
     )
@@ -232,7 +195,6 @@ export const HomeForm = () => {
 
   return (
     <div className="flex flex-col">
-
       {/* SAVE BAR */}
 
       <SaveBar
@@ -244,13 +206,11 @@ export const HomeForm = () => {
       />
 
       <div className="flex flex-col gap-6 p-4">
-
         {/* HOME SECTIONS */}
 
         <div className="flex flex-col gap-3">
-
           <div className="px-1">
-            <p className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">
+            <p className="text-xs font-semibold tracking-wide text-muted-foreground uppercase">
               Home Sections
             </p>
 
@@ -259,144 +219,85 @@ export const HomeForm = () => {
             </p>
           </div>
 
-          {orderedSections
-            .map(
-              (
-                section,
-                index
-              ) => {
-                const isOpen =
-                  openSections[
-                  section.key
-                  ] ?? false
+          {orderedSections.map((section, index) => {
+            const isOpen = openSections[section.key] ?? false
 
-                const actualIndex =
-                  sections.findIndex(
-                    (item) =>
-                      item.key ===
-                      section.key
-                  )
+            const actualIndex = sections.findIndex(
+              (item) => item.key === section.key
+            )
 
-                return (
-                  <div
-                    key={
-                      `${section.key}-${index}`
-                    }
-                    className="overflow-hidden rounded-lg border border-border/60"
-                  >
+            return (
+              <div
+                key={`${section.key}-${index}`}
+                className="overflow-hidden rounded-lg border border-border/60"
+              >
+                {/* HEADER */}
 
-                    {/* HEADER */}
+                <button
+                  type="button"
+                  onClick={() => toggleSection(section.key)}
+                  className="flex w-full items-center justify-between gap-3 px-4 py-3 text-left transition-colors hover:bg-muted/40"
+                >
+                  <div className="flex min-w-0 items-center gap-3">
+                    <span className="flex h-7 min-w-7 items-center justify-center rounded-md bg-muted px-2 text-[10px] font-semibold text-muted-foreground">
+                      {String(section.order ?? index + 1).padStart(2, "0")}
+                    </span>
 
-                    <button
-                      type="button"
-                      onClick={() =>
-                        toggleSection(
-                          section.key
-                        )
-                      }
-                      className="
-                        flex
-                        w-full
-                        items-center
-                        justify-between
-                        gap-3
-                        px-4
-                        py-3
-                        text-left
-                        transition-colors
-                        hover:bg-muted/40
-                      "
-                    >
+                    <div className="min-w-0">
+                      <p className="text-sm font-semibold">
+                        {getSectionTitle(section)}
+                      </p>
 
-                      <div className="flex min-w-0 items-center gap-3">
-
-                        <span
-                          className="
-                            flex
-                            h-7
-                            min-w-7
-                            items-center
-                            justify-center
-                            rounded-md
-                            bg-muted
-                            px-2
-                            text-[10px]
-                            font-semibold
-                            text-muted-foreground
-                          "
-                        >
-                          {String(
-                            section.order ??
-                            index + 1
-                          ).padStart(
-                            2,
-                            "0"
-                          )}
-                        </span>
-
-                        <div className="min-w-0">
-
-                          <p className="text-sm font-semibold">
-                            {
-                              getSectionTitle(
-                                section
-                              )
-                            }
-                          </p>
-
-                          <p className="truncate text-[10px] text-muted-foreground">
-                            {section.type}
-                          </p>
-
-                        </div>
-
-                      </div>
-
-                      {isOpen ? (
-                        <ChevronUp className="h-4 w-4 shrink-0 text-muted-foreground" />
-                      ) : (
-                        <ChevronDown className="h-4 w-4 shrink-0 text-muted-foreground" />
-                      )}
-
-                    </button>
-
-                    {/* CONTENT */}
-
-                    {isOpen && (
-                      <div className="border-t border-border/60 p-4">
-                        {renderSectionContent(
-                          section,
-                          actualIndex
-                        )}
-                      </div>
-                    )}
-
+                      <p className="truncate text-[10px] text-muted-foreground">
+                        {section.type}
+                      </p>
+                    </div>
                   </div>
-                )
-              }
-            )}
 
+                  {isOpen ? (
+                    <ChevronUp className="h-4 w-4 shrink-0 text-muted-foreground" />
+                  ) : (
+                    <ChevronDown className="h-4 w-4 shrink-0 text-muted-foreground" />
+                  )}
+                </button>
+
+                {/* CONTENT */}
+
+                {isOpen && (
+                  <div className="border-t border-border/60 p-4">
+                    {renderSectionContent(section, actualIndex)}
+                  </div>
+                )}
+              </div>
+            )
+          })}
         </div>
 
-        <div className="overflow-hidden rounded-lg border border-border/60">
-          <button
-            type="button"
-            onClick={() => toggleSection("seo")}
-            className="flex w-full items-center justify-between gap-3 px-4 py-3 text-left transition-colors hover:bg-muted/40"
-          >
-            <span className="text-sm font-semibold">SEO Metadata</span>
-            {openSections.seo ? (
-              <ChevronUp className="h-4 w-4 shrink-0 text-muted-foreground" />
-            ) : (
-              <ChevronDown className="h-4 w-4 shrink-0 text-muted-foreground" />
-            )}
-          </button>
-
-          {openSections.seo && (
-            <SeoForm page={page} setPage={setPage} />
-          )}
-        </div>
-
+        <CollapsibleSectionCard
+          title="SEO Metadata"
+          meta="seo"
+          indexLabel="SEO"
+          isOpen={openSections.seo ?? false}
+          onToggle={() => toggleSection("seo")}
+        >
+          <SeoForm
+            metadata={page?.metadata}
+            onChange={(metadata) =>
+              setPage({
+                ...page,
+                name: page?.name ?? "Home",
+                metadata: {
+                  ...metadata,
+                  title: metadata.title ?? "",
+                  description: metadata.description ?? "",
+                },
+                data: {
+                  ...(page?.data ?? {}),
+                },
+              })
+            }
+          />
+        </CollapsibleSectionCard>
       </div>
     </div>
   )

@@ -24,13 +24,13 @@ export function LogoutModal({ open, onClose }: LogoutModalProps) {
     // Clear tokens
     localStorage.removeItem("accessToken")
     localStorage.removeItem("refreshToken")
-    
+
     // Clear React Query cache
     queryClient.clear()
-    
+
     toast.success("Logged out successfully")
     onClose()
-    
+
     // Redirect to login
     navigate("/login")
   }
@@ -41,7 +41,8 @@ export function LogoutModal({ open, onClose }: LogoutModalProps) {
         <DialogHeader>
           <DialogTitle>Confirm Logout</DialogTitle>
           <DialogDescription>
-            Are you sure you want to log out of your account? You will need to sign in again to access the dashboard.
+            Are you sure you want to log out of your account? You will need to
+            sign in again to access the dashboard.
           </DialogDescription>
         </DialogHeader>
         <DialogFooter>

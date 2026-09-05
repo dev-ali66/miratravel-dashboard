@@ -1,6 +1,10 @@
 export interface FooterTheme {
   backgroundColor?: string
   backgroundImage?: string
+  backgroundVideo?: string
+  footerBackgroundMultimedia?: Record<string, any>
+  navbarBrandMultimedia?: Record<string, any>
+  footerBrandMultimedia?: Record<string, any>
 
   textColor?: string
   headingColor?: string
@@ -34,6 +38,7 @@ export interface FooterBrand {
   logo?: FooterLogo
   name?: string
   description?: string
+  footerBrandMultimedia?: Record<string, any>
 }
 
 export interface FooterColumnLink {
@@ -109,6 +114,12 @@ export interface FooterPageData {
   metadata?: {
     title?: string
     description?: string
+    keywords?: string[]
+    canonicalUrl?: string
+    robots?: {
+      index?: boolean
+      follow?: boolean
+    }
   }
 
   data?: {

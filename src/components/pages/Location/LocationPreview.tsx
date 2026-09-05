@@ -3,8 +3,8 @@ import { ArrowRight } from "lucide-react"
 import { useLocationDraft } from "./shared/LocationDraftContext"
 import { getLocationBasics } from "./shared/previewBasics"
 import {
-    locationSectionOrder,
-    locationSectionRegistry,
+  locationSectionOrder,
+  locationSectionRegistry,
 } from "./config/locationSections"
 
 /* =====================================================
@@ -22,53 +22,59 @@ import {
 ===================================================== */
 
 export const LocationPreview = () => {
-    const { draft } = useLocationDraft()
+  const { draft } = useLocationDraft()
 
-    const { name, data } = getLocationBasics(draft)
-    const heroButton = data.hero?.button ?? {}
+  const { name, data } = getLocationBasics(draft)
+  const heroButton = data.hero?.button ?? {}
 
-    return (
-        <div className="w-full bg-[#f7f6f2] text-[#171717] text-sm md:text-base">
-            {locationSectionOrder.map((key) => {
-                const SectionPreview = locationSectionRegistry[key].preview
+  return (
+    <div className="w-full bg-[#f7f6f2] text-sm text-[#171717] md:text-base">
+      {locationSectionOrder.map((key) => {
+        const SectionPreview = locationSectionRegistry[key].preview
 
-                // Render invisible placeholder for sections with no preview so
-                // DOM order matches the Form but no visual space is occupied.
-                if (!SectionPreview) {
-                    return <div key={key} data-section={key} style={{ display: "none" }} aria-hidden />
-                }
+        // Render invisible placeholder for sections with no preview so
+        // DOM order matches the Form but no visual space is occupied.
+        if (!SectionPreview) {
+          return (
+            <div
+              key={key}
+              data-section={key}
+              style={{ display: "none" }}
+              aria-hidden
+            />
+          )
+        }
 
-                return (
-                    <section key={key} data-section={key} className="w-full">
-                        <SectionPreview draft={draft} />
-                    </section>
-                )
-            })}
+        return (
+          <section key={key} data-section={key} className="w-full">
+            <SectionPreview draft={draft} />
+          </section>
+        )
+      })}
 
-            {/* =========================================================
+      {/* =========================================================
                 FOOTER CTA
                 Layout chrome, not tied to a single data section —
                 stays in the shell rather than the section loop.
             ========================================================= */}
 
-            <section className="bg-black px-6 py-20 text-center text-white md:px-10 md:py-28">
-                <p className="text-[10px] tracking-[0.3em] text-white/40">
-                    READY TO EXPLORE?
-                </p>
+      <section className="bg-black px-6 py-20 text-center text-white md:px-10 md:py-28">
+        <p className="text-[10px] tracking-[0.3em] text-white/40">
+          READY TO EXPLORE?
+        </p>
 
-                <h2 className="mx-auto mt-5 max-w-4xl text-4xl font-light leading-tight md:text-7xl">
-                    Your journey into{" "}
-                    {name} starts here.
-                </h2>
+        <h2 className="mx-auto mt-5 max-w-4xl text-4xl leading-tight font-light md:text-7xl">
+          Your journey into {name} starts here.
+        </h2>
 
-                {heroButton.name && (
-                    <button className="mt-8 inline-flex items-center gap-3 rounded-full bg-white px-6 py-3 text-xs font-medium text-black transition hover:bg-white/80">
-                        {heroButton.name}
+        {heroButton.name && (
+          <button className="mt-8 inline-flex items-center gap-3 rounded-full bg-white px-6 py-3 text-xs font-medium text-black transition hover:bg-white/80">
+            {heroButton.name}
 
-                        <ArrowRight className="h-4 w-4" />
-                    </button>
-                )}
-            </section>
-        </div>
-    )
+            <ArrowRight className="h-4 w-4" />
+          </button>
+        )}
+      </section>
+    </div>
+  )
 }

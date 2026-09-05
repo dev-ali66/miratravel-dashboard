@@ -6,8 +6,8 @@ import { ScaledWorkspace } from "@/components/shared/AutoScale"
 import { HomePreview } from "../pages/CMS/Home/HomePreview"
 import { NavbarPreview } from "../pages/CMS/Navbar/NavbarPreview"
 import { FooterPreview } from "../pages/CMS/Footer/FooterPreview"
-import { FaqPreview } from "../pages/CMS/Faq/FaqPreview"
-import { ContactPreview } from "../pages/CMS/Contact/ContactPreview"
+import { FaqPreviewShell } from "../pages/CMS/Faq/FaqPreviewShell"
+import { ContactPreviewShell } from "../pages/CMS/Contact/ContactPreviewShell"
 import { CtaPreview } from "../pages/CMS/Cta/CtaPreview"
 
 import { CmsDraftProvider } from "../pages/CMS/shared/CmsDraftContext"
@@ -41,11 +41,11 @@ export function CMSEditorLayout() {
     }
 
     if (pageSlug === "faq") {
-      return <FaqPreview />
+      return <FaqPreviewShell />
     }
 
     if (pageSlug === "contact-us") {
-      return <ContactPreview />
+      return <ContactPreviewShell />
     }
 
     if (pageSlug === "cta") {
@@ -97,7 +97,6 @@ export function CMSEditorLayout() {
 
       <main className="relative flex flex-1 flex-col overflow-hidden md:flex-row">
         <CmsDraftProvider key={pageSlug}>
-        
           <aside className="relative z-10 flex w-full min-w-0 flex-none flex-col overflow-hidden border-b border-border/60 bg-card/50 shadow-[0_4px_24px_rgba(0,0,0,0.02)] md:w-[30%] md:basis-[30%] md:border-r md:border-b-0 md:shadow-[4px_0_24px_rgba(0,0,0,0.02)]">
             <div className="custom-scrollbar flex-1 overflow-y-auto">
               <Outlet />

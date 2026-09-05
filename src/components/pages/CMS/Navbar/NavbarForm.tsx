@@ -2,16 +2,19 @@ import { useState } from "react"
 
 import { useCmsPage } from "../shared/useCmsPage"
 import { SaveBar } from "../shared/SaveBar"
-import { TextField, ColorField } from "../shared/FormControls"
-import { ImageUploadField } from "@/components/shared/ImageUploadField"
 import { CollapsibleSectionCard } from "../shared/CollapsibleSectionCard"
+import { SeoForm } from "../shared/SeoForm"
+import {
+  navbarSectionOrder,
+  navbarSectionRegistry,
+} from "./config/navbarSections"
 import type { NavbarPageData } from "./navbarTypes"
+import type { NavbarFormSectionContext } from "./shared/form/sectionTypes"
 
 export const NavbarForm = () => {
-  const [openSections, setOpenSections] = useState<
-    Record<string, boolean>
-  >({
-    brand: true,
+  const [openSections, setOpenSections] = useState<Record<string, boolean>>({
+    [navbarSectionOrder[0] ?? "brand"]: true,
+    seo: false,
   })
 
   const toggleSection = (key: string) => {
@@ -36,33 +39,27 @@ export const NavbarForm = () => {
         />
 
         <div className="flex min-h-[300px] items-center justify-center">
-          <p className="text-sm text-muted-foreground">
-            Loading navbar...
-          </p>
+          <p className="text-sm text-muted-foreground">Loading navbar...</p>
         </div>
       </div>
     )
   }
 
-  const updateTheme = (
-    key: keyof NavbarPageData["data"]["theme"],
-    value: string
-  ) => {
+  const updateTheme = (patch: Partial<NavbarPageData["data"]["theme"]>) => {
     setPage({
       ...page,
       data: {
         ...page.data,
         theme: {
           ...page.data.theme,
-          [key]: value,
+          ...patch,
         },
       },
     })
   }
 
   const updateBrand = (
-    key: keyof NavbarPageData["data"]["content"]["brand"],
-    value: string
+    patch: Partial<NavbarPageData["data"]["content"]["brand"]>
   ) => {
     setPage({
       ...page,
@@ -72,11 +69,18 @@ export const NavbarForm = () => {
           ...page.data.content,
           brand: {
             ...page.data.content.brand,
-            [key]: value,
+            ...patch,
           },
         },
       },
     })
+  }
+
+  const sectionContext: NavbarFormSectionContext = {
+    theme: page.data.theme,
+    content: page.data.content,
+    updateTheme,
+    updateBrand,
   }
 
   return (
@@ -92,7 +96,7 @@ export const NavbarForm = () => {
       <div className="flex flex-col gap-6 p-4">
         <div className="flex flex-col gap-3">
           <div className="px-1">
-            <p className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">
+            <p className="text-xs font-semibold tracking-wide text-muted-foreground uppercase">
               Navbar Sections
             </p>
 
@@ -101,84 +105,49 @@ export const NavbarForm = () => {
             </p>
           </div>
 
-          <CollapsibleSectionCard
-            title="Brand"
-            meta="brand"
-            indexLabel="01"
-            isOpen={openSections.brand ?? false}
-            onToggle={() => toggleSection("brand")}
-          >
-            <div className="flex flex-col gap-3">
-              <TextField
-                label="Brand name"
-                value={page.data.content.brand.name}
-                onChange={(value) =>
-                  updateBrand("name", value)
-                }
-              />
+          {navbarSectionOrder.map((key, index) => {
+            const sectionEntry = navbarSectionRegistry[key]
+            const FormSection = sectionEntry.form
 
-              <ImageUploadField
-                label="Logo"
-                fieldName="content.brand.logo"
-                value={page.data.content.brand.logo}
-                onChange={(value) =>
-                  updateBrand("logo", value)
-                }
-              />
-
-              <TextField
-                label="Logo alt text"
-                value={page.data.content.brand.alt}
-                onChange={(value) =>
-                  updateBrand("alt", value)
-                }
-              />
-
-              <TextField
-                label="Brand URL"
-                value={page.data.content.brand.url}
-                onChange={(value) =>
-                  updateBrand("url", value)
-                }
-              />
-            </div>
-          </CollapsibleSectionCard>
+            return (
+              <CollapsibleSectionCard
+                key={key}
+                title={sectionEntry.label}
+                meta={key}
+                indexLabel={String(index + 1).padStart(2, "0")}
+                isOpen={openSections[key] ?? false}
+                onToggle={() => toggleSection(key)}
+              >
+                <FormSection context={sectionContext} />
+              </CollapsibleSectionCard>
+            )
+          })}
 
           <CollapsibleSectionCard
-            title="Navbar Theme"
-            meta="theme"
-            indexLabel="02"
-            isOpen={openSections.theme ?? false}
-            onToggle={() => toggleSection("theme")}
+            title="SEO Metadata"
+            meta="seo"
+            indexLabel="SEO"
+            isOpen={openSections.seo ?? false}
+            onToggle={() => toggleSection("seo")}
           >
-            <div className="grid grid-cols-1 gap-3 sm:grid-cols-3">
-              <ColorField
-                label="Background color"
-                value={page.data.theme.backgroundColor}
-                onChange={(value) =>
-                  updateTheme("backgroundColor", value)
-                }
-              />
-
-              <ColorField
-                label="Text color"
-                value={page.data.theme.textColor}
-                onChange={(value) =>
-                  updateTheme("textColor", value)
-                }
-              />
-
-              <ColorField
-                label="Active color"
-                value={page.data.theme.activeColor}
-                onChange={(value) =>
-                  updateTheme("activeColor", value)
-                }
-              />
-            </div>
+            <SeoForm
+              metadata={page.metadata}
+              onChange={(metadata) =>
+                setPage({
+                  ...page,
+                  metadata: {
+                    ...metadata,
+                    title: metadata.title ?? "",
+                    description: metadata.description ?? "",
+                  },
+                  data: {
+                    ...page.data,
+                  },
+                })
+              }
+            />
           </CollapsibleSectionCard>
         </div>
-
       </div>
     </div>
   )

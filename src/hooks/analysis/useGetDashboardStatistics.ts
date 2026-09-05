@@ -94,7 +94,9 @@ export function useGetDashboardStatistics() {
   return useQuery({
     queryKey: ["dashboard", "statistics"],
     queryFn: async () => {
-      const res = await apiPrivate.get<DashboardStatisticsResponse>("/dashboard/statastics")
+      const res = await apiPrivate.get<DashboardStatisticsResponse>(
+        "/dashboard/statastics"
+      )
       return res.data.data
     },
     staleTime: 1000 * 60 * 5,

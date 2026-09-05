@@ -59,7 +59,13 @@ export default function StatCards() {
               {isLoading ? "—" : stat.value}
             </div>
             <p className="mt-2 text-sm text-muted-foreground">
-              <span className={stat.trend === "up" ? "font-medium text-primary" : "font-medium text-destructive"}>
+              <span
+                className={
+                  stat.trend === "up"
+                    ? "font-medium text-primary"
+                    : "font-medium text-destructive"
+                }
+              >
                 {stat.change}
               </span>
             </p>

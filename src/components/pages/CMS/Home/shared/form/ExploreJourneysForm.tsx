@@ -1,7 +1,7 @@
 import type { HomeSection } from "../../homeTypes"
 import { DynamicStyledField } from "../../../shared/FormControls"
 import { ButtonsField } from "../../../shared/ButtonsField"
-import { UniversalMultimediaForm } from "./UniversalMultimediaForm"
+import { UniversalMultimediaForm } from "../../../shared/UniversalMultimediaForm"
 
 export type ExploreJourneysFormProps = {
   section: HomeSection
@@ -25,52 +25,72 @@ export function ExploreJourneysForm({
   return (
     <div className="flex flex-col gap-5">
       <div className="rounded-md border border-border/50 p-3">
-        <p className="mb-3 text-xs font-semibold uppercase tracking-wide text-muted-foreground">
+        <p className="mb-3 text-xs font-semibold tracking-wide text-muted-foreground uppercase">
           Content
         </p>
 
         <div className="flex flex-col gap-3">
-          <DynamicStyledField type="text"
+          <DynamicStyledField
+            type="text"
             label="Eyebrow"
             value={content.eyebrow ?? ""}
-            onChange={(value: string) => updateSectionContent(index, { eyebrow: value })}
+            onChange={(value: string) =>
+              updateSectionContent(index, { eyebrow: value })
+            }
             enableStyle
             style={content.homeExploreJourneysEyebrowStyle}
             onStyleChange={(style) =>
-              updateSectionContent(index, { homeExploreJourneysEyebrowStyle: style })
+              updateSectionContent(index, {
+                homeExploreJourneysEyebrowStyle: style,
+              })
             }
           />
 
-          <DynamicStyledField type="text"
+          <DynamicStyledField
+            type="text"
             label="Title"
             value={content.title ?? ""}
-            onChange={(value: string) => updateSectionContent(index, { title: value })}
+            onChange={(value: string) =>
+              updateSectionContent(index, { title: value })
+            }
             enableStyle
             style={content.homeExploreJourneysTitleStyle}
             onStyleChange={(style) =>
-              updateSectionContent(index, { homeExploreJourneysTitleStyle: style })
+              updateSectionContent(index, {
+                homeExploreJourneysTitleStyle: style,
+              })
             }
           />
 
-          <DynamicStyledField type="text"
+          <DynamicStyledField
+            type="text"
             label="Subtitle"
             value={content.subtitle ?? ""}
-            onChange={(value: string) => updateSectionContent(index, { subtitle: value })}
+            onChange={(value: string) =>
+              updateSectionContent(index, { subtitle: value })
+            }
             enableStyle
             style={content.homeExploreJourneysSubtitleStyle}
             onStyleChange={(style) =>
-              updateSectionContent(index, { homeExploreJourneysSubtitleStyle: style })
+              updateSectionContent(index, {
+                homeExploreJourneysSubtitleStyle: style,
+              })
             }
           />
 
-          <DynamicStyledField type="textarea"
+          <DynamicStyledField
+            type="textarea"
             label="Description"
             value={content.description ?? ""}
-            onChange={(value: string) => updateSectionContent(index, { description: value })}
+            onChange={(value: string) =>
+              updateSectionContent(index, { description: value })
+            }
             enableStyle
             style={content.homeExploreJourneysDescriptionStyle}
             onStyleChange={(style) =>
-              updateSectionContent(index, { homeExploreJourneysDescriptionStyle: style })
+              updateSectionContent(index, {
+                homeExploreJourneysDescriptionStyle: style,
+              })
             }
           />
         </div>
@@ -99,7 +119,7 @@ export function ExploreJourneysForm({
       />
 
       <div className="rounded-md border border-border/50 p-3">
-        <p className="mb-3 text-xs font-semibold uppercase tracking-wide text-muted-foreground">
+        <p className="mb-3 text-xs font-semibold tracking-wide text-muted-foreground uppercase">
           Buttons
         </p>
 

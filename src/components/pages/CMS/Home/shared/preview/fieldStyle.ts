@@ -31,6 +31,12 @@ export const fieldCssStyle = (
   style: FieldStyleValue | undefined,
   fallbackColor?: string
 ) => ({
-  color: colorWithOpacity(style?.textColor ?? fallbackColor, style?.textOpacity),
-  backgroundColor: colorWithOpacity(style?.backgroundColor, style?.backgroundOpacity),
+  color: colorWithOpacity(
+    style?.textColor ?? fallbackColor,
+    style?.textOpacity
+  ),
+  backgroundColor: colorWithOpacity(
+    style?.backgroundColor,
+    style?.backgroundOpacity
+  ),
 })
