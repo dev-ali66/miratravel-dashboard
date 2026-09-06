@@ -446,6 +446,46 @@ export type JourneyDataContent = {
   } | null
 
   accommodation?: {
+    backgroundMultimedia?: Record<string, any> | null
+    philosophySection?: {
+      eyebrow?: any
+      title?: any
+      description?: any
+      items?: {
+        title?: any
+        description?: any
+        iconMultimedia?: Record<string, any> | null
+      }[]
+    }
+    accommodationSection?: {
+      eyebrow?: any
+      title?: any
+      description?: any
+      items?: {
+        hotelName?: any
+        location?: any
+        nights?: any
+        roomType?: any
+        boardBasis?: any
+        description?: any
+        multimedia?: Record<string, any> | null
+      }[]
+    }
+    standardsSection?: {
+      title?: any
+      description?: any
+      items?: {
+         title?: any
+         description?: any
+      }[]
+    }
+    visualsSection?: {
+      title?: any
+      description?: any
+      mediaItems?: Record<string, any>[]
+    }
+
+    // Legacy fields for backward compatibility
     philosophy?: any
     stays?: AccommodationStayItem[]
     destinations?: {

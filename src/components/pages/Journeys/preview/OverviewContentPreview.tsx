@@ -6,6 +6,7 @@
 ===================================================== */
 
 import { UniversalMultimediaPreview } from "@/components/pages/CMS/Home/shared/preview/UniversalMultimediaPreview"
+import { fieldCssStyle, type FieldStyleValue } from "@/components/pages/CMS/shared/fieldStyle"
 import {
   whyWeDesignedData,
   overviewListData,
@@ -20,28 +21,66 @@ const TITLE_CSS =
 const SECTION_PX = "px-4 lg:px-0"
 const SECTION_GAP_BOTTOM = "pb-[65px] md:pb-[90px] lg:pb-[100px] xlg:pb-[110px] xl:pb-[120px]"
 
+function getTextStyle(
+  style?: FieldStyleValue,
+  fallbackColor?: string
+): React.CSSProperties {
+  const css = fieldCssStyle(style, fallbackColor) as React.CSSProperties
+  if (
+    css.backgroundColor &&
+    css.backgroundColor !== "transparent" &&
+    css.backgroundColor !== "#00000000"
+  ) {
+    return {
+      ...css,
+      display: "inline-block",
+      padding: "0.25rem 0.6rem",
+      borderRadius: "0.375rem",
+      width: "fit-content",
+    }
+  }
+  return css
+}
+
 export function OverviewContentPreview({ draft }: { draft?: Journey }) {
   const overviewSection =
     (draft?.data?.overview as any) ||
     (draft?.data?.overviewList as any) ||
     {}
+  const whyData = (draft?.data?.whyWeDesigned as any) || {}
+  const overviewListDataFromDraft = (draft?.data?.overviewList as any) || {}
+
   const overviewBg = overviewSection?.backgroundMultimedia
 
   // Why We Designed This Journey data with static fallbacks
-  const whyTitle = overviewSection?.whyTitle ?? whyWeDesignedData.title
+  const whyTitle = overviewSection?.whyTitle ?? whyData?.title ?? whyWeDesignedData.title
+  const whyTitleStyle = overviewSection?.whyTitleStyle ?? whyData?.titleStyle
+
   const whyParagraphs =
     Array.isArray(overviewSection?.whyParagraphs) && overviewSection.whyParagraphs.length > 0
       ? overviewSection.whyParagraphs
+      : Array.isArray(whyData?.paragraphs) && whyData.paragraphs.length > 0
+      ? whyData.paragraphs
       : whyWeDesignedData.paragraphs
-  const whySignature = overviewSection?.whySignature ?? whyWeDesignedData.signature
+  const whyParagraphStyles = overviewSection?.whyParagraphStyles || whyData?.paragraphStyles || []
+
+  const whySignature = overviewSection?.whySignature ?? whyData?.signature ?? whyWeDesignedData.signature
+  const whySignatureStyle = overviewSection?.whySignatureStyle ?? whyData?.signatureStyle
 
   // Journey Overview & Highlights data with static fallbacks
-  const overviewTitle = overviewSection?.overviewTitle ?? overviewListData.title
+  const overviewTitle = overviewSection?.overviewTitle ?? overviewListDataFromDraft?.title ?? overviewListData.title
+  const overviewTitleStyle = overviewSection?.overviewTitleStyle ?? overviewListDataFromDraft?.titleStyle
+
   const titlegraphs =
     Array.isArray(overviewSection?.titlegraphs) && overviewSection.titlegraphs.length > 0
       ? overviewSection.titlegraphs
+      : Array.isArray(overviewListDataFromDraft?.titlegraphs) && overviewListDataFromDraft.titlegraphs.length > 0
+      ? overviewListDataFromDraft.titlegraphs
       : overviewListData.titlegraphs
-  const highlightsTitle = overviewSection?.highlightsTitle ?? overviewListData.highlightsTitle
+  const titlegraphStyles = overviewSection?.titlegraphStyles || overviewListDataFromDraft?.titlegraphStyles || []
+
+  const highlightsTitle = overviewSection?.highlightsTitle ?? overviewListDataFromDraft?.highlightsTitle ?? overviewListData.highlightsTitle
+  const highlightsTitleStyle = overviewSection?.highlightsTitleStyle ?? overviewListDataFromDraft?.highlightsTitleStyle
   const highlights =
     Array.isArray(draft?.highlights) && draft.highlights.length > 0
       ? draft.highlights
@@ -94,15 +133,24 @@ export function OverviewContentPreview({ draft }: { draft?: Journey }) {
           <div className="max-w-[1216px] flex flex-col lgx:gap-11 xl:gap-12 md:gap-10 gap-8">
             {/* Why We Designed This Journey */}
             <div className="flex flex-col gap-5 md:gap-6 lgx:gap-7 xl:gap-8">
-              <h2 className={TITLE_CSS}>{whyTitle}</h2>
+              <h2 className={TITLE_CSS} style={getTextStyle(whyTitleStyle)}>
+                {whyTitle}
+              </h2>
               <div className="flex flex-col gap-3 md:gap-4 lgx:gap-5 xl:gap-6 text-nav-text text-sm md:text-[15px] xl:text-base font-normal leading-6 md:leading-[26.8px] xl:leading-[28.8px] tracking-[2px]">
                 {whyParagraphs.map((paragraph: string, idx: number) => (
-                  <p key={idx} className="whitespace-pre-line">
+                  <p
+                    key={idx}
+                    className="whitespace-pre-line"
+                    style={getTextStyle(whyParagraphStyles?.[idx])}
+                  >
                     {paragraph}
                   </p>
                 ))}
                 {whySignature && (
-                  <p className="flex items-center justify-end font-heading text-accent text-xl md:text-2xl font-normal leading-7 tracking-[2px] pt-1 gap-2">
+                  <p
+                    className="flex items-center justify-end font-heading text-accent text-xl md:text-2xl font-normal leading-7 tracking-[2px] pt-1 gap-2"
+                    style={getTextStyle(whySignatureStyle)}
+                  >
                     <span>{whySignature}</span>
                     <svg
                       xmlns="http://www.w3.org/2000/svg"
@@ -125,17 +173,23 @@ export function OverviewContentPreview({ draft }: { draft?: Journey }) {
 
             {/* Title & Description */}
             <div className="flex flex-col gap-5 md:gap-6 lgx:gap-7 xl:gap-8">
-              <h2 className={TITLE_CSS}>{overviewTitle}</h2>
+              <h2 className={TITLE_CSS} style={getTextStyle(overviewTitleStyle)}>
+                {overviewTitle}
+              </h2>
               <div className="flex flex-col gap-3 md:gap-4 lgx:gap-5 xl:gap-6 text-nav-text text-sm md:text-[15px] xl:text-base font-normal leading-6 md:leading-[26.8px] xl:leading-[28.8px] tracking-[2px]">
                 {titlegraphs.map((title: string, idx: number) => (
-                  <p key={idx}>{title}</p>
+                  <p key={idx} style={getTextStyle(titlegraphStyles?.[idx])}>
+                    {title}
+                  </p>
                 ))}
               </div>
             </div>
 
             {/* Highlights Grid */}
             <div className="flex flex-col gap-5 md:gap-6 lgx:gap-7 xl:gap-8 max-w-[1050px]">
-              <h3 className={TITLE_CSS}>{highlightsTitle}</h3>
+              <h3 className={TITLE_CSS} style={getTextStyle(highlightsTitleStyle)}>
+                {highlightsTitle}
+              </h3>
               <div className="grid grid-cols-1 md:grid-cols-2 md:gap-x-4 gap-x-3 md:gap-y-[14px] gap-y-2.5">
                 {highlights.map((highlight: string, idx: number) => (
                   <div

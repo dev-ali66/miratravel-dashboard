@@ -16,7 +16,6 @@ import { Plus, Trash2, Sparkles, CheckCircle2, XCircle, Info } from "lucide-reac
 import {
   FormSection,
   DynamicStyledField,
-  UniversalMultimediaForm,
 } from "../../shared/fields"
 import { useJourneyDraft } from "../../shared/JourneyDraftContext"
 import { whatsIncludedData } from "../../preview/journeyStaticData"
@@ -42,6 +41,7 @@ export function HighlightsInclusionsForm({
 
   const highlightsTitle =
     overviewSection.highlightsTitle || "Curated Highlights"
+  const highlightsTitleStyle = overviewSection.highlightsTitleStyle
   const highlightsList: string[] = Array.isArray(draft.highlights)
     ? draft.highlights
     : Array.isArray(overviewSection.highlights)
@@ -76,11 +76,6 @@ export function HighlightsInclusionsForm({
     ? [...whatsIncludedData.importantInfoItems]
     : []
 
-  const backgroundMultimedia = whatsIncludedSection.backgroundMultimedia || {
-    type: "color",
-    color: "#F9F9F9",
-  }
-
   const syncState = (patch: {
     highlights?: string[]
     included?: string[]
@@ -111,6 +106,7 @@ export function HighlightsInclusionsForm({
       const updatedOverview = {
         ...currentOverview,
         highlightsTitle: patch.overviewPatch?.highlightsTitle ?? currentOverview.highlightsTitle ?? highlightsTitle,
+        highlightsTitleStyle: patch.overviewPatch?.highlightsTitleStyle ?? currentOverview.highlightsTitleStyle ?? highlightsTitleStyle,
         highlights: nextHighlights,
         ...(patch.overviewPatch || {}),
       }
@@ -200,75 +196,6 @@ export function HighlightsInclusionsForm({
       badge={`${highlightsList.length} Highlights • ${includedList.length} Inclusions`}
     >
       <div className="space-y-6">
-        {/* Section Background */}
-        <UniversalMultimediaForm
-          sectionTitle="What's Included Section Background"
-          section={{ backgroundMultimedia } as any}
-          content={{ backgroundMultimedia } as Record<string, any>}
-          updateSection={(patch: any) =>
-            syncState({
-              whatsIncludedPatch: {
-                backgroundMultimedia:
-                  patch?.backgroundMultimedia || patch,
-              },
-            })
-          }
-          updateSectionContent={(patch: any) =>
-            syncState({
-              whatsIncludedPatch: {
-                backgroundMultimedia:
-                  patch?.backgroundMultimedia || patch,
-              },
-            })
-          }
-          backgroundType={backgroundMultimedia.type || "color"}
-          onBackgroundTypeChange={(type) =>
-            syncState({
-              whatsIncludedPatch: {
-                backgroundMultimedia: { ...backgroundMultimedia, type },
-              },
-            })
-          }
-          defaultColor={backgroundMultimedia.color}
-          onColorChange={(color) =>
-            syncState({
-              whatsIncludedPatch: {
-                backgroundMultimedia: {
-                  ...backgroundMultimedia,
-                  type: "color",
-                  color,
-                },
-              },
-            })
-          }
-          image={backgroundMultimedia.image}
-          onImageChange={(image) =>
-            syncState({
-              whatsIncludedPatch: {
-                backgroundMultimedia: {
-                  ...backgroundMultimedia,
-                  type: "image",
-                  image,
-                  url: image?.url || "",
-                },
-              },
-            })
-          }
-          video={backgroundMultimedia.video}
-          onVideoChange={(video) =>
-            syncState({
-              whatsIncludedPatch: {
-                backgroundMultimedia: {
-                  ...backgroundMultimedia,
-                  type: "video",
-                  video,
-                  url: video?.url || "",
-                },
-              },
-            })
-          }
-        />
-
         {/* 1. Trip Highlights */}
         <div className="space-y-3 rounded-xl border border-border/70 bg-card/40 p-4">
           <div className="flex items-center justify-between border-b border-border/60 pb-3">
@@ -293,6 +220,25 @@ export function HighlightsInclusionsForm({
               <Plus className="h-3.5 w-3.5" /> Add Highlight
             </button>
           </div>
+
+          <DynamicStyledField
+            type="text"
+            label="Highlights Section Title"
+            value={highlightsTitle}
+            onChange={(val: string) =>
+              syncState({
+                overviewPatch: { highlightsTitle: val },
+              })
+            }
+            placeholder="Curated Highlights"
+            enableStyle
+            style={highlightsTitleStyle}
+            onStyleChange={(style) =>
+              syncState({
+                overviewPatch: { highlightsTitleStyle: style },
+              })
+            }
+          />
 
           <div className="space-y-2 pt-1">
             {highlightsList.map((item, idx) => (

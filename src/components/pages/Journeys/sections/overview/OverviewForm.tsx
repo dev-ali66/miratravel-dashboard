@@ -15,6 +15,7 @@ import {
   FormSection,
   DynamicStyledField,
   UniversalMultimediaForm,
+  type FieldStyle,
 } from "../../shared/fields"
 import { useJourneyDraft } from "../../shared/JourneyDraftContext"
 import {
@@ -42,22 +43,39 @@ export function OverviewForm({
     (draft?.data?.overview as any) ||
     (draft?.data?.overviewList as any) ||
     {}
+  const whyData = (draft?.data?.whyWeDesigned as any) || {}
+  const overviewListDataFromDraft = (draft?.data?.overviewList as any) || {}
 
-  const whyTitle = overviewData.whyTitle ?? whyWeDesignedData.title
+  const whyTitle = overviewData.whyTitle ?? whyData.title ?? whyWeDesignedData.title
+  const whyTitleStyle = overviewData.whyTitleStyle ?? whyData.titleStyle
+
   const whyParagraphs: string[] = Array.isArray(overviewData.whyParagraphs)
     ? overviewData.whyParagraphs
+    : Array.isArray(whyData.paragraphs)
+    ? [...whyData.paragraphs]
     : Array.isArray(whyWeDesignedData.paragraphs)
     ? [...whyWeDesignedData.paragraphs]
     : []
-  const whySignature = overviewData.whySignature ?? whyWeDesignedData.signature
+  const whyParagraphStyles: (FieldStyle | undefined)[] = Array.isArray(overviewData.whyParagraphStyles)
+    ? overviewData.whyParagraphStyles
+    : []
 
-  const overviewTitle = overviewData.overviewTitle ?? overviewListData.title
+  const whySignature = overviewData.whySignature ?? whyData.signature ?? whyWeDesignedData.signature
+  const whySignatureStyle = overviewData.whySignatureStyle ?? whyData.signatureStyle
+
+  const overviewTitle = overviewData.overviewTitle ?? overviewListDataFromDraft.title ?? overviewListData.title
+  const overviewTitleStyle = overviewData.overviewTitleStyle ?? overviewListDataFromDraft.titleStyle
+
   const titlegraphs: string[] = Array.isArray(overviewData.titlegraphs)
     ? overviewData.titlegraphs
+    : Array.isArray(overviewListDataFromDraft.titlegraphs)
+    ? [...overviewListDataFromDraft.titlegraphs]
     : Array.isArray(overviewListData.titlegraphs)
     ? [...overviewListData.titlegraphs]
     : []
-  const highlightsTitle = overviewData.highlightsTitle ?? overviewListData.highlightsTitle
+  const titlegraphStyles: (FieldStyle | undefined)[] = Array.isArray(overviewData.titlegraphStyles)
+    ? overviewData.titlegraphStyles
+    : []
 
   const backgroundMultimedia = overviewData.backgroundMultimedia || {
     type: "color",
@@ -76,12 +94,33 @@ export function OverviewForm({
         ...patch,
       }
 
+      const updatedWhyWeDesigned = {
+        ...((prevData.whyWeDesigned as any) || {}),
+        title: updatedOverview.whyTitle,
+        paragraphs: updatedOverview.whyParagraphs,
+        signature: updatedOverview.whySignature,
+        titleStyle: updatedOverview.whyTitleStyle,
+        signatureStyle: updatedOverview.whySignatureStyle,
+        paragraphStyles: updatedOverview.whyParagraphStyles,
+      }
+
+      const updatedOverviewList = {
+        ...((prevData.overviewList as any) || {}),
+        title: updatedOverview.overviewTitle,
+        titlegraphs: updatedOverview.titlegraphs,
+        highlightsTitle: updatedOverview.highlightsTitle,
+        titleStyle: updatedOverview.overviewTitleStyle,
+        highlightsTitleStyle: updatedOverview.highlightsTitleStyle,
+        titlegraphStyles: updatedOverview.titlegraphStyles,
+      }
+
       return {
         ...prev,
         data: {
           ...prevData,
           overview: updatedOverview,
-          overviewList: updatedOverview,
+          whyWeDesigned: updatedWhyWeDesigned,
+          overviewList: updatedOverviewList,
         },
       }
     })
@@ -94,12 +133,24 @@ export function OverviewForm({
     syncOverview({ whyParagraphs: updated })
   }
 
+  const handleWhyParagraphStyleChange = (index: number, style: FieldStyle) => {
+    const updatedStyles = [...whyParagraphStyles]
+    updatedStyles[index] = style
+    syncOverview({ whyParagraphStyles: updatedStyles })
+  }
+
   const handleAddWhyParagraph = () => {
-    syncOverview({ whyParagraphs: [...whyParagraphs, ""] })
+    syncOverview({
+      whyParagraphs: [...whyParagraphs, ""],
+      whyParagraphStyles: [...whyParagraphStyles, undefined],
+    })
   }
 
   const handleRemoveWhyParagraph = (index: number) => {
-    syncOverview({ whyParagraphs: whyParagraphs.filter((_, i) => i !== index) })
+    syncOverview({
+      whyParagraphs: whyParagraphs.filter((_, i) => i !== index),
+      whyParagraphStyles: whyParagraphStyles.filter((_, i) => i !== index),
+    })
   }
 
   const handleTitlegraphChange = (index: number, val: string) => {
@@ -108,12 +159,24 @@ export function OverviewForm({
     syncOverview({ titlegraphs: updated })
   }
 
+  const handleTitlegraphStyleChange = (index: number, style: FieldStyle) => {
+    const updatedStyles = [...titlegraphStyles]
+    updatedStyles[index] = style
+    syncOverview({ titlegraphStyles: updatedStyles })
+  }
+
   const handleAddTitlegraph = () => {
-    syncOverview({ titlegraphs: [...titlegraphs, ""] })
+    syncOverview({
+      titlegraphs: [...titlegraphs, ""],
+      titlegraphStyles: [...titlegraphStyles, undefined],
+    })
   }
 
   const handleRemoveTitlegraph = (index: number) => {
-    syncOverview({ titlegraphs: titlegraphs.filter((_, i) => i !== index) })
+    syncOverview({
+      titlegraphs: titlegraphs.filter((_, i) => i !== index),
+      titlegraphStyles: titlegraphStyles.filter((_, i) => i !== index),
+    })
   }
 
   return (
@@ -201,6 +264,9 @@ export function OverviewForm({
             value={whyTitle}
             onChange={(val: string) => syncOverview({ whyTitle: val })}
             placeholder="Why we designed this journey?"
+            enableStyle
+            style={whyTitleStyle}
+            onStyleChange={(style) => syncOverview({ whyTitleStyle: style })}
           />
 
           <div className="space-y-3">
@@ -228,6 +294,11 @@ export function OverviewForm({
                       handleWhyParagraphChange(idx, val)
                     }
                     placeholder="Atmospheric narrative explaining the travel inspiration..."
+                    enableStyle
+                    style={whyParagraphStyles[idx]}
+                    onStyleChange={(style) =>
+                      handleWhyParagraphStyleChange(idx, style)
+                    }
                   />
                 </div>
                 <button
@@ -248,6 +319,9 @@ export function OverviewForm({
             value={whySignature}
             onChange={(val: string) => syncOverview({ whySignature: val })}
             placeholder="— MIRA"
+            enableStyle
+            style={whySignatureStyle}
+            onStyleChange={(style) => syncOverview({ whySignatureStyle: style })}
           />
         </div>
 
@@ -273,6 +347,9 @@ export function OverviewForm({
             value={overviewTitle}
             onChange={(val: string) => syncOverview({ overviewTitle: val })}
             placeholder="Journey Overview"
+            enableStyle
+            style={overviewTitleStyle}
+            onStyleChange={(style) => syncOverview({ overviewTitleStyle: style })}
           />
 
           <div className="space-y-3">
@@ -300,6 +377,11 @@ export function OverviewForm({
                       handleTitlegraphChange(idx, val)
                     }
                     placeholder="Immerse yourself in the timeless beauty and rich culture..."
+                    enableStyle
+                    style={titlegraphStyles[idx]}
+                    onStyleChange={(style) =>
+                      handleTitlegraphStyleChange(idx, style)
+                    }
                   />
                 </div>
                 <button
@@ -313,16 +395,6 @@ export function OverviewForm({
               </div>
             ))}
           </div>
-
-          <DynamicStyledField
-            type="text"
-            label="Highlights Section Title"
-            value={highlightsTitle}
-            onChange={(val: string) =>
-              syncOverview({ highlightsTitle: val })
-            }
-            placeholder="Curated Highlights"
-          />
         </div>
       </div>
     </FormSection>
