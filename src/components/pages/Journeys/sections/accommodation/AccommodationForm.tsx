@@ -18,7 +18,6 @@ import {
   DynamicStyledField,
   UniversalMultimediaForm,
 } from "../../shared/fields"
-import { UniversalMultimediaPreview } from "@/components/pages/CMS/Home/shared/preview/UniversalMultimediaPreview"
 import { type Journey } from "../../journeyTypes"
 
 export type AccommodationFormProps = {
@@ -191,8 +190,8 @@ export function AccommodationForm({
           <UniversalMultimediaForm
             section={accData as any}
             content={accData as any}
-            updateSection={(patch) => syncState(patch)}
-            updateSectionContent={(patch) => syncState(patch)}
+            updateSection={(patch: any) => syncState(patch)}
+            updateSectionContent={(patch: any) => syncState(patch)}
             contentMediaKey="backgroundMultimedia"
             backgroundType={accData?.backgroundMultimedia?.type ?? "color"}
             backgroundTypeStyleKey="accommodationBgType"

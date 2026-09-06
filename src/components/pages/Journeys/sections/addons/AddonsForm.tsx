@@ -4,23 +4,75 @@
 ===================================================== */
 
 import { useState } from "react"
-import { Plus, Trash2, ChevronDown, ChevronUp, Image as ImageIcon } from "lucide-react"
+import { Plus, Trash2, ChevronDown, ChevronUp, MapPin } from "lucide-react"
 import { cn } from "@/lib/utils"
+import { removeFiles } from "@/services/fileUpload"
 import {
   FormSection,
   DynamicStyledField,
   UniversalMultimediaForm,
+  JourneySelectField,
 } from "../../shared/fields"
+
+const CURRENCY_OPTIONS = [
+  { label: "EUR (€)", value: "EUR" },
+  { label: "USD ($)", value: "USD" },
+  { label: "GBP (£)", value: "GBP" },
+]
+import { UniversalMultimediaPreview } from "@/components/pages/CMS/Home/shared/preview/UniversalMultimediaPreview"
 import {
   getJourneyAddons,
+  sanitizeItineraryDay,
+  sanitizeFieldStyle,
+  sanitizeMultimedia,
+  sanitizeLocation,
+  getCurrencySymbol,
+  getDayEyebrow,
+  getDayTitle,
+  getDayLocation,
+  getDayDescription,
+  getDayMedia,
   type Journey,
+  type AddonItem,
 } from "../../journeyTypes"
+import { LocationSearchCombobox } from "../itinerary/LocationSearchCombobox"
 
 export type AddonsFormProps = {
   draft: Journey
   updateField: (path: string, value: unknown) => void
   openSections: Record<string, boolean>
   toggleSection: (section: string) => void
+}
+
+function extractMediaUrlsFromAddon(addon: AddonItem): string[] {
+  const urls: string[] = []
+
+  const addUrl = (u: any) => {
+    if (typeof u === "string" && u.trim() && !u.startsWith("/images/")) {
+      urls.push(u.trim())
+    }
+  }
+
+  // 1. itineraryMedia
+  const media = addon.itineraryMedia as any
+  if (media) {
+    addUrl(media.url)
+    addUrl(media.image?.url)
+    addUrl(media.video?.url)
+    addUrl(media.video?.poster)
+    addUrl(media.posterUrl)
+  }
+
+  // 2. legacy multimedia
+  const mm = (addon as any).multimedia
+  if (mm) {
+    addUrl(mm.url)
+    addUrl(mm.image?.url)
+    addUrl(mm.video?.url)
+    addUrl(mm.video?.poster)
+  }
+
+  return urls
 }
 
 export function AddonsForm({
@@ -30,89 +82,131 @@ export function AddonsForm({
   toggleSection,
 }: AddonsFormProps) {
   const addons = getJourneyAddons(draft)
-  const [expandedIndex, setExpandedIndex] = useState<number | null>(0)
+  const [expandedAddon, setExpandedAddon] = useState<number | null>(0)
 
-  const syncAddons = (next: any[]) => {
-    updateField("addOns", next)
-    updateField("addons", next)
-    updateField("data.addons", next)
+  const syncAddons = (nextAddons: AddonItem[]) => {
+    updateField("addOns", nextAddons)
+    updateField("addons", nextAddons)
+    updateField("data.addons", nextAddons)
   }
 
   const handleAddAddon = () => {
-    const nextDayNum = addons.length + 1
-    const title = "Private Cooking Class & Wine Tasting"
-    const slug = `addon-${nextDayNum}-${title
+    const nextAddonNum = addons.length + 1
+    const titleText = `Optional Add-on ${nextAddonNum}`
+    const slug = `addon-${nextAddonNum}-${titleText
       .toLowerCase()
       .replace(/[^a-z0-9]+/g, "-")
       .replace(/(^-|-$)/g, "")}`
 
-    const newItem = {
-      dayNumber: nextDayNum,
-      title,
+    const newAddon: AddonItem = {
+      dayNumber: nextAddonNum,
+      dayLabel: `Add-on ${nextAddonNum}`,
       slug,
-      price: 150,
-      description: "",
-      journeyItineraryImage: [],
-      data: {},
-      metadata: {},
+      price: 0,
+      currency: "EUR",
+      priceSuffix: "per person",
+      eyebrow: {
+        text: "",
+        style: {
+          textColor: null,
+          backgroundColor: null,
+        },
+      },
+      title: {
+        text: titleText,
+        style: {
+          textColor: null,
+          backgroundColor: null,
+        },
+      },
+      location: {
+        id: null,
+        name: "",
+        geoData: {
+          latitude: null,
+          longitude: null,
+        },
+      },
+      description: {
+        text: "",
+        style: {
+          textColor: null,
+          backgroundColor: null,
+        },
+      },
+      itineraryMedia: {
+        type: "image",
+        color: "#F8F6F0",
+        url: null,
+        alt: null,
+        image: {
+          url: null,
+          alt: null,
+          opacity: 100,
+          overlayColor: "#000000",
+          overlayOpacity: 0,
+        },
+        video: {
+          url: null,
+          alt: null,
+          poster: null,
+          autoplay: true,
+          loop: true,
+          muted: true,
+          opacity: 100,
+          overlayColor: "#000000",
+          overlayOpacity: 0,
+        },
+      },
     }
-    const updated = [...addons, newItem]
+    const updated = [...addons, newAddon]
     syncAddons(updated)
-    setExpandedIndex(updated.length - 1)
+    setExpandedAddon(updated.length - 1)
   }
 
-  const handleUpdateAddon = (index: number, field: string, val: any) => {
-    const next = [...addons]
-    const item = { ...next[index], [field]: val }
+  const handleUpdateAddonFields = (index: number, patch: Record<string, any>) => {
+    const updated = addons.map((curr, idx) => {
+      if (idx !== index) return curr
+      const sanitized = sanitizeItineraryDay({ ...curr, ...patch }, idx) as AddonItem
+      // Retain Addon specific fields not handled by sanitizeItineraryDay
+      sanitized.price = patch.price !== undefined ? patch.price : curr.price
+      sanitized.currency = patch.currency !== undefined ? patch.currency : curr.currency
+      sanitized.priceSuffix = patch.priceSuffix !== undefined ? patch.priceSuffix : curr.priceSuffix
+      return sanitized
+    })
+    syncAddons(updated)
+  }
 
-    if (field === "title") {
-      item.slug = `addon-${item.dayNumber || index + 1}-${String(val)
-        .toLowerCase()
-        .replace(/[^a-z0-9]+/g, "-")
-        .replace(/(^-|-$)/g, "")}`
+  const handleRemoveAddon = async (index: number) => {
+    const targetAddon = addons[index]
+    if (targetAddon) {
+      // 1. Delete all multimedia uploaded files from server
+      const mediaUrls = extractMediaUrlsFromAddon(targetAddon)
+      if (mediaUrls.length > 0) {
+        try {
+          await removeFiles(mediaUrls)
+        } catch (err) {
+          console.error("Failed to delete media files from server:", err)
+        }
+      }
     }
 
-    next[index] = item
-    syncAddons(next)
-  }
+    // 2. Remove addon card and renumber remaining addons
+    const updated = addons
+      .filter((_: AddonItem, i: number) => i !== index)
+      .map((a: AddonItem, i: number) => ({
+        ...a,
+        dayNumber: i + 1,
+        dayLabel: `Add-on ${i + 1}`,
+      }))
 
-  const handleUpdateAddonData = (index: number, dataKey: string, val: any) => {
-    const next = [...addons]
-    const item = next[index]
-    item.data = { ...((item.data as any) || {}), [dataKey]: val }
-    next[index] = item
-    syncAddons(next)
-  }
+    syncAddons(updated)
 
-  const handleRemoveAddon = (index: number) => {
-    const next = addons
-      .filter((_: any, i: number) => i !== index)
-      .map((item: any, i: number) => ({ ...item, dayNumber: i + 1 }))
-    syncAddons(next)
-    if (expandedIndex === index) {
-      setExpandedIndex(null)
+    if (expandedAddon === index) {
+      setExpandedAddon(null)
+    } else if (expandedAddon !== null && expandedAddon > index) {
+      setExpandedAddon(expandedAddon - 1)
     }
-  }
-
-  const handleAddImage = (addonIdx: number) => {
-    const item = addons[addonIdx]
-    const current = item.journeyItineraryImage || (item.image ? [item.image] : [])
-    handleUpdateAddon(addonIdx, "journeyItineraryImage", [...current, ""])
-  }
-
-  const handleUpdateImage = (addonIdx: number, imgIdx: number, url: string) => {
-    const item = addons[addonIdx]
-    const current = [...(item.journeyItineraryImage || (item.image ? [item.image] : []))]
-    current[imgIdx] = url
-    handleUpdateAddon(addonIdx, "journeyItineraryImage", current)
-  }
-
-  const handleRemoveImage = (addonIdx: number, imgIdx: number) => {
-    const item = addons[addonIdx]
-    const current = (item.journeyItineraryImage || (item.image ? [item.image] : [])).filter(
-      (_: string, i: number) => i !== imgIdx
-    )
-    handleUpdateAddon(addonIdx, "journeyItineraryImage", current)
   }
 
   return (
@@ -125,7 +219,7 @@ export function AddonsForm({
       <div className="space-y-4">
         <div className="flex items-center justify-between">
           <p className="text-xs text-muted-foreground">
-            Optional excursions, upgrades, and experiences for this journey.
+            Configure optional excursions, upgrades, and experiences for this journey.
           </p>
           <button
             type="button"
@@ -136,10 +230,15 @@ export function AddonsForm({
           </button>
         </div>
 
+        {/* Add-ons Accordion */}
         <div className="space-y-3">
-          {addons.map((addon: any, idx: number) => {
-            const isExpanded = expandedIndex === idx
-            const images = addon.journeyItineraryImage || (addon.image ? [addon.image] : [])
+          {addons.map((addon: AddonItem, idx: number) => {
+            const isExpanded = expandedAddon === idx
+            const addonEyebrow = getDayEyebrow(addon)
+            const addonTitle = getDayTitle(addon, idx + 1)
+            const addonLoc = getDayLocation(addon)
+            const addonDesc = getDayDescription(addon)
+            const addonMedia = getDayMedia(addon)
 
             return (
               <div
@@ -149,25 +248,47 @@ export function AddonsForm({
                   isExpanded ? "shadow-sm ring-1 ring-primary/20" : ""
                 )}
               >
+                {/* Header */}
                 <div
                   className="flex items-center justify-between p-3.5 cursor-pointer hover:bg-muted/30"
-                  onClick={() => setExpandedIndex(isExpanded ? null : idx)}
+                  onClick={() => setExpandedAddon(isExpanded ? null : idx)}
                 >
-                  <div className="flex items-center gap-3">
-                    <span className="flex h-6 w-6 items-center justify-center rounded-full bg-secondary text-xs font-bold text-secondary-foreground">
+                  <div className="flex items-center gap-3 min-w-0">
+                    <span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-primary/10 text-xs font-bold text-primary">
                       {addon.dayNumber || idx + 1}
                     </span>
-                    <span className="text-xs font-semibold text-foreground">
-                      {addon.title || `Add-on #${idx + 1}`}
-                    </span>
-                    {addon.price > 0 && (
-                      <span className="rounded-full bg-primary/10 px-2 py-0.5 text-[10px] font-semibold text-primary">
-                        +€{addon.price}
+
+                    {/* Add-on Media Thumbnail */}
+                    <div className="relative h-10 w-10 shrink-0 overflow-hidden rounded-md border border-border bg-muted/30">
+                      <UniversalMultimediaPreview
+                        multimedia={addonMedia}
+                        fallbackImageSrc={addonMedia.url || addon.thumbnail}
+                        fallbackAlt={addonTitle.text}
+                        mode="background"
+                        className="h-full w-full object-cover object-center"
+                        containerClassName="absolute inset-0"
+                      />
+                    </div>
+
+                    <div className="flex flex-col min-w-0">
+                      <span className="text-xs font-semibold text-foreground truncate">
+                        {addonTitle.text}
                       </span>
-                    )}
+                      {addonLoc.name && (
+                        <span className="flex items-center gap-1 text-[10px] text-muted-foreground truncate">
+                          <MapPin className="h-2.5 w-2.5 text-primary shrink-0" />
+                          {addonLoc.name}
+                        </span>
+                      )}
+                    </div>
                   </div>
 
                   <div className="flex items-center gap-2">
+                    {addon.price ? (
+                      <span className="rounded-full bg-primary/10 px-2 py-0.5 text-[10px] font-semibold text-primary shrink-0">
+                        +{getCurrencySymbol(addon.currency)}{addon.price}
+                      </span>
+                    ) : null}
                     <button
                       type="button"
                       onClick={(e) => {
@@ -186,137 +307,199 @@ export function AddonsForm({
                   </div>
                 </div>
 
+                {/* Add-on Details */}
                 {isExpanded && (
                   <div className="border-t border-border/50 p-4 space-y-4">
+                    {/* Eyebrow with DynamicStyledField */}
+                    <DynamicStyledField
+                      type="text"
+                      label="Eyebrow"
+                      value={addonEyebrow.text}
+                      onChange={(val: string) => {
+                        handleUpdateAddonFields(idx, {
+                          eyebrow: { text: val, style: sanitizeFieldStyle(addonEyebrow.style) },
+                        })
+                      }}
+                      placeholder="e.g. Optional Excursion"
+                      enableStyle
+                      style={addonEyebrow.style}
+                      onStyleChange={(style) => {
+                        handleUpdateAddonFields(idx, {
+                          eyebrow: { text: addonEyebrow.text, style: sanitizeFieldStyle(style) },
+                        })
+                      }}
+                    />
+
+                    {/* Add-on Title with DynamicStyledField */}
                     <DynamicStyledField
                       type="text"
                       label="Add-on Title"
-                      value={addon.title ?? ""}
-                      onChange={(val: string) => handleUpdateAddon(idx, "title", val)}
-                      placeholder="e.g. Private Vineyard Tour & Sunset Tasting"
+                      value={addonTitle.text}
+                      onChange={(val: string) => {
+                        handleUpdateAddonFields(idx, {
+                          title: { text: val, style: sanitizeFieldStyle(addonTitle.style) },
+                        })
+                      }}
+                      placeholder="e.g. Private Cooking Class"
                       enableStyle
-                      style={(addon.data as any)?.titleStyle}
-                      onStyleChange={(style) => handleUpdateAddonData(idx, "titleStyle", style)}
+                      style={addonTitle.style}
+                      onStyleChange={(style) => {
+                        handleUpdateAddonFields(idx, {
+                          title: { text: addonTitle.text, style: sanitizeFieldStyle(style) },
+                        })
+                      }}
                     />
 
-                    <div className="grid grid-cols-2 gap-3">
+                    {/* Price & Currency */}
+                    <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
                       <DynamicStyledField
                         type="number"
-                        label="Day Number"
-                        value={addon.dayNumber ?? idx + 1}
-                        onChange={(val: string) =>
-                          handleUpdateAddon(idx, "dayNumber", val === "" ? 1 : Number(val))
-                        }
-                        min={1}
-                      />
-
-                      <DynamicStyledField
-                        type="number"
-                        label="Price (EUR)"
+                        label="Price"
                         value={addon.price ?? 0}
                         onChange={(val: string) =>
-                          handleUpdateAddon(idx, "price", val === "" ? 0 : Number(val))
+                          handleUpdateAddonFields(idx, { price: val === "" ? 0 : Number(val) })
                         }
                         min={0}
                       />
+                      <JourneySelectField
+                        label="Currency"
+                        value={addon.currency || "EUR"}
+                        options={CURRENCY_OPTIONS}
+                        onChange={(val) => handleUpdateAddonFields(idx, { currency: val })}
+                      />
+                      <DynamicStyledField
+                        type="number"
+                        label="Price Suffix (Persons)"
+                        value={(addon as any).personCount ?? (typeof addon.priceSuffix === "number" ? addon.priceSuffix : Number(addon.priceSuffix) || 1)}
+                        onChange={(val: number | string) => {
+                          const num = Number(val) || 1
+                          handleUpdateAddonFields(idx, { 
+                            personCount: num,
+                            priceSuffix: num.toString()
+                          } as any)
+                        }}
+                        placeholder="1"
+                        hint="1 = per person, 2 = two persons, 3 = three persons..."
+                        min={1}
+                        step={1}
+                      />
                     </div>
 
-                    <DynamicStyledField
-                      type="text"
-                      label="Slug"
-                      value={addon.slug ?? ""}
-                      onChange={(val: string) => handleUpdateAddon(idx, "slug", val)}
-                      placeholder="e.g. private-vineyard-tour"
+                    {/* Location Search Box (Allows same location across addons) */}
+                    <LocationSearchCombobox
+                      valueLocationId={addonLoc.id}
+                      valueLocationName={addonLoc.name}
+                      onSelect={(loc) => {
+                        handleUpdateAddonFields(idx, {
+                          location: sanitizeLocation(loc),
+                        })
+                      }}
                     />
 
+                    {/* Add-on Description with DynamicStyledField */}
                     <DynamicStyledField
                       type="textarea"
-                      label="Description"
-                      value={addon.description ?? ""}
-                      onChange={(val: string) => handleUpdateAddon(idx, "description", val)}
-                      placeholder="Details of what this optional experience involves..."
+                      label="Add-on Description"
+                      value={addonDesc.text}
+                      onChange={(val: string) => {
+                        handleUpdateAddonFields(idx, {
+                          description: { text: val, style: sanitizeFieldStyle(addonDesc.style) },
+                        })
+                      }}
+                      placeholder="Detailed narrative of this optional add-on..."
                       enableStyle
-                      style={(addon.data as any)?.descriptionStyle}
-                      onStyleChange={(style) =>
-                        handleUpdateAddonData(idx, "descriptionStyle", style)
-                      }
+                      style={addonDesc.style}
+                      onStyleChange={(style) => {
+                        handleUpdateAddonFields(idx, {
+                          description: { text: addonDesc.text, style: sanitizeFieldStyle(style) },
+                        })
+                      }}
                     />
 
-                    {/* Images */}
-                    <div className="rounded-lg border border-border/60 p-3 space-y-2.5">
-                      <div className="flex items-center justify-between">
-                        <label className="text-xs font-semibold text-foreground flex items-center gap-1.5">
-                          <ImageIcon className="h-3.5 w-3.5 text-primary" />
-                          Add-on Images ({images.length})
-                        </label>
-                        <button
-                          type="button"
-                          onClick={() => handleAddImage(idx)}
-                          className="flex items-center gap-1 rounded bg-secondary px-2 py-1 text-[11px] font-medium text-secondary-foreground hover:bg-secondary/80"
-                        >
-                          <Plus className="h-3 w-3" /> Add Image
-                        </button>
-                      </div>
-
-                      <div className="space-y-3">
-                        {images.map((imgUrl: string, imgIdx: number) => {
-                          const imgItem = {
-                            id: imgIdx,
-                            imageMultimedia: {
+                    {/* Add-on Universal Multimedia (Image / Video / Background Color) */}
+                    <div className="rounded-lg border border-border/60 p-3 space-y-2.5 bg-card/40">
+                      <UniversalMultimediaForm
+                        sectionTitle={`Add-on ${addon.dayNumber || idx + 1} Media`}
+                        section={{
+                          ...addon,
+                          itineraryMedia: addonMedia,
+                        } as any}
+                        content={{
+                          ...addon,
+                          itineraryMedia: addonMedia,
+                        }}
+                        contentMediaKey="itineraryMedia"
+                        backgroundType={addonMedia.type || "image"}
+                        onBackgroundTypeChange={(type) => {
+                          handleUpdateAddonFields(idx, {
+                            itineraryMedia: sanitizeMultimedia({
+                              ...addonMedia,
+                              type,
+                            }),
+                          })
+                        }}
+                        onColorChange={(color) => {
+                          handleUpdateAddonFields(idx, {
+                            itineraryMedia: sanitizeMultimedia({
+                              ...addonMedia,
+                              type: "color" as const,
+                              color,
+                            }),
+                          })
+                        }}
+                        image={addonMedia.image}
+                        onImageChange={(nextImg) => {
+                          handleUpdateAddonFields(idx, {
+                            itineraryMedia: sanitizeMultimedia({
+                              ...addonMedia,
                               type: "image" as const,
-                              url: imgUrl,
-                              alt: `${addon.title || "Add-on"} photo ${imgIdx + 1}`,
-                            },
-                          }
-
-                          return (
-                            <div
-                              key={imgIdx}
-                              className="rounded-lg border border-border/50 p-3 bg-muted/10 space-y-2"
-                            >
-                              <div className="flex items-center justify-between pb-1 border-b border-border/30">
-                                <span className="text-[11px] font-semibold text-muted-foreground">
-                                  Image #{imgIdx + 1}
-                                </span>
-                                <button
-                                  type="button"
-                                  onClick={() => handleRemoveImage(idx, imgIdx)}
-                                  className="rounded p-1 text-muted-foreground hover:text-destructive hover:bg-destructive/10"
-                                >
-                                  <Trash2 className="h-3.5 w-3.5" />
-                                </button>
-                              </div>
-
-                              <UniversalMultimediaForm
-                                section={imgItem as any}
-                                content={imgItem}
-                                updateSection={(patch) => {
-                                  const nextUrl =
-                                    (patch as any)?.imageMultimedia?.url ??
-                                    (patch as any)?.url ??
-                                    imgUrl
-                                  handleUpdateImage(idx, imgIdx, nextUrl)
-                                }}
-                                updateSectionContent={(patch) => {
-                                  const nextUrl =
-                                    (patch as any)?.imageMultimedia?.url ??
-                                    (patch as any)?.url ??
-                                    imgUrl
-                                  handleUpdateImage(idx, imgIdx, nextUrl)
-                                }}
-                                contentMediaKey="imageMultimedia"
-                                backgroundType="image"
-                                sectionTitle={`Add-on ${idx + 1} - Image #${imgIdx + 1}`}
-                                showColorPicker={false}
-                                imageTitle="Photo"
-                                imageLabel="Photo"
-                                imageFieldName={`addon_${idx}_img_${imgIdx}`}
-                                showImageAltField
-                              />
-                            </div>
-                          )
-                        })}
-                      </div>
+                              image: {
+                                ...(addonMedia.image || {}),
+                                ...nextImg,
+                              },
+                            }),
+                          })
+                        }}
+                        video={addonMedia.video}
+                        onVideoChange={(nextVid) => {
+                          handleUpdateAddonFields(idx, {
+                            itineraryMedia: sanitizeMultimedia({
+                              ...addonMedia,
+                              type: "video" as const,
+                              video: {
+                                ...(addonMedia.video || {}),
+                                ...nextVid,
+                              },
+                            }),
+                          })
+                        }}
+                        updateSection={(patch: any) => {
+                          const raw = patch?.itineraryMedia || patch?.multimedia || patch
+                          handleUpdateAddonFields(idx, {
+                            itineraryMedia: sanitizeMultimedia(raw),
+                          })
+                        }}
+                        updateSectionContent={(patch: any) => {
+                          const raw = patch?.itineraryMedia || patch?.multimedia || patch
+                          handleUpdateAddonFields(idx, {
+                            itineraryMedia: sanitizeMultimedia(raw),
+                          })
+                        }}
+                        showColorPicker={true}
+                        colorLabel="Add-on Background / Card Color"
+                        defaultColor="#F8F6F0"
+                        allowImage={true}
+                        allowVideo={true}
+                        imageTitle="Add-on Photo / Image"
+                        imageLabel="Add-on Image"
+                        imageFieldName="addonImage"
+                        videoTitle="Add-on Video"
+                        videoLabel="Add-on Video (mp4, webm)"
+                        videoHint="Upload or link an mp4/webm video clip for this add-on."
+                        videoFieldName="addonVideo"
+                        showImageAltField={true}
+                        showVideoAltField={true}
+                      />
                     </div>
                   </div>
                 )}
@@ -324,8 +507,8 @@ export function AddonsForm({
             )
           })}
         </div>
-
-        {/* Section Background Multimedia */}
+        
+        {/* Section Background Multimedia (Retained from original addons) */}
         <div className="pt-2 border-t border-border/60">
           <UniversalMultimediaForm
             section={((draft.data?.addonsSection as any) || {}) as any}
@@ -358,6 +541,17 @@ export function AddonsForm({
             showImageAltField
             showVideoSwitches
           />
+        </div>
+
+        {/* Bottom Actions */}
+        <div className="pt-2 flex items-center justify-between border-t border-border/60">
+          <button
+            type="button"
+            onClick={handleAddAddon}
+            className="flex items-center gap-1.5 rounded-lg bg-secondary px-3 py-1.5 text-xs font-medium text-secondary-foreground transition hover:bg-secondary/80"
+          >
+            <Plus className="h-3.5 w-3.5" /> Add Option
+          </button>
         </div>
       </div>
     </FormSection>

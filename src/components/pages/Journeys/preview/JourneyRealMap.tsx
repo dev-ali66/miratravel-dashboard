@@ -109,6 +109,7 @@ export interface StopItem {
   multimedia?: any
   geoData?: { latitude: number | null; longitude: number | null } | null
   locationId?: string | null
+  isAddon?: boolean
 }
 
 export interface JourneyRealMapProps {
@@ -306,15 +307,16 @@ export function JourneyRealMap({
     stopCoordinates.current.forEach(({ idx, coords, stop }) => {
       const isSelected = selectedStopIdx === idx
       const isHovered = hoveredStopIdx === idx
+      const isAddon = stop.isAddon
 
       const el = document.createElement("div")
       el.className = "journey-real-map-pin"
       el.style.cursor = "pointer"
 
       el.innerHTML = `
-        <div class="pin-inner ${isSelected ? "is-selected" : ""} ${isHovered ? "is-hovered" : ""}">
+        <div class="pin-inner ${isSelected ? "is-selected" : ""} ${isHovered ? "is-hovered" : ""} ${isAddon ? "is-addon" : ""}">
           <div class="pin-badge">
-            <span class="pin-idx">${idx + 1}</span>
+            <span class="pin-idx">${isAddon ? '+' : idx + 1}</span>
             <span class="pin-text">${escapeHtml(stop.name)}</span>
           </div>
           <div class="pin-dot"></div>
@@ -524,6 +526,25 @@ export function JourneyRealMap({
           color: #ffffff;
           box-shadow: 0 0 0 6px rgba(175, 99, 72, 0.35), 0 10px 24px rgba(175, 99, 72, 0.5);
         }
+        
+        /* Add-on styles */
+        .pin-inner.is-addon .pin-badge {
+          border-color: rgba(212, 175, 55, 0.5);
+        }
+        .pin-inner.is-addon:hover .pin-badge,
+        .pin-inner.is-addon.is-hovered .pin-badge {
+          background: #d4af37;
+          border-color: #ffffff;
+          color: #ffffff;
+          box-shadow: 0 0 0 5px rgba(212, 175, 55, 0.25), 0 8px 20px rgba(212, 175, 55, 0.4);
+        }
+        .pin-inner.is-addon.is-selected .pin-badge {
+          background: #d4af37;
+          border-color: #ffffff;
+          color: #ffffff;
+          box-shadow: 0 0 0 6px rgba(212, 175, 55, 0.35), 0 10px 24px rgba(212, 175, 55, 0.5);
+        }
+
         .pin-idx {
           display: flex;
           align-items: center;
@@ -541,6 +562,17 @@ export function JourneyRealMap({
           background: rgba(255, 255, 255, 0.25);
           color: #ffffff;
         }
+        
+        .pin-inner.is-addon .pin-idx {
+          color: #d4af37;
+          background: rgba(212, 175, 55, 0.15);
+        }
+        .pin-inner.is-addon.is-selected .pin-idx,
+        .pin-inner.is-addon.is-hovered .pin-idx {
+          background: rgba(255, 255, 255, 0.25);
+          color: #ffffff;
+        }
+
         .pin-text {
           font-size: 11px;
           font-weight: 600;
@@ -562,6 +594,13 @@ export function JourneyRealMap({
         .pin-inner.is-selected .pin-dot {
           background: #af6348;
           transform: scale(1.3);
+        }
+        
+        .pin-inner.is-addon .pin-dot {
+          background: #d4af37;
+        }
+        .pin-inner.is-addon.is-selected .pin-dot {
+          background: #d4af37;
         }
       `}</style>
     </div>

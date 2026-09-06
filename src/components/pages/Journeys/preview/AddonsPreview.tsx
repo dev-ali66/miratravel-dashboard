@@ -9,7 +9,7 @@ import { useState } from "react"
 import { motion, AnimatePresence } from "framer-motion"
 import { UniversalMultimediaPreview } from "@/components/pages/CMS/Home/shared/preview/UniversalMultimediaPreview"
 import { addonsData } from "./journeyStaticData"
-import { getJourneyAddons, type Journey } from "../journeyTypes"
+import { getJourneyAddons, getDayTitle, getDayDescription, getDayEyebrow, getDayMedia, getCurrencySymbol, getFieldStyleProps, type Journey } from "../journeyTypes"
 
 const SECTION_PX = "px-4 lg:px-0"
 const SECTION_GAP_BOTTOM = "pb-[65px] md:pb-[90px] lg:pb-[100px] xlg:pb-[110px] xl:pb-[120px]"
@@ -23,17 +23,29 @@ export function AddonsPreview({ draft }: { draft?: Journey }) {
   const draftAddons = draft ? getJourneyAddons(draft) : []
   const items =
     draftAddons.length > 0
-      ? draftAddons.map((item, idx) => ({
-          id: item.id || idx + 1,
-          itemNumber: idx + 1,
-          title: item.title,
-          price: item.price ? `${item.currency || "€"}${item.price}` : "€120 / person",
-          dayLabel: (item as any).dayLabel || "OPTIONAL EXPERIENCE",
-          detailedHeading: (item as any).detailedHeading || item.title,
-          description: item.description || "A curated optional experience to elevate your journey.",
-          thumbnail: item.thumbnail || item.image || "/images/albania-journey4.jpg",
-          image: item.image || item.thumbnail || "/images/albania-journey4.jpg",
-        }))
+      ? draftAddons.map((item, idx) => {
+          const titleObj = getDayTitle(item, idx + 1)
+          const descObj = getDayDescription(item)
+          const eyebrowObj = getDayEyebrow(item)
+          const mediaObj = getDayMedia(item)
+          return {
+            id: item.id || idx + 1,
+            itemNumber: idx + 1,
+            title: titleObj.text,
+            titleStyle: titleObj.style,
+            price: item.price 
+              ? `${getCurrencySymbol(item.currency)}${item.price} / ${(item as any).personCount ?? Number((item as any).priceSuffix) > 1 ? `${(item as any).personCount ?? (item as any).priceSuffix} persons` : "person"}` 
+              : "€120 / person",
+            dayLabel: eyebrowObj.text || (item as any).dayLabel || "OPTIONAL EXPERIENCE",
+            dayLabelStyle: eyebrowObj.style,
+            detailedHeading: (item as any).detailedHeading || titleObj.text,
+            description: descObj.text,
+            descriptionStyle: descObj.style,
+            thumbnail: item.thumbnail || (item as any).image || "/images/albania-journey4.jpg",
+            image: (item as any).image || item.thumbnail || "/images/albania-journey4.jpg",
+            multimedia: mediaObj,
+          }
+        })
       : addonsData.items
 
   const [expandedId, setExpandedId] = useState<string | number | null>(null)
@@ -107,11 +119,7 @@ export function AddonsPreview({ draft }: { draft?: Journey }) {
                         {/* Thumbnail */}
                         <div className="relative xl:w-24 xl:h-24 md:w-20 md:h-20 w-16 h-16 xl:rounded-[10px] md:rounded-[8px] rounded-[6px] shrink-0 overflow-hidden bg-neutral-200">
                           <UniversalMultimediaPreview
-                            multimedia={{
-                              type: "image",
-                              url: item.thumbnail,
-                              alt: item.title,
-                            }}
+                            multimedia={item.multimedia}
                             fallbackImageSrc={item.thumbnail}
                             fallbackAlt={item.title}
                             mode="background"
@@ -122,7 +130,10 @@ export function AddonsPreview({ draft }: { draft?: Journey }) {
 
                         {/* Title and Price */}
                         <div className="flex flex-col items-start justify-center gap-2 md:gap-4 min-w-0">
-                          <h3 className="text-secondary text-[20px] md:text-[22px] xl:text-[24px] font-bold leading-5 md:leading-6 font-heading">
+                          <h3 
+                            className="text-secondary text-[20px] md:text-[22px] xl:text-[24px] font-bold leading-5 md:leading-6 font-heading"
+                            style={getFieldStyleProps(item.titleStyle)}
+                          >
                             {item.title}
                           </h3>
                           {item.price && (
@@ -165,14 +176,23 @@ export function AddonsPreview({ draft }: { draft?: Journey }) {
                               <div className="flex-1 flex flex-col justify-center xl:p-[35px] lgx:p-8 md:p-7 p-5">
                                 <div className="flex flex-col">
                                   {item.dayLabel && (
-                                    <span className="text-accent-hover text-[11.8px] mb-[9px] leading-[19.5px] font-bold uppercase tracking-[0.85px]">
+                                    <span 
+                                      className="text-accent-hover text-[11.8px] mb-[9px] leading-[19.5px] font-bold uppercase tracking-[0.85px]"
+                                      style={getFieldStyleProps(item.dayLabelStyle)}
+                                    >
                                       {item.dayLabel}
                                     </span>
                                   )}
-                                  <h4 className="text-black font-heading xl:text-base md:text-[15px] text-sm font-semibold uppercase xl:tracking-[2px] tracking-[1.5px] leading-6 md:leading-[27px] mb-[12.75px]">
+                                  <h4 
+                                    className="text-black font-heading xl:text-base md:text-[15px] text-sm font-semibold uppercase xl:tracking-[2px] tracking-[1.5px] leading-6 md:leading-[27px] mb-[12.75px]"
+                                    style={getFieldStyleProps(item.titleStyle)}
+                                  >
                                     {item.detailedHeading}
                                   </h4>
-                                  <p className="text-subtitle xl:text-sm md:text-[13px] text-xs font-normal md:tracking-[2px] tracking-[1px] xl:leading-[27px] md:leading-[25px] leading-[23px]">
+                                  <p 
+                                    className="text-subtitle xl:text-sm md:text-[13px] text-xs font-normal md:tracking-[2px] tracking-[1px] xl:leading-[27px] md:leading-[25px] leading-[23px]"
+                                    style={getFieldStyleProps(item.descriptionStyle)}
+                                  >
                                     {item.description}
                                   </p>
                                 </div>
@@ -196,11 +216,7 @@ export function AddonsPreview({ draft }: { draft?: Journey }) {
                               {/* Right Visual Image */}
                               <div className="w-[calc(100%-40px)] md:w-[calc(100%-48px)] lg:w-[380px] xl:w-[410px] h-[220px] md:h-[260px] xl:h-[280px] relative lg:rounded-r-[16px] rounded-[10px] lg:rounded-l-none overflow-hidden shrink-0 group select-none cursor-pointer mx-5 md:mx-6 lg:mx-0">
                                 <UniversalMultimediaPreview
-                                  multimedia={{
-                                    type: "image",
-                                    url: currentImage,
-                                    alt: item.detailedHeading || item.title,
-                                  }}
+                                  multimedia={item.multimedia}
                                   fallbackImageSrc={currentImage}
                                   fallbackAlt={item.detailedHeading || item.title}
                                   mode="background"

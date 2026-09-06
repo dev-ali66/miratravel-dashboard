@@ -3,6 +3,8 @@
    Matches Prisma schema backend and frontend design system
 ===================================================== */
 
+import type React from "react"
+
 export type JourneyType =
   | "PRIVATE_JOURNEY"
   | "SELF_DRIVE_JOURNEY"
@@ -167,6 +169,19 @@ export type ItineraryDayItem = {
   data?: Record<string, any> | null
 }
 
+export type AddonItem = ItineraryDayItem & {
+  price?: number
+  currency?: string
+  priceSuffix?: string
+}
+
+export function getCurrencySymbol(currencyCode?: string | null): string {
+  if (currencyCode === "USD") return "$"
+  if (currencyCode === "GBP") return "£"
+  if (currencyCode === "EUR") return "€"
+  return currencyCode || "€"
+}
+
 export function sanitizeFieldStyle(style: any): { textColor: string | null; backgroundColor: string | null } {
   if (typeof style === "object" && style !== null) {
     return {
@@ -178,6 +193,17 @@ export function sanitizeFieldStyle(style: any): { textColor: string | null; back
     textColor: null,
     backgroundColor: null,
   }
+}
+
+export function getFieldStyleProps(style?: Record<string, any> | null): React.CSSProperties {
+  if (!style) return {}
+  const res: React.CSSProperties = {}
+  if (style.textColor) res.color = style.textColor
+  if (style.textOpacity !== undefined && style.textOpacity !== null && !style.textColor?.startsWith("rgba")) {
+    res.opacity = Number(style.textOpacity) / 100
+  }
+  if (style.backgroundColor) res.backgroundColor = style.backgroundColor
+  return res
 }
 
 export function getDayEyebrow(day: ItineraryDayItem): { text: string; style: { textColor: string | null; backgroundColor: string | null } } {
@@ -358,25 +384,6 @@ export type AccommodationPrincipleItem = {
   icon?: string
 }
 
-export type AddonItem = {
-  id?: string
-  dayNumber?: number
-  itemNumber?: number
-  title: string
-  slug?: string
-  price: number
-  currency?: string
-  duration?: string
-  dayLabel?: string
-  detailedHeading?: string
-  description: string
-  thumbnail?: string
-  image?: string
-  journeyItineraryImage?: string[]
-  locationId?: string | null
-  metadata?: Record<string, any> | null
-  data?: Record<string, any> | null
-}
 
 export type RouteStopItem = {
   name?: string
@@ -472,6 +479,7 @@ export type JourneyDataContent = {
       }[]
     }
     standardsSection?: {
+      eyebrow?: any
       title?: any
       description?: any
       items?: {
@@ -480,6 +488,7 @@ export type JourneyDataContent = {
       }[]
     }
     visualsSection?: {
+      eyebrow?: any
       title?: any
       description?: any
       mediaItems?: Record<string, any>[]

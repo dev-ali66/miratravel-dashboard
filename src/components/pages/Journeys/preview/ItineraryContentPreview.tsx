@@ -24,8 +24,11 @@ import {
   getDayLocation,
   getDayDescription,
   getDayMedia,
+  getJourneyAddons,
+  getCurrencySymbol,
   type Journey,
   type ItineraryDayItem,
+  type AddonItem,
 } from "../journeyTypes"
 
 const SECTION_PX = "px-4 lg:px-0"
@@ -185,9 +188,26 @@ export function ItineraryContentPreview({ draft }: { draft?: Journey }) {
 
   // Normalize draft days with eyebrow, styles, and multimedia
   const draftDays = draft ? getJourneyItineraryDays(draft) : []
+  const addonsData = draft ? getJourneyAddons(draft) : []
+  
+  const [selectedAddonIdxs, setSelectedAddonIdxs] = useState<Set<number>>(new Set())
+
+  const toggleAddon = (idx: number) => {
+    setSelectedAddonIdxs((prev) => {
+      const next = new Set(prev)
+      if (next.has(idx)) {
+        next.delete(idx)
+      } else {
+        next.add(idx)
+      }
+      return next
+    })
+  }
+
   const formattedDays: FormattedDayItem[] = useMemo(() => {
+    let baseDays: FormattedDayItem[] = []
     if (draftDays.length > 0) {
-      return draftDays.map((d: ItineraryDayItem, idx: number) => {
+      baseDays = draftDays.map((d: ItineraryDayItem, idx: number) => {
         const itemNum = d.dayNumber ?? idx + 1
         const dayLabel = d.dayLabel || `Day ${itemNum}`
         const eyebrowData = getDayEyebrow(d)
@@ -240,28 +260,76 @@ export function ItineraryContentPreview({ draft }: { draft?: Journey }) {
           images: rawImgs,
         }
       })
+    } else {
+      // Static fallback
+      baseDays = dayByDayItineraryData.days.map((d: any, idx: number) => ({
+        id: `static-${idx + 1}`,
+        dayNumber: d.dayNumber ?? idx + 1,
+        dayLabel: d.dayLabel || `Day ${idx + 1}`,
+        eyebrow: "",
+        eyebrowStyle: null,
+        title: d.title,
+        titleStyle: null,
+        location: d.location || "",
+        locationId: null,
+        geoData: null,
+        detailedHeading: d.detailedHeading || d.title,
+        description: d.description,
+        descriptionStyle: null,
+        multimedia: null,
+        thumbnail: d.thumbnail,
+        images: d.images,
+      }))
     }
 
-    // Static fallback
-    return dayByDayItineraryData.days.map((d: any, idx: number) => ({
-      id: `static-${idx + 1}`,
-      dayNumber: d.dayNumber ?? idx + 1,
-      dayLabel: d.dayLabel || `Day ${idx + 1}`,
-      eyebrow: "",
-      eyebrowStyle: null,
-      title: d.title,
-      titleStyle: null,
-      location: d.location || "",
-      locationId: null,
-      geoData: null,
-      detailedHeading: d.detailedHeading || d.title,
-      description: d.description,
-      descriptionStyle: null,
-      multimedia: null,
-      thumbnail: d.thumbnail,
-      images: d.images,
-    }))
-  }, [draftDays])
+    // Append selected add-ons at the end of the itinerary
+    const selectedAddonDays: FormattedDayItem[] = Array.from(selectedAddonIdxs).map(idx => {
+      const a = addonsData[idx]
+      const itemNum = a.dayNumber ?? idx + 1
+      const dayLabel = a.dayLabel || `Add-on ${itemNum}`
+      const eyebrowData = getDayEyebrow(a)
+      const titleData = getDayTitle(a, itemNum)
+      const locData = getDayLocation(a)
+      const descData = getDayDescription(a)
+      const media = getDayMedia(a)
+      const isVideo = media.type === "video"
+      const mediaUrl =
+        media.type === "video"
+          ? (media.video?.url || media.url || "")
+          : (media.image?.url || media.url || "")
+      const thumb =
+        media.type === "image" && mediaUrl
+          ? mediaUrl
+          : isVideo && (media.video?.poster || media.posterUrl)
+          ? media.video?.poster || media.posterUrl
+          : isVideo && mediaUrl
+          ? mediaUrl
+          : a.thumbnail ||
+            a.images?.[0] ||
+            "/images/albania-journey1.jpg"
+
+      return {
+        id: `addon-${idx}`,
+        dayNumber: 9999 + idx, // Ensure it's grouped at the end
+        dayLabel,
+        eyebrow: eyebrowData.text || "OPTIONAL ADD-ON",
+        eyebrowStyle: eyebrowData.style || { textColor: "#d4af37" }, // Gold marker style for Add-ons
+        title: titleData.text,
+        titleStyle: titleData.style,
+        location: locData.name,
+        locationId: locData.id,
+        geoData: locData.geoData,
+        detailedHeading: a.detailedHeading || titleData.text,
+        description: descData.text,
+        descriptionStyle: descData.style,
+        multimedia: media,
+        thumbnail: thumb,
+        images: [thumb],
+      }
+    })
+
+    return [...baseDays, ...selectedAddonDays]
+  }, [draftDays, selectedAddonIdxs, addonsData])
 
   // Group days by consecutive location
   const locationGroups: LocationDayGroup[] = useMemo(() => {
@@ -282,6 +350,7 @@ export function ItineraryContentPreview({ draft }: { draft?: Journey }) {
         multimedia: g.multimedia,
         geoData: g.geoData,
         locationId: g.locationId,
+        isAddon: g.days.some(d => d.id.toString().startsWith("addon-"))
       }))
     }
     return (
@@ -301,6 +370,7 @@ export function ItineraryContentPreview({ draft }: { draft?: Journey }) {
       multimedia: null,
       geoData: null,
       locationId: null,
+      isAddon: false
     }))
   }, [locationGroups, routeData?.stops, itinerarySection?.stops])
 
@@ -380,6 +450,14 @@ export function ItineraryContentPreview({ draft }: { draft?: Journey }) {
   const [mapZoom, setMapZoom] = useState<number>(1)
   const [mapMode, setMapMode] = useState<"real" | "visual">("real")
 
+  // Calculate total addons price
+  const totalAddonsPrice = Array.from(selectedAddonIdxs).reduce((sum, idx) => {
+    return sum + (addonsData[idx]?.price || 0)
+  }, 0)
+  const journeyBasePrice = draft?.price || 0
+  const totalJourneyPrice = journeyBasePrice + totalAddonsPrice
+  const journeyCurrency = getCurrencySymbol(draft?.currency)
+
   const mapContainerRef = useRef<HTMLDivElement | null>(null)
 
   const handleHoverStop = useCallback((idx: number | null, source: "sidebar" | "map" = "sidebar") => {
@@ -433,7 +511,17 @@ export function ItineraryContentPreview({ draft }: { draft?: Journey }) {
                 <h2 className="text-primary xl:text-[24px] lgx:text-[22px] md:text-[20px] text-[18px] font-heading font-semibold xl:leading-8 lgx:leading-7 md:leading-6 leading-5">
                   {routeTitle}
                 </h2>
-                <p className="text-subtitle lgx:max-w-[75%] mid:max-w-full w-full text-sm md:text-[15px] xl:text-base font-normal leading-6">
+                <div className="flex items-center gap-3">
+                  <span className="text-sm font-semibold bg-accent/10 text-accent px-3 py-1 rounded-full">
+                    Total Price: {journeyCurrency}{totalJourneyPrice}
+                  </span>
+                  {totalAddonsPrice > 0 && (
+                    <span className="text-xs font-medium text-muted-foreground">
+                      (Base: {journeyCurrency}{journeyBasePrice} + Add-ons: {journeyCurrency}{totalAddonsPrice})
+                    </span>
+                  )}
+                </div>
+                <p className="text-subtitle lgx:max-w-[75%] mid:max-w-full w-full text-sm md:text-[15px] xl:text-base font-normal leading-6 mt-1">
                   {routeDescription}
                 </p>
               </div>
@@ -1072,6 +1160,84 @@ export function ItineraryContentPreview({ draft }: { draft?: Journey }) {
           </div>
         </div>
       </section>
+
+      {/* =====================================================
+          3. ADD-ONS SELECTION SECTION
+      ===================================================== */}
+      {addonsData && addonsData.length > 0 && (
+        <section className="relative z-10 w-full xl:pt-[50px] md:pt-[46px] pt-10">
+          <div className={`w-full container mx-auto ${SECTION_PX}`}>
+            <div className="max-w-[1216px] flex flex-col gap-6 sm:gap-8 lgx:gap-10 border-t border-black/10 pt-10">
+              {/* Section Header */}
+              <div className="flex flex-col gap-2 max-w-[860px]">
+                <h2 className="text-[#af6348] font-heading text-[18px] md:text-[20px] lgx:text-[22px] xl:text-[24px] font-semibold xl:leading-8 lgx:leading-7 md:leading-6 leading-5">
+                  Enhance Your Journey
+                </h2>
+                <p className="text-subtitle xl:text-sm md:text-[13px] text-xs font-normal xl:leading-5 md:leading-4 leading-3.5">
+                  Select optional add-ons to customize your experience. Selected add-ons will appear in your itinerary above and update the total price.
+                </p>
+              </div>
+
+              {/* Add-ons List */}
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 w-full">
+                {addonsData.map((addon: AddonItem, idx: number) => {
+                  const isSelected = selectedAddonIdxs.has(idx)
+                  const addonTitle = getDayTitle(addon, idx + 1).text
+                  const addonMedia = getDayMedia(addon)
+                  const thumb = addonMedia.type === "video" 
+                    ? (addonMedia.video?.poster || addonMedia.posterUrl || addonMedia.url) 
+                    : (addonMedia.image?.url || addonMedia.url || addon.thumbnail)
+                  
+                  return (
+                    <div 
+                      key={idx}
+                      onClick={() => toggleAddon(idx)}
+                      className={cn(
+                        "rounded-[16px] border bg-white overflow-hidden cursor-pointer transition-all duration-300 hover:shadow-md flex flex-col h-full",
+                        isSelected ? "border-[#d4af37] ring-1 ring-[#d4af37] shadow-md" : "border-black/10"
+                      )}
+                    >
+                      <div className="relative h-40 w-full bg-neutral-200 shrink-0">
+                        <UniversalMultimediaPreview
+                          multimedia={addonMedia}
+                          fallbackImageSrc={thumb as string}
+                          fallbackAlt={addonTitle}
+                          mode="background"
+                          className="h-full w-full object-cover"
+                          containerClassName="absolute inset-0"
+                        />
+                        <div className="absolute top-3 right-3 flex items-center justify-center size-7 rounded-full bg-white/90 backdrop-blur-sm border border-black/5 shadow-sm">
+                          <div className={cn(
+                            "size-4 rounded-full border transition-colors",
+                            isSelected ? "bg-[#d4af37] border-[#d4af37]" : "border-neutral-400 bg-transparent"
+                          )}>
+                            {isSelected && (
+                              <svg viewBox="0 0 14 14" fill="none" className="w-full h-full text-white p-0.5">
+                                <path d="M11.6667 3.5L5.25001 9.91667L2.33334 7" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                              </svg>
+                            )}
+                          </div>
+                        </div>
+                      </div>
+                      <div className="p-4 flex flex-col flex-1">
+                        <h4 className="font-heading font-semibold text-neutral-900 text-[15px] mb-1">{addonTitle}</h4>
+                        {addon.price ? (
+                          <div className="text-sm font-semibold text-[#af6348] mb-3">
+                            +{addon.currency || "€"}{addon.price} <span className="font-normal text-xs text-muted-foreground">{addon.priceSuffix}</span>
+                          </div>
+                        ) : null}
+                        <p className="text-xs text-neutral-600 line-clamp-3 mt-auto">
+                          {getDayDescription(addon).text}
+                        </p>
+                      </div>
+                    </div>
+                  )
+                })}
+              </div>
+            </div>
+          </div>
+        </section>
+      )}
     </div>
   )
 }
