@@ -1,4 +1,5 @@
 import type { Journey } from "../journeyTypes"
+import { getJourneyItineraryDays } from "../journeyTypes"
 
 function recursivelyReplaceUndefinedWithNull(input: any): any {
   if (input === undefined) return null
@@ -17,6 +18,12 @@ function recursivelyReplaceUndefinedWithNull(input: any): any {
 }
 
 export function normalizeJourneyPayload(draft: Journey): Record<string, any> {
+  const cleanDays = recursivelyReplaceUndefinedWithNull(getJourneyItineraryDays(draft))
+  const cleanData = recursivelyReplaceUndefinedWithNull(draft.data || {})
+
+  cleanData.itineraryData = cleanDays
+  cleanData.itinerary = cleanDays
+
   const payload: Record<string, any> = {
     title: draft.title?.trim() || "Untitled Journey",
     subtitle: draft.subtitle?.trim() || null,
@@ -53,18 +60,12 @@ export function normalizeJourneyPayload(draft: Journey): Record<string, any> {
     notIncluded: draft.notIncluded || [],
 
     metadata: recursivelyReplaceUndefinedWithNull(draft.metadata || {}),
-    data: recursivelyReplaceUndefinedWithNull(draft.data || {}),
+    data: cleanData,
 
     // Top-level itinerary, addons, accommodations
-    itineraryData: recursivelyReplaceUndefinedWithNull(
-      (draft as any).itineraryData || draft.itineraryDays || draft.itinerary || []
-    ),
-    itineraryDays: recursivelyReplaceUndefinedWithNull(
-      draft.itineraryDays || (draft as any).itineraryData || draft.itinerary || []
-    ),
-    itinerary: recursivelyReplaceUndefinedWithNull(
-      draft.itinerary || draft.itineraryDays || (draft as any).itineraryData || []
-    ),
+    itineraryData: cleanDays,
+    itineraryDays: cleanDays,
+    itinerary: cleanDays,
     addons: recursivelyReplaceUndefinedWithNull(draft.addons || draft.addOns || []),
     accommodations: recursivelyReplaceUndefinedWithNull(draft.accommodations || null),
   }

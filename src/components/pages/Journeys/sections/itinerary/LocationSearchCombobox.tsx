@@ -14,6 +14,10 @@ export interface SelectedLocation {
   name: string
   slug?: string
   type?: string
+  geoData?: {
+    latitude: number | null
+    longitude: number | null
+  } | null
 }
 
 export interface LocationSearchComboboxProps {
@@ -69,11 +73,18 @@ export function LocationSearchCombobox({
   }, [])
 
   const handleSelect = (loc: JourneyLocationItem) => {
+    const lat = typeof loc.geoData?.latitude === "number" ? loc.geoData.latitude : null
+    const lng = typeof loc.geoData?.longitude === "number" ? loc.geoData.longitude : null
+
     onSelect({
       id: loc.id,
       name: loc.name,
       slug: loc.slug,
       type: loc.type,
+      geoData: {
+        latitude: lat,
+        longitude: lng,
+      },
     })
     setIsOpen(false)
     setQuery("")

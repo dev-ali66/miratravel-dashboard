@@ -302,7 +302,7 @@ export const ContactSectionForm = ({
                 {
                   ...(section.sideImages?.[0] ?? {}),
                   url: next.url ?? "",
-                  alt: next.alt,
+                  alt: next.alt ?? undefined,
                 },
               ],
             })

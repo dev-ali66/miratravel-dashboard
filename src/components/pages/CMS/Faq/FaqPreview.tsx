@@ -9,13 +9,13 @@ import type { FieldStyle } from "../shared/FormControls"
 import { UniversalMultimediaPreview } from "../Home/shared/preview/UniversalMultimediaPreview"
 
 const colorWithOpacity = (
-  color: string | undefined,
+  color: string | null | undefined,
   opacity: number | undefined
-) => {
-  if (!color || opacity === undefined || opacity >= 100) return color
+): string | undefined => {
+  if (!color || opacity === undefined || opacity >= 100) return color ?? undefined
 
   const hexMatch = color.match(/^#([0-9a-f]{6})$/i)
-  if (!hexMatch) return color
+  if (!hexMatch) return color ?? undefined
 
   const red = parseInt(hexMatch[1].slice(0, 2), 16)
   const green = parseInt(hexMatch[1].slice(2, 4), 16)

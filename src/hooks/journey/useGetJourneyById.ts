@@ -10,17 +10,29 @@ type GetJourneyResponse = {
 }
 
 export function useGetJourneyById(id?: string, slug?: string) {
-  const enabled = Boolean(id || slug)
+  const enabled = Boolean(id || slug) && id !== "new"
 
   return useQuery({
     queryKey: ["journey", id || slug],
     queryFn: async () => {
-      const res = await apiPrivate.get<GetJourneyResponse>("/journeys", {
-        params: {
-          ...(id ? { id } : {}),
-          ...(slug ? { slug } : {}),
-        },
-      })
+      const params: Record<string, string> = {}
+      const isCuidOrUuid =
+        id && (/^c[a-z0-9]{20,}$/i.test(id) || /^[0-9a-f-]{36}$/i.test(id))
+
+      if (id && id !== "new") {
+        if (isCuidOrUuid) {
+          params.id = id
+        } else if (!slug) {
+          params.slug = id
+        } else {
+          params.id = id
+        }
+      }
+      if (slug && slug !== "new") {
+        params.slug = slug
+      }
+
+      const res = await apiPrivate.get<GetJourneyResponse>("/journeys", { params })
       const raw = res.data?.data
       if (Array.isArray(raw)) {
         return raw[0] ?? null

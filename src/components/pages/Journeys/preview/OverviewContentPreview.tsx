@@ -21,28 +21,31 @@ const SECTION_PX = "px-4 lg:px-0"
 const SECTION_GAP_BOTTOM = "pb-[65px] md:pb-[90px] lg:pb-[100px] xlg:pb-[110px] xl:pb-[120px]"
 
 export function OverviewContentPreview({ draft }: { draft?: Journey }) {
-  const overviewSection = (draft?.data?.overview as any) || {}
+  const overviewSection =
+    (draft?.data?.overview as any) ||
+    (draft?.data?.overviewList as any) ||
+    {}
   const overviewBg = overviewSection?.backgroundMultimedia
 
   // Why We Designed This Journey data with static fallbacks
-  const whyTitle = overviewSection?.whyTitle || whyWeDesignedData.title
+  const whyTitle = overviewSection?.whyTitle ?? whyWeDesignedData.title
   const whyParagraphs =
-    overviewSection?.whyParagraphs && overviewSection.whyParagraphs.length > 0
+    Array.isArray(overviewSection?.whyParagraphs) && overviewSection.whyParagraphs.length > 0
       ? overviewSection.whyParagraphs
       : whyWeDesignedData.paragraphs
-  const whySignature = overviewSection?.whySignature || whyWeDesignedData.signature
+  const whySignature = overviewSection?.whySignature ?? whyWeDesignedData.signature
 
   // Journey Overview & Highlights data with static fallbacks
-  const overviewTitle = overviewSection?.overviewTitle || overviewListData.title
+  const overviewTitle = overviewSection?.overviewTitle ?? overviewListData.title
   const titlegraphs =
-    overviewSection?.titlegraphs && overviewSection.titlegraphs.length > 0
+    Array.isArray(overviewSection?.titlegraphs) && overviewSection.titlegraphs.length > 0
       ? overviewSection.titlegraphs
       : overviewListData.titlegraphs
-  const highlightsTitle = overviewSection?.highlightsTitle || overviewListData.highlightsTitle
+  const highlightsTitle = overviewSection?.highlightsTitle ?? overviewListData.highlightsTitle
   const highlights =
-    draft?.highlights && draft.highlights.length > 0
+    Array.isArray(draft?.highlights) && draft.highlights.length > 0
       ? draft.highlights
-      : overviewSection?.highlights && overviewSection.highlights.length > 0
+      : Array.isArray(overviewSection?.highlights) && overviewSection.highlights.length > 0
       ? overviewSection.highlights
       : overviewListData.highlights
 

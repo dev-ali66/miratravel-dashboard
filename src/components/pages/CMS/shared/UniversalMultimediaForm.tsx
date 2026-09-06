@@ -6,13 +6,16 @@ type BackgroundType = "image" | "video" | "color"
 
 type MediaItem = {
   type?: BackgroundType
-  color?: string
+  color?: string | null
   imageData?: MediaItem
   videoData?: MediaItem
-  url?: string
-  alt?: string
+  image?: MediaItem
+  video?: MediaItem
+  url?: string | null
+  alt?: string | null
+  poster?: string | null
   opacity?: number
-  overlayColor?: string
+  overlayColor?: string | null
   overlayOpacity?: number
   autoplay?: boolean
   loop?: boolean
@@ -105,24 +108,42 @@ export function UniversalMultimediaForm({
       })
     : undefined
 
+  const cleanStringOrNull = (val: any): string | null => {
+    if (typeof val === "string" && val.trim() !== "") return val.trim()
+    return null
+  }
+
   // Guarantee that if a contentMediaKey is configured, it is never absent from the draft.
   useEffect(() => {
     if (contentMediaKey && safeContent[contentMediaKey] === undefined) {
+      const emptyImg = {
+        url: null,
+        alt: null,
+        opacity: 100,
+        overlayColor: "#000000",
+        overlayOpacity: 0,
+      }
+      const emptyVid = {
+        url: null,
+        alt: null,
+        poster: null,
+        autoplay: true,
+        loop: true,
+        muted: true,
+        opacity: 100,
+        overlayColor: "#000000",
+        overlayOpacity: 0,
+      }
       updateSectionContent({
         [contentMediaKey]: {
           type: backgroundType ?? "image",
+          color: defaultColor || "#F8F6F0",
           url: null,
           alt: null,
-          color: null,
-          imageData: {
-            url: null,
-            alt: null,
-            overlayOpacity: null,
-          },
-          videoData: {
-            url: null,
-            alt: null,
-          },
+          image: emptyImg,
+          imageData: emptyImg,
+          video: emptyVid,
+          videoData: emptyVid,
         },
       })
     }
@@ -130,12 +151,14 @@ export function UniversalMultimediaForm({
 
   const resolvedImage =
     image ??
+    contentMedia?.image ??
     contentMedia?.imageData ??
     contentMedia ??
     safeSection.bgImages?.[0] ??
     {}
   const resolvedVideo =
     video ??
+    contentMedia?.video ??
     contentMedia?.videoData ??
     contentMedia ??
     safeSection.bgVideos?.[0] ??
@@ -158,25 +181,23 @@ export function UniversalMultimediaForm({
     if (contentMediaKey) {
       const resolvedUrl =
         type === "video"
-          ? (contentMedia?.videoData?.url ?? null)
+          ? (contentMedia?.video?.url ?? contentMedia?.videoData?.url ?? null)
           : type === "image"
-            ? (contentMedia?.imageData?.url ?? null)
+            ? (contentMedia?.image?.url ?? contentMedia?.imageData?.url ?? null)
             : null
       const resolvedAlt =
         type === "video"
-          ? (contentMedia?.videoData?.alt ?? null)
+          ? (contentMedia?.video?.alt ?? contentMedia?.videoData?.alt ?? null)
           : type === "image"
-            ? (contentMedia?.imageData?.alt ?? null)
+            ? (contentMedia?.image?.alt ?? contentMedia?.imageData?.alt ?? null)
             : null
 
       updateSectionContent({
         [contentMediaKey]: {
           ...(contentMedia ?? {}),
           type,
-          url: resolvedUrl,
-          alt: resolvedAlt,
-          imageData: contentMedia?.imageData ?? { url: null, alt: null },
-          videoData: contentMedia?.videoData ?? { url: null, alt: null },
+          url: cleanStringOrNull(resolvedUrl),
+          alt: cleanStringOrNull(resolvedAlt),
         },
       })
       return
@@ -210,10 +231,8 @@ export function UniversalMultimediaForm({
         [contentMediaKey]: {
           ...(contentMedia ?? {}),
           type: "color",
-          color: nextColor || null,
+          color: cleanStringOrNull(nextColor) ?? defaultColor,
           url: null,
-          imageData: contentMedia?.imageData ?? { url: null, alt: null },
-          videoData: contentMedia?.videoData ?? { url: null, alt: null },
         },
       })
       return
@@ -229,31 +248,48 @@ export function UniversalMultimediaForm({
     }
 
     if (contentMediaKey) {
-      const resolvedUrl = next.url || null
-      const resolvedAlt = next.alt || null
+      const resolvedUrl = cleanStringOrNull(next.url)
+      const resolvedAlt = cleanStringOrNull(next.alt)
       const nextImageData = {
-        ...(contentMedia?.imageData ?? {}),
+        ...(contentMedia?.image ?? contentMedia?.imageData ?? {}),
         ...next,
         url: resolvedUrl,
         alt: resolvedAlt,
+        opacity: next.opacity ?? 100,
+        overlayColor: cleanStringOrNull(next.overlayColor) || "#000000",
+        overlayOpacity: next.overlayOpacity ?? 0,
+      }
+      const existingVideoData = contentMedia?.video ?? contentMedia?.videoData ?? {
+        url: null,
+        alt: null,
+        poster: null,
+        autoplay: true,
+        loop: true,
+        muted: true,
+        opacity: 100,
+        overlayColor: "#000000",
+        overlayOpacity: 0,
       }
       updateSectionContent({
         [contentMediaKey]: {
+          ...(contentMedia ?? {}),
           type: "image",
           url: resolvedUrl,
           alt: resolvedAlt,
           opacity: next.opacity ?? 100,
-          overlayColor: next.overlayColor ?? null,
+          overlayColor: cleanStringOrNull(next.overlayColor) || "#000000",
           overlayOpacity: next.overlayOpacity ?? 0,
-          color: next.color ?? null,
+          color: cleanStringOrNull(next.color) ?? cleanStringOrNull(contentMedia?.color) ?? defaultColor,
+          image: nextImageData,
           imageData: nextImageData,
-          videoData: contentMedia?.videoData ?? { url: null, alt: null },
+          video: existingVideoData,
+          videoData: existingVideoData,
         },
       })
       return
     }
 
-    updateSection({ bgImages: [next] })
+    updateSection({ bgImages: [next as any] })
   }
 
   const applyVideoChange = (next: MediaItem) => {
@@ -263,31 +299,49 @@ export function UniversalMultimediaForm({
     }
 
     if (contentMediaKey) {
-      const resolvedUrl = next.url || null
-      const resolvedAlt = next.alt || null
+      const resolvedUrl = cleanStringOrNull(next.url)
+      const resolvedAlt = cleanStringOrNull(next.alt)
+      const resolvedPoster = cleanStringOrNull((next as any)?.poster || (next as any)?.posterUrl)
       const nextVideoData = {
-        ...(contentMedia?.videoData ?? {}),
+        ...(contentMedia?.video ?? contentMedia?.videoData ?? {}),
         ...next,
         url: resolvedUrl,
         alt: resolvedAlt,
+        poster: resolvedPoster,
+        autoplay: next.autoplay ?? true,
+        loop: next.loop ?? true,
+        muted: next.muted ?? true,
+        opacity: next.opacity ?? 100,
+        overlayColor: cleanStringOrNull(next.overlayColor) || "#000000",
+        overlayOpacity: next.overlayOpacity ?? 0,
+      }
+      const existingImageData = contentMedia?.image ?? contentMedia?.imageData ?? {
+        url: null,
+        alt: null,
+        opacity: 100,
+        overlayColor: "#000000",
+        overlayOpacity: 0,
       }
       updateSectionContent({
         [contentMediaKey]: {
+          ...(contentMedia ?? {}),
           type: "video",
           url: resolvedUrl,
           alt: resolvedAlt,
           opacity: next.opacity ?? 100,
-          overlayColor: next.overlayColor ?? null,
+          overlayColor: cleanStringOrNull(next.overlayColor) || "#000000",
           overlayOpacity: next.overlayOpacity ?? 0,
-          color: next.color ?? null,
+          color: cleanStringOrNull(next.color) ?? cleanStringOrNull(contentMedia?.color) ?? defaultColor,
+          video: nextVideoData,
           videoData: nextVideoData,
-          imageData: contentMedia?.imageData ?? { url: null, alt: null },
+          image: existingImageData,
+          imageData: existingImageData,
         },
       })
       return
     }
 
-    updateSection({ bgVideos: [next] })
+    updateSection({ bgVideos: [next as any] })
   }
 
   return (

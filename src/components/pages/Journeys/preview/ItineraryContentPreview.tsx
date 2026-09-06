@@ -10,10 +10,12 @@
    - DynamicStyledField text & color styling support
 ===================================================== */
 
-import { useState, useMemo } from "react"
+import { useState, useMemo, useRef, useCallback } from "react"
 import { motion, AnimatePresence } from "framer-motion"
-import { MapPin, Compass } from "lucide-react"
+import { MapPin, Compass, Plus, Minus } from "lucide-react"
+import { cn } from "@/lib/utils"
 import { UniversalMultimediaPreview } from "@/components/pages/CMS/Home/shared/preview/UniversalMultimediaPreview"
+import { JourneyRealMap } from "./JourneyRealMap"
 import { journeyRouteData, dayByDayItineraryData } from "./journeyStaticData"
 import {
   getJourneyItineraryDays,
@@ -39,6 +41,10 @@ export interface FormattedDayItem {
   titleStyle?: Record<string, any> | null
   location: string
   locationId?: string | null
+  geoData?: {
+    latitude: number | null
+    longitude: number | null
+  } | null
   detailedHeading: string
   description: string
   descriptionStyle?: Record<string, any> | null
@@ -51,6 +57,10 @@ export interface LocationDayGroup {
   groupKey: string
   locationName: string
   locationId?: string | null
+  geoData?: {
+    latitude: number | null
+    longitude: number | null
+  } | null
   startDay: number
   endDay: number
   dayCount: number
@@ -58,6 +68,13 @@ export interface LocationDayGroup {
   days: FormattedDayItem[]
   primaryImage: string
   multimedia?: Record<string, any> | null
+}
+
+function hasActualMedia(m?: Record<string, any> | null): boolean {
+  if (!m) return false
+  if (m.type === "video" && (m.video?.url || m.url)) return true
+  if (m.type === "image" && (m.image?.url || m.url)) return true
+  return false
 }
 
 function getFieldStyleProps(style?: Record<string, any> | null): React.CSSProperties {
@@ -84,27 +101,39 @@ function groupDaysByLocation(dayList: FormattedDayItem[]): LocationDayGroup[] {
 
   for (let i = 0; i < dayList.length; i++) {
     const day = dayList[i]
+    const rawLocName = (day.location || "").trim()
     const locName =
-      (day.location || "").trim() ||
+      rawLocName ||
       (day.locationId ? "Selected Destination" : `Stop ${groups.length + 1}`)
 
     const locKey = day.locationId
       ? `id:${day.locationId}`
-      : `name:${locName.toLowerCase()}`
+      : rawLocName
+      ? `name:${rawLocName.toLowerCase()}`
+      : `day:${day.dayNumber}` // Keep unassigned days distinct
 
     const prevLocKey: string | null = current
       ? current.locationId
         ? `id:${current.locationId}`
-        : `name:${current.locationName.toLowerCase()}`
+        : current.locationName
+        ? `name:${current.locationName.toLowerCase()}`
+        : null
       : null
+
+    const hasDayMedia = hasActualMedia(day.multimedia)
+    const dayThumb = day.thumbnail || day.images[0] || "/images/albania-journey1.jpg"
 
     if (current && locKey === prevLocKey) {
       // Same consecutive location!
       current.endDay = day.dayNumber
       current.dayCount += 1
       current.days.push(day)
-      if (!current.multimedia && day.multimedia) {
+      if (!hasActualMedia(current.multimedia) && hasDayMedia) {
         current.multimedia = day.multimedia
+        current.primaryImage = dayThumb
+      }
+      if (!current.geoData && day.geoData) {
+        current.geoData = day.geoData
       }
     } else {
       // New location stop
@@ -112,12 +141,13 @@ function groupDaysByLocation(dayList: FormattedDayItem[]): LocationDayGroup[] {
         groupKey: `loc-group-${groups.length}-${locKey}`,
         locationName: locName,
         locationId: day.locationId,
+        geoData: day.geoData || null,
         startDay: day.dayNumber,
         endDay: day.dayNumber,
         dayCount: 1,
         dayRangeLabel: "",
         days: [day],
-        primaryImage: day.thumbnail || day.images[0] || "/images/albania-journey1.jpg",
+        primaryImage: dayThumb,
         multimedia: day.multimedia || null,
       }
       groups.push(current)
@@ -137,14 +167,21 @@ function groupDaysByLocation(dayList: FormattedDayItem[]): LocationDayGroup[] {
 }
 
 export function ItineraryContentPreview({ draft }: { draft?: Journey }) {
+  const routeData = (draft?.data as any)?.route || (draft?.data as any)?.itinerarySection || {}
   const itinerarySection = (draft?.data?.itinerarySection as any) || {}
-  const itineraryBg = itinerarySection?.backgroundMultimedia
+  const itineraryBg = itinerarySection?.backgroundMultimedia || routeData?.backgroundMultimedia
 
   // Route map data with static fallbacks
-  const routeTitle = itinerarySection?.routeTitle || journeyRouteData.title
-  const routeDescription = itinerarySection?.routeDescription || journeyRouteData.description
-  const mapImageSrc = itinerarySection?.mapImage?.src || journeyRouteData.mapImage.src
-  const mapImageAlt = itinerarySection?.mapImage?.alt || journeyRouteData.mapImage.alt
+  const routeTitle = routeData?.title || routeData?.routeTitle || itinerarySection?.routeTitle || journeyRouteData.title
+  const routeDescription = routeData?.description || routeData?.routeDescription || itinerarySection?.routeDescription || journeyRouteData.description
+  const mapImageSrc =
+    typeof routeData?.mapImage === "string"
+      ? routeData.mapImage
+      : routeData?.mapImage?.src || routeData?.mapImage?.url || itinerarySection?.mapImage?.src || journeyRouteData.mapImage.src
+  const mapImageAlt =
+    (typeof routeData?.mapImage === "object" && routeData?.mapImage?.alt) ||
+    itinerarySection?.mapImage?.alt ||
+    journeyRouteData.mapImage.alt
 
   // Normalize draft days with eyebrow, styles, and multimedia
   const draftDays = draft ? getJourneyItineraryDays(draft) : []
@@ -194,6 +231,7 @@ export function ItineraryContentPreview({ draft }: { draft?: Journey }) {
           titleStyle: titleData.style,
           location: locData.name,
           locationId: locData.id,
+          geoData: locData.geoData,
           detailedHeading: d.detailedHeading || titleData.text || `Day ${itemNum} Experience`,
           description: descData.text,
           descriptionStyle: descData.style,
@@ -215,6 +253,7 @@ export function ItineraryContentPreview({ draft }: { draft?: Journey }) {
       titleStyle: null,
       location: d.location || "",
       locationId: null,
+      geoData: null,
       detailedHeading: d.detailedHeading || d.title,
       description: d.description,
       descriptionStyle: null,
@@ -232,27 +271,101 @@ export function ItineraryContentPreview({ draft }: { draft?: Journey }) {
   // Map sidebar stops: dynamically derived from locationGroups, with count (e.g. Day 1-2, Day 3)
   const stops = useMemo(() => {
     if (locationGroups.length > 0) {
-      return locationGroups.map((g) => ({
+      return locationGroups.map((g, idx) => ({
+        id: g.groupKey,
+        idx,
         name: g.locationName,
         days: g.dayRangeLabel,
         dayCount: g.dayCount,
         daysList: g.days,
         image: g.primaryImage,
         multimedia: g.multimedia,
+        geoData: g.geoData,
+        locationId: g.locationId,
       }))
     }
-    return (itinerarySection?.stops && itinerarySection.stops.length > 0
-      ? itinerarySection.stops
-      : journeyRouteData.stops
-    ).map((s: any) => ({
+    return (
+      (routeData?.stops && routeData.stops.length > 0
+        ? routeData.stops
+        : itinerarySection?.stops && itinerarySection.stops.length > 0
+        ? itinerarySection.stops
+        : journeyRouteData.stops) || []
+    ).map((s: any, idx: number) => ({
+      id: `static-${idx}`,
+      idx,
       name: s.name,
       days: s.days,
       dayCount: 1,
       daysList: [],
       image: "/images/albania-journey1.jpg",
       multimedia: null,
+      geoData: null,
+      locationId: null,
     }))
-  }, [locationGroups, itinerarySection?.stops])
+  }, [locationGroups, routeData?.stops, itinerarySection?.stops])
+
+  // Map Pins calculation (GPS bounds or scenic curve path)
+  const stopPins = useMemo(() => {
+    if (!stops || stops.length === 0) return []
+
+    const curvePoints = [
+      { x: 30, y: 38 },
+      { x: 44, y: 28 },
+      { x: 58, y: 36 },
+      { x: 72, y: 48 },
+      { x: 62, y: 68 },
+      { x: 46, y: 74 },
+      { x: 32, y: 82 },
+      { x: 22, y: 64 },
+    ]
+
+    const validGeoStops = stops.filter(
+      (s: any) =>
+        typeof s.geoData?.latitude === "number" &&
+        typeof s.geoData?.longitude === "number"
+    )
+
+    if (validGeoStops.length >= 2) {
+      const lats = validGeoStops.map((s: any) => s.geoData!.latitude!)
+      const lngs = validGeoStops.map((s: any) => s.geoData!.longitude!)
+      const minLat = Math.min(...lats)
+      const maxLat = Math.max(...lats)
+      const minLng = Math.min(...lngs)
+      const maxLng = Math.max(...lngs)
+
+      const latSpan = maxLat - minLat || 0.05
+      const lngSpan = maxLng - minLng || 0.05
+
+      return stops.map((stop: any, i: number) => {
+        if (
+          typeof stop.geoData?.latitude === "number" &&
+          typeof stop.geoData?.longitude === "number"
+        ) {
+          const normX = (stop.geoData.longitude - minLng) / lngSpan
+          const normY = (maxLat - stop.geoData.latitude) / latSpan
+          const x = Math.min(Math.max(18 + normX * 64, 15), 85)
+          const y = Math.min(Math.max(20 + normY * 60, 18), 82)
+          return { ...stop, x, y, isGeo: true }
+        }
+        const pt = curvePoints[i % curvePoints.length]
+        return { ...stop, x: pt.x, y: pt.y, isGeo: false }
+      })
+    }
+
+    return stops.map((stop: any, i: number) => {
+      const pt = curvePoints[i % curvePoints.length]
+      return { ...stop, x: pt.x, y: pt.y, isGeo: false }
+    })
+  }, [stops])
+
+  // Route path SVG line
+  const routePathD = useMemo(() => {
+    if (!stopPins || stopPins.length < 2) return ""
+    return stopPins.reduce((acc: string, pt: any, idx: number) => {
+      if (idx === 0) return `M ${pt.x} ${pt.y}`
+      return `${acc} L ${pt.x} ${pt.y}`
+    }, "")
+  }, [stopPins])
 
   // Day by day headers
   const dayByDayTitle = itinerarySection?.dayByDayTitle || dayByDayItineraryData.title
@@ -262,10 +375,39 @@ export function ItineraryContentPreview({ draft }: { draft?: Journey }) {
     formattedDays[0]?.id || 1
   )
   const [hoveredStopIdx, setHoveredStopIdx] = useState<number | null>(null)
+  const [hoverSource, setHoverSource] = useState<"sidebar" | "map">("sidebar")
+  const [selectedStopIdx, setSelectedStopIdx] = useState<number | null>(null)
+  const [mapZoom, setMapZoom] = useState<number>(1)
+  const [mapMode, setMapMode] = useState<"real" | "visual">("real")
+
+  const mapContainerRef = useRef<HTMLDivElement | null>(null)
+
+  const handleHoverStop = useCallback((idx: number | null, source: "sidebar" | "map" = "sidebar") => {
+    setHoverSource(source)
+    setHoveredStopIdx(idx)
+  }, [])
 
   const toggleExpand = (id: string | number) => {
     setExpandedId((prev) => (prev === id ? null : id))
   }
+
+  const handleStopClick = useCallback((idx: number, stop: any) => {
+    setSelectedStopIdx(idx)
+    if (stop.daysList && stop.daysList.length > 0) {
+      const targetDay = stop.daysList[0]
+      setExpandedId(targetDay.id)
+      const targetEl =
+        document.getElementById(`itinerary-day-${targetDay.id}`) ||
+        document.getElementById(`location-group-${stop.id}`)
+      if (targetEl) {
+        targetEl.scrollIntoView({ behavior: "smooth", block: "center" })
+      }
+    }
+  }, [])
+
+  const handleZoomIn = () => setMapZoom((prev) => Math.min(prev + 0.25, 2.25))
+  const handleZoomOut = () => setMapZoom((prev) => Math.max(prev - 0.25, 1))
+  const handleResetZoom = () => setMapZoom(1)
 
   return (
     <div className={`relative w-full flex flex-col xl:pt-[51px] pt-6 md:pt-11 lgx:pt-12 ${SECTION_GAP_BOTTOM}`}>
@@ -286,55 +428,207 @@ export function ItineraryContentPreview({ draft }: { draft?: Journey }) {
         <div className={`w-full container mx-auto ${SECTION_PX}`}>
           <div className="max-w-[1216px] flex flex-col gap-10 md:gap-[50px] lgx:gap-[60px] xl:gap-[66px]">
             {/* Section Header */}
-            <div className="flex flex-col gap-3 md:gap-3.5 xl:gap-4">
-              <h2 className="text-primary xl:text-[24px] lgx:text-[22px] md:text-[20px] text-[18px] font-heading font-semibold xl:leading-8 lgx:leading-7 md:leading-6 leading-5">
-                {routeTitle}
-              </h2>
-              <p className="text-subtitle lgx:max-w-[60%] mid:max-w-full w-full text-sm md:text-[15px] xl:text-base font-normal leading-6">
-                {routeDescription}
-              </p>
+            <div className="flex flex-col md:flex-row md:items-end justify-between gap-4">
+              <div className="flex flex-col gap-3 md:gap-3.5 xl:gap-4">
+                <h2 className="text-primary xl:text-[24px] lgx:text-[22px] md:text-[20px] text-[18px] font-heading font-semibold xl:leading-8 lgx:leading-7 md:leading-6 leading-5">
+                  {routeTitle}
+                </h2>
+                <p className="text-subtitle lgx:max-w-[75%] mid:max-w-full w-full text-sm md:text-[15px] xl:text-base font-normal leading-6">
+                  {routeDescription}
+                </p>
+              </div>
+
+              {/* Real Map / Illustrated Map Switcher */}
+              <div className="flex items-center gap-1 self-start md:self-auto rounded-full bg-neutral-200/80 p-1 text-xs border border-black/5 shadow-xs shrink-0">
+                <button
+                  type="button"
+                  onClick={() => setMapMode("real")}
+                  className={cn(
+                    "rounded-full px-3 py-1 font-medium transition cursor-pointer flex items-center gap-1.5",
+                    mapMode === "real"
+                      ? "bg-white text-foreground shadow-xs font-semibold"
+                      : "text-muted-foreground hover:text-foreground"
+                  )}
+                >
+                  <MapPin className="size-3 text-[#af6348]" />
+                  Real GPS Map
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setMapMode("visual")}
+                  className={cn(
+                    "rounded-full px-3 py-1 font-medium transition cursor-pointer",
+                    mapMode === "visual"
+                      ? "bg-white text-foreground shadow-xs font-semibold"
+                      : "text-muted-foreground hover:text-foreground"
+                  )}
+                >
+                  Visual Map
+                </button>
+              </div>
             </div>
 
             {/* Map Card Container */}
-            <div className="relative w-full h-[360px] md:h-[500px] lg:h-[540px] lgx:h-[550px] xlg:h-[560px] xl:h-[565px] rounded-[14px] overflow-hidden border border-[#E7E5E4]">
-              {/* Map Background Visual */}
-              <UniversalMultimediaPreview
-                multimedia={{
-                  type: "image",
-                  url: mapImageSrc,
-                  alt: mapImageAlt,
-                }}
-                fallbackImageSrc={mapImageSrc}
-                fallbackAlt={mapImageAlt}
-                mode="background"
-                className="h-full w-full object-cover object-center"
-                containerClassName="absolute inset-0"
-              />
+            <div
+              ref={mapContainerRef}
+              className="relative w-full h-[360px] md:h-[500px] lg:h-[540px] lgx:h-[550px] xlg:h-[560px] xl:h-[565px] rounded-[14px] overflow-hidden border border-[#E7E5E4] bg-neutral-100"
+            >
+              {/* Mode 1: Interactive Real Vector Map */}
+              {mapMode === "real" ? (
+                <JourneyRealMap
+                  stops={stops}
+                  selectedStopIdx={selectedStopIdx}
+                  hoveredStopIdx={hoveredStopIdx}
+                  hoverSource={hoverSource}
+                  onSelectStop={handleStopClick}
+                  onHoverStop={handleHoverStop}
+                  className="absolute inset-0 size-full"
+                />
+              ) : (
+                /* Mode 2: Scalable Map Visual Layer */
+                <div
+                  className="relative h-full w-full transition-transform duration-300 ease-out origin-center"
+                  style={{ transform: `scale(${mapZoom})` }}
+                >
+                  {/* Map Background Visual */}
+                  <UniversalMultimediaPreview
+                    multimedia={{
+                      type: "image",
+                      url: mapImageSrc,
+                      alt: mapImageAlt,
+                    }}
+                    fallbackImageSrc={mapImageSrc}
+                    fallbackAlt={mapImageAlt}
+                    mode="background"
+                    className="h-full w-full object-cover object-center"
+                    containerClassName="absolute inset-0"
+                  />
 
-              {/* Floating Route Stops Sidebar (Left) */}
-              <div className="absolute left-3 md:left-8 top-3 md:top-8 z-20 bg-[#F8F5F3]/95 backdrop-blur-md p-3 md:p-4 xl:p-5 rounded-[12px] md:rounded-[16px] lgx:rounded-[18px] xl:rounded-[20px] max-h-[calc(100%-24px)] overflow-y-auto no-scrollbar shadow-lg border border-black/5">
-                <div className="flex items-center gap-1.5 pb-2 mb-2 border-b border-black/10">
-                  <Compass className="size-3.5 text-primary" />
-                  <span className="text-[11px] font-bold uppercase tracking-wider text-muted-foreground">
-                    Route Stops ({stops.length})
-                  </span>
-                </div>
+                  {/* SVG Route Trail Connecting Stop Pins */}
+                  {routePathD && (
+                    <svg
+                      viewBox="0 0 100 100"
+                      preserveAspectRatio="none"
+                      className="absolute inset-0 size-full pointer-events-none z-10"
+                    >
+                      <path
+                        d={routePathD}
+                        fill="none"
+                        stroke="#af6348"
+                        strokeWidth="0.7"
+                        strokeDasharray="2 1.5"
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        className="opacity-75 drop-shadow-[0_2px_4px_rgba(0,0,0,0.35)]"
+                      />
+                    </svg>
+                  )}
 
-                <div className="flex flex-col xl:w-[185px] lgx:w-[178px] md:w-[172px] w-[165px] xl:gap-3.5 md:gap-3 gap-2.5">
-                  {stops.map((stop: any, idx: number) => {
-                    const isHovered = hoveredStopIdx === idx
+                  {/* Interactive Map Route Pins */}
+                  {stopPins.map((pin: any, pIdx: number) => {
+                    const isHovered = hoveredStopIdx === pIdx
+                    const isSelected = selectedStopIdx === pIdx
 
                     return (
                       <div
-                        key={idx}
-                        onMouseEnter={() => setHoveredStopIdx(idx)}
-                        onMouseLeave={() => setHoveredStopIdx(null)}
-                        className={`flex items-start gap-2 md:gap-2.5 xl:gap-3 p-1.5 rounded-lg transition-all cursor-pointer ${
-                          isHovered
-                            ? "bg-black/5 scale-[1.02] shadow-xs"
-                            : "hover:bg-black/5"
-                        }`}
+                        key={pin.id || pIdx}
+                        style={{ left: `${pin.x}%`, top: `${pin.y}%` }}
+                        onMouseEnter={() => handleHoverStop(pIdx)}
+                        onMouseLeave={() => handleHoverStop(null)}
+                        onClick={() => handleStopClick(pIdx, pin)}
+                        className="absolute -translate-x-1/2 -translate-y-1/2 z-20 cursor-pointer group select-none transition-transform hover:scale-115 active:scale-95"
                       >
+                        {/* Pulse Radar on Active or Hovered Pin */}
+                        {(isHovered || isSelected) && (
+                          <span className="absolute -inset-2 rounded-full bg-[#af6348]/35 animate-ping pointer-events-none" />
+                        )}
+
+                        {/* Pin Badge */}
+                        <div
+                          className={cn(
+                            "flex items-center gap-1.5 rounded-full px-2 py-0.5 shadow-md border transition-all text-xs font-semibold backdrop-blur-sm",
+                            isSelected
+                              ? "bg-[#af6348] text-white border-white scale-110 shadow-lg ring-2 ring-[#af6348]/40"
+                              : isHovered
+                              ? "bg-[#af6348] text-white border-white scale-105 shadow-md"
+                              : "bg-white/95 text-neutral-900 border-black/10 hover:border-[#af6348]"
+                          )}
+                        >
+                          <span
+                            className={cn(
+                              "flex size-4 items-center justify-center rounded-full text-[10px] font-bold",
+                              isSelected || isHovered
+                                ? "bg-white/20 text-white"
+                                : "bg-black/10 text-neutral-800"
+                            )}
+                          >
+                            {pIdx + 1}
+                          </span>
+                          <span className="text-[11px] font-medium hidden sm:inline-block max-w-[85px] truncate">
+                            {pin.name}
+                          </span>
+                        </div>
+                      </div>
+                    )
+                  })}
+                </div>
+              )}
+
+              {/* Floating Route Stops Sidebar (Left) */}
+              <div className="absolute left-3 md:left-8 top-3 md:top-8 z-20 bg-[#F8F5F3]/95 backdrop-blur-md p-3 md:p-4 xl:p-5 rounded-[12px] md:rounded-[16px] lgx:rounded-[18px] xl:rounded-[20px] max-h-[calc(100%-24px)] overflow-y-auto no-scrollbar shadow-lg border border-black/5">
+                <div className="flex items-center justify-between gap-2 pb-2 mb-2 border-b border-black/10">
+                  <div className="flex items-center gap-1.5">
+                    <Compass className="size-3.5 text-[#af6348]" />
+                    <span className="text-[11px] font-bold uppercase tracking-wider text-muted-foreground">
+                      Route Stops ({stops.length})
+                    </span>
+                  </div>
+                  {selectedStopIdx !== null && (
+                    <button
+                      type="button"
+                      onClick={(e) => {
+                        e.stopPropagation()
+                        setSelectedStopIdx(null)
+                      }}
+                      className="text-[10px] font-medium text-muted-foreground hover:text-foreground underline transition cursor-pointer"
+                    >
+                      Reset
+                    </button>
+                  )}
+                </div>
+
+                <div className="flex flex-col xl:w-[195px] lgx:w-[185px] md:w-[178px] w-[165px] xl:gap-2.5 md:gap-2 gap-1.5">
+                  {stops.map((stop: any, idx: number) => {
+                    const isHovered = hoveredStopIdx === idx
+                    const isSelected = selectedStopIdx === idx
+
+                    return (
+                      <div
+                        key={stop.id || idx}
+                        onMouseEnter={() => handleHoverStop(idx, "sidebar")}
+                        onMouseLeave={() => handleHoverStop(null, "sidebar")}
+                        onClick={() => handleStopClick(idx, stop)}
+                        className={cn(
+                          "flex items-start gap-2 md:gap-2.5 xl:gap-3 p-1.5 rounded-xl transition-all cursor-pointer border",
+                          isSelected
+                            ? "bg-[#af6348]/10 border-[#af6348]/40 shadow-xs ring-1 ring-[#af6348]/30"
+                            : isHovered
+                            ? "bg-black/5 border-black/10 shadow-xs"
+                            : "border-transparent hover:bg-black/5 hover:border-black/5"
+                        )}
+                      >
+                        {/* Stop Number Marker */}
+                        <span
+                          className={cn(
+                            "flex size-5 shrink-0 items-center justify-center rounded-full text-[10px] font-bold mt-1 transition-colors",
+                            isSelected
+                              ? "bg-[#af6348] text-white"
+                              : "bg-black/10 text-neutral-700"
+                          )}
+                        >
+                          {idx + 1}
+                        </span>
+
                         {/* Stop Media Thumbnail using UniversalMultimediaPreview */}
                         <div className="relative size-10 md:size-11 xl:size-12 rounded-lg overflow-hidden shrink-0 bg-neutral-200 border border-black/10">
                           <UniversalMultimediaPreview
@@ -354,20 +648,25 @@ export function ItineraryContentPreview({ draft }: { draft?: Journey }) {
                         </div>
 
                         {/* Stop Info */}
-                        <div className="flex flex-col min-w-0">
+                        <div className="flex flex-col min-w-0 flex-1">
                           <span
-                            className={`text-sm md:text-[15px] font-medium leading-[18px] md:leading-5 xl:leading-6 truncate transition-colors ${
-                              isHovered ? "text-primary font-semibold" : "text-title"
-                            }`}
+                            className={cn(
+                              "text-sm md:text-[14px] font-medium leading-[18px] md:leading-5 truncate transition-colors",
+                              isSelected
+                                ? "text-[#af6348] font-bold"
+                                : isHovered
+                                ? "text-[#af6348] font-semibold"
+                                : "text-title"
+                            )}
                           >
                             {stop.name}
                           </span>
-                          <div className="flex items-center gap-1.5">
-                            <span className="text-muted text-[12px] md:text-[13px] xl:text-sm font-normal leading-4 md:leading-[18px] xl:leading-5">
+                          <div className="flex items-center gap-1.5 mt-0.5">
+                            <span className="text-muted text-[11px] md:text-[12px] font-normal leading-4">
                               {stop.days}
                             </span>
                             {stop.dayCount > 1 && (
-                              <span className="rounded bg-primary/10 px-1 py-0.2 text-[9px] font-medium text-primary">
+                              <span className="rounded bg-[#af6348]/15 px-1 py-0.2 text-[9px] font-semibold text-[#af6348]">
                                 {stop.dayCount}d
                               </span>
                             )}
@@ -379,10 +678,11 @@ export function ItineraryContentPreview({ draft }: { draft?: Journey }) {
                 </div>
               </div>
 
-              {/* Floating Rich Tooltip / Hover Popover on Route Stop */}
+              {/* Floating Rich Tooltip / Hover Popover next to Sidebar */}
               <AnimatePresence>
                 {hoveredStopIdx !== null && stops[hoveredStopIdx] && (
                   <motion.div
+                    key={`sidebar-popover-${hoveredStopIdx}`}
                     initial={{ opacity: 0, x: -8, scale: 0.96 }}
                     animate={{ opacity: 1, x: 0, scale: 1 }}
                     exit={{ opacity: 0, x: -8, scale: 0.96 }}
@@ -392,12 +692,12 @@ export function ItineraryContentPreview({ draft }: { draft?: Journey }) {
                     {/* Popover Header */}
                     <div className="flex items-center justify-between gap-2 pb-2.5 border-b border-black/10">
                       <div className="flex items-center gap-1.5 min-w-0">
-                        <MapPin className="size-4 text-primary shrink-0" />
+                        <MapPin className="size-4 text-[#af6348] shrink-0" />
                         <span className="font-heading font-bold text-sm md:text-base text-neutral-900 truncate">
                           {stops[hoveredStopIdx].name}
                         </span>
                       </div>
-                      <span className="rounded-full bg-primary/15 px-2.5 py-0.5 text-xs font-semibold text-primary shrink-0">
+                      <span className="rounded-full bg-[#af6348]/15 px-2.5 py-0.5 text-xs font-semibold text-[#af6348] shrink-0">
                         {stops[hoveredStopIdx].days}
                       </span>
                     </div>
@@ -408,7 +708,7 @@ export function ItineraryContentPreview({ draft }: { draft?: Journey }) {
                         {stops[hoveredStopIdx].daysList.map((d: FormattedDayItem, dIdx: number) => (
                           <div
                             key={dIdx}
-                            className="relative flex-1 min-w-0 h-28 overflow-hidden rounded-lg bg-neutral-200 border border-black/5"
+                            className="relative flex-1 min-w-0 h-24 sm:h-28 overflow-hidden rounded-lg bg-neutral-200 border border-black/5"
                           >
                             <UniversalMultimediaPreview
                               multimedia={
@@ -438,7 +738,7 @@ export function ItineraryContentPreview({ draft }: { draft?: Journey }) {
                         <div className="text-[11px] font-semibold text-muted-foreground uppercase tracking-wider">
                           Itinerary Days ({stops[hoveredStopIdx].daysList.length}):
                         </div>
-                        <div className="space-y-1.5 max-h-36 overflow-hidden">
+                        <div className="space-y-1.5 max-h-32 overflow-hidden">
                           {stops[hoveredStopIdx].daysList.map((d: FormattedDayItem, dIdx: number) => (
                             <div key={dIdx} className="flex items-center gap-2 text-xs text-neutral-800 leading-snug">
                               {/* Per-day multimedia thumbnail */}
@@ -459,7 +759,7 @@ export function ItineraryContentPreview({ draft }: { draft?: Journey }) {
                                 />
                               </div>
                               <div className="flex flex-col min-w-0">
-                                <span className="font-semibold text-primary shrink-0 text-[11px]">
+                                <span className="font-semibold text-[#af6348] shrink-0 text-[11px]">
                                   {d.dayLabel || `Day ${d.dayNumber}`}
                                 </span>
                                 <span className="truncate text-[11px] text-neutral-700">{d.title}</span>
@@ -480,34 +780,40 @@ export function ItineraryContentPreview({ draft }: { draft?: Journey }) {
                 )}
               </AnimatePresence>
 
-              {/* Map Zoom Controls (Bottom Right) */}
-              <div className="absolute right-3 md:right-[31px] bottom-3 md:bottom-[27px] z-10 flex flex-col items-center xl:gap-7 md:gap-6 gap-5 bg-neutral-100 shadow-md rounded-full xl:px-5 py-6 md:px-4 px-3.5">
-                <button
-                  type="button"
-                  aria-label="Zoom in"
-                  className="xl:size-6 md:size-5 size-4 flex items-center justify-center rounded-full text-dark hover:bg-neutral-300 active:scale-95 transition-colors cursor-pointer"
-                >
-                  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" className="w-full h-full">
-                    <path
-                      d="M22.7999 10.8H13.2001V1.19992C13.2001 0.537693 12.6624 0 11.9999 0C11.3377 0 10.8 0.537693 10.8 1.19992V10.8H1.19992C0.537693 10.8 0 11.3377 0 11.9999C0 12.6624 0.537693 13.2001 1.19992 13.2001H10.8V22.7999C10.8 23.4624 11.3377 24.0001 11.9999 24.0001C12.6624 24.0001 13.2001 23.4624 13.2001 22.7999V13.2001H22.7999C23.4624 13.2001 24.0001 12.6624 24.0001 11.9999C24.0001 11.3377 23.4624 10.8 22.7999 10.8Z"
-                      fill="currentColor"
-                    />
-                  </svg>
-                </button>
-
-                <button
-                  type="button"
-                  aria-label="Zoom out"
-                  className="xl:size-6 md:size-5 size-4 flex items-center justify-center rounded-full text-dark hover:bg-neutral-300 active:scale-95 transition-colors cursor-pointer"
-                >
-                  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" className="w-full h-full">
-                    <path
-                      d="M1.44009 13.441H22.56C22.7491 13.441 22.9364 13.4038 23.1112 13.3314C23.2859 13.259 23.4447 13.1529 23.5784 13.0191C23.7121 12.8854 23.8182 12.7266 23.8906 12.5519C23.9629 12.3771 24.0002 12.1898 24.0001 12.0007C24.0002 11.8116 23.9629 11.6243 23.8906 11.4495C23.8182 11.2748 23.7121 11.116 23.5784 10.9823C23.4447 10.8486 23.2859 10.7425 23.1112 10.6701C22.9364 10.5978 22.7491 10.5605 22.56 10.5605H1.44009C1.06103 10.565 0.699007 10.7187 0.432527 10.9883C0.166048 11.2579 0.0166016 11.6217 0.0166016 12.0008C0.0166016 12.3799 0.166048 12.7437 0.432527 13.0133C0.699007 13.2829 1.06103 13.4366 1.44009 13.441Z"
-                      fill="currentColor"
-                    />
-                  </svg>
-                </button>
-              </div>
+              {/* Map Zoom Controls (Bottom Right - for Visual Mode) */}
+              {mapMode === "visual" && (
+                <div className="absolute right-3 md:right-[31px] bottom-3 md:bottom-[27px] z-20 flex flex-col items-center xl:gap-2.5 md:gap-2 gap-1.5 bg-[#F8F5F3]/95 backdrop-blur-md shadow-lg border border-black/10 rounded-full p-1.5">
+                  <button
+                    type="button"
+                    onClick={handleZoomIn}
+                    aria-label="Zoom in"
+                    title="Zoom In"
+                    className="size-8 flex items-center justify-center rounded-full text-neutral-800 hover:bg-neutral-200 active:scale-95 transition-colors cursor-pointer"
+                  >
+                    <Plus className="size-4" />
+                  </button>
+                  <button
+                    type="button"
+                    onClick={handleZoomOut}
+                    aria-label="Zoom out"
+                    title="Zoom Out"
+                    className="size-8 flex items-center justify-center rounded-full text-neutral-800 hover:bg-neutral-200 active:scale-95 transition-colors cursor-pointer"
+                  >
+                    <Minus className="size-4" />
+                  </button>
+                  {mapZoom !== 1 && (
+                    <button
+                      type="button"
+                      onClick={handleResetZoom}
+                      aria-label="Reset zoom"
+                      title="Reset Zoom"
+                      className="text-[9px] font-bold text-[#af6348] hover:text-[#af6348]/80 px-1 py-0.5 rounded transition cursor-pointer"
+                    >
+                      1x
+                    </button>
+                  )}
+                </div>
+              )}
             </div>
           </div>
         </div>
@@ -535,7 +841,8 @@ export function ItineraryContentPreview({ draft }: { draft?: Journey }) {
                 return (
                   <div
                     key={locGroup.groupKey}
-                    className="w-full rounded-[18px] border border-black/10 bg-neutral-50/70 p-3 md:p-5 shadow-xs space-y-3.5 transition-all hover:border-black/15"
+                    id={`location-group-${locGroup.groupKey}`}
+                    className="w-full rounded-[18px] border border-black/10 bg-neutral-50/70 p-3 md:p-5 shadow-xs space-y-3.5 transition-all hover:border-black/15 scroll-mt-24"
                   >
                     {/* Location Section Group Header Banner */}
                     <div className="flex flex-wrap items-center justify-between gap-2 pb-2.5 border-b border-black/10 px-1">
@@ -588,11 +895,17 @@ export function ItineraryContentPreview({ draft }: { draft?: Journey }) {
                         return (
                           <div
                             key={itemId}
-                            className={`w-full xl:rounded-[14px] md:rounded-[12px] rounded-[8px] border transition-all duration-300 overflow-hidden bg-white ${
+                            id={`itinerary-day-${itemId}`}
+                            className={cn(
+                              "w-full xl:rounded-[14px] md:rounded-[12px] rounded-[8px] border transition-all duration-300 overflow-hidden bg-white scroll-mt-28",
                               isExpanded
                                 ? "border-black/15 xl:py-6 md:py-5 py-4 shadow-sm"
-                                : "border-black/10 hover:border-black/20 xl:h-[130px] md:h-[120px] h-[110px]"
-                            }`}
+                                : "border-black/10 hover:border-black/20 xl:h-[130px] md:h-[120px] h-[110px]",
+                              selectedStopIdx !== null &&
+                                stops[selectedStopIdx]?.daysList?.some((d: any) => d.id === itemId)
+                                ? "ring-2 ring-[#af6348]/40 border-[#af6348]/60 shadow-md"
+                                : ""
+                            )}
                           >
                             {/* Clickable Header Row */}
                             <button

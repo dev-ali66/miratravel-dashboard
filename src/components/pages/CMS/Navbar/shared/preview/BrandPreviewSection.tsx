@@ -3,10 +3,10 @@ import { UniversalMultimediaPreview } from "../../../Home/shared/preview/Univers
 import type { NavbarPreviewSectionProps } from "./sectionTypes"
 
 const colorWithOpacity = (
-  color: string | undefined,
+  color: string | null | undefined,
   opacity: number | undefined
-) => {
-  if (!color || opacity === undefined || opacity >= 100) return color
+): string | undefined => {
+  if (!color || opacity === undefined || opacity >= 100) return color ?? undefined
 
   const hexMatch = color.match(/^#([0-9a-f]{6})$/i)
   if (hexMatch) {
@@ -17,7 +17,7 @@ const colorWithOpacity = (
     return `rgba(${red}, ${green}, ${blue}, ${opacity / 100})`
   }
 
-  return color
+  return color ?? undefined
 }
 
 const fieldCssStyle = (

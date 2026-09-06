@@ -27,9 +27,9 @@ export interface BaseProps {
 }
 
 export interface FieldStyle {
-  textColor?: string
+  textColor?: string | null
   textOpacity?: number
-  backgroundColor?: string
+  backgroundColor?: string | null
   backgroundOpacity?: number
 }
 
@@ -57,7 +57,26 @@ const updateFieldStyle = (
   onStyleChange: ((style: FieldStyle) => void) | undefined,
   patch: Partial<FieldStyle>
 ) => {
-  onStyleChange?.({ ...(style ?? {}), ...patch })
+  const currentTextColor =
+    style?.textColor !== undefined && style?.textColor !== "" ? style.textColor : null
+  const currentBgColor =
+    style?.backgroundColor !== undefined && style?.backgroundColor !== "" ? style.backgroundColor : null
+
+  const nextTextColor =
+    patch.textColor !== undefined
+      ? (patch.textColor ? patch.textColor : null)
+      : currentTextColor
+  const nextBgColor =
+    patch.backgroundColor !== undefined
+      ? (patch.backgroundColor ? patch.backgroundColor : null)
+      : currentBgColor
+
+  onStyleChange?.({
+    ...style,
+    ...patch,
+    textColor: nextTextColor,
+    backgroundColor: nextBgColor,
+  })
 }
 
 export function FieldWrapper({
@@ -196,16 +215,16 @@ export function FieldStyleControls({
     <div className="mt-1 grid grid-cols-1 gap-2 rounded-md border border-border/40 bg-muted/20 p-2 md:grid-cols-2">
       <ColorField
         label="Text color"
-        value={style?.textColor ?? "#000000"}
+        value={style?.textColor ?? ""}
         onChange={(value) =>
-          updateFieldStyle(style, onStyleChange, { textColor: value })
+          updateFieldStyle(style, onStyleChange, { textColor: value || null })
         }
       />
       <ColorField
         label="Background color"
-        value={style?.backgroundColor ?? "#000000"}
+        value={style?.backgroundColor ?? ""}
         onChange={(value) =>
-          updateFieldStyle(style, onStyleChange, { backgroundColor: value })
+          updateFieldStyle(style, onStyleChange, { backgroundColor: value || null })
         }
       />
     </div>

@@ -10,6 +10,7 @@ import type { Journey } from "../journeyTypes"
 import { BasicInfoForm } from "../sections/basicInfo/BasicInfoForm"
 import { HeroForm } from "../sections/hero/HeroForm"
 import { TagsAttributesForm } from "../sections/tags/TagsAttributesForm"
+import { OverviewForm } from "../sections/overview/OverviewForm"
 import { HighlightsInclusionsForm } from "../sections/highlights/HighlightsInclusionsForm"
 import { ItineraryForm } from "../sections/itinerary/ItineraryForm"
 import { AccommodationForm } from "../sections/accommodation/AccommodationForm"
@@ -28,6 +29,7 @@ export type JourneySectionKey =
   | "basic-info"
   | "hero"
   | "tags"
+  | "overview"
   | "highlights"
   | "itinerary"
   | "accommodation"
@@ -55,6 +57,10 @@ export const journeySectionRegistry: Record<
   tags: {
     label: "Tags & Styles",
     form: TagsAttributesForm,
+  },
+  overview: {
+    label: "Overview & Why We Designed",
+    form: OverviewForm,
   },
   highlights: {
     label: "Highlights & Inclusions",
@@ -86,6 +92,7 @@ export const journeySectionOrder: JourneySectionKey[] = [
   "basic-info",
   "hero",
   "tags",
+  "overview",
   "highlights",
   "itinerary",
   "accommodation",

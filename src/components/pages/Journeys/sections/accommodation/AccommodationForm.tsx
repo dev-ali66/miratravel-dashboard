@@ -380,16 +380,20 @@ export function AccommodationForm({
                                   content={imgItem}
                                   updateSection={(patch) => {
                                     const nextUrl =
-                                      (patch as any)?.imageMultimedia?.url ??
-                                      (patch as any)?.url ??
-                                      imgUrl
+                                      (patch as any)?.imageMultimedia?.url !== undefined
+                                        ? (patch as any)?.imageMultimedia?.url || ""
+                                        : (patch as any)?.url !== undefined
+                                        ? (patch as any)?.url || ""
+                                        : imgUrl
                                     handleUpdateImage(idx, imgIdx, nextUrl)
                                   }}
                                   updateSectionContent={(patch) => {
                                     const nextUrl =
-                                      (patch as any)?.imageMultimedia?.url ??
-                                      (patch as any)?.url ??
-                                      imgUrl
+                                      (patch as any)?.imageMultimedia?.url !== undefined
+                                        ? (patch as any)?.imageMultimedia?.url || ""
+                                        : (patch as any)?.url !== undefined
+                                        ? (patch as any)?.url || ""
+                                        : imgUrl
                                     handleUpdateImage(idx, imgIdx, nextUrl)
                                   }}
                                   contentMediaKey="imageMultimedia"

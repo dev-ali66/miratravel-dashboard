@@ -101,6 +101,10 @@ export type ItineraryTextWithStyle = {
 export type ItineraryLocationValue = {
   id?: string | null
   name?: string
+  geoData?: {
+    latitude?: number | null
+    longitude?: number | null
+  } | null
 }
 
 export type ItineraryMediaValue = {
@@ -163,88 +167,171 @@ export type ItineraryDayItem = {
   data?: Record<string, any> | null
 }
 
-export function getDayEyebrow(day: ItineraryDayItem): { text: string; style: any } {
+export function sanitizeFieldStyle(style: any): { textColor: string | null; backgroundColor: string | null } {
+  if (typeof style === "object" && style !== null) {
+    return {
+      textColor: typeof style.textColor === "string" && style.textColor.trim() !== "" ? style.textColor : null,
+      backgroundColor: typeof style.backgroundColor === "string" && style.backgroundColor.trim() !== "" ? style.backgroundColor : null,
+    }
+  }
+  return {
+    textColor: null,
+    backgroundColor: null,
+  }
+}
+
+export function getDayEyebrow(day: ItineraryDayItem): { text: string; style: { textColor: string | null; backgroundColor: string | null } } {
   if (typeof day.eyebrow === "object" && day.eyebrow !== null) {
-    return { text: day.eyebrow.text || "", style: day.eyebrow.style || day.eyebrowStyle }
+    return { text: day.eyebrow.text || "", style: sanitizeFieldStyle(day.eyebrow.style || day.eyebrowStyle) }
   }
-  return { text: (day.eyebrow as string) || "", style: day.eyebrowStyle }
+  return { text: (day.eyebrow as string) || "", style: sanitizeFieldStyle(day.eyebrowStyle) }
 }
 
-export function getDayTitle(day: ItineraryDayItem, defaultNum?: number): { text: string; style: any } {
+export function getDayTitle(day: ItineraryDayItem, defaultNum?: number): { text: string; style: { textColor: string | null; backgroundColor: string | null } } {
   if (typeof day.title === "object" && day.title !== null) {
-    return { text: day.title.text || `Day ${day.dayNumber || defaultNum || 1}`, style: day.title.style || day.titleStyle }
+    return { text: day.title.text || `Day ${day.dayNumber || defaultNum || 1}`, style: sanitizeFieldStyle(day.title.style || day.titleStyle) }
   }
-  return { text: (day.title as string) || `Day ${day.dayNumber || defaultNum || 1}`, style: day.titleStyle }
+  return { text: (day.title as string) || `Day ${day.dayNumber || defaultNum || 1}`, style: sanitizeFieldStyle(day.titleStyle) }
 }
 
-export function getDayLocation(day: ItineraryDayItem): { id: string | null; name: string } {
-  if (typeof day.location === "object" && day.location !== null) {
-    return { id: day.location.id || day.locationId || null, name: day.location.name || day.locationName || "" }
+export function sanitizeLocation(loc: any): {
+  id: string | null
+  name: string
+  geoData: {
+    latitude: number | null
+    longitude: number | null
   }
-  return { id: day.locationId || null, name: (day.location as string) || day.locationName || "" }
+} {
+  const cleanId =
+    typeof loc?.id === "string" && loc.id.trim()
+      ? loc.id.trim()
+      : typeof loc?.locationId === "string" && loc.locationId.trim()
+      ? loc.locationId.trim()
+      : null
+  const cleanName =
+    typeof loc?.name === "string"
+      ? loc.name
+      : typeof loc?.locationName === "string"
+      ? loc.locationName
+      : typeof loc === "string"
+      ? loc
+      : ""
+
+  const rawGeo = loc?.geoData
+  const lat =
+    typeof rawGeo?.latitude === "number"
+      ? rawGeo.latitude
+      : typeof rawGeo?.lat === "number"
+      ? rawGeo.lat
+      : null
+  const lng =
+    typeof rawGeo?.longitude === "number"
+      ? rawGeo.longitude
+      : typeof rawGeo?.lng === "number"
+      ? rawGeo.lng
+      : null
+
+  return {
+    id: cleanId,
+    name: cleanName,
+    geoData: {
+      latitude: lat,
+      longitude: lng,
+    },
+  }
 }
 
-export function getDayDescription(day: ItineraryDayItem): { text: string; style: any } {
+export function getDayLocation(day: ItineraryDayItem): {
+  id: string | null
+  name: string
+  geoData: {
+    latitude: number | null
+    longitude: number | null
+  }
+} {
+  const rawLoc = day.location ?? { id: day.locationId, name: day.locationName }
+  return sanitizeLocation(rawLoc)
+}
+
+export function getDayDescription(day: ItineraryDayItem): { text: string; style: { textColor: string | null; backgroundColor: string | null } } {
   if (typeof day.description === "object" && day.description !== null) {
-    return { text: day.description.text || "", style: day.description.style || day.descriptionStyle }
+    return { text: day.description.text || "", style: sanitizeFieldStyle(day.description.style || day.descriptionStyle) }
   }
-  return { text: (day.description as string) || "", style: day.descriptionStyle }
+  return { text: (day.description as string) || "", style: sanitizeFieldStyle(day.descriptionStyle) }
+}
+
+export function sanitizeMultimedia(rawMedia: any, fallbackAlt: string = ""): Record<string, any> {
+  const m = rawMedia || {}
+  const rawImg = m.image || m.imageData || {}
+  const rawVid = m.video || m.videoData || {}
+
+  const cleanStringOrNull = (val: any): string | null => {
+    if (typeof val === "string" && val.trim() !== "") return val.trim()
+    return null
+  }
+
+  const imgUrl = cleanStringOrNull(rawImg.url)
+  const vidUrl = cleanStringOrNull(rawVid.url)
+  const rootUrl = cleanStringOrNull(m.url)
+
+  const mediaType: "image" | "video" | "color" =
+    m.type === "video" || (!m.type && vidUrl)
+      ? "video"
+      : m.type === "color"
+      ? "color"
+      : "image"
+
+  const url =
+    mediaType === "video"
+      ? (vidUrl || rootUrl || null)
+      : mediaType === "image"
+      ? (imgUrl || rootUrl || null)
+      : null
+
+  const imgAlt = cleanStringOrNull(rawImg.alt)
+  const vidAlt = cleanStringOrNull(rawVid.alt)
+  const rootAlt = cleanStringOrNull(m.alt)
+
+  const alt =
+    mediaType === "video"
+      ? (vidAlt || rootAlt || (url ? (fallbackAlt || null) : null))
+      : mediaType === "image"
+      ? (imgAlt || rootAlt || (url ? (fallbackAlt || null) : null))
+      : null
+
+  const color = cleanStringOrNull(m.color) || "#F8F6F0"
+  const poster = cleanStringOrNull(rawVid.poster || rawVid.posterUrl || m.posterUrl)
+
+  return {
+    type: mediaType,
+    color,
+    url,
+    alt,
+    image: {
+      url: imgUrl || (mediaType === "image" ? url : null),
+      alt: imgAlt || (mediaType === "image" ? alt : null),
+      opacity: typeof rawImg.opacity === "number" ? rawImg.opacity : (typeof m.opacity === "number" ? m.opacity : 100),
+      overlayColor: cleanStringOrNull(rawImg.overlayColor) || cleanStringOrNull(m.overlayColor) || "#000000",
+      overlayOpacity: typeof rawImg.overlayOpacity === "number" ? rawImg.overlayOpacity : (typeof m.overlayOpacity === "number" ? m.overlayOpacity : 0),
+    },
+    video: {
+      url: vidUrl || (mediaType === "video" ? url : null),
+      alt: vidAlt || (mediaType === "video" ? alt : null),
+      poster,
+      autoplay: rawVid.autoplay ?? m.autoplay ?? true,
+      loop: rawVid.loop ?? m.loop ?? true,
+      muted: rawVid.muted ?? m.muted ?? true,
+      opacity: typeof rawVid.opacity === "number" ? rawVid.opacity : (typeof m.opacity === "number" ? m.opacity : 100),
+      overlayColor: cleanStringOrNull(rawVid.overlayColor) || cleanStringOrNull(m.overlayColor) || "#000000",
+      overlayOpacity: typeof rawVid.overlayOpacity === "number" ? rawVid.overlayOpacity : (typeof m.overlayOpacity === "number" ? m.overlayOpacity : 0),
+    },
+  }
 }
 
 export function getDayMedia(day: ItineraryDayItem): Record<string, any> {
   const m = (day as any).itineraryMedia || day.multimedia || {}
-  const type = m.type || (m.video?.url ? "video" : m.color ? "color" : "image")
-  const img = m.image || m.imageData || {}
-  const vid = m.video || m.videoData || {}
-  const url =
-    type === "video"
-      ? (vid.url || m.url || "")
-      : (img.url || m.url || day.thumbnail || day.images?.[0] || "")
-  const alt = type === "video" ? (vid.alt || m.alt || "") : (img.alt || m.alt || "")
-
-  return {
-    ...m,
-    type,
-    url,
-    alt,
-    color: m.color,
-    image: {
-      url: img.url || url,
-      alt: img.alt || alt,
-      opacity: img.opacity ?? m.opacity ?? 100,
-      overlayColor: img.overlayColor ?? m.overlayColor ?? "#000000",
-      overlayOpacity: img.overlayOpacity ?? m.overlayOpacity ?? 0,
-    },
-    video: {
-      url: vid.url || (type === "video" ? url : ""),
-      alt: vid.alt || alt,
-      poster: vid.poster || vid.posterUrl || m.posterUrl || day.thumbnail || "",
-      autoplay: vid.autoplay ?? m.autoplay ?? true,
-      loop: vid.loop ?? m.loop ?? true,
-      muted: vid.muted ?? m.muted ?? true,
-      opacity: vid.opacity ?? m.opacity ?? 100,
-      overlayColor: vid.overlayColor ?? m.overlayColor ?? "#000000",
-      overlayOpacity: vid.overlayOpacity ?? m.overlayOpacity ?? 0,
-    },
-    imageData: {
-      url: img.url || url,
-      alt: img.alt || alt,
-      opacity: img.opacity ?? m.opacity ?? 100,
-      overlayColor: img.overlayColor ?? m.overlayColor ?? "#000000",
-      overlayOpacity: img.overlayOpacity ?? m.overlayOpacity ?? 0,
-    },
-    videoData: {
-      url: vid.url || (type === "video" ? url : ""),
-      alt: vid.alt || alt,
-      posterUrl: vid.poster || vid.posterUrl || m.posterUrl || day.thumbnail || "",
-      autoplay: vid.autoplay ?? m.autoplay ?? true,
-      loop: vid.loop ?? m.loop ?? true,
-      muted: vid.muted ?? m.muted ?? true,
-      opacity: vid.opacity ?? m.opacity ?? 100,
-      overlayColor: vid.overlayColor ?? m.overlayColor ?? "#000000",
-      overlayOpacity: vid.overlayOpacity ?? m.overlayOpacity ?? 0,
-    },
-  }
+  const dayTitle = typeof day.title === "object" && day.title !== null ? day.title.text : (day.title as string) || ""
+  return sanitizeMultimedia(m, dayTitle)
 }
 
 export type AccommodationStayItem = {
@@ -452,53 +539,145 @@ export type Journey = {
   updatedAt?: string
 }
 
-export function getJourneyItineraryDays(journey: Journey): ItineraryDayItem[] {
+export function sanitizeItineraryDay(day: any, index: number): ItineraryDayItem {
+  const dayNum = typeof day?.dayNumber === "number" ? day.dayNumber : index + 1
+  const defaultTitle = `Day ${dayNum}: Exploration & Discovery`
+
+  const dayData = day?.data && typeof day.data === "object" ? day.data : {}
+  const dayMeta = day?.metadata && typeof day.metadata === "object" ? day.metadata : {}
+
+  // 1. Eyebrow: strictly { text, style: { textColor, backgroundColor } }
+  const rawEyebrow = day?.eyebrow ?? dayData?.eyebrow ?? dayMeta?.eyebrow
+  const rawEyebrowStyle = day?.eyebrowStyle ?? dayData?.eyebrowStyle ?? dayMeta?.eyebrowStyle
+  const eyebrow =
+    typeof rawEyebrow === "object" && rawEyebrow !== null
+      ? {
+          text: rawEyebrow.text ?? "",
+          style: sanitizeFieldStyle(rawEyebrow.style ?? rawEyebrowStyle),
+        }
+      : {
+          text: typeof rawEyebrow === "string" ? rawEyebrow : "",
+          style: sanitizeFieldStyle(rawEyebrowStyle),
+        }
+
+  // 2. Title: strictly { text, style: { textColor, backgroundColor } }
+  const rawTitle = day?.title ?? dayData?.title ?? dayMeta?.title
+  const rawTitleStyle = day?.titleStyle ?? dayData?.titleStyle ?? dayMeta?.titleStyle
+  const title =
+    typeof rawTitle === "object" && rawTitle !== null
+      ? {
+          text: rawTitle.text ?? defaultTitle,
+          style: sanitizeFieldStyle(rawTitle.style ?? rawTitleStyle),
+        }
+      : {
+          text: typeof rawTitle === "string" && rawTitle.trim() ? rawTitle : defaultTitle,
+          style: sanitizeFieldStyle(rawTitleStyle),
+        }
+
+  // 3. Location: strictly { id, name, geoData: { latitude, longitude } }
+  const rawLoc = day?.location ?? dayData?.location ?? dayMeta?.location
+  const location = sanitizeLocation(
+    typeof rawLoc === "object" && rawLoc !== null
+      ? rawLoc
+      : {
+          id: day?.locationId ?? dayData?.locationId ?? null,
+          name: typeof rawLoc === "string" ? rawLoc : (day?.locationName ?? dayData?.locationName ?? ""),
+          geoData: day?.geoData ?? dayData?.geoData ?? null,
+        }
+  )
+
+  // 4. Description: strictly { text, style: { textColor, backgroundColor } }
+  const rawDesc = day?.description ?? dayData?.description ?? dayMeta?.description
+  const rawDescStyle = day?.descriptionStyle ?? dayData?.descriptionStyle ?? dayMeta?.descriptionStyle
+  const description =
+    typeof rawDesc === "object" && rawDesc !== null
+      ? {
+          text: rawDesc.text ?? "",
+          style: sanitizeFieldStyle(rawDesc.style ?? rawDescStyle),
+        }
+      : {
+          text: typeof rawDesc === "string" ? rawDesc : "",
+          style: sanitizeFieldStyle(rawDescStyle),
+        }
+
+  // 5. ItineraryMedia: strictly { type, color, url, alt, image: {}, video: {} }
+  const rawMedia =
+    day?.itineraryMedia ||
+    dayData?.itineraryMedia ||
+    day?.multimedia ||
+    dayData?.multimedia ||
+    (day?.journeyItineraryImage?.[0]
+      ? { type: "image", url: day.journeyItineraryImage[0] }
+      : {})
+  const itineraryMedia = sanitizeMultimedia(rawMedia, title.text)
+
+  return {
+    dayNumber: dayNum,
+    dayLabel: day?.dayLabel || dayData?.dayLabel || `Day ${dayNum}`,
+    eyebrow,
+    title,
+    location,
+    description,
+    itineraryMedia,
+    ...(day?.id ? { id: day.id } : {}),
+  }
+}
+
+export function getJourneyItineraryDays(journey?: Journey | null): ItineraryDayItem[] {
+  if (!journey) return []
+
+  // Check authoritative user-edited arrays first (respect empty array if user deleted all cards)
   if (Array.isArray((journey as any).itineraryData)) {
-    return (journey as any).itineraryData
+    return (journey as any).itineraryData.map((d: any, idx: number) => sanitizeItineraryDay(d, idx))
   }
-
   if (Array.isArray(journey.itineraryDays)) {
-    return journey.itineraryDays
+    return journey.itineraryDays.map((d: any, idx: number) => sanitizeItineraryDay(d, idx))
+  }
+  if (Array.isArray((journey.data as any)?.itineraryData)) {
+    return (journey.data as any).itineraryData.map((d: any, idx: number) => sanitizeItineraryDay(d, idx))
+  }
+  if (Array.isArray(journey.data?.itinerary)) {
+    return (journey.data as any).itinerary.map((d: any, idx: number) => sanitizeItineraryDay(d, idx))
   }
 
-  if (Array.isArray(journey.itinerary)) {
-    return journey.itinerary
+  let rawDays: any[] = []
+
+  const candidates = [
+    (journey.data as any)?.itinerary?.days,
+    (journey.data as any)?.itinerarySection?.days,
+    (journey.data as any)?.dayByDay?.days,
+    journey.itinerary,
+  ]
+
+  for (const cand of candidates) {
+    if (Array.isArray(cand) && cand.length > 0) {
+      rawDays = cand
+      break
+    }
   }
 
-  const itinerary = (journey.data as any)?.itineraryData || journey.data?.itinerary
-  if (Array.isArray(itinerary)) {
-    return itinerary
-  }
-
-  if (
-    itinerary &&
-    typeof itinerary === "object" &&
-    Array.isArray((itinerary as { days?: unknown }).days)
-  ) {
-    return (itinerary as { days: ItineraryDayItem[] }).days
-  }
-
-  return []
+  return rawDays.map((d, idx) => sanitizeItineraryDay(d, idx))
 }
 
 export function getJourneyAddons(journey: Journey): AddonItem[] {
-  if (Array.isArray(journey.addons)) {
+  if (Array.isArray(journey.addons) && journey.addons.length > 0) {
     return journey.addons
   }
 
-  if (Array.isArray(journey.addOns)) {
+  if (Array.isArray(journey.addOns) && journey.addOns.length > 0) {
     return journey.addOns
   }
 
   const addons = journey.data?.addons
-  if (Array.isArray(addons)) {
+  if (Array.isArray(addons) && addons.length > 0) {
     return addons
   }
 
   if (
     addons &&
     typeof addons === "object" &&
-    Array.isArray((addons as { items?: unknown }).items)
+    Array.isArray((addons as { items?: unknown }).items) &&
+    (addons as { items: AddonItem[] }).items.length > 0
   ) {
     return (addons as { items: AddonItem[] }).items
   }
@@ -545,6 +724,7 @@ export type JourneySectionKey =
   | "basic-info"
   | "hero"
   | "tags"
+  | "overview"
   | "highlights"
   | "itinerary"
   | "accommodation"
@@ -556,6 +736,7 @@ export const journeySectionOrder: JourneySectionKey[] = [
   "basic-info",
   "hero",
   "tags",
+  "overview",
   "highlights",
   "itinerary",
   "accommodation",

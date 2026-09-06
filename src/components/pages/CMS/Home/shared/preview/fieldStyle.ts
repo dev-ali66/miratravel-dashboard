@@ -1,15 +1,15 @@
 export type FieldStyleValue = {
-  textColor?: string
+  textColor?: string | null
   textOpacity?: number
-  backgroundColor?: string
+  backgroundColor?: string | null
   backgroundOpacity?: number
 }
 
 const colorWithOpacity = (
-  color: string | undefined,
+  color: string | null | undefined,
   opacity: number | undefined
-) => {
-  if (!color || opacity === undefined || opacity >= 100) return color
+): string | undefined => {
+  if (!color || opacity === undefined || opacity >= 100) return color ?? undefined
 
   const hexMatch = color.match(/^#([0-9a-f]{6})$/i)
   if (hexMatch) {
@@ -24,7 +24,7 @@ const colorWithOpacity = (
     return `rgba(${rgbMatch[1]}, ${rgbMatch[2]}, ${rgbMatch[3]}, ${opacity / 100})`
   }
 
-  return color
+  return color ?? undefined
 }
 
 export const fieldCssStyle = (

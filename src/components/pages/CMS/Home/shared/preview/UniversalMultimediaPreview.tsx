@@ -40,12 +40,15 @@ export function UniversalMultimediaPreview({
   containerClassName,
   overlayClassName,
 }: UniversalMultimediaPreviewProps) {
+  const mediaImg = (multimedia as any)?.image || multimedia?.imageData
+  const mediaVid = (multimedia as any)?.video || multimedia?.videoData
+
   const resolvedMultimedia = multimedia
     ? {
         ...multimedia,
         ...(multimedia.type === "video"
-          ? multimedia.videoData
-          : multimedia.imageData),
+          ? mediaVid
+          : mediaImg),
         type: multimedia.type,
       }
     : undefined
