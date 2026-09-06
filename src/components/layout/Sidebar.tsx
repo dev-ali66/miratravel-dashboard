@@ -24,6 +24,7 @@ import {
   Mail,
   Megaphone,
   LocateIcon,
+  Compass,
 } from "lucide-react"
 
 import { LogoutModal } from "./LogoutModal"
@@ -49,6 +50,7 @@ const iconMap = {
   user: User,
   cms: FileText,
   locations: LocateIcon,
+  journeys: Compass,
   faq: HelpCircle,
   requests: Inbox,
   privacy: Shield,

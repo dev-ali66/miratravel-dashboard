@@ -25,6 +25,10 @@ import { LocationEditorLayout } from "./components/pages/Location/LocationEditor
 import { LocationForm } from "./components/pages/Location/LocationForm"
 // import { LocationEditPage } from "./components/pages/Location/LocationEditPage";
 
+import JourneysPage from "@/components/pages/Journeys"
+import { JourneyEditorLayout } from "@/components/pages/Journeys/JourneyEditorLayout"
+import { JourneyForm } from "@/components/pages/Journeys/JourneyForm"
+
 export function App() {
   return (
     <TooltipProvider>
@@ -47,6 +51,7 @@ export function App() {
 
             <Route path="cms" element={<CMSPage />} />
             <Route path="location" element={<LocationPages />} />
+            <Route path="journeys" element={<JourneysPage />} />
           </Route>
 
           <Route path="/cms" element={<CMSEditorLayout />}>
@@ -59,6 +64,13 @@ export function App() {
           <Route path="/locations" element={<LocationEditorLayout />}>
             <Route path="new" element={<LocationForm />} />
             <Route path=":id/:slug" element={<LocationForm />} />
+          </Route>
+
+          {/* Journeys Editor */}
+          <Route path="/journeys" element={<JourneyEditorLayout />}>
+            <Route path="new" element={<JourneyForm />} />
+            <Route path=":id/:slug" element={<JourneyForm />} />
+            <Route path=":id" element={<JourneyForm />} />
           </Route>
           {/* <Route
             path="location/add"

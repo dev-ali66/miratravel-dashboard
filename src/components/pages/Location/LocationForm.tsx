@@ -6,7 +6,6 @@ import { useLocationPage } from "@/hooks/location/useLocationPage"
 import { useLocationDraft } from "./shared/LocationDraftContext"
 import { emptyLocation } from "./shared/emptyLocation"
 import { thethSampleLocation } from "./shared/thethSampleLocation"
-import { bangladeshSampleLocation } from "./shared/bangladeshSampleLocation"
 import { mergeWithDefaults } from "./shared/mergeWithDefaults"
 import {
   locationSectionOrder,
@@ -28,7 +27,7 @@ type LocationFormProps = {}
    for both Add (no :id param) and Edit (:id present).
 ===================================================== */
 
-export function LocationForm({}: LocationFormProps) {
+export function LocationForm({ }: LocationFormProps) {
   const { id, slug } = useParams()
   const [searchParams] = useSearchParams()
 
@@ -44,34 +43,23 @@ export function LocationForm({}: LocationFormProps) {
   const autoAddTriggered = useRef(false)
 
   /* ================================================
-       ADD MODE: start from the fetched template
+       ADD MODE: start from the fetched Theth template
        so all sections have real live data immediately.
        EDIT MODE: merge the fetched record over the default
        skeleton so a partial/incomplete API record never
        crashes the form.
     ================================================= */
 
-  // When entering Add mode, initialize draft with Bangladesh (or Theth if specified)
+  // When entering Add mode, initialize draft with the Theth API sample data
   useEffect(() => {
     if (!isEditMode) {
-      const template = searchParams.get("template")
-      if (template === "theth") {
-        resetDraft(structuredClone(thethSampleLocation))
-      } else {
-        resetDraft(structuredClone(bangladeshSampleLocation))
-      }
+      resetDraft(structuredClone(thethSampleLocation))
     }
-  }, [isEditMode, resetDraft, searchParams])
+  }, [isEditMode, resetDraft])
 
   // Optional: Auto-add if query param ?autoAdd=true is passed
   useEffect(() => {
-    if (
-      !isEditMode &&
-      searchParams.get("autoAdd") === "true" &&
-      draft &&
-      !isSaving &&
-      !autoAddTriggered.current
-    ) {
+    if (!isEditMode && searchParams.get("autoAdd") === "true" && draft && !isSaving && !autoAddTriggered.current) {
       autoAddTriggered.current = true
       save()
     }

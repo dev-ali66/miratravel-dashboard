@@ -75,9 +75,7 @@ export const thethSampleLocation: LocationData = {
       description:
         "Enter one of Albania's wildest mountain valleys, surrounded by limestone peaks, waterfalls, ancient trails and traditional stone houses.",
       breadcrumbStyle: null,
-      background_image:
-        "https://res.cloudinary.com/dscqp4wwt/image/upload/v1788215577/P/locationBackgroundImage/ar2if6xrmiqrdjdsuwui.png",
-      descriptionStyle: null,
+     descriptionStyle: null,
       backgroundMultimedia: {
         url: "https://res.cloudinary.com/dscqp4wwt/video/upload/v1788628954/P/locationHeroBackgroundVideo/h0pb6rlfyxtavfqy2wxe.webm",
         type: "video",
