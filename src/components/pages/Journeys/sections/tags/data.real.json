@@ -1,0 +1,18 @@
+{
+  "journeyType": [
+    "PRIVATE_JOURNEY",
+    "SELF_DRIVE_JOURNEY"
+  ],
+  "travelStyle": [
+    "CULTURE_HERITAGE",
+    "MOUNTAINS",
+    "SLOW_TRAVEL",
+    "LUXURY"
+  ],
+  "perfectFor": [
+    "COUPLES",
+    "NATURE_LOVERS",
+    "FIRST_TIME_VISITORS",
+    "FOOD_WINE"
+  ]
+}

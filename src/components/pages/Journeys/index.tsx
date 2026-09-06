@@ -5,13 +5,11 @@ import {
   Plus,
   Search,
   Trash2,
-  Edit,
   Clock,
   Loader2,
   ChevronLeft,
   ChevronRight,
   Sparkles,
-  AlertCircle,
 } from "lucide-react"
 import { toast } from "sonner"
 import { Button } from "@/components/ui/button"
@@ -25,7 +23,14 @@ import {
 } from "@/components/ui/dialog"
 import { useGetJourneys } from "@/hooks/journey/useGetJourneys"
 import { useDeleteJourney } from "@/hooks/journey/useDeleteJourney"
-import type { Journey, JourneyStatus } from "./journeyTypes"
+import { UniversalMultimediaPreview } from "@/components/pages/CMS/Home/shared/preview/UniversalMultimediaPreview"
+import {
+  JOURNEY_TYPES,
+  JOURNEY_STATUSES,
+  type Journey,
+  type JourneyStatus,
+  type JourneyType,
+} from "./journeyTypes"
 
 const PAGE_SIZE = 12
 
@@ -34,14 +39,16 @@ export default function JourneysPage() {
   const [searchInput, setSearchInput] = useState("")
   const [search, setSearch] = useState("")
   const [statusFilter, setStatusFilter] = useState<string>("")
+  const [typeFilter, setTypeFilter] = useState<string>("")
 
-  // Debounce search
+  // Debounce search before querying API
   useEffect(() => {
-    const timer = setTimeout(() => {
+    const timeout = setTimeout(() => {
       setSearch(searchInput)
       setPage(1)
     }, 350)
-    return () => clearTimeout(timer)
+
+    return () => clearTimeout(timeout)
   }, [searchInput])
 
   const { data, isLoading, isError, refetch } = useGetJourneys({
@@ -49,6 +56,7 @@ export default function JourneysPage() {
     limit: PAGE_SIZE,
     search: search || undefined,
     status: (statusFilter as JourneyStatus) || undefined,
+    journeyType: (typeFilter as JourneyType) || undefined,
   })
 
   const { mutate: deleteJourney, isPending: isDeleting } = useDeleteJourney()
@@ -63,337 +71,398 @@ export default function JourneysPage() {
 
   const confirmDelete = () => {
     if (!selectedJourney?.id) return
+
     deleteJourney(selectedJourney.id, {
       onSuccess: () => {
-        toast.success(`"${selectedJourney.title}" was deleted.`)
+        toast.success(`"${selectedJourney.title}" journey deleted.`)
         refetch()
         setDeleteModalOpen(false)
         setSelectedJourney(null)
       },
-      onError: (err: any) => {
-        toast.error(err?.message || "Failed to delete journey.")
+      onError: () => {
+        toast.error("Failed to delete journey. Please try again.")
       },
     })
   }
 
-  const journeys = data?.data || []
-  const meta = data?.meta || {
-    total: journeys.length,
-    page: 1,
-    limit: PAGE_SIZE,
-    totalPages: 1,
-  }
+  const journeys = data?.data ?? []
+  const meta = data?.meta
+
+  const hasFilters = Boolean(search || statusFilter || typeFilter)
 
   return (
-    <div className="space-y-6 p-6 md:p-8 max-w-7xl mx-auto">
-      {/* =================================================
-          PAGE HEADER
-      ================================================= */}
-      <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+    <div className="w-full animate-in pt-2 duration-700 fade-in slide-in-from-bottom-4">
+      {/* Header */}
+      <div className="mb-6 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
         <div>
-          <div className="flex items-center gap-2.5">
-            <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-primary/10 text-primary">
-              <Compass className="h-5 w-5 text-[#af6348]" />
-            </div>
-            <h1 className="text-2xl font-bold tracking-tight text-foreground">
-              Journeys & Itineraries
-            </h1>
-            <span className="rounded-full bg-muted px-2.5 py-0.5 text-xs font-semibold text-muted-foreground">
-              {meta.total}
-            </span>
-          </div>
-          <p className="mt-1 text-xs sm:text-sm text-muted-foreground">
+          <h1 className="text-3xl font-bold tracking-tight text-foreground">
+            Journeys & Itineraries
+          </h1>
+
+          <p className="mt-1 text-sm text-muted-foreground">
             Manage multi-day signature journeys, daily itineraries, stays, and pricing.
           </p>
         </div>
 
-        <Link to="/journeys/new">
-          <Button className="flex items-center gap-2 bg-primary text-primary-foreground shadow-sm hover:opacity-90">
-            <Plus className="h-4 w-4" />
-            <span>Add Journey</span>
-          </Button>
+        <Link
+          to="/journeys/new"
+          className="inline-flex shrink-0 items-center gap-2 rounded-lg bg-primary px-4 py-2.5 text-sm font-medium text-primary-foreground transition hover:opacity-90"
+        >
+          <Plus className="h-4 w-4" />
+          Add Journey
         </Link>
       </div>
 
-      {/* =================================================
-          FILTER BAR
-      ================================================= */}
-      <div className="flex flex-col gap-3 sm:flex-row sm:items-center">
-        {/* Search */}
+      {/* Search + Filters */}
+      <div className="mb-6 flex flex-col gap-3 md:flex-row md:items-center">
         <div className="relative flex-1">
-          <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+          <Search className="pointer-events-none absolute top-1/2 left-3 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+
           <input
-            type="text"
-            placeholder="Search journeys by title, slug, or destination..."
             value={searchInput}
             onChange={(e) => setSearchInput(e.target.value)}
-            className="w-full rounded-lg border border-border/70 bg-card pl-9 pr-4 py-2 text-xs text-foreground placeholder:text-muted-foreground/60 focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary"
+            placeholder="Search journeys by title, slug, or destination..."
+            className="w-full rounded-lg border border-border/60 bg-background py-2.5 pr-3 pl-9 text-sm outline-none focus:border-primary"
           />
         </div>
 
-        {/* Status Dropdown */}
-        <div className="w-full sm:w-48">
-          <select
-            value={statusFilter}
-            onChange={(e) => {
-              setStatusFilter(e.target.value)
-              setPage(1)
-            }}
-            className="w-full rounded-lg border border-border/70 bg-card px-3 py-2 text-xs text-foreground focus:border-primary focus:outline-none"
-          >
-            <option value="">All Statuses</option>
-            <option value="PUBLISHED">Published</option>
-            <option value="DRAFT">Draft</option>
-            <option value="ARCHIVED">Archived</option>
-          </select>
-        </div>
+        {/* Status Filter */}
+        <select
+          value={statusFilter}
+          onChange={(e) => {
+            setStatusFilter(e.target.value)
+            setPage(1)
+          }}
+          className="rounded-lg border border-border/60 bg-background px-3 py-2.5 text-sm outline-none focus:border-primary md:w-44"
+        >
+          <option value="">All Statuses</option>
+          {JOURNEY_STATUSES.map((s) => (
+            <option key={s.value} value={s.value}>
+              {s.label}
+            </option>
+          ))}
+        </select>
+
+        {/* Journey Type Filter */}
+        <select
+          value={typeFilter}
+          onChange={(e) => {
+            setTypeFilter(e.target.value)
+            setPage(1)
+          }}
+          className="rounded-lg border border-border/60 bg-background px-3 py-2.5 text-sm outline-none focus:border-primary md:w-52"
+        >
+          <option value="">All Journey Types</option>
+          {JOURNEY_TYPES.map((t) => (
+            <option key={t.value} value={t.value}>
+              {t.label}
+            </option>
+          ))}
+        </select>
       </div>
 
-      {/* =================================================
-          CONTENT / CARDS GRID
-      ================================================= */}
+      {/* Loading State */}
       {isLoading ? (
-        <div className="flex min-h-[300px] items-center justify-center">
-          <Loader2 className="h-8 w-8 animate-spin text-muted-foreground" />
+        <div className="flex justify-center py-10">
+          <div className="size-8 animate-spin rounded-full border-4 border-primary border-t-transparent" />
         </div>
       ) : isError ? (
+        /* Error State */
         <div className="rounded-xl border border-destructive/30 bg-destructive/5 p-6 text-center">
-          <AlertCircle className="mx-auto h-8 w-8 text-destructive" />
-          <p className="mt-2 text-sm font-semibold text-destructive">
+          <p className="text-sm font-medium text-destructive">
             Failed to load journeys.
           </p>
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={() => refetch()}
-            className="mt-3 text-xs"
-          >
-            Try Again
-          </Button>
-        </div>
-      ) : journeys.length === 0 ? (
-        <div className="rounded-2xl border border-dashed border-border/80 bg-card/50 p-12 text-center">
-          <Compass className="mx-auto h-12 w-12 text-muted-foreground/40" />
-          <h3 className="mt-3 text-base font-semibold text-foreground">
-            No journeys found
-          </h3>
           <p className="mt-1 text-xs text-muted-foreground">
-            {search || statusFilter
-              ? "Try adjusting your filters or search query."
-              : "Create your first signature journey to get started."}
+            Please try again.
           </p>
-          <Link to="/journeys/new" className="mt-4 inline-block">
-            <Button size="sm" className="gap-1.5 text-xs">
-              <Plus className="h-3.5 w-3.5" />
-              Create Journey
-            </Button>
-          </Link>
         </div>
-      ) : (
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-          {journeys.map((journey) => {
-            const heroMedia = journey.data?.hero?.media
-            const heroImg =
-              heroMedia?.src ||
-              (heroMedia as any)?.url ||
-              "https://images.unsplash.com/photo-1506744038136-46273834b3fb?auto=format&fit=crop&w=800&q=80"
+      ) : journeys.length > 0 ? (
+        <>
+          {/* Card Grid */}
+          <div className="grid grid-cols-1 gap-5 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+            {journeys.map((journey, index) => {
+              const heroMultimedia = journey.data?.hero?.backgroundMultimedia
+              const heroImg =
+                journey.journeyHeroImage?.[0] ||
+                heroMultimedia?.url ||
+                journey.data?.hero?.media?.src ||
+                "https://images.unsplash.com/photo-1506744038136-46273834b3fb?auto=format&fit=crop&w=800&q=80"
 
-            const duration =
-              journey.minDays === journey.maxDays
-                ? `${journey.minDays} Days`
-                : `${journey.minDays} - ${journey.maxDays} Days`
+              const duration =
+                journey.minDays === journey.maxDays
+                  ? `${journey.minDays} Days`
+                  : `${journey.minDays} - ${journey.maxDays} Days`
 
-            const isPublished = journey.status === "PUBLISHED"
-            const isDraft = journey.status === "DRAFT"
+              const durationShort =
+                journey.minDays === journey.maxDays
+                  ? `${journey.minDays}D`
+                  : `${journey.minDays}-${journey.maxDays}D`
 
-            return (
-              <div
-                key={journey.id}
-                className="group relative flex flex-col justify-between overflow-hidden rounded-2xl border border-border/70 bg-card shadow-xs transition-all duration-300 hover:border-primary/40 hover:shadow-md"
-              >
-                {/* Image & Badges */}
-                <div className="relative h-48 w-full overflow-hidden bg-muted">
-                  <img
-                    src={heroImg}
-                    alt={journey.title}
-                    className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
-                  />
-                  <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent" />
+              const isPublished = journey.status === "PUBLISHED"
+              const isDraft = journey.status === "DRAFT"
 
-                  {/* Status pill */}
-                  <div className="absolute top-3 left-3">
-                    <span
-                      className={`inline-flex items-center rounded-full px-2.5 py-0.5 text-[10px] font-semibold uppercase tracking-wider ${
-                        isPublished
-                          ? "bg-emerald-500/90 text-white"
-                          : isDraft
-                          ? "bg-amber-500/90 text-white"
-                          : "bg-zinc-600/90 text-white"
-                      }`}
-                    >
-                      {journey.status}
-                    </span>
-                  </div>
+              const tags = [
+                ...(journey.journeyType || []),
+                ...(journey.travelStyle || []),
+              ]
 
-                  {/* Featured */}
-                  {journey.featured && (
-                    <div className="absolute top-3 right-3">
-                      <span className="flex items-center gap-1 rounded-full bg-primary/90 px-2 py-0.5 text-[10px] font-medium text-white shadow-xs">
-                        <Sparkles className="h-3 w-3" /> Featured
+              const seo = journey.metadata?.seo
+
+              return (
+                <div
+                  key={`${journey.id ?? "journey"}-${journey.slug ?? index}`}
+                  className="group relative flex min-h-[390px] flex-col overflow-hidden rounded-2xl border border-border/60 bg-card shadow-sm transition-all duration-300 hover:-translate-y-1 hover:shadow-xl"
+                >
+                  {/* Floating Delete Button (revealed on card hover) */}
+                  <button
+                    type="button"
+                    onClick={() => openDeleteModal(journey)}
+                    className="absolute top-4 right-4 z-20 rounded-full bg-background/90 p-2 text-muted-foreground opacity-0 shadow-sm backdrop-blur transition-all group-hover:opacity-100 hover:bg-destructive/10 hover:text-destructive focus:opacity-100"
+                    title="Delete Journey"
+                  >
+                    <Trash2 className="h-4 w-4" />
+                  </button>
+
+                  {/* Image / Hero */}
+                  <div className="relative h-44 overflow-hidden bg-muted">
+                    <UniversalMultimediaPreview
+                      multimedia={heroMultimedia ?? undefined}
+                      fallbackImageSrc={heroImg}
+                      fallbackAlt={journey.title}
+                      mode="background"
+                      className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
+                      containerClassName="h-full w-full"
+                    />
+
+                    {/* Gradient Overlay */}
+                    <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent" />
+
+                    {/* Status Badge */}
+                    <div className="absolute top-4 left-4 z-10">
+                      <span
+                        className={`rounded-full px-3 py-1 text-[10px] font-bold tracking-wider uppercase shadow-sm backdrop-blur ${
+                          isPublished
+                            ? "bg-emerald-500/90 text-white"
+                            : isDraft
+                            ? "bg-amber-500/90 text-white"
+                            : "bg-background/90 text-foreground"
+                        }`}
+                      >
+                        {journey.status || "DRAFT"}
                       </span>
                     </div>
-                  )}
 
-                  {/* Bottom Image Overlay: Duration & Price */}
-                  <div className="absolute bottom-3 left-3 right-3 flex items-center justify-between text-xs text-white">
-                    <div className="flex items-center gap-1 font-medium">
-                      <Clock className="h-3.5 w-3.5 text-[#af6348]" />
-                      {duration}
-                    </div>
-                    <div className="font-bold">
-                      {journey.currency || "USD"} ${journey.price?.toLocaleString()}
+                    {/* Journey Title & Price Overlay */}
+                    <div className="absolute right-4 bottom-4 left-4 z-10">
+                      <h3 className="text-xl font-bold text-white line-clamp-1">
+                        {journey.title || "Untitled Journey"}
+                      </h3>
+
+                      <div className="mt-1 flex items-center justify-between text-xs text-white/90">
+                        <span className="flex items-center gap-1 font-medium">
+                          <Clock className="h-3.5 w-3.5 text-[#af6348]" />
+                          {duration}
+                        </span>
+
+                        <span className="font-bold">
+                          {journey.currency === "EUR"
+                            ? "€"
+                            : journey.currency === "GBP"
+                            ? "£"
+                            : "$"}
+                          {Number(journey.price || 0).toLocaleString()}
+                        </span>
+                      </div>
                     </div>
                   </div>
-                </div>
 
-                {/* Content */}
-                <div className="flex flex-1 flex-col justify-between p-5 space-y-4">
-                  <div>
-                    {journey.journeyType && journey.journeyType.length > 0 && (
-                      <div className="mb-1.5 flex flex-wrap gap-1">
-                        {journey.journeyType.slice(0, 2).map((t, idx) => (
+                  {/* Card Content Body */}
+                  <div className="flex flex-1 flex-col p-5">
+                    {/* Subtitle / Description */}
+                    <p className="line-clamp-2 text-[13px] leading-relaxed text-muted-foreground">
+                      {journey.subtitle ||
+                        (journey.data?.hero as any)?.subtitle ||
+                        `Explore authentic handcrafted routes across regional landscapes.`}
+                    </p>
+
+                    {/* Tags */}
+                    {tags.length > 0 && (
+                      <div className="mt-4 flex flex-wrap gap-1.5">
+                        {tags.slice(0, 3).map((tag: string) => (
                           <span
-                            key={idx}
-                            className="rounded bg-muted px-2 py-0.5 text-[10px] font-medium text-muted-foreground uppercase"
+                            key={tag}
+                            className="rounded-md bg-primary/8 px-2 py-1 text-[10px] font-medium text-primary"
                           >
-                            {t.replace(/_/g, " ")}
+                            {tag.replace(/_/g, " ")}
                           </span>
                         ))}
+
+                        {tags.length > 3 && (
+                          <span className="rounded-md bg-muted px-2 py-1 text-[10px] font-medium text-muted-foreground">
+                            +{tags.length - 3}
+                          </span>
+                        )}
                       </div>
                     )}
 
-                    <h3 className="font-serif text-base font-semibold text-foreground line-clamp-1 group-hover:text-primary transition-colors">
-                      {journey.title}
-                    </h3>
+                    {/* 3-Column Stats Grid Bar (Matching Location's architecture) */}
+                    <div className="mt-5 grid grid-cols-3 divide-x rounded-xl border border-border/50 bg-muted/30 py-3">
+                      {/* Pace */}
+                      <div className="flex flex-col items-center">
+                        <span className="text-sm font-bold text-foreground capitalize">
+                          {journey.pace?.toLowerCase() || "—"}
+                        </span>
 
-                    {journey.subtitle && (
-                      <p className="mt-1 text-xs text-muted-foreground line-clamp-2 leading-relaxed">
-                        {journey.subtitle}
-                      </p>
-                    )}
-                  </div>
+                        <span className="mt-0.5 text-[10px] tracking-wide text-muted-foreground uppercase">
+                          Pace
+                        </span>
+                      </div>
 
-                  {/* Attributes footer */}
-                  <div className="flex items-center justify-between border-t border-border/50 pt-3 text-[11px] text-muted-foreground">
-                    <span className="capitalize">
-                      Pace: {journey.pace?.toLowerCase() || "Moderate"}
-                    </span>
-                    <span className="capitalize">
-                      {journey.comfortLevel?.replace(/_/g, " ").toLowerCase() || "Luxury"}
-                    </span>
-                  </div>
+                      {/* Comfort */}
+                      <div className="flex flex-col items-center">
+                        <span className="text-sm font-bold text-foreground capitalize">
+                          {journey.comfortLevel?.replace(/_/g, " ").toLowerCase() || "—"}
+                        </span>
 
-                  {/* Action Buttons */}
-                  <div className="flex items-center gap-2 pt-1">
+                        <span className="mt-0.5 text-[10px] tracking-wide text-muted-foreground uppercase">
+                          Comfort
+                        </span>
+                      </div>
+
+                      {/* Duration */}
+                      <div className="flex flex-col items-center">
+                        <span className="text-sm font-bold text-foreground">
+                          {durationShort}
+                        </span>
+
+                        <span className="mt-0.5 text-[10px] tracking-wide text-muted-foreground uppercase">
+                          Duration
+                        </span>
+                      </div>
+                    </div>
+
+                    {/* SEO Status + Featured Indicator */}
+                    <div className="mt-4 flex items-center justify-between text-[11px] text-muted-foreground">
+                      <div className="flex items-center gap-1">
+                        <span
+                          className={`h-1.5 w-1.5 rounded-full ${
+                            seo?.title ? "bg-emerald-500" : "bg-orange-400"
+                          }`}
+                        />
+
+                        {seo?.title ? "SEO Ready" : "SEO Incomplete"}
+                      </div>
+
+                      {journey.featured ? (
+                        <span className="flex items-center gap-1 font-semibold text-primary">
+                          <Sparkles className="h-3 w-3" /> Featured
+                        </span>
+                      ) : (
+                        <span>
+                          {journey.perfectFor?.[0]?.replace(/_/g, " ") || "Curated"}
+                        </span>
+                      )}
+                    </div>
+
+                    {/* Edit Action Button */}
                     <Link
                       to={`/journeys/${journey.id}/${journey.slug}`}
-                      className="flex-1"
+                      className="mt-5 inline-flex items-center justify-between rounded-lg bg-primary/10 px-4 py-2.5 text-sm font-semibold text-primary transition-all hover:bg-primary hover:text-primary-foreground"
                     >
-                      <Button
-                        variant="outline"
-                        size="sm"
-                        className="w-full gap-1.5 text-xs font-medium"
-                      >
-                        <Edit className="h-3.5 w-3.5" />
-                        Edit Journey
-                      </Button>
-                    </Link>
+                      <span>Edit Journey</span>
 
-                    <Button
-                      variant="ghost"
-                      size="sm"
-                      onClick={() => openDeleteModal(journey)}
-                      className="h-8 w-8 p-0 text-muted-foreground hover:bg-destructive/10 hover:text-destructive"
-                      title="Delete Journey"
-                    >
-                      <Trash2 className="h-4 w-4" />
-                    </Button>
+                      <span className="transition-transform group-hover:translate-x-1">
+                        →
+                      </span>
+                    </Link>
                   </div>
                 </div>
-              </div>
-            )
-          })}
-        </div>
-      )}
-
-      {/* =================================================
-          PAGINATION
-      ================================================= */}
-      {meta.totalPages > 1 && (
-        <div className="flex items-center justify-between border-t border-border/60 pt-4">
-          <p className="text-xs text-muted-foreground">
-            Page {meta.page} of {meta.totalPages} ({meta.total} total)
-          </p>
-
-          <div className="flex items-center gap-2">
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={() => setPage((p) => Math.max(1, p - 1))}
-              disabled={page <= 1}
-              className="h-8 px-2 text-xs"
-            >
-              <ChevronLeft className="h-4 w-4 mr-1" /> Prev
-            </Button>
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={() => setPage((p) => Math.min(meta.totalPages, p + 1))}
-              disabled={page >= meta.totalPages}
-              className="h-8 px-2 text-xs"
-            >
-              Next <ChevronRight className="h-4 w-4 ml-1" />
-            </Button>
+              )
+            })}
           </div>
+
+          {/* Pagination (Matching Location's architecture) */}
+          {meta && meta.totalPages > 1 && (
+            <div className="mt-8 flex items-center justify-center gap-3">
+              <button
+                type="button"
+                onClick={() => setPage((p) => Math.max(1, p - 1))}
+                disabled={page <= 1}
+                className="flex items-center gap-1 rounded-lg border border-border/60 px-3 py-2 text-sm disabled:cursor-not-allowed disabled:opacity-40"
+              >
+                <ChevronLeft className="h-4 w-4" />
+                Prev
+              </button>
+
+              <span className="text-sm text-muted-foreground">
+                Page {meta.page} of {meta.totalPages}
+              </span>
+
+              <button
+                type="button"
+                onClick={() => setPage((p) => Math.min(meta.totalPages, p + 1))}
+                disabled={page >= meta.totalPages}
+                className="flex items-center gap-1 rounded-lg border border-border/60 px-3 py-2 text-sm disabled:cursor-not-allowed disabled:opacity-40"
+              >
+                Next
+                <ChevronRight className="h-4 w-4" />
+              </button>
+            </div>
+          )}
+        </>
+      ) : (
+        /* Empty State */
+        <div className="flex flex-col items-center justify-center rounded-xl border border-dashed border-border/60 bg-card/50 py-24 text-center">
+          <div className="mb-4 rounded-full bg-primary/10 p-4">
+            <Compass className="h-8 w-8 text-primary" />
+          </div>
+
+          <h3 className="mb-2 text-xl font-semibold">
+            {hasFilters
+              ? "No matching journeys found"
+              : "No Journeys Found"}
+          </h3>
+
+          <p className="max-w-sm text-muted-foreground">
+            {hasFilters
+              ? "Try a different search term or clear the filters."
+              : "There are no journeys created yet."}
+          </p>
         </div>
       )}
 
-      {/* =================================================
-          DELETE MODAL
-      ================================================= */}
+      {/* Delete Confirmation Dialog */}
       <Dialog open={deleteModalOpen} onOpenChange={setDeleteModalOpen}>
-        <DialogContent className="sm:max-w-md">
+        <DialogContent>
           <DialogHeader>
-            <DialogTitle className="text-base font-semibold text-destructive">
-              Delete Journey
-            </DialogTitle>
-            <DialogDescription className="text-xs text-muted-foreground">
-              Are you sure you want to permanently delete{" "}
-              <strong className="text-foreground">
+            <DialogTitle>Delete journey?</DialogTitle>
+
+            <DialogDescription>
+              This will permanently delete{" "}
+              <span className="font-medium text-foreground">
                 "{selectedJourney?.title}"
-              </strong>
-              ? This action cannot be undone and will remove all itinerary days, stays, and pricing data.
+              </span>
+              . This action cannot be undone.
             </DialogDescription>
           </DialogHeader>
-          <DialogFooter className="gap-2 sm:gap-0">
+
+          <DialogFooter>
             <Button
               variant="outline"
-              size="sm"
               onClick={() => setDeleteModalOpen(false)}
               disabled={isDeleting}
-              className="text-xs"
             >
               Cancel
             </Button>
+
             <Button
               variant="destructive"
-              size="sm"
               onClick={confirmDelete}
               disabled={isDeleting}
-              className="gap-1.5 text-xs"
+              className="gap-1.5"
             >
               {isDeleting && <Loader2 className="h-3.5 w-3.5 animate-spin" />}
-              Delete Permanently
+              Delete
             </Button>
           </DialogFooter>
         </DialogContent>

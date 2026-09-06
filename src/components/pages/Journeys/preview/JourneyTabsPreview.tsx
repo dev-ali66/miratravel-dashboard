@@ -1,74 +1,120 @@
 /* =====================================================
    JOURNEYS — INTERACTIVE TABS PREVIEW
-   Matches frontend/components/journey-overview/StickyNav.tsx + tab panels
+   100% Pixel-Perfect Match with:
+   frontend/components/journey-overview/journey-tabs.tsx
 ===================================================== */
 
 import { useState } from "react"
-import { cn } from "@/lib/utils"
-import type { Journey } from "../journeyTypes"
+import { motion, AnimatePresence } from "framer-motion"
+import { journeyTabsData } from "./journeyStaticData"
 import { OverviewContentPreview } from "./OverviewContentPreview"
 import { ItineraryContentPreview } from "./ItineraryContentPreview"
 import { AccommodationContentPreview } from "./AccommodationContentPreview"
 import { WhatsIncludedPreview } from "./WhatsIncludedPreview"
 import { AddonsPreview } from "./AddonsPreview"
+import type { Journey } from "../journeyTypes"
 
-type TabKey = "overview" | "itinerary" | "stay" | "inclusions" | "addons"
-
-const TABS: { key: TabKey; label: string }[] = [
-  { key: "overview", label: "Overview" },
-  { key: "itinerary", label: "Itinerary" },
-  { key: "stay", label: "Where You Stay" },
-  { key: "inclusions", label: "Inclusions" },
-  { key: "addons", label: "Add-ons" },
-]
+const SECTION_PX = "px-4 lg:px-0"
 
 export function JourneyTabsPreview({ draft }: { draft: Journey }) {
-  const [activeTab, setActiveTab] = useState<TabKey>("overview")
+  const [activeTab, setActiveTab] = useState<string>("overview")
 
   return (
-    <div className="w-full bg-[#FDFBF7]">
-      {/* Sticky Tab Bar */}
-      <div className="sticky top-0 z-30 border-b border-[#EDE7D8] bg-[#FDFBF7]/95 backdrop-blur shadow-xs">
-        <div className="mx-auto max-w-6xl px-8 flex items-center justify-between">
-          <nav className="flex space-x-8 overflow-x-auto py-4 scrollbar-none">
-            {TABS.map((tab) => {
-              const isActive = activeTab === tab.key
-              return (
-                <button
-                  key={tab.key}
-                  type="button"
-                  onClick={() => setActiveTab(tab.key)}
-                  className={cn(
-                    "relative text-xs md:text-sm font-medium tracking-wider uppercase transition-colors whitespace-nowrap pb-1",
-                    isActive
-                      ? "text-[#af6348] font-semibold"
-                      : "text-[#121816]/70 hover:text-[#121816]"
-                  )}
-                >
-                  {tab.label}
-                  {isActive && (
-                    <span className="absolute bottom-0 left-0 right-0 h-0.5 bg-[#af6348] rounded-full" />
-                  )}
-                </button>
-              )
-            })}
-          </nav>
-
-          <div className="hidden sm:flex items-center gap-2">
-            <span className="text-xs text-[#121816]/60">Live Preview</span>
-            <span className="h-2 w-2 rounded-full bg-green-500 animate-pulse" />
+    <div className="w-full flex flex-col">
+      {/* Tabs Navigation Bar */}
+      <div className="w-full sticky top-0 z-20 bg-[#F9F9F9]/95 backdrop-blur-md border-b border-[#D8CBB8]/80 shadow-[0_1px_3px_rgba(0,0,0,0.03)]">
+        <div className={`w-full container mx-auto ${SECTION_PX}`}>
+          <div className="max-w-[1216px]">
+            <nav className="flex items-center xl:gap-[70px] gap-4 xlg:gap-8 overflow-x-auto no-scrollbar">
+              {journeyTabsData.map((tab) => {
+                const isActive = activeTab === tab.id
+                return (
+                  <button
+                    key={tab.id}
+                    type="button"
+                    onClick={() => setActiveTab(tab.id)}
+                    className={`p-2.5 text-sm md:text-base xlg:text-[17px] xl:text-xl font-normal whitespace-nowrap xl:leading-8 xlg:leading-[30px] lgx:leading-7 md:leading-[26px] leading-6 xl:tracking-[2px] tracking-[1.5px] cursor-pointer transition-colors duration-200 relative ${
+                      isActive
+                        ? "text-accent font-semibold border-b-2 border-accent"
+                        : "text-nav-text hover:text-title"
+                    }`}
+                  >
+                    {tab.label}
+                  </button>
+                )
+              })}
+            </nav>
           </div>
         </div>
       </div>
 
-      {/* Tab Panel Content Container */}
-      <div className="mx-auto max-w-6xl px-8 min-h-[600px]">
-        {activeTab === "overview" && <OverviewContentPreview draft={draft} />}
-        {activeTab === "itinerary" && <ItineraryContentPreview draft={draft} />}
-        {activeTab === "stay" && <AccommodationContentPreview draft={draft} />}
-        {activeTab === "inclusions" && <WhatsIncludedPreview draft={draft} />}
-        {activeTab === "addons" && <AddonsPreview draft={draft} />}
-      </div>
+      {/* Dynamic Tab Panels */}
+      <AnimatePresence mode="wait">
+        {activeTab === "overview" && (
+          <motion.div
+            key="overview"
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -10 }}
+            transition={{ duration: 0.3 }}
+            className="w-full flex flex-col"
+          >
+            <OverviewContentPreview draft={draft} />
+          </motion.div>
+        )}
+
+        {activeTab === "itinerary" && (
+          <motion.div
+            key="itinerary"
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -10 }}
+            transition={{ duration: 0.3 }}
+            className="w-full flex flex-col"
+          >
+            <ItineraryContentPreview draft={draft} />
+          </motion.div>
+        )}
+
+        {activeTab === "accommodation" && (
+          <motion.div
+            key="accommodation"
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -10 }}
+            transition={{ duration: 0.3 }}
+            className="w-full flex flex-col"
+          >
+            <AccommodationContentPreview draft={draft} />
+          </motion.div>
+        )}
+
+        {activeTab === "included" && (
+          <motion.div
+            key="included"
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -10 }}
+            transition={{ duration: 0.3 }}
+            className="w-full flex flex-col"
+          >
+            <WhatsIncludedPreview draft={draft} />
+          </motion.div>
+        )}
+
+        {activeTab === "addons" && (
+          <motion.div
+            key="addons"
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -10 }}
+            transition={{ duration: 0.3 }}
+            className="w-full flex flex-col"
+          >
+            <AddonsPreview draft={draft} />
+          </motion.div>
+        )}
+      </AnimatePresence>
     </div>
   )
 }

@@ -54,6 +54,19 @@ export function normalizeJourneyPayload(draft: Journey): Record<string, any> {
 
     metadata: recursivelyReplaceUndefinedWithNull(draft.metadata || {}),
     data: recursivelyReplaceUndefinedWithNull(draft.data || {}),
+
+    // Top-level itinerary, addons, accommodations
+    itineraryData: recursivelyReplaceUndefinedWithNull(
+      (draft as any).itineraryData || draft.itineraryDays || draft.itinerary || []
+    ),
+    itineraryDays: recursivelyReplaceUndefinedWithNull(
+      draft.itineraryDays || (draft as any).itineraryData || draft.itinerary || []
+    ),
+    itinerary: recursivelyReplaceUndefinedWithNull(
+      draft.itinerary || draft.itineraryDays || (draft as any).itineraryData || []
+    ),
+    addons: recursivelyReplaceUndefinedWithNull(draft.addons || draft.addOns || []),
+    accommodations: recursivelyReplaceUndefinedWithNull(draft.accommodations || null),
   }
 
   if (draft.id) {

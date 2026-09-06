@@ -1,27 +1,28 @@
 /* =====================================================
    JOURNEYS — ITINERARY (DAY-BY-DAY) FORM SECTION
+   Directly reflects Prisma model JourneyItinerary
 ===================================================== */
 
 import { useState } from "react"
-import {
-  Plus,
-  Trash2,
-  ChevronDown,
-  ChevronUp,
-  MapPin,
-} from "lucide-react"
+import { Plus, Trash2, ChevronDown, ChevronUp, MapPin } from "lucide-react"
 import { cn } from "@/lib/utils"
 import {
   FormSection,
-  JourneyInputField,
-  JourneyTextareaField,
+  DynamicStyledField,
+  UniversalMultimediaForm,
 } from "../../shared/fields"
-import { ImageUploadField } from "@/components/shared/ImageUploadField"
+import { UniversalMultimediaPreview } from "@/components/pages/CMS/Home/shared/preview/UniversalMultimediaPreview"
 import {
   getJourneyItineraryDays,
+  getDayEyebrow,
+  getDayTitle,
+  getDayLocation,
+  getDayDescription,
+  getDayMedia,
   type Journey,
   type ItineraryDayItem,
 } from "../../journeyTypes"
+import { LocationSearchCombobox } from "./LocationSearchCombobox"
 
 export type ItineraryFormProps = {
   draft: Journey
@@ -37,86 +38,100 @@ export function ItineraryForm({
   toggleSection,
 }: ItineraryFormProps) {
   const itineraryDays = getJourneyItineraryDays(draft)
-
   const [expandedDay, setExpandedDay] = useState<number | null>(0)
 
   const syncItinerary = (next: ItineraryDayItem[]) => {
+    updateField("itineraryData", next)
     updateField("itineraryDays", next)
+    updateField("itinerary", next)
+    updateField("data.itineraryData", next)
     updateField("data.itinerary", next)
   }
 
   const handleAddDay = () => {
     const nextDayNum = itineraryDays.length + 1
+    const titleText = `Day ${nextDayNum}: Exploration & Discovery`
+
     const newDay: ItineraryDayItem = {
       dayNumber: nextDayNum,
-      title: `Day ${nextDayNum}: Exploration`,
-      subtitle: "",
-      description: "",
-      location: "",
-      meals: "Breakfast",
-      accommodation: "",
-      activities: [],
+      dayLabel: `Day ${nextDayNum}`,
+      // Grouped structure: eyebrow: {}, title: {}, location: {}, description: {}, itineraryMedia: {}
+      eyebrow: {
+        text: "",
+        style: null,
+      },
+      title: {
+        text: titleText,
+        style: null,
+      },
+      location: {
+        id: null,
+        name: "",
+      },
+      description: {
+        text: "",
+        style: null,
+      },
+      itineraryMedia: {
+        type: "image",
+        color: "#F8F6F0",
+        url: "",
+        alt: titleText,
+        image: {
+          url: "",
+          alt: titleText,
+          opacity: 100,
+          overlayColor: "#000000",
+          overlayOpacity: 0,
+        },
+        video: {
+          url: "",
+          alt: titleText,
+          poster: "",
+          autoplay: true,
+          loop: true,
+          muted: true,
+          opacity: 100,
+          overlayColor: "#000000",
+          overlayOpacity: 0,
+        },
+      },
+      thumbnail: "",
+      journeyItineraryImage: [],
       images: [],
+      data: {},
+      metadata: {},
     }
     const updated = [...itineraryDays, newDay]
     syncItinerary(updated)
     setExpandedDay(updated.length - 1)
   }
 
-  const handleUpdateDay = (index: number, field: keyof ItineraryDayItem, val: any) => {
+  const handleUpdateDayFields = (index: number, patch: Record<string, any>) => {
     const updated = [...itineraryDays]
-    updated[index] = { ...updated[index], [field]: val }
+    const current = updated[index] || {}
+    const day = { ...current, ...patch }
+
+    if ("journeyItineraryImage" in patch) {
+      day.images = patch.journeyItineraryImage
+    }
+
+    updated[index] = day
     syncItinerary(updated)
   }
+
 
   const handleRemoveDay = (index: number) => {
     const updated = itineraryDays
       .filter((_: ItineraryDayItem, i: number) => i !== index)
-      .map((d: ItineraryDayItem, i: number) => ({ ...d, dayNumber: i + 1 }))
+      .map((d: ItineraryDayItem, i: number) => ({
+        ...d,
+        dayNumber: i + 1,
+      }))
     syncItinerary(updated)
     if (expandedDay === index) {
       setExpandedDay(null)
     }
-  }
-
-  // Activities helper
-  const handleAddActivity = (dayIndex: number) => {
-    const day = itineraryDays[dayIndex]
-    const nextActivities = [...(day.activities || []), ""]
-    handleUpdateDay(dayIndex, "activities", nextActivities)
-  }
-
-  const handleUpdateActivity = (dayIndex: number, actIndex: number, val: string) => {
-    const day = itineraryDays[dayIndex]
-    const nextActivities = [...(day.activities || [])]
-    nextActivities[actIndex] = val
-    handleUpdateDay(dayIndex, "activities", nextActivities)
-  }
-
-  const handleRemoveActivity = (dayIndex: number, actIndex: number) => {
-    const day = itineraryDays[dayIndex]
-    const nextActivities = (day.activities || []).filter((_: string, i: number) => i !== actIndex)
-    handleUpdateDay(dayIndex, "activities", nextActivities)
-  }
-
-  // Images helper
-  const handleAddImage = (dayIndex: number) => {
-    const day = itineraryDays[dayIndex]
-    const nextImages = [...(day.images || []), ""]
-    handleUpdateDay(dayIndex, "images", nextImages)
-  }
-
-  const handleUpdateImage = (dayIndex: number, imgIndex: number, url: string) => {
-    const day = itineraryDays[dayIndex]
-    const nextImages = [...(day.images || [])]
-    nextImages[imgIndex] = url
-    handleUpdateDay(dayIndex, "images", nextImages)
-  }
-
-  const handleRemoveImage = (dayIndex: number, imgIndex: number) => {
-    const day = itineraryDays[dayIndex]
-    const nextImages = (day.images || []).filter((_: string, i: number) => i !== imgIndex)
-    handleUpdateDay(dayIndex, "images", nextImages)
   }
 
   return (
@@ -129,59 +144,78 @@ export function ItineraryForm({
       <div className="space-y-4">
         <div className="flex items-center justify-between">
           <p className="text-xs text-muted-foreground">
-            Structure your day-by-day story with meals, stays, and visuals.
+            Configure each day of the journey with titles, descriptions, and media.
           </p>
           <button
             type="button"
             onClick={handleAddDay}
-            className="flex items-center gap-1.5 rounded-lg bg-primary px-3 py-1.5 text-xs font-medium text-primary-foreground transition hover:opacity-90"
+            className="flex items-center gap-1.5 rounded-lg bg-secondary px-3 py-1.5 text-xs font-medium text-secondary-foreground transition hover:bg-secondary/80"
           >
             <Plus className="h-3.5 w-3.5" /> Add Day
           </button>
         </div>
 
+        {/* Days Accordion */}
         <div className="space-y-3">
           {itineraryDays.map((day: ItineraryDayItem, idx: number) => {
             const isExpanded = expandedDay === idx
+            const dayEyebrow = getDayEyebrow(day)
+            const dayTitle = getDayTitle(day, idx + 1)
+            const dayLoc = getDayLocation(day)
+            const dayDesc = getDayDescription(day)
+            const dayMedia = getDayMedia(day)
 
             return (
               <div
                 key={idx}
                 className={cn(
-                  "rounded-xl border transition-all bg-background",
-                  isExpanded ? "border-primary/50 shadow-sm" : "border-border/70"
+                  "rounded-xl border border-border/70 bg-background transition-all",
+                  isExpanded ? "shadow-sm ring-1 ring-primary/20" : ""
                 )}
               >
-                {/* Accordion header */}
+                {/* Header */}
                 <div
+                  className="flex items-center justify-between p-3.5 cursor-pointer hover:bg-muted/30"
                   onClick={() => setExpandedDay(isExpanded ? null : idx)}
-                  className="flex items-center justify-between p-3 cursor-pointer select-none hover:bg-muted/30"
                 >
-                  <div className="flex items-center gap-2.5 min-w-0">
-                    <span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-md bg-primary/10 text-xs font-bold text-primary">
+                  <div className="flex items-center gap-3 min-w-0">
+                    <span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-primary/10 text-xs font-bold text-primary">
                       {day.dayNumber || idx + 1}
                     </span>
-                    <div className="truncate">
-                      <span className="text-xs font-semibold text-foreground truncate block">
-                        {day.title || `Day ${idx + 1}`}
+
+                    {/* Day Media Thumbnail */}
+                    <div className="relative h-10 w-10 shrink-0 overflow-hidden rounded-md border border-border bg-muted/30">
+                      <UniversalMultimediaPreview
+                        multimedia={dayMedia}
+                        fallbackImageSrc={dayMedia.url || day.thumbnail}
+                        fallbackAlt={dayTitle.text}
+                        mode="background"
+                        className="h-full w-full object-cover object-center"
+                        containerClassName="absolute inset-0"
+                      />
+                    </div>
+
+                    <div className="flex flex-col min-w-0">
+                      <span className="text-xs font-semibold text-foreground truncate">
+                        {dayTitle.text}
                       </span>
-                      {day.location && (
-                        <span className="text-[11px] text-muted-foreground flex items-center gap-1">
-                          <MapPin className="h-3 w-3" /> {day.location}
+                      {dayLoc.name && (
+                        <span className="flex items-center gap-1 text-[10px] text-muted-foreground truncate">
+                          <MapPin className="h-2.5 w-2.5 text-primary shrink-0" />
+                          {dayLoc.name}
                         </span>
                       )}
                     </div>
                   </div>
 
-                  <div className="flex items-center gap-1">
+                  <div className="flex items-center gap-2">
                     <button
                       type="button"
                       onClick={(e) => {
                         e.stopPropagation()
                         handleRemoveDay(idx)
                       }}
-                      className="p-1 text-muted-foreground hover:text-destructive transition"
-                      title="Delete day"
+                      className="rounded p-1 text-muted-foreground hover:text-destructive hover:bg-destructive/10"
                     >
                       <Trash2 className="h-3.5 w-3.5" />
                     </button>
@@ -193,139 +227,234 @@ export function ItineraryForm({
                   </div>
                 </div>
 
-                {/* Day expanded content */}
+                {/* Day Details */}
                 {isExpanded && (
-                  <div className="p-3.5 pt-1 border-t border-border/50 space-y-3">
-                    <div className="grid grid-cols-4 gap-2">
-                      <div className="col-span-1">
-                        <JourneyInputField
-                          label="Day #"
-                          type="number"
-                          value={day.dayNumber || idx + 1}
-                          onChange={(val) => handleUpdateDay(idx, "dayNumber", val)}
-                          min={1}
-                        />
-                      </div>
-                      <div className="col-span-3">
-                        <JourneyInputField
-                          label="Title"
-                          value={day.title}
-                          onChange={(val) => handleUpdateDay(idx, "title", val)}
-                          placeholder="e.g. Arrive in Tirana & Historic BunkArt Traverse"
-                        />
-                      </div>
-                    </div>
-
-                    <div className="grid grid-cols-2 gap-2">
-                      <JourneyInputField
-                        label="Location / Region"
-                        value={day.location ?? ""}
-                        onChange={(val) => handleUpdateDay(idx, "location", val)}
-                        placeholder="e.g. Tirana"
-                      />
-                      <JourneyInputField
-                        label="Subtitle / Route"
-                        value={day.subtitle ?? ""}
-                        onChange={(val) => handleUpdateDay(idx, "subtitle", val)}
-                        placeholder="e.g. Tirana to Lake Shkodra"
-                      />
-                    </div>
-
-                    <div className="grid grid-cols-2 gap-2">
-                      <JourneyInputField
-                        label="Meals Included"
-                        value={day.meals ?? ""}
-                        onChange={(val) => handleUpdateDay(idx, "meals", val)}
-                        placeholder="e.g. Breakfast, Lunch, Dinner"
-                      />
-                      <JourneyInputField
-                        label="Overnight Accommodation"
-                        value={day.accommodation ?? ""}
-                        onChange={(val) => handleUpdateDay(idx, "accommodation", val)}
-                        placeholder="e.g. The Plaza Tirana"
-                      />
-                    </div>
-
-                    <JourneyTextareaField
-                      label="Day Story & Description"
-                      value={day.description ?? ""}
-                      onChange={(val) => handleUpdateDay(idx, "description", val)}
-                      rows={4}
-                      placeholder="Detailed itinerary narrative for this day..."
+                  <div className="border-t border-border/50 p-4 space-y-4">
+                    {/* Eyebrow with DynamicStyledField */}
+                    <DynamicStyledField
+                      type="text"
+                      label="Eyebrow"
+                      value={dayEyebrow.text}
+                      onChange={(val: string) => {
+                        handleUpdateDayFields(idx, {
+                          eyebrow: { text: val, style: dayEyebrow.style },
+                          eyebrowStyle: dayEyebrow.style,
+                        })
+                      }}
+                      placeholder="e.g. The Northern Frontier"
+                      enableStyle
+                      style={dayEyebrow.style}
+                      onStyleChange={(style) => {
+                        handleUpdateDayFields(idx, {
+                          eyebrow: { text: dayEyebrow.text, style },
+                          eyebrowStyle: style,
+                          data: { ...((day.data as any) || {}), eyebrowStyle: style },
+                        })
+                      }}
                     />
 
-                    {/* Activities */}
-                    <div className="space-y-2 pt-1 border-t border-border/40">
-                      <div className="flex items-center justify-between">
-                        <label className="text-xs font-semibold text-foreground">
-                          Key Activities / Highlights
-                        </label>
-                        <button
-                          type="button"
-                          onClick={() => handleAddActivity(idx)}
-                          className="flex items-center gap-1 text-[11px] text-primary hover:underline"
-                        >
-                          <Plus className="h-3 w-3" /> Add Activity
-                        </button>
-                      </div>
+                    {/* Day Title with DynamicStyledField */}
+                    <DynamicStyledField
+                      type="text"
+                      label="Day Title"
+                      value={dayTitle.text}
+                      onChange={(val: string) => {
+                        handleUpdateDayFields(idx, {
+                          title: { text: val, style: dayTitle.style },
+                          titleStyle: dayTitle.style,
+                        })
+                      }}
+                      placeholder="e.g. Day 1: Tirana to Shkodra & The Southern Gates"
+                      enableStyle
+                      style={dayTitle.style}
+                      onStyleChange={(style) => {
+                        handleUpdateDayFields(idx, {
+                          title: { text: dayTitle.text, style },
+                          titleStyle: style,
+                          data: { ...((day.data as any) || {}), titleStyle: style },
+                        })
+                      }}
+                    />
 
-                      {(day.activities || []).map((act: string, actIdx: number) => (
-                        <div key={actIdx} className="flex items-center gap-2">
-                          <input
-                            type="text"
-                            value={act}
-                            onChange={(e) =>
-                              handleUpdateActivity(idx, actIdx, e.target.value)
-                            }
-                            placeholder="e.g. Private architecture walk through Blloku"
-                            className="flex-1 rounded-md border border-border/70 bg-background px-2.5 py-1 text-xs"
-                          />
-                          <button
-                            type="button"
-                            onClick={() => handleRemoveActivity(idx, actIdx)}
-                            className="text-muted-foreground hover:text-destructive"
-                          >
-                            <Trash2 className="h-3.5 w-3.5" />
-                          </button>
-                        </div>
-                      ))}
-                    </div>
+                    {/* Location Search Box (Allows same location across days) */}
+                    <LocationSearchCombobox
+                      valueLocationId={dayLoc.id}
+                      valueLocationName={dayLoc.name}
+                      onSelect={(loc) => {
+                        if (loc) {
+                          handleUpdateDayFields(idx, {
+                            location: { id: loc.id, name: loc.name },
+                            locationId: loc.id,
+                            locationName: loc.name,
+                          })
+                        } else {
+                          handleUpdateDayFields(idx, {
+                            location: { id: null, name: "" },
+                            locationId: null,
+                            locationName: "",
+                          })
+                        }
+                      }}
+                    />
 
-                    {/* Images */}
-                    <div className="space-y-2 pt-1 border-t border-border/40">
-                      <div className="flex items-center justify-between">
-                        <label className="text-xs font-semibold text-foreground">
-                          Day Photos ({(day.images || []).length})
-                        </label>
-                        <button
-                          type="button"
-                          onClick={() => handleAddImage(idx)}
-                          className="flex items-center gap-1 text-[11px] text-primary hover:underline"
-                        >
-                          <Plus className="h-3 w-3" /> Add Image
-                        </button>
-                      </div>
+                    {/* Day Description with DynamicStyledField */}
+                    <DynamicStyledField
+                      type="textarea"
+                      label="Day Description"
+                      value={dayDesc.text}
+                      onChange={(val: string) => {
+                        handleUpdateDayFields(idx, {
+                          description: { text: val, style: dayDesc.style },
+                          descriptionStyle: dayDesc.style,
+                        })
+                      }}
+                      placeholder="Detailed narrative of this day's highlights, sights, and encounters..."
+                      enableStyle
+                      style={dayDesc.style}
+                      onStyleChange={(style) => {
+                        handleUpdateDayFields(idx, {
+                          description: { text: dayDesc.text, style },
+                          descriptionStyle: style,
+                          data: { ...((day.data as any) || {}), descriptionStyle: style },
+                        })
+                      }}
+                    />
 
-                      {(day.images || []).map((imgUrl: string, imgIdx: number) => (
-                        <div key={imgIdx} className="space-y-1">
-                          <div className="flex items-center justify-between">
-                            <span className="text-[10px] text-muted-foreground">Photo {imgIdx + 1}</span>
-                            <button
-                              type="button"
-                              onClick={() => handleRemoveImage(idx, imgIdx)}
-                              className="text-muted-foreground hover:text-destructive"
-                            >
-                              <Trash2 className="h-3 w-3" />
-                            </button>
-                          </div>
-                          <ImageUploadField
-                            label=""
-                            value={imgUrl}
-                            onChange={(url) => handleUpdateImage(idx, imgIdx, url || "")}
-                            fieldName={`itinerary_day_${idx + 1}_img_${imgIdx + 1}`}
-                          />
-                        </div>
-                      ))}
+                    {/* Day Universal Multimedia (Image / Video / Background Color) */}
+                    <div className="rounded-lg border border-border/60 p-3 space-y-2.5 bg-card/40">
+                      <UniversalMultimediaForm
+                        sectionTitle={`Day ${day.dayNumber || idx + 1} Media`}
+                        section={{
+                          ...day,
+                          itineraryMedia: dayMedia,
+                          multimedia: dayMedia,
+                        } as any}
+                        content={{
+                          ...day,
+                          itineraryMedia: dayMedia,
+                          multimedia: dayMedia,
+                        }}
+                        contentMediaKey="itineraryMedia"
+                        backgroundType={dayMedia.type || "image"}
+                        onBackgroundTypeChange={(type) => {
+                          const nextMedia = {
+                            ...dayMedia,
+                            type,
+                          }
+                          handleUpdateDayFields(idx, {
+                            itineraryMedia: nextMedia,
+                            multimedia: nextMedia,
+                          })
+                        }}
+                        onColorChange={(color) => {
+                          const nextMedia = {
+                            ...dayMedia,
+                            type: "color" as const,
+                            color,
+                          }
+                          handleUpdateDayFields(idx, {
+                            itineraryMedia: nextMedia,
+                            multimedia: nextMedia,
+                          })
+                        }}
+                        image={dayMedia.image}
+                        onImageChange={(nextImg) => {
+                          const nextImageObj = {
+                            ...(dayMedia.image || {}),
+                            ...nextImg,
+                            url: nextImg.url || "",
+                            alt: nextImg.alt || dayTitle.text,
+                          }
+                          const nextMedia = {
+                            ...dayMedia,
+                            type: "image" as const,
+                            url: nextImg.url || "",
+                            alt: nextImg.alt || dayTitle.text,
+                            image: nextImageObj,
+                            imageData: nextImageObj,
+                          }
+                          handleUpdateDayFields(idx, {
+                            itineraryMedia: nextMedia,
+                            multimedia: nextMedia,
+                            thumbnail: nextImg.url || "",
+                            journeyItineraryImage: nextImg.url ? [nextImg.url] : [],
+                            images: nextImg.url ? [nextImg.url] : [],
+                          })
+                        }}
+                        video={dayMedia.video}
+                        onVideoChange={(nextVid) => {
+                          const nextVideoObj = {
+                            ...(dayMedia.video || {}),
+                            ...nextVid,
+                            url: nextVid.url || "",
+                            alt: nextVid.alt || dayTitle.text,
+                            poster: (nextVid as any)?.posterUrl || (nextVid as any)?.poster || "",
+                          }
+                          const nextMedia = {
+                            ...dayMedia,
+                            type: "video" as const,
+                            url: nextVid.url || "",
+                            alt: nextVid.alt || dayTitle.text,
+                            video: nextVideoObj,
+                            videoData: nextVideoObj,
+                          }
+                          handleUpdateDayFields(idx, {
+                            itineraryMedia: nextMedia,
+                            multimedia: nextMedia,
+                            thumbnail: nextVideoObj.poster || nextVid.url || "",
+                            journeyItineraryImage: nextVid.url ? [nextVid.url] : [],
+                            images: nextVid.url ? [nextVid.url] : [],
+                          })
+                        }}
+                        updateSection={(patch: any) => {
+                          const nextMedia = patch?.itineraryMedia || patch?.multimedia || patch
+                          const dayPatch: Record<string, any> = {
+                            itineraryMedia: nextMedia,
+                            multimedia: nextMedia,
+                          }
+                          if (nextMedia?.type === "image" && nextMedia?.url) {
+                            dayPatch.thumbnail = nextMedia.url
+                            dayPatch.journeyItineraryImage = [nextMedia.url]
+                            dayPatch.images = [nextMedia.url]
+                          } else if (nextMedia?.type === "video" && (nextMedia?.posterUrl || nextMedia?.url)) {
+                            dayPatch.thumbnail = nextMedia.posterUrl || nextMedia.url
+                            dayPatch.journeyItineraryImage = [nextMedia.url]
+                            dayPatch.images = [nextMedia.url]
+                          }
+                          handleUpdateDayFields(idx, dayPatch)
+                        }}
+                        updateSectionContent={(patch: any) => {
+                          const nextMedia = patch?.itineraryMedia || patch?.multimedia || patch
+                          const dayPatch: Record<string, any> = {
+                            itineraryMedia: nextMedia,
+                            multimedia: nextMedia,
+                          }
+                          if (nextMedia?.type === "image" && nextMedia?.url) {
+                            dayPatch.thumbnail = nextMedia.url
+                            dayPatch.journeyItineraryImage = [nextMedia.url]
+                            dayPatch.images = [nextMedia.url]
+                          } else if (nextMedia?.type === "video" && (nextMedia?.posterUrl || nextMedia?.url)) {
+                            dayPatch.thumbnail = nextMedia.posterUrl || nextMedia.url
+                            dayPatch.journeyItineraryImage = [nextMedia.url]
+                            dayPatch.images = [nextMedia.url]
+                          }
+                          handleUpdateDayFields(idx, dayPatch)
+                        }}
+                        showColorPicker={true}
+                        colorLabel="Day Background / Card Color"
+                        defaultColor="#F8F6F0"
+                        allowImage={true}
+                        allowVideo={true}
+                        imageTitle="Day Photo / Image"
+                        imageLabel="Day Image"
+                        imageFieldName={`itinerary_day_${idx}_multimedia_img`}
+                        videoTitle="Day Video"
+                        videoLabel="Day Video (mp4, webm)"
+                        videoHint="Upload or link an mp4/webm video clip for this itinerary day."
+                        videoFieldName={`itinerary_day_${idx}_multimedia_vid`}
+                        showImageAltField={true}
+                        showVideoAltField={true}
+                      />
                     </div>
                   </div>
                 )}

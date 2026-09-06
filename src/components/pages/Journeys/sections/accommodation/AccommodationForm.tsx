@@ -1,5 +1,6 @@
 /* =====================================================
    JOURNEYS — ACCOMMODATION (WHERE YOU STAY) FORM SECTION
+   Reflects Prisma field: accommodations Json?
 ===================================================== */
 
 import { useState } from "react"
@@ -11,14 +12,14 @@ import {
   Building2,
   MapPin,
   Moon,
+  Image as ImageIcon,
 } from "lucide-react"
 import { cn } from "@/lib/utils"
 import {
   FormSection,
-  JourneyInputField,
-  JourneyTextareaField,
+  DynamicStyledField,
+  UniversalMultimediaForm,
 } from "../../shared/fields"
-import { ImageUploadField } from "@/components/shared/ImageUploadField"
 import {
   getJourneyAccommodationPhilosophy,
   getJourneyAccommodationStays,
@@ -43,6 +44,14 @@ export function AccommodationForm({
   const stays = getJourneyAccommodationStays(draft)
   const [expandedStay, setExpandedStay] = useState<number | null>(0)
 
+  const syncStays = (updatedStays: AccommodationStayItem[]) => {
+    updateField("data.accommodation.stays", updatedStays)
+    updateField("accommodations", {
+      philosophy,
+      stays: updatedStays,
+    })
+  }
+
   const handleAddStay = () => {
     const newStay: AccommodationStayItem = {
       hotelName: "Boutique Hotel / Alpine Lodge",
@@ -55,19 +64,19 @@ export function AccommodationForm({
       rating: 5,
     }
     const updated = [...stays, newStay]
-    updateField("data.accommodation.stays", updated)
+    syncStays(updated)
     setExpandedStay(updated.length - 1)
   }
 
   const handleUpdateStay = (index: number, field: keyof AccommodationStayItem, val: any) => {
     const updated = [...stays]
     updated[index] = { ...updated[index], [field]: val }
-    updateField("data.accommodation.stays", updated)
+    syncStays(updated)
   }
 
   const handleRemoveStay = (index: number) => {
     const updated = stays.filter((_, i) => i !== index)
-    updateField("data.accommodation.stays", updated)
+    syncStays(updated)
     if (expandedStay === index) {
       setExpandedStay(null)
     }
@@ -121,13 +130,24 @@ export function AccommodationForm({
       badge={`${stays.length} Properties`}
     >
       <div className="space-y-4">
-        <JourneyTextareaField
+        {/* Philosophy with DynamicStyledField */}
+        <DynamicStyledField
+          type="textarea"
           label="Accommodation Philosophy"
           value={philosophy}
-          onChange={(val) => updateField("data.accommodation.philosophy", val)}
+          onChange={(val: string) => {
+            updateField("data.accommodation.philosophy", val)
+            updateField("accommodations", {
+              philosophy: val,
+              stays,
+            })
+          }}
           placeholder="We prioritize authentic boutique hotels, heritage guesthouses, and scenic lodges that reflect local architecture..."
-          rows={3}
-          description="Introductory explanation of how properties are selected for this journey."
+          enableStyle
+          style={(draft.data?.accommodation as any)?.philosophyStyle}
+          onStyleChange={(style) =>
+            updateField("data.accommodation.philosophyStyle", style)
+          }
         />
 
         <div className="space-y-3 pt-2 border-t border-border/60">
@@ -147,51 +167,48 @@ export function AccommodationForm({
           <div className="space-y-3">
             {stays.map((stay, idx) => {
               const isExpanded = expandedStay === idx
+              const images = stay.images || (stay.image ? [stay.image] : [])
 
               return (
                 <div
                   key={idx}
                   className={cn(
-                    "rounded-xl border bg-background transition-all",
-                    isExpanded ? "border-primary/50 shadow-sm" : "border-border/70"
+                    "rounded-xl border border-border/70 bg-background transition-all",
+                    isExpanded ? "shadow-sm ring-1 ring-primary/20" : ""
                   )}
                 >
-                  {/* Header */}
+                  {/* Stay Header */}
                   <div
+                    className="flex items-center justify-between p-3.5 cursor-pointer hover:bg-muted/30"
                     onClick={() => setExpandedStay(isExpanded ? null : idx)}
-                    className="flex items-center justify-between p-3 cursor-pointer select-none hover:bg-muted/30"
                   >
-                    <div className="flex items-center gap-2.5 min-w-0">
-                      <div className="flex h-7 w-7 items-center justify-center rounded-lg bg-primary/10 text-primary">
+                    <div className="flex items-center gap-3">
+                      <span className="flex h-6 w-6 items-center justify-center rounded-full bg-secondary text-xs font-bold text-secondary-foreground">
                         <Building2 className="h-3.5 w-3.5" />
-                      </div>
-                      <div className="truncate">
-                        <span className="text-xs font-semibold text-foreground truncate block">
+                      </span>
+                      <div>
+                        <span className="text-xs font-semibold text-foreground">
                           {stay.hotelName || `Property #${idx + 1}`}
                         </span>
-                        <div className="flex items-center gap-2 text-[11px] text-muted-foreground">
-                          {stay.location && (
-                            <span className="flex items-center gap-0.5">
-                              <MapPin className="h-2.5 w-2.5" /> {stay.location}
-                            </span>
-                          )}
-                          {stay.nights && (
-                            <span className="flex items-center gap-0.5">
-                              <Moon className="h-2.5 w-2.5" /> {stay.nights} Nights
-                            </span>
-                          )}
-                        </div>
+                        {stay.location && (
+                          <span className="ml-2 text-[11px] text-muted-foreground flex-inline items-center gap-1">
+                            <MapPin className="inline h-3 w-3" /> {stay.location}
+                          </span>
+                        )}
                       </div>
                     </div>
 
-                    <div className="flex items-center gap-1">
+                    <div className="flex items-center gap-2">
+                      <span className="text-[11px] text-muted-foreground flex items-center gap-1">
+                        <Moon className="h-3 w-3" /> {stay.nights}N
+                      </span>
                       <button
                         type="button"
                         onClick={(e) => {
                           e.stopPropagation()
                           handleRemoveStay(idx)
                         }}
-                        className="p-1 text-muted-foreground hover:text-destructive"
+                        className="rounded p-1 text-muted-foreground hover:text-destructive hover:bg-destructive/10"
                       >
                         <Trash2 className="h-3.5 w-3.5" />
                       </button>
@@ -203,123 +220,191 @@ export function AccommodationForm({
                     </div>
                   </div>
 
-                  {/* Body */}
+                  {/* Stay Details */}
                   {isExpanded && (
-                    <div className="p-3.5 pt-1 border-t border-border/50 space-y-3">
-                      <div className="grid grid-cols-2 gap-2">
-                        <JourneyInputField
-                          label="Property Name"
+                    <div className="border-t border-border/50 p-4 space-y-3.5">
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                        <DynamicStyledField
+                          type="text"
+                          label="Hotel / Lodge Name"
                           value={stay.hotelName}
-                          onChange={(val) => handleUpdateStay(idx, "hotelName", val)}
-                          placeholder="e.g. Villa Gjepali"
+                          onChange={(val: string) =>
+                            handleUpdateStay(idx, "hotelName", val)
+                          }
+                          placeholder="e.g. Hotel Tradita / Bujtina Polia"
+                          enableStyle
+                          style={(stay as any).hotelNameStyle}
+                          onStyleChange={(style) =>
+                            handleUpdateStay(idx, "hotelNameStyle" as any, style)
+                          }
                         />
-                        <JourneyInputField
-                          label="Location"
+
+                        <DynamicStyledField
+                          type="text"
+                          label="Location / Region"
                           value={stay.location}
-                          onChange={(val) => handleUpdateStay(idx, "location", val)}
-                          placeholder="e.g. Shijak, Durrës"
+                          onChange={(val: string) => handleUpdateStay(idx, "location", val)}
+                          placeholder="e.g. Shkodra, Albania"
                         />
                       </div>
 
-                      <div className="grid grid-cols-3 gap-2">
-                        <JourneyInputField
-                          label="Nights"
+                      <div className="grid grid-cols-2 gap-3">
+                        <DynamicStyledField
                           type="number"
+                          label="Number of Nights"
                           value={stay.nights}
-                          onChange={(val) => handleUpdateStay(idx, "nights", val)}
+                          onChange={(val: string) =>
+                            handleUpdateStay(idx, "nights", val === "" ? 1 : Number(val))
+                          }
                           min={1}
                         />
-                        <div className="col-span-2">
-                          <JourneyInputField
-                            label="Room Type / Category"
-                            value={stay.roomType ?? ""}
-                            onChange={(val) => handleUpdateStay(idx, "roomType", val)}
-                            placeholder="e.g. Heritage Suite"
-                          />
-                        </div>
+
+                        <DynamicStyledField
+                          type="text"
+                          label="Room / Suite Category"
+                          value={stay.roomType ?? ""}
+                          onChange={(val: string) =>
+                            handleUpdateStay(idx, "roomType", val)
+                          }
+                          placeholder="e.g. Deluxe Alpine Suite with Balcony"
+                          enableStyle
+                          style={(stay as any).roomTypeStyle}
+                          onStyleChange={(style) =>
+                            handleUpdateStay(idx, "roomTypeStyle" as any, style)
+                          }
+                        />
                       </div>
 
-                      <JourneyTextareaField
-                        label="Property Description"
+                      <DynamicStyledField
+                        type="textarea"
+                        label="Property Experience & Atmosphere"
                         value={stay.description ?? ""}
-                        onChange={(val) => handleUpdateStay(idx, "description", val)}
-                        rows={3}
-                        placeholder="Atmosphere, setting, architectural heritage..."
+                        onChange={(val: string) =>
+                          handleUpdateStay(idx, "description", val)
+                        }
+                        placeholder="A historic traditional stone compound featuring authentic wood-carved interiors and an open hearth fireplace..."
+                        enableStyle
+                        style={(stay as any).descriptionStyle}
+                        onStyleChange={(style) =>
+                          handleUpdateStay(idx, "descriptionStyle" as any, style)
+                        }
                       />
 
-                      {/* Amenities */}
-                      <div className="space-y-2 pt-1 border-t border-border/40">
+                      {/* Key Amenities */}
+                      <div className="rounded-lg border border-border/60 p-3 space-y-2">
                         <div className="flex items-center justify-between">
-                          <label className="text-xs font-semibold text-foreground">
-                            Amenities & Features
+                          <label className="text-xs font-medium text-foreground">
+                            Key Amenities
                           </label>
                           <button
                             type="button"
                             onClick={() => handleAddAmenity(idx)}
-                            className="flex items-center gap-1 text-[11px] text-primary hover:underline"
+                            className="flex items-center gap-1 rounded bg-secondary px-2 py-0.5 text-[10px] font-medium text-secondary-foreground"
                           >
-                            <Plus className="h-3 w-3" /> Add Amenity
+                            <Plus className="h-2.5 w-2.5" /> Add
                           </button>
                         </div>
-
-                        {(stay.amenities || []).map((am, amIdx) => (
-                          <div key={amIdx} className="flex items-center gap-2">
-                            <input
-                              type="text"
-                              value={am}
-                              onChange={(e) =>
-                                handleUpdateAmenity(idx, amIdx, e.target.value)
-                              }
-                              placeholder="e.g. Organic vineyard dining"
-                              className="flex-1 rounded-md border border-border/70 bg-background px-2.5 py-1 text-xs"
-                            />
-                            <button
-                              type="button"
-                              onClick={() => handleRemoveAmenity(idx, amIdx)}
-                              className="text-muted-foreground hover:text-destructive"
+                        <div className="flex flex-wrap gap-1.5">
+                          {(stay.amenities || []).map((amenity, aIdx) => (
+                            <div
+                              key={aIdx}
+                              className="flex items-center gap-1 rounded-md border border-border/70 bg-background px-2 py-1"
                             >
-                              <Trash2 className="h-3.5 w-3.5" />
-                            </button>
-                          </div>
-                        ))}
-                      </div>
-
-                      {/* Images */}
-                      <div className="space-y-2 pt-1 border-t border-border/40">
-                        <div className="flex items-center justify-between">
-                          <label className="text-xs font-semibold text-foreground">
-                            Property Photos ({(stay.images || []).length})
-                          </label>
-                          <button
-                            type="button"
-                            onClick={() => handleAddImage(idx)}
-                            className="flex items-center gap-1 text-[11px] text-primary hover:underline"
-                          >
-                            <Plus className="h-3 w-3" /> Add Photo
-                          </button>
-                        </div>
-
-                        {(stay.images || []).map((imgUrl, imgIdx) => (
-                          <div key={imgIdx} className="space-y-1">
-                            <div className="flex items-center justify-between">
-                              <span className="text-[10px] text-muted-foreground">Photo {imgIdx + 1}</span>
+                              <input
+                                type="text"
+                                value={amenity}
+                                onChange={(e) =>
+                                  handleUpdateAmenity(idx, aIdx, e.target.value)
+                                }
+                                placeholder="Amenity"
+                                className="w-32 bg-transparent text-xs text-foreground focus:outline-none"
+                              />
                               <button
                                 type="button"
-                                onClick={() => handleRemoveImage(idx, imgIdx)}
+                                onClick={() => handleRemoveAmenity(idx, aIdx)}
                                 className="text-muted-foreground hover:text-destructive"
                               >
                                 <Trash2 className="h-3 w-3" />
                               </button>
                             </div>
-                            <ImageUploadField
-                              label=""
-                              value={imgUrl}
-                              onChange={(url) => handleUpdateImage(idx, imgIdx, url || "")}
-                              fieldName={`stay_${idx + 1}_img_${imgIdx + 1}`}
+                          ))}
+                        </div>
+                      </div>
 
-                            />
-                          </div>
-                        ))}
+                      {/* Property Images */}
+                      <div className="rounded-lg border border-border/60 p-3 space-y-2">
+                        <div className="flex items-center justify-between">
+                          <label className="text-xs font-medium text-foreground flex items-center gap-1.5">
+                            <ImageIcon className="h-3.5 w-3.5 text-primary" />
+                            Property Photos ({images.length})
+                          </label>
+                          <button
+                            type="button"
+                            onClick={() => handleAddImage(idx)}
+                            className="flex items-center gap-1 rounded bg-secondary px-2 py-0.5 text-[10px] font-medium text-secondary-foreground"
+                          >
+                            <Plus className="h-2.5 w-2.5" /> Add Photo
+                          </button>
+                        </div>
+                        <div className="space-y-3">
+                          {images.map((imgUrl, imgIdx) => {
+                            const imgItem = {
+                              id: imgIdx,
+                              imageMultimedia: {
+                                type: "image" as const,
+                                url: imgUrl,
+                                alt: `${stay.hotelName || "Stay"} photo ${imgIdx + 1}`,
+                              },
+                            }
+
+                            return (
+                              <div
+                                key={imgIdx}
+                                className="rounded-lg border border-border/50 p-3 bg-muted/10 space-y-2"
+                              >
+                                <div className="flex items-center justify-between pb-1 border-b border-border/30">
+                                  <span className="text-[11px] font-semibold text-muted-foreground">
+                                    Photo #{imgIdx + 1}
+                                  </span>
+                                  <button
+                                    type="button"
+                                    onClick={() => handleRemoveImage(idx, imgIdx)}
+                                    className="rounded p-1 text-muted-foreground hover:text-destructive hover:bg-destructive/10"
+                                  >
+                                    <Trash2 className="h-3.5 w-3.5" />
+                                  </button>
+                                </div>
+
+                                <UniversalMultimediaForm
+                                  section={imgItem as any}
+                                  content={imgItem}
+                                  updateSection={(patch) => {
+                                    const nextUrl =
+                                      (patch as any)?.imageMultimedia?.url ??
+                                      (patch as any)?.url ??
+                                      imgUrl
+                                    handleUpdateImage(idx, imgIdx, nextUrl)
+                                  }}
+                                  updateSectionContent={(patch) => {
+                                    const nextUrl =
+                                      (patch as any)?.imageMultimedia?.url ??
+                                      (patch as any)?.url ??
+                                      imgUrl
+                                    handleUpdateImage(idx, imgIdx, nextUrl)
+                                  }}
+                                  contentMediaKey="imageMultimedia"
+                                  backgroundType="image"
+                                  sectionTitle={`Stay ${idx + 1} Photo #${imgIdx + 1}`}
+                                  showColorPicker={false}
+                                  imageTitle="Photo"
+                                  imageLabel="Photo"
+                                  imageFieldName={`stay_${idx}_img_${imgIdx}`}
+                                  showImageAltField
+                                />
+                              </div>
+                            )
+                          })}
+                        </div>
                       </div>
                     </div>
                   )}
@@ -327,6 +412,41 @@ export function AccommodationForm({
               )
             })}
           </div>
+        </div>
+
+        {/* Section Background Multimedia */}
+        <div className="pt-2 border-t border-border/60">
+          <UniversalMultimediaForm
+            section={((draft.data?.accommodation as any) || {}) as any}
+            content={((draft.data?.accommodation as any) || {}) as Record<string, any>}
+            updateSection={(patch) =>
+              updateField("data.accommodation", {
+                ...((draft.data?.accommodation as any) || {}),
+                ...patch,
+              })
+            }
+            updateSectionContent={(patch) =>
+              updateField("data.accommodation", {
+                ...((draft.data?.accommodation as any) || {}),
+                ...patch,
+              })
+            }
+            contentMediaKey="backgroundMultimedia"
+            backgroundType={(draft.data?.accommodation as any)?.backgroundMultimedia?.type ?? "color"}
+            backgroundTypeStyleKey="journeyAccommodationBackgroundTypeStyle"
+            sectionTitle="Accommodation Section Background"
+            showColorPicker
+            colorLabel="Accommodation background color"
+            defaultColor="#FFFFFF"
+            imageTitle="Background Image"
+            imageLabel="Background image"
+            imageFieldName="journeyAccommodationBackgroundImage"
+            videoTitle="Background Video"
+            videoLabel="Background video"
+            videoFieldName="journeyAccommodationBackgroundVideo"
+            showImageAltField
+            showVideoSwitches
+          />
         </div>
       </div>
     </FormSection>

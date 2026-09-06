@@ -1,6 +1,8 @@
 import { useEffect, useState, useRef } from "react"
-import { Loader2, Save, RotateCcw, Compass } from "lucide-react"
+import { Loader2, Save, RotateCcw, Compass, Lock } from "lucide-react"
 import { useParams, useSearchParams } from "react-router-dom"
+import { toast } from "sonner"
+import { cn } from "@/lib/utils"
 
 import { useJourneyPage } from "@/hooks/journey/useJourneyPage"
 import { useJourneyDraft } from "./shared/JourneyDraftContext"
@@ -14,10 +16,20 @@ export function JourneyForm() {
   const { id, slug } = useParams<{ id?: string; slug?: string }>()
   const [searchParams] = useSearchParams()
 
-  const { draft, resetDraft } = useJourneyDraft()
+  const { draft, resetDraft, isSlugConflict, slugConflictMessage } = useJourneyDraft()
 
   const { updateField, save, isEditMode, isLoading, isError, isSaving } =
     useJourneyPage(id, slug)
+
+  const handleSave = () => {
+    if (isSlugConflict) {
+      toast.error(
+        slugConflictMessage || "Already a journey exists with this slug! Creation locked."
+      )
+      return
+    }
+    save()
+  }
 
   const [openSections, setOpenSections] = useState<Record<string, boolean>>({
     "basic-info": true,
@@ -122,16 +134,24 @@ export function JourneyForm() {
 
             <button
               type="button"
-              onClick={save}
-              disabled={isSaving}
-              className="flex shrink-0 items-center gap-2 rounded-lg bg-primary px-4 py-2 text-xs font-medium text-primary-foreground transition hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-50"
+              onClick={handleSave}
+              disabled={isSaving || isSlugConflict}
+              className={cn(
+                "flex shrink-0 items-center gap-2 rounded-lg px-4 py-2 text-xs font-medium transition shadow-sm",
+                isSlugConflict
+                  ? "bg-destructive/15 text-destructive border border-destructive/30 cursor-not-allowed"
+                  : "bg-primary text-primary-foreground hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-50"
+              )}
+              title={isSlugConflict ? (slugConflictMessage || "Creation Locked: Slug already exists!") : undefined}
             >
               {isSaving ? (
                 <Loader2 className="h-4 w-4 animate-spin" />
+              ) : isSlugConflict ? (
+                <Lock className="h-4 w-4 text-destructive" />
               ) : (
                 <Save className="h-4 w-4" />
               )}
-              {isEditMode ? "Update" : "Save Journey"}
+              {isSlugConflict ? "Creation Locked" : isEditMode ? "Update" : "Save Journey"}
             </button>
           </div>
         </div>
@@ -158,19 +178,33 @@ export function JourneyForm() {
         })}
 
         {/* BOTTOM SAVE BUTTON */}
-        <div className="flex justify-end pt-3 pb-8">
+        <div className="flex flex-col items-end gap-2 pt-3 pb-8">
+          {isSlugConflict && (
+            <div className="flex items-center gap-1.5 text-xs text-destructive font-medium bg-destructive/10 border border-destructive/20 px-3 py-1.5 rounded-lg">
+              <Lock className="h-3.5 w-3.5 shrink-0" />
+              <span>A journey with this slug already exists (Creation Locked)</span>
+            </div>
+          )}
           <button
             type="button"
-            onClick={save}
-            disabled={isSaving}
-            className="flex items-center gap-2 rounded-lg bg-primary px-6 py-2.5 text-sm font-medium text-primary-foreground hover:opacity-90 disabled:opacity-50 shadow-sm"
+            onClick={handleSave}
+            disabled={isSaving || isSlugConflict}
+            className={cn(
+              "flex items-center gap-2 rounded-lg px-6 py-2.5 text-sm font-medium shadow-sm transition",
+              isSlugConflict
+                ? "bg-destructive/15 text-destructive border border-destructive/30 cursor-not-allowed"
+                : "bg-primary text-primary-foreground hover:opacity-90 disabled:opacity-50"
+            )}
+            title={isSlugConflict ? "Creation locked due to duplicate slug" : undefined}
           >
             {isSaving ? (
               <Loader2 className="h-4 w-4 animate-spin" />
+            ) : isSlugConflict ? (
+              <Lock className="h-4 w-4" />
             ) : (
               <Save className="h-4 w-4" />
             )}
-            {isEditMode ? "Update Journey" : "Create Journey"}
+            {isSlugConflict ? "Creation Locked" : isEditMode ? "Update Journey" : "Create Journey"}
           </button>
         </div>
       </div>

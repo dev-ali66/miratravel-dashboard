@@ -1,0 +1,281 @@
+{
+  "id": "",
+  "slug": "",
+  "title": "",
+  "subtitle": "",
+  "price": 0,
+  "currency": "EUR",
+  "minDays": 0,
+  "maxDays": 0,
+  "journeyHeroImage": [],
+  "journeyGallery": [],
+  "highlights": [],
+  "included": [],
+  "notIncluded": [],
+  "journeyType": [],
+  "travelStyle": [],
+  "perfectFor": [],
+  "pace": "BALANCED",
+  "comfortLevel": "BOUTIQUE",
+  "status": "DRAFT",
+  "featured": false,
+  "createdAt": "",
+  "updatedAt": "",
+  "metadata": {
+    "seo": {
+      "metaTitle": "",
+      "metaDescription": "",
+      "metaKeywords": [],
+      "ogTitle": "",
+      "ogDescription": "",
+      "ogImage": "",
+      "canonicalUrl": "",
+      "structuredData": {
+        "@context": "",
+        "@type": "",
+        "name": "",
+        "touristType": [],
+        "offers": {
+          "@type": "",
+          "price": "",
+          "priceCurrency": ""
+        }
+      }
+    },
+    "version": 0,
+    "author": ""
+  },
+  "data": {
+    "hero": {
+      "title": "",
+      "subtitle": "",
+      "price": "",
+      "priceSuffix": "",
+      "occupancyText": "",
+      "taxesLabel": "",
+      "taxesValue": "",
+      "ctaText": "",
+      "ctaHref": "",
+      "contactPromptText": "",
+      "contactLinkText": "",
+      "contactHref": "",
+      "benefits": [],
+      "backgroundMultimedia": {
+        "type": "image",
+        "url": "",
+        "posterUrl": "",
+        "alt": "",
+        "opacity": 100,
+        "overlay": true,
+        "autoplay": false,
+        "loop": false,
+        "muted": false
+      }
+    },
+    "overview": {
+      "backgroundMultimedia": {
+        "type": "color",
+        "url": "",
+        "posterUrl": "",
+        "alt": "",
+        "opacity": 0,
+        "overlay": false,
+        "autoplay": false,
+        "loop": false,
+        "muted": false
+      },
+      "whyTitle": "",
+      "whyParagraphs": [],
+      "whySignature": "",
+      "overviewTitle": "",
+      "titlegraphs": [],
+      "highlightsTitle": "",
+      "highlights": [],
+      "galleryTitle": "",
+      "featuredImage": {
+        "src": "",
+        "alt": ""
+      },
+      "secondaryImages": [
+        {
+          "src": "",
+          "alt": ""
+        }
+      ],
+      "convinceTitle": "",
+      "convinceItems": []
+    },
+    "itinerarySection": {
+      "backgroundMultimedia": {
+        "type": "color",
+        "url": "",
+        "posterUrl": "",
+        "alt": "",
+        "opacity": 0,
+        "overlay": false,
+        "autoplay": false,
+        "loop": false,
+        "muted": false
+      },
+      "routeTitle": "",
+      "routeDescription": "",
+      "mapImage": {
+        "src": "",
+        "alt": ""
+      },
+      "stops": [
+        {
+          "name": "",
+          "days": "",
+          "coordinates": {
+            "lat": 0,
+            "lng": 0
+          }
+        }
+      ],
+      "dayByDayTitle": "",
+      "dayByDaySubtitle": "",
+      "days": [
+        {
+          "dayNumber": 0,
+          "dayLabel": "",
+          "title": "",
+          "location": "",
+          "detailedHeading": "",
+          "description": "",
+          "thumbnail": "",
+          "images": []
+        }
+      ]
+    },
+    "accommodation": {
+      "backgroundMultimedia": {
+        "type": "color",
+        "url": "",
+        "posterUrl": "",
+        "alt": "",
+        "opacity": 0,
+        "overlay": false,
+        "autoplay": false,
+        "loop": false,
+        "muted": false
+      },
+      "badge": "",
+      "title": "",
+      "description": "",
+      "principles": [
+        {
+          "icon": "",
+          "title": "",
+          "description": ""
+        }
+      ],
+      "destinationsBadge": "",
+      "destinationsTitle": "",
+      "destinationsDescription": "",
+      "stays": [
+        {
+          "step": "",
+          "duration": "",
+          "city": "",
+          "stayType": "",
+          "description": "",
+          "image": "",
+          "confirmedBy": ""
+        }
+      ],
+      "standardsBadge": "",
+      "standardsTitle": "",
+      "standardsDescription": "",
+      "expectations": [],
+      "visualReference": {
+        "badge": "",
+        "title": "",
+        "description": "",
+        "featuredImage": {
+          "src": "",
+          "alt": ""
+        },
+        "galleryImages": [
+          {
+            "src": "",
+            "alt": ""
+          }
+        ]
+      }
+    },
+    "whatsIncluded": {
+      "backgroundMultimedia": {
+        "type": "color",
+        "url": "",
+        "posterUrl": "",
+        "alt": "",
+        "opacity": 0,
+        "overlay": false,
+        "autoplay": false,
+        "loop": false,
+        "muted": false
+      },
+      "includedTitle": "",
+      "includedItems": [],
+      "notIncludedTitle": "",
+      "notIncludedItems": [],
+      "importantInfoTitle": "",
+      "importantInfoItems": []
+    },
+    "addonsSection": {
+      "backgroundMultimedia": {
+        "type": "color",
+        "url": "",
+        "posterUrl": "",
+        "alt": "",
+        "opacity": 0,
+        "overlay": false,
+        "autoplay": false,
+        "loop": false,
+        "muted": false
+      },
+      "title": "",
+      "items": [
+        {
+          "id": "",
+          "itemNumber": 0,
+          "title": "",
+          "price": "",
+          "dayLabel": "",
+          "detailedHeading": "",
+          "description": "",
+          "thumbnail": "",
+          "image": ""
+        }
+      ]
+    },
+    "similarJourneysSection": {
+      "backgroundMultimedia": {
+        "type": "color",
+        "url": "",
+        "posterUrl": "",
+        "alt": "",
+        "opacity": 0,
+        "overlay": false,
+        "autoplay": false,
+        "loop": false,
+        "muted": false
+      },
+      "title": "",
+      "subtitle": "",
+      "journeys": [
+        {
+          "id": "",
+          "title": "",
+          "description": "",
+          "image": "",
+          "days": "",
+          "label": "",
+          "priceFrom": "",
+          "tags": []
+        }
+      ]
+    }
+  }
+}

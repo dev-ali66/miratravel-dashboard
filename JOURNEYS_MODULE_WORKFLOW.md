@@ -5,6 +5,15 @@
 
 ---
 
+## ⚡ CORE ARCHITECTURAL SINGLE SOURCE OF TRUTH (IMMUTABLE RULES)
+1. **DynamicStyledField**: SINGLE SOURCE OF TRUTH for all text, number, and textarea fields. NEVER create or use ad-hoc input components like `JourneyInputField`.
+2. **UniversalMultimediaForm**: SINGLE SOURCE OF TRUTH for all multimedia forms. **EVERY form section MUST include a Background configuration using `UniversalMultimediaForm`**, and all image/video files in any section must use `UniversalMultimediaForm`.
+3. **UniversalMultimediaPreview ("Universal Multimedia Show")**: SINGLE SOURCE OF TRUTH for rendering all media and section backgrounds across live previews, cards, and list thumbnails.
+4. **SeoForm (Universal from `CMS/shared/SeoForm`)**: SINGLE SOURCE OF TRUTH for SEO metadata, placed at the bottom of forms.
+5. **ButtonsField (CMS `/home` hero form style)**: SINGLE SOURCE OF TRUTH for buttons and CTA links.
+
+---
+
 ## 1. Progress Checklist
 
 - [ ] **Phase 1: Architecture & API Hooks**

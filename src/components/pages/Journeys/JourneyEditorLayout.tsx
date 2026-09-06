@@ -2,7 +2,6 @@ import { Outlet, useNavigate, useParams } from "react-router-dom"
 import { ArrowLeft, Compass } from "lucide-react"
 import { cn } from "@/lib/utils"
 
-import { ScaledWorkspace } from "@/components/shared/AutoScale"
 import { JourneyPreview } from "./preview/JourneyPreview"
 import { JourneyDraftProvider } from "./shared/JourneyDraftContext"
 
@@ -72,16 +71,14 @@ export function JourneyEditorLayout() {
           </aside>
 
           {/* Right: Live Preview */}
-          <section className="relative hidden min-w-0 flex-1 items-start justify-center overflow-auto bg-muted/30 p-1 md:flex md:w-[75%] md:basis-[75%]">
+          <section className="relative hidden min-w-0 flex-1 items-start justify-center overflow-hidden bg-muted/30 p-1 md:flex md:w-[75%] md:basis-[75%]">
             <div
               className={cn(
-                "min-h-full w-full overflow-hidden bg-background shadow-md",
-                "rounded-lg border border-border/60"
+                "h-full w-full overflow-y-auto overflow-x-hidden bg-background shadow-md",
+                "rounded-lg border border-border/60 custom-scrollbar"
               )}
             >
-              <ScaledWorkspace>
-                <JourneyPreview />
-              </ScaledWorkspace>
+              <JourneyPreview />
             </div>
           </section>
         </JourneyDraftProvider>

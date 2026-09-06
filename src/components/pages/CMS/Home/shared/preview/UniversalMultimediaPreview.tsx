@@ -92,6 +92,10 @@ export function UniversalMultimediaPreview({
           className={cn("h-full w-full", className)}
           style={{
             backgroundColor: resolvedMultimedia?.color ?? fallbackColor,
+            opacity:
+              resolvedMultimedia?.opacity !== undefined
+                ? resolvedMultimedia.opacity / 100
+                : undefined,
           }}
         />
       )}

@@ -5,15 +5,16 @@
 import React from "react"
 import { ChevronDown } from "lucide-react"
 import { cn } from "@/lib/utils"
-import { ImageUploadField } from "@/components/shared/ImageUploadField"
 import {
   DynamicStyledField,
   ColorField,
   type FieldStyle,
   type ValidationRules,
 } from "../../CMS/shared/FormControls"
+import { UniversalMultimediaForm } from "../../CMS/shared/UniversalMultimediaForm"
+import { ButtonsField } from "../../CMS/shared/ButtonsField"
 
-export { DynamicStyledField, ColorField }
+export { DynamicStyledField, ColorField, UniversalMultimediaForm, ButtonsField }
 export type { FieldStyle, ValidationRules }
 
 export function FormSection({
@@ -65,60 +66,6 @@ export function FormSection({
         <div className="rounded-b-xl border-t border-border/60 p-4 space-y-4">
           {children}
         </div>
-      )}
-    </div>
-  )
-}
-
-export function JourneyInputField({
-  label,
-  value,
-  onChange,
-  type = "text",
-  placeholder,
-  required,
-  min,
-  max,
-  step,
-  description,
-}: {
-  label: string
-  value: string | number
-  onChange: (val: any) => void
-  type?: "text" | "number" | "url"
-  placeholder?: string
-  required?: boolean
-  min?: number
-  max?: number
-  step?: number
-  description?: string
-}) {
-  return (
-    <div className="space-y-1.5">
-      <div className="flex items-center justify-between">
-        <label className="text-xs font-medium text-foreground">
-          {label} {required && <span className="text-destructive">*</span>}
-        </label>
-      </div>
-      <input
-        type={type}
-        value={value ?? ""}
-        onChange={(e) => {
-          if (type === "number") {
-            const parsed = e.target.value === "" ? 0 : Number(e.target.value)
-            onChange(parsed)
-          } else {
-            onChange(e.target.value)
-          }
-        }}
-        min={min}
-        max={max}
-        step={step}
-        placeholder={placeholder}
-        className="w-full rounded-lg border border-border/70 bg-background px-3 py-2 text-xs text-foreground placeholder:text-muted-foreground/60 focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary"
-      />
-      {description && (
-        <p className="text-[11px] text-muted-foreground">{description}</p>
       )}
     </div>
   )
@@ -246,29 +193,3 @@ export function JourneyMultiBadgeSelect<T extends string>({
   )
 }
 
-export function JourneyImageField({
-  label,
-  value,
-  onChange,
-  description,
-}: {
-  label: string
-  value: string | null | undefined
-  onChange: (val: string) => void
-  description?: string
-}) {
-  return (
-    <div className="space-y-1.5">
-      <ImageUploadField
-        label={label}
-        value={value ?? ""}
-        onChange={(url) => onChange(url || "")}
-        fieldName={label.toLowerCase().replace(/\s+/g, "_")}
-
-      />
-      {description && (
-        <p className="text-[11px] text-muted-foreground">{description}</p>
-      )}
-    </div>
-  )
-}

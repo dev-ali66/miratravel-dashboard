@@ -1,107 +1,120 @@
 /* =====================================================
    JOURNEYS — INCLUSIONS TAB PREVIEW
-   Matches frontend/components/journey-overview/WhatsIncludedContent.tsx
+   100% Pixel-Perfect Match with:
+   frontend/components/journey-overview/whatsincluded-content.tsx
+   Uses UniversalMultimediaPreview Single Source of Truth
 ===================================================== */
 
-import { CheckCircle2, XCircle, Info } from "lucide-react"
+import { UniversalMultimediaPreview } from "@/components/pages/CMS/Home/shared/preview/UniversalMultimediaPreview"
+import { whatsIncludedData } from "./journeyStaticData"
 import type { Journey } from "../journeyTypes"
 
-export function WhatsIncludedPreview({ draft }: { draft: Journey }) {
-  const included = draft.included || []
-  const notIncluded = draft.notIncluded || []
-  const importantInfo = draft.data?.whatsIncluded?.importantInfo || []
+const SECTION_PX = "px-4 lg:px-0"
+
+export function WhatsIncludedPreview({ draft }: { draft?: Journey }) {
+  const sectionData = (draft?.data?.whatsIncluded as any) || {}
+  const sectionBg =
+    sectionData?.backgroundMultimedia ||
+    (draft?.data?.highlightsSection as any)?.backgroundMultimedia
+
+  const includedTitle = sectionData?.includedTitle || whatsIncludedData.includedTitle
+  const notIncludedTitle = sectionData?.notIncludedTitle || whatsIncludedData.notIncludedTitle
+  const importantInfoTitle = sectionData?.importantInfoTitle || whatsIncludedData.importantInfoTitle
+
+  const includedItems: string[] =
+    draft?.included && draft.included.length > 0
+      ? draft.included
+      : sectionData?.includedItems && sectionData.includedItems.length > 0
+      ? sectionData.includedItems
+      : whatsIncludedData.includedItems
+
+  const notIncludedItems: string[] =
+    draft?.notIncluded && draft.notIncluded.length > 0
+      ? draft.notIncluded
+      : sectionData?.notIncludedItems && sectionData.notIncludedItems.length > 0
+      ? sectionData.notIncludedItems
+      : whatsIncludedData.notIncludedItems
+
+  const importantInfoItems: string[] =
+    sectionData?.importantInfo && sectionData.importantInfo.length > 0
+      ? sectionData.importantInfo
+      : sectionData?.importantInfoItems && sectionData.importantInfoItems.length > 0
+      ? sectionData.importantInfoItems
+      : whatsIncludedData.importantInfoItems
 
   return (
-    <div className="py-12 space-y-12 text-[#235347]">
-      {/* Header */}
-      <div className="border-b border-[#EDE7D8] pb-6">
-        <h2 className="font-serif text-2xl md:text-3xl font-normal text-[#121816]">
-          What's Included & Clear Transparency
-        </h2>
-        <p className="mt-2 text-sm text-[#121816]/70">
-          Everything you need for an effortless, privately guided journey.
-        </p>
-      </div>
-
-      {/* Grid of Included / Not Included */}
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-        {/* Included Card */}
-        <div className="rounded-2xl border border-[#235347]/20 bg-white p-6 md:p-8 shadow-xs">
-          <div className="flex items-center gap-2.5 mb-6 text-[#235347]">
-            <CheckCircle2 className="h-6 w-6 text-[#235347]" />
-            <h3 className="font-serif text-xl font-normal text-[#121816]">
-              What Is Included
-            </h3>
-          </div>
-
-          <div className="space-y-3.5">
-            {included.length > 0 ? (
-              included.map((item, idx) => (
-                <div key={idx} className="flex items-start gap-3">
-                  <span className="flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-[#235347]/10 text-[#235347] mt-0.5">
-                    <CheckCircle2 className="h-3.5 w-3.5" />
-                  </span>
-                  <span className="text-xs md:text-sm text-[#121816]/85 leading-relaxed">
-                    {item}
-                  </span>
-                </div>
-              ))
-            ) : (
-              <p className="text-xs text-muted-foreground">No items listed yet.</p>
-            )}
-          </div>
-        </div>
-
-        {/* Not Included Card */}
-        <div className="rounded-2xl border border-[#EDE7D8] bg-[#EDE7D8]/20 p-6 md:p-8">
-          <div className="flex items-center gap-2.5 mb-6 text-[#af6348]">
-            <XCircle className="h-6 w-6 text-[#af6348]" />
-            <h3 className="font-serif text-xl font-normal text-[#121816]">
-              What Is Not Included
-            </h3>
-          </div>
-
-          <div className="space-y-3.5">
-            {notIncluded.length > 0 ? (
-              notIncluded.map((item, idx) => (
-                <div key={idx} className="flex items-start gap-3">
-                  <span className="flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-[#af6348]/10 text-[#af6348] mt-0.5">
-                    <XCircle className="h-3.5 w-3.5" />
-                  </span>
-                  <span className="text-xs md:text-sm text-[#121816]/75 leading-relaxed">
-                    {item}
-                  </span>
-                </div>
-              ))
-            ) : (
-              <p className="text-xs text-muted-foreground">No items listed yet.</p>
-            )}
-          </div>
-        </div>
-      </div>
-
-      {/* Important Information */}
-      {importantInfo.length > 0 && (
-        <div className="rounded-2xl border border-[#EDE7D8] bg-white p-6 md:p-8 space-y-4">
-          <div className="flex items-center gap-2 text-[#235347]">
-            <Info className="h-5 w-5 text-[#af6348]" />
-            <h4 className="font-serif text-lg font-normal text-[#121816]">
-              Important Trip Information
-            </h4>
-          </div>
-
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            {importantInfo.map((info, idx) => (
-              <div
-                key={idx}
-                className="rounded-xl bg-[#EDE7D8]/30 p-3.5 text-xs text-[#121816]/80 leading-relaxed"
-              >
-                • {info}
-              </div>
-            ))}
-          </div>
-        </div>
+    <div className="relative w-full flex flex-col xl:pt-[51px] pt-6 md:pt-11 lgx:pt-12 pb-16">
+      {/* Background Universal Multimedia */}
+      {sectionBg && (
+        <UniversalMultimediaPreview
+          multimedia={sectionBg}
+          mode="background"
+          className="h-full w-full object-cover"
+          containerClassName="absolute inset-0 z-0 pointer-events-none"
+        />
       )}
+
+      <section className="relative z-10 w-full">
+        <div className={`w-full container mx-auto ${SECTION_PX}`}>
+          <div className="max-w-[1216px] flex flex-col gap-10 sm:gap-12 lgx:gap-14">
+            {/* 1. What's Included */}
+            <div className="flex flex-col xl:gap-[22px] gap-[20px]">
+              <h2 className="text-dark font-heading text-[22px] xl:text-[30px] lgx:text-[28px] md:text-[26px] font-semibold xl:leading-[36px] lgx:leading-[32px] md:leading-[28px] leading-[24px]">
+                {includedTitle}
+              </h2>
+              <div className="grid grid-cols-1 gap-2 md:gap-2.5 xl:gap-3">
+                {includedItems.map((item, idx) => (
+                  <div
+                    key={idx}
+                    className="flex items-start gap-2.5 text-sm md:text-[15px] xl:text-base font-normal leading-4 md:leading-5 xl:leading-6"
+                  >
+                    <span className="text-accent select-none font-bold">✓</span>
+                    <span className="text-nav-text">{item}</span>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            {/* 2. What's Not Included */}
+            <div className="flex flex-col gap-5 sm:gap-6">
+              <h2 className="text-dark font-heading text-[22px] xl:text-[30px] lgx:text-[28px] md:text-[26px] font-semibold xl:leading-[36px] lgx:leading-[32px] md:leading-[28px] leading-[24px]">
+                {notIncludedTitle}
+              </h2>
+              <div className="grid grid-cols-1 gap-2 md:gap-2.5 xl:gap-3">
+                {notIncludedItems.map((item, idx) => (
+                  <div
+                    key={idx}
+                    className="flex items-start gap-2.5 text-sm md:text-[15px] xl:text-base font-normal leading-4 md:leading-5 xl:leading-6"
+                  >
+                    <span className="text-muted select-none font-bold">✗</span>
+                    <span className="text-nav-text">{item}</span>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            {/* 3. Important Information Card */}
+            {importantInfoItems.length > 0 && (
+              <div className="w-full rounded-[10px] bg-[#F7F5F2] xl:p-8 lgx:p-7 md:p-6 p-5 flex flex-col xl:gap-4 md:gap-3.5 gap-3">
+                <h3 className="text-dark font-heading xl:text-[20px] md:text-[18px] text-base font-semibold xl:leading-7 md:leading-6 leading-5">
+                  {importantInfoTitle}
+                </h3>
+                <ul className="flex flex-col gap-2">
+                  {importantInfoItems.map((info, idx) => (
+                    <li
+                      key={idx}
+                      className="flex items-start gap-2 text-nav-text text-xs md:text-[13px] xl:text-sm font-normal leading-4 md:leading-[18px] xl:leading-4"
+                    >
+                      <span className="select-none">•</span>
+                      <span>{info}</span>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            )}
+          </div>
+        </div>
+      </section>
     </div>
   )
 }

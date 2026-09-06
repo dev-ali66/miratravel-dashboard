@@ -36,74 +36,41 @@ export const emptyJourney: Journey = {
 
   data: {
     hero: {
+      badge: "Signature Journey",
       title: null,
       subtitle: null,
-      background_image: null,
-      video: null,
-      backgroundMultimedia: null,
-      tags: [],
-      highlightBadge: null,
-      priceSuffix: "per person",
-      occupancyText: "Based on double occupancy",
-      taxesLabel: "Taxes & fees",
-      taxesValue: "Calculated at checkout",
-      ctaText: "Request This Journey",
-      contactPromptText: "Questions on this journey?",
-      benefits: [],
-    },
-    whyWeDesigned: {
-      title: "Why we designed this journey?",
-      paragraphs: [],
-      signature: "— MIRA",
-    },
-    isThisForYou: {
-      title: "Is this Journey for you?",
-      items: [],
-    },
-    overviewList: {
-      title: "Journey Overview",
-      titlegraphs: [],
-      highlightsTitle: "Highlights",
-      highlights: [],
-    },
-    route: {
-      title: "Route Overview",
-      description: null,
-      mapImage: null,
-      stops: [],
+      buttons: [
+        {
+          label: "Request This Journey",
+          url: "#request",
+          style: "primary",
+          backgroundColor: "#235347",
+          textColor: "#FFFFFF",
+        },
+        {
+          label: "Questions on this journey?",
+          url: "/contact-us",
+          style: "link",
+          textColor: "#464136",
+        },
+        {
+          label: "Contact our travel experts",
+          url: "/contact-us",
+          style: "link",
+          textColor: "#af6348",
+        },
+      ],
     },
     accommodation: {
-      philosophy: {
-        badge: "ACCOMMODATION PHILOSOPHY",
-        title: "Where You Will Stay",
-        description: null,
-        principles: [],
-      },
-      destinations: {
-        badge: "DESTINATION BY DESTINATION",
-        title: "Selected Properties",
-        description: null,
-        stays: [],
-      },
+      philosophy: "We handpick authentic boutique properties, alpine lodges, and heritage stays.",
+      stays: [],
     },
-    whatsIncluded: {
-      includedTitle: "What's Included",
-      includedItems: [],
-      notIncludedTitle: "What's Not Included",
-      notIncludedItems: [],
-      importantInfoTitle: "Important Notes",
-      importantInfoItems: [],
+    gallery: {
+      title: "Journey Visuals & Moments",
+      images: [],
     },
-    addons: {
-      title: "Optional Add-ons",
-      subtitle: null,
-      items: [],
-    },
-    itinerary: {
-      title: "Day-by-Day Itinerary",
-      subtitle: null,
-      days: [],
-    },
+    itinerary: [],
+    addons: [],
   },
 
   itinerary: [],

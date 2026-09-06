@@ -1,8 +1,12 @@
 /* =====================================================
    JOURNEYS — HIGHLIGHTS & INCLUSIONS FORM SECTION
+   Directly manages Prisma fields:
+   - highlights: String[]
+   - included: String[]
+   - notIncluded: String[]
 ===================================================== */
 
-import { Plus, Trash2 } from "lucide-react"
+import { Plus, Trash2, Sparkles, CheckCircle2, XCircle } from "lucide-react"
 import { FormSection } from "../../shared/fields"
 import type { Journey } from "../../journeyTypes"
 
@@ -15,14 +19,18 @@ export type HighlightsInclusionsFormProps = {
 
 function StringListManager({
   title,
+  icon: Icon,
   items,
   placeholder,
   onChange,
+  badgeColor = "bg-primary/10 text-primary",
 }: {
   title: string
+  icon: any
   items: string[]
   placeholder: string
   onChange: (items: string[]) => void
+  badgeColor?: string
 }) {
   const handleAdd = () => {
     onChange([...items, ""])
@@ -39,11 +47,16 @@ function StringListManager({
   }
 
   return (
-    <div className="space-y-2">
+    <div className="space-y-2.5 rounded-xl border border-border/60 bg-background p-4">
       <div className="flex items-center justify-between">
-        <label className="text-xs font-semibold text-foreground">
-          {title} ({items.length})
-        </label>
+        <div className="flex items-center gap-2">
+          <span className={`flex h-6 w-6 items-center justify-center rounded-lg ${badgeColor}`}>
+            <Icon className="h-3.5 w-3.5" />
+          </span>
+          <label className="text-xs font-semibold text-foreground">
+            {title} ({items.length})
+          </label>
+        </div>
         <button
           type="button"
           onClick={handleAdd}
@@ -83,8 +96,6 @@ export function HighlightsInclusionsForm({
   openSections,
   toggleSection,
 }: HighlightsInclusionsFormProps) {
-  const importantInfo = draft.data?.whatsIncluded?.importantInfo || []
-
   return (
     <FormSection
       title="Highlights & Inclusions"
@@ -92,41 +103,35 @@ export function HighlightsInclusionsForm({
       onClick={() => toggleSection("highlights")}
       badge={(draft.highlights?.length || 0) + (draft.included?.length || 0)}
     >
-      <div className="space-y-5">
+      <div className="space-y-4">
+        {/* Trip Highlights */}
         <StringListManager
           title="Trip Highlights"
+          icon={Sparkles}
           items={draft.highlights || []}
           placeholder="e.g., Summit hike across Valbona Pass to Theth"
           onChange={(items) => updateField("highlights", items)}
+          badgeColor="bg-primary/10 text-primary"
         />
 
-        <div className="h-px bg-border/60" />
-
+        {/* What's Included */}
         <StringListManager
           title="What's Included"
+          icon={CheckCircle2}
           items={draft.included || []}
-          placeholder="e.g., 8 nights boutique heritage hotel & alpine lodge accommodation"
+          placeholder="e.g., All private 4WD transfers and luggage portage"
           onChange={(items) => updateField("included", items)}
+          badgeColor="bg-green-500/10 text-green-600"
         />
 
-        <div className="h-px bg-border/60" />
-
+        {/* What's Not Included */}
         <StringListManager
           title="What's Not Included"
+          icon={XCircle}
           items={draft.notIncluded || []}
-          placeholder="e.g., International airfare to/from Tirana (TIA)"
+          placeholder="e.g., International flights to/from Tirana"
           onChange={(items) => updateField("notIncluded", items)}
-        />
-
-        <div className="h-px bg-border/60" />
-
-        <StringListManager
-          title="Important Information & Policies"
-          items={importantInfo}
-          placeholder="e.g., Mountain weather can be unpredictable; flexible footwear required"
-          onChange={(items) =>
-            updateField("data.whatsIncluded.importantInfo", items)
-          }
+          badgeColor="bg-amber-500/10 text-amber-600"
         />
       </div>
     </FormSection>

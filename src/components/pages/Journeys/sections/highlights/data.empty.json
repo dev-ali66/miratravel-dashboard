@@ -1,0 +1,57 @@
+{
+  "highlights": [],
+  "included": [],
+  "notIncluded": [],
+  "overview": {
+    "backgroundMultimedia": {
+      "type": "color",
+      "url": "",
+      "posterUrl": "",
+      "alt": "",
+      "opacity": 0,
+      "overlay": false,
+      "autoplay": false,
+      "loop": false,
+      "muted": false
+    },
+    "whyTitle": "",
+    "whyParagraphs": [],
+    "whySignature": "",
+    "overviewTitle": "",
+    "titlegraphs": [],
+    "highlightsTitle": "",
+    "highlights": [],
+    "galleryTitle": "",
+    "featuredImage": {
+      "src": "",
+      "alt": ""
+    },
+    "secondaryImages": [
+      {
+        "src": "",
+        "alt": ""
+      }
+    ],
+    "convinceTitle": "",
+    "convinceItems": []
+  },
+  "whatsIncluded": {
+    "backgroundMultimedia": {
+      "type": "color",
+      "url": "",
+      "posterUrl": "",
+      "alt": "",
+      "opacity": 0,
+      "overlay": false,
+      "autoplay": false,
+      "loop": false,
+      "muted": false
+    },
+    "includedTitle": "",
+    "includedItems": [],
+    "notIncludedTitle": "",
+    "notIncludedItems": [],
+    "importantInfoTitle": "",
+    "importantInfoItems": []
+  }
+}

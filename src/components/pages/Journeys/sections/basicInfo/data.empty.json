@@ -1,0 +1,16 @@
+{
+  "id": "",
+  "slug": "",
+  "title": "",
+  "subtitle": "",
+  "price": 0,
+  "currency": "EUR",
+  "minDays": 0,
+  "maxDays": 0,
+  "pace": "BALANCED",
+  "comfortLevel": "BOUTIQUE",
+  "status": "DRAFT",
+  "featured": false,
+  "createdAt": "",
+  "updatedAt": ""
+}

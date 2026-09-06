@@ -7,6 +7,10 @@ type JourneyDraftContextType = {
   setDraft: React.Dispatch<React.SetStateAction<Journey>>
   updateField: (path: string, value: unknown) => void
   resetDraft: (initial?: Journey) => void
+  isSlugConflict: boolean
+  setIsSlugConflict: (conflict: boolean) => void
+  slugConflictMessage?: string
+  setSlugConflictMessage: (msg?: string) => void
 }
 
 const JourneyDraftContext = createContext<JourneyDraftContextType | null>(null)
@@ -40,6 +44,8 @@ export function JourneyDraftProvider({
   initialData?: Journey
 }) {
   const [draft, setDraft] = useState<Journey>(initialData ?? emptyJourney)
+  const [isSlugConflict, setIsSlugConflict] = useState(false)
+  const [slugConflictMessage, setSlugConflictMessage] = useState<string | undefined>(undefined)
 
   const updateField = useCallback((path: string, value: unknown) => {
     setDraft((prev) => setNestedValue(prev, path, value))
@@ -47,11 +53,22 @@ export function JourneyDraftProvider({
 
   const resetDraft = useCallback((initial?: Journey) => {
     setDraft(initial ?? emptyJourney)
+    setIsSlugConflict(false)
+    setSlugConflictMessage(undefined)
   }, [])
 
   return (
     <JourneyDraftContext.Provider
-      value={{ draft, setDraft, updateField, resetDraft }}
+      value={{
+        draft,
+        setDraft,
+        updateField,
+        resetDraft,
+        isSlugConflict,
+        setIsSlugConflict,
+        slugConflictMessage,
+        setSlugConflictMessage,
+      }}
     >
       {children}
     </JourneyDraftContext.Provider>

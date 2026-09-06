@@ -2,7 +2,10 @@
    JOURNEYS — TAGS & ATTRIBUTES FORM SECTION
 ===================================================== */
 
-import { FormSection, JourneyMultiBadgeSelect } from "../../shared/fields"
+import {
+  FormSection,
+  JourneyMultiBadgeSelect,
+} from "../../shared/fields"
 import {
   JOURNEY_TYPES,
   TRAVEL_STYLES,

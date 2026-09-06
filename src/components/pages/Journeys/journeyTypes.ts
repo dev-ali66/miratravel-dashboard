@@ -93,24 +93,158 @@ export const JOURNEY_STATUSES: { label: string; value: JourneyStatus }[] = [
    SUB-ENTITIES
 ===================================================== */
 
+export type ItineraryTextWithStyle = {
+  text?: string
+  style?: Record<string, any> | null
+}
+
+export type ItineraryLocationValue = {
+  id?: string | null
+  name?: string
+}
+
+export type ItineraryMediaValue = {
+  type?: "image" | "video" | "color"
+  color?: string
+  image?: {
+    url?: string | null
+    alt?: string | null
+    opacity?: number
+    overlayColor?: string | null
+    overlayOpacity?: number
+  }
+  video?: {
+    url?: string | null
+    alt?: string | null
+    poster?: string | null
+    autoplay?: boolean
+    loop?: boolean
+    muted?: boolean
+    opacity?: number
+    overlayColor?: string | null
+    overlayOpacity?: number
+  }
+  url?: string | null
+  alt?: string | null
+  opacity?: number
+  overlayColor?: string | null
+  overlayOpacity?: number
+}
+
 export type ItineraryDayItem = {
   id?: string
   dayNumber: number
   dayLabel?: string
-  title: string
+
+  // Grouped structure: { eyebrow: {}, title: {}, location: {}, description: {}, itineraryMedia: {} }
+  eyebrow?: string | ItineraryTextWithStyle
+  title: string | ItineraryTextWithStyle
+  location?: string | ItineraryLocationValue
+  description: string | ItineraryTextWithStyle
+  itineraryMedia?: ItineraryMediaValue | Record<string, any> | null
+
+  // Flat fields for backwards compatibility
+  eyebrowStyle?: Record<string, any> | null
+  titleStyle?: Record<string, any> | null
+  slug?: string
   subtitle?: string
-  location?: string
+  locationId?: string | null
+  locationName?: string | null
   detailedHeading?: string
-  description: string
+  descriptionStyle?: Record<string, any> | null
+  multimedia?: Record<string, any> | null
   thumbnail?: string
   journeyItineraryImage?: string[]
   images?: string[]
   meals?: string
   accommodation?: string
   activities?: string[]
-  locationId?: string | null
   metadata?: Record<string, any> | null
   data?: Record<string, any> | null
+}
+
+export function getDayEyebrow(day: ItineraryDayItem): { text: string; style: any } {
+  if (typeof day.eyebrow === "object" && day.eyebrow !== null) {
+    return { text: day.eyebrow.text || "", style: day.eyebrow.style || day.eyebrowStyle }
+  }
+  return { text: (day.eyebrow as string) || "", style: day.eyebrowStyle }
+}
+
+export function getDayTitle(day: ItineraryDayItem, defaultNum?: number): { text: string; style: any } {
+  if (typeof day.title === "object" && day.title !== null) {
+    return { text: day.title.text || `Day ${day.dayNumber || defaultNum || 1}`, style: day.title.style || day.titleStyle }
+  }
+  return { text: (day.title as string) || `Day ${day.dayNumber || defaultNum || 1}`, style: day.titleStyle }
+}
+
+export function getDayLocation(day: ItineraryDayItem): { id: string | null; name: string } {
+  if (typeof day.location === "object" && day.location !== null) {
+    return { id: day.location.id || day.locationId || null, name: day.location.name || day.locationName || "" }
+  }
+  return { id: day.locationId || null, name: (day.location as string) || day.locationName || "" }
+}
+
+export function getDayDescription(day: ItineraryDayItem): { text: string; style: any } {
+  if (typeof day.description === "object" && day.description !== null) {
+    return { text: day.description.text || "", style: day.description.style || day.descriptionStyle }
+  }
+  return { text: (day.description as string) || "", style: day.descriptionStyle }
+}
+
+export function getDayMedia(day: ItineraryDayItem): Record<string, any> {
+  const m = (day as any).itineraryMedia || day.multimedia || {}
+  const type = m.type || (m.video?.url ? "video" : m.color ? "color" : "image")
+  const img = m.image || m.imageData || {}
+  const vid = m.video || m.videoData || {}
+  const url =
+    type === "video"
+      ? (vid.url || m.url || "")
+      : (img.url || m.url || day.thumbnail || day.images?.[0] || "")
+  const alt = type === "video" ? (vid.alt || m.alt || "") : (img.alt || m.alt || "")
+
+  return {
+    ...m,
+    type,
+    url,
+    alt,
+    color: m.color,
+    image: {
+      url: img.url || url,
+      alt: img.alt || alt,
+      opacity: img.opacity ?? m.opacity ?? 100,
+      overlayColor: img.overlayColor ?? m.overlayColor ?? "#000000",
+      overlayOpacity: img.overlayOpacity ?? m.overlayOpacity ?? 0,
+    },
+    video: {
+      url: vid.url || (type === "video" ? url : ""),
+      alt: vid.alt || alt,
+      poster: vid.poster || vid.posterUrl || m.posterUrl || day.thumbnail || "",
+      autoplay: vid.autoplay ?? m.autoplay ?? true,
+      loop: vid.loop ?? m.loop ?? true,
+      muted: vid.muted ?? m.muted ?? true,
+      opacity: vid.opacity ?? m.opacity ?? 100,
+      overlayColor: vid.overlayColor ?? m.overlayColor ?? "#000000",
+      overlayOpacity: vid.overlayOpacity ?? m.overlayOpacity ?? 0,
+    },
+    imageData: {
+      url: img.url || url,
+      alt: img.alt || alt,
+      opacity: img.opacity ?? m.opacity ?? 100,
+      overlayColor: img.overlayColor ?? m.overlayColor ?? "#000000",
+      overlayOpacity: img.overlayOpacity ?? m.overlayOpacity ?? 0,
+    },
+    videoData: {
+      url: vid.url || (type === "video" ? url : ""),
+      alt: vid.alt || alt,
+      posterUrl: vid.poster || vid.posterUrl || m.posterUrl || day.thumbnail || "",
+      autoplay: vid.autoplay ?? m.autoplay ?? true,
+      loop: vid.loop ?? m.loop ?? true,
+      muted: vid.muted ?? m.muted ?? true,
+      opacity: vid.opacity ?? m.opacity ?? 100,
+      overlayColor: vid.overlayColor ?? m.overlayColor ?? "#000000",
+      overlayOpacity: vid.overlayOpacity ?? m.overlayOpacity ?? 0,
+    },
+  }
 }
 
 export type AccommodationStayItem = {
@@ -139,8 +273,10 @@ export type AccommodationPrincipleItem = {
 
 export type AddonItem = {
   id?: string
+  dayNumber?: number
   itemNumber?: number
   title: string
+  slug?: string
   price: number
   currency?: string
   duration?: string
@@ -149,6 +285,10 @@ export type AddonItem = {
   description: string
   thumbnail?: string
   image?: string
+  journeyItineraryImage?: string[]
+  locationId?: string | null
+  metadata?: Record<string, any> | null
+  data?: Record<string, any> | null
 }
 
 export type RouteStopItem = {
@@ -183,6 +323,7 @@ export type JourneyDataContent = {
     ctaText?: string | null
     contactPromptText?: string | null
     benefits?: string[]
+    buttons?: any[] | null
     media?: {
       type: "image" | "video"
       src: string
@@ -241,6 +382,7 @@ export type JourneyDataContent = {
   addons?: any
 
   itinerary?: any
+  itineraryData?: any
 
   gallery?: {
     title?: string | null
@@ -301,6 +443,7 @@ export type Journey = {
 
   itinerary?: ItineraryDayItem[]
   itineraryDays?: ItineraryDayItem[]
+  itineraryData?: ItineraryDayItem[]
   accommodations?: any | null
   addOns?: any[]
   addons?: AddonItem[]
@@ -310,6 +453,10 @@ export type Journey = {
 }
 
 export function getJourneyItineraryDays(journey: Journey): ItineraryDayItem[] {
+  if (Array.isArray((journey as any).itineraryData)) {
+    return (journey as any).itineraryData
+  }
+
   if (Array.isArray(journey.itineraryDays)) {
     return journey.itineraryDays
   }
@@ -318,7 +465,7 @@ export function getJourneyItineraryDays(journey: Journey): ItineraryDayItem[] {
     return journey.itinerary
   }
 
-  const itinerary = journey.data?.itinerary
+  const itinerary = (journey.data as any)?.itineraryData || journey.data?.itinerary
   if (Array.isArray(itinerary)) {
     return itinerary
   }
@@ -397,11 +544,10 @@ export function getJourneyAccommodationPhilosophy(journey: Journey): string {
 export type JourneySectionKey =
   | "basic-info"
   | "hero"
-  | "tags-attributes"
-  | "why-designed"
-  | "highlights-inclusions"
+  | "tags"
+  | "highlights"
   | "itinerary"
-  | "accommodations"
+  | "accommodation"
   | "addons"
   | "gallery"
   | "seo"
@@ -409,11 +555,10 @@ export type JourneySectionKey =
 export const journeySectionOrder: JourneySectionKey[] = [
   "basic-info",
   "hero",
-  "tags-attributes",
-  "why-designed",
-  "highlights-inclusions",
+  "tags",
+  "highlights",
   "itinerary",
-  "accommodations",
+  "accommodation",
   "addons",
   "gallery",
   "seo",

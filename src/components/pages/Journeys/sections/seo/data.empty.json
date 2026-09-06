@@ -1,0 +1,26 @@
+{
+  "metadata": {
+    "seo": {
+      "metaTitle": "",
+      "metaDescription": "",
+      "metaKeywords": [],
+      "ogTitle": "",
+      "ogDescription": "",
+      "ogImage": "",
+      "canonicalUrl": "",
+      "structuredData": {
+        "@context": "",
+        "@type": "",
+        "name": "",
+        "touristType": [],
+        "offers": {
+          "@type": "",
+          "price": "",
+          "priceCurrency": ""
+        }
+      }
+    },
+    "version": 0,
+    "author": ""
+  }
+}

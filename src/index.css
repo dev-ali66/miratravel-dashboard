@@ -3,6 +3,38 @@
 @import "shadcn/tailwind.css";
 @import "@fontsource-variable/geist";
 
+@font-face {
+  font-family: 'Karena Serif';
+  src: url('/fonts/karena-serif/KarenaSerif-Extralight.otf') format('opentype');
+  font-weight: 100 900;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Sansation';
+  src: url('/fonts/sansation/Sansation_Regular.ttf') format('truetype');
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Sansation';
+  src: url('/fonts/sansation/Sansation_Light.ttf') format('truetype');
+  font-weight: 300;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Sansation';
+  src: url('/fonts/sansation/Sansation_Bold.ttf') format('truetype');
+  font-weight: 700;
+  font-style: normal;
+  font-display: swap;
+}
+
 .contact-form-preview-field::placeholder {
   color: var(--form-field-placeholder);
   opacity: 1;
@@ -15,6 +47,62 @@
   --color-foreground: var(--foreground);
   --font-sans: 'Geist Variable', sans-serif;
   --font-mono: 'Geist Mono', monospace;
+  --font-heading: 'Karena Serif', Georgia, serif;
+  --font-karena: 'Karena Serif', Georgia, serif;
+  --font-sansation: 'Sansation', system-ui, -apple-system, sans-serif;
+
+  /* Frontend Brand Colors */
+  --color-dark: #080c1d;
+  --color-title: #0a0a0a;
+  --color-title-light: #313131;
+  --color-card-title: #1a1a1a;
+  --color-neutral-100: #ffffff;
+  --color-base-100: #ffffff;
+  --color-neutral-200: #fefefe;
+  --color-neutral-300: #F9FAFB;
+  --color-subtitle: #565e69;
+  --color-sub: #454842;
+  --color-subtext: #717182;
+  --color-accent: #af6348;
+  --color-accent-light: #b85c38;
+  --color-accent-muted: #B86B3A;
+  --color-accent-hover: #ff7747;
+  --color-text-card-title: #1b1712;
+  --color-extra-light: #8A8070;
+  --color-body: #4a4a4a;
+  --color-muted: #7E7E7E;
+  --color-surface: #EDE7D8;
+  --color-surface-light: #FFF8F2;
+  --color-surface-muted: #E8E5DD;
+  --color-surface-accent: #EFE8DE;
+  --color-form-bg: rgba(242, 239, 233);
+  --color-stroke: #d1d5db;
+  --color-primary-hover: #365314;
+  --color-nav-text: #464136;
+  --color-highlight: #f3c684;
+  --color-sidebar-active: #1f3d2b;
+  --color-overlay: #0a3c4b;
+  --color-border-light: #D8CBB8;
+  --color-border-neutral: #F3F4F6;
+  --color-border-muted: rgba(183, 182, 182);
+  --color-border-form: #C5C7C0;
+  --color-input-border: #efefef;
+  --color-placeholder: #6B7280;
+  --color-placeholder-light: #DADAD8;
+  --color-input-label: #757871;
+  --color-qoute: #1A1209;
+
+  /* Frontend Breakpoints */
+  --breakpoint-xs: 30rem;
+  --breakpoint-sm: 40rem;
+  --breakpoint-md: 48rem;
+  --breakpoint-lg: 66rem;
+  --breakpoint-lgx: 74rem;
+  --breakpoint-xlg: 80rem;
+  --breakpoint-mid: 90rem;
+  --breakpoint-xl: 105rem;
+  --breakpoint-2xl: 120rem;
+
   --color-sidebar-ring: var(--sidebar-ring);
   --color-sidebar-border: var(--sidebar-border);
   --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
@@ -33,9 +121,7 @@
   --color-border: var(--border);
   --color-destructive: var(--destructive);
   --color-accent-foreground: var(--accent-foreground);
-  --color-accent: var(--accent);
   --color-muted-foreground: var(--muted-foreground);
-  --color-muted: var(--muted);
   --color-secondary-foreground: var(--secondary-foreground);
   --color-secondary: var(--secondary);
   --color-primary-foreground: var(--primary-foreground);
@@ -51,6 +137,35 @@
   --radius-2xl: calc(var(--radius) * 1.8);
   --radius-3xl: calc(var(--radius) * 2.2);
   --radius-4xl: calc(var(--radius) * 2.6);
+}
+
+@utility container {
+  width: 100%;
+  margin-inline: auto;
+
+  @media (min-width: 66rem) {
+    max-width: 62rem;
+  }
+
+  @media (min-width: 74rem) {
+    max-width: 70rem;
+  }
+
+  @media (min-width: 80rem) {
+    max-width: 76rem;
+  }
+
+  @media (min-width: 90rem) {
+    max-width: 85rem;
+  }
+
+  @media (min-width: 105rem) {
+    max-width: 98.75rem;
+  }
+
+  @media (min-width: 120rem) {
+    max-width: 112.5rem;
+  }
 }
 
 :root {

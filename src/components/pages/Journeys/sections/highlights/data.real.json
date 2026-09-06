@@ -1,0 +1,125 @@
+{
+  "highlights": [
+    "Private Colosseum of Shkodra & Venetian Rozafa Fortress exploration",
+    "Scenic Lake Koman navigation via traditional emerald water cruise",
+    "Hike the legendary Valbona to Theth Pass with certified alpine guides",
+    "Restored Ottoman stone tower (kulla) stay with private chef gastronomy",
+    "Ancient UNESCO citadel of Berat & artisan vintage cellar tasting",
+    "Secluded Ionian coastal coves and Byzantine monastery at Butrint"
+  ],
+  "included": [
+    "Private chauffeur-driven 4WD luxury vehicle for entire expedition",
+    "Certified English-speaking mountain and cultural art historian guides",
+    "All boutique heritage hotel and alpine kulla accommodations with breakfast",
+    "All gourmet dinners featuring farm-to-table regional gastronomy",
+    "Lake Koman private boat charter and priority national park admissions",
+    "24/7 dedicated in-country personal concierge and travel specialist"
+  ],
+  "notIncluded": [
+    "International transatlantic and intra-European flights",
+    "Comprehensive personal travel and medical insurance",
+    "Alcoholic beverages outside of curated private wine tastings",
+    "Discretionary personal expenses, spa treatments, and gratuities"
+  ],
+  "overview": {
+    "backgroundMultimedia": {
+      "type": "color",
+      "url": "",
+      "posterUrl": "",
+      "alt": "Overview Section Background",
+      "opacity": 100,
+      "overlay": false,
+      "autoplay": false,
+      "loop": false,
+      "muted": false
+    },
+    "whyTitle": "Why we designed this journey?",
+    "whyParagraphs": [
+      "We created Ancient Albania & Beyond for travelers who yearn for Europe as it once was: deeply rooted in hospitality, unblemished by mass tourism, and crowned by wild, dramatic geological monuments.",
+      "Rather than skimming through tourist hubs, this journey opens private doors into centuries-old stone kullas, arranges private sunrise navigations on Lake Koman, and pairs mountain traverses with quiet evenings enjoying heritage vintage wines."
+    ],
+    "whySignature": "— MIRA",
+    "overviewTitle": "Journey Overview",
+    "titlegraphs": [
+      "Immerse yourself in the timeless beauty and rich heritage of the Western Balkans. From the ancient cobblestone quarters of Berat to the jagged limestone heights of the Accursed Mountains, experience the finest Albanian craft, gastronomy, and nature.",
+      "Every mile has been carefully measured to provide a leisurely, contemplative rhythm. You will enjoy skip-the-line access to major citadel sites, private guide accompaniment from regional historians, and intimate evenings hosted by generational families."
+    ],
+    "highlightsTitle": "Highlights",
+    "highlights": [
+      "Private Colosseum of Shkodra & Venetian Rozafa Fortress exploration",
+      "Scenic Lake Koman navigation via traditional emerald water cruise",
+      "Hike the legendary Valbona to Theth Pass with certified alpine guides",
+      "Restored Ottoman stone tower (kulla) stay with private chef gastronomy",
+      "Ancient UNESCO citadel of Berat & artisan vintage cellar tasting",
+      "Secluded Ionian coastal coves and Byzantine monastery at Butrint"
+    ],
+    "galleryTitle": "Visuals & Moments",
+    "featuredImage": {
+      "src": "https://images.unsplash.com/photo-1506744038136-46273834b3fb?auto=format&fit=crop&w=1200&q=80",
+      "alt": "Scenic glacial emerald waters and limestone fjord cliffs of Lake Koman"
+    },
+    "secondaryImages": [
+      {
+        "src": "https://images.unsplash.com/photo-1469854523086-cc02fe5d8800?auto=format&fit=crop&w=800&q=80",
+        "alt": "Traditional mountain pass drive through Northern Albania"
+      },
+      {
+        "src": "https://images.unsplash.com/photo-1476514525535-07fb3b4ae5f1?auto=format&fit=crop&w=800&q=80",
+        "alt": "Scenic boat traverse on crystalline alpine waters"
+      },
+      {
+        "src": "https://images.unsplash.com/photo-1566073771259-6a8506099945?auto=format&fit=crop&w=800&q=80",
+        "alt": "Boutique heritage stone hotel courtyard and terrace"
+      },
+      {
+        "src": "https://images.unsplash.com/photo-1504674900247-0877df9cc836?auto=format&fit=crop&w=800&q=80",
+        "alt": "Artisan farm-to-table slow food dining experience"
+      }
+    ],
+    "convinceTitle": "Is this Journey for you?",
+    "convinceItems": [
+      "You appreciate raw, untouched alpine wilderness and authentic hospitality.",
+      "You prefer boutique historic retreats over generic commercial resorts.",
+      "You enjoy moderate guided hikes through breathtaking mountain landscapes.",
+      "You desire skip-the-line access with personal cultural art historians.",
+      "You love farm-to-table regional cuisine paired with rare indigenous wines."
+    ]
+  },
+  "whatsIncluded": {
+    "backgroundMultimedia": {
+      "type": "color",
+      "url": "",
+      "posterUrl": "",
+      "alt": "What's Included Section Background",
+      "opacity": 100,
+      "overlay": false,
+      "autoplay": false,
+      "loop": false,
+      "muted": false
+    },
+    "includedTitle": "What's Included",
+    "includedItems": [
+      "Private chauffeur-driven 4WD vehicle for mountain traverses",
+      "Certified English-speaking mountain and cultural guides",
+      "All boutique hotel and alpine guesthouse accommodations with breakfast",
+      "Traditional family dinners in Theth and Valbona",
+      "Lake Koman boat cruise and priority access",
+      "All national park permits and entrance admissions",
+      "24/7 dedicated in-country concierge support"
+    ],
+    "notIncludedTitle": "What's Not Included",
+    "notIncludedItems": [
+      "International transatlantic flights",
+      "Personal travel and medical insurance",
+      "Alcoholic beverages outside of guided tastings",
+      "Gratuities for drivers and mountain guides"
+    ],
+    "importantInfoTitle": "Important Information",
+    "importantInfoItems": [
+      "Valbona Pass hike requires a good baseline level of fitness (6-7 hours hiking with 800m elevation gain).",
+      "Pack sturdy, broken-in trail boots and breathable layered alpine clothing.",
+      "Dietary preferences (vegetarian, vegan, allergies) are seamlessly arranged when communicated ahead.",
+      "ATMs are unavailable in remote mountain valleys; cash for small personal purchases will be coordinated in Tirana."
+    ]
+  }
+}

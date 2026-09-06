@@ -1,0 +1,110 @@
+{
+  "addonsSection": {
+    "backgroundMultimedia": {
+      "type": "color",
+      "url": "",
+      "posterUrl": "",
+      "alt": "Add-ons Section Background",
+      "opacity": 100,
+      "overlay": false,
+      "autoplay": false,
+      "loop": false,
+      "muted": false
+    },
+    "title": "Optional Journey Enhancements",
+    "items": [
+      {
+        "id": "addon-wine-tasting",
+        "itemNumber": 1,
+        "title": "Private Sunset Wine Tasting in Historic Krujë",
+        "price": "€120 / person",
+        "dayLabel": "TIRANA & KRUJË",
+        "detailedHeading": "PRIVATE HISTORIC CELLAR TASTING",
+        "description": "Sample rare indigenous Kallmet and Shesh i Bardhë varietals paired with aged cheeses inside a private 17th-century castle vaulted cellar.",
+        "thumbnail": "https://images.unsplash.com/photo-1510812431401-41d2bd2722f3?auto=format&fit=crop&w=600&q=80",
+        "image": "https://images.unsplash.com/photo-1510812431401-41d2bd2722f3?auto=format&fit=crop&w=1000&q=80"
+      },
+      {
+        "id": "addon-helicopter",
+        "itemNumber": 2,
+        "title": "Helicopter Hop: Tirana to Theth Alpine Peaks",
+        "price": "€850 / flight",
+        "dayLabel": "MOUNTAIN PASS",
+        "detailedHeading": "AERIAL SPECTACLE OF THE ACCURSED PEAKS",
+        "description": "Bypass highway switchbacks with an exhilarating 25-minute flight soaring over the sheer limestone cliffs of the north.",
+        "thumbnail": "https://images.unsplash.com/photo-1508614589041-895b88991e3e?auto=format&fit=crop&w=600&q=80",
+        "image": "https://images.unsplash.com/photo-1508614589041-895b88991e3e?auto=format&fit=crop&w=1000&q=80"
+      },
+      {
+        "id": "addon-cooking",
+        "itemNumber": 3,
+        "title": "Traditional Artisan Culinary Masterclass",
+        "price": "€95 / person",
+        "dayLabel": "SHKODËR",
+        "detailedHeading": "HANDS-ON GASTRONOMY WITH A MASTER CHEF",
+        "description": "Learn the delicate art of wood-fired tava kosi and flaky byrek alongside a celebrated local culinary preservationist.",
+        "thumbnail": "https://images.unsplash.com/photo-1556910103-1c02745aae4d?auto=format&fit=crop&w=600&q=80",
+        "image": "https://images.unsplash.com/photo-1556910103-1c02745aae4d?auto=format&fit=crop&w=1000&q=80"
+      }
+    ]
+  },
+  "similarJourneysSection": {
+    "backgroundMultimedia": {
+      "type": "color",
+      "url": "",
+      "posterUrl": "",
+      "alt": "Similar Journeys Section Background",
+      "opacity": 100,
+      "overlay": false,
+      "autoplay": false,
+      "loop": false,
+      "muted": false
+    },
+    "title": "Similar Journeys",
+    "subtitle": "Other carefully curated routes across the region that might capture your imagination.",
+    "journeys": [
+      {
+        "id": "albanian-riviera",
+        "title": "The Wild Coast & Ancient Ports",
+        "description": "From secluded Ionian coves to Ottoman stone hillside towns.",
+        "image": "https://images.unsplash.com/photo-1507525428034-b723cf961d3e?auto=format&fit=crop&w=800&q=80",
+        "days": "7 DAYS",
+        "label": "COASTAL ESCAPE",
+        "priceFrom": "€2,400",
+        "tags": [
+          "COASTAL",
+          "CULTURE",
+          "BOUTIQUE"
+        ]
+      },
+      {
+        "id": "unesco-heritage-crossroads",
+        "title": "UNESCO Stone Cities & Canyon Trails",
+        "description": "Centuries of cultural harmony, fortress vistas, and thermal springs.",
+        "image": "https://images.unsplash.com/photo-1469854523086-cc02fe5d8800?auto=format&fit=crop&w=800&q=80",
+        "days": "8 DAYS",
+        "label": "HERITAGE FOCUS",
+        "priceFrom": "€2,650",
+        "tags": [
+          "HERITAGE",
+          "SLOW TRAVEL",
+          "WINE"
+        ]
+      },
+      {
+        "id": "alps-to-adriatic",
+        "title": "High Alps to Turquoise Adriatic",
+        "description": "The complete journey bridging dramatic north gorges and warm southern seas.",
+        "image": "https://images.unsplash.com/photo-1476514525535-07fb3b4ae5f1?auto=format&fit=crop&w=800&q=80",
+        "days": "12 DAYS",
+        "label": "SIGNATURE ROUTE",
+        "priceFrom": "€3,900",
+        "tags": [
+          "SIGNATURE",
+          "EXPEDITION",
+          "LUXURY"
+        ]
+      }
+    ]
+  }
+}
