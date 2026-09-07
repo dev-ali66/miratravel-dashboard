@@ -14,7 +14,7 @@ const queryClient = new QueryClient()
 createRoot(document.getElementById("root")!).render(
   <StrictMode>
     <ErrorBoundary>
-      <ThemeProvider defaultTheme="dark">
+      <ThemeProvider defaultTheme="light">
         <QueryClientProvider client={queryClient}>
           <BrowserRouter>
             <App />
