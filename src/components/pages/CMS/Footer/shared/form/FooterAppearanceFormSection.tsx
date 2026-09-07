@@ -26,7 +26,7 @@ export const FooterAppearanceFormSection = ({
           sectionTitle="Footer Background"
           showColorPicker
           colorLabel="Footer background color"
-          defaultColor="#1F3A1B"
+          defaultColor="#16330D"
           imageTitle="Background Image"
           imageLabel="Background image"
           imageFieldName="cmsFooterBackgroundImage"

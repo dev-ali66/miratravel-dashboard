@@ -3,8 +3,12 @@ import { useGetCmsBySlug } from "@/hooks/cms/useGetCmsBySlug"
 import { useAddCms } from "@/hooks/cms/useAddCms"
 import { useSetCmsDraft } from "./CmsDraftContext"
 
+import { getDefaultCmsPageData } from "./defaultCmsData"
+
 export function useCmsPage<
   T extends {
+    name?: string
+    slug?: string
     data?: Record<string, any>
     metadata?: unknown
   },
@@ -20,8 +24,13 @@ export function useCmsPage<
 
   useEffect(() => {
     if (isLoading) return
-    setPage(cmsData?.data ? (cmsData.data as unknown as T) : null)
-  }, [cmsData, isLoading])
+    if (cmsData?.data) {
+      setPage(cmsData.data as unknown as T)
+    } else {
+      const defaults = getDefaultCmsPageData(slug, name) as unknown as T
+      setPage(defaults)
+    }
+  }, [cmsData, isLoading, slug, name])
 
   useEffect(() => {
     if (page) {

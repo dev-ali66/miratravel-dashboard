@@ -53,8 +53,9 @@ export function CustomJourneyCtaPreview({
 
   return (
     <section
-      className="relative w-full overflow-hidden"
-      style={{ backgroundColor: section.bgColor ?? "#FBF9F5", color: darkText }}
+      id="design-journey"
+      className="relative w-full pt-[65px] md:pt-[90px] lg:pt-[100px] xlg:pt-[110px] xl:pt-[120px] xl:pb-[80px] xlg:pb-[75px] lgx:pb-[72px] lg:pb-[70px] md:pb-[65px] pb-[55px] overflow-hidden"
+      style={{ backgroundColor: section.bgColor ?? "transparent", color: darkText }}
     >
       <UniversalMultimediaPreview
         multimedia={
@@ -67,20 +68,20 @@ export function CustomJourneyCtaPreview({
         fallbackImageSrc={PREVIEW_IMAGE_SOURCE}
         fallbackVideoSrc={PREVIEW_VIDEO_SOURCE}
         fallbackAlt="Custom Journey CTA background"
-        fallbackColor={section.bgColor ?? "#FBF9F5"}
+        fallbackColor={section.bgColor ?? "transparent"}
         mode="background"
         className="h-full w-full"
         containerClassName="absolute inset-0"
         overlayClassName="bg-white/70"
       />
 
-      <div className="relative z-10 mx-auto flex w-full flex-col-reverse items-center justify-between gap-10 py-16 sm:gap-12 md:py-24 lg:flex-row lg:items-center">
-        <div className="flex w-full flex-1 justify-start px-7 md:px-14 lg:justify-end xl:pr-14 xl:pl-36">
-          <div className="flex w-full max-w-[700px] flex-col items-start gap-8 md:gap-12 lg:gap-14 xl:gap-[68px]">
+      <div className="relative z-10 mx-auto flex w-full flex-col-reverse items-center justify-between gap-8 xlg:gap-10 xl:gap-12 lg:flex-row lg:items-center">
+        <div className="flex w-full flex-1 justify-start lg:justify-end xl:pl-[144px] xlg:pl-[110px] md:pl-[56px] pl-[20px] pr-4 md:pr-8 lg:pr-10 xl:pr-14">
+          <div className="flex w-full flex-col items-start gap-8 sm:gap-10 md:gap-12 lg:gap-[56px] xl:gap-[68px] max-w-[638px] xl:max-w-[700px]">
             <div className="flex flex-col items-start gap-5 sm:gap-6">
               {content.titleLine1 && (
                 <h2
-                  className="font-serif text-[26px] leading-[34px] font-semibold tracking-[1px] md:text-[38px] md:leading-[48px] lg:text-[42px] lg:leading-[52px] xl:text-[50px] xl:leading-[60px]"
+                  className="font-heading text-[26px] leading-[34px] md:text-[38px] md:leading-[48px] lg:text-[42px] lg:leading-[52px] lgx:text-[45px] lgx:leading-[55px] xlg:text-[48px] xlg:leading-[58px] xl:text-[50px] xl:leading-[60px] font-semibold tracking-[1px]"
                   style={fieldCssStyle(
                     content.homeCustomJourneyCtaTitleLine1Style,
                     darkText
@@ -103,7 +104,7 @@ export function CustomJourneyCtaPreview({
 
               {content.description && (
                 <p
-                  className="max-w-[514px] text-sm leading-[18px] tracking-[1px] opacity-70 md:text-[15px] md:leading-5 xl:text-base xl:leading-[22px]"
+                  className="max-w-[514px] text-sm md:text-[15px] xl:text-base font-normal leading-[18px] md:leading-[20px] xl:leading-[22px] tracking-[1px] text-subtitle"
                   style={fieldCssStyle(
                     content.homeCustomJourneyCtaDescriptionStyle,
                     darkText
@@ -114,17 +115,19 @@ export function CustomJourneyCtaPreview({
               )}
             </div>
 
-            {section.buttons?.length
-              ? renderButtons(section.buttons, false, false, true)
-              : null}
+            {section.buttons?.length ? (
+              <div className="md:w-[230px] w-full">
+                {renderButtons(section.buttons, true, false, true)}
+              </div>
+            ) : null}
           </div>
         </div>
 
-        <div className="flex w-full shrink-0 justify-end lg:w-1/2">
+        <div className="w-full lg:w-1/2 flex justify-end shrink-0">
           <ImageShowPreview
             src={image}
             alt={imageAlt}
-            className="lgx:h-[490px] h-[260px] w-full md:h-[420px] lg:h-[460px] xl:h-[560px] 2xl:h-[580px]"
+            className="w-full h-[260px] md:h-[420px] lg:h-[460px] lgx:h-[490px] xlg:h-[520px] xl:h-[560px] 2xl:h-[580px] object-cover"
             opacity={section.bgImages?.[0]?.opacity ?? 100}
             overlayColor={section.bgImages?.[0]?.overlayColor}
             overlayOpacity={section.bgImages?.[0]?.overlayOpacity}

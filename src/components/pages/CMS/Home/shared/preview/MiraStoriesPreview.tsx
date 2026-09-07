@@ -81,12 +81,13 @@ export function MiraStoriesPreview({
 
   return (
     <section
-      className="relative w-full overflow-hidden px-7 py-16 md:px-14 md:py-24"
+      id="stories"
+      className="relative w-full overflow-hidden container mx-auto pt-[65px] md:pt-[90px] lg:pt-[100px] xlg:pt-[110px] xl:pt-[120px] pb-[65px] md:pb-[90px] lg:pb-[100px] xlg:pb-[110px] xl:pb-[120px] px-4 lg:px-0"
       style={{
         backgroundColor:
           backgroundType === "color"
-            ? (backgroundMultimedia.color ?? section.bgColor ?? "#FBF9F5")
-            : (section.bgColor ?? "#FBF9F5"),
+            ? (backgroundMultimedia.color ?? section.bgColor ?? "transparent")
+            : (section.bgColor ?? "transparent"),
         color: darkText,
       }}
     >
@@ -101,7 +102,7 @@ export function MiraStoriesPreview({
         fallbackImageSrc={PREVIEW_IMAGE_SOURCE}
         fallbackVideoSrc={PREVIEW_VIDEO_SOURCE}
         fallbackAlt="Mira Stories background"
-        fallbackColor={section.bgColor ?? "#FBF9F5"}
+        fallbackColor={section.bgColor ?? "transparent"}
         mode="background"
         className="h-full w-full"
         containerClassName="absolute inset-0"
@@ -110,8 +111,8 @@ export function MiraStoriesPreview({
         }
       />
 
-      <div className="relative z-10 mx-auto flex w-full max-w-[1336px] flex-col items-center justify-center gap-[38px] lg:flex-row lg:gap-12 xl:gap-16">
-        <div className="lgx:h-[426px] lgx:w-[500px] relative aspect-[776/661] w-full overflow-hidden lg:aspect-auto lg:h-[375px] lg:w-[440px] lg:flex-none xl:h-[661px] xl:w-[776px]">
+      <div className="mx-auto flex w-full max-w-[1336px] xl:px-8 lg:px-6 px-0 flex-col items-center justify-center lg:items-center gap-[38px] md:gap-[50px] lg:gap-[48px] lgx:gap-[56px] xl:gap-[64px] lg:flex-row relative z-10">
+        <div className="w-full aspect-[776/661] lg:w-[440px] lg:h-[375px] lgx:w-[500px] lgx:h-[426px] xlg:w-[580px] xlg:h-[494px] xl:w-[776px] xl:h-[661px] overflow-hidden shrink-0">
           <UniversalMultimediaPreview
             multimedia={
               shouldShowLeftVideo
@@ -124,15 +125,15 @@ export function MiraStoriesPreview({
             fallbackVideoSrc={PREVIEW_VIDEO_SOURCE}
             fallbackAlt={imageAlt}
             fallbackColor="#E5E7EB"
-            className="h-full w-full"
+            className="h-full w-full object-cover"
           />
         </div>
 
         <div className="flex w-full flex-col items-start lg:flex-1 xl:w-[550px] xl:flex-none">
-          <div className="flex w-full flex-col items-start gap-6 md:gap-8 xl:gap-10">
+          <div className="flex w-full flex-col items-start xl:gap-10 lgx:gap-9 md:gap-8 gap-6">
             {content.eyebrow && (
               <p
-                className="text-sm font-normal tracking-[1.5px] uppercase"
+                className="text-sm md:text-[15px] font-normal xl:leading-4 leading-3 tracking-[1.5px] md:tracking-[2px] xl:tracking-[2.4px] uppercase"
                 style={fieldCssStyle(
                   content.homeMiraStoriesEyebrowStyle,
                   accentColor
@@ -144,7 +145,7 @@ export function MiraStoriesPreview({
 
             {content.title && (
               <h2
-                className="text-card-title max-w-[496px] font-serif text-[36px] leading-[44px] font-semibold tracking-[2px] md:text-[52px] md:leading-[64px] xl:text-[64px] xl:leading-[80px]"
+                className="font-heading max-w-[496px] font-semibold text-card-title tracking-[2px] md:tracking-[3px] xl:tracking-[4px] text-[36px] md:text-[52px] lgx:text-[56px] xl:text-[64px] leading-[44px] md:leading-[64px] lgx:leading-[70px] xl:leading-[80px] self-stretch"
                 style={fieldCssStyle(
                   content.homeMiraStoriesTitleStyle,
                   darkText
@@ -156,7 +157,7 @@ export function MiraStoriesPreview({
 
             {content.description && (
               <p
-                className="text-subtitle w-full max-w-[550px] text-sm leading-6 md:text-[15px] md:leading-7 xl:text-base xl:leading-[30px]"
+                className="w-full text-sm sm:text-[15px] font-normal leading-[24px] sm:leading-[26px] md:leading-[28px] xl:leading-[30px] text-subtitle max-w-[550px]"
                 style={fieldCssStyle(
                   content.homeMiraStoriesDescriptionStyle,
                   darkText
@@ -167,7 +168,7 @@ export function MiraStoriesPreview({
             )}
           </div>
 
-          <div className="mt-6 flex w-full flex-col gap-4 md:mt-8 md:gap-6 xl:mt-10 xl:gap-8">
+          <div className="flex w-full flex-col gap-4 md:gap-6 lgx:gap-7 xl:gap-8 xl:mt-10 lgx:mt-9 md:mt-8 mt-6">
             {items.length
               ? items.map((item: HomeStoryItem, index) => {
                   const itemStyle = item as Record<string, any>
@@ -176,10 +177,10 @@ export function MiraStoriesPreview({
                     <a
                       key={index}
                       href={item.url || "#"}
-                      className="group flex items-start gap-4 transition-opacity hover:opacity-60 md:gap-6 xl:gap-8"
+                      className="group flex items-start gap-4 md:gap-6 lgx:gap-7 xl:gap-8 transition-opacity hover:opacity-80"
                     >
                       <span
-                        className="mt-0.5 text-sm text-muted transition-colors group-hover:text-accent"
+                        className="mt-0.5 text-sm font-normal leading-5 tracking-wide text-muted transition-colors group-hover:text-accent"
                         style={fieldCssStyle(
                           itemStyle.homeMiraStoriesItemIndexStyle,
                           accentColor
@@ -188,9 +189,9 @@ export function MiraStoriesPreview({
                         {item.index || String(index + 1).padStart(2, "0")}
                       </span>
 
-                      <div className="flex flex-col gap-1">
+                      <div className="flex flex-col gap-1 gap-[5px] xl:gap-1.5">
                         <h3
-                          className="text-card-title font-serif text-base leading-5 font-medium transition-colors group-hover:text-primary md:text-[18px] xl:text-[20px]"
+                          className="font-heading text-base md:text-[18px] xl:text-[20px] font-medium leading-5 md:leading-6 xl:leading-7 text-card-title transition-colors group-hover:text-primary"
                           style={fieldCssStyle(
                             itemStyle.homeMiraStoriesItemTitleStyle,
                             darkText
@@ -201,7 +202,7 @@ export function MiraStoriesPreview({
 
                         {item.subtitle && (
                           <p
-                            className="text-xs leading-[18px] text-muted md:text-[13px] xl:text-sm"
+                            className="text-xs md:text-[13px] xl:text-sm font-normal xl:leading-5 leading-[18px] text-muted"
                             style={fieldCssStyle(
                               itemStyle.homeMiraStoriesItemSubtitleStyle,
                               darkText
@@ -217,21 +218,21 @@ export function MiraStoriesPreview({
               : [1, 2, 3, 4].map((item) => (
                   <div
                     key={item}
-                    className="group flex items-start gap-4 md:gap-6 xl:gap-8"
+                    className="group flex items-start gap-4 md:gap-6 lgx:gap-7 xl:gap-8"
                   >
                     <span
-                      className="mt-0.5 text-sm text-muted"
+                      className="mt-0.5 text-sm font-normal leading-5 tracking-wide text-muted"
                       style={{ color: accentColor }}
                     >
                       {String(item).padStart(2, "0")}
                     </span>
 
-                    <div className="flex flex-col gap-1">
-                      <h3 className="text-card-title font-serif text-base leading-5 font-medium md:text-[18px] xl:text-[20px]">
+                    <div className="flex flex-col gap-1 gap-[5px] xl:gap-1.5">
+                      <h3 className="font-heading text-base md:text-[18px] xl:text-[20px] font-medium leading-5 md:leading-6 xl:leading-7 text-card-title">
                         Story title
                       </h3>
 
-                      <p className="text-xs leading-[18px] text-muted md:text-[13px] xl:text-sm">
+                      <p className="text-xs md:text-[13px] xl:text-sm font-normal xl:leading-5 leading-[18px] text-muted">
                         Story subtitle
                       </p>
                     </div>
@@ -239,7 +240,11 @@ export function MiraStoriesPreview({
                 ))}
           </div>
 
-          {renderButtons(section.buttons, false, false, true)}
+          <div className="w-full md:w-auto xl:mt-10 lgx:mt-9 md:mt-8 mt-6">
+            <div className="w-full md:w-[280px]">
+              {renderButtons(section.buttons, true, false, true)}
+            </div>
+          </div>
         </div>
       </div>
     </section>

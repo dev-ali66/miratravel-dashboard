@@ -30,6 +30,22 @@ export const contactSectionRegistry: Record<string, ContactSectionConfig> = {
     preview: null,
   },
   ctaBanner: { label: "Final CTA", form: FinalCtaForm, preview: null },
+
+  // Key Aliases
+  contact_hero: { label: "Page Hero", form: PageHeroForm, preview: null },
+  process_steps: { label: "Process Steps", form: ProcessStepsForm, preview: null },
+  inquiry_form: { label: "Inquiry Form", form: InquiryForm, preview: null },
+  personal_approach: {
+    label: "Personal Approach",
+    form: PersonalApproachForm,
+    preview: null,
+  },
+  contact_info: {
+    label: "Contact Information",
+    form: ContactInformationForm,
+    preview: null,
+  },
+  final_cta: { label: "Final CTA", form: FinalCtaForm, preview: null },
 }
 
 export const contactSectionOrder = [

@@ -32,7 +32,7 @@ function isTheme(value: string | null): value is Theme {
 }
 
 function getSystemTheme(): ResolvedTheme {
-  if (window.matchMedia(COLOR_SCHEME_QUERY).matches) {
+  if (typeof window !== "undefined" && window.matchMedia(COLOR_SCHEME_QUERY).matches) {
     return "dark"
   }
 
@@ -66,33 +66,32 @@ export function ThemeProvider({
   ...props
 }: ThemeProviderProps) {
   const [theme, setThemeState] = React.useState<Theme>(() => {
-    const storedTheme = localStorage.getItem(storageKey)
-    if (storedTheme === "dark") {
-      return "dark"
+    if (typeof window === "undefined") return defaultTheme
+    try {
+      const storedTheme = localStorage.getItem(storageKey)
+      if (isTheme(storedTheme)) {
+        return storedTheme
+      }
+    } catch (e) {
+      console.warn("Failed to read theme from localStorage", e)
     }
-    localStorage.setItem(storageKey, "dark")
-    return "dark"
+    return defaultTheme
   })
-
-  const setTheme = React.useCallback(
-    (nextTheme: Theme) => {
-      localStorage.setItem(storageKey, nextTheme)
-      setThemeState(nextTheme)
-    },
-    [storageKey]
-  )
 
   const applyTheme = React.useCallback(
     (nextTheme: Theme) => {
+      if (typeof window === "undefined") return
       const root = document.documentElement
       const resolvedTheme =
         nextTheme === "system" ? getSystemTheme() : nextTheme
+
       const restoreTransitions = disableTransitionOnChange
         ? disableTransitionsTemporarily()
         : null
 
       root.classList.remove("light", "dark")
       root.classList.add(resolvedTheme)
+      root.style.colorScheme = resolvedTheme
 
       if (restoreTransitions) {
         restoreTransitions()
@@ -101,10 +100,25 @@ export function ThemeProvider({
     [disableTransitionOnChange]
   )
 
-  React.useEffect(() => {
-    applyTheme(theme)
+  const setTheme = React.useCallback(
+    (nextTheme: Theme) => {
+      try {
+        localStorage.setItem(storageKey, nextTheme)
+      } catch (e) {
+        console.warn("Failed to save theme to localStorage", e)
+      }
+      setThemeState(nextTheme)
+      applyTheme(nextTheme)
+    },
+    [storageKey, applyTheme]
+  )
 
-    if (theme !== "system") {
+  React.useLayoutEffect(() => {
+    applyTheme(theme)
+  }, [theme, applyTheme])
+
+  React.useEffect(() => {
+    if (theme !== "system" || typeof window === "undefined") {
       return undefined
     }
 
@@ -121,6 +135,8 @@ export function ThemeProvider({
   }, [theme, applyTheme])
 
   React.useEffect(() => {
+    if (typeof window === "undefined") return
+
     const handleStorageChange = (event: StorageEvent) => {
       if (event.storageArea !== localStorage) {
         return
@@ -132,10 +148,12 @@ export function ThemeProvider({
 
       if (isTheme(event.newValue)) {
         setThemeState(event.newValue)
+        applyTheme(event.newValue)
         return
       }
 
       setThemeState(defaultTheme)
+      applyTheme(defaultTheme)
     }
 
     window.addEventListener("storage", handleStorageChange)
@@ -143,7 +161,7 @@ export function ThemeProvider({
     return () => {
       window.removeEventListener("storage", handleStorageChange)
     }
-  }, [defaultTheme, storageKey])
+  }, [defaultTheme, storageKey, applyTheme])
 
   const value = React.useMemo(
     () => ({

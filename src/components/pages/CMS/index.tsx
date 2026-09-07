@@ -1,45 +1,45 @@
-import { useGetPages, type PageData } from "@/hooks/cms/useGetPages"
-import { useDeletePage } from "@/hooks/cms/useDeletePage"
+import { useGetPages } from "@/hooks/cms/useGetPages"
 import { Link } from "react-router-dom"
-import { useState } from "react"
-import { Trash2, FileText, Loader2 } from "lucide-react"
-import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-  DialogDescription,
-  DialogFooter,
-} from "@/components/ui/dialog"
-import { Button } from "@/components/ui/button"
-import { toast } from "sonner"
 
 export default function CMSPage() {
   const { data, isLoading } = useGetPages()
-  const { mutate: deletePage, isPending: isDeleting } = useDeletePage()
-  const [deleteModalOpen, setDeleteModalOpen] = useState(false)
-  const [selectedPage, setSelectedPage] = useState<PageData | null>(null)
 
-  const openDeleteModal = (page: PageData) => {
-    setSelectedPage(page)
-    setDeleteModalOpen(true)
-  }
+  const fetchedPages = data?.data ?? []
 
-  const confirmDelete = () => {
-    if (!selectedPage) return
-    deletePage(selectedPage.id, {
-      onSuccess: () => {
-        toast.success(`"${selectedPage.name}" page deleted.`)
-        setDeleteModalOpen(false)
-        setSelectedPage(null)
-      },
-      onError: () => {
-        toast.error("Failed to delete page. Please try again.")
-      },
-    })
-  }
+  const STANDARD_PAGES = [
+    { name: "Home", slug: "home", description: "Manage homepage content, sections, theme and media." },
+    { name: "Navbar", slug: "navbar", description: "Manage site-wide navbar branding and theme." },
+    { name: "Footer", slug: "footer", description: "Manage site footer, links, social media, and copyright." },
+    { name: "Contact Us", slug: "contact-us", description: "Manage contact page information and details." },
+    { name: "Call To Action", slug: "cta", description: "Manage site-wide Call to Action banner." },
+    { name: "FAQ", slug: "faq", description: "Manage frequently asked questions and category lists." },
+  ]
 
-  const pages = data?.data ?? []
+  // Combine standard pages with any extra pages from API
+  const displayedPages = STANDARD_PAGES.map((stdPage) => {
+    const matched = fetchedPages.find(
+      (p) => p.slug.toLowerCase() === stdPage.slug.toLowerCase()
+    )
+    return {
+      ...stdPage,
+      id: matched?.id,
+      name: matched?.name || stdPage.name,
+      isExisting: !!matched,
+    }
+  })
+
+  // Add any custom pages created in backend that aren't in STANDARD_PAGES
+  fetchedPages.forEach((fp) => {
+    if (!displayedPages.some((dp) => dp.slug.toLowerCase() === fp.slug.toLowerCase())) {
+      displayedPages.push({
+        name: fp.name,
+        slug: fp.slug,
+        description: `Manage content for ${fp.name} page.`,
+        id: fp.id,
+        isExisting: true,
+      })
+    }
+  })
 
   return (
     <div className="w-full animate-in pt-2 duration-700 fade-in slide-in-from-bottom-4">
@@ -48,6 +48,9 @@ export default function CMSPage() {
           <h1 className="text-3xl font-bold tracking-tight text-foreground">
             Content Management System
           </h1>
+          <p className="mt-1 text-sm text-muted-foreground">
+            Configure site pages, branding, footers, and section content.
+          </p>
         </div>
       </div>
 
@@ -55,34 +58,26 @@ export default function CMSPage() {
         <div className="flex justify-center py-10">
           <div className="size-8 animate-spin rounded-full border-4 border-primary border-t-transparent" />
         </div>
-      ) : pages.length > 0 ? (
-        <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-4">
-          {pages.map((page) => (
+      ) : (
+        <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
+          {displayedPages.map((page) => (
             <div
-              key={page.id}
+              key={page.slug}
               className="group relative flex flex-col justify-between overflow-hidden rounded-xl border border-border/60 bg-card p-6 shadow-sm transition-all hover:shadow-md"
             >
-              <button
-                onClick={() => openDeleteModal(page)}
-                className="absolute top-4 right-4 rounded-full p-2 text-muted-foreground opacity-0 transition-colors group-hover:opacity-100 hover:bg-destructive/10 hover:text-destructive focus:opacity-100"
-                title="Delete Page"
-              >
-                <Trash2 className="h-4 w-4" />
-              </button>
               <div>
                 <h3 className="mb-2 pr-8 text-[17px] font-bold text-foreground capitalize">
-                  Manage {page.name.replace(/([A-Z])/g, " $1").trim()} Page
+                  Manage {page.name} Page
                 </h3>
                 <p className="mb-6 text-[13px] leading-relaxed text-muted-foreground">
-                  Manage texts, images, and content for the{" "}
-                  {page.name.replace(/([A-Z])/g, " $1").trim()} page.
+                  {page.description}
                 </p>
               </div>
               <Link
-                to={`/cms/${page.slug}&&${page.id}`}
+                to={page.id ? `/cms/${page.slug}&&${page.id}` : `/cms/${page.slug}`}
                 className="group/link inline-flex items-center gap-1 text-sm font-semibold text-primary transition-colors hover:text-primary/80"
               >
-                Edit {page.name.replace(/([A-Z])/g, " $1").trim()} Page
+                Edit {page.name} Page
                 <span className="transition-transform group-hover/link:translate-x-1">
                   &rarr;
                 </span>
@@ -90,48 +85,8 @@ export default function CMSPage() {
             </div>
           ))}
         </div>
-      ) : (
-        <div className="flex flex-col items-center justify-center rounded-xl border border-dashed border-border/60 bg-card/50 py-24 text-center">
-          <div className="mb-4 rounded-full bg-primary/10 p-4">
-            <FileText className="h-8 w-8 text-primary" />
-          </div>
-          <h3 className="mb-2 text-xl font-semibold">No Pages Found</h3>
-          <p className="max-w-sm text-muted-foreground">
-            There are no CMS pages created yet. Click the "Create Page" button
-            above to get started.
-          </p>
-        </div>
       )}
-
-      <Dialog open={deleteModalOpen} onOpenChange={setDeleteModalOpen}>
-        <DialogContent>
-          <DialogHeader>
-            <DialogTitle>Delete page?</DialogTitle>
-            <DialogDescription>
-              This will permanently delete "{selectedPage?.name}". This action
-              cannot be undone.
-            </DialogDescription>
-          </DialogHeader>
-          <DialogFooter>
-            <Button
-              variant="outline"
-              onClick={() => setDeleteModalOpen(false)}
-              disabled={isDeleting}
-            >
-              Cancel
-            </Button>
-            <Button
-              variant="destructive"
-              onClick={confirmDelete}
-              disabled={isDeleting}
-              className="gap-1.5"
-            >
-              {isDeleting && <Loader2 className="h-3.5 w-3.5 animate-spin" />}
-              Delete
-            </Button>
-          </DialogFooter>
-        </DialogContent>
-      </Dialog>
     </div>
   )
 }
+

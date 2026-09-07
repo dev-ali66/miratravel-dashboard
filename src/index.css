@@ -169,72 +169,72 @@
 }
 
 :root {
-  --background: oklch(1 0 0);
-  --foreground: #161C24;
-  --card: oklch(1 0 0);
-  --card-foreground: #161C24;
-  --popover: oklch(1 0 0);
-  --popover-foreground: #161C24;
+  --background: #F9F9F9;
+  --foreground: #080C1D;
+  --card: #FFFFFF;
+  --card-foreground: #080C1D;
+  --popover: #FFFFFF;
+  --popover-foreground: #080C1D;
   --primary: #1F3A1B;
   --primary-foreground: #FFFFFF;
-  --secondary: oklch(0.967 0.007 247.896);
-  --secondary-foreground: #161C24;
-  --muted: oklch(0.967 0.003 264.542);
-  --muted-foreground: oklch(0.551 0.027 264.364);
-  --accent: #C97B4A;
+  --secondary: #F3F4F6;
+  --secondary-foreground: #080C1D;
+  --muted: #F3F4F6;
+  --muted-foreground: #565E69;
+  --accent: #AF6348;
   --accent-foreground: #FFFFFF;
-  --destructive: oklch(0.577 0.245 27.325);
-  --border: oklch(0.92 0.004 286.32);
-  --input: oklch(0.92 0.004 286.32);
+  --destructive: #EF4444;
+  --border: #E4E4E7;
+  --input: #E4E4E7;
   --ring: #1F3A1B;
   --chart-1: #1F3A1B;
-  --chart-2: #C97B4A;
-  --chart-3: oklch(0.187 0.038 274.5);
-  --chart-4: oklch(0.842 0.132 215.155);
-  --chart-5: oklch(0.627 0.194 256.79);
+  --chart-2: #AF6348;
+  --chart-3: #235347;
+  --chart-4: #B86B3A;
+  --chart-5: #3F7D58;
   --radius: 0.625rem;
-  --sidebar: oklch(0.985 0 0);
-  --sidebar-foreground: #161C24;
+  --sidebar: #FFFFFF;
+  --sidebar-foreground: #080C1D;
   --sidebar-primary: #1F3A1B;
-  --sidebar-primary-foreground: oklch(0.985 0 0);
-  --sidebar-accent: oklch(0.967 0.007 247.896);
-  --sidebar-accent-foreground: #161C24;
-  --sidebar-border: oklch(0.92 0.004 286.32);
+  --sidebar-primary-foreground: #FFFFFF;
+  --sidebar-accent: #F3F4F6;
+  --sidebar-accent-foreground: #1F3A1B;
+  --sidebar-border: #E4E4E7;
   --sidebar-ring: #1F3A1B;
 }
 
 .dark {
-  --background: #161C24;
-  --foreground: oklch(0.985 0 0);
-  --card: oklch(0.141 0.044 263.951);
-  --card-foreground: oklch(0.985 0 0);
-  --popover: oklch(0.141 0.044 263.951);
-  --popover-foreground: oklch(0.985 0 0);
-  --primary: #3E6B37;
+  --background: #080C1D;
+  --foreground: #F9FAFB;
+  --card: #0E1424;
+  --card-foreground: #F9FAFB;
+  --popover: #0E1424;
+  --popover-foreground: #F9FAFB;
+  --primary: #2D5227;
   --primary-foreground: #FFFFFF;
-  --secondary: oklch(0.208 0.042 265.755);
-  --secondary-foreground: oklch(0.985 0 0);
-  --muted: oklch(0.208 0.042 265.755);
-  --muted-foreground: oklch(0.708 0 0);
-  --accent: #C97B4A;
+  --secondary: #161F33;
+  --secondary-foreground: #F9FAFB;
+  --muted: #161F33;
+  --muted-foreground: #9CA3AF;
+  --accent: #AF6348;
   --accent-foreground: #FFFFFF;
-  --destructive: oklch(0.704 0.191 22.216);
-  --border: oklch(1 0 0 / 10%);
-  --input: oklch(1 0 0 / 15%);
-  --ring: #1F3A1B;
-  --chart-1: #1F3A1B;
-  --chart-2: #C97B4A;
-  --chart-3: oklch(0.187 0.038 274.5);
-  --chart-4: oklch(0.842 0.132 215.155);
-  --chart-5: oklch(0.627 0.194 256.79);
-  --sidebar: oklch(0.141 0.044 263.951);
-  --sidebar-foreground: oklch(0.985 0 0);
-  --sidebar-primary: #1F3A1B;
-  --sidebar-primary-foreground: oklch(1 0 0);
-  --sidebar-accent: oklch(0.208 0.042 265.755);
-  --sidebar-accent-foreground: oklch(0.985 0 0);
-  --sidebar-border: oklch(1 0 0 / 10%);
-  --sidebar-ring: #1F3A1B;
+  --destructive: #F87171;
+  --border: rgba(255, 255, 255, 0.12);
+  --input: rgba(255, 255, 255, 0.12);
+  --ring: #AF6348;
+  --chart-1: #2D5227;
+  --chart-2: #AF6348;
+  --chart-3: #3F7D58;
+  --chart-4: #B86B3A;
+  --chart-5: #60A5FA;
+  --sidebar: #0A0E1A;
+  --sidebar-foreground: #F9FAFB;
+  --sidebar-primary: #2D5227;
+  --sidebar-primary-foreground: #FFFFFF;
+  --sidebar-accent: #161F33;
+  --sidebar-accent-foreground: #4ADE80;
+  --sidebar-border: rgba(255, 255, 255, 0.10);
+  --sidebar-ring: #2D5227;
 }
 
 @layer base {
@@ -360,4 +360,16 @@ html.lenis body {
   input[type="reset"]:disabled {
     cursor: not-allowed;
   }
+}
+
+/* Universal Editor Active Section Dynamic Highlight */
+[data-section] {
+  transition: background-color 0.25s ease, border-color 0.25s ease, box-shadow 0.25s ease;
+}
+
+[data-section][data-active-section="true"],
+[data-section].editor-section-active {
+  background-color: hsl(var(--primary) / 0.09) !important;
+  border-left: 3.5px solid hsl(var(--primary)) !important;
+  box-shadow: 0 4px 16px -2px hsl(var(--primary) / 0.12);
 }

@@ -7,11 +7,14 @@ export function RootLayout() {
       title: "Menu Principal",
       items: [
         { href: "/", label: "Dashboard", icon: "dashboard" },
+        { href: "/bookings", label: "Bookings", icon: "bookings" as any },
         { href: "/user", label: "User", icon: "user" },
         { href: "/requests", label: "Requests", icon: "requests" as any },
         { href: "/cms", label: "CMS", icon: "cms" },
         { href: "/location", label: "Locations", icon: "locations" },
         { href: "/journeys", label: "Journeys", icon: "journeys" as any },
+        { href: "/stories", label: "Stories", icon: "cms" as any },
+        { href: "/iam", label: "IAM", icon: "privacy" as any },
         {
           href: "/privacy-policy",
           label: "Privacy Policy",

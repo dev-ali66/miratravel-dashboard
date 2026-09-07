@@ -167,13 +167,14 @@ export function JourneyForm() {
           const SectionForm = SectionEntry.form
 
           return (
-            <SectionForm
-              key={key}
-              draft={draft}
-              updateField={updateField}
-              openSections={openSections}
-              toggleSection={toggleSection}
-            />
+            <div key={key} data-section={key} className="transition-all">
+              <SectionForm
+                draft={draft}
+                updateField={updateField}
+                openSections={openSections}
+                toggleSection={toggleSection}
+              />
+            </div>
           )
         })}
 

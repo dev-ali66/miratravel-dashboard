@@ -49,12 +49,12 @@ export function EssencePreview({ draft }: EssencePreviewProps) {
         className="h-full w-full object-cover"
         containerClassName="absolute inset-0 z-0 pointer-events-none"
       />
-      <div className="relative z-10 container mx-auto px-6 md:px-10">
+      <div className="relative z-10 container mx-auto px-5 sm:px-8 xl:px-12 2xl:px-16">
         <div className="flex w-full flex-col items-start gap-12 md:gap-16 xl:gap-16.75">
-          <div className="grid w-full grid-cols-1 items-center gap-10 md:gap-12 lg:grid-cols-2 lg:gap-10 xl:gap-16">
+          <div className="flex w-full max-w-[1280px] mx-auto flex-col-reverse lg:flex-row lg:items-center items-start gap-10 md:gap-12 lg:gap-10 xl:gap-16">
             <div className="flex w-full flex-col items-start">
               <span
-                className="text-xs leading-3 font-normal tracking-[3px] uppercase md:text-[15px] md:leading-3.5 xl:text-base xl:leading-4 xl:tracking-[4.2px]"
+                className="justify-start font-normal uppercase text-sm md:text-[15px] xl:text-base xl:leading-4 md:leading-3.5 leading-3 tracking-[2px] md:tracking-[3.5px] xl:tracking-[4.2px]"
                 style={{
                   color: labelStyle.textColor || "var(--accent)",
                   fontSize: labelStyle.fontSize || undefined,
@@ -65,7 +65,7 @@ export function EssencePreview({ draft }: EssencePreviewProps) {
               </span>
 
               <h2
-                className="font-heading mt-4 w-full text-[28px] leading-8.5 font-semibold md:mt-5 md:text-[36px] md:leading-12 lg:text-[40px] lg:leading-13.5 xl:mt-6 xl:text-[44px] xl:leading-16"
+                className="w-full justify-start font-semibold font-heading text-[30px] md:text-[36px] lg:text-[40px] xl:text-[48px] leading-[40px] md:leading-[48px] lg:leading-[52px] xl:leading-[64px]"
                 style={{
                   color: titleStyle.textColor || "var(--primary)",
                   fontSize: titleStyle.fontSize || undefined,
@@ -79,7 +79,7 @@ export function EssencePreview({ draft }: EssencePreviewProps) {
                 {paragraphs.map((paragraph, index) => (
                   <p
                     key={`${paragraph}-${index}`}
-                    className="w-full text-justify text-[14px] leading-6 font-normal tracking-wide md:text-[15px] md:leading-6.5 xl:text-base xl:leading-7"
+                    className="w-full justify-start font-normal text-[14px] md:text-[15px] xl:text-base leading-6 md:leading-[26px] xl:leading-7 tracking-[1px] text-justify"
                     style={{
                       color: paragraphStyle.textColor || "#4b5563",
                       fontSize: paragraphStyle.fontSize || undefined,
@@ -95,7 +95,7 @@ export function EssencePreview({ draft }: EssencePreviewProps) {
 
               <div className="mt-8 w-full border-t border-neutral-900/10 pt-6">
                 <blockquote
-                  className="w-full text-[18px] leading-8 font-normal italic"
+                  className="w-full justify-start font-normal italic text-[15px] md:text-[16px] lg:text-[18px] xl:text-[20px] leading-[22px] md:leading-[24px] lg:leading-[28px] xl:leading-[32px]"
                   style={{
                     color: quoteStyle.textColor || "#57534e",
                     fontSize: quoteStyle.fontSize || undefined,
@@ -111,7 +111,7 @@ export function EssencePreview({ draft }: EssencePreviewProps) {
             </div>
 
             <div className="relative mb-4 flex w-full justify-center self-stretch sm:mb-6 lg:mb-0 lg:justify-end">
-              <div className="relative h-90 w-full max-w-85 md:h-120 md:max-w-120 lg:h-115 lg:max-w-full xl:h-150 xl:max-w-155 2xl:h-165 2xl:max-w-175">
+              <div className="relative w-full max-w-[340px] xs:max-w-[390px] sm:max-w-[450px] md:max-w-[490px] lg:max-w-full xl:max-w-[536px] 2xl:max-w-[620px] h-[425px] xs:h-[488px] sm:h-[562px] md:h-[612px] lg:h-[520px] xl:h-[640px] 2xl:h-[700px]">
                 {essence.imageMultimedia ? (
                   <UniversalMultimediaPreview
                     multimedia={essence.imageMultimedia}

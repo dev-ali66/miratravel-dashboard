@@ -4,11 +4,9 @@ import { toast } from "sonner"
 
 export type PermissionItem = {
   id: string
-  name: string
-  description?: string | null
-  module?: string
-  image?: string | null
-  video?: string | null
+  action: "CREATE" | "READ" | "UPDATE" | "DELETE"
+  resource?: string | null
+  scope: "OWN" | "ANY" | "OTHER"
   createdAt?: string
   updatedAt?: string
 }
@@ -40,11 +38,9 @@ export function useGetPermissions(page: number = 1, limit: number = 10) {
 
 export type ManagePermissionPayload = {
   id?: string
-  name: string
-  description?: string
-  module?: string
-  image?: File | null
-  video?: File | null
+  action: "CREATE" | "READ" | "UPDATE" | "DELETE"
+  resource?: string
+  scope: "OWN" | "ANY" | "OTHER"
 }
 
 export type ManagePermissionResponse = {
@@ -54,32 +50,14 @@ export type ManagePermissionResponse = {
   data: PermissionItem
 }
 
-function buildPermissionFormData(payload: ManagePermissionPayload) {
-  const formData = new FormData()
-
-  if (payload.id) formData.append("id", payload.id)
-  formData.append("name", payload.name)
-  if (payload.description) formData.append("description", payload.description)
-  if (payload.module) formData.append("module", payload.module)
-  if (payload.image) formData.append("image", payload.image)
-  if (payload.video) formData.append("video", payload.video)
-
-  return formData
-}
-
 export function useManagePermission() {
   const queryClient = useQueryClient()
 
   return useMutation({
     mutationFn: async (payload: ManagePermissionPayload) => {
-      const hasFile = Boolean(payload.image || payload.video)
-
       const res = await apiPrivate.post<ManagePermissionResponse>(
         "/permissions",
-        hasFile ? buildPermissionFormData(payload) : payload,
-        hasFile
-          ? { headers: { "Content-Type": "multipart/form-data" } }
-          : undefined
+        payload
       )
 
       return res.data

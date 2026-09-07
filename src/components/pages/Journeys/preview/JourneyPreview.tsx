@@ -18,13 +18,19 @@ export function JourneyPreview({ draft: propDraft }: { draft?: Journey }) {
   return (
     <div className="w-full bg-[#F9F9F9] min-h-screen text-[#080c1d] font-sans antialiased selection:bg-[#af6348] selection:text-white">
       {/* 1. Hero with floating OverviewCard */}
-      <OverviewHeroPreview draft={draft} />
+      <div data-section="basic-info">
+        <OverviewHeroPreview draft={draft} />
+      </div>
 
       {/* 2. Sticky Tab Navigation & Dynamic Panels */}
-      <JourneyTabsPreview draft={draft} />
+      <div data-section="overview">
+        <JourneyTabsPreview draft={draft} />
+      </div>
 
       {/* 3. Similar Journeys 3-Card Grid */}
-      <SimilarJourneysPreview />
+      <div data-section="similar-journeys">
+        <SimilarJourneysPreview />
+      </div>
     </div>
   )
 }

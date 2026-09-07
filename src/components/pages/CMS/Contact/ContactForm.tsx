@@ -4,7 +4,7 @@ import { SaveBar } from "../shared/SaveBar"
 import { CollapsibleSectionCard } from "../shared/CollapsibleSectionCard"
 import { SeoForm } from "../shared/SeoForm"
 import { contactSectionRegistry } from "./config/contactSections"
-import type { ContactPageData, ContactSection } from "./contactTypes"
+import { type ContactPageData, type ContactSection, DEFAULT_CONTACT_SECTIONS } from "./contactTypes"
 
 export const ContactForm = () => {
   const [openSections, setOpenSections] = useState<Record<string, boolean>>({
@@ -31,7 +31,10 @@ export const ContactForm = () => {
   }
   if (!page) return null
 
-  const sections = page.data.sections ?? []
+  const sections =
+    page.data.sections && page.data.sections.length > 0
+      ? page.data.sections
+      : DEFAULT_CONTACT_SECTIONS
   const updatePage = (data: ContactPageData["data"]) =>
     setPage({ ...page, data })
   const updateSection = (index: number, patch: Partial<ContactSection>) => {

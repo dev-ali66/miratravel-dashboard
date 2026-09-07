@@ -5,7 +5,7 @@
    sourced from or editable through location CMS data.
 ===================================================== */
 
-import { ArrowUpRight } from "lucide-react"
+
 import { motion } from "framer-motion"
 import type { LocationData } from "../../locationTypes"
 import { getLocationBasics, FALLBACK_IMAGE } from "../../shared/previewBasics"
@@ -37,44 +37,42 @@ export function RegionGlancePreview({ draft }: RegionGlancePreviewProps) {
     glance.description ||
     "Discover the landscapes, culture and places that shape this remarkable destination."
   const style = glance.style ?? {}
-  const [featured, ...secondaryCards] = DEMO_CARDS
+
 
   const background = (glance as any)?.backgroundMultimedia
 
   return (
-    <section className="relative w-full overflow-hidden py-12 md:py-16 xl:py-20">
+    <section className="relative w-full overflow-hidden bg-[#faf9f6] py-[58px] md:py-[74px] lg:py-[84px] xl:py-[92px]">
       <UniversalMultimediaPreview
         multimedia={background}
-        fallbackColor={style.backgroundColor || "#F7F6F2"}
+        fallbackColor={style.backgroundColor || "#faf9f6"}
         mode="background"
         className="h-full w-full object-cover"
         containerClassName="absolute inset-0 z-0 pointer-events-none"
       />
-      <div className="relative z-10 container mx-auto px-6 md:px-10">
-        <div className="flex w-full flex-col items-center gap-10 md:gap-13 lg:gap-15 xl:gap-16.5">
-          <div className="grid w-full grid-cols-1 items-end gap-6 lg:grid-cols-2 lg:gap-12">
-            <div>
-              <span
-                className="text-sm font-normal tracking-[3px] uppercase"
-                style={{
-                  color: style.labelTextColor || "#C97B4A",
-                  ...fieldCssStyle((glance as any).labelStyle),
-                }}
-              >
-                {label}
-              </span>
-              <h2
-                className="font-heading mt-4 text-[30px] leading-tight font-semibold md:text-[42px] xl:text-[52px]"
-                style={{
-                  color: style.titleTextColor || "#1A2E2A",
-                  ...fieldCssStyle((glance as any).titleStyle),
-                }}
-              >
-                {title}
-              </h2>
-            </div>
+      <div className="relative z-10 w-full">
+        <div className="container mx-auto">
+          <div className="mx-auto flex w-full max-w-[90%] flex-col items-center gap-2 text-center md:max-w-[85%] md:gap-2.5 lg:max-w-[863px] xl:gap-3">
+            <span
+              className="justify-center text-center text-xs font-normal tracking-[2.34px] uppercase md:text-sm lg:text-[15px]"
+              style={{
+                color: style.labelTextColor || "#C97B4A",
+                ...fieldCssStyle((glance as any).labelStyle),
+              }}
+            >
+              {label}
+            </span>
+            <h2
+              className="font-heading mb-2 justify-center text-center text-[30px] leading-[44px] font-semibold md:mb-[9px] md:text-[36px] md:leading-[48px] lg:text-[40px] lg:leading-[52px] xl:mb-[11px] xl:text-[48px] xl:leading-[56px]"
+              style={{
+                color: style.titleTextColor || "#1A2E2A",
+                ...fieldCssStyle((glance as any).titleStyle),
+              }}
+            >
+              {title}
+            </h2>
             <p
-              className="max-w-155 text-justify text-sm leading-6 tracking-wide md:text-base md:leading-7 lg:justify-self-end"
+              className="text-center text-[16px] font-normal md:text-[18px] lg:text-[20px]"
               style={{
                 color: style.descriptionTextColor || "#737373",
                 ...fieldCssStyle((glance as any).descriptionStyle),
@@ -83,14 +81,13 @@ export function RegionGlancePreview({ draft }: RegionGlancePreviewProps) {
               {description}
             </p>
           </div>
+        </div>
 
-          <div className="grid w-full grid-cols-1 items-stretch gap-6 md:gap-7 lg:grid-cols-12 xl:gap-10">
-            <DemoCard item={featured} featured />
-            <div className="flex flex-col gap-6 sm:gap-7 lg:col-span-5 lg:gap-8 xl:gap-11">
-              {secondaryCards.map((item) => (
-                <DemoCard key={item.title} item={item} />
-              ))}
-            </div>
+        <div className="mt-12 w-full overflow-x-auto pb-8 md:mt-16 lg:mt-[74px] xl:mt-[80px]">
+          <div className="flex w-max items-center gap-6 px-6 sm:gap-8 md:gap-10 lg:gap-12 xl:gap-12">
+            {[...DEMO_CARDS, ...DEMO_CARDS].map((item, index) => (
+              <DemoCard key={`${item.title}-${index}`} item={item} />
+            ))}
           </div>
         </div>
       </div>
@@ -100,20 +97,14 @@ export function RegionGlancePreview({ draft }: RegionGlancePreviewProps) {
 
 function DemoCard({
   item,
-  featured = false,
 }: {
   item: (typeof DEMO_CARDS)[number]
-  featured?: boolean
 }) {
   return (
     <motion.div
       whileHover={{ scale: 1.01 }}
       transition={{ duration: 0.35 }}
-      className={
-        featured
-          ? "group relative h-95 w-full overflow-hidden rounded-xs md:h-135 lg:col-span-7 lg:h-155 xl:h-178.5"
-          : "group relative h-55 w-full overflow-hidden rounded-xs sm:h-65 md:h-72.5 lg:h-73.5 xl:h-84.25"
-      }
+      className="group relative h-[340px] w-[300px] shrink-0 overflow-hidden rounded-xs md:h-[500px] md:w-[440px] lg:h-[520px] lg:w-[487px] xl:h-[551px] xl:w-[527px]"
     >
       <img
         src={FALLBACK_IMAGE}
@@ -124,27 +115,17 @@ function DemoCard({
       <div className="pointer-events-none absolute inset-0 z-2 bg-linear-to-r from-neutral-950/60 via-transparent to-transparent" />
       <div className="pointer-events-none absolute inset-0 z-5 -translate-x-full bg-primary/50 transition-transform delay-300 duration-700 group-hover:translate-x-0" />
       <div className="absolute right-6 bottom-6 left-6 z-10 flex flex-col items-start gap-1.5 sm:right-8 sm:bottom-8 sm:left-8">
-        <span
-          className="text-xs font-normal tracking-[2px] uppercase"
-          style={{ color: "#F5F5F5" }}
-        >
-          {item.country}
-        </span>
-        <div className="flex items-center gap-3 transition-transform duration-300 group-hover:translate-x-1">
+        <div className="flex flex-col items-start gap-1">
+          <span
+            className="text-[10px] font-semibold tracking-[2px] uppercase text-white/80"
+          >
+            {item.country}
+          </span>
           <h3
-            className={
-              featured
-                ? "font-roboto-serif text-xl font-normal sm:text-2xl md:text-[26px] xl:text-[28px]"
-                : "font-heading text-lg font-normal md:text-[22px] xl:text-[27px]"
-            }
-            style={{ color: "#F5F5F5" }}
+            className="font-heading text-lg font-normal md:text-[22px] xl:text-[27px] text-white transition-transform duration-300 group-hover:translate-x-1"
           >
             {item.title}
           </h3>
-          <ArrowUpRight
-            className="size-5 shrink-0 text-[#F5F5F5] sm:size-6"
-            aria-hidden="true"
-          />
         </div>
       </div>
     </motion.div>

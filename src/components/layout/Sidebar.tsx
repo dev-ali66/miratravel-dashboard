@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react"
 import { Link, useLocation } from "react-router-dom"
 import { motion } from "framer-motion"
 import { useMe } from "@/hooks/auth/useMe"
+import { useGetCmsBySlug } from "@/hooks/cms/useGetCmsBySlug"
 import { cn } from "@/lib/utils"
 import { SlideLeft } from "@/components/animation"
 
@@ -25,14 +26,12 @@ import {
   Megaphone,
   LocateIcon,
   Compass,
+  CalendarDays,
 } from "lucide-react"
 
 import { LogoutModal } from "./LogoutModal"
-
-const images = {
-  logo_black: "/logo_black.png",
-  logo: "/logo.png",
-}
+import { ThemeToggle } from "@/components/ThemeToggle"
+import { UniversalMultimediaPreview } from "../pages/CMS/Home/shared/preview/UniversalMultimediaPreview"
 
 const defaultAvatar = "https://i.pravatar.cc/150?u=default"
 
@@ -55,6 +54,7 @@ const iconMap = {
   requests: Inbox,
   privacy: Shield,
   terms: ScrollText,
+  bookings: CalendarDays,
 }
 
 /* =========================================================
@@ -300,6 +300,74 @@ const CMSDropdown = ({
   )
 }
 
+const extractBrand = (cmsResponse: any) => {
+  if (!cmsResponse) return null
+  const pageObj = Array.isArray(cmsResponse?.data)
+    ? cmsResponse.data[0]
+    : cmsResponse?.data
+  if (!pageObj) return null
+
+  const innerData = pageObj?.data || pageObj
+  return innerData?.content?.brand || pageObj?.content?.brand || null
+}
+
+const SidebarLogo = () => {
+  const { data: navbarCms } = useGetCmsBySlug("navbar")
+  const { data: footerCms } = useGetCmsBySlug("footer")
+
+  const navbarBrand = extractBrand(navbarCms)
+  const footerBrand = extractBrand(footerCms)
+
+  const navbarMedia = navbarBrand?.navbarBrandMultimedia
+  const footerMedia = footerBrand?.footerBrandMultimedia
+
+  const mediaObj =
+    navbarMedia &&
+    (navbarMedia.url ||
+      (navbarMedia as any).image?.url ||
+      (navbarMedia as any).imageData?.url)
+      ? navbarMedia
+      : navbarBrand?.logo
+      ? { type: "image", url: navbarBrand.logo, alt: navbarBrand.alt }
+      : footerMedia &&
+        (footerMedia.url ||
+          (footerMedia as any).image?.url ||
+          (footerMedia as any).imageData?.url)
+      ? footerMedia
+      : footerBrand?.logo
+      ? { type: "image", url: footerBrand.logo, alt: footerBrand.alt }
+      : null
+
+  const brandName = navbarBrand?.name || footerBrand?.name || "MIRA"
+  const mediaUrl =
+    mediaObj?.url ||
+    (mediaObj as any)?.image?.url ||
+    (mediaObj as any)?.imageData?.url
+
+  if (mediaObj && mediaUrl) {
+    return (
+      <Link to="/" className="inline-block transition-opacity hover:opacity-90">
+        <UniversalMultimediaPreview
+          multimedia={mediaObj as any}
+          fallbackAlt={brandName}
+          className="h-8 max-w-[160px] w-auto object-contain object-left"
+          containerClassName="h-8 max-w-[160px] flex items-center"
+        />
+      </Link>
+    )
+  }
+
+  return (
+    <Link to="/" className="inline-block transition-transform hover:scale-[1.02]">
+      <div className="flex h-9 min-w-[130px] items-center justify-center gap-2 rounded-lg border border-border/80 bg-muted/60 px-3 shadow-xs transition-colors hover:bg-muted">
+        <span className="font-serif text-sm font-bold tracking-widest text-foreground uppercase">
+          {brandName}
+        </span>
+      </div>
+    </Link>
+  )
+}
+
 /* =========================================================
    Sidebar
 ========================================================= */
@@ -362,25 +430,7 @@ export default function Sidebar({
         ===================================================== */}
 
         <SlideLeft delay={0.1} className="mb-10 px-4">
-          <Link to="/">
-            {/* Light mode */}
-            <img
-              src={images.logo_black}
-              alt="Logo"
-              width={140}
-              height={40}
-              className="block h-8 w-auto object-contain dark:hidden"
-            />
-
-            {/* Dark mode */}
-            <img
-              src={images.logo}
-              alt="Logo"
-              width={140}
-              height={40}
-              className="hidden h-8 w-auto object-contain dark:block"
-            />
-          </Link>
+          <SidebarLogo />
         </SlideLeft>
 
         {/* =====================================================
@@ -454,30 +504,35 @@ export default function Sidebar({
         </div>
 
         {/* =====================================================
-            User Profile Card
+            User Profile & Theme Card
         ===================================================== */}
 
         <SlideLeft delay={0.2}>
-          <div className="mx-2 mt-8 flex cursor-default items-center gap-4 rounded-2xl border border-muted/50 bg-muted/30 p-4 transition-all hover:bg-muted/40">
-            {/* Avatar */}
-            <div className="relative h-10 w-10 shrink-0 overflow-hidden rounded-full ring-2 ring-primary/10 ring-offset-2 ring-offset-background">
-              <img
-                src={profileImage}
-                alt="User Avatar"
-                className="h-full w-full object-cover"
-              />
+          <div className="mx-2 mt-8 flex items-center justify-between gap-3 rounded-2xl border border-muted/50 bg-muted/30 p-3 transition-all hover:bg-muted/40">
+            <div className="flex min-w-0 items-center gap-3">
+              {/* Avatar */}
+              <div className="relative h-9 w-9 shrink-0 overflow-hidden rounded-full ring-2 ring-primary/10 ring-offset-2 ring-offset-background">
+                <img
+                  src={profileImage}
+                  alt="User Avatar"
+                  className="h-full w-full object-cover"
+                />
+              </div>
+
+              {/* User Info */}
+              <div className="flex min-w-0 flex-col overflow-hidden">
+                <span className="truncate text-sm font-bold text-foreground">
+                  {profileName}
+                </span>
+
+                <span className="truncate text-xs text-muted-foreground">
+                  {profileEmail}
+                </span>
+              </div>
             </div>
 
-            {/* User Info */}
-            <div className="flex flex-col overflow-hidden">
-              <span className="truncate text-sm font-bold text-foreground">
-                {profileName}
-              </span>
-
-              <span className="truncate text-sm text-muted-foreground">
-                {profileEmail}
-              </span>
-            </div>
+            {/* Theme Toggle */}
+            <ThemeToggle className="shrink-0" />
           </div>
         </SlideLeft>
       </aside>

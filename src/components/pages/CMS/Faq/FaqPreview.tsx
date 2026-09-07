@@ -194,7 +194,7 @@ export const FaqContentPreview = () => {
           CONTENT
       ========================== */}
 
-      <div className="relative mx-auto w-full max-w-3xl px-6 py-14">
+      <div className="relative mx-auto w-full container px-4 lg:px-0 py-16 md:py-24 max-w-[1200px]">
         {/* =========================
             HEADER
         ========================== */}
@@ -218,7 +218,7 @@ export const FaqContentPreview = () => {
 
           {data.content?.eyebrow && (
             <p
-              className="relative z-10 mb-3 text-[10px] font-semibold tracking-[0.2em] uppercase"
+              className="relative z-10 mb-3 text-xs font-semibold tracking-[0.2em] uppercase text-accent"
               style={{
                 ...eyebrowStyle,
               }}
@@ -230,7 +230,7 @@ export const FaqContentPreview = () => {
           {/* TITLE */}
 
           <h1
-            className="relative z-10 font-serif text-3xl font-bold tracking-tight"
+            className="relative z-10 font-heading text-3xl md:text-5xl font-semibold tracking-tight"
             style={{
               ...titleStyle,
             }}
@@ -242,7 +242,7 @@ export const FaqContentPreview = () => {
 
           {data.content?.subtitle && (
             <p
-              className="relative z-10 mt-3 text-sm leading-6"
+              className="relative z-10 mt-3 text-sm md:text-base leading-relaxed text-subtitle"
               style={{
                 ...subtitleStyle,
               }}
@@ -255,7 +255,7 @@ export const FaqContentPreview = () => {
 
           {data.content?.description && (
             <p
-              className="relative z-10 mt-2 text-xs leading-5"
+              className="relative z-10 mt-2 text-xs md:text-sm leading-5 text-subtitle"
               style={{
                 ...descriptionStyle,
               }}
@@ -269,7 +269,7 @@ export const FaqContentPreview = () => {
             FAQ LIST
         ========================== */}
 
-        <div className="mx-auto mt-10 flex max-w-2xl flex-col gap-3">
+        <div className="mx-auto mt-10 flex max-w-3xl flex-col gap-3.5">
           {sortedItems.length > 0 ? (
             sortedItems.map((item, index) => {
               const isOpen = openIndex === index

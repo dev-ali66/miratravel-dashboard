@@ -229,7 +229,8 @@ export const HomeForm = () => {
             return (
               <div
                 key={`${section.key}-${index}`}
-                className="overflow-hidden rounded-lg border border-border/60"
+                data-section={section.key}
+                className="overflow-hidden rounded-lg border border-border/60 transition-all"
               >
                 {/* HEADER */}
 

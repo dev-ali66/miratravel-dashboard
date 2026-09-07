@@ -9,6 +9,36 @@ const PREVIEW_IMAGE_SOURCE =
 const PREVIEW_VIDEO_SOURCE =
   "https://cdn.coverr.co/videos/coverr-aerial-view-of-a-beach-1576/1080p.mp4"
 
+const DEFAULT_INSIGHTS = [
+  {
+    tag: "HERITAGE",
+    title: "Explore UNESCO Towns: A Journey Through Time",
+    description:
+      "Discover the architectural marvels and hidden histories of the Balkans' most preserved medieval settlements.",
+    url: "/stories/explore-unesco-towns",
+    image:
+      "https://images.unsplash.com/photo-1548625361-18da857bbf08?auto=format&fit=crop&w=800&q=80",
+  },
+  {
+    tag: "STAYS",
+    title: "The Art of Balkan Hospitality",
+    description:
+      "Curated accommodations that define luxury through authenticity.",
+    url: "/stories/the-art-of-balkan-hospitality",
+    image:
+      "https://images.unsplash.com/photo-1566073771259-6a8506099945?auto=format&fit=crop&w=800&q=80",
+  },
+  {
+    tag: "CULTURE",
+    title: "Decoding the Stećci",
+    description:
+      "Mythology of the medieval tombstones and silent narratives.",
+    url: "/stories/decoding-the-stecci",
+    image:
+      "https://images.unsplash.com/photo-1590523741831-ab7e8b8f9c7f?auto=format&fit=crop&w=800&q=80",
+  },
+]
+
 export type TravelInsightsPreviewProps = {
   section: HomeSection
   accentColor: string
@@ -32,6 +62,10 @@ export function TravelInsightsPreview({
     string,
     any
   >
+  const leftSideMultimedia = (content.leftSideMultimedia ?? {}) as Record<
+    string,
+    any
+  >
   const backgroundImage = section.bgImages?.[0]
   const backgroundVideo = section.bgVideos?.[0]
   const backgroundType =
@@ -47,168 +81,180 @@ export function TravelInsightsPreview({
     backgroundMultimedia.imageData ?? backgroundMultimedia
   const backgroundVideoData =
     backgroundMultimedia.videoData ?? backgroundMultimedia
+  const leftImageData = leftSideMultimedia.imageData ?? leftSideMultimedia
 
-  const image = backgroundImage?.url ?? PREVIEW_IMAGE_SOURCE
-  const imageAlt = backgroundImage?.alt ?? "Balkan Travel Insights"
+  const spotlightImage =
+    leftImageData.url ?? backgroundImage?.url ?? PREVIEW_IMAGE_SOURCE
+  const spotlightAlt = leftImageData.alt ?? "Balkan Travel Insights"
+
+  const displayInsights =
+    section.items && section.items.length > 0
+      ? section.items
+      : DEFAULT_INSIGHTS
+
+  const featuredInsight = displayInsights[0]
+  const secondaryInsights = displayInsights.slice(1, 3)
 
   return (
     <section
-      className="relative w-full overflow-hidden px-7 py-16 md:px-14 md:py-24"
-      style={{ backgroundColor: section.bgColor ?? "#FBF9F5", color: darkText }}
+      id="travel-insights"
+      className="relative w-full pt-[65px] md:pt-[90px] lg:pt-[100px] xlg:pt-[110px] xl:pt-[120px] px-4 lg:px-0"
+      style={{ color: darkText }}
     >
-      <UniversalMultimediaPreview
-        multimedia={
-          backgroundType === "video"
-            ? { ...backgroundVideo, ...backgroundVideoData, type: "video" }
-            : backgroundType === "image"
-              ? { ...backgroundImage, ...backgroundImageData, type: "image" }
-              : { color: backgroundMultimedia.color, type: "color" }
-        }
-        fallbackImageSrc={PREVIEW_IMAGE_SOURCE}
-        fallbackVideoSrc={PREVIEW_VIDEO_SOURCE}
-        fallbackAlt="Travel Insights background"
-        fallbackColor={section.bgColor ?? "#FBF9F5"}
-        mode="background"
-        className="h-full w-full"
-        containerClassName="absolute inset-0"
-        overlayClassName="bg-white/70"
-      />
+      <div
+        className="w-full flex bg-base-100 flex-col justify-center items-center xl:py-12 lg:py-10 md:py-8 py-7 relative overflow-hidden"
+        style={{ backgroundColor: section.bgColor ?? "var(--color-base-100, #ffffff)" }}
+      >
+        <UniversalMultimediaPreview
+          multimedia={
+            backgroundType === "video"
+              ? { ...backgroundVideo, ...backgroundVideoData, type: "video" }
+              : backgroundType === "image"
+                ? { ...backgroundImage, ...backgroundImageData, type: "image" }
+                : { color: backgroundMultimedia.color, type: "color" }
+          }
+          fallbackImageSrc={PREVIEW_IMAGE_SOURCE}
+          fallbackVideoSrc={PREVIEW_VIDEO_SOURCE}
+          fallbackAlt="Travel Insights background"
+          fallbackColor={section.bgColor ?? "#ffffff"}
+          mode="background"
+          className="h-full w-full"
+          containerClassName="absolute inset-0"
+          overlayClassName="bg-white/70"
+        />
 
-      <div className="relative z-10 mx-auto w-full max-w-[1680px]">
-        <div className="flex flex-col items-center justify-center gap-6 md:gap-10 lg:flex-row lg:gap-12 xl:gap-16">
-          <div className="relative flex w-full items-center justify-center lg:w-1/2">
-            <ImageShowPreview
-              src={image}
-              alt={imageAlt}
-              className="h-[400px] w-full object-cover md:h-[500px] lg:h-[520px] xl:h-[540px]"
-              opacity={section.bgImages?.[0]?.opacity ?? 100}
-              overlayColor={section.bgImages?.[0]?.overlayColor}
-              overlayOpacity={section.bgImages?.[0]?.overlayOpacity}
-            />
-          </div>
+        <div className="w-full container relative z-10">
+          <div className="flex flex-col lgx:flex-row justify-center items-center gap-6 md:gap-10 lgx:gap-12 xlg:gap-14 xl:gap-16">
+            {/* Spotlight Left Image */}
+            <div className="w-full lgx:w-1/2 flex items-center justify-center relative">
+              <ImageShowPreview
+                src={spotlightImage}
+                alt={spotlightAlt}
+                className="w-full h-[400px] md:h-[500px] lgx:h-[520px] xl:h-[540px] rounded-lg shadow-sm object-cover"
+              />
+            </div>
 
-          <div className="flex w-full flex-col items-start justify-start gap-3 md:gap-3.5 lg:w-1/2 xl:gap-4">
-            {content.eyebrow && (
-              <p
-                className="text-xs font-normal tracking-[1.4px] uppercase"
-                style={fieldCssStyle(
-                  content.homeTravelInsightsEyebrowStyle,
-                  accentColor
-                )}
-              >
-                {content.eyebrow}
-              </p>
-            )}
+            {/* Editorial Right Column */}
+            <div className="w-full lgx:w-1/2 flex flex-col justify-start items-start xl:gap-4 gap-3 md:gap-3.5">
+              {content.eyebrow && (
+                <span
+                  className="xl:text-sm md:text-[13px] text-xs leading-4 md:leading-[18px] xl:leading-5 tracking-[1.4px] font-normal uppercase text-accent"
+                  style={fieldCssStyle(
+                    content.homeTravelInsightsEyebrowStyle,
+                    accentColor || "#C5A880"
+                  )}
+                >
+                  {content.eyebrow}
+                </span>
+              )}
 
-            {content.title && (
-              <h2
-                className="font-serif text-[38px] leading-tight tracking-[-1px] md:text-[52px]"
-                style={fieldCssStyle(
-                  content.homeTravelInsightsTitleStyle,
-                  darkText
-                )}
-              >
-                {content.title}
-              </h2>
-            )}
+              {content.title && (
+                <h2
+                  className="font-serif text-[32px] leading-tight font-semibold tracking-[-0.5px] md:text-[42px] xl:text-[48px]"
+                  style={fieldCssStyle(
+                    content.homeTravelInsightsTitleStyle,
+                    darkText
+                  )}
+                >
+                  {content.title}
+                </h2>
+              )}
 
-            {content.subtitle && (
-              <p
-                className="text-subtitle max-w-[600px] text-sm leading-[22px] font-normal md:text-[15px] md:leading-6 xl:text-base xl:leading-[26px]"
-                style={fieldCssStyle(
-                  content.homeTravelInsightsSubtitleStyle,
-                  darkText
-                )}
-              >
-                {content.subtitle}
-              </p>
-            )}
+              {(content.subtitle || content.description) && (
+                <p
+                  className="h-auto font-normal text-sm md:text-[15px] xl:text-[16px] leading-[22px] md:leading-[24px] xl:leading-[26px] text-subtitle"
+                  style={fieldCssStyle(
+                    content.homeTravelInsightsSubtitleStyle ||
+                      content.homeTravelInsightsDescriptionStyle,
+                    darkText
+                  )}
+                >
+                  {content.subtitle || content.description}
+                </p>
+              )}
 
-            {content.description && (
-              <p
-                className="max-w-[500px] text-[11px] leading-[1.8] opacity-70"
-                style={fieldCssStyle(
-                  content.homeTravelInsightsDescriptionStyle,
-                  darkText
-                )}
-              >
-                {content.description}
-              </p>
-            )}
-
-            <div className="flex w-full flex-col items-start gap-4 py-5 md:gap-5 md:py-6 lg:gap-[22px] xl:gap-6">
-              <article className="border-border-neutral w-full border-b pb-5">
-                <ImageShowPreview
-                  src={image}
-                  alt="Explore UNESCO Towns"
-                  className="h-44 w-full"
-                  opacity={section.bgImages?.[0]?.opacity ?? 100}
-                  overlayColor={section.bgImages?.[0]?.overlayColor}
-                  overlayOpacity={section.bgImages?.[0]?.overlayOpacity}
-                />
-
-                <div className="pt-4">
-                  <p
-                    className="text-[9px] tracking-[0.15em] uppercase"
-                    style={{ color: accentColor }}
-                  >
-                    Heritage
-                  </p>
-                  <h3 className="mt-2 font-serif text-[22px] leading-tight">
-                    Explore UNESCO Towns: A Journey Through Time
-                  </h3>
-                  <p className="mt-2 text-[10px] leading-5 opacity-65">
-                    Discover the architectural marvels and hidden histories of
-                    the Balkans&apos; most preserved medieval settlements.
-                  </p>
-                </div>
-              </article>
-
-              <div className="grid w-full grid-cols-1 gap-4 md:grid-cols-2 md:gap-5 xl:gap-6">
-                {[
-                  [
-                    "Stays",
-                    "The Art of Balkan Hospitality",
-                    "Curated accommodations that define luxury through authenticity.",
-                  ],
-                  [
-                    "Culture",
-                    "Decoding the Stećci",
-                    "Mythology of the medieval tombstones and silent narratives.",
-                  ],
-                ].map(([tag, title, description]) => (
-                  <article key={title} className="group">
-                    <ImageShowPreview
-                      src={image}
-                      alt={title as string}
-                      className="aspect-[0.9] w-full"
-                      opacity={section.bgImages?.[0]?.opacity ?? 100}
-                      overlayColor={section.bgImages?.[0]?.overlayColor}
-                      overlayOpacity={section.bgImages?.[0]?.overlayOpacity}
-                    />
-
-                    <div className="border-b py-4">
-                      <p
-                        className="text-[9px] tracking-[0.15em] uppercase"
-                        style={{ color: accentColor }}
-                      >
-                        {tag}
-                      </p>
-
-                      <h3 className="mt-2 font-serif text-[19px] leading-tight">
-                        {title}
-                      </h3>
-
-                      <p className="mt-2 text-[9px] leading-[1.5] opacity-55">
-                        {description}
-                      </p>
+              {/* Insights Content Cards List */}
+              <div className="w-full xl:py-8 lg:py-7 md:py-6 py-5 flex flex-col justify-start items-start xl:gap-6 lg:gap-[22px] md:gap-5 gap-4">
+                {/* Featured Story (Top) */}
+                {featuredInsight && (
+                  <div className="w-full">
+                    <div className="flex flex-col md:flex-row items-center gap-4 lg:gap-6">
+                      <div className="w-full md:w-48 h-36 relative shrink-0 overflow-hidden rounded-md bg-muted">
+                        <img
+                          src={
+                            typeof (featuredInsight as any).image === "string"
+                              ? (featuredInsight as any).image
+                              : (featuredInsight as any).image?.url || (featuredInsight as any).imageUrl || PREVIEW_IMAGE_SOURCE
+                          }
+                          alt={featuredInsight.title}
+                          className="w-full h-full object-cover"
+                        />
+                      </div>
+                      <div className="flex flex-col gap-1.5 flex-1">
+                        <span
+                          className="text-[11px] font-semibold tracking-[2px] uppercase"
+                          style={{ color: accentColor || "#C5A880" }}
+                        >
+                          {(featuredInsight as any).tag || "HERITAGE"}
+                        </span>
+                        <h3 className="font-serif text-lg font-normal leading-snug">
+                          {featuredInsight.title}
+                        </h3>
+                        <p className="text-xs text-muted-foreground line-clamp-2 leading-relaxed">
+                          {(featuredInsight as any).description}
+                        </p>
+                        <a
+                          href={featuredInsight.url || "#"}
+                          className="inline-flex items-center text-xs font-semibold underline underline-offset-4 mt-1 hover:text-accent transition-colors"
+                        >
+                          Read the Insight
+                        </a>
+                      </div>
                     </div>
-                  </article>
-                ))}
+                  </div>
+                )}
+
+                {secondaryInsights.length > 0 && (
+                  <div className="h-[1px] bg-border/60 w-full" />
+                )}
+
+                {/* Secondary Stories Grid */}
+                {secondaryInsights.length > 0 && (
+                  <div className="w-full grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-5">
+                    {secondaryInsights.map((insight: any, idx) => (
+                      <div key={idx} className="flex flex-col gap-2 group">
+                        <div className="w-full h-36 relative overflow-hidden rounded-md bg-muted">
+                          <img
+                            src={
+                              typeof insight.image === "string"
+                                ? insight.image
+                                : insight.image?.url || insight.imageUrl || PREVIEW_IMAGE_SOURCE
+                            }
+                            alt={insight.title}
+                            className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                          />
+                        </div>
+                        <span
+                          className="text-[10px] font-semibold tracking-[2px] uppercase mt-1"
+                          style={{ color: accentColor || "#C5A880" }}
+                        >
+                          {insight.tag || "STORY"}
+                        </span>
+                        <h4 className="font-serif text-base font-normal leading-tight group-hover:text-accent transition-colors">
+                          {insight.title}
+                        </h4>
+                        <p className="text-xs text-muted-foreground line-clamp-2 leading-relaxed">
+                          {insight.description}
+                        </p>
+                      </div>
+                    ))}
+                  </div>
+                )}
               </div>
 
-              <div className="pt-2">
-                {renderButtons(section.buttons, false, false, true)}
+              {/* View All Stories Button */}
+              <div className="pt-2 md:w-[230px] w-full">
+                {renderButtons(section.buttons, true, false, true)}
               </div>
             </div>
           </div>
@@ -217,3 +263,4 @@ export function TravelInsightsPreview({
     </section>
   )
 }
+

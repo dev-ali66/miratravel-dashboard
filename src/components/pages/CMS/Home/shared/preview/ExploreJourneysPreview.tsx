@@ -50,9 +50,10 @@ export function ExploreJourneysPreview({
 
   return (
     <section
-      className="relative w-full overflow-hidden px-7 py-16 md:px-14 md:py-24"
+      id="journeys"
+      className="relative w-full overflow-hidden container px-4 lg:px-0 pb-[65px] md:pb-[90px] lg:pb-[100px] xlg:pb-[110px] xl:pb-[120px]"
       style={{
-        backgroundColor: section.bgColor ?? "#FBF9F5",
+        backgroundColor: section.bgColor ?? "transparent",
         color: darkText,
       }}
     >
@@ -67,14 +68,14 @@ export function ExploreJourneysPreview({
         fallbackImageSrc={PREVIEW_IMAGE_SOURCE}
         fallbackVideoSrc={PREVIEW_VIDEO_SOURCE}
         fallbackAlt="Explore Journeys background"
-        fallbackColor={section.bgColor ?? "#FBF9F5"}
+        fallbackColor={section.bgColor ?? "transparent"}
         mode="background"
         className="h-full w-full"
         containerClassName="absolute inset-0"
         overlayClassName="bg-white/70"
       />
 
-      <div className="relative z-10 mx-auto flex w-full max-w-[1680px] flex-col gap-14">
+      <div className="relative z-10 mx-auto flex w-full flex-col gap-14">
         <div className="flex flex-col items-start justify-between gap-8 lg:flex-row lg:items-end">
           <div className="flex flex-col items-start gap-4">
             {content.eyebrow && (
@@ -91,7 +92,7 @@ export function ExploreJourneysPreview({
 
             {content.title && (
               <h2
-                className="max-w-[700px] font-serif text-[24px] leading-[24px] md:text-[28px] md:leading-[28px] lg:text-[30px] lg:leading-[30px] xl:text-[40px] xl:leading-[40px]"
+                className="max-w-[700px] font-serif text-[24px] leading-[24px] md:text-[28px] md:leading-[28px] lg:text-[30px] lg:leading-[30px] lgx:text-[34px] lgx:leading-[34px] mid:text-[36px] mid:leading-[36px] xlg:text-[38px] xlg:leading-[38px] xl:text-[40px] xl:leading-[40px]"
                 style={fieldCssStyle(
                   content.homeExploreJourneysTitleStyle,
                   darkText
@@ -103,7 +104,7 @@ export function ExploreJourneysPreview({
 
             {content.subtitle && (
               <p
-                className="text-[12px] leading-[1.7]"
+                className="text-sm font-normal text-muted"
                 style={fieldCssStyle(
                   content.homeExploreJourneysSubtitleStyle,
                   darkText
@@ -116,7 +117,7 @@ export function ExploreJourneysPreview({
 
           {content.description && (
             <p
-              className="max-w-[558px] text-sm leading-8 font-normal opacity-70"
+              className="xlg:max-w-[558px] max-w-[500px] text-sm font-normal leading-8 text-muted"
               style={fieldCssStyle(
                 content.homeExploreJourneysDescriptionStyle,
                 darkText
@@ -127,7 +128,7 @@ export function ExploreJourneysPreview({
           )}
         </div>
 
-        <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
+        <div className="grid grid-cols-1 gap-4 lgx:gap-6 xlg:gap-7 xl:gap-10 md:grid-cols-2 lg:grid-cols-3">
           {[1, 2, 3].map((item) => (
             <div
               key={item}
@@ -195,8 +196,10 @@ export function ExploreJourneysPreview({
           ))}
         </div>
 
-        <div className="flex w-full items-start">
-          {renderButtons(section.buttons, false, false, true)}
+        <div className="flex w-full justify-center">
+          <div className="w-full md:w-[230px]">
+            {renderButtons(section.buttons, true, false, true)}
+          </div>
         </div>
       </div>
     </section>

@@ -61,9 +61,10 @@ export function DestinationsPreview({
 
   return (
     <section
-      className="relative w-full overflow-hidden px-7 py-16 md:px-14 md:py-24"
+      id="destinations"
+      className="relative w-full overflow-hidden container px-4 lg:px-0 pb-[65px] md:pb-[90px] lg:pb-[100px] xlg:pb-[110px] xl:pb-[120px]"
       style={{
-        backgroundColor: section.bgColor ?? "#FBF9F5",
+        backgroundColor: section.bgColor ?? "transparent",
         color: darkText,
       }}
     >
@@ -78,7 +79,7 @@ export function DestinationsPreview({
         fallbackImageSrc={PREVIEW_IMAGE_SOURCE}
         fallbackVideoSrc={PREVIEW_VIDEO_SOURCE}
         fallbackAlt="Destinations background"
-        fallbackColor={section.bgColor ?? "#FBF9F5"}
+        fallbackColor={section.bgColor ?? "transparent"}
         mode="background"
         className="h-full w-full"
         containerClassName="absolute inset-0"
@@ -89,7 +90,7 @@ export function DestinationsPreview({
         <div className="flex flex-col items-center gap-4 text-center">
           {content.eyebrow && (
             <p
-              className="text-[10px] font-semibold tracking-[0.18em] uppercase"
+              className="text-base md:text-[20px] lgx:text-[22px] xl:text-[24px] leading-7 md:leading-8 lgx:leading-9 xl:leading-10 font-medium tracking-[1.4px]"
               style={fieldCssStyle(
                 content.homeDestinationEyebrowStyle,
                 accentColor
@@ -101,7 +102,7 @@ export function DestinationsPreview({
 
           {content.title && (
             <h2
-              className="max-w-[900px] font-serif text-[32px] leading-tight tracking-[-1px] md:text-[52px]"
+              className="max-w-[900px] font-heading font-normal text-neutral-900 tracking-[1px] text-[28px] md:text-[38px] lgx:text-[44px] xl:text-[48px] leading-tight"
               style={fieldCssStyle(content.homeDestinationTitleStyle, darkText)}
             >
               {content.title}
@@ -110,7 +111,7 @@ export function DestinationsPreview({
 
           {content.subtitle && (
             <p
-              className="max-w-[700px] text-[12px] leading-[1.7] opacity-70 md:text-sm"
+              className="max-w-[700px] text-sm md:text-base text-subtitle leading-relaxed"
               style={fieldCssStyle(
                 content.homeDestinationSubtitleStyle,
                 darkText
@@ -121,7 +122,7 @@ export function DestinationsPreview({
           )}
         </div>
 
-        <div className="grid w-full grid-cols-1 items-start gap-4 md:grid-cols-2 lg:grid-cols-3">
+        <div className="grid w-full grid-cols-1 items-start gap-4 lgx:gap-6 xlg:gap-7 xl:gap-10 md:grid-cols-2 lg:grid-cols-3">
           {["Croatia", "Bosnia & Herzegovina", "Albania"].map((name) => (
             <div
               key={name}
@@ -153,7 +154,9 @@ export function DestinationsPreview({
         </div>
 
         <div className="flex w-full justify-center">
-          {renderButtons(section.buttons, false, false, true)}
+          <div className="w-full md:w-[230px]">
+            {renderButtons(section.buttons, true, false, true)}
+          </div>
         </div>
       </div>
     </section>

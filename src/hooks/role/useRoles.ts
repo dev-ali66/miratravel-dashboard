@@ -5,10 +5,7 @@ import { toast } from "sonner"
 export type RoleItem = {
   id: string
   name: string
-  description?: string | null
-  permissions: string[]
-  image?: string | null
-  video?: string | null
+  permissions: any[]
   createdAt?: string
   updatedAt?: string
 }
@@ -41,10 +38,7 @@ export function useGetRoles(page: number = 1, limit: number = 10) {
 export type ManageRolePayload = {
   id?: string
   name: string
-  description?: string
   permissions?: string[]
-  image?: File | null
-  video?: File | null
 }
 
 export type ManageRoleResponse = {
@@ -54,34 +48,14 @@ export type ManageRoleResponse = {
   data: RoleItem
 }
 
-function buildRoleFormData(payload: ManageRolePayload) {
-  const formData = new FormData()
-
-  if (payload.id) formData.append("id", payload.id)
-  formData.append("name", payload.name)
-  if (payload.description) formData.append("description", payload.description)
-  if (payload.permissions) {
-    payload.permissions.forEach((p) => formData.append("permissions[]", p))
-  }
-  if (payload.image) formData.append("image", payload.image)
-  if (payload.video) formData.append("video", payload.video)
-
-  return formData
-}
-
 export function useManageRole() {
   const queryClient = useQueryClient()
 
   return useMutation({
     mutationFn: async (payload: ManageRolePayload) => {
-      const hasFile = Boolean(payload.image || payload.video)
-
       const res = await apiPrivate.post<ManageRoleResponse>(
         "/roles",
-        hasFile ? buildRoleFormData(payload) : payload,
-        hasFile
-          ? { headers: { "Content-Type": "multipart/form-data" } }
-          : undefined
+        payload
       )
 
       return res.data

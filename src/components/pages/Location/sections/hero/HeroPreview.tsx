@@ -38,7 +38,7 @@ export function HeroPreview({ draft }: HeroPreviewProps) {
       : []
 
   return (
-    <section className="relative flex w-full items-center overflow-hidden bg-black text-white md:h-[720px] lg:h-[740px] xl:h-[768px]">
+    <section className="relative flex w-full items-center overflow-hidden bg-[#080c1d] text-white min-h-[600px] md:h-[720px] lg:h-[740px] xl:h-[768px]">
       {hero.backgroundMultimedia ? (
         <UniversalMultimediaPreview
           multimedia={hero.backgroundMultimedia}
@@ -69,15 +69,15 @@ export function HeroPreview({ draft }: HeroPreviewProps) {
       )}
 
       <div
-        className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/20 to-transparent"
+        className="absolute inset-0 bg-gradient-to-t from-[#080c1d]/60 via-[#080c1d]/20 to-transparent"
         aria-hidden="true"
       />
 
-      <div className="relative z-10 mx-auto flex h-full w-full flex-col justify-end px-5 pb-9 sm:px-8 sm:pb-12 md:px-14 md:pb-16 lg:pr-[96px] lg:pl-[96px] xl:pr-[136px] xl:pl-[136px]">
+      <div className="relative z-10 mx-auto flex h-full w-full flex-col justify-end xl:pb-[80px] lg:pb-[70px] md:pb-[60px] sm:pb-[48px] pb-[36px] xl:pl-[136px] lg:pl-[96px] md:pl-[56px] sm:pl-[36px] pl-[20px] xl:pr-[136px] lg:pr-[96px] md:pr-[56px] sm:pr-[36px] pr-[20px]">
         <div className="flex w-full max-w-[880px] flex-col items-start">
           {heroBreadcrumb && (
             <p
-              className="mb-3 text-[10px] font-semibold tracking-[0.22em] text-white/75 uppercase sm:text-xs md:text-[15px]"
+              className="text-xs xl:text-base md:text-[15px] font-semibold uppercase leading-5 md:leading-[22px] xl:leading-6 tracking-[2px] text-amber-500 xl:mb-3 mb-2 md:mb-2.5"
               style={fieldCssStyle((hero as any).breadcrumbStyle)}
             >
               {heroBreadcrumb}
@@ -86,7 +86,7 @@ export function HeroPreview({ draft }: HeroPreviewProps) {
 
           {heroTitle && (
             <h1
-              className="mb-4 max-w-5xl font-serif text-[42px] leading-[0.95] font-medium tracking-[-0.04em] text-white sm:text-[50px] md:text-[58px] lg:text-[66px] xl:text-[72px]"
+              className="font-serif font-semibold text-[42px] md:text-[52px] lg:text-[56px] xl:text-[64px] xl:leading-[72px] lg:leading-[64px] md:leading-[60px] tracking-[0.905px] text-white/90 mb-3 md:mb-3.5 xl:mb-4"
               style={fieldCssStyle((hero as any).titleStyle)}
             >
               {heroTitle}
@@ -95,7 +95,7 @@ export function HeroPreview({ draft }: HeroPreviewProps) {
 
           {heroDescription && (
             <p
-              className="max-w-[760px] text-sm leading-[1.8] font-normal text-white/75 sm:text-base md:text-[17px]"
+              className="max-w-[738px] text-base md:text-[17px] xl:text-[20px] font-normal xl:leading-[36px] leading-[30px] text-white/80"
               style={fieldCssStyle((hero as any).descriptionStyle)}
             >
               {heroDescription}

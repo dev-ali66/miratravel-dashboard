@@ -1,6 +1,5 @@
 import { ArrowRight } from "lucide-react"
 import { UniversalMultimediaPreview } from "../../../Home/shared/preview/UniversalMultimediaPreview"
-
 import type { FooterPreviewSectionProps } from "./sectionTypes"
 
 export const FooterNewsletterCertificationsPreviewSection = ({
@@ -8,89 +7,86 @@ export const FooterNewsletterCertificationsPreviewSection = ({
 }: FooterPreviewSectionProps) => {
   const { theme, content } = context
 
-  const newsletter = content.newsletter ?? {}
-  const certifications = content.certifications ?? []
-
-  if (!newsletter.text && !newsletter.linkText && certifications.length === 0) {
-    return null
+  const newsletter = content.newsletter ?? {
+    text: "Stay up to date:",
+    linkText: "Subscribe to the Newsletter",
+    url: "/newsletter",
   }
 
-  return (
-    <div
-      className="mt-10 flex flex-col gap-5 border-t pt-4 md:flex-row md:items-center md:justify-between"
-      style={{
-        borderColor: theme.borderColor,
-      }}
-    >
-      {(newsletter.text || newsletter.linkText) && (
-        <div className="flex items-center gap-2">
-          {newsletter.text && (
-            <span
-              className="text-[10px]"
-              style={{
-                color: theme.mutedTextColor,
-              }}
-            >
-              {newsletter.text}
-            </span>
-          )}
+  const certifications = content.certifications ?? []
 
-          {newsletter.linkText && (
+  const text = newsletter.text || "Stay up to date:"
+  const linkText = newsletter.linkText || "Subscribe to the Newsletter"
+
+  return (
+    <div className="w-full my-8 lg:my-0">
+      <div className="container px-4 lg:px-0 mx-auto">
+        <div
+          className="w-full py-5 border-t-2 border-b-2 flex flex-col md:flex-row items-center justify-between gap-5 md:gap-4"
+          style={{
+            borderColor: theme.borderColor || "rgba(255, 255, 255, 0.16)",
+          }}
+        >
+          {/* Newsletter CTA */}
+          <div className="flex flex-wrap items-center justify-center md:justify-start gap-3 text-center md:text-left font-normal text-sm md:text-[15px] xl:text-base leading-5 md:leading-[22px] xl:leading-6">
+            <span style={{ color: theme.mutedTextColor }}>{text}</span>
+
             <a
               href={newsletter.url || "#"}
-              className="group inline-flex items-center gap-1 text-[10px] transition-opacity hover:opacity-70"
+              className="group relative inline-flex items-center gap-1.5 font-medium transition-opacity duration-300 hover:opacity-90 focus-visible:outline-none"
               style={{
-                color: theme.accentColor,
+                color: theme.accentColor || "#C97B4A",
               }}
             >
-              <span>{newsletter.linkText}</span>
+              <span>{linkText}</span>
 
               <ArrowRight
-                size={11}
-                strokeWidth={1.5}
-                className="transition-transform group-hover:translate-x-0.5"
+                size={16}
+                strokeWidth={2.2}
+                className="transition-transform duration-200 group-hover:translate-x-1"
               />
             </a>
-          )}
-        </div>
-      )}
+          </div>
 
-      {certifications.length > 0 && (
-        <div className="flex items-center gap-4">
-          {certifications.map((certification, index) => (
-            <a
-              key={index}
-              href={certification.url || "#"}
-              target={certification.url ? "_blank" : undefined}
-              rel={certification.url ? "noreferrer" : undefined}
-              className="block transition-opacity hover:opacity-70"
-              title={certification.name ?? ""}
-            >
-              {certification.image ? (
-                <UniversalMultimediaPreview
-                  multimedia={{
-                    type: "image",
-                    url: certification.image,
-                    alt: certification.alt ?? certification.name ?? "",
-                  }}
-                  fallbackAlt={certification.alt ?? certification.name ?? ""}
-                  className="h-7 w-auto max-w-17.5 object-contain"
-                  containerClassName="h-7 max-w-17.5"
-                />
-              ) : certification.name ? (
-                <span
-                  className="text-[9px]"
-                  style={{
-                    color: theme.mutedTextColor,
-                  }}
+          {/* Partner Certification Badges */}
+          {certifications.length > 0 ? (
+            <div className="flex flex-wrap items-center justify-center xl:gap-3 md:gap-2.5 gap-2">
+              {certifications.map((certification, index) => (
+                <a
+                  key={index}
+                  href={certification.url || "#"}
+                  target={certification.url ? "_blank" : undefined}
+                  rel={certification.url ? "noreferrer" : undefined}
+                  className="block transition-opacity duration-300 hover:opacity-100 opacity-90"
+                  title={certification.name ?? ""}
                 >
-                  {certification.name}
-                </span>
-              ) : null}
-            </a>
-          ))}
+                  {certification.image ? (
+                    <UniversalMultimediaPreview
+                      multimedia={{
+                        type: "image",
+                        url: certification.image,
+                        alt: certification.alt ?? certification.name ?? "",
+                      }}
+                      fallbackAlt={certification.alt ?? certification.name ?? ""}
+                      className="xl:h-8 md:h-7 h-6 w-auto object-contain"
+                      containerClassName="xl:h-8 md:h-7 h-6 w-auto"
+                    />
+                  ) : certification.name ? (
+                    <span
+                      className="text-xs"
+                      style={{
+                        color: theme.mutedTextColor,
+                      }}
+                    >
+                      {certification.name}
+                    </span>
+                  ) : null}
+                </a>
+              ))}
+            </div>
+          ) : null}
         </div>
-      )}
+      </div>
     </div>
   )
 }

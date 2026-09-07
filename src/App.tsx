@@ -16,7 +16,7 @@ import PageSections from "@/components/pages/CMS/PageSections"
 import { PrivateRoute } from "@/components/auth/PrivateRoute"
 import { PublicRoute } from "@/components/auth/PublicRoute"
 
-import { CMSEditorLayout } from "@/components/layout/CMSEditorLayout"
+import { CmsEditorLayout } from "@/components/pages/CMS/CmsEditorLayout"
 
 import { TooltipProvider } from "@/components/ui/tooltip"
 import LocationPages from "./components/pages/Location"
@@ -28,6 +28,13 @@ import { LocationForm } from "./components/pages/Location/LocationForm"
 import JourneysPage from "@/components/pages/Journeys"
 import { JourneyEditorLayout } from "@/components/pages/Journeys/JourneyEditorLayout"
 import { JourneyForm } from "@/components/pages/Journeys/JourneyForm"
+
+import StoriesPage from "@/components/pages/Stories"
+import { StoryEditorLayout } from "@/components/pages/Stories/StoryEditorLayout"
+import { StoryForm } from "@/components/pages/Stories/StoryForm"
+
+import IAMPage from "@/components/pages/IAM"
+import BookingsPage from "@/components/pages/Bookings"
 
 export function App() {
   return (
@@ -52,9 +59,12 @@ export function App() {
             <Route path="cms" element={<CMSPage />} />
             <Route path="location" element={<LocationPages />} />
             <Route path="journeys" element={<JourneysPage />} />
+            <Route path="stories" element={<StoriesPage />} />
+            <Route path="iam" element={<IAMPage />} />
+            <Route path="bookings" element={<BookingsPage />} />
           </Route>
 
-          <Route path="/cms" element={<CMSEditorLayout />}>
+          <Route path="/cms" element={<CmsEditorLayout />}>
             <Route path=":slug" element={<PageSections />} />
           </Route>
 
@@ -67,10 +77,25 @@ export function App() {
           </Route>
 
           {/* Journeys Editor */}
-          <Route path="/journeys" element={<JourneyEditorLayout />}>
-            <Route path="new" element={<JourneyForm />} />
-            <Route path=":id/:slug" element={<JourneyForm />} />
-            <Route path=":id" element={<JourneyForm />} />
+          <Route path="/journeys/new" element={<JourneyEditorLayout />}>
+            <Route index element={<JourneyForm />} />
+          </Route>
+          <Route path="/journeys/:id/:slug" element={<JourneyEditorLayout />}>
+            <Route index element={<JourneyForm />} />
+          </Route>
+          <Route path="/journeys/:id" element={<JourneyEditorLayout />}>
+            <Route index element={<JourneyForm />} />
+          </Route>
+
+          {/* Stories Editor */}
+          <Route path="/stories/new" element={<StoryEditorLayout />}>
+            <Route index element={<StoryForm />} />
+          </Route>
+          <Route path="/stories/:id/:slug" element={<StoryEditorLayout />}>
+            <Route index element={<StoryForm />} />
+          </Route>
+          <Route path="/stories/:id" element={<StoryEditorLayout />}>
+            <Route index element={<StoryForm />} />
           </Route>
           {/* <Route
             path="location/add"

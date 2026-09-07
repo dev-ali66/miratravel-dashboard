@@ -18,6 +18,13 @@ import {
 } from "./config/footerSections"
 import type { FooterPageData } from "./footerTypes"
 import type { FooterFormSectionContext } from "./shared/form/sectionTypes"
+const TextField = (props: SharedTextFieldProps) => (
+  <DynamicStyledField type="text" {...props} />
+)
+
+const TextAreaField = (props: SharedTextAreaFieldProps) => (
+  <DynamicStyledField type="textarea" {...props} />
+)
 
 export const FooterForm = () => {
   const [openSections, setOpenSections] = useState<Record<string, boolean>>({
@@ -82,14 +89,6 @@ export const FooterForm = () => {
       },
     })
   }
-
-  const TextField = (props: SharedTextFieldProps) => (
-    <DynamicStyledField type="text" {...props} />
-  )
-
-  const TextAreaField = (props: SharedTextAreaFieldProps) => (
-    <DynamicStyledField type="textarea" {...props} />
-  )
 
   const sectionContext: FooterFormSectionContext = {
     theme,

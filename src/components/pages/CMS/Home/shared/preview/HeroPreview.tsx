@@ -50,7 +50,7 @@ export function HeroPreview({
 
   return (
     <section
-      className="relative min-h-[560px] w-full overflow-hidden md:min-h-[680px]"
+      className="relative xl:h-[1086px] lg:h-[1000px] md:h-[900px] h-[700px] w-full overflow-hidden"
       style={{ backgroundColor: section.bgColor ?? "#0F2A2E" }}
     >
       <UniversalMultimediaPreview
@@ -79,7 +79,7 @@ export function HeroPreview({
       />
 
       <div
-        className="absolute inset-0"
+        className="absolute inset-0 bg-black/40"
         style={{
           background:
             "linear-gradient(90deg, rgba(0,0,0,0.58) 0%, rgba(0,0,0,0.22) 55%, rgba(0,0,0,0.05) 100%)",
@@ -87,14 +87,14 @@ export function HeroPreview({
       />
 
       <div
-        className="relative z-10 flex min-h-[560px] items-end px-7 pb-12 md:min-h-[680px] md:px-14 md:pb-16"
+        className="relative z-10 flex h-full w-full items-center"
         style={{ color: lightText }}
       >
-        <div className="max-w-[680px]">
+        <div className="flex w-full xl:max-w-[1206px] flex-col items-start xl:pl-[136px] mid:pl-[120px] lgx:pl-[110px] lg:pl-[86px] md:pl-[36px] pl-[20px] pr-5">
           {(content.titleLine1 ||
             content.titleHighlight ||
             content.titleLine2) && (
-            <h1 className="font-serif text-[40px] leading-[0.94] font-medium tracking-[-1.5px] md:text-[60px] lg:text-[72px]">
+            <h1 className="font-heading xl:text-[72px] mid:text-[68px] lgx:text-[64px] lg:text-[60px] md:text-[52px] text-[32px] font-[600] capitalize xl:leading-[92px] mid:leading-[88px] lgx:leading-[84px] lg:leading-[80px] md:leading-[66px] leading-[42px] text-neutral-100 xl:mb-12 mid:mb-10 lgx:mb-9 lg:mb-8 md:mb-7 mb-6">
               {content.titleLine1 && (
                 <span
                   className="block"
@@ -111,6 +111,7 @@ export function HeroPreview({
                 <span className="block">
                   {content.titleHighlight && (
                     <span
+                      className="text-highlight"
                       style={fieldCssStyle(
                         content.homeHeroTitleHighlightStyle ??
                           content.titleHighlightStyle,
@@ -142,17 +143,19 @@ export function HeroPreview({
 
           {content.description && (
             <p
-              className="mt-6 max-w-[520px] text-[11px] leading-[1.75] md:text-[12px]"
+              className="max-w-[839px] xl:text-xl mid:text-[22px] lgx:text-[20px] lg:text-[18px] md:text-base text-[15px] font-normal xl:leading-[38px] mid:leading-[34px] lg:leading-[30px] lgx:leading-[28px] md:leading-[26px] leading-[22px] xl:tracking-[1.44px] mid:tracking-[1.34px] lgx:tracking-[1.24px] lg:tracking-[1.14px] md:tracking-[1.04px] tracking-[0.94px] text-neutral-100 xl:mb-[80px] mid:mb-[75px] lgx:mb-[70px] lg:mb-[65px] md:mb-[60px] mb-[55px]"
               style={fieldCssStyle(
                 content.homeHeroDescriptionStyle ?? content.descriptionStyle,
-                textColors.description ?? "rgba(255,255,255,0.82)"
+                textColors.description ?? "rgba(255,255,255,0.92)"
               )}
             >
               {content.description}
             </p>
           )}
 
-          {renderButtons(section.buttons, false, false, true)}
+          <div className="w-full md:w-[230px]">
+            {renderButtons(section.buttons, true, false, true)}
+          </div>
         </div>
       </div>
     </section>

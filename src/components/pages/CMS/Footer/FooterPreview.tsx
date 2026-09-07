@@ -7,16 +7,28 @@ import {
 import type { FooterPageData, FooterSocialLink } from "./footerTypes"
 import type { FooterPreviewSectionContext } from "./shared/preview/sectionTypes"
 
-export const FooterPreview = () => {
-  const page = useCmsDraft<FooterPageData>()
+export const FooterPreview = ({
+  footerData,
+}: {
+  footerData?: FooterPageData
+} = {}) => {
+  const draftPage = useCmsDraft<FooterPageData>()
+
+  const page = footerData ?? draftPage
 
   const data = page?.data
 
   const theme = data?.theme ?? {}
   const content = data?.content ?? {}
 
+  const rawBgColor =
+    theme.backgroundColor ?? theme.footerBackgroundMultimedia?.color
+
   const resolvedTheme = {
-    backgroundColor: theme.backgroundColor ?? "#16330D",
+    backgroundColor:
+      rawBgColor && rawBgColor !== "#09090b" && rawBgColor !== "#000000"
+        ? rawBgColor
+        : "#16330D",
 
     backgroundImage: theme.backgroundImage,
 
@@ -109,12 +121,13 @@ export const FooterPreview = () => {
 
   return (
     <footer
-      className="relative w-full overflow-hidden"
+      className="relative w-full self-stretch flex flex-col overflow-hidden"
       style={{
         backgroundColor: resolvedTheme.backgroundColor,
         color: resolvedTheme.textColor,
       }}
     >
+      {/* Background image & overlay */}
       {outerSections.map((key) => {
         const sectionEntry = footerPreviewSectionRegistry[key]
 
@@ -123,7 +136,8 @@ export const FooterPreview = () => {
         return <PreviewSection key={key} context={sectionContext} />
       })}
 
-      <div className="relative mx-auto max-w-295 px-6 py-10 md:px-10 md:py-12">
+      {/* Main Top, Newsletter/Partners, and Copyright sections */}
+      <div className="relative z-10 w-full flex flex-col">
         {innerSections.map((key) => {
           const sectionEntry = footerPreviewSectionRegistry[key]
 

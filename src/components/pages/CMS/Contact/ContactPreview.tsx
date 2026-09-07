@@ -1,5 +1,5 @@
 import { useCmsDraft } from "../shared/CmsDraftContext"
-import type { ContactPageData } from "./contactTypes"
+import { type ContactPageData, DEFAULT_CONTACT_SECTIONS } from "./contactTypes"
 import { UniversalMultimediaPreview } from "../Home/shared/preview/UniversalMultimediaPreview"
 import { FormBuilderPreview } from "../shared/formBuilder/FormBuilderPreview"
 
@@ -24,144 +24,10 @@ const contactStyle = (style: any, fallback: string) => ({
 export const ContactContentPreview = () => {
   const page = useCmsDraft<ContactPageData>()
 
-  const sections = page?.data?.sections ?? [
-    {
-      key: "contact_hero",
-      bgImages: {
-        alt: "Aerial view of Mostar and the surrounding Balkan landscape",
-        url: "https://images.unsplash.com/photo-1623536167776-922ccb1ff749?auto=format&fit=crop&w=2400&q=85",
-        device: "desktop",
-      },
-      content: {
-        eyebrow: "GET IN TOUCH",
-        titleLine1: "Let's plan",
-        titleLine2: "your journey",
-        description:
-          "Tell us about your travel plans and let us help you create an unforgettable experience.",
-      },
-    },
-    {
-      key: "process_steps",
-      bgColor: "#FDF8F1",
-      content: {
-        title: "How it works",
-      },
-      items: [
-        {
-          id: "1",
-          index: "01",
-          title: "Tell us your plans",
-          description:
-            "Share your destination, dates and what kind of experience you are looking for.",
-        },
-        {
-          id: "2",
-          index: "02",
-          title: "We create your journey",
-          description:
-            "Our team carefully plans a personalised itinerary around your interests.",
-        },
-        {
-          id: "3",
-          index: "03",
-          title: "Enjoy the experience",
-          description:
-            "Everything is prepared so you can simply arrive and enjoy your journey.",
-        },
-      ],
-    },
-    {
-      key: "inquiry_form",
-      bgColor: "#F5F0E8",
-      content: {
-        eyebrow: "START A CONVERSATION",
-        title: "Tell us what you have in mind",
-      },
-      fields: [
-        {
-          id: "name",
-          type: "text",
-          label: "Name",
-          placeholder: "Your name",
-        },
-        {
-          id: "email",
-          type: "email",
-          label: "Email",
-          placeholder: "Your email",
-        },
-        {
-          id: "message",
-          type: "textarea",
-          label: "Message",
-          placeholder: "Tell us about your journey...",
-        },
-      ],
-      buttons: [
-        {
-          label: "Send inquiry",
-          url: "#",
-        },
-      ],
-      sideImages: [
-        {
-          url: "https://images.unsplash.com/photo-1548013146-72479768bada?auto=format&fit=crop&w=1200&q=85",
-          alt: "Historic architecture and landscape",
-        },
-      ],
-    },
-    {
-      key: "personal_approach",
-      bgColor: "#FDF8F1",
-      content: {
-        eyebrow: "A PERSONAL APPROACH",
-        title: "Travel designed around you",
-      },
-      sideImages: [
-        {
-          url: "https://images.unsplash.com/photo-1526772662000-3f88f10405ff?auto=format&fit=crop&w=1200&q=85",
-          alt: "Beautiful travel destination",
-        },
-      ],
-    },
-    {
-      key: "contact_info",
-      bgColor: "#FBF9F5",
-      items: [
-        {
-          id: "email",
-          label: "EMAIL",
-          value: "hello@example.com",
-          url: "mailto:hello@example.com",
-        },
-        {
-          id: "phone",
-          label: "PHONE",
-          value: "+00 123 456 789",
-          url: "tel:+00123456789",
-        },
-        {
-          id: "location",
-          label: "LOCATION",
-          value: "Mostar, Bosnia & Herzegovina",
-        },
-      ],
-    },
-    {
-      key: "final_cta",
-      bgColor: "#FBF9F5",
-      content: {
-        title: "Ready to start your journey?",
-        description: "Let's create something unforgettable together.",
-      },
-      buttons: [
-        {
-          label: "Start planning",
-          url: "#",
-        },
-      ],
-    },
-  ]
+  const sections =
+    page?.data?.sections && page.data.sections.length > 0
+      ? page.data.sections
+      : DEFAULT_CONTACT_SECTIONS
 
   const sectionKeyAliases: Record<string, string[]> = {
     contact_hero: ["contact_hero", "pageHero"],
@@ -201,7 +67,7 @@ export const ContactContentPreview = () => {
 
       {hero && (
         <section
-          className="relative flex min-h-[420px] items-center bg-cover bg-center"
+          className="relative flex min-h-[420px] items-center bg-cover bg-center overflow-hidden"
           style={{ backgroundColor: hero.bgColor ?? "#24351C" }}
         >
           {((hero.content as any)?.contentMultimedia || hero.bgImages?.url) && (
@@ -219,10 +85,10 @@ export const ContactContentPreview = () => {
           )}
           <div className="absolute inset-0 bg-black/35" />
 
-          <div className="relative z-10 mx-auto w-full max-w-6xl px-8">
+          <div className="relative z-10 mx-auto w-full container px-4 lg:px-0 py-16 md:py-24">
             <div className="max-w-xl text-white">
               <p
-                className="mb-4 text-[9px] tracking-[0.25em] uppercase"
+                className="mb-4 text-xs font-semibold tracking-[0.25em] uppercase text-accent"
                 style={contactStyle(
                   (hero.content as any)?.contactHeroEyebrowStyle,
                   "#FFFFFF"
@@ -232,7 +98,7 @@ export const ContactContentPreview = () => {
               </p>
 
               <h1
-                className="font-serif text-4xl leading-tight"
+                className="font-heading text-3xl md:text-5xl leading-tight font-semibold"
                 style={contactStyle(
                   (hero.content as any)?.contactHeroTitleLine1Style,
                   "#FFFFFF"
@@ -251,7 +117,7 @@ export const ContactContentPreview = () => {
               </h1>
 
               <p
-                className="mt-5 max-w-md text-sm leading-6 text-white/80"
+                className="mt-5 max-w-md text-sm leading-6 text-white/90"
                 style={contactStyle(
                   (hero.content as any)?.contactHeroDescriptionStyle,
                   "#FFFFFFCC"
@@ -270,7 +136,7 @@ export const ContactContentPreview = () => {
 
       {process && (
         <section
-          className="relative overflow-hidden px-8 py-20"
+          className="relative overflow-hidden w-full bg-neutral-100 xl:pt-20 xlg:pt-[76px] lgx:pt-[66px] md:pt-[60px] pt-12 xl:pb-[126px] xlg:pb-[110px] lgx:pb-[100px] md:pb-[80px] pb-14"
           style={{
             backgroundColor: process.bgColor ?? "#FDF8F1",
           }}
@@ -283,9 +149,9 @@ export const ContactContentPreview = () => {
               containerClassName="absolute inset-0"
             />
           )}
-          <div className="relative z-10 mx-auto max-w-6xl">
+          <div className="relative z-10 mx-auto container px-4 lg:px-0">
             <h2
-              className="text-center font-serif text-2xl"
+              className="w-full text-primary text-center font-heading font-medium text-2xl md:text-[34px] xlg:text-4xl xl:text-[40px] leading-[46px] md:leading-[52px] xl:leading-[56px] tracking-[2px] xl:tracking-[3px] capitalize"
               style={contactStyle(
                 (process.content as any)?.contactStepsTitleStyle,
                 "#24351C"
@@ -294,7 +160,7 @@ export const ContactContentPreview = () => {
               {process.content?.title}
             </h2>
 
-            <div className="mt-14 grid grid-cols-1 gap-10 md:grid-cols-3">
+            <div className="mt-14 grid grid-cols-1 gap-8 md:gap-10 lg:gap-12 xl:gap-20 md:grid-cols-3">
               {process.items?.map(
                 (
                   item: {
@@ -305,9 +171,9 @@ export const ContactContentPreview = () => {
                   },
                   index: number
                 ) => (
-                  <div key={item.id ?? index}>
+                  <div key={item.id ?? index} className="flex flex-col gap-4">
                     <p
-                      className="text-[8px] tracking-[0.2em] uppercase"
+                      className="text-accent md:text-[15px] text-sm xl:text-base font-medium uppercase tracking-[1.5px] xl:tracking-[2px]"
                       style={contactStyle(
                         (item as any).contactStepIndexStyle,
                         "#B87858"
@@ -317,7 +183,7 @@ export const ContactContentPreview = () => {
                     </p>
 
                     <h3
-                      className="mt-3 font-serif text-base"
+                      className="text-title font-heading text-xl md:text-[24px] lg:text-[26px] xl:text-[30px] font-semibold leading-7 md:leading-8 lgx:leading-9 xl:leading-[40px]"
                       style={contactStyle(
                         (item as any).contactStepTitleStyle,
                         "#24351C"
@@ -327,7 +193,7 @@ export const ContactContentPreview = () => {
                     </h3>
 
                     <p
-                      className="mt-3 text-[10px] leading-5"
+                      className="text-subtitle text-sm md:text-[15px] xl:text-base font-normal leading-[20px] md:leading-[22px] xl:leading-[24px]"
                       style={contactStyle(
                         (item as any).contactStepDescriptionStyle,
                         "#6B7280"
@@ -349,7 +215,7 @@ export const ContactContentPreview = () => {
 
       {inquiry && (
         <section
-          className="relative overflow-hidden px-8 py-20"
+          className="relative overflow-hidden w-full py-16 md:py-24"
           style={{
             backgroundColor: inquiry.bgColor ?? "#F5F0E8",
           }}
@@ -362,9 +228,9 @@ export const ContactContentPreview = () => {
               containerClassName="absolute inset-0"
             />
           )}
-          <div className="relative z-10 mx-auto max-w-6xl">
+          <div className="relative z-10 mx-auto container px-4 lg:px-0">
             <p
-              className="text-[8px] tracking-[0.2em] uppercase"
+              className="text-xs font-semibold tracking-[0.2em] uppercase text-accent"
               style={contactStyle(
                 (inquiry.content as any)?.contactSectionEyebrowStyle,
                 "#B87858"
@@ -374,7 +240,7 @@ export const ContactContentPreview = () => {
             </p>
 
             <h2
-              className="mt-2 font-serif text-2xl"
+              className="mt-2 font-heading text-2xl md:text-4xl font-semibold"
               style={contactStyle(
                 (inquiry.content as any)?.contactSectionTitleStyle,
                 "#24351C"
@@ -385,7 +251,7 @@ export const ContactContentPreview = () => {
 
             {inquiry.content?.description && (
               <p
-                className="mt-3 max-w-xl text-[11px] leading-5"
+                className="mt-3 max-w-xl text-sm leading-6 text-subtitle"
                 style={contactStyle(
                   (inquiry.content as any)?.contactSectionDescriptionStyle,
                   "#6B7280"
@@ -395,162 +261,15 @@ export const ContactContentPreview = () => {
               </p>
             )}
 
-            <div className="mt-8 grid grid-cols-1 gap-8 md:grid-cols-[1fr_320px]">
+            <div className="mt-8 grid grid-cols-1 gap-8 md:grid-cols-[1fr_380px]">
               {/* FORM */}
-
-              <div className="space-y-3">
+              <div className="space-y-4">
                 <FormBuilderPreview fields={inquiry.fields ?? []} />
-                {/* {inquiry.fields?.map(
-                  (field: {
-                    id: string
-                      name?: string
-                    type: string
-                    label?: string
-                    placeholder?: string
-                    options?: {
-                      value: string
-                      label: string
-                      default?: boolean
-                    }[]
-                    required?: boolean
-                    pattern?: string
-                    minLength?: number
-                    maxLength?: number
-                    errorMessage?: string
-                    requiredErrorMessage?: string
-                      labelStyle?: any
-                      placeholderStyle?: any
-                      requiredErrorStyle?: any
-                      icon?: string
-                  }) => {
-                    if (
-                      ["chipSelect", "select", "radio", "checkbox"].includes(
-                        field.type
-                      )
-                    ) {
-                      return (
-                        <div key={field.id}>
-                          <p className="mb-2 flex items-center gap-1 text-[8px]" style={contactStyle(field.labelStyle, "#24351C")}>
-                            {field.icon && <UniversalMultimediaPreview multimedia={{ type: "image", url: field.icon }} className="h-4 w-4 object-contain" containerClassName="h-4 w-4" />}
-                            {field.label}
-                          </p>
-
-                          {field.type === "select" ? (
-                            <select
-                              name={field.id}
-                              required={field.required}
-                              className="h-9 w-full border border-black/10 bg-transparent px-3 text-[9px]"
-                            >
-                              <option value="">Select an option</option>
-                              {field.options?.map((option) => (
-                                <option key={option.value} value={option.value}>
-                                  {option.label}
-                                </option>
-                              ))}
-                            </select>
-                          ) : (
-                            <div className="flex flex-wrap gap-2">
-                              {field.options?.map(
-                                (option: {
-                                  value: string
-                                  label: string
-                                  default?: boolean
-                                }) => (
-                                  <label
-                                    key={option.value}
-                                    className={`border px-3 py-2 text-[7px] ${
-                                      option.default
-                                        ? "border-[#B87858] bg-[#B87858] text-white"
-                                        : "border-black/10"
-                                    }`}
-                                  >
-                                    {(field as any).icon && (
-                                      <UniversalMultimediaPreview
-                                        multimedia={{
-                                          type: "image",
-                                          url: (field as any).icon,
-                                        }}
-                                        className="h-4 w-4 object-contain"
-                                        containerClassName="h-4 w-4"
-                                      />
-                                    )}
-                                    <input
-                                      type={
-                                        field.type === "radio"
-                                          ? "radio"
-                                          : "checkbox"
-                                      }
-                                      name={field.id}
-                                      value={option.value}
-                                      defaultChecked={option.default}
-                                      className="mr-1"
-                                    />
-                                    {option.label}
-                                  </label>
-                                )
-                              )}
-                            </div>
-                          )}
-                        </div>
-                      )
-                    }
-
-                    if (field.type === "textarea") {
-                      return (
-                        <textarea
-                          key={field.id}
-                          name={field.name ?? field.id}
-                          required={field.required}
-                          minLength={field.minLength}
-                          maxLength={field.maxLength}
-                          onInvalid={(event) =>
-                            event.currentTarget.setCustomValidity(
-                              field.required && !event.currentTarget.value
-                                ? (field.requiredErrorMessage ?? "This field is required")
-                                : (field.errorMessage ?? "Please enter a valid value")
-                            )
-                          }
-                          onInput={(event) =>
-                            event.currentTarget.setCustomValidity("")
-                          }
-                          className="min-h-[90px] w-full border border-black/10 bg-transparent p-3 text-[9px]"
-                          placeholder={field.placeholder}
-                          style={contactStyle(field.placeholderStyle, "#6B7280")}
-                        />
-                      )
-                    }
-
-                    return (
-                      <input
-                        key={field.id}
-                        name={field.name ?? field.id}
-                        type={field.type}
-                        required={field.required}
-                        minLength={field.minLength}
-                        maxLength={field.maxLength}
-                        pattern={field.pattern}
-                        onInvalid={(event) =>
-                          event.currentTarget.setCustomValidity(
-                            field.required && !event.currentTarget.value
-                              ? (field.requiredErrorMessage ?? "This field is required")
-                              : (field.errorMessage ?? "Please enter a valid value")
-                          )
-                        }
-                        onInput={(event) =>
-                          event.currentTarget.setCustomValidity("")
-                        }
-                        className="h-9 w-full border border-black/10 bg-transparent px-3 text-[9px]"
-                        placeholder={field.placeholder}
-                        style={contactStyle(field.placeholderStyle, "#6B7280")}
-                      />
-                    )
-                  }
-                )} */}
 
                 {inquiry.buttons?.[0] && (
                   <button
                     type="button"
-                    className="bg-[#18370F] px-8 py-3 text-[8px] tracking-wider text-white uppercase"
+                    className="bg-[#18370F] px-8 py-3 text-xs font-semibold tracking-wider text-white uppercase rounded-xs"
                     onClick={async () => {
                       const fields = Array.from(
                         document.querySelectorAll<
@@ -591,7 +310,6 @@ export const ContactContentPreview = () => {
               </div>
 
               {/* IMAGE */}
-
               <div>
                 {((inquiry.content as any)?.sideMultimedia ||
                   inquiry.sideImages?.[0]?.url) && (
@@ -603,7 +321,7 @@ export const ContactContentPreview = () => {
                         alt: inquiry.sideImages?.[0]?.alt,
                       }
                     }
-                    className="h-full min-h-[320px] w-full object-cover"
+                    className="h-full min-h-[320px] w-full object-cover rounded-xs"
                     containerClassName="h-full min-h-[320px] w-full"
                   />
                 )}
@@ -619,7 +337,7 @@ export const ContactContentPreview = () => {
 
       {approach && (
         <section
-          className="relative overflow-hidden px-8 py-20"
+          className="relative overflow-hidden w-full py-16 md:py-24"
           style={{
             backgroundColor: approach.bgColor ?? "#FDF8F1",
           }}
@@ -632,7 +350,7 @@ export const ContactContentPreview = () => {
               containerClassName="absolute inset-0"
             />
           )}
-          <div className="relative z-10 mx-auto grid max-w-6xl grid-cols-1 items-center gap-12 md:grid-cols-2">
+          <div className="relative z-10 mx-auto container px-4 lg:px-0 grid grid-cols-1 items-center gap-12 md:grid-cols-2">
             <div>
               {((approach.content as any)?.leftMultimedia ||
                 approach.sideImages?.[0]?.url) && (
@@ -644,15 +362,15 @@ export const ContactContentPreview = () => {
                       alt: approach.sideImages?.[0]?.alt,
                     }
                   }
-                  className="h-[300px] w-full rounded object-cover"
-                  containerClassName="h-[300px] w-full"
+                  className="h-[340px] md:h-[440px] w-full rounded-xs object-cover"
+                  containerClassName="h-[340px] md:h-[440px] w-full"
                 />
               )}
             </div>
 
             <div>
               <p
-                className="text-[8px] tracking-[0.2em] uppercase"
+                className="text-xs font-semibold tracking-[0.2em] uppercase text-accent"
                 style={contactStyle(
                   (approach.content as any)?.contactSectionEyebrowStyle,
                   "#B87858"
@@ -662,7 +380,7 @@ export const ContactContentPreview = () => {
               </p>
 
               <h2
-                className="mt-3 font-serif text-2xl"
+                className="mt-3 font-heading text-2xl md:text-4xl font-semibold"
                 style={contactStyle(
                   (approach.content as any)?.contactSectionTitleStyle,
                   "#24351C"
@@ -673,7 +391,7 @@ export const ContactContentPreview = () => {
 
               {approach.content?.description && (
                 <p
-                  className="mt-4 text-[11px] leading-6"
+                  className="mt-4 text-sm md:text-base leading-relaxed text-subtitle"
                   style={contactStyle(
                     (approach.content as any)?.contactSectionDescriptionStyle,
                     "#6B7280"
@@ -693,7 +411,7 @@ export const ContactContentPreview = () => {
 
       {contactInfo && (
         <section
-          className="relative overflow-hidden px-8 py-14"
+          className="relative overflow-hidden w-full py-14 md:py-20"
           style={{
             backgroundColor: contactInfo.bgColor ?? "#FBF9F5",
           }}
@@ -706,7 +424,7 @@ export const ContactContentPreview = () => {
               containerClassName="absolute inset-0"
             />
           )}
-          <div className="relative z-10 mx-auto grid max-w-4xl grid-cols-1 gap-8 text-center md:grid-cols-3">
+          <div className="relative z-10 mx-auto container px-4 lg:px-0 grid grid-cols-1 gap-8 text-center md:grid-cols-3">
             {contactInfo.items?.map(
               (
                 item: {
@@ -721,9 +439,9 @@ export const ContactContentPreview = () => {
                 },
                 index: number
               ) => (
-                <div key={item.id ?? index}>
+                <div key={item.id ?? index} className="flex flex-col items-center">
                   <p
-                    className="flex items-center justify-center gap-1 text-[8px] tracking-wider uppercase"
+                    className="flex items-center justify-center gap-1 text-xs font-semibold tracking-wider uppercase text-muted-foreground"
                     style={contactStyle(item.contactInfoLabelStyle, "#9CA3AF")}
                   >
                     {(item.iconMultimedia || item.icon) && (
@@ -744,7 +462,7 @@ export const ContactContentPreview = () => {
                   {item.url ? (
                     <a
                       href={item.url}
-                      className="mt-2 block text-[9px]"
+                      className="mt-2 block text-sm md:text-base font-medium text-primary hover:underline"
                       style={contactStyle(
                         item.contactInfoValueStyle,
                         "#24351C"
@@ -754,7 +472,7 @@ export const ContactContentPreview = () => {
                     </a>
                   ) : (
                     <p
-                      className="mt-2 text-[9px]"
+                      className="mt-2 text-sm md:text-base font-medium text-primary"
                       style={contactStyle(
                         item.contactInfoValueStyle,
                         "#24351C"
@@ -776,7 +494,7 @@ export const ContactContentPreview = () => {
 
       {cta && (
         <section
-          className="relative overflow-hidden px-8 py-20 text-center"
+          className="relative overflow-hidden w-full py-16 md:py-24 text-center"
           style={{
             backgroundColor: cta.bgColor ?? "#FBF9F5",
           }}
@@ -790,9 +508,9 @@ export const ContactContentPreview = () => {
             />
           )}
 
-          <div className="relative z-10">
+          <div className="relative z-10 mx-auto container px-4 lg:px-0">
             <h2
-              className="font-serif text-2xl"
+              className="font-heading text-2xl md:text-4xl font-semibold"
               style={contactStyle(
                 (cta.content as any)?.contactSectionTitleStyle,
                 "#24351C"
@@ -802,7 +520,7 @@ export const ContactContentPreview = () => {
             </h2>
 
             <p
-              className="mx-auto mt-3 max-w-xl text-[10px] leading-5"
+              className="mx-auto mt-3 max-w-xl text-sm leading-relaxed text-subtitle"
               style={contactStyle(
                 (cta.content as any)?.contactSectionDescriptionStyle,
                 "#6B7280"
@@ -814,7 +532,7 @@ export const ContactContentPreview = () => {
             {cta.buttons?.[0] && (
               <a
                 href={cta.buttons[0].url}
-                className="mt-7 inline-flex px-10 py-3 text-[8px] tracking-wider uppercase"
+                className="mt-7 inline-flex px-8 py-3 text-xs font-semibold tracking-wider uppercase rounded-xs"
                 style={{
                   backgroundColor:
                     (cta.buttons[0] as any).backgroundColor ?? "#18370F",

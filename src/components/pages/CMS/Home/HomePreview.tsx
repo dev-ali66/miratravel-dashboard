@@ -1,4 +1,8 @@
 import { useCmsDraft } from "../shared/CmsDraftContext"
+import { useGetCmsBySlug } from "@/hooks/cms/useGetCmsBySlug"
+import { getDefaultCmsPageData } from "../shared/defaultCmsData"
+import { FooterPreview } from "../Footer/FooterPreview"
+import type { FooterPageData } from "../Footer/footerTypes"
 
 import type { HomeButton, HomePageData, HomeSection } from "./homeTypes"
 import { cn } from "@/lib/utils"
@@ -159,6 +163,14 @@ const getHomeSectionEntry = (key: string) => {
 export const HomePreview = () => {
   const page = useCmsDraft<HomePageData>()
 
+  const { data: footerCmsData } = useGetCmsBySlug("footer")
+  const fetchedFooter = footerCmsData?.data
+  const footerData = (
+    fetchedFooter && (fetchedFooter.data?.theme || fetchedFooter.data?.content)
+      ? fetchedFooter
+      : getDefaultCmsPageData("footer", "Footer")
+  ) as unknown as FooterPageData
+
   const data = page?.data ?? DEFAULT_HOME_DATA
 
   const theme = data.theme ?? DEFAULT_HOME_DATA.theme ?? {}
@@ -286,118 +298,8 @@ export const HomePreview = () => {
         </div>
       ))}
 
-      {/* FOOTER */}
-      <footer className="relative flex w-full flex-col self-stretch overflow-hidden bg-primary">
-        {/* Top Main Section: Brand + Navigation */}
-        <div className="w-full pt-14 pb-7 md:pt-20 md:pb-10 xl:pt-[100px] xl:pb-[50px]">
-          <div className="flex w-full flex-col items-start justify-between gap-12 px-7 md:px-14 lg:flex-row lg:gap-8 xl:gap-20">
-            {/* Brand Column */}
-            <div className="flex w-full shrink-0 flex-col items-start text-left lg:w-[350px]">
-              <p className="text-sm font-semibold tracking-[1.4px] text-accent uppercase md:text-base">
-                MIRA
-              </p>
-              <p className="mt-5 text-sm leading-5 font-normal text-neutral-300 md:mt-6 md:text-[15px] xl:mt-[30px] xl:text-base xl:leading-[22px]">
-                Your Trusted partner for world-class travel experiences across
-                50+ destinations.
-              </p>
-              <div className="mt-4 flex items-center justify-start gap-3.5 md:mt-8 xl:mt-13">
-                {["facebook", "instagram", "twitter", "linkedin"].map(
-                  (social) => (
-                    <a
-                      key={social}
-                      href="#"
-                      className="flex size-7 items-center justify-center bg-neutral-300/10 transition-all duration-300 hover:bg-neutral-300/15 md:size-8 xl:size-9"
-                      aria-label={`Follow on ${social}`}
-                    >
-                      <span className="text-xs text-neutral-100">◉</span>
-                    </a>
-                  )
-                )}
-              </div>
-            </div>
-
-            {/* Navigation Columns */}
-            <div className="grid w-full flex-1 grid-cols-2 items-start gap-8 md:grid-cols-3 md:gap-10 lg:grid-cols-4">
-              {[
-                {
-                  title: "Explore",
-                  links: [
-                    "Destinations",
-                    "Journeys",
-                    "Travel Insights",
-                    "Mira Stories",
-                  ],
-                },
-                {
-                  title: "About",
-                  links: ["About Mira", "Why Mira", "How we work", "Contact"],
-                },
-                {
-                  title: "Plan",
-                  links: [
-                    "Start a travel request",
-                    "Financial protection",
-                    "FAQ",
-                  ],
-                },
-                {
-                  title: "Company",
-                  links: [
-                    "Privacy",
-                    "Cookies",
-                    "Terms and conditions",
-                    "Complaints procedure",
-                  ],
-                },
-              ].map((col) => (
-                <div
-                  key={col.title}
-                  className="flex min-w-0 flex-col gap-4 md:gap-5 xl:gap-8"
-                >
-                  <h3 className="text-base leading-4 font-semibold tracking-[1px] text-neutral-300 md:text-lg md:leading-[18px] lg:text-sm xl:text-[22px] xl:leading-[22px]">
-                    {col.title}
-                  </h3>
-                  <ul className="flex flex-col gap-2 md:gap-3 xl:gap-4">
-                    {col.links.map((link) => (
-                      <li key={link}>
-                        <a
-                          href="#"
-                          className="text-xs font-normal text-neutral-200 transition-colors hover:text-neutral-100 md:text-sm lg:text-[15px] xl:text-neutral-100"
-                        >
-                          {link}
-                        </a>
-                      </li>
-                    ))}
-                  </ul>
-                </div>
-              ))}
-            </div>
-          </div>
-        </div>
-
-        {/* Newsletter Section */}
-        <div className="flex w-full flex-col items-center justify-between gap-5 border-t border-b border-neutral-200/16 px-7 py-5 md:flex-row md:gap-4 md:px-14">
-          <div className="flex flex-wrap items-center justify-center gap-3 text-center text-sm leading-5 font-normal md:text-left md:text-[15px] xl:text-base">
-            <span className="text-neutral-200/90">Stay up to date:</span>
-            <a
-              href="#"
-              className="font-medium text-accent transition-opacity hover:opacity-90"
-            >
-              Subscribe to the Newsletter →
-            </a>
-          </div>
-          <div className="flex flex-wrap items-center justify-center gap-3 md:gap-4">
-            <span className="text-xs font-normal text-neutral-300 md:text-sm">
-              Partner Badges
-            </span>
-          </div>
-        </div>
-
-        {/* Bottom Copyright */}
-        <div className="w-full px-7 py-6 text-center text-xs text-neutral-300 md:px-14 md:py-8 md:text-sm">
-          <p>&copy; 2024 MIRA. All rights reserved.</p>
-        </div>
-      </footer>
+      {/* FOOTER PREVIEW (Fetched via API) */}
+      <FooterPreview footerData={footerData} />
     </div>
   )
 }
