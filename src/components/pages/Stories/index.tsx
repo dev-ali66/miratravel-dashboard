@@ -56,8 +56,8 @@ export default function StoriesPage() {
   const stories = (data?.data ?? []).filter((s) =>
     searchInput
       ? s.title.toLowerCase().includes(searchInput.toLowerCase()) ||
-        s.slug.toLowerCase().includes(searchInput.toLowerCase()) ||
-        s.description.toLowerCase().includes(searchInput.toLowerCase())
+      s.slug.toLowerCase().includes(searchInput.toLowerCase()) ||
+      s.description.toLowerCase().includes(searchInput.toLowerCase())
       : true
   );
 
@@ -129,8 +129,8 @@ export default function StoriesPage() {
               story.categories && story.categories.length > 0
                 ? story.categories
                 : story.category
-                ? [story.category]
-                : []
+                  ? [story.category]
+                  : []
 
             return (
               <div

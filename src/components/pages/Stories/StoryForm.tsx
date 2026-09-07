@@ -196,8 +196,8 @@ export function StoryForm() {
         s.categories && s.categories.length > 0
           ? s.categories
           : s.category
-          ? [s.category]
-          : ["Culture & Heritage"]
+            ? [s.category]
+            : ["Culture & Heritage"]
 
       setFormData({
         title: s.title || "",
@@ -235,12 +235,12 @@ export function StoryForm() {
           detail.blocks && Array.isArray(detail.blocks) && detail.blocks.length > 0
             ? detail.blocks
             : [
-                {
-                  id: "b1",
-                  type: "paragraph",
-                  text: s.description || "Start writing your story content here...",
-                },
-              ],
+              {
+                id: "b1",
+                type: "paragraph",
+                text: s.description || "Start writing your story content here...",
+              },
+            ],
       })
     }
   }, [storyData])
@@ -607,11 +607,10 @@ export function StoryForm() {
                           <div
                             key={catItem.id}
                             onClick={() => addCategoryToStory(catItem.name)}
-                            className={`flex items-center justify-between rounded-md px-3 py-2 text-xs cursor-pointer transition-colors ${
-                              isSelected
+                            className={`flex items-center justify-between rounded-md px-3 py-2 text-xs cursor-pointer transition-colors ${isSelected
                                 ? "bg-primary/10 font-bold text-primary"
                                 : "hover:bg-muted text-foreground"
-                            }`}
+                              }`}
                           >
                             <span className="truncate">{catItem.name}</span>
                             <div className="flex items-center gap-1.5">
@@ -696,11 +695,10 @@ export function StoryForm() {
                           <div
                             key={typeItem.id}
                             onClick={() => selectStoryType(typeItem.name)}
-                            className={`flex items-center justify-between rounded-md px-3 py-2 text-xs cursor-pointer transition-colors ${
-                              isSelected
+                            className={`flex items-center justify-between rounded-md px-3 py-2 text-xs cursor-pointer transition-colors ${isSelected
                                 ? "bg-primary/10 font-bold text-primary"
                                 : "hover:bg-muted text-foreground"
-                            }`}
+                              }`}
                           >
                             <span className="truncate">{typeItem.name}</span>
                             <div className="flex items-center gap-1.5">
@@ -809,7 +807,7 @@ export function StoryForm() {
               <UniversalMultimediaForm
                 section={{ id: "hero", type: "hero" } as any}
                 content={{ heroMultimedia: formData.heroMultimedia }}
-                updateSection={() => {}}
+                updateSection={() => { }}
                 updateSectionContent={(patch) => {
                   if (patch.heroMultimedia) {
                     setFormData((prev) => ({
@@ -1003,7 +1001,7 @@ export function StoryForm() {
                       <UniversalMultimediaForm
                         section={{ id: block.id, type: "spotlight-image" } as any}
                         content={{ multimedia: block.multimedia || { type: "image", url: block.url || "", alt: block.title || "" } }}
-                        updateSection={() => {}}
+                        updateSection={() => { }}
                         updateSectionContent={(patch) => {
                           if (patch.multimedia) {
                             updateBlock(block.id, "multimedia", patch.multimedia)
@@ -1036,7 +1034,7 @@ export function StoryForm() {
                       <UniversalMultimediaForm
                         section={{ id: `${block.id}_1`, type: "gallery-image-1" } as any}
                         content={{ multimedia: block.multimedia || { type: "image", url: block.url || "" } }}
-                        updateSection={() => {}}
+                        updateSection={() => { }}
                         updateSectionContent={(patch) => {
                           if (patch.multimedia) {
                             updateBlock(block.id, "multimedia", patch.multimedia)
@@ -1059,7 +1057,7 @@ export function StoryForm() {
                       <UniversalMultimediaForm
                         section={{ id: `${block.id}_2`, type: "gallery-image-2" } as any}
                         content={{ secondMultimedia: block.secondMultimedia || { type: "image", url: block.secondUrl || "" } }}
-                        updateSection={() => {}}
+                        updateSection={() => { }}
                         updateSectionContent={(patch) => {
                           if (patch.secondMultimedia) {
                             updateBlock(block.id, "secondMultimedia", patch.secondMultimedia)
@@ -1127,7 +1125,7 @@ export function StoryForm() {
                       <UniversalMultimediaForm
                         section={{ id: block.id, type: "block-image" } as any}
                         content={{ multimedia: block.multimedia || { type: "image", url: block.url || "", alt: block.caption || "" } }}
-                        updateSection={() => {}}
+                        updateSection={() => { }}
                         updateSectionContent={(patch) => {
                           if (patch.multimedia) {
                             updateBlock(block.id, "multimedia", patch.multimedia)
@@ -1318,11 +1316,10 @@ export function StoryForm() {
                       key={j.id}
                       type="button"
                       onClick={() => toggleJourneyId(j.id)}
-                      className={`flex items-center justify-between rounded-md px-3 py-2 text-left text-xs transition-colors cursor-pointer ${
-                        isSelected
+                      className={`flex items-center justify-between rounded-md px-3 py-2 text-left text-xs transition-colors cursor-pointer ${isSelected
                           ? "bg-primary/10 font-semibold text-primary"
                           : "hover:bg-muted/50 text-foreground"
-                      }`}
+                        }`}
                     >
                       <div className="flex items-center gap-2 truncate pr-2">
                         <span className="truncate">{j.title}</span>

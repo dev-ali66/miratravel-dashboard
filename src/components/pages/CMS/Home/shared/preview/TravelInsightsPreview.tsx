@@ -87,13 +87,13 @@ export function TravelInsightsPreview({
     leftImageData.url ?? backgroundImage?.url ?? PREVIEW_IMAGE_SOURCE
   const spotlightAlt = leftImageData.alt ?? "Balkan Travel Insights"
 
-  const displayInsights =
+  const displayInsights: any[] =
     section.items && section.items.length > 0
       ? section.items
       : DEFAULT_INSIGHTS
 
-  const featuredInsight = displayInsights[0]
-  const secondaryInsights = displayInsights.slice(1, 3)
+  const featuredInsight: any = displayInsights[0]
+  const secondaryInsights: any[] = displayInsights.slice(1, 3)
 
   return (
     <section
@@ -165,7 +165,7 @@ export function TravelInsightsPreview({
                   className="h-auto font-normal text-sm md:text-[15px] xl:text-[16px] leading-[22px] md:leading-[24px] xl:leading-[26px] text-subtitle"
                   style={fieldCssStyle(
                     content.homeTravelInsightsSubtitleStyle ||
-                      content.homeTravelInsightsDescriptionStyle,
+                    content.homeTravelInsightsDescriptionStyle,
                     darkText
                   )}
                 >
@@ -182,9 +182,9 @@ export function TravelInsightsPreview({
                       <div className="w-full md:w-48 h-36 relative shrink-0 overflow-hidden rounded-md bg-muted">
                         <img
                           src={
-                            typeof (featuredInsight as any).image === "string"
-                              ? (featuredInsight as any).image
-                              : (featuredInsight as any).image?.url || (featuredInsight as any).imageUrl || PREVIEW_IMAGE_SOURCE
+                            typeof featuredInsight.image === "string"
+                              ? featuredInsight.image
+                              : featuredInsight.image?.url || PREVIEW_IMAGE_SOURCE
                           }
                           alt={featuredInsight.title}
                           className="w-full h-full object-cover"
@@ -195,13 +195,13 @@ export function TravelInsightsPreview({
                           className="text-[11px] font-semibold tracking-[2px] uppercase"
                           style={{ color: accentColor || "#C5A880" }}
                         >
-                          {(featuredInsight as any).tag || "HERITAGE"}
+                          {featuredInsight.tag || "HERITAGE"}
                         </span>
                         <h3 className="font-serif text-lg font-normal leading-snug">
                           {featuredInsight.title}
                         </h3>
                         <p className="text-xs text-muted-foreground line-clamp-2 leading-relaxed">
-                          {(featuredInsight as any).description}
+                          {featuredInsight.description}
                         </p>
                         <a
                           href={featuredInsight.url || "#"}
@@ -221,14 +221,14 @@ export function TravelInsightsPreview({
                 {/* Secondary Stories Grid */}
                 {secondaryInsights.length > 0 && (
                   <div className="w-full grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-5">
-                    {secondaryInsights.map((insight: any, idx) => (
+                    {secondaryInsights.map((insight, idx) => (
                       <div key={idx} className="flex flex-col gap-2 group">
                         <div className="w-full h-36 relative overflow-hidden rounded-md bg-muted">
                           <img
                             src={
                               typeof insight.image === "string"
                                 ? insight.image
-                                : insight.image?.url || insight.imageUrl || PREVIEW_IMAGE_SOURCE
+                                : insight.image?.url || PREVIEW_IMAGE_SOURCE
                             }
                             alt={insight.title}
                             className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"

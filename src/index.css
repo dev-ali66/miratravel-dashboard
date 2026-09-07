@@ -169,72 +169,87 @@
 }
 
 :root {
-  --background: #F9F9F9;
-  --foreground: #080C1D;
+  --background: #FFF8F2;
+  /* frontend --color-surface-light */
+  --foreground: #1A1209;
+  /* frontend --color-qoute */
   --card: #FFFFFF;
-  --card-foreground: #080C1D;
+  --card-foreground: #1a1a1a;
+  /* frontend --color-card-title */
   --popover: #FFFFFF;
-  --popover-foreground: #080C1D;
-  --primary: #1F3A1B;
+  --popover-foreground: #1a1a1a;
+  --primary: #1f3d2b;
+  /* frontend --color-sidebar-active */
   --primary-foreground: #FFFFFF;
-  --secondary: #F3F4F6;
-  --secondary-foreground: #080C1D;
-  --muted: #F3F4F6;
-  --muted-foreground: #565E69;
-  --accent: #AF6348;
+  --secondary: #EDE7D8;
+  /* frontend --color-surface */
+  --secondary-foreground: #1A1209;
+  --muted: #E8E5DD;
+  /* frontend --color-surface-muted */
+  --muted-foreground: #7E7E7E;
+  /* frontend --color-muted */
+  --accent: #af6348;
+  /* frontend --color-accent */
   --accent-foreground: #FFFFFF;
   --destructive: #EF4444;
-  --border: #E4E4E7;
-  --input: #E4E4E7;
-  --ring: #1F3A1B;
-  --chart-1: #1F3A1B;
-  --chart-2: #AF6348;
-  --chart-3: #235347;
-  --chart-4: #B86B3A;
-  --chart-5: #3F7D58;
+  /* frontend --color-error-100 */
+  --border: #D8CBB8;
+  /* frontend --color-border-light */
+  --input: #C5C7C0;
+  /* frontend --color-border-form */
+  --ring: #1f3d2b;
+  --chart-1: #1f3d2b;
+  --chart-2: #af6348;
+  --chart-3: #C9A227;
+  /* frontend --color-warning */
+  --chart-4: #3F7D58;
+  /* frontend --color-success */
+  --chart-5: #15428C;
+  /* frontend --color-blue */
   --radius: 0.625rem;
-  --sidebar: #FFFFFF;
-  --sidebar-foreground: #080C1D;
-  --sidebar-primary: #1F3A1B;
+  --sidebar: #FFF8F2;
+  --sidebar-foreground: #1A1209;
+  --sidebar-primary: #1f3d2b;
   --sidebar-primary-foreground: #FFFFFF;
-  --sidebar-accent: #F3F4F6;
-  --sidebar-accent-foreground: #1F3A1B;
-  --sidebar-border: #E4E4E7;
-  --sidebar-ring: #1F3A1B;
+  --sidebar-accent: #EDE7D8;
+  --sidebar-accent-foreground: #1A1209;
+  --sidebar-border: #D8CBB8;
+  --sidebar-ring: #1f3d2b;
 }
 
 .dark {
-  --background: #080C1D;
+  --background: #080c1d;
+  /* frontend --color-dark */
   --foreground: #F9FAFB;
-  --card: #0E1424;
+  --card: #0c1328;
   --card-foreground: #F9FAFB;
-  --popover: #0E1424;
+  --popover: #0c1328;
   --popover-foreground: #F9FAFB;
-  --primary: #2D5227;
+  --primary: #1f3d2b;
   --primary-foreground: #FFFFFF;
-  --secondary: #161F33;
+  --secondary: #121b36;
   --secondary-foreground: #F9FAFB;
-  --muted: #161F33;
-  --muted-foreground: #9CA3AF;
-  --accent: #AF6348;
+  --muted: #121b36;
+  --muted-foreground: #7E7E7E;
+  --accent: #af6348;
   --accent-foreground: #FFFFFF;
-  --destructive: #F87171;
-  --border: rgba(255, 255, 255, 0.12);
-  --input: rgba(255, 255, 255, 0.12);
-  --ring: #AF6348;
-  --chart-1: #2D5227;
-  --chart-2: #AF6348;
-  --chart-3: #3F7D58;
-  --chart-4: #B86B3A;
-  --chart-5: #60A5FA;
-  --sidebar: #0A0E1A;
+  --destructive: #EF4444;
+  --border: #1a2545;
+  --input: #1a2545;
+  --ring: #1f3d2b;
+  --chart-1: #1f3d2b;
+  --chart-2: #af6348;
+  --chart-3: #C9A227;
+  --chart-4: #3F7D58;
+  --chart-5: #15428C;
+  --sidebar: #080c1d;
   --sidebar-foreground: #F9FAFB;
-  --sidebar-primary: #2D5227;
+  --sidebar-primary: #1f3d2b;
   --sidebar-primary-foreground: #FFFFFF;
-  --sidebar-accent: #161F33;
-  --sidebar-accent-foreground: #4ADE80;
-  --sidebar-border: rgba(255, 255, 255, 0.10);
-  --sidebar-ring: #2D5227;
+  --sidebar-accent: #121b36;
+  --sidebar-accent-foreground: #F9FAFB;
+  --sidebar-border: #1a2545;
+  --sidebar-ring: #1f3d2b;
 }
 
 @layer base {
@@ -301,7 +316,7 @@ html.lenis body {
   line-height: 1.5;
 }
 
-.ProseMirror > * + * {
+.ProseMirror>*+* {
   margin-top: 0.25rem;
 }
 
@@ -314,9 +329,17 @@ html.lenis body {
   margin-bottom: 0.25rem;
 }
 
-.ProseMirror h1 { font-size: 1.5rem; }
-.ProseMirror h2 { font-size: 1.25rem; }
-.ProseMirror h3 { font-size: 1.125rem; }
+.ProseMirror h1 {
+  font-size: 1.5rem;
+}
+
+.ProseMirror h2 {
+  font-size: 1.25rem;
+}
+
+.ProseMirror h3 {
+  font-size: 1.125rem;
+}
 
 .ProseMirror ul,
 .ProseMirror ol {
@@ -324,17 +347,30 @@ html.lenis body {
   margin: 0.25rem 0;
 }
 
-.ProseMirror ul { list-style-type: disc; }
-.ProseMirror ol { list-style-type: decimal; }
+.ProseMirror ul {
+  list-style-type: disc;
+}
+
+.ProseMirror ol {
+  list-style-type: decimal;
+}
 
 .ProseMirror li {
   margin-top: 0.125rem;
   margin-bottom: 0.125rem;
 }
 
-.ProseMirror strong { font-weight: 600; }
-.ProseMirror em { font-style: italic; }
-.ProseMirror s { text-decoration: line-through; }
+.ProseMirror strong {
+  font-weight: 600;
+}
+
+.ProseMirror em {
+  font-style: italic;
+}
+
+.ProseMirror s {
+  text-decoration: line-through;
+}
 
 .ProseMirror p.is-editor-empty:first-child::before {
   color: hsl(var(--muted-foreground));
@@ -345,6 +381,7 @@ html.lenis body {
 }
 
 @layer base {
+
   button,
   [role="button"],
   input[type="button"],

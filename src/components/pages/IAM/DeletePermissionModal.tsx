@@ -42,32 +42,32 @@ export default function DeletePermissionModal({
           <DialogDescription>
             Are you sure you want to delete the permission{" "}
             <span className="font-semibold text-foreground">
-              {(permission as any)?.name || "this permission"}
+              {permission?.action || (permission as any)?.name || "this permission"}
             </span>
             ? Roles using this permission will be affected.
           </DialogDescription>
-        </DialogHeader>
+        </DialogHeader >
 
-        <DialogFooter className="gap-2 sm:gap-0">
-          <Button
-            variant="outline"
-            onClick={onClose}
-            disabled={isDeleting}
-            className="cursor-pointer"
-          >
-            Cancel
-          </Button>
+    <DialogFooter className="gap-2 sm:gap-0">
+      <Button
+        variant="outline"
+        onClick={onClose}
+        disabled={isDeleting}
+        className="cursor-pointer"
+      >
+        Cancel
+      </Button>
 
-          <Button
-            variant="destructive"
-            onClick={handleDeleteConfirm}
-            disabled={isDeleting}
-            className="cursor-pointer"
-          >
-            {isDeleting ? "Deleting..." : "Delete Permission"}
-          </Button>
-        </DialogFooter>
-      </DialogContent>
-    </Dialog>
+      <Button
+        variant="destructive"
+        onClick={handleDeleteConfirm}
+        disabled={isDeleting}
+        className="cursor-pointer"
+      >
+        {isDeleting ? "Deleting..." : "Delete Permission"}
+      </Button>
+    </DialogFooter>
+      </DialogContent >
+    </Dialog >
   )
 }

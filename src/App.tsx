@@ -64,19 +64,19 @@ export function App() {
             <Route path="bookings" element={<BookingsPage />} />
           </Route>
 
-          <Route path="/cms" element={<CmsEditorLayout />}>
-            <Route path=":slug" element={<PageSections />} />
-          </Route>
+    <Route path="/cms" element={<CmsEditorLayout />}>
+      <Route path=":slug" element={<PageSections />} />
+    </Route>
 
-          {/* <Route path="/locations" element={<LocationEditorLayout />}>
+  {/* <Route path="/locations" element={<LocationEditorLayout />}>
             <Route path=":slug" element={<LocationForm />} />
           </Route> */}
-          <Route path="/locations" element={<LocationEditorLayout />}>
-            <Route path="new" element={<LocationForm />} />
-            <Route path=":id/:slug" element={<LocationForm />} />
-          </Route>
+  <Route path="/locations" element={<LocationEditorLayout />}>
+    <Route path="new" element={<LocationForm />} />
+    <Route path=":id/:slug" element={<LocationForm />} />
+  </Route>
 
-          {/* Journeys Editor */}
+  {/* Journeys Editor */ }
           <Route path="/journeys/new" element={<JourneyEditorLayout />}>
             <Route index element={<JourneyForm />} />
           </Route>
@@ -87,7 +87,7 @@ export function App() {
             <Route index element={<JourneyForm />} />
           </Route>
 
-          {/* Stories Editor */}
+  {/* Stories Editor */ }
           <Route path="/stories/new" element={<StoryEditorLayout />}>
             <Route index element={<StoryForm />} />
           </Route>
@@ -97,25 +97,25 @@ export function App() {
           <Route path="/stories/:id" element={<StoryEditorLayout />}>
             <Route index element={<StoryForm />} />
           </Route>
-          {/* <Route
+  {/* <Route
             path="location/add"
             element={
               <LocationForm />
             }
           /> */}
 
-          {/* <Route
+  {/* <Route
             path="location/edit/:locationId"
             element={
               <LocationEditPage />
             }
           /> */}
-        </Route>
+        </Route >
 
-        {/* 404 */}
-        <Route path="*" element={<NotFoundPage />} />
-      </Routes>
-    </TooltipProvider>
+    {/* 404 */ }
+    < Route path = "*" element = {< NotFoundPage />} />
+      </Routes >
+    </TooltipProvider >
   )
 }
 

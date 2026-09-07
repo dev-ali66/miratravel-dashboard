@@ -323,20 +323,20 @@ const SidebarLogo = () => {
 
   const mediaObj =
     navbarMedia &&
-    (navbarMedia.url ||
-      (navbarMedia as any).image?.url ||
-      (navbarMedia as any).imageData?.url)
+      (navbarMedia.url ||
+        (navbarMedia as any).image?.url ||
+        (navbarMedia as any).imageData?.url)
       ? navbarMedia
       : navbarBrand?.logo
-      ? { type: "image", url: navbarBrand.logo, alt: navbarBrand.alt }
-      : footerMedia &&
-        (footerMedia.url ||
-          (footerMedia as any).image?.url ||
-          (footerMedia as any).imageData?.url)
-      ? footerMedia
-      : footerBrand?.logo
-      ? { type: "image", url: footerBrand.logo, alt: footerBrand.alt }
-      : null
+        ? { type: "image", url: navbarBrand.logo, alt: navbarBrand.alt }
+        : footerMedia &&
+          (footerMedia.url ||
+            (footerMedia as any).image?.url ||
+            (footerMedia as any).imageData?.url)
+          ? footerMedia
+          : footerBrand?.logo
+            ? { type: "image", url: footerBrand.logo, alt: footerBrand.alt }
+            : null
 
   const brandName = navbarBrand?.name || footerBrand?.name || "MIRA"
   const mediaUrl =
@@ -407,9 +407,8 @@ export default function Sidebar({
   ========================================================= */
 
   const profileName = user?.userPersonalInfo?.firstName
-    ? `${user.userPersonalInfo.firstName} ${
-        user.userPersonalInfo.lastName || ""
-      }`
+    ? `${user.userPersonalInfo.firstName} ${user.userPersonalInfo.lastName || ""
+    }`
     : user?.email?.split("@")[0] || "Guest"
 
   const profileEmail = user?.email || "No email"
@@ -433,103 +432,103 @@ export default function Sidebar({
           <SidebarLogo />
         </SlideLeft>
 
-        {/* =====================================================
+    {/* =====================================================
             Navigation Sections
         ===================================================== */}
 
-        <div className="flex h-full flex-col justify-between gap-10">
-          {sections?.map((section, sIdx) => (
-            <div key={section.title} className="flex flex-col gap-2">
-              {/* Section Title */}
-              <SlideLeft delay={0.3 + sIdx * 0.1}>
-                <h3 className="px-4 text-xs font-bold tracking-wider text-foreground">
-                  {section.title}
-                </h3>
-              </SlideLeft>
+    <div className="flex h-full flex-col justify-between gap-10">
+      {sections?.map((section, sIdx) => (
+        <div key={section.title} className="flex flex-col gap-2">
+          {/* Section Title */}
+          <SlideLeft delay={0.3 + sIdx * 0.1}>
+            <h3 className="px-4 text-xs font-bold tracking-wider text-foreground">
+              {section.title}
+            </h3>
+          </SlideLeft>
 
-              {/* Navigation */}
-              <nav className="flex flex-col gap-1">
-                {section.items.map((item, iIdx) => {
-                  const isCMSItem = item.href === "/cms"
+          {/* Navigation */}
+          <nav className="flex flex-col gap-1">
+            {section.items.map((item, iIdx) => {
+              const isCMSItem = item.href === "/cms"
 
-                  /*
-                   * CMS gets special dropdown treatment
-                   */
-                  if (isCMSItem) {
-                    return (
-                      <SlideLeft
-                        key={item.href}
-                        delay={0.4 + sIdx * 0.1 + iIdx * 0.05}
-                      >
-                        <CMSDropdown
-                          isOpen={cmsOpen}
-                          setIsOpen={setCmsOpen}
-                          pathname={pathname}
-                        />
-                      </SlideLeft>
-                    )
-                  }
+              /*
+               * CMS gets special dropdown treatment
+               */
+              if (isCMSItem) {
+                return (
+                  <SlideLeft
+                    key={item.href}
+                    delay={0.4 + sIdx * 0.1 + iIdx * 0.05}
+                  >
+                    <CMSDropdown
+                      isOpen={cmsOpen}
+                      setIsOpen={setCmsOpen}
+                      pathname={pathname}
+                    />
+                  </SlideLeft>
+                )
+              }
 
-                  /* =================================================
-                     Normal Navigation Item
-                  ================================================= */
+              /* =================================================
+                 Normal Navigation Item
+              ================================================= */
 
-                  return (
-                    <SlideLeft
-                      key={item.href}
-                      delay={0.4 + sIdx * 0.1 + iIdx * 0.05}
-                    >
-                      <NavLink
-                        {...item}
-                        isActive={
-                          pathname === item.href ||
-                          pathname.startsWith(item.href + "/")
+              return (
+                <SlideLeft
+                  key={item.href}
+                  delay={0.4 + sIdx * 0.1 + iIdx * 0.05}
+                >
+                  <NavLink
+                    {...item}
+                    isActive={
+                      pathname === item.href ||
+                      pathname.startsWith(item.href + "/")
+                    }
+                    onClick={
+                      item.href === "/logout"
+                        ? (e) => {
+                          e.preventDefault()
+
+                          setShowLogoutModal(true)
                         }
-                        onClick={
-                          item.href === "/logout"
-                            ? (e) => {
-                                e.preventDefault()
-
-                                setShowLogoutModal(true)
-                              }
-                            : undefined
-                        }
-                      />
-                    </SlideLeft>
-                  )
-                })}
-              </nav>
-            </div>
-          ))}
+                        : undefined
+                    }
+                  />
+                </SlideLeft>
+              )
+            })}
+          </nav>
         </div>
+      ))}
+    </div>
 
-        {/* =====================================================
+    {/* =====================================================
             User Profile & Theme Card
         ===================================================== */}
 
-        <SlideLeft delay={0.2}>
-          <div className="mx-2 mt-8 flex items-center justify-between gap-3 rounded-2xl border border-muted/50 bg-muted/30 p-3 transition-all hover:bg-muted/40">
-            <div className="flex min-w-0 items-center gap-3">
-              {/* Avatar */}
-              <div className="relative h-9 w-9 shrink-0 overflow-hidden rounded-full ring-2 ring-primary/10 ring-offset-2 ring-offset-background">
-                <img
-                  src={profileImage}
-                  alt="User Avatar"
-                  className="h-full w-full object-cover"
-                />
-              </div>
+    <SlideLeft delay={0.2}>
+      <div className="mx-2 mt-8 flex items-center justify-between gap-3 rounded-2xl border border-muted/50 bg-muted/30 p-3 transition-all hover:bg-muted/40">
+        <div className="flex min-w-0 items-center gap-3">
+          {/* Avatar */}
+          <div className="relative h-9 w-9 shrink-0 overflow-hidden rounded-full ring-2 ring-primary/10 ring-offset-2 ring-offset-background">
+            <img
+              src={profileImage}
+              alt="User Avatar"
+              className="h-full w-full object-cover"
+            />
+          </div>
 
-              {/* User Info */}
-              <div className="flex min-w-0 flex-col overflow-hidden">
-                <span className="truncate text-sm font-bold text-foreground">
-                  {profileName}
-                </span>
+          {/* User Info */}
+          <div className="flex min-w-0 flex-col overflow-hidden">
+            <span className="truncate text-sm font-bold text-foreground">
+              {profileName}
+            </span>
 
-                <span className="truncate text-xs text-muted-foreground">
-                  {profileEmail}
-                </span>
-              </div>
-            </div>
+            <span className="truncate text-xs text-muted-foreground">
+              {profileEmail}
+            </span>
+          </div>
+        </div>
 
             {/* Theme Toggle */}
             <ThemeToggle className="shrink-0" />
