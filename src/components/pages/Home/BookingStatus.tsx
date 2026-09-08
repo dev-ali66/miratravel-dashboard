@@ -3,33 +3,39 @@ import { SlideLeft } from "@/components/animation"
 import { useGetDashboardStatistics } from "@/hooks/analysis/useGetDashboardStatistics"
 
 export default function BookingStatus({ className }: { className?: string }) {
-  const { data } = useGetDashboardStatistics()
-  const overview = data?.overview
+  const { data, isLoading } = useGetDashboardStatistics()
+  const bStatus = data?.bookingStatus
+  const totalBookings = data?.overview?.totalBookings ?? 0
+
+  const confirmedCount = bStatus?.confirmed ?? 0
+  const underReviewCount = bStatus?.underReview ?? 0
+  const depositDueCount = bStatus?.depositDue ?? 0
+  const cancelledCount = bStatus?.cancelled ?? 0
 
   const statuses = [
     {
-      name: "Accepted",
-      value: overview?.acceptedLeads ?? 0,
-      color: "text-primary",
-      stroke: "stroke-primary",
+      name: "Confirmed",
+      value: confirmedCount,
+      color: "text-emerald-500",
+      stroke: "stroke-emerald-500",
     },
     {
-      name: "Pending",
-      value: overview?.pendingLeads ?? 0,
-      color: "text-amber-500",
-      stroke: "stroke-amber-500",
+      name: "Under Review",
+      value: underReviewCount,
+      color: "text-blue-500",
+      stroke: "stroke-blue-500",
     },
     {
-      name: "Declined",
-      value: overview?.declinedLeads ?? 0,
-      color: "text-destructive",
-      stroke: "stroke-destructive",
+      name: "Deposit / Due",
+      value: depositDueCount,
+      color: "text-purple-500",
+      stroke: "stroke-purple-500",
     },
     {
-      name: "Expired",
-      value: overview?.expiredLeads ?? 0,
-      color: "text-slate-500",
-      stroke: "stroke-slate-500",
+      name: "Cancelled",
+      value: cancelledCount,
+      color: "text-rose-500",
+      stroke: "stroke-rose-500",
     },
   ]
 
@@ -42,15 +48,15 @@ export default function BookingStatus({ className }: { className?: string }) {
 
   return (
     <SlideLeft
-      delay={0.6}
-      className={`flex flex-col rounded-xl border border-border bg-card p-6 shadow-sm ${className || ""}`}
+      delay={0.5}
+      className={`flex flex-col rounded-xl border border-border/60 bg-card/60 p-6 shadow-sm backdrop-blur-xl ${className || ""}`}
     >
       <div className="mb-2">
         <h3 className="text-lg font-semibold tracking-tight text-foreground">
-          Lead Status
+          Booking Distribution
         </h3>
-        <p className="mt-1 text-sm text-muted-foreground">
-          Current lead distribution
+        <p className="mt-1 text-xs text-muted-foreground">
+          Current booking workflow status breakdown
         </p>
       </div>
 
@@ -66,7 +72,7 @@ export default function BookingStatus({ className }: { className?: string }) {
               r="40"
               fill="transparent"
               strokeWidth="12"
-              className="stroke-muted"
+              className="stroke-muted/40"
             />
             {statuses.map((status, index) => {
               const strokeDasharray = `${(status.value / totalValue) * c} ${c}`
@@ -100,16 +106,20 @@ export default function BookingStatus({ className }: { className?: string }) {
           </svg>
           <div className="absolute inset-0 flex flex-col items-center justify-center">
             <span className="text-3xl font-bold tracking-tight text-foreground">
-              {overview?.totalLeads ?? 0}
+              {isLoading ? (
+                <span className="inline-block h-8 w-12 animate-pulse rounded bg-muted/60"></span>
+              ) : (
+                totalBookings
+              )}
             </span>
             <span className="text-xs font-medium text-muted-foreground">
-              Total Leads
+              Total Bookings
             </span>
           </div>
         </div>
       </div>
 
-      <div className="mt-auto grid grid-cols-2 gap-2 border-t border-border pt-4">
+      <div className="mt-auto grid grid-cols-2 gap-2 border-t border-border/60 pt-4">
         {statuses.map((status) => (
           <div
             key={status.name}
@@ -122,7 +132,7 @@ export default function BookingStatus({ className }: { className?: string }) {
               {status.name}
             </span>
             <span className="text-xs text-muted-foreground">
-              {Math.round((status.value / totalValue) * 100)}%
+              {totalBookings > 0 ? Math.round((status.value / totalValue) * 100) : 0}%
             </span>
           </div>
         ))}

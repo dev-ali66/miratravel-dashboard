@@ -2,46 +2,39 @@ import { useMutation, useQueryClient } from "@tanstack/react-query"
 import { apiPrivate } from "@/lib/api-client"
 import { toast } from "sonner"
 
-export type EditUserPayload = {
-  id: string
+export type CreateUserPayload = {
+  email: string
+  password?: string
   firstName?: string
   lastName?: string
-  email?: string
   phone?: string
   role?: string
-  roles?: string
-  roleId?: string
   status?: string
   isVerified?: boolean
-  password?: string
-  photoUrl?: string | null
 }
 
-export type EditUserResponse = {
+export type CreateUserResponse = {
   success: boolean
   message: string
   code: number
   data: any
 }
 
-export function useEditUser() {
+export function useCreateUser() {
   const queryClient = useQueryClient()
 
   return useMutation({
-    mutationFn: async ({ id, ...payload }: EditUserPayload) => {
-      const res = await apiPrivate.put<EditUserResponse>(`/users/${id}`, {
-        id,
-        ...payload,
-      })
+    mutationFn: async (payload: CreateUserPayload) => {
+      const res = await apiPrivate.post<CreateUserResponse>("/users", payload)
       return res.data
     },
 
     onSuccess: (data) => {
       if (data.success) {
-        toast.success(data.message || "User updated successfully")
+        toast.success(data.message || "User created successfully")
         queryClient.invalidateQueries({ queryKey: ["users"] })
       } else {
-        toast.error(data.message || "Failed to update user")
+        toast.error(data.message || "Failed to create user")
       }
     },
 
@@ -49,7 +42,7 @@ export function useEditUser() {
       toast.error(
         error?.response?.data?.message ||
           error?.message ||
-          "An error occurred while updating user"
+          "An error occurred while creating user"
       )
     },
   })

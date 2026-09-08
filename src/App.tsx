@@ -35,6 +35,14 @@ import { StoryForm } from "@/components/pages/Stories/StoryForm"
 
 import IAMPage from "@/components/pages/IAM"
 import BookingsPage from "@/components/pages/Bookings"
+import AuditLogsPage from "@/components/pages/AuditLogs"
+import SystemHealthPage from "@/components/pages/SystemHealth"
+import PaymentConfigPage from "@/components/pages/PaymentConfig"
+import ConciergePage from "@/components/pages/Concierge"
+import ReviewsPage from "@/components/pages/Reviews"
+import PromotionsPage from "@/components/pages/Promotions"
+import NewsletterPage from "@/components/pages/Newsletter"
+import NotificationsPage from "@/components/pages/Notifications"
 
 export function App() {
   return (
@@ -52,6 +60,11 @@ export function App() {
             <Route index element={<Home />} />
 
             <Route path="user" element={<UserListPage />} />
+            <Route path="concierge" element={<ConciergePage />} />
+            <Route path="reviews" element={<ReviewsPage />} />
+            <Route path="promotions" element={<PromotionsPage />} />
+            <Route path="newsletter" element={<NewsletterPage />} />
+            <Route path="notifications" element={<NotificationsPage />} />
             <Route path="requests" element={<RequestsPage />} />
             <Route path="privacy-policy" element={<PrivacyPolicyPage />} />
             <Route path="terms-of-service" element={<TermsOfServicePage />} />
@@ -62,6 +75,9 @@ export function App() {
             <Route path="stories" element={<StoriesPage />} />
             <Route path="iam" element={<IAMPage />} />
             <Route path="bookings" element={<BookingsPage />} />
+            <Route path="audit-logs" element={<AuditLogsPage />} />
+            <Route path="system-health" element={<SystemHealthPage />} />
+            <Route path="payment-config" element={<PaymentConfigPage />} />
           </Route>
 
     <Route path="/cms" element={<CmsEditorLayout />}>

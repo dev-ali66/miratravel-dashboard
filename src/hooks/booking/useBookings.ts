@@ -30,10 +30,10 @@ export interface BookingItem {
   id: string
   bookingNumber: string
   journeyId: string
-  // For the frontend table, it's very likely the backend includes some journey details if expanded
   journey?: {
     id: string
     title: string
+    price?: number | string
   }
   createdBy: string
   travelerFirstName: string
@@ -45,6 +45,8 @@ export interface BookingItem {
   travelDepartureDate: string
   adults: number
   children: number
+  travelerType?: TravelerType
+  travelerMessage?: string | null
   confirmedTotal?: string | null
   currency: string
   paidAmount: string
@@ -68,29 +70,68 @@ export type GetBookingsResponse = {
   data: BookingItem[]
 }
 
-export function useGetBookings(page: number = 1, limit: number = 10) {
+export interface GetBookingsParams {
+  page?: number
+  limit?: number
+  search?: string
+  bookingStatus?: string
+  paymentStatus?: string
+  departureFrom?: string
+  departureTo?: string
+}
+
+export function useGetBookings(params: GetBookingsParams = {}) {
+  const { page = 1, limit = 10, search, bookingStatus, paymentStatus, departureFrom, departureTo } = params
+
   return useQuery({
-    queryKey: ["bookings", page, limit],
+    queryKey: ["bookings", page, limit, search, bookingStatus, paymentStatus, departureFrom, departureTo],
     queryFn: async () => {
+      const queryParams: Record<string, any> = { page, limit }
+      if (search) queryParams.search = search
+      if (bookingStatus && bookingStatus !== "ALL") queryParams.bookingStatus = bookingStatus
+      if (paymentStatus && paymentStatus !== "ALL") queryParams.paymentStatus = paymentStatus
+      if (departureFrom) queryParams.departureFrom = departureFrom
+      if (departureTo) queryParams.departureTo = departureTo
+
       const res = await apiPrivate.get<GetBookingsResponse>("/bookings", {
-        params: { page, limit },
+        params: queryParams,
       })
       return res.data
     },
   })
 }
 
+export interface ApproveBookingPayload {
+  id: string
+  data?: {
+    confirmedTotal?: number
+    currency?: string
+    scheduleOverride?: {
+      overrideReason: string
+      items: Array<{
+        label: string
+        calculationType: "PERCENTAGE" | "FIXED" | "REMAINDER"
+        ruleValue?: number
+        dueRule: "IMMEDIATE_AFTER_APPROVAL" | "DAYS_BEFORE_DEPARTURE" | "FIXED_DATE" | "MANUAL"
+        dueValue?: number
+        fixedDate?: string | Date
+      }>
+    }
+  }
+}
+
 // Action: Approve
 export function useApproveBooking() {
   const queryClient = useQueryClient()
   return useMutation({
-    mutationFn: async (id: string) => {
-      const res = await apiPrivate.post(`/bookings/${id}/approve`)
+    mutationFn: async ({ id, data }: ApproveBookingPayload) => {
+      const res = await apiPrivate.post(`/bookings/${id}/approve`, data || {})
       return res.data
     },
     onSuccess: () => {
-      toast.success("Booking approved successfully")
+      toast.success("Booking approved and payment schedule generated successfully")
       queryClient.invalidateQueries({ queryKey: ["bookings"] })
+      queryClient.invalidateQueries({ queryKey: ["payment-schedules"] })
     },
     onError: (error: any) => {
       toast.error(error?.response?.data?.message || "Failed to approve booking")
@@ -102,13 +143,14 @@ export function useApproveBooking() {
 export function useRejectBooking() {
   const queryClient = useQueryClient()
   return useMutation({
-    mutationFn: async (id: string) => {
-      const res = await apiPrivate.post(`/bookings/${id}/reject`)
+    mutationFn: async ({ id, reason }: { id: string; reason: string }) => {
+      const res = await apiPrivate.post(`/bookings/${id}/reject`, { reason })
       return res.data
     },
     onSuccess: () => {
-      toast.success("Booking rejected successfully")
+      toast.success("Booking request rejected")
       queryClient.invalidateQueries({ queryKey: ["bookings"] })
+      queryClient.invalidateQueries({ queryKey: ["payment-schedules"] })
     },
     onError: (error: any) => {
       toast.error(error?.response?.data?.message || "Failed to reject booking")
@@ -120,16 +162,36 @@ export function useRejectBooking() {
 export function useCancelBooking() {
   const queryClient = useQueryClient()
   return useMutation({
-    mutationFn: async (id: string) => {
-      const res = await apiPrivate.post(`/bookings/${id}/cancel`)
+    mutationFn: async ({ id, reason }: { id: string; reason: string }) => {
+      const res = await apiPrivate.post(`/bookings/${id}/cancel`, { reason })
       return res.data
     },
     onSuccess: () => {
-      toast.success("Booking cancelled successfully")
+      toast.success("Booking cancelled")
       queryClient.invalidateQueries({ queryKey: ["bookings"] })
+      queryClient.invalidateQueries({ queryKey: ["payment-schedules"] })
     },
     onError: (error: any) => {
       toast.error(error?.response?.data?.message || "Failed to cancel booking")
+    },
+  })
+}
+
+// Action: Revise Total
+export function useReviseBookingTotal() {
+  const queryClient = useQueryClient()
+  return useMutation({
+    mutationFn: async ({ id, newConfirmedTotal, reason }: { id: string; newConfirmedTotal: number; reason: string }) => {
+      const res = await apiPrivate.post(`/bookings/${id}/revise-total`, { newConfirmedTotal, reason })
+      return res.data
+    },
+    onSuccess: () => {
+      toast.success("Booking total revised and schedule recalculated")
+      queryClient.invalidateQueries({ queryKey: ["bookings"] })
+      queryClient.invalidateQueries({ queryKey: ["payment-schedules"] })
+    },
+    onError: (error: any) => {
+      toast.error(error?.response?.data?.message || "Failed to revise booking total")
     },
   })
 }

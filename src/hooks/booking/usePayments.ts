@@ -1,5 +1,6 @@
-import { useQuery } from "@tanstack/react-query"
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query"
 import { apiPrivate } from "@/lib/api-client"
+import { toast } from "sonner"
 
 export type ScheduleItemCalcType = "PERCENTAGE" | "FIXED" | "REMAINDER"
 export type ScheduleItemDueRule =
@@ -79,6 +80,7 @@ export interface PaymentRecord {
   status: PaymentRecordStatus
   refundAmount: string
   adminNotes: string | null
+  recordedBy?: string | null
   createdAt: string
 }
 
@@ -95,5 +97,55 @@ export function useGetPaymentRecords(bookingId?: string) {
       return res.data.data
     },
     enabled: !!bookingId,
+  })
+}
+
+export interface RecordManualPaymentPayload {
+  bookingId: string
+  scheduleItemId?: string
+  amount: number
+  currency?: string
+  method?: string
+  pspTransactionRef?: string
+  status?: "SUCCEEDED" | "FAILED" | "PENDING"
+  paymentDate?: string | Date
+  adminNotes?: string
+}
+
+export function useRecordManualPayment() {
+  const queryClient = useQueryClient()
+  return useMutation({
+    mutationFn: async (payload: RecordManualPaymentPayload) => {
+      const res = await apiPrivate.post("/payment-records", payload)
+      return res.data
+    },
+    onSuccess: () => {
+      toast.success("Payment recorded successfully")
+      queryClient.invalidateQueries({ queryKey: ["bookings"] })
+      queryClient.invalidateQueries({ queryKey: ["payment-schedules"] })
+      queryClient.invalidateQueries({ queryKey: ["payment-records"] })
+    },
+    onError: (error: any) => {
+      toast.error(error?.response?.data?.message || "Failed to record payment")
+    },
+  })
+}
+
+export function useRefundPayment() {
+  const queryClient = useQueryClient()
+  return useMutation({
+    mutationFn: async ({ id, refundAmount, adminNotes }: { id: string; refundAmount: number; adminNotes: string }) => {
+      const res = await apiPrivate.post(`/payment-records/${id}/refund`, { refundAmount, adminNotes })
+      return res.data
+    },
+    onSuccess: () => {
+      toast.success("Refund processed successfully")
+      queryClient.invalidateQueries({ queryKey: ["bookings"] })
+      queryClient.invalidateQueries({ queryKey: ["payment-schedules"] })
+      queryClient.invalidateQueries({ queryKey: ["payment-records"] })
+    },
+    onError: (error: any) => {
+      toast.error(error?.response?.data?.message || "Failed to process refund")
+    },
   })
 }
