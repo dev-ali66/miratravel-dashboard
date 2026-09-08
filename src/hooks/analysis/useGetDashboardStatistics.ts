@@ -1,74 +1,44 @@
 import { useQuery } from "@tanstack/react-query"
 import { apiPrivate } from "@/lib/api-client"
 
-export type DashboardTopBeach = {
-  id: string
-  name: string
-  tag: string
-  slug: string
-  beachImage: string[]
-  description: string
-  isPublished: boolean
-  createdAt: string
-  updatedAt: string
-  _count: {
-    leads: number
-  }
-}
-
-export type DashboardAlerts = {
-  pendingMoreThan24h: number
-  instructorsWith3OpenLeads: any
-  instructorsBelow20Acceptance: number
-  suspiciousWhatsapp: Array<{
-    _count: {
-      whatsapp: number
-    }
-    whatsapp: string
-  }>
-}
-
 export type DashboardChartPoint = {
   name: string
   total: number
 }
 
-export type DashboardRecentPurchase = {
+export type DashboardRecentActivity = {
   id: string
-  name: string
-  email: string
-  credits: number
+  bookingNumber: string
+  travelerName: string
+  travelerEmail: string
+  journeyTitle: string
   amount: number
+  currency: string
+  bookingStatus: string
+  paymentStatus: string
   createdAt: string
 }
 
-export type DashboardInstructorRating = {
-  averageRating: number
-  totalReviews: number
-  topInstructors: Array<{
-    id: string
-    name: string
-    rating: number
-    reviews: number
-  }>
+export type DashboardBookingStatus = {
+  confirmed: number
+  underReview: number
+  depositDue: number
+  cancelled: number
 }
 
 export type DashboardOverview = {
-  totalLeadsToday: number
-  totalLeadsLast7Days: number
-  totalLeadsLast30Days: number
-  totalLeads: number
-  pendingLeads: number
-  acceptedLeads: number
-  declinedLeads: number
-  expiredLeads: number
-  leadAcceptanceRate: number
-  activeInstructors: number
-  instructorsWithZeroCredits: number
-  creditsPurchased: number
-  creditPacksSold: number
+  totalBookings: number
   totalRevenue: number
-  topBeaches: DashboardTopBeach[]
+  totalTravelers: number
+  activeTravelers: number
+  verifiedTravelers: number
+  totalJourneys: number
+  totalStories: number
+  totalLocations: number
+  pendingReviewBookings: number
+  confirmedBookings: number
+  depositDueBookings: number
+  cancelledBookings: number
 }
 
 export type DashboardStatistics = {
@@ -77,9 +47,8 @@ export type DashboardStatistics = {
     revenueOverview: DashboardChartPoint[]
     monthlyBookings: DashboardChartPoint[]
   }
-  recentPurchases: DashboardRecentPurchase[]
-  instructorRatings: DashboardInstructorRating
-  alerts: DashboardAlerts
+  bookingStatus: DashboardBookingStatus
+  recentActivity: DashboardRecentActivity[]
 }
 
 type DashboardStatisticsResponse = {
@@ -94,11 +63,9 @@ export function useGetDashboardStatistics() {
   return useQuery({
     queryKey: ["dashboard", "statistics"],
     queryFn: async () => {
-      const res = await apiPrivate.get<DashboardStatisticsResponse>(
-        "/dashboard/statastics"
-      )
+      const res = await apiPrivate.get<DashboardStatisticsResponse>("/statistics")
       return res.data.data
     },
-    staleTime: 1000 * 60 * 5,
+    staleTime: 1000 * 60 * 2, // 2 minutes
   })
 }

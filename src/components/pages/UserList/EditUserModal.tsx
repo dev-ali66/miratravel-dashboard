@@ -2,6 +2,8 @@ import { useState, useEffect } from "react"
 import {
   Dialog,
   DialogContent,
+  DialogDescription,
+  DialogFooter,
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog"
@@ -15,7 +17,8 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select"
-import { Loader2 } from "lucide-react"
+import { Switch } from "@/components/ui/switch"
+import { Loader2, UserCog } from "lucide-react"
 import { useEditUser } from "@/hooks/users/useEditUser"
 import { type UserItem } from "@/hooks/users/useGetUsers"
 import { useGetRoles } from "@/hooks/role/useRoles"
@@ -27,17 +30,18 @@ interface EditUserModalProps {
 
 export default function EditUserModal({ user, onClose }: EditUserModalProps) {
   const { mutate: editUser, isPending } = useEditUser()
-
   const { data: rolesData, isLoading: rolesLoading } = useGetRoles(1, 100)
 
   const [formData, setFormData] = useState({
     firstName: "",
     lastName: "",
     email: "",
+    phone: "",
     role: "USER",
     roleId: "",
     status: "ACTIVE",
-    free_lead_used: false,
+    isVerified: true,
+    password: "",
   })
 
   useEffect(() => {
@@ -51,51 +55,35 @@ export default function EditUserModal({ user, onClose }: EditUserModalProps) {
       firstName: user.firstName || "",
       lastName: user.lastName || "",
       email: user.email || "",
+      phone: user.phone || "",
       role: user.roles?.toUpperCase() || "USER",
-      roleId: currentRole?.id || "",
+      roleId: currentRole?.id || user.roleId || "",
       status: user.status || "ACTIVE",
-
-      // Instructor হলে existing value নেবে
-      free_lead_used:
-        user.roles?.toUpperCase() === "INSTRUCTOR"
-          ? (user.instructorInfo?.free_lead_used ?? false)
-          : false,
+      isVerified: user.isVerified ?? true,
+      password: "",
     })
   }, [user, rolesData])
 
-  const handleChange = (field: string, value: string) => {
+  const handleChange = (field: string, value: any) => {
     setFormData((prev) => ({
       ...prev,
       [field]: value,
     }))
   }
 
-  const handleRoleChange = (roleId: string) => {
-    const selectedRole = rolesData?.data?.find((role) => role.id === roleId)
-
-    const selectedRoleName = selectedRole?.name?.toUpperCase() || "USER"
+  const handleRoleChange = (roleIdOrName: string) => {
+    const selectedRole = rolesData?.data?.find((role) => role.id === roleIdOrName || role.name === roleIdOrName)
+    const selectedRoleName = selectedRole?.name?.toUpperCase() || roleIdOrName.toUpperCase()
 
     setFormData((prev) => ({
       ...prev,
-      roleId,
+      roleId: selectedRole?.id || "",
       role: selectedRoleName,
-
-      // Instructor না হলে false
-      free_lead_used:
-        selectedRoleName === "INSTRUCTOR" ? prev.free_lead_used : false,
-    }))
-  }
-
-  const handleFreeLeadChange = (value: string) => {
-    setFormData((prev) => ({
-      ...prev,
-      free_lead_used: value === "true",
     }))
   }
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault()
-
     if (!user) return
 
     editUser(
@@ -104,15 +92,13 @@ export default function EditUserModal({ user, onClose }: EditUserModalProps) {
         firstName: formData.firstName,
         lastName: formData.lastName,
         email: formData.email,
+        phone: formData.phone,
         role: formData.role,
         roles: formData.role,
-        roleId: formData.roleId,
+        roleId: formData.roleId || undefined,
         status: formData.status,
-
-        // শুধুমাত্র instructor এর জন্য পাঠানো হবে
-        ...(formData.role === "INSTRUCTOR" && {
-          free_lead_used: formData.free_lead_used,
-        }),
+        isVerified: formData.isVerified,
+        ...(formData.password ? { password: formData.password } : {}),
       },
       {
         onSuccess: () => {
@@ -124,17 +110,26 @@ export default function EditUserModal({ user, onClose }: EditUserModalProps) {
 
   return (
     <Dialog open={!!user} onOpenChange={(open) => !open && onClose()}>
-      <DialogContent className="sm:max-w-[500px]">
+      <DialogContent className="sm:max-w-[520px]">
         <DialogHeader>
-          <DialogTitle>Edit User</DialogTitle>
+          <div className="flex items-center gap-2">
+            <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-primary/10 text-primary">
+              <UserCog className="h-5 w-5" />
+            </div>
+            <div>
+              <DialogTitle>Edit User</DialogTitle>
+              <DialogDescription className="text-xs">
+                Update account details, role permissions, and access status.
+              </DialogDescription>
+            </div>
+          </div>
         </DialogHeader>
 
-        <form onSubmit={handleSubmit} className="mt-4 flex flex-col gap-4">
+        <form onSubmit={handleSubmit} className="mt-2 flex flex-col gap-4">
           {/* First Name & Last Name */}
-          <div className="grid grid-cols-2 gap-4">
-            <div className="flex flex-col gap-2">
-              <Label htmlFor="edit-first-name">First Name</Label>
-
+          <div className="grid grid-cols-2 gap-3">
+            <div className="flex flex-col gap-1.5">
+              <Label htmlFor="edit-first-name" className="text-xs font-semibold">First Name</Label>
               <Input
                 id="edit-first-name"
                 placeholder="John"
@@ -143,9 +138,8 @@ export default function EditUserModal({ user, onClose }: EditUserModalProps) {
               />
             </div>
 
-            <div className="flex flex-col gap-2">
-              <Label htmlFor="edit-last-name">Last Name</Label>
-
+            <div className="flex flex-col gap-1.5">
+              <Label htmlFor="edit-last-name" className="text-xs font-semibold">Last Name</Label>
               <Input
                 id="edit-last-name"
                 placeholder="Doe"
@@ -155,59 +149,67 @@ export default function EditUserModal({ user, onClose }: EditUserModalProps) {
             </div>
           </div>
 
-          {/* Email */}
-          <div className="flex flex-col gap-2">
-            <Label htmlFor="edit-user-email">Email</Label>
+          {/* Email & Phone */}
+          <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
+            <div className="flex flex-col gap-1.5">
+              <Label htmlFor="edit-user-email" className="text-xs font-semibold">Email</Label>
+              <Input
+                id="edit-user-email"
+                type="email"
+                required
+                placeholder="user@example.com"
+                value={formData.email}
+                onChange={(e) => handleChange("email", e.target.value)}
+              />
+            </div>
 
-            <Input
-              id="edit-user-email"
-              type="email"
-              required
-              placeholder="user@example.com"
-              value={formData.email}
-              onChange={(e) => handleChange("email", e.target.value)}
-            />
+            <div className="flex flex-col gap-1.5">
+              <Label htmlFor="edit-user-phone" className="text-xs font-semibold">Phone</Label>
+              <Input
+                id="edit-user-phone"
+                type="tel"
+                placeholder="+1 (555) 000-0000"
+                value={formData.phone}
+                onChange={(e) => handleChange("phone", e.target.value)}
+              />
+            </div>
           </div>
 
           {/* Role & Status */}
-          <div className="grid grid-cols-2 gap-4">
+          <div className="grid grid-cols-2 gap-3">
             {/* Role */}
-            <div className="flex flex-col gap-2">
-              <Label htmlFor="edit-user-role">Role</Label>
-
+            <div className="flex flex-col gap-1.5">
+              <Label htmlFor="edit-user-role" className="text-xs font-semibold">Role</Label>
               <Select
-                value={formData.roleId}
+                value={formData.roleId || formData.role}
                 onValueChange={handleRoleChange}
                 disabled={rolesLoading}
               >
                 <SelectTrigger id="edit-user-role">
                   <SelectValue placeholder="Select role" />
                 </SelectTrigger>
-
                 <SelectContent>
-                  {rolesLoading ? (
-                    <div className="px-2 py-1.5 text-sm text-muted-foreground">
-                      Loading...
-                    </div>
-                  ) : rolesData?.data?.length ? (
+                  {rolesData?.data?.length ? (
                     rolesData.data.map((role) => (
                       <SelectItem key={role.id} value={role.id}>
                         {role.name}
                       </SelectItem>
                     ))
                   ) : (
-                    <div className="px-2 py-1.5 text-sm text-muted-foreground">
-                      No roles found
-                    </div>
+                    <>
+                      <SelectItem value="USER">USER</SelectItem>
+                      <SelectItem value="ADMIN">ADMIN</SelectItem>
+                      <SelectItem value="MANAGER">MANAGER</SelectItem>
+                      <SelectItem value="EDITOR">EDITOR</SelectItem>
+                    </>
                   )}
                 </SelectContent>
               </Select>
             </div>
 
             {/* Status */}
-            <div className="flex flex-col gap-2">
-              <Label htmlFor="edit-user-status">Status</Label>
-
+            <div className="flex flex-col gap-1.5">
+              <Label htmlFor="edit-user-status" className="text-xs font-semibold">Status</Label>
               <Select
                 value={formData.status}
                 onValueChange={(value) => handleChange("status", value)}
@@ -215,76 +217,67 @@ export default function EditUserModal({ user, onClose }: EditUserModalProps) {
                 <SelectTrigger id="edit-user-status">
                   <SelectValue placeholder="Select status" />
                 </SelectTrigger>
-
                 <SelectContent>
                   <SelectItem value="ACTIVE">Active</SelectItem>
-
                   <SelectItem value="INACTIVE">Inactive</SelectItem>
-
-                  <SelectItem value="DEACTIVE">Deactive</SelectItem>
-
                   <SelectItem value="BLOCKED">Blocked</SelectItem>
-
                   <SelectItem value="SUSPENDED">Suspended</SelectItem>
-
                   <SelectItem value="PENDING">Pending</SelectItem>
-
                   <SelectItem value="DELETED">Deleted</SelectItem>
-
-                  <SelectItem value="ARCHIVED">Archived</SelectItem>
                 </SelectContent>
               </Select>
             </div>
           </div>
 
-          {/* Free Lead Used - Instructor Only */}
-          {formData.role === "INSTRUCTOR" && (
-            <div className="flex flex-col gap-2">
-              <Label htmlFor="edit-free-lead-used">Free Lead Used</Label>
+          {/* Reset Password Optional */}
+          <div className="flex flex-col gap-1.5">
+            <Label htmlFor="edit-new-password" className="text-xs font-semibold">
+              New Password <span className="text-xs font-normal text-muted-foreground">(leave blank to keep current)</span>
+            </Label>
+            <Input
+              id="edit-new-password"
+              type="password"
+              placeholder="Enter new password if changing"
+              value={formData.password}
+              onChange={(e) => handleChange("password", e.target.value)}
+            />
+          </div>
 
-              <Select
-                value={String(formData.free_lead_used)}
-                onValueChange={handleFreeLeadChange}
-              >
-                <SelectTrigger id="edit-free-lead-used">
-                  <SelectValue placeholder="Select option" />
-                </SelectTrigger>
-
-                <SelectContent>
-                  <SelectItem value="false">No</SelectItem>
-
-                  <SelectItem value="true">Yes</SelectItem>
-                </SelectContent>
-              </Select>
-
-              <p className="text-xs text-muted-foreground">
-                Select whether this instructor has already used their free lead.
-              </p>
+          {/* Email Verified Toggle */}
+          <div className="flex items-center justify-between rounded-lg border border-border/60 bg-muted/30 p-3">
+            <div className="flex flex-col gap-0.5">
+              <span className="text-xs font-semibold text-foreground">
+                Email Verification Status
+              </span>
+              <span className="text-[11px] text-muted-foreground">
+                Mark account as email-verified
+              </span>
             </div>
-          )}
+            <Switch
+              checked={formData.isVerified}
+              onCheckedChange={(checked) => handleChange("isVerified", checked)}
+            />
+          </div>
 
           {/* Buttons */}
-          <div className="mt-4 flex justify-end gap-3">
+          <DialogFooter className="mt-2 gap-2 sm:gap-0">
             <Button
               type="button"
               variant="outline"
               onClick={onClose}
               disabled={isPending}
-              className="cursor-pointer"
             >
               Cancel
             </Button>
-
             <Button
               type="submit"
               disabled={isPending}
-              className="min-w-[120px] cursor-pointer"
+              className="min-w-[120px]"
             >
               {isPending && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-
               {isPending ? "Saving..." : "Save Changes"}
             </Button>
-          </div>
+          </DialogFooter>
         </form>
       </DialogContent>
     </Dialog>

@@ -1,77 +1,85 @@
-import { Users, DollarSign, GraduationCap, CalendarCheck } from "lucide-react"
+import { CalendarDays, DollarSign, Users, Compass } from "lucide-react"
 import { SlideBottom } from "@/components/animation"
 import { useGetDashboardStatistics } from "@/hooks/analysis/useGetDashboardStatistics"
 
 export default function StatCards() {
   const { data, isLoading } = useGetDashboardStatistics()
-
   const overview = data?.overview
 
   const stats = [
     {
-      title: "Leads (7 days)",
-      value: overview?.totalLeadsLast7Days?.toLocaleString() ?? "0",
-      change: `${overview?.totalLeadsToday ?? 0} today`,
-      icon: Users,
-      trend: "up" as const,
+      title: "Total Bookings",
+      value: overview?.totalBookings?.toLocaleString() ?? "0",
+      change: `${overview?.pendingReviewBookings ?? 0} pending review`,
+      icon: CalendarDays,
+      color: "text-blue-500",
+      bg: "bg-blue-500/10",
+      border: "border-blue-500/20",
     },
     {
-      title: "Active instructors",
-      value: overview?.activeInstructors?.toLocaleString() ?? "0",
-      change: `${overview?.instructorsWithZeroCredits ?? 0} with 0 credits`,
-      icon: GraduationCap,
-      trend: "up" as const,
-    },
-    {
-      title: "Accepted leads",
-      value: overview?.acceptedLeads?.toLocaleString() ?? "0",
-      change: `${overview?.leadAcceptanceRate?.toFixed(2) ?? "0.00"}% acceptance rate`,
-      icon: CalendarCheck,
-      trend: "up" as const,
-    },
-    {
-      title: "Revenue",
+      title: "Gross Revenue",
       value: `$${(overview?.totalRevenue ?? 0).toLocaleString()}`,
-      change: `${overview?.creditPacksSold ?? 0} packs sold`,
+      change: `${overview?.confirmedBookings ?? 0} confirmed / paid`,
       icon: DollarSign,
-      trend: "up" as const,
+      color: "text-emerald-500",
+      bg: "bg-emerald-500/10",
+      border: "border-emerald-500/20",
+    },
+    {
+      title: "Registered Travelers",
+      value: overview?.totalTravelers?.toLocaleString() ?? "0",
+      change: `${overview?.verifiedTravelers ?? 0} verified accounts`,
+      icon: Users,
+      color: "text-purple-500",
+      bg: "bg-purple-500/10",
+      border: "border-purple-500/20",
+    },
+    {
+      title: "Curated Journeys",
+      value: overview?.totalJourneys?.toLocaleString() ?? "0",
+      change: `${overview?.totalStories ?? 0} published stories`,
+      icon: Compass,
+      color: "text-amber-500",
+      bg: "bg-amber-500/10",
+      border: "border-amber-500/20",
     },
   ]
 
   return (
     <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
-      {stats.map((stat, i) => (
-        <SlideBottom
-          key={stat.title}
-          delay={i * 0.1}
-          className="rounded-xl border border-border bg-card p-6 shadow-sm hover:shadow-md"
-        >
-          <div className="flex flex-row items-center justify-between pb-2">
-            <h3 className="text-sm font-medium text-muted-foreground">
-              {stat.title}
-            </h3>
-            <div className="flex size-10 items-center justify-center rounded-xl bg-primary/10 text-primary">
-              <stat.icon className="size-5" />
+      {stats.map((stat, i) => {
+        const Icon = stat.icon
+        return (
+          <SlideBottom
+            key={stat.title}
+            delay={i * 0.1}
+            className="rounded-xl border border-border/60 bg-card/60 p-6 shadow-sm backdrop-blur-xl transition-all hover:border-border hover:shadow-md"
+          >
+            <div className="flex flex-row items-center justify-between pb-2">
+              <h3 className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
+                {stat.title}
+              </h3>
+              <div className={`flex size-10 items-center justify-center rounded-xl border ${stat.bg} ${stat.border} ${stat.color}`}>
+                <Icon className="size-5" />
+              </div>
             </div>
-          </div>
-          <div className="mt-2">
-            <div className="text-3xl font-bold tracking-tight text-foreground">
-              {isLoading ? "—" : stat.value}
+            <div className="mt-2">
+              <div className="text-3xl font-bold tracking-tight text-foreground">
+                {isLoading ? (
+                  <span className="inline-block h-8 w-20 animate-pulse rounded bg-muted/60"></span>
+                ) : (
+                  stat.value
+                )}
+              </div>
+              <p className="mt-2 text-xs text-muted-foreground">
+                <span className="font-medium text-foreground/80">
+                  {stat.change}
+                </span>
+              </p>
             </div>
-            <p className="mt-2 text-sm text-muted-foreground">
-              <span
-                className={
-                  stat.trend === "up"
-                    ? "font-medium text-primary"
-                    : "font-medium text-destructive"
-                }
-              >
-                {stat.change}
-              </span>
-            </p>
-          </div>
-        </SlideBottom>
-      ))}
+          </SlideBottom>
+        )
+      })}
     </div>
   )
 }

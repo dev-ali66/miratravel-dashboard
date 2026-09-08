@@ -4,17 +4,44 @@ import Sidebar, { type SectionProps } from "./Sidebar"
 export function RootLayout() {
   const sections: SectionProps[] = [
     {
-      title: "Menu Principal",
+      title: "Operations & Bookings",
       items: [
         { href: "/", label: "Dashboard", icon: "dashboard" },
         { href: "/bookings", label: "Bookings", icon: "bookings" as any },
-        { href: "/user", label: "User", icon: "user" },
-        { href: "/requests", label: "Requests", icon: "requests" as any },
-        { href: "/cms", label: "CMS", icon: "cms" },
+        { href: "/concierge", label: "Concierge Inquiries", icon: "concierge" as any },
+        { href: "/user", label: "Travelers & Users", icon: "user" },
+        { href: "/reviews", label: "Reviews & Ratings", icon: "reviews" as any },
+      ],
+    },
+    {
+      title: "Content & Editorial",
+      items: [
+        { href: "/cms", label: "CMS Pages", icon: "cms" },
         { href: "/location", label: "Locations", icon: "locations" },
         { href: "/journeys", label: "Journeys", icon: "journeys" as any },
         { href: "/stories", label: "Stories", icon: "cms" as any },
-        { href: "/iam", label: "IAM", icon: "privacy" as any },
+      ],
+    },
+    {
+      title: "Marketing & Growth",
+      items: [
+        { href: "/promotions", label: "Promotions & Vouchers", icon: "promotions" as any },
+        { href: "/newsletter", label: "Newsletter Subscribers", icon: "newsletter" as any },
+        { href: "/notifications", label: "Notification Triggers", icon: "notifications" as any },
+      ],
+    },
+    {
+      title: "System & Governance",
+      items: [
+        { href: "/system-health", label: "System Health", icon: "health" as any },
+        { href: "/audit-logs", label: "Audit Logs", icon: "audit" as any },
+        { href: "/payment-config", label: "Payment Rules & Config", icon: "paymentConfig" as any },
+        { href: "/iam", label: "IAM Roles & Access", icon: "iam" as any },
+      ],
+    },
+    {
+      title: "Compliance & Legal",
+      items: [
         {
           href: "/privacy-policy",
           label: "Privacy Policy",

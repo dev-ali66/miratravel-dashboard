@@ -27,6 +27,16 @@ import {
   LocateIcon,
   Compass,
   CalendarDays,
+  Activity,
+  History,
+  Sliders,
+  ShieldCheck,
+  Server,
+  Sparkles,
+  Star,
+  Tag,
+  Send,
+  Bell,
 } from "lucide-react"
 
 import { LogoutModal } from "./LogoutModal"
@@ -55,6 +65,16 @@ const iconMap = {
   privacy: Shield,
   terms: ScrollText,
   bookings: CalendarDays,
+  audit: History,
+  health: Activity,
+  paymentConfig: Sliders,
+  iam: ShieldCheck,
+  server: Server,
+  concierge: Sparkles,
+  reviews: Star,
+  promotions: Tag,
+  newsletter: Send,
+  notifications: Bell,
 }
 
 /* =========================================================
