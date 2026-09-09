@@ -47,6 +47,7 @@ export type LocationSectionKey =
   | "travel-info"
   | "accommodation"
   | "experiences"
+  | "signature-experiences"
   | "practical-information"
   | "faq"
   | "image-gallery"
@@ -88,6 +89,7 @@ import { SafetyForm } from "../sections/safety/SafetyForm"
 import { GeographyForm } from "../sections/geography/GeographyForm"
 import { TravelInfoForm } from "../sections/travelInfo/TravelInfoForm"
 import { ExperiencesForm } from "../sections/experiences/ExperiencesForm"
+import { SignatureExperiencesForm } from "../sections/signatureExperiences/SignatureExperiencesForm"
 import { AccommodationStaysForm } from "../sections/accommodation/AccommodationStaysForm"
 import { PracticalInformationForm } from "../sections/practicalInformation/PracticalInformationForm"
 import { LocationFaqForm } from "../sections/faq/LocationFaqForm"
@@ -116,6 +118,7 @@ import { SafetyPreview } from "../sections/safety/SafetyPreview"
 import { GeographyPreview } from "../sections/geography/GeographyPreview"
 import { TravelInfoPreview } from "../sections/travelInfo/TravelInfoPreview"
 import { ExperiencesPreview } from "../sections/experiences/ExperiencesPreview"
+import { SignatureExperiencesPreview } from "../sections/signatureExperiences/SignatureExperiencesPreview"
 import { AccommodationStaysPreview } from "../sections/accommodation/AccommodationStaysPreview"
 import { PracticalInformationPreview } from "../sections/practicalInformation/PracticalInformationPreview"
 import { ImageGalleryPreview } from "../sections/imageGallery/ImageGalleryPreview"
@@ -223,6 +226,11 @@ export const locationSectionRegistry: Record<
     form: ExperiencesForm,
     preview: ExperiencesPreview,
   },
+  "signature-experiences": {
+    label: "Signature Experiences",
+    form: SignatureExperiencesForm,
+    preview: SignatureExperiencesPreview,
+  },
   "practical-information": {
     label: "Practical Information",
     form: PracticalInformationForm,
@@ -270,6 +278,7 @@ export const locationSectionOrder: LocationSectionKey[] = [
   "info",
   "why",
   "experiences",
+  "signature-experiences",
   "geo-data",
   "shared-info",
   "accommodation",

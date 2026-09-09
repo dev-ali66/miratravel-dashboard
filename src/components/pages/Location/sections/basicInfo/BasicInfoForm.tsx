@@ -3,9 +3,9 @@
    Auto-migrated from the legacy LocationForm.tsx monolith.
 ===================================================== */
 
-import { DynamicStyledField, FormSection } from "../../shared/fields"
+import { DynamicStyledField, FormSection, SelectField } from "../../shared/fields"
 import { ParentLocationSelect } from "../../shared/ParentLocationSelect"
-import type { LocationData } from "../../locationTypes"
+import { LOCATION_TYPES, type LocationData } from "../../locationTypes"
 
 export type BasicInfoFormProps = {
   draft: LocationData
@@ -55,6 +55,17 @@ export function BasicInfoForm({
           value={draft.slug ?? ""}
           onChange={() => {}}
           disabled
+        />
+
+        <SelectField
+          label="Location Type"
+          value={draft.type ?? "PLACE"}
+          options={LOCATION_TYPES.map((t) => ({
+            label: t.replace(/_/g, " "),
+            value: t,
+          }))}
+          onChange={(value) => updateField("type", value)}
+          hint="Select the geographical hierarchy level (e.g. COUNTRY, REGION, DESTINATION, PLACE, CITY)."
         />
 
         <ParentLocationSelect

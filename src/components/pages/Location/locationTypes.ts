@@ -24,6 +24,44 @@ export type ExperienceCard = {
   description: string
 }
 
+export type SignatureExperienceItem = {
+  id: string
+  number: string
+  numberStyle?: Record<string, any> | null
+  title: string
+  titleStyle?: Record<string, any> | null
+  description: string
+  descriptionStyle?: Record<string, any> | null
+  href?: string
+  linkText?: string
+  button?: {
+    label?: string
+    url?: string
+    style?: string
+    backgroundColor?: string
+    textColor?: string
+  }
+  buttons?: Array<{
+    label: string
+    url: string
+    style?: string
+    backgroundColor?: string
+    textColor?: string
+  }>
+}
+
+export type SignatureExperiencesSection = {
+  label: string
+  labelStyle?: Record<string, any> | null
+  title: string
+  titleStyle?: Record<string, any> | null
+  description: string
+  descriptionStyle?: Record<string, any> | null
+  backgroundMultimedia?: Record<string, any> | null
+  style?: Record<string, any> | null
+  experiences: SignatureExperienceItem[]
+}
+
 export type AccommodationStayItem = {
   id: string | number
   image?: string
@@ -484,6 +522,9 @@ export type LocationData = {
         region: string
       }
     }
+
+    signature_experiences?: SignatureExperiencesSection
+    signatureExperiences?: SignatureExperiencesSection
 
     practical_information: {
       title: string

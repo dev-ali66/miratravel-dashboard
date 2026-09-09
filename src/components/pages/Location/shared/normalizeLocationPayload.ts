@@ -109,6 +109,8 @@ export function normalizeLocationPayload(
   const beforeTravel = travelInfo.beforeTravel ?? {}
   const experiences = safeData.experiences ?? {}
   const featuredExperience = experiences.featured_experience ?? {}
+  const signatureExperiences =
+    safeData.signature_experiences ?? safeData.signatureExperiences ?? {}
   const practicalInformation = safeData.practical_information ?? {}
   const faqSection = safeData.faq_section ?? {}
   const travelInsights = safeData.travel_insights ?? {}
@@ -386,6 +388,34 @@ export function normalizeLocationPayload(
           note: experiences.footer?.note ?? "",
           region: experiences.footer?.region ?? "",
         },
+      },
+
+      signature_experiences: {
+        label: signatureExperiences.label ?? "Signature Experiences",
+        labelStyle: signatureExperiences.labelStyle ?? null,
+        title: signatureExperiences.title ?? "",
+        titleStyle: signatureExperiences.titleStyle ?? null,
+        description: signatureExperiences.description ?? "",
+        descriptionStyle: signatureExperiences.descriptionStyle ?? null,
+        backgroundMultimedia: normalizeMultimedia(
+          signatureExperiences.backgroundMultimedia
+        ),
+        style: signatureExperiences.style ?? null,
+        experiences: Array.isArray(signatureExperiences.experiences)
+          ? signatureExperiences.experiences.map((exp: any, idx: number) => ({
+              id: exp.id ?? `exp-${String(idx + 1).padStart(2, "0")}`,
+              number: exp.number ?? String(idx + 1).padStart(2, "0"),
+              numberStyle: exp.numberStyle ?? null,
+              title: exp.title ?? "",
+              titleStyle: exp.titleStyle ?? null,
+              description: exp.description ?? "",
+              descriptionStyle: exp.descriptionStyle ?? null,
+              href: exp.href ?? "#",
+              linkText: exp.linkText ?? "Explore this experience",
+              button: exp.button ?? null,
+              buttons: Array.isArray(exp.buttons) ? exp.buttons : [],
+            }))
+          : [],
       },
 
       practical_information: {

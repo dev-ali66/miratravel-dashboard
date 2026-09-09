@@ -415,6 +415,41 @@ export const bangladeshSampleLocation: LocationData = {
         },
       ],
     },
+    signature_experiences: {
+      label: "Signature Experiences",
+      title: "Five ways to fall in love with Bangladesh",
+      description:
+        "From the mysterious labyrinth of the mangrove wilderness to silent highland tea estates and historic river waterways, explore curated journeys designed for the discerning traveler.",
+      experiences: [
+        {
+          id: "exp-01",
+          number: "01",
+          title: "Explore the Sundarbans Mangrove Wilderness",
+          description:
+            "Cruise through tidal creeks aboard a private boutique vessel, tracking the elusive Bengal tiger, saltwater crocodiles, and rare kingfishers in the world's largest mangrove forest.",
+          href: "#",
+          linkText: "Explore this experience",
+        },
+        {
+          id: "exp-02",
+          number: "02",
+          title: "Sreemangal Tea Country & Forest Trails",
+          description:
+            "Immerse yourself in endless rolling emerald tea gardens, sip layered seven-color tea, and trek through ancient rain forests home to endangered hoolock gibbons.",
+          href: "#",
+          linkText: "Explore this experience",
+        },
+        {
+          id: "exp-03",
+          number: "03",
+          title: "Classic Paddle Steamer Delta Cruise",
+          description:
+            "Step back into timeless river romance on the heritage Rocket steamer navigating the winding delta arteries between Old Dhaka and Barisal.",
+          href: "#",
+          linkText: "Explore this experience",
+        },
+      ],
+    },
     faq_section: {
       title: "Frequently Asked Questions",
       questions: [
