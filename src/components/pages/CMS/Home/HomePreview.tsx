@@ -293,7 +293,7 @@ export const HomePreview = () => {
   return (
     <div className="w-full overflow-hidden bg-background">
       {sortedSections.map((section) => (
-        <div key={section.key} className="w-full">
+        <div key={section.key} data-section={section.key} className="w-full">
           {renderSection(section)}
         </div>
       ))}

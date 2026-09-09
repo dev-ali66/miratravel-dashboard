@@ -5,8 +5,23 @@ export function useSyncScroll() {
   const previewRef = useRef<HTMLDivElement | null>(null)
   const isSyncingRef = useRef<"form" | "preview" | null>(null)
   const syncTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null)
+  const rafIdRef = useRef<number | null>(null)
 
-  // Helper: Detect and mark active section across form & preview
+  // Helper: Get element top offset relative to the scrollable container content (scale-aware)
+  const getAbsoluteTop = (child: HTMLElement, container: HTMLElement): number => {
+    const childRect = child.getBoundingClientRect()
+    const containerRect = container.getBoundingClientRect()
+    const scale = container.offsetWidth > 0 ? containerRect.width / container.offsetWidth : 1
+    const safeScale = scale > 0.05 ? scale : 1
+    return (childRect.top - containerRect.top) / safeScale + container.scrollTop
+  }
+
+  // Helper: Get element height accurately
+  const getElementHeight = (el: HTMLElement): number => {
+    return el.offsetHeight || el.getBoundingClientRect().height || 1
+  }
+
+  // Helper: Detect and mark active section in form
   const updateActiveSection = useCallback(() => {
     const previewEl = previewRef.current
     const formEl = formRef.current
@@ -19,27 +34,36 @@ export function useSyncScroll() {
     let activeKey: string | null = null
 
     if (previewSections.length > 0 && previewEl.clientHeight > 0) {
-      const previewRect = previewEl.getBoundingClientRect()
-      const triggerY = previewRect.top + previewRect.height * 0.35 // 35% from viewport top
+      const containerRect = previewEl.getBoundingClientRect()
+      const triggerY = containerRect.top + containerRect.height * 0.3 // 30% from container top
 
       for (const sec of previewSections) {
         const rect = sec.getBoundingClientRect()
-        if (rect.top <= triggerY && rect.bottom >= previewRect.top + 30) {
+        if (rect.top <= triggerY && rect.bottom >= triggerY) {
           activeKey = sec.getAttribute("data-section")
+          break
         }
       }
 
       if (!activeKey && previewSections.length > 0) {
-        activeKey = previewSections[0].getAttribute("data-section")
+        // Fallback to closest section
+        for (const sec of previewSections) {
+          const rect = sec.getBoundingClientRect()
+          if (rect.bottom >= containerRect.top + 20) {
+            activeKey = sec.getAttribute("data-section")
+            break
+          }
+        }
       }
     } else if (formSections.length > 0 && formEl.clientHeight > 0) {
-      const formRect = formEl.getBoundingClientRect()
-      const triggerY = formRect.top + formRect.height * 0.35
+      const containerRect = formEl.getBoundingClientRect()
+      const triggerY = containerRect.top + containerRect.height * 0.3
 
       for (const sec of formSections) {
         const rect = sec.getBoundingClientRect()
-        if (rect.top <= triggerY && rect.bottom >= formRect.top + 30) {
+        if (rect.top <= triggerY && rect.bottom >= triggerY) {
           activeKey = sec.getAttribute("data-section")
+          break
         }
       }
     }
@@ -58,76 +82,102 @@ export function useSyncScroll() {
     }
   }, [])
 
-  // 1. Proportional Bidirectional Scroll Sync using Sections
+  // 1. Form Scroll Handler -> Syncs to Preview
   const handleFormScroll = useCallback(() => {
     updateActiveSection()
     if (isSyncingRef.current === "preview") return
+
     const formEl = formRef.current
     const previewEl = previewRef.current
     if (!formEl || !previewEl) return
 
     const formSections = Array.from(formEl.querySelectorAll<HTMLElement>("[data-section]"))
     const previewSections = Array.from(previewEl.querySelectorAll<HTMLElement>("[data-section]"))
-    
-    if (formSections.length > 0 && previewSections.length > 0) {
-      isSyncingRef.current = "form"
-      
-      const formRect = formEl.getBoundingClientRect()
-      const triggerY = formRect.top + formRect.height * 0.35
 
-      // Find which section is currently at the trigger point
-      let currentSection: HTMLElement | null = null
-      let currentSectionIndex = -1
+    // Top boundary check
+    if (formEl.scrollTop <= 5) {
+      isSyncingRef.current = "form"
+      previewEl.scrollTop = 0
+      if (syncTimerRef.current) clearTimeout(syncTimerRef.current)
+      syncTimerRef.current = setTimeout(() => { isSyncingRef.current = null }, 50)
+      return
+    }
+
+    // Bottom boundary check
+    const formMaxScroll = formEl.scrollHeight - formEl.clientHeight
+    const previewMaxScroll = previewEl.scrollHeight - previewEl.clientHeight
+    if (formMaxScroll > 0 && formEl.scrollTop >= formMaxScroll - 5) {
+      isSyncingRef.current = "form"
+      previewEl.scrollTop = previewMaxScroll
+      if (syncTimerRef.current) clearTimeout(syncTimerRef.current)
+      syncTimerRef.current = setTimeout(() => { isSyncingRef.current = null }, 50)
+      return
+    }
+
+    if (formSections.length > 0 && previewSections.length > 0) {
+      const focusOffset = formEl.clientHeight * 0.3
+      const formFocusY = formEl.scrollTop + focusOffset
+
+      let currentFormSec: HTMLElement | null = null
+      let secProgress = 0
 
       for (let i = 0; i < formSections.length; i++) {
-        const rect = formSections[i].getBoundingClientRect()
-        if (rect.top <= triggerY && rect.bottom >= triggerY) {
-          currentSection = formSections[i]
-          currentSectionIndex = i
+        const fSec = formSections[i]
+        const secTop = getAbsoluteTop(fSec, formEl)
+        const secHeight = getElementHeight(fSec)
+        const secBottom = secTop + secHeight
+
+        if (formFocusY >= secTop && formFocusY <= secBottom) {
+          currentFormSec = fSec
+          secProgress = Math.max(0, Math.min(1, (formFocusY - secTop) / Math.max(1, secHeight)))
           break
         }
       }
 
-      if (currentSection && currentSectionIndex !== -1) {
-        const sectionKey = currentSection.getAttribute("data-section")
-        const targetSection = previewSections.find(s => s.getAttribute("data-section") === sectionKey)
-        
-        if (targetSection) {
-          // Calculate progress within current form section
-          const formSecRect = currentSection.getBoundingClientRect()
-          const progress = Math.max(0, Math.min(1, (triggerY - formSecRect.top) / formSecRect.height))
-          
-          // Apply progress to target preview section
-          const previewRect = previewEl.getBoundingClientRect()
-          const targetTriggerY = previewRect.height * 0.35
-          
-          // We want targetSection.top (relative to previewEl) to be at targetTriggerY
-          // scrollTop = offsetTop - targetTriggerY + (height * progress)
-          const targetOffsetTop = targetSection.offsetTop
-          const targetScrollTop = targetOffsetTop - targetTriggerY + (targetSection.offsetHeight * progress)
-          
-          previewEl.scrollTop = targetScrollTop
-        }
-      } else {
-        // Fallback to proportional if no section at trigger
-        const formScrollable = formEl.scrollHeight - formEl.clientHeight
-        const previewScrollable = previewEl.scrollHeight - previewEl.clientHeight
-        if (formScrollable > 0 && previewScrollable > 0) {
-          const ratio = formEl.scrollTop / formScrollable
-          previewEl.scrollTop = ratio * previewScrollable
+      if (currentFormSec) {
+        const sectionKey = currentFormSec.getAttribute("data-section")
+        const targetPreviewSec = previewSections.find(s => s.getAttribute("data-section") === sectionKey)
+
+        if (targetPreviewSec) {
+          isSyncingRef.current = "form"
+          const targetSecTop = getAbsoluteTop(targetPreviewSec, previewEl)
+          const targetSecHeight = getElementHeight(targetPreviewSec)
+          const previewFocusOffset = previewEl.clientHeight * 0.3
+
+          const targetScrollTop = targetSecTop + (targetSecHeight * secProgress) - previewFocusOffset
+
+          if (rafIdRef.current) cancelAnimationFrame(rafIdRef.current)
+          rafIdRef.current = requestAnimationFrame(() => {
+            previewEl.scrollTop = Math.max(0, Math.min(targetScrollTop, previewMaxScroll))
+          })
+
+          if (syncTimerRef.current) clearTimeout(syncTimerRef.current)
+          syncTimerRef.current = setTimeout(() => {
+            isSyncingRef.current = null
+          }, 60)
+          return
         }
       }
+    }
+
+    // Proportional Fallback
+    if (formMaxScroll > 0 && previewMaxScroll > 0) {
+      isSyncingRef.current = "form"
+      const ratio = formEl.scrollTop / formMaxScroll
+      previewEl.scrollTop = ratio * previewMaxScroll
 
       if (syncTimerRef.current) clearTimeout(syncTimerRef.current)
       syncTimerRef.current = setTimeout(() => {
         isSyncingRef.current = null
-      }, 80)
+      }, 60)
     }
   }, [updateActiveSection])
 
+  // 2. Preview Scroll Handler -> Syncs to Form
   const handlePreviewScroll = useCallback(() => {
     updateActiveSection()
     if (isSyncingRef.current === "form") return
+
     const formEl = formRef.current
     const previewEl = previewRef.current
     if (!formEl || !previewEl) return
@@ -135,57 +185,86 @@ export function useSyncScroll() {
     const formSections = Array.from(formEl.querySelectorAll<HTMLElement>("[data-section]"))
     const previewSections = Array.from(previewEl.querySelectorAll<HTMLElement>("[data-section]"))
 
-    if (formSections.length > 0 && previewSections.length > 0) {
+    // Top boundary check
+    if (previewEl.scrollTop <= 5) {
       isSyncingRef.current = "preview"
-      
-      const previewRect = previewEl.getBoundingClientRect()
-      const triggerY = previewRect.top + previewRect.height * 0.35
+      formEl.scrollTop = 0
+      if (syncTimerRef.current) clearTimeout(syncTimerRef.current)
+      syncTimerRef.current = setTimeout(() => { isSyncingRef.current = null }, 50)
+      return
+    }
 
-      let currentSection: HTMLElement | null = null
-      let currentSectionIndex = -1
+    // Bottom boundary check
+    const formMaxScroll = formEl.scrollHeight - formEl.clientHeight
+    const previewMaxScroll = previewEl.scrollHeight - previewEl.clientHeight
+    if (previewMaxScroll > 0 && previewEl.scrollTop >= previewMaxScroll - 5) {
+      isSyncingRef.current = "preview"
+      formEl.scrollTop = formMaxScroll
+      if (syncTimerRef.current) clearTimeout(syncTimerRef.current)
+      syncTimerRef.current = setTimeout(() => { isSyncingRef.current = null }, 50)
+      return
+    }
+
+    if (formSections.length > 0 && previewSections.length > 0) {
+      const focusOffset = previewEl.clientHeight * 0.3
+      const previewFocusY = previewEl.scrollTop + focusOffset
+
+      let currentPreviewSec: HTMLElement | null = null
+      let secProgress = 0
 
       for (let i = 0; i < previewSections.length; i++) {
-        const rect = previewSections[i].getBoundingClientRect()
-        if (rect.top <= triggerY && rect.bottom >= triggerY) {
-          currentSection = previewSections[i]
-          currentSectionIndex = i
+        const pSec = previewSections[i]
+        const secTop = getAbsoluteTop(pSec, previewEl)
+        const secHeight = getElementHeight(pSec)
+        const secBottom = secTop + secHeight
+
+        if (previewFocusY >= secTop && previewFocusY <= secBottom) {
+          currentPreviewSec = pSec
+          secProgress = Math.max(0, Math.min(1, (previewFocusY - secTop) / Math.max(1, secHeight)))
           break
         }
       }
 
-      if (currentSection && currentSectionIndex !== -1) {
-        const sectionKey = currentSection.getAttribute("data-section")
-        const targetSection = formSections.find(s => s.getAttribute("data-section") === sectionKey)
-        
-        if (targetSection) {
-          const prevSecRect = currentSection.getBoundingClientRect()
-          const progress = Math.max(0, Math.min(1, (triggerY - prevSecRect.top) / prevSecRect.height))
-          
-          const formRect = formEl.getBoundingClientRect()
-          const targetTriggerY = formRect.height * 0.35
-          
-          const targetOffsetTop = targetSection.offsetTop
-          const targetScrollTop = targetOffsetTop - targetTriggerY + (targetSection.offsetHeight * progress)
-          
-          formEl.scrollTop = targetScrollTop
-        }
-      } else {
-        const formScrollable = formEl.scrollHeight - formEl.clientHeight
-        const previewScrollable = previewEl.scrollHeight - previewEl.clientHeight
-        if (formScrollable > 0 && previewScrollable > 0) {
-          const ratio = previewEl.scrollTop / previewScrollable
-          formEl.scrollTop = ratio * formScrollable
+      if (currentPreviewSec) {
+        const sectionKey = currentPreviewSec.getAttribute("data-section")
+        const targetFormSec = formSections.find(s => s.getAttribute("data-section") === sectionKey)
+
+        if (targetFormSec) {
+          isSyncingRef.current = "preview"
+          const targetSecTop = getAbsoluteTop(targetFormSec, formEl)
+          const targetSecHeight = getElementHeight(targetFormSec)
+          const formFocusOffset = formEl.clientHeight * 0.3
+
+          const targetScrollTop = targetSecTop + (targetSecHeight * secProgress) - formFocusOffset
+
+          if (rafIdRef.current) cancelAnimationFrame(rafIdRef.current)
+          rafIdRef.current = requestAnimationFrame(() => {
+            formEl.scrollTop = Math.max(0, Math.min(targetScrollTop, formMaxScroll))
+          })
+
+          if (syncTimerRef.current) clearTimeout(syncTimerRef.current)
+          syncTimerRef.current = setTimeout(() => {
+            isSyncingRef.current = null
+          }, 60)
+          return
         }
       }
+    }
+
+    // Proportional Fallback
+    if (previewMaxScroll > 0 && formMaxScroll > 0) {
+      isSyncingRef.current = "preview"
+      const ratio = previewEl.scrollTop / previewMaxScroll
+      formEl.scrollTop = ratio * formMaxScroll
 
       if (syncTimerRef.current) clearTimeout(syncTimerRef.current)
       syncTimerRef.current = setTimeout(() => {
         isSyncingRef.current = null
-      }, 80)
+      }, 60)
     }
   }, [updateActiveSection])
 
-  // 2. Section Click & Focus Synchronizer
+  // 3. Section Click & Focus Synchronizer
   const handleFormInteraction = useCallback((e: Event) => {
     const target = e.target as HTMLElement | null
     if (!target) return
@@ -196,7 +275,7 @@ export function useSyncScroll() {
     const sectionKey = sectionEl.getAttribute("data-section")
     if (!sectionKey) return
 
-    // Immediately highlight the clicked section
+    // Highlight the clicked section in form
     const formEl = formRef.current
     if (formEl) {
       const formSections = formEl.querySelectorAll<HTMLElement>("[data-section]")
@@ -220,9 +299,12 @@ export function useSyncScroll() {
 
     if (matchingPreviewEl) {
       isSyncingRef.current = "form"
-      matchingPreviewEl.scrollIntoView({
+      const targetTop = getAbsoluteTop(matchingPreviewEl, previewEl)
+      const targetScrollTop = Math.max(0, targetTop - previewEl.clientHeight * 0.15)
+
+      previewEl.scrollTo({
+        top: targetScrollTop,
         behavior: "smooth",
-        block: "center",
       })
 
       if (syncTimerRef.current) clearTimeout(syncTimerRef.current)
@@ -232,7 +314,7 @@ export function useSyncScroll() {
     }
   }, [])
 
-  // Attach event listeners and keep refreshed
+  // Attach event listeners with resilient ref checking
   useEffect(() => {
     let attachedFormEl: HTMLDivElement | null = null
     let attachedPreviewEl: HTMLDivElement | null = null
@@ -263,9 +345,7 @@ export function useSyncScroll() {
     }
 
     bindListeners()
-
-    // Poll briefly to catch delayed ref bindings on page mount/route switch
-    const intervalId = setInterval(bindListeners, 250)
+    const intervalId = setInterval(bindListeners, 300)
 
     return () => {
       clearInterval(intervalId)
@@ -278,8 +358,10 @@ export function useSyncScroll() {
         attachedPreviewEl.removeEventListener("scroll", handlePreviewScroll)
       }
       if (syncTimerRef.current) clearTimeout(syncTimerRef.current)
+      if (rafIdRef.current) cancelAnimationFrame(rafIdRef.current)
     }
   }, [handleFormScroll, handlePreviewScroll, handleFormInteraction])
 
   return { formRef, previewRef }
 }
+
