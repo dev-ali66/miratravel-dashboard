@@ -1,7 +1,11 @@
+import { useState } from "react"
 import { Outlet } from "react-router-dom"
 import Sidebar, { type SectionProps } from "./Sidebar"
+import { Navbar } from "./Navbar"
 
 export function RootLayout() {
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
+
   const sections: SectionProps[] = [
     {
       title: "Operations & Bookings",
@@ -36,6 +40,7 @@ export function RootLayout() {
         { href: "/system-health", label: "System Health", icon: "health" as any },
         { href: "/audit-logs", label: "Audit Logs", icon: "audit" as any },
         { href: "/payment-config", label: "Payment Rules & Config", icon: "paymentConfig" as any },
+        { href: "/settings", label: "Site Settings", icon: "settings" as any },
         { href: "/iam", label: "IAM Roles & Access", icon: "iam" as any },
       ],
     },
@@ -54,19 +59,30 @@ export function RootLayout() {
         },
       ],
     },
-    {
-      title: "Account",
-      items: [{ href: "/logout", label: "Logout", icon: "logout" }],
-    },
   ]
   return (
-    <div className="flex min-h-svh">
-      <div className="flex-1">
-        <Sidebar sections={sections} />
+    <div className="flex min-h-svh flex-col bg-muted/10">
+      <Navbar onMenuClick={() => setIsMobileMenuOpen(true)} />
+      <div className="flex flex-1 pt-16 overflow-hidden">
+        <Sidebar 
+          sections={sections} 
+          isMobileOpen={isMobileMenuOpen} 
+          onMobileClose={() => setIsMobileMenuOpen(false)} 
+        />
+        <main className="flex-1 overflow-y-auto p-4 md:p-8 w-full md:pl-[280px]">
+          <Outlet />
+        </main>
       </div>
-      <main className="flex w-full flex-col p-8">
-        <Outlet />
-      </main>
+      
+      {/* Mobile overlay */}
+      {isMobileMenuOpen && (
+        <div 
+          className="fixed inset-0 z-40 bg-black/50 md:hidden"
+          onClick={() => setIsMobileMenuOpen(false)}
+        />
+      )}
     </div>
   )
 }
+
+

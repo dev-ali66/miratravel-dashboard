@@ -43,6 +43,7 @@ import ReviewsPage from "@/components/pages/Reviews"
 import PromotionsPage from "@/components/pages/Promotions"
 import NewsletterPage from "@/components/pages/Newsletter"
 import NotificationsPage from "@/components/pages/Notifications"
+import SettingsPage from "@/components/pages/Settings"
 
 export function App() {
   return (
@@ -78,6 +79,7 @@ export function App() {
             <Route path="audit-logs" element={<AuditLogsPage />} />
             <Route path="system-health" element={<SystemHealthPage />} />
             <Route path="payment-config" element={<PaymentConfigPage />} />
+            <Route path="settings" element={<SettingsPage />} />
           </Route>
 
     <Route path="/cms" element={<CmsEditorLayout />}>

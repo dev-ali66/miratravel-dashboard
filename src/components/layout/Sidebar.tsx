@@ -1,8 +1,6 @@
 import React, { useEffect, useState } from "react"
 import { Link, useLocation } from "react-router-dom"
 import { motion } from "framer-motion"
-import { useMe } from "@/hooks/auth/useMe"
-import { useGetCmsBySlug } from "@/hooks/cms/useGetCmsBySlug"
 import { cn } from "@/lib/utils"
 import { SlideLeft } from "@/components/animation"
 
@@ -38,12 +36,6 @@ import {
   Send,
   Bell,
 } from "lucide-react"
-
-import { LogoutModal } from "./LogoutModal"
-import { ThemeToggle } from "@/components/ThemeToggle"
-import { UniversalMultimediaPreview } from "../pages/CMS/Home/shared/preview/UniversalMultimediaPreview"
-
-const defaultAvatar = "https://i.pravatar.cc/150?u=default"
 
 /* =========================================================
    Icon Map
@@ -320,87 +312,21 @@ const CMSDropdown = ({
   )
 }
 
-const extractBrand = (cmsResponse: any) => {
-  if (!cmsResponse) return null
-  const pageObj = Array.isArray(cmsResponse?.data)
-    ? cmsResponse.data[0]
-    : cmsResponse?.data
-  if (!pageObj) return null
-
-  const innerData = pageObj?.data || pageObj
-  return innerData?.content?.brand || pageObj?.content?.brand || null
-}
-
-const SidebarLogo = () => {
-  const { data: navbarCms } = useGetCmsBySlug("navbar")
-  const { data: footerCms } = useGetCmsBySlug("footer")
-
-  const navbarBrand = extractBrand(navbarCms)
-  const footerBrand = extractBrand(footerCms)
-
-  const navbarMedia = navbarBrand?.navbarBrandMultimedia
-  const footerMedia = footerBrand?.footerBrandMultimedia
-
-  const mediaObj =
-    navbarMedia &&
-      (navbarMedia.url ||
-        (navbarMedia as any).image?.url ||
-        (navbarMedia as any).imageData?.url)
-      ? navbarMedia
-      : navbarBrand?.logo
-        ? { type: "image", url: navbarBrand.logo, alt: navbarBrand.alt }
-        : footerMedia &&
-          (footerMedia.url ||
-            (footerMedia as any).image?.url ||
-            (footerMedia as any).imageData?.url)
-          ? footerMedia
-          : footerBrand?.logo
-            ? { type: "image", url: footerBrand.logo, alt: footerBrand.alt }
-            : null
-
-  const brandName = navbarBrand?.name || footerBrand?.name || "MIRA"
-  const mediaUrl =
-    mediaObj?.url ||
-    (mediaObj as any)?.image?.url ||
-    (mediaObj as any)?.imageData?.url
-
-  if (mediaObj && mediaUrl) {
-    return (
-      <Link to="/" className="inline-block transition-opacity hover:opacity-90">
-        <UniversalMultimediaPreview
-          multimedia={mediaObj as any}
-          fallbackAlt={brandName}
-          className="h-8 max-w-[160px] w-auto object-contain object-left"
-          containerClassName="h-8 max-w-[160px] flex items-center"
-        />
-      </Link>
-    )
-  }
-
-  return (
-    <Link to="/" className="inline-block transition-transform hover:scale-[1.02]">
-      <div className="flex h-9 min-w-[130px] items-center justify-center gap-2 rounded-lg border border-border/80 bg-muted/60 px-3 shadow-xs transition-colors hover:bg-muted">
-        <span className="font-serif text-sm font-bold tracking-widest text-foreground uppercase">
-          {brandName}
-        </span>
-      </div>
-    </Link>
-  )
-}
-
 /* =========================================================
    Sidebar
 ========================================================= */
 
 export default function Sidebar({
   sections = [],
+  isMobileOpen,
+  onMobileClose,
 }: {
   sections?: SectionProps[]
+  isMobileOpen?: boolean
+  onMobileClose?: () => void
 }) {
   const location = useLocation()
   const pathname = location.pathname
-
-  const [showLogoutModal, setShowLogoutModal] = useState(false)
 
   /*
    * CMS automatically opens when current route
@@ -420,141 +346,74 @@ export default function Sidebar({
     }
   }, [isCMSRoute])
 
-  const { data: user } = useMe()
-
-  /* =========================================================
-     User Profile
-  ========================================================= */
-
-  const profileName = user?.userPersonalInfo?.firstName
-    ? `${user.userPersonalInfo.firstName} ${user.userPersonalInfo.lastName || ""
-    }`
-    : user?.email?.split("@")[0] || "Guest"
-
-  const profileEmail = user?.email || "No email"
-
-  const profileImage = user?.userPersonalInfo?.photoUrl?.[0] || defaultAvatar
+  // Close mobile sidebar when route changes
+  useEffect(() => {
+    if (onMobileClose) onMobileClose()
+  }, [pathname, onMobileClose])
 
   return (
-    <>
-      {/* Logout Modal */}
-      <LogoutModal
-        open={showLogoutModal}
-        onClose={() => setShowLogoutModal(false)}
-      />
+    <aside
+      className={cn(
+        "fixed top-16 bottom-0 left-0 z-40 w-[280px] flex-col border-r border-dashed border-border bg-background/95 backdrop-blur-xl supports-[backdrop-filter]:bg-background/60 py-6 px-4 transition-transform duration-300 ease-in-out md:translate-x-0 overflow-y-auto hidden md:flex",
+        isMobileOpen ? "translate-x-0 flex" : "-translate-x-full"
+      )}
+    >
+      {/* Navigation Sections */}
+      <div className="flex flex-col gap-8 pb-10">
+        {sections?.map((section, sIdx) => (
+          <div key={section.title} className="flex flex-col gap-2">
+            {/* Section Title */}
+            <SlideLeft delay={0.1 + sIdx * 0.05}>
+              <h3 className="px-3 text-xs font-bold tracking-wider text-muted-foreground uppercase">
+                {section.title}
+              </h3>
+            </SlideLeft>
 
-      <aside className="sticky top-0 flex h-screen min-w-70 flex-2 shrink-0 flex-col overflow-y-auto border-r border-dashed border-border bg-background/50 px-4 py-8 backdrop-blur-xl">
-        {/* =====================================================
-            Logo
-        ===================================================== */}
+            {/* Navigation */}
+            <nav className="flex flex-col gap-1">
+              {section.items.map((item, iIdx) => {
+                const isCMSItem = item.href === "/cms"
 
-        <SlideLeft delay={0.1} className="mb-10 px-4">
-          <SidebarLogo />
-        </SlideLeft>
+                /*
+                 * CMS gets special dropdown treatment
+                 */
+                if (isCMSItem) {
+                  return (
+                    <SlideLeft
+                      key={item.href}
+                      delay={0.15 + sIdx * 0.05 + iIdx * 0.03}
+                    >
+                      <CMSDropdown
+                        isOpen={cmsOpen}
+                        setIsOpen={setCmsOpen}
+                        pathname={pathname}
+                      />
+                    </SlideLeft>
+                  )
+                }
 
-    {/* =====================================================
-            Navigation Sections
-        ===================================================== */}
-
-    <div className="flex h-full flex-col justify-between gap-10">
-      {sections?.map((section, sIdx) => (
-        <div key={section.title} className="flex flex-col gap-2">
-          {/* Section Title */}
-          <SlideLeft delay={0.3 + sIdx * 0.1}>
-            <h3 className="px-4 text-xs font-bold tracking-wider text-foreground">
-              {section.title}
-            </h3>
-          </SlideLeft>
-
-          {/* Navigation */}
-          <nav className="flex flex-col gap-1">
-            {section.items.map((item, iIdx) => {
-              const isCMSItem = item.href === "/cms"
-
-              /*
-               * CMS gets special dropdown treatment
-               */
-              if (isCMSItem) {
+                /* =================================================
+                   Normal Navigation Item
+                ================================================= */
                 return (
                   <SlideLeft
                     key={item.href}
-                    delay={0.4 + sIdx * 0.1 + iIdx * 0.05}
+                    delay={0.15 + sIdx * 0.05 + iIdx * 0.03}
                   >
-                    <CMSDropdown
-                      isOpen={cmsOpen}
-                      setIsOpen={setCmsOpen}
-                      pathname={pathname}
+                    <NavLink
+                      {...item}
+                      isActive={
+                        pathname === item.href ||
+                        (item.href !== "/" && pathname.startsWith(item.href + "/"))
+                      }
                     />
                   </SlideLeft>
                 )
-              }
-
-              /* =================================================
-                 Normal Navigation Item
-              ================================================= */
-
-              return (
-                <SlideLeft
-                  key={item.href}
-                  delay={0.4 + sIdx * 0.1 + iIdx * 0.05}
-                >
-                  <NavLink
-                    {...item}
-                    isActive={
-                      pathname === item.href ||
-                      pathname.startsWith(item.href + "/")
-                    }
-                    onClick={
-                      item.href === "/logout"
-                        ? (e) => {
-                          e.preventDefault()
-
-                          setShowLogoutModal(true)
-                        }
-                        : undefined
-                    }
-                  />
-                </SlideLeft>
-              )
-            })}
-          </nav>
-        </div>
-      ))}
-    </div>
-
-    {/* =====================================================
-            User Profile & Theme Card
-        ===================================================== */}
-
-    <SlideLeft delay={0.2}>
-      <div className="mx-2 mt-8 flex items-center justify-between gap-3 rounded-2xl border border-muted/50 bg-muted/30 p-3 transition-all hover:bg-muted/40">
-        <div className="flex min-w-0 items-center gap-3">
-          {/* Avatar */}
-          <div className="relative h-9 w-9 shrink-0 overflow-hidden rounded-full ring-2 ring-primary/10 ring-offset-2 ring-offset-background">
-            <img
-              src={profileImage}
-              alt="User Avatar"
-              className="h-full w-full object-cover"
-            />
+              })}
+            </nav>
           </div>
-
-          {/* User Info */}
-          <div className="flex min-w-0 flex-col overflow-hidden">
-            <span className="truncate text-sm font-bold text-foreground">
-              {profileName}
-            </span>
-
-            <span className="truncate text-xs text-muted-foreground">
-              {profileEmail}
-            </span>
-          </div>
-        </div>
-
-            {/* Theme Toggle */}
-            <ThemeToggle className="shrink-0" />
-          </div>
-        </SlideLeft>
-      </aside>
-    </>
+        ))}
+      </div>
+    </aside>
   )
 }
