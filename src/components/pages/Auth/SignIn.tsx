@@ -14,14 +14,23 @@ import { Button } from "@/components/ui/button"
 import { useLogin } from "@/hooks/auth/useLogin"
 
 export default function SignIn() {
-  const [email, setEmail] = React.useState("")
+  const [email, setEmail] = React.useState(() => {
+    return typeof window !== "undefined"
+      ? localStorage.getItem("savedUserEmail") || ""
+      : ""
+  })
   const [password, setPassword] = React.useState("")
+  const [rememberMe, setRememberMe] = React.useState(() => {
+    return typeof window !== "undefined"
+      ? Boolean(localStorage.getItem("savedUserEmail"))
+      : true
+  })
   const [showPassword, setShowPassword] = React.useState(false)
   const { mutate: login, isPending } = useLogin()
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault()
-    login({ email, password })
+    login({ email, password, rememberMe })
   }
 
   return (
@@ -151,6 +160,22 @@ export default function SignIn() {
                     )}
                   </button>
                 </div>
+              </div>
+
+              <div className="flex items-center space-x-2 pt-1">
+                <input
+                  id="rememberMe"
+                  type="checkbox"
+                  checked={rememberMe}
+                  onChange={(e) => setRememberMe(e.target.checked)}
+                  className="size-4 cursor-pointer rounded border-border text-primary accent-primary focus:ring-primary/20"
+                />
+                <label
+                  htmlFor="rememberMe"
+                  className="cursor-pointer text-sm font-medium text-muted-foreground select-none hover:text-foreground"
+                >
+                  Remember me on this device
+                </label>
               </div>
             </div>
 

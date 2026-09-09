@@ -7,6 +7,7 @@ import { useNavigate } from "react-router-dom"
 type LoginPayload = {
   email: string
   password?: string
+  rememberMe?: boolean
 }
 
 type User = {
@@ -40,7 +41,7 @@ type LoginResponse = {
   meta: any
   data: {
     accessToken: string
-    refreshToken: string
+    refreshToken?: string | null
     user: User
   }
 }
@@ -54,7 +55,7 @@ export function useLogin() {
       const res = await apiPublic.post<LoginResponse>("/auth/login", payload)
       return res.data
     },
-    onSuccess: (res) => {
+    onSuccess: (res, variables) => {
       if (res.success) {
         toast.success(res.message || "Logged in successfully!")
 
@@ -64,6 +65,15 @@ export function useLogin() {
         }
         if (res.data?.refreshToken) {
           localStorage.setItem("refreshToken", res.data.refreshToken)
+        } else {
+          localStorage.removeItem("refreshToken")
+        }
+
+        // Remember user email if rememberMe was checked
+        if (variables?.rememberMe) {
+          localStorage.setItem("savedUserEmail", variables.email)
+        } else {
+          localStorage.removeItem("savedUserEmail")
         }
 
         // Clear previous user data queries
