@@ -25,9 +25,21 @@ export function useDeleteLocation() {
       return res.data
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["location-pages"] })
-      queryClient.invalidateQueries({ queryKey: ["locations"] })
-      queryClient.invalidateQueries({ queryKey: ["location"] })
+      queryClient.invalidateQueries({
+        queryKey: ["location-pages"],
+        refetchType: "all",
+      })
+      queryClient.invalidateQueries({
+        queryKey: ["locations"],
+        refetchType: "all",
+      })
+      queryClient.invalidateQueries({
+        queryKey: ["location"],
+        refetchType: "all",
+      })
+      queryClient.refetchQueries({
+        queryKey: ["location-pages"],
+      })
     },
   })
 }

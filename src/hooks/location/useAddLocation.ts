@@ -36,14 +36,21 @@ export function useAddLocation() {
 
         queryClient.invalidateQueries({
           queryKey: ["location-pages"],
+          refetchType: "all",
         })
 
         queryClient.invalidateQueries({
           queryKey: ["locations"],
+          refetchType: "all",
         })
 
         queryClient.invalidateQueries({
           queryKey: ["location"],
+          refetchType: "all",
+        })
+
+        queryClient.refetchQueries({
+          queryKey: ["location-pages"],
         })
       } else {
         toast.error(response.message || "Failed to save location")

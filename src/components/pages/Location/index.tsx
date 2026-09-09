@@ -56,6 +56,11 @@ export default function LocationPages() {
     parentId: parentId || undefined,
   })
 
+  // Refetch when mounting or returning back to this page
+  useEffect(() => {
+    refetch()
+  }, [refetch])
+
   const { mutate: deleteLocation, isPending: isDeleting } = useDeleteLocation()
 
   const [deleteModalOpen, setDeleteModalOpen] = useState(false)

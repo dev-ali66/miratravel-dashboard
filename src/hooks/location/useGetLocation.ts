@@ -55,5 +55,8 @@ export function useGetLocationPages(params: LocationQueryParams = {}) {
     },
     // keep previous page's data visible while the next page loads
     placeholderData: (previous) => previous,
+    staleTime: 0,
+    refetchOnMount: "always",
+    refetchOnWindowFocus: true,
   })
 }
