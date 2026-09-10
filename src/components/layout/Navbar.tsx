@@ -1,6 +1,7 @@
 import { useState } from "react"
 import { Link, useNavigate } from "react-router-dom"
 import { useMe } from "@/hooks/auth/useMe"
+import { useUserSessions } from "@/hooks/auth/useUserSessions"
 import { useGetCmsBySlug } from "@/hooks/cms/useGetCmsBySlug"
 import { UniversalMultimediaPreview } from "../pages/CMS/Home/shared/preview/UniversalMultimediaPreview"
 import { ThemeToggle } from "@/components/ThemeToggle"
@@ -110,6 +111,7 @@ interface NavbarProps {
 export function Navbar({ onMenuClick }: NavbarProps) {
   const navigate = useNavigate()
   const { data: user } = useMe()
+  const { data: sessionStats } = useUserSessions()
   const [isLogoutOpen, setIsLogoutOpen] = useState(false)
 
   const profileName = user?.userPersonalInfo?.firstName
@@ -119,6 +121,9 @@ export function Navbar({ onMenuClick }: NavbarProps) {
   const profileEmail = user?.email || "admin@example.com"
   const profileImage = user?.userPersonalInfo?.photoUrl?.[0] || defaultAvatar
   const userRole = user?.roles?.[0]?.name || "ADMIN"
+
+  const activeDevicesCount = sessionStats?.totalActiveDevices ?? 1
+  const onlineDevicesCount = sessionStats?.onlineDevices ?? 1
 
   let sessionInfo: {
     rememberMe?: boolean
@@ -232,7 +237,7 @@ export function Navbar({ onMenuClick }: NavbarProps) {
                         </span>
                         <span className="text-[10px] text-emerald-600 dark:text-emerald-400 font-medium flex items-center gap-1">
                           <span className="h-1.5 w-1.5 rounded-full bg-emerald-500 animate-pulse" />
-                          Online
+                          {onlineDevicesCount > 1 ? `${onlineDevicesCount} Online` : "Online"}
                         </span>
                       </div>
                     </div>
@@ -258,6 +263,17 @@ export function Navbar({ onMenuClick }: NavbarProps) {
                       </span>
                     )}
                   </div>
+
+                  <div className="mt-1.5 flex items-center justify-between border-t border-border/40 pt-1 text-[10px]">
+                    <span className="text-muted-foreground">
+                      Active: <strong className="font-semibold text-foreground">{activeDevicesCount} Device{activeDevicesCount > 1 ? "s" : ""}</strong>
+                    </span>
+                    <span className="text-emerald-600 dark:text-emerald-400 font-medium flex items-center gap-1">
+                      <span className="h-1.5 w-1.5 rounded-full bg-emerald-500" />
+                      {onlineDevicesCount} Online Now
+                    </span>
+                  </div>
+
                   <p className="mt-1 text-[9px] text-muted-foreground/80 leading-tight">
                     {isRemembered
                       ? `Persistent session active (${sessionDuration} token lifetime).`
@@ -285,9 +301,14 @@ export function Navbar({ onMenuClick }: NavbarProps) {
                       <ShieldCheck className="h-4 w-4 text-muted-foreground" />
                       <span>Security & Sessions</span>
                     </div>
-                    <span className="rounded bg-emerald-500/10 px-1.5 py-0.2 text-[9px] font-semibold text-emerald-600 dark:text-emerald-400">
-                      1 Active
-                    </span>
+                    <div className="flex items-center gap-1">
+                      <span className="rounded bg-primary/10 px-1.5 py-0.5 text-[9px] font-semibold text-primary">
+                        {activeDevicesCount} Device{activeDevicesCount > 1 ? "s" : ""}
+                      </span>
+                      <span className="rounded bg-emerald-500/10 px-1.5 py-0.5 text-[9px] font-semibold text-emerald-600 dark:text-emerald-400">
+                        {onlineDevicesCount} Online
+                      </span>
+                    </div>
                   </DropdownMenuItem>
 
                   <DropdownMenuItem

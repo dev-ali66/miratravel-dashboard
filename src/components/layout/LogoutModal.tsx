@@ -7,9 +7,8 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog"
 import { Button } from "@/components/ui/button"
-import { useNavigate } from "react-router-dom"
-import { useQueryClient } from "@tanstack/react-query"
-import { toast } from "sonner"
+import { useLogout } from "@/hooks/auth/useLogout"
+import { Loader2 } from "lucide-react"
 
 interface LogoutModalProps {
   open: boolean
@@ -17,40 +16,47 @@ interface LogoutModalProps {
 }
 
 export function LogoutModal({ open, onClose }: LogoutModalProps) {
-  const navigate = useNavigate()
-  const queryClient = useQueryClient()
+  const { mutate: logout, isPending } = useLogout()
 
-  const handleLogout = () => {
-    // Clear tokens
-    localStorage.removeItem("accessToken")
-    localStorage.removeItem("refreshToken")
-
-    // Clear React Query cache
-    queryClient.clear()
-
-    toast.success("Logged out successfully")
-    onClose()
-
-    // Redirect to login
-    navigate("/login")
+  const handleLogout = (allDevices: boolean = false) => {
+    logout(
+      { allDevices },
+      {
+        onSettled: () => {
+          onClose()
+        },
+      }
+    )
   }
 
   return (
-    <Dialog open={open} onOpenChange={(isOpen) => !isOpen && onClose()}>
+    <Dialog open={open} onOpenChange={(isOpen) => !isOpen && !isPending && onClose()}>
       <DialogContent>
         <DialogHeader>
           <DialogTitle>Confirm Logout</DialogTitle>
           <DialogDescription>
-            Are you sure you want to log out of your account? You will need to
-            sign in again to access the dashboard.
+            Are you sure you want to log out of your account? Your current session
+            will be revoked and you will need to sign in again.
           </DialogDescription>
         </DialogHeader>
-        <DialogFooter>
-          <Button variant="outline" onClick={onClose}>
+        <DialogFooter className="gap-2 sm:gap-0">
+          <Button variant="outline" disabled={isPending} onClick={onClose}>
             Cancel
           </Button>
-          <Button variant="destructive" onClick={handleLogout}>
-            Log Out
+          <Button
+            variant="destructive"
+            disabled={isPending}
+            onClick={() => handleLogout(false)}
+            className="flex items-center gap-1.5"
+          >
+            {isPending ? (
+              <>
+                <Loader2 className="h-4 w-4 animate-spin" />
+                <span>Logging out...</span>
+              </>
+            ) : (
+              <span>Log Out</span>
+            )}
           </Button>
         </DialogFooter>
       </DialogContent>
