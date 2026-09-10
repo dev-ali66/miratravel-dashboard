@@ -1,11 +1,37 @@
 import { useState } from "react"
-import { Link } from "react-router-dom"
+import { Link, useNavigate } from "react-router-dom"
 import { useMe } from "@/hooks/auth/useMe"
 import { useGetCmsBySlug } from "@/hooks/cms/useGetCmsBySlug"
 import { UniversalMultimediaPreview } from "../pages/CMS/Home/shared/preview/UniversalMultimediaPreview"
 import { ThemeToggle } from "@/components/ThemeToggle"
 import { LogoutModal } from "./LogoutModal"
-import { LogOut, Menu } from "lucide-react"
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuGroup,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu"
+import {
+  User,
+  Settings,
+  ShieldCheck,
+  Bell,
+  Activity,
+  Command,
+  HelpCircle,
+  LogOut,
+  Menu,
+  ChevronDown,
+  KeyRound,
+  ExternalLink,
+  Laptop,
+  CheckCircle2,
+  Clock,
+} from "lucide-react"
+import { toast } from "sonner"
 
 const defaultAvatar = "https://i.pravatar.cc/150?u=default"
 
@@ -82,6 +108,7 @@ interface NavbarProps {
 }
 
 export function Navbar({ onMenuClick }: NavbarProps) {
+  const navigate = useNavigate()
   const { data: user } = useMe()
   const [isLogoutOpen, setIsLogoutOpen] = useState(false)
 
@@ -91,6 +118,17 @@ export function Navbar({ onMenuClick }: NavbarProps) {
 
   const profileEmail = user?.email || "admin@example.com"
   const profileImage = user?.userPersonalInfo?.photoUrl?.[0] || defaultAvatar
+  const userRole = user?.roles?.[0]?.name || "ADMIN"
+
+  const isRemembered =
+    localStorage.getItem("rememberMe") === "true" ||
+    Boolean(localStorage.getItem("savedUserEmail"))
+
+  const handleDummyFeature = (featureName: string) => {
+    toast.info(`${featureName} is under active development and will be available in the next release!`, {
+      duration: 3000,
+    })
+  }
 
   return (
     <>
@@ -109,42 +147,209 @@ export function Navbar({ onMenuClick }: NavbarProps) {
             <NavbarBrandLogo />
           </div>
           
-          {/* Right: Theme Toggle + User Info + Logout */}
+          {/* Right: Theme Toggle + User Profile Dropdown */}
           <div className="flex items-center gap-3 sm:gap-4">
             <ThemeToggle />
             
             <div className="h-6 w-px bg-border/60" />
 
-            <div className="flex items-center gap-3">
-              {/* User Avatar */}
-              <div className="relative h-9 w-9 shrink-0 overflow-hidden rounded-full ring-2 ring-primary/20 ring-offset-2 ring-offset-background shadow-2xs">
-                <img
-                  src={profileImage}
-                  alt={profileName}
-                  className="h-full w-full object-cover"
-                />
-              </div>
+            {/* User Profile Dropdown Menu */}
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <button
+                  type="button"
+                  className="flex items-center gap-2.5 rounded-full border border-border/60 bg-card/70 py-1 pl-1 pr-2.5 transition-all hover:bg-muted/80 hover:border-border focus:outline-none focus:ring-2 focus:ring-primary/20 cursor-pointer shadow-2xs group"
+                >
+                  {/* User Avatar with live status pulse */}
+                  <div className="relative h-8 w-8 shrink-0 overflow-hidden rounded-full ring-2 ring-primary/20 group-hover:ring-primary/40 transition-all">
+                    <img
+                      src={profileImage}
+                      alt={profileName}
+                      className="h-full w-full object-cover"
+                    />
+                    <span className="absolute bottom-0 right-0 h-2 w-2 rounded-full bg-emerald-500 ring-1.5 ring-background" />
+                  </div>
 
-              {/* Name & Email */}
-              <div className="hidden sm:flex flex-col text-left">
-                <span className="text-sm font-bold text-foreground leading-tight">
-                  {profileName}
-                </span>
-                <span className="text-xs text-muted-foreground leading-tight">
-                  {profileEmail}
-                </span>
-              </div>
-              
-              {/* Logout Button */}
-              <button
-                type="button"
-                onClick={() => setIsLogoutOpen(true)}
-                className="flex h-9 w-9 items-center justify-center rounded-lg border border-border/60 bg-card text-foreground transition-all hover:bg-destructive hover:text-destructive-foreground hover:scale-105 active:scale-95 shadow-2xs cursor-pointer ml-1"
-                title="Log out"
+                  {/* Name & Role (Desktop) */}
+                  <div className="hidden sm:flex flex-col text-left">
+                    <span className="text-xs font-bold text-foreground leading-tight truncate max-w-[120px]">
+                      {profileName}
+                    </span>
+                    <span className="text-[10px] font-medium text-muted-foreground leading-tight uppercase tracking-wider">
+                      {userRole}
+                    </span>
+                  </div>
+
+                  <ChevronDown className="h-3.5 w-3.5 text-muted-foreground transition-transform group-data-[state=open]:rotate-180" />
+                </button>
+              </DropdownMenuTrigger>
+
+              <DropdownMenuContent
+                align="end"
+                sideOffset={8}
+                className="w-72 rounded-xl border border-border/70 bg-card p-1.5 shadow-xl animate-in fade-in-0 zoom-in-95"
               >
-                <LogOut className="h-4 w-4" />
-              </button>
-            </div>
+                {/* Dropdown Header: Full Profile Card */}
+                <DropdownMenuLabel className="p-2 font-normal">
+                  <div className="flex items-center gap-3">
+                    <div className="relative h-10 w-10 shrink-0 overflow-hidden rounded-full ring-2 ring-primary/20">
+                      <img
+                        src={profileImage}
+                        alt={profileName}
+                        className="h-full w-full object-cover"
+                      />
+                    </div>
+                    <div className="flex flex-col min-w-0">
+                      <p className="text-sm font-bold text-foreground truncate">
+                        {profileName}
+                      </p>
+                      <p className="text-xs text-muted-foreground truncate">
+                        {profileEmail}
+                      </p>
+                      <div className="flex items-center gap-1.5 mt-1">
+                        <span className="inline-flex items-center rounded bg-primary/10 px-1.5 py-0.5 text-[9px] font-semibold text-primary uppercase tracking-wide">
+                          {userRole}
+                        </span>
+                        <span className="text-[10px] text-emerald-600 dark:text-emerald-400 font-medium flex items-center gap-1">
+                          <span className="h-1.5 w-1.5 rounded-full bg-emerald-500 animate-pulse" />
+                          Online
+                        </span>
+                      </div>
+                    </div>
+                  </div>
+                </DropdownMenuLabel>
+
+                {/* Remember This Device Status Banner */}
+                <div className="mx-1 my-1 rounded-lg border border-border/60 bg-muted/40 p-2 text-left">
+                  <div className="flex items-center justify-between">
+                    <span className="text-[11px] font-medium text-muted-foreground flex items-center gap-1.5">
+                      <Laptop className="h-3.5 w-3.5" />
+                      <span>Remember Device:</span>
+                    </span>
+                    {isRemembered ? (
+                      <span className="inline-flex items-center gap-1 rounded-full bg-emerald-500/15 border border-emerald-500/30 px-2 py-0.5 text-[10px] font-bold text-emerald-600 dark:text-emerald-400">
+                        <CheckCircle2 className="h-3 w-3" />
+                        TRUE (30d)
+                      </span>
+                    ) : (
+                      <span className="inline-flex items-center gap-1 rounded-full bg-amber-500/15 border border-amber-500/30 px-2 py-0.5 text-[10px] font-bold text-amber-600 dark:text-amber-400">
+                        <Clock className="h-3 w-3" />
+                        FALSE (1m)
+                      </span>
+                    )}
+                  </div>
+                  <p className="mt-1 text-[9px] text-muted-foreground/80 leading-tight">
+                    {isRemembered
+                      ? "Persistent session active (30-day token lifetime)."
+                      : "Ephemeral session active (1-min test lifetime)."}
+                  </p>
+                </div>
+
+                <DropdownMenuSeparator className="my-1 bg-border/60" />
+
+                {/* Group 1: Profile & Core Account */}
+                <DropdownMenuGroup>
+                  <DropdownMenuItem
+                    onClick={() => navigate("/settings")}
+                    className="flex items-center gap-2.5 px-2.5 py-2 text-xs font-medium text-foreground rounded-lg cursor-pointer transition-colors hover:bg-muted focus:bg-muted"
+                  >
+                    <User className="h-4 w-4 text-muted-foreground" />
+                    <span>My Profile & Settings</span>
+                  </DropdownMenuItem>
+
+                  <DropdownMenuItem
+                    onClick={() => handleDummyFeature("Account Security & Active Sessions")}
+                    className="flex items-center justify-between px-2.5 py-2 text-xs font-medium text-foreground rounded-lg cursor-pointer transition-colors hover:bg-muted focus:bg-muted"
+                  >
+                    <div className="flex items-center gap-2.5">
+                      <ShieldCheck className="h-4 w-4 text-muted-foreground" />
+                      <span>Security & Sessions</span>
+                    </div>
+                    <span className="rounded bg-emerald-500/10 px-1.5 py-0.2 text-[9px] font-semibold text-emerald-600 dark:text-emerald-400">
+                      1 Active
+                    </span>
+                  </DropdownMenuItem>
+
+                  <DropdownMenuItem
+                    onClick={() => navigate("/settings")}
+                    className="flex items-center gap-2.5 px-2.5 py-2 text-xs font-medium text-foreground rounded-lg cursor-pointer transition-colors hover:bg-muted focus:bg-muted"
+                  >
+                    <Settings className="h-4 w-4 text-muted-foreground" />
+                    <span>Site Preferences</span>
+                  </DropdownMenuItem>
+                </DropdownMenuGroup>
+
+                <DropdownMenuSeparator className="my-1 bg-border/60" />
+
+                {/* Group 2: Productivity & System Features */}
+                <DropdownMenuGroup>
+                  <DropdownMenuItem
+                    onClick={() => handleDummyFeature("Notification Center")}
+                    className="flex items-center justify-between px-2.5 py-2 text-xs font-medium text-foreground rounded-lg cursor-pointer transition-colors hover:bg-muted focus:bg-muted"
+                  >
+                    <div className="flex items-center gap-2.5">
+                      <Bell className="h-4 w-4 text-muted-foreground" />
+                      <span>Notifications</span>
+                    </div>
+                    <span className="flex h-4 w-4 items-center justify-center rounded-full bg-primary text-[9px] font-bold text-primary-foreground">
+                      3
+                    </span>
+                  </DropdownMenuItem>
+
+                  <DropdownMenuItem
+                    onClick={() => navigate("/audit-logs")}
+                    className="flex items-center gap-2.5 px-2.5 py-2 text-xs font-medium text-foreground rounded-lg cursor-pointer transition-colors hover:bg-muted focus:bg-muted"
+                  >
+                    <Activity className="h-4 w-4 text-muted-foreground" />
+                    <span>Live Audit Logs</span>
+                  </DropdownMenuItem>
+
+                  <DropdownMenuItem
+                    onClick={() => handleDummyFeature("API Keys & Webhooks Manager")}
+                    className="flex items-center gap-2.5 px-2.5 py-2 text-xs font-medium text-foreground rounded-lg cursor-pointer transition-colors hover:bg-muted focus:bg-muted"
+                  >
+                    <KeyRound className="h-4 w-4 text-muted-foreground" />
+                    <span>API Keys & Integrations</span>
+                  </DropdownMenuItem>
+
+                  <DropdownMenuItem
+                    onClick={() => handleDummyFeature("Keyboard Shortcuts Guide")}
+                    className="flex items-center justify-between px-2.5 py-2 text-xs font-medium text-foreground rounded-lg cursor-pointer transition-colors hover:bg-muted focus:bg-muted"
+                  >
+                    <div className="flex items-center gap-2.5">
+                      <Command className="h-4 w-4 text-muted-foreground" />
+                      <span>Keyboard Shortcuts</span>
+                    </div>
+                    <span className="text-[10px] text-muted-foreground font-mono">⌘K</span>
+                  </DropdownMenuItem>
+
+                  <DropdownMenuItem
+                    onClick={() => handleDummyFeature("Documentation & Help Center")}
+                    className="flex items-center justify-between px-2.5 py-2 text-xs font-medium text-foreground rounded-lg cursor-pointer transition-colors hover:bg-muted focus:bg-muted"
+                  >
+                    <div className="flex items-center gap-2.5">
+                      <HelpCircle className="h-4 w-4 text-muted-foreground" />
+                      <span>Help & Support</span>
+                    </div>
+                    <ExternalLink className="h-3 w-3 text-muted-foreground" />
+                  </DropdownMenuItem>
+                </DropdownMenuGroup>
+
+                <DropdownMenuSeparator className="my-1 bg-border/60" />
+
+                {/* Footer: Log Out */}
+                <DropdownMenuItem
+                  onClick={() => setIsLogoutOpen(true)}
+                  className="flex items-center justify-between px-2.5 py-2 text-xs font-semibold text-destructive rounded-lg cursor-pointer transition-colors hover:bg-destructive/10 focus:bg-destructive/10 focus:text-destructive"
+                >
+                  <div className="flex items-center gap-2.5">
+                    <LogOut className="h-4 w-4 text-destructive" />
+                    <span>Log Out</span>
+                  </div>
+                  <span className="text-[10px] font-mono text-destructive/70">⌥⇧Q</span>
+                </DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
           </div>
         </div>
       </header>

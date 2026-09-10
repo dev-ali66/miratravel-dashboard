@@ -72,8 +72,10 @@ export function useLogin() {
         // Remember user email if rememberMe was checked
         if (variables?.rememberMe) {
           localStorage.setItem("savedUserEmail", variables.email)
+          localStorage.setItem("rememberMe", "true")
         } else {
           localStorage.removeItem("savedUserEmail")
+          localStorage.setItem("rememberMe", "false")
         }
 
         // Clear previous user data queries
