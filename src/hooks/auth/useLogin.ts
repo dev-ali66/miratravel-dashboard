@@ -78,6 +78,20 @@ export function useLogin() {
           localStorage.setItem("rememberMe", "false")
         }
 
+        // Store session duration & metadata
+        if ((res.data as any)?.session) {
+          localStorage.setItem("sessionInfo", JSON.stringify((res.data as any).session))
+        } else {
+          localStorage.setItem(
+            "sessionInfo",
+            JSON.stringify({
+              rememberMe: Boolean(variables?.rememberMe),
+              durationFormatted: variables?.rememberMe ? "30d" : "30m",
+              expiresInMinutes: variables?.rememberMe ? 30 * 24 * 60 : 30,
+            })
+          )
+        }
+
         // Clear previous user data queries
         queryClient.clear()
 

@@ -55,6 +55,7 @@ const processQueue = (error: any, token: string | null = null) => {
 const handleForceLogout = () => {
   localStorage.removeItem("accessToken")
   localStorage.removeItem("refreshToken")
+  localStorage.removeItem("sessionInfo")
   window.dispatchEvent(new Event("unauthorized"))
   if (typeof window !== "undefined" && window.location.pathname !== "/login") {
     window.location.replace("/login")
@@ -132,12 +133,17 @@ apiPrivate.interceptors.response.use(
           response.data?.data?.accessToken || response.data?.accessToken
         const newRefreshToken =
           response.data?.data?.refreshToken || response.data?.refreshToken
+        const sessionData =
+          response.data?.data?.session || response.data?.session
 
         if (newAccessToken) {
           localStorage.setItem("accessToken", newAccessToken)
         }
         if (newRefreshToken) {
           localStorage.setItem("refreshToken", newRefreshToken)
+        }
+        if (sessionData) {
+          localStorage.setItem("sessionInfo", JSON.stringify(sessionData))
         }
 
         originalRequest.headers.Authorization = `Bearer ${newAccessToken}`

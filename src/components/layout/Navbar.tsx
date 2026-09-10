@@ -120,9 +120,29 @@ export function Navbar({ onMenuClick }: NavbarProps) {
   const profileImage = user?.userPersonalInfo?.photoUrl?.[0] || defaultAvatar
   const userRole = user?.roles?.[0]?.name || "ADMIN"
 
+  let sessionInfo: {
+    rememberMe?: boolean
+    durationFormatted?: string
+    expiresInMinutes?: number
+  } | null = null
+  try {
+    const rawSession = localStorage.getItem("sessionInfo")
+    if (rawSession) {
+      sessionInfo = JSON.parse(rawSession)
+    }
+  } catch {
+    sessionInfo = null
+  }
+
   const isRemembered =
-    localStorage.getItem("rememberMe") === "true" ||
-    Boolean(localStorage.getItem("savedUserEmail"))
+    sessionInfo?.rememberMe !== undefined
+      ? Boolean(sessionInfo.rememberMe)
+      : localStorage.getItem("rememberMe") === "true" ||
+        Boolean(localStorage.getItem("savedUserEmail"))
+
+  const sessionDuration =
+    sessionInfo?.durationFormatted ||
+    (isRemembered ? "30d" : "30m")
 
   const handleDummyFeature = (featureName: string) => {
     toast.info(`${featureName} is under active development and will be available in the next release!`, {
@@ -229,19 +249,19 @@ export function Navbar({ onMenuClick }: NavbarProps) {
                     {isRemembered ? (
                       <span className="inline-flex items-center gap-1 rounded-full bg-emerald-500/15 border border-emerald-500/30 px-2 py-0.5 text-[10px] font-bold text-emerald-600 dark:text-emerald-400">
                         <CheckCircle2 className="h-3 w-3" />
-                        TRUE (30d)
+                        TRUE ({sessionDuration})
                       </span>
                     ) : (
                       <span className="inline-flex items-center gap-1 rounded-full bg-amber-500/15 border border-amber-500/30 px-2 py-0.5 text-[10px] font-bold text-amber-600 dark:text-amber-400">
                         <Clock className="h-3 w-3" />
-                        FALSE (1m)
+                        FALSE ({sessionDuration})
                       </span>
                     )}
                   </div>
                   <p className="mt-1 text-[9px] text-muted-foreground/80 leading-tight">
                     {isRemembered
-                      ? "Persistent session active (30-day token lifetime)."
-                      : "Ephemeral session active (1-min test lifetime)."}
+                      ? `Persistent session active (${sessionDuration} token lifetime).`
+                      : `Ephemeral session active (${sessionDuration} token lifetime).`}
                   </p>
                 </div>
 
