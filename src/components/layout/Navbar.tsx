@@ -6,6 +6,7 @@ import { useGetCmsBySlug } from "@/hooks/cms/useGetCmsBySlug"
 import { UniversalMultimediaPreview } from "../pages/CMS/Home/shared/preview/UniversalMultimediaPreview"
 import { ThemeToggle } from "@/components/ThemeToggle"
 import { LogoutModal } from "./LogoutModal"
+import { ActiveDevicesModal } from "./ActiveDevicesModal"
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -113,6 +114,7 @@ export function Navbar({ onMenuClick }: NavbarProps) {
   const { data: user } = useMe()
   const { data: sessionStats } = useUserSessions()
   const [isLogoutOpen, setIsLogoutOpen] = useState(false)
+  const [isDevicesModalOpen, setIsDevicesModalOpen] = useState(false)
 
   const profileName = user?.userPersonalInfo?.firstName
     ? `${user.userPersonalInfo.firstName} ${user.userPersonalInfo.lastName || ""}`.trim()
@@ -294,7 +296,7 @@ export function Navbar({ onMenuClick }: NavbarProps) {
                   </DropdownMenuItem>
 
                   <DropdownMenuItem
-                    onClick={() => handleDummyFeature("Account Security & Active Sessions")}
+                    onClick={() => setIsDevicesModalOpen(true)}
                     className="flex items-center justify-between px-2.5 py-2 text-xs font-medium text-foreground rounded-lg cursor-pointer transition-colors hover:bg-muted focus:bg-muted"
                   >
                     <div className="flex items-center gap-2.5">
@@ -396,6 +398,11 @@ export function Navbar({ onMenuClick }: NavbarProps) {
       </header>
 
       <LogoutModal open={isLogoutOpen} onClose={() => setIsLogoutOpen(false)} />
+      <ActiveDevicesModal
+        open={isDevicesModalOpen}
+        onClose={() => setIsDevicesModalOpen(false)}
+        onOpenLogoutModal={() => setIsLogoutOpen(true)}
+      />
     </>
   )
 }
