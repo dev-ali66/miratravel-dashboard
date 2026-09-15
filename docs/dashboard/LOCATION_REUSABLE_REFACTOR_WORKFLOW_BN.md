@@ -38,28 +38,29 @@ LocationEditorLayout
 - `src/components/pages/Location/shared/emptyLocation.ts`
 - `src/components/pages/Location/shared/mergeWithDefaults.ts`
 
-## Phase 1 — Shared Control Baseline
+### Phase 1 — Location Hero Banner Implementation (Completed)
 
-### কাজ
+#### HeroForm Structure (`src/components/pages/Location/sections/hero/HeroForm.tsx`)
+- **Accordion Wrapper**: `FormSection` (Title: "02. Hero Banner", key: `"hero"`)
+- **Fields List**:
+  1. `hero.breadcrumb` (`DynamicStyledField type="text"`): Unified styled object `{ value, textColor, textOpacity, backgroundColor, backgroundOpacity }`, default `#d29393`.
+  2. `hero.title` (`DynamicStyledField type="text"`): Main Heading, default color `#FFFFFF`.
+  3. `hero.subtitle` (`DynamicStyledField type="text"`): Subtitle / Tagline, default color `#E5E7EB`.
+  4. `hero.description` (`DynamicStyledField type="richtext"`): TipTap WYSIWYG editor with rich HTML formatting, text colors, highlights, lists, alignments, and links.
+  5. `hero.isCenter` (`DynamicStyledField type="radio"`): Alignment toggle ("Bottom-Left Aligned" vs "Center Aligned").
+  6. `hero.buttons` (`ButtonsField`): CTA button repeater with label, URL, target (`_self`/`_blank`), variant styles, custom colors, opacity, radius, and arrow icons.
+  7. `hero.backgroundMultimedia` (`UniversalMultimediaForm`): 3-in-1 media switcher (`image`, `video`, `color`) with aspect ratios, opacity sliders, overlay color/opacity, and video loop/autoplay/mute toggles.
 
-- Location-এর shared `Field` wrapper-কে `DynamicStyledField`-এর adapter হিসেবে ব্যবহার করা।
-- Existing `FormSection` accordion layout অপরিবর্তিত রাখা।
-- Existing `ImageField`/`VideoField` compatibility বজায় রাখা।
-- Location Hero-এ `UniversalMultimediaForm` যোগ করা।
-- Hero preview-তে `UniversalMultimediaPreview` যোগ করা।
+#### HeroPreview (`src/components/pages/Location/sections/hero/HeroPreview.tsx`)
+- 1:1 matching Next.js `SharedHero` design.
+- `UniversalMultimediaPreview` (`mode="background"`) for responsive edge-to-edge video/image background.
+- `DynamicStyledPreview` for real-time live styling and rich text rendering.
+- CTA buttons list with responsive flex alignment and hover animation.
 
-### Completed
-
-- `src/components/pages/Location/shared/fields.tsx`
-- `src/components/pages/Location/sections/hero/HeroForm.tsx`
-- `src/components/pages/Location/sections/hero/HeroPreview.tsx`
-- `src/components/pages/Location/locationTypes.ts`
-- `src/components/pages/Location/shared/GuideSection.tsx` — ImageField import fix + updateSection patch fix
-
-### Validation
-
+#### Validation
 ```text
-npm run build  ✅ clean
+npm run build     ✅ clean (0 errors)
+npx tsc --noEmit  ✅ clean (0 errors)
 ```
 
 ## Phase 2 — Media-Bearing Sections

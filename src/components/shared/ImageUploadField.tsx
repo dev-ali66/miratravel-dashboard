@@ -170,16 +170,16 @@ export function ImageUploadField({
         )}
       </div>
 
-      {value && onOverlayColorChange && onOverlayOpacityChange && (
-        <div className="flex flex-col gap-3">
+      {onOverlayColorChange && onOverlayOpacityChange && (
+        <div className="flex flex-col gap-2 rounded-lg border border-border/60 bg-muted/20 p-2.5">
           <ColorField
-            label="Overlay color"
+            label="Overlay Color"
             value={overlayColor}
             onChange={onOverlayColorChange}
           />
           <div className="flex items-center gap-3">
-            <Label className="w-28 shrink-0 text-left text-xs font-semibold text-foreground">
-              Overlay opacity
+            <Label className="w-24 shrink-0 text-left text-xs font-semibold text-foreground">
+              Overlay Opacity
             </Label>
             <input
               type="range"
@@ -196,10 +196,10 @@ export function ImageUploadField({
         </div>
       )}
 
-      {value && onOpacityChange && (
-        <div className="flex items-center gap-3">
-          <Label className="w-28 shrink-0 text-left text-xs font-semibold text-foreground">
-            Image opacity
+      {onOpacityChange && (
+        <div className="flex items-center gap-3 rounded-lg border border-border/60 bg-muted/20 px-3 py-2">
+          <Label className="w-24 shrink-0 text-left text-xs font-semibold text-foreground">
+            Image Opacity
           </Label>
           <input
             type="range"

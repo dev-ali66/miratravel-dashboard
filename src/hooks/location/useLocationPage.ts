@@ -7,6 +7,7 @@ import type { LocationData } from "@/components/pages/Location/locationTypes"
 import { mergeWithDefaults } from "@/components/pages/Location/shared/mergeWithDefaults"
 import { emptyLocation } from "@/components/pages/Location/shared/emptyLocation"
 
+import { toast } from "sonner"
 import { normalizeLocationPayload } from "@/components/pages/Location/shared/normalizeLocationPayload"
 
 export function useLocationPage(locationId?: string, _slug?: string) {
@@ -38,10 +39,23 @@ export function useLocationPage(locationId?: string, _slug?: string) {
     const location = Array.isArray(rawData) ? rawData[0] : rawData
 
     if (location) {
+      const resolvedLocation: LocationData = {
+        ...location,
+        hero: location.hero ?? location.data?.hero ?? emptyLocation.hero,
+        essence: location.essence ?? location.data?.essence ?? emptyLocation.essence,
+        highlights:
+          location.highlights ??
+          location.data?.highlights ??
+          emptyLocation.highlights,
+        card: location.card ?? location.data?.card ?? emptyLocation.card,
+        why: location.why ?? location.data?.why ?? emptyLocation.data?.why,
+        sharedInfo: location.sharedInfo ?? location.data?.sharedInfo ?? emptyLocation.data?.sharedInfo,
+      }
+
       setDraft(
         mergeWithDefaults(
           emptyLocation,
-          location as LocationData
+          resolvedLocation
         ) as LocationData
       )
     }
@@ -90,6 +104,16 @@ export function useLocationPage(locationId?: string, _slug?: string) {
 
   const save = useCallback(() => {
     if (!draft) return
+
+    if (!draft.name || !draft.name.trim()) {
+      toast.error("Location Name is required to save.")
+      return
+    }
+
+    if (!draft.type || !draft.type.trim()) {
+      toast.error("Location Type is required to save.")
+      return
+    }
 
     const normalizedDraft = normalizeLocationPayload(draft)
 

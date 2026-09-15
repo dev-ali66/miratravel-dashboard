@@ -6,7 +6,7 @@ import { toast } from "sonner"
 import type { LocationData } from "@/components/pages/Location/locationTypes"
 
 export type AddLocationPayload = Partial<LocationData> & {
-  data: LocationData["data"]
+  data?: LocationData["data"]
 }
 
 export type AddLocationResponse = {

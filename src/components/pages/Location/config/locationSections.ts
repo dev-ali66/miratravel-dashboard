@@ -1,21 +1,18 @@
 /* =====================================================
    LOCATION — SECTION CONFIGURATION
-   SINGLE SOURCE OF TRUTH for section order. Both
-   LocationForm.tsx and LocationPreview.tsx loop over
-   `locationSectionOrder` and look each key up in
-   `locationSectionRegistry` — there is no separate order
-   array anywhere else. Reordering this array reorders both
-   the Form accordion and the Preview render, together.
-
-   To add a new section in the future:
-     1. Build <Name>Form.tsx / <Name>Preview.tsx under sections/<key>/
-     2. Add one entry to `locationSectionRegistry` below
-     3. Add its key to `locationSectionOrder` wherever it belongs
-   No other file needs to change.
+   SINGLE SOURCE OF TRUTH for Location section registry and order.
+   Only active, built sections are registered here.
 ===================================================== */
 
 import type { ComponentType } from "react"
 import type { LocationData } from "../locationTypes"
+import { BasicInfoForm } from "../sections/basic-info/BasicInfoForm"
+import { HeroForm } from "../sections/hero/HeroForm"
+import { HeroPreview } from "../sections/hero/HeroPreview"
+import { EssenceForm } from "../sections/essence/EssenceForm"
+import { EssencePreview } from "../sections/essence/EssencePreview"
+import { HighlightsForm } from "../sections/highlights/HighlightsForm"
+import { HighlightsPreview } from "../sections/highlights/HighlightsPreview"
 
 export type LocationFormSectionProps = {
   draft: LocationData
@@ -31,275 +28,41 @@ export type LocationPreviewSectionProps = {
 export type LocationSectionKey =
   | "basic-info"
   | "hero"
-  | "geo-data"
-  | "card"
-  | "why"
-  | "info"
-  | "shared-info"
-  | "region-glance"
-  | "region-character"
   | "essence"
-  | "statistics"
-  | "climate"
-  | "culture"
-  | "safety"
-  | "geography"
-  | "travel-info"
-  | "accommodation"
-  | "experiences"
-  | "signature-experiences"
-  | "practical-information"
-  | "faq"
-  | "image-gallery"
-  | "local-guide"
-  | "travel-insights"
-  | "video-gallery"
-  | "seo"
+  | "highlights"
 
-type SectionRegistryEntry = {
+export type SectionRegistryEntry = {
   label: string
-  form: ComponentType<LocationFormSectionProps>
-  /**
-   * null = this section has no public-facing detail preview
-   * (administrative-only sections: identifiers, geo metadata,
-   * SEO), or its content is rendered as part of another
-   * section's preview (see "culture" below).
-   */
+  form: ComponentType<LocationFormSectionProps> | null
   preview: ComponentType<LocationPreviewSectionProps> | null
 }
 
-/* =====================================================
-   FORM IMPORTS
-===================================================== */
-
-import { BasicInfoForm } from "../sections/basicInfo/BasicInfoForm"
-import { GeoDataForm } from "../sections/geoData/GeoDataForm"
-import { HeroForm } from "../sections/hero/HeroForm"
-import { CardForm } from "../sections/card/CardForm"
-import { WhyVisitForm } from "../sections/why/WhyVisitForm"
-import { InfoForm } from "../sections/info/InfoForm"
-import SharedInfoForm from "../shared/SharedInfoForm"
-import RegionGlanceForm from "../sections/regionGlance/RegionGlanceForm"
-import RegionCharacterForm from "../sections/regionCharacter/RegionCharacterForm"
-import { EssenceForm } from "../sections/essence/EssenceForm"
-import { StatisticsForm } from "../sections/statistics/StatisticsForm"
-import { ClimateForm } from "../sections/climate/ClimateForm"
-import { CultureForm } from "../sections/culture/CultureForm"
-import { SafetyForm } from "../sections/safety/SafetyForm"
-import { GeographyForm } from "../sections/geography/GeographyForm"
-import { TravelInfoForm } from "../sections/travelInfo/TravelInfoForm"
-import { ExperiencesForm } from "../sections/experiences/ExperiencesForm"
-import { SignatureExperiencesForm } from "../sections/signatureExperiences/SignatureExperiencesForm"
-import { AccommodationStaysForm } from "../sections/accommodation/AccommodationStaysForm"
-import { PracticalInformationForm } from "../sections/practicalInformation/PracticalInformationForm"
-import { LocationFaqForm } from "../sections/faq/LocationFaqForm"
-import { ImageGalleryForm } from "../sections/imageGallery/ImageGalleryForm"
-import { LocalGuideForm } from "../sections/localGuide/LocalGuideForm"
-import { TravelInsightsForm } from "../sections/travelInsights/TravelInsightsForm"
-import { VideoGalleryForm } from "../sections/videoGallery/VideoGalleryForm"
-
-/* =====================================================
-   PREVIEW IMPORTS
-===================================================== */
-
-import { HeroPreview } from "../sections/hero/HeroPreview"
-import { CardPreview } from "../sections/card/CardPreview"
-import { GeoDataPreview } from "../sections/geoData/GeoDataPreview"
-import { WhyVisitPreview } from "../sections/why/WhyVisitPreview"
-import { IntroInfoPreview } from "../sections/info/IntroInfoPreview"
-import SharedInfoPreview from "../shared/SharedInfoPreview"
-import RegionGlancePreview from "../sections/regionGlance/RegionGlancePreview"
-import RegionCharacterPreview from "../sections/regionCharacter/RegionCharacterPreview"
-import { EssencePreview } from "../sections/essence/EssencePreview"
-import { StatisticsPreview } from "../sections/statistics/StatisticsPreview"
-import { ClimateCulturePreview } from "../sections/climate/ClimateCulturePreview"
-import CulturePreview from "../sections/culture/CulturePreview"
-import { SafetyPreview } from "../sections/safety/SafetyPreview"
-import { GeographyPreview } from "../sections/geography/GeographyPreview"
-import { TravelInfoPreview } from "../sections/travelInfo/TravelInfoPreview"
-import { ExperiencesPreview } from "../sections/experiences/ExperiencesPreview"
-import { SignatureExperiencesPreview } from "../sections/signatureExperiences/SignatureExperiencesPreview"
-import { AccommodationStaysPreview } from "../sections/accommodation/AccommodationStaysPreview"
-import { PracticalInformationPreview } from "../sections/practicalInformation/PracticalInformationPreview"
-import { ImageGalleryPreview } from "../sections/imageGallery/ImageGalleryPreview"
-import { LocalGuidePreview } from "../sections/localGuide/LocalGuidePreview"
-import { TravelInsightsPreview } from "../sections/travelInsights/TravelInsightsPreview"
-import { VideoGalleryPreview } from "../sections/videoGallery/VideoGalleryPreview"
-import { LocationFaqPreview } from "../sections/faq/LocationFaqPreview"
-import { SeoForm } from "../sections/seo/SeoForm"
-
-/* =====================================================
-   REGISTRY
-===================================================== */
-
-export const locationSectionRegistry: Record<
-  LocationSectionKey,
-  SectionRegistryEntry
-> = {
+export const locationSectionRegistry: Record<LocationSectionKey, SectionRegistryEntry> = {
   "basic-info": {
-    label: "Basic Information",
+    label: "01. Basic Information",
     form: BasicInfoForm,
-    preview: null, // identifiers/meta only, not part of the public preview
+    preview: null,
   },
   hero: {
-    label: "Hero",
+    label: "02. Hero Banner",
     form: HeroForm,
     preview: HeroPreview,
   },
-  "geo-data": {
-    label: "Geo Information",
-    form: GeoDataForm,
-    preview: GeoDataPreview,
-  },
-  card: {
-    label: "Card",
-    form: CardForm,
-    preview: CardPreview,
-  },
-  why: {
-    label: "Why Visit",
-    form: WhyVisitForm,
-    preview: WhyVisitPreview,
-  },
-  info: {
-    label: "Info",
-    form: InfoForm,
-    preview: IntroInfoPreview,
-  },
-  "shared-info": {
-    label: "Shared Info",
-    form: SharedInfoForm,
-    preview: SharedInfoPreview,
-  },
-  "region-glance": {
-    label: "Region Glance",
-    form: RegionGlanceForm,
-    preview: RegionGlancePreview,
-  },
-  "region-character": {
-    label: "Region Character",
-    form: RegionCharacterForm,
-    preview: RegionCharacterPreview,
-  },
   essence: {
-    label: "Essence",
+    label: "03. Essence of Location",
     form: EssenceForm,
     preview: EssencePreview,
   },
-  statistics: {
-    label: "Statistics",
-    form: StatisticsForm,
-    preview: StatisticsPreview,
-  },
-  climate: {
-    label: "Climate",
-    form: ClimateForm,
-    preview: ClimateCulturePreview,
-  },
-  culture: {
-    label: "Culture",
-    form: CultureForm,
-    preview: CulturePreview,
-  },
-  safety: {
-    label: "Safety",
-    form: SafetyForm,
-    preview: SafetyPreview,
-  },
-  geography: {
-    label: "Geography",
-    form: GeographyForm,
-    preview: GeographyPreview,
-  },
-  "travel-info": {
-    label: "Travel Information",
-    form: TravelInfoForm,
-    preview: TravelInfoPreview,
-  },
-  accommodation: {
-    label: "Accommodation",
-    form: AccommodationStaysForm,
-    preview: AccommodationStaysPreview,
-  },
-  experiences: {
-    label: "Experiences",
-    form: ExperiencesForm,
-    preview: ExperiencesPreview,
-  },
-  "signature-experiences": {
-    label: "Signature Experiences",
-    form: SignatureExperiencesForm,
-    preview: SignatureExperiencesPreview,
-  },
-  "practical-information": {
-    label: "Practical Information",
-    form: PracticalInformationForm,
-    preview: PracticalInformationPreview,
-  },
-  faq: {
-    label: "FAQ",
-    form: LocationFaqForm,
-    preview: LocationFaqPreview,
-  },
-  "image-gallery": {
-    label: "Image Gallery",
-    form: ImageGalleryForm,
-    preview: ImageGalleryPreview,
-  },
-  "local-guide": {
-    label: "Local Guide",
-    form: LocalGuideForm,
-    preview: LocalGuidePreview,
-  },
-  "travel-insights": {
-    label: "Travel Insights",
-    form: TravelInsightsForm,
-    preview: TravelInsightsPreview,
-  },
-  "video-gallery": {
-    label: "Video Gallery",
-    form: VideoGalleryForm,
-    preview: VideoGalleryPreview,
-  },
-  seo: {
-    label: "SEO",
-    form: SeoForm,
-    preview: null,
+  highlights: {
+    label: "04. Seasonal Highlights & Regions",
+    form: HighlightsForm,
+    preview: HighlightsPreview,
   },
 }
-
-/* =====================================================
-   ORDER — reorder this array to reorder Form + Preview together
-===================================================== */
 
 export const locationSectionOrder: LocationSectionKey[] = [
   "basic-info",
   "hero",
-  "info",
-  "why",
-  "experiences",
-  "signature-experiences",
-  "geo-data",
-  "shared-info",
-  "accommodation",
-  "travel-insights",
-  "practical-information",
-
   "essence",
-  "statistics",
-  "region-glance",
-  "region-character",
-  "travel-info",
-
-  "faq",
-  "card",
-
-  // "culture",
-  // "climate",
-  // "safety",
-  // "geography",
-  // "image-gallery",
-  // "local-guide",
-  // "video-gallery",
-  "seo",
+  "highlights",
 ]

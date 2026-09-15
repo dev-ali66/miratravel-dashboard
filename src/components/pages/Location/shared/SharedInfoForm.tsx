@@ -20,7 +20,7 @@ export function SharedInfoForm({
   openSections,
   toggleSection,
 }: SharedInfoFormProps) {
-  const sharedInfo = draft.data.sharedInfo ?? {}
+  const sharedInfo = draft?.data?.sharedInfo ?? {}
 
   return (
     <FormSection

@@ -45,8 +45,10 @@ export function mergeWithDefaults<T>(
         !Array.isArray(value)
       ) {
         result[key] = mergeWithDefaults(defaultValue, value)
-      } else if (value !== undefined) {
+      } else if (value !== undefined && value !== null) {
         result[key] = structuredClone(value)
+      } else if (value === null && defaultValue === undefined) {
+        result[key] = null
       }
     }
 

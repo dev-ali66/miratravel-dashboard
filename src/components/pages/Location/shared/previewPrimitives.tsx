@@ -6,6 +6,7 @@
 ===================================================== */
 
 import type { ElementType } from "react"
+export { DynamicStyledPreview, DynamicStyledText } from "@/components/shared/DynamicStyledPreview"
 
 type StatItemProps = {
   icon: ElementType

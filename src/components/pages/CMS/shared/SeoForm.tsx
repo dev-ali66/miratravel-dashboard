@@ -54,9 +54,9 @@ export const SeoForm = ({ metadata, onChange }: SeoFormProps) => {
           onChange={(value) =>
             onChange({
               ...normalizedMetadata,
-              keywords: value
+              keywords: String(value)
                 .split(",")
-                .map((item) => item.trim())
+                .map((item: string) => item.trim())
                 .filter(Boolean),
             })
           }

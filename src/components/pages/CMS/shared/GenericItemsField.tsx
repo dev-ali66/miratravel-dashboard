@@ -129,9 +129,9 @@ export function GenericItemsField({
                     onChange={(v) =>
                       update({
                         ...item,
-                        [field.key]: v
+                        [field.key]: String(v)
                           .split(",")
-                          .map((t) => t.trim())
+                          .map((t: string) => t.trim())
                           .filter(Boolean),
                       })
                     }

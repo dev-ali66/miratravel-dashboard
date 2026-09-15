@@ -1,11 +1,10 @@
 import { useEffect, useState, useRef } from "react"
-import { Loader2, Save, RotateCcw } from "lucide-react"
+import { Loader2, Save, RotateCcw, Terminal } from "lucide-react"
 import { useParams, useSearchParams } from "react-router-dom"
 
 import { useLocationPage } from "@/hooks/location/useLocationPage"
 import { useLocationDraft } from "./shared/LocationDraftContext"
 import { emptyLocation } from "./shared/emptyLocation"
-import { thethSampleLocation } from "./shared/thethSampleLocation"
 import { mergeWithDefaults } from "./shared/mergeWithDefaults"
 import {
   locationSectionOrder,
@@ -43,17 +42,16 @@ export function LocationForm({ }: LocationFormProps) {
   const autoAddTriggered = useRef(false)
 
   /* ================================================
-       ADD MODE: start from the fetched Theth template
-       so all sections have real live data immediately.
+       ADD MODE: start from completely empty skeleton.
        EDIT MODE: merge the fetched record over the default
        skeleton so a partial/incomplete API record never
        crashes the form.
     ================================================= */
 
-  // When entering Add mode, initialize draft with the Theth API sample data
+  // When entering Add mode, initialize draft with empty clean state
   useEffect(() => {
     if (!isEditMode) {
-      resetDraft(structuredClone(thethSampleLocation))
+      resetDraft(structuredClone(emptyLocation))
     }
   }, [isEditMode, resetDraft])
 
@@ -146,12 +144,12 @@ export function LocationForm({ }: LocationFormProps) {
             {!isEditMode && (
               <button
                 type="button"
-                onClick={() => resetDraft(structuredClone(thethSampleLocation))}
-                className="flex shrink-0 items-center gap-1.5 rounded-lg border border-border/80 bg-background px-3 py-2 text-xs font-medium text-foreground transition hover:bg-muted"
-                title="Reset form with Theth API data"
+                onClick={() => resetDraft(structuredClone(emptyLocation))}
+                className="flex shrink-0 items-center gap-1.5 rounded-lg border border-border/80 bg-background px-3 py-2 text-xs font-medium text-foreground transition hover:bg-muted cursor-pointer"
+                title="Clear all fields to empty draft"
               >
                 <RotateCcw className="h-3.5 w-3.5" />
-                Load Theth Data
+                Clear Form
               </button>
             )}
 
@@ -179,9 +177,12 @@ export function LocationForm({ }: LocationFormProps) {
                 of truth shared with LocationPreview.tsx.
             ================================================= */}
 
-      <div className="flex-1 space-y-3 p-4">
+      <div className="flex-1 divide-y divide-border/60">
         {locationSectionOrder.map((key) => {
-          const SectionForm = locationSectionRegistry[key].form
+          const sectionEntry = locationSectionRegistry[key]
+          const SectionForm = sectionEntry?.form
+
+          if (!SectionForm) return null
 
           return (
             <div key={key} data-section={key} className="transition-all">
@@ -196,15 +197,27 @@ export function LocationForm({ }: LocationFormProps) {
         })}
 
         {/* =================================================
-                    SAVE BUTTON
+                    ACTION & CONSOLE BUTTONS
                 ================================================= */}
 
-        <div className="flex justify-end pt-2">
+        <div className="flex items-center justify-between gap-3 p-4">
+          <button
+            type="button"
+            onClick={() => {
+              console.log("📍 [LOCATION DRAFT DATA]:", draft)
+            }}
+            className="flex items-center gap-2 rounded-lg border border-border/80 bg-muted/60 px-3.5 py-2 text-xs font-semibold text-foreground transition-colors hover:bg-muted cursor-pointer shadow-2xs"
+            title="Inspect full current location draft in browser console (F12)"
+          >
+            <Terminal className="h-3.5 w-3.5 text-primary" />
+            Console Log Draft
+          </button>
+
           <button
             type="button"
             onClick={save}
             disabled={isSaving}
-            className="flex items-center gap-2 rounded-lg bg-primary px-5 py-2.5 text-sm font-medium text-primary-foreground hover:opacity-90 disabled:opacity-50"
+            className="flex items-center gap-2 rounded-lg bg-primary px-5 py-2.5 text-sm font-medium text-primary-foreground hover:opacity-90 disabled:opacity-50 cursor-pointer"
           >
             {isSaving ? (
               <Loader2 className="h-4 w-4 animate-spin" />

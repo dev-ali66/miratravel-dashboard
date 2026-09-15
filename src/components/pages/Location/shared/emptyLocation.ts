@@ -1,341 +1,272 @@
 /* =====================================================
-   LOCATION — EMPTY / DEFAULT DRAFT
-   Full default skeleton covering every structured
-   `data` section plus geoData/metadata. Ensures all
-   multimedia and style fields are explicitly declared as
-   `null` so no fields are dropped during JSON serialization.
+   LOCATION — DEFAULT / INITIAL DRAFT (EUROPE)
+   Default data loaded when creating a new location.
+   Image & Video URLs are left blank so user doesn't have to delete them.
 ===================================================== */
 
 import type { LocationData } from "../locationTypes"
 
 export const emptyLocation: LocationData = {
-  name: "",
-  slug: "",
-  type: "PLACE",
+  name: "Europe",
+  slug: "europe",
+  type: "CONTINENT",
   parentId: null,
 
-  geoData: {
-    area: {
-      unit: "km²",
-      value: 0,
+  hero: {
+    breadcrumb: {
+      value: "CONTINENTS / EUROPE",
+      textColor: "#d29393",
+      textOpacity: 1,
+      backgroundColor: null,
+      backgroundOpacity: 1,
     },
-    mapZoom: 6,
-    latitude: 0,
-    longitude: 0,
-    timezone: "",
-  },
-
-  metadata: {
-    seo: {
-      title: "",
-      keywords: [],
-      description: "",
-      canonicalUrl: "",
-      robots: {
-        index: true,
-        follow: true,
+    title: {
+      value: "Unveil the Soul of Europe",
+      textColor: "#FFFFFF",
+      textOpacity: 1,
+      backgroundColor: null,
+      backgroundOpacity: 1,
+    },
+    subtitle: {
+      value: "From Ancient Empires to Wild Alpine Horizons",
+      textColor: "#E5E7EB",
+      textOpacity: 1,
+      backgroundColor: null,
+      backgroundOpacity: 1,
+    },
+    description: {
+      value: "Immerse yourself in timeless cultural heritage, majestic mountain passes, sun-drenched Mediterranean shores, and secluded storybook villages crafted for discerning explorers.",
+      textColor: "#F3F4F6",
+      textOpacity: 1,
+      backgroundColor: null,
+      backgroundOpacity: 1,
+    },
+    isCenter: false,
+    buttons: [
+      {
+        label: "Explore European Journeys",
+        url: "/journeys?continent=europe",
+        style: "primary",
+        variant: "PRIMARY",
+        textColor: "#000000",
+        backgroundColor: "#ffffff",
+      },
+    ],
+    backgroundMultimedia: {
+      show: "video",
+      image: {
+        url: "/videos/des-thumb.png",
+        alt: "Panoramic European Alpine Landscape",
+        opacity: 100,
+        overlayColor: "#000000",
+        overlayOpacity: 45,
+        width: "100%",
+        height: "auto",
+        aspectRatio: "auto",
+        fit: "cover",
+      },
+      video: {
+        url: "/videos/des-hero.mp4",
+        alt: "Cinematic Aerial View of Europe",
+        autoplay: true,
+        loop: true,
+        muted: true,
+        opacity: 100,
+        overlayColor: "#000000",
+        overlayOpacity: 45,
+        width: "100%",
+        height: "auto",
+        aspectRatio: "auto",
+        fit: "cover",
+      },
+      color: {
+        color: "#171717",
+        opacity: 100,
+        width: "100%",
+        height: "100%",
+        aspectRatio: "auto",
       },
     },
   },
 
-  data: {
-    name: "",
-    title: "",
-    subtitle: "",
-    description: "",
-    shortDescription: "",
-
-    hero: {
-      title: "",
-      description: "",
-      breadcrumb: "",
-      background_image: "",
-      video: "",
-      showVideo: false,
-      button: {
-        name: "Explore Journey",
+  essence: {
+    label: {
+      value: "THE ESSENCE OF EUROPE",
+      textColor: "#af6348",
+      textOpacity: 1,
+      backgroundColor: null,
+      backgroundOpacity: 1,
+    },
+    title: {
+      value: "A tapestry of living history, untamed wilderness, and timeless elegance",
+      textColor: "#182d09",
+      textOpacity: 1,
+      backgroundColor: null,
+      backgroundOpacity: 1,
+    },
+    paragraphs: {
+      value:
+        "Europe is an extraordinary mosaic where centuries of civilization meet pristine natural wonder. From the snow-capped summits of the Alps and the sun-drenched coves of the Mediterranean to fairy-tale medieval towns and ancient pine forests, every corner holds a distinct chapter waiting to be discovered.\n\nHere, travel transcends the ordinary. Wander through cobblestone alleyways that have witnessed millennia of history, savour world-renowned culinary heritage crafted by generational artisans, and lose yourself in landscapes that have inspired poets, artists, and explorers across generations.\n\nWhether navigating remote coastal paths or uncovering secluded mountain refuges far from the beaten track, Europe rewards curious minds with profound intimacy and indelible memories.",
+      textColor: "#565e69",
+      textOpacity: 1,
+      backgroundColor: null,
+      backgroundOpacity: 1,
+    },
+    quote: {
+      value:
+        "To travel through Europe is to witness the living poetry of the ancient world reimagined for the modern spirit.",
+      textColor: "#1A1209",
+      textOpacity: 1,
+      backgroundColor: null,
+      backgroundOpacity: 1,
+    },
+    statValue: {
+      value: "50+",
+      textColor: "#ffffff",
+      textOpacity: 1,
+      backgroundColor: null,
+      backgroundOpacity: 1,
+    },
+    statLabel: {
+      value: "Countries & Sovereign Territories",
+      textColor: "#ffffff",
+      textOpacity: 0.75,
+      backgroundColor: null,
+      backgroundOpacity: 1,
+    },
+    statBadgeBg: "#B86B3A",
+    imageMultimedia: {
+      show: "image",
+      image: {
         url: "",
+        alt: "The Essence of Europe — Landscapes & Heritage",
+        opacity: 100,
+        overlayColor: "#000000",
+        overlayOpacity: 0,
+        width: "100%",
+        height: "100%",
+        aspectRatio: "auto",
+        fit: "cover",
       },
-      buttons: [],
-      titleStyle: null,
-      breadcrumbStyle: null,
-      descriptionStyle: null,
-      backgroundMultimedia: null,
-    },
-
-    card: {
-      title: "",
-      subtitle: "",
-      background_image: "",
-      button: {
-        label: "EXPLORE",
+      video: {
         url: "",
+        alt: "The Essence of Europe video",
+        autoplay: true,
+        loop: true,
+        muted: true,
+        opacity: 100,
+        overlayColor: "#000000",
+        overlayOpacity: 0,
+        width: "100%",
+        height: "100%",
+        aspectRatio: "auto",
+        fit: "cover",
       },
-      titleStyle: null,
-      subtitleStyle: null,
-      backgroundMultimedia: null,
-    },
-
-    why: {
-      subtitle: "",
-      title: "",
-      description_paragraphs: [],
-      image: "",
-      tags: [],
-      subtitleStyle: null,
-      imageMultimedia: null,
-      backgroundMultimedia: null,
-    },
-
-    info: {
-      headline: "",
-      description: "",
-      headlineStyle: null,
-      descriptionStyle: null,
-      backgroundMultimedia: null,
-    },
-
-    sharedInfo: {
-      text: "",
-      style: null,
-      textStyle: null,
-      backgroundMultimedia: null,
-    },
-
-    regionGlance: {
-      label: "",
-      title: "",
-      description: "",
-      style: null,
-      labelStyle: null,
-      descriptionStyle: null,
-      backgroundMultimedia: null,
-    },
-
-    regionCharacter: {
-      label: "",
-      title: "",
-      items: [],
-      style: null,
-      backgroundMultimedia: null,
-    },
-
-    essence: {
-      label: "",
-      title: "",
-      paragraphs: [],
-      paragraphStyles: [],
-      quote: "",
-      imageSrc: "",
-      imageAlt: "",
-      statValue: "",
-      statLabel: "",
-      facts: [],
-      style: null,
-      labelStyle: null,
-      quoteStyle: null,
-      titleStyle: null,
-      imageMultimedia: null,
-      backgroundMultimedia: null,
-    },
-
-    statistics: {
-      facts: [],
-      area: {
-        value: 0,
-        unit: "km²",
-      },
-      elevation: {
-        value: 0,
-        unit: "m",
-      },
-      population: {
-        value: 0,
-        year: 2026,
-      },
-      style: null,
-      backgroundMultimedia: null,
-    },
-
-    climate: {
-      types: [],
-      description: "",
-    },
-
-    culture: {
-      cuisine: [],
-      description: "",
-      majorLanguages: [],
-      majorReligions: [],
-      famousFestivals: [],
-      style: null,
-    },
-
-    safety: {
-      description: "",
-      emergencyNumber: "",
-    },
-
-    geography: {
-      highestPoint: {
-        name: "",
-        unit: "m",
-        elevation: 0,
-      },
-      majorLandscapes: [],
-    },
-
-    travelInfo: {
-      beforeTravel: {
-        label: "",
-        title: "",
-        image: "",
-        imageAlt: "",
-        items: [],
-        style: null,
-        imageMultimedia: null,
-        backgroundMultimedia: null,
-      },
-      visa: {
-        description: "",
-      },
-      currency: {
-        description: "",
-        majorCurrency: "",
-      },
-      bestTimeToVisit: {
-        summer: "",
-        winter: "",
-        general: "",
-      },
-      popularTransportation: [],
-    },
-
-    experiences: {
-      title: "",
-      location: "",
-      description: "",
-      load_more_button: "Load More",
-      loadMoreButtonStyle: null,
-      titleStyle: null,
-      locationStyle: null,
-      descriptionStyle: null,
-      seasonInfo: "",
-      seasonLocation: "",
-      featured_experience: {
-        image: "",
-        title: "",
-        category: "",
-        duration: "",
-        subtitle: "",
-        action_text: "More info",
-        button: null,
-        buttons: [],
-        imageMultimedia: null,
-      },
-      cards: [],
-      footer: {
-        note: "",
-        region: "",
+      color: {
+        color: "#EDE7D8",
+        opacity: 100,
+        width: "100%",
+        height: "100%",
+        aspectRatio: "auto",
       },
     },
-
-    signature_experiences: {
-      label: "Signature Experiences",
-      labelStyle: null,
-      title: "Signature Experiences",
-      titleStyle: null,
-      description: "",
-      descriptionStyle: null,
-      backgroundMultimedia: null,
-      style: null,
-      experiences: [
-        {
-          id: "exp-01",
-          number: "01",
-          numberStyle: null,
-          title: "",
-          titleStyle: null,
-          description: "",
-          descriptionStyle: null,
-          href: "#",
-          linkText: "Explore this experience",
-        },
-        {
-          id: "exp-02",
-          number: "02",
-          numberStyle: null,
-          title: "",
-          titleStyle: null,
-          description: "",
-          descriptionStyle: null,
-          href: "#",
-          linkText: "Explore this experience",
-        },
-        {
-          id: "exp-03",
-          number: "03",
-          numberStyle: null,
-          title: "",
-          titleStyle: null,
-          description: "",
-          descriptionStyle: null,
-          href: "#",
-          linkText: "Explore this experience",
-        },
-      ],
+    backgroundMultimedia: {
+      show: "color",
+      image: {
+        url: "",
+        alt: "Europe essence background pattern",
+        opacity: 100,
+        overlayColor: "#000000",
+        overlayOpacity: 0,
+        width: "100%",
+        height: "auto",
+        aspectRatio: "auto",
+        fit: "cover",
+      },
+      video: {
+        url: "",
+        alt: "Europe essence background video",
+        autoplay: true,
+        loop: true,
+        muted: true,
+        opacity: 100,
+        overlayColor: "#000000",
+        overlayOpacity: 0,
+        width: "100%",
+        height: "auto",
+        aspectRatio: "auto",
+        fit: "cover",
+      },
+      color: {
+        color: "#FFF8F2",
+        opacity: 100,
+        width: "100%",
+        height: "100%",
+        aspectRatio: "auto",
+      },
     },
+  },
 
-    practical_information: {
-      title: "",
-      sub_heading: "",
-      side_image: "",
-      accordion_items: [],
-      sideImageMultimedia: null,
-      backgroundMultimedia: null,
+  highlights: {
+    label: {
+      value: "SEASONAL HIGHLIGHTS",
+      textColor: "#af6348",
+      textOpacity: 1,
+      backgroundColor: null,
+      backgroundOpacity: 1,
     },
-
-    faq_section: {
-      image: "",
-      title: "",
-      questions: [],
-      imageMultimedia: null,
-      backgroundMultimedia: null,
+    title: {
+      value: "Regions of Europe",
+      textColor: "#182d09",
+      textOpacity: 1,
+      backgroundColor: null,
+      backgroundOpacity: 1,
     },
-
-    imageGalary: [],
-
-    local_guide: {
-      title: "",
-      sub_heading: "",
-      main_image: "",
-      articles: [],
+    description: {
+      value:
+        "A selection of destinations currently resonating with our most discerning travelers.",
+      textColor: "#565e69",
+      textOpacity: 1,
+      backgroundColor: null,
+      backgroundOpacity: 1,
     },
-
-    travel_insights: {
-      title: "",
-      sub_heading: "",
-      main_image: "",
-      articles: [],
-      mainImageMultimedia: null,
-    },
-
-    accommodation_stays: {
-      badge: "",
-      badgeStyle: null,
-      title: "",
-      titleStyle: null,
-      description: "",
-      descriptionStyle: null,
-      stays: [],
-      backgroundMultimedia: null,
-    },
-
-    videoGalary: {
-      alt: "",
-      url: "",
-      thumbnail: "",
-      multimedia: null,
+    items: [],
+    backgroundMultimedia: {
+      show: "color",
+      color: {
+        color: "#FFF8F2",
+        opacity: 100,
+        width: "100%",
+        height: "100%",
+        aspectRatio: "auto",
+      },
+      image: {
+        url: "",
+        alt: "Highlights background",
+        opacity: 100,
+        overlayColor: "#000000",
+        overlayOpacity: 0,
+        width: "100%",
+        height: "auto",
+        aspectRatio: "auto",
+        fit: "cover",
+      },
+      video: {
+        url: "",
+        alt: "Highlights background video",
+        autoplay: true,
+        loop: true,
+        muted: true,
+        opacity: 100,
+        overlayColor: "#000000",
+        overlayOpacity: 0,
+        width: "100%",
+        height: "auto",
+        aspectRatio: "auto",
+        fit: "cover",
+      },
     },
   },
 }
+
+

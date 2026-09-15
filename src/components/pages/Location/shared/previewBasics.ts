@@ -16,13 +16,13 @@ export const FALLBACK_IMAGE =
 export const FALLBACK_TEXT = "Information not available."
 
 export function getLocationBasics(draft: LocationData | null | undefined) {
-  const data = draft?.data ?? ({} as LocationData["data"])
+  const data = (draft?.data ?? {}) as NonNullable<LocationData["data"]>
 
-  const name = data.name || draft?.name || "Location"
+  const name = data?.name || draft?.name || "Location"
 
-  const subtitle = data.subtitle || data.shortDescription || FALLBACK_TEXT
+  const subtitle = data?.subtitle || data?.shortDescription || FALLBACK_TEXT
 
-  const description = data.description || data.shortDescription || FALLBACK_TEXT
+  const description = data?.description || data?.shortDescription || FALLBACK_TEXT
 
   return { data, name, subtitle, description }
 }

@@ -33,19 +33,16 @@ export function FormSection({
   return (
     <div
       className={cn(
-        "rounded-xl border border-border/60 bg-card transition-colors",
+        "border-b border-border/60 bg-card transition-colors",
         !active && "overflow-hidden"
       )}
     >
       <button
         type="button"
         onClick={onClick}
-        className={cn(
-          "flex w-full items-center justify-between px-4 py-3.5 text-left transition-colors",
-          active ? "rounded-t-xl" : "rounded-xl"
-        )}
+        className="flex w-full items-center justify-between px-4 py-3.5 text-left transition-colors hover:bg-muted/40 cursor-pointer"
       >
-        <span className="text-sm font-medium">{title}</span>
+        <span className="text-sm font-semibold text-foreground">{title}</span>
 
         <ChevronDown
           className={cn(
@@ -56,7 +53,7 @@ export function FormSection({
       </button>
 
       {active && (
-        <div className="rounded-b-xl border-t border-border/60 p-4">
+        <div className="border-t border-border/40 p-4">
           {children}
         </div>
       )}

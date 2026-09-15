@@ -60,3 +60,44 @@ export function useGetLocationPages(params: LocationQueryParams = {}) {
     refetchOnWindowFocus: true,
   })
 }
+
+export type LocationSearchItem = {
+  id: string
+  name: string
+  slug: string
+  type: string
+  hero?: any
+  card?: any
+  why?: any
+  parent?: {
+    id: string
+    name: string
+    slug: string
+    type: string
+  } | null
+}
+
+type LocationSearchResponse = {
+  success: boolean
+  message: string
+  code: number
+  data: LocationSearchItem[]
+}
+
+export function useSearchLocations(search = "", type?: string, limit = 50) {
+  return useQuery({
+    queryKey: ["locations-search", search, type, limit],
+    queryFn: async () => {
+      const res = await apiPrivate.get<LocationSearchResponse>("/locations/search", {
+        params: {
+          search: search.trim() || undefined,
+          type: type || undefined,
+          limit,
+        },
+      })
+      return res.data
+    },
+    staleTime: 1000 * 30,
+  })
+}
+

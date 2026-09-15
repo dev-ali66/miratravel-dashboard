@@ -1,230 +1,145 @@
-/* =====================================================
-   ESSENCE — FORM SECTION
-   Every field here maps 1:1 onto the real frontend
-   `<Essence />` component's props (label/title/paragraphs/
-   quote/imageSrc/imageAlt/statValue/statLabel), plus a
-   CMS-only `style` group so text color, font size, image
-   and background are all editable per element.
-===================================================== */
-
-import { Plus, Trash2 } from "lucide-react"
-import { DynamicStyledField, FormSection } from "../../shared/fields"
-import { UniversalMultimediaForm } from "../../../CMS/shared/UniversalMultimediaForm"
-import type { LocationData } from "../../locationTypes"
-import { emptyLocation } from "../../shared/emptyLocation"
-
-export type EssenceFormProps = {
-  draft: LocationData
-  updateField: (path: string, value: unknown) => void
-  openSections: Record<string, boolean>
-  toggleSection: (section: string) => void
-}
+import { DynamicStyledField } from "@/components/pages/CMS/shared/FormControls"
+import { UniversalMultimediaForm } from "@/components/pages/CMS/shared/UniversalMultimediaForm"
+import { FormSection } from "../../shared/fields"
+import type { LocationFormSectionProps } from "../../config/locationSections"
 
 export function EssenceForm({
   draft,
   updateField,
   openSections,
   toggleSection,
-}: EssenceFormProps) {
-  const essence = draft?.data?.essence ?? emptyLocation.data.essence
-  const paragraphs = essence.paragraphs ?? []
-  const paragraphStyles = (essence as any).paragraphStyles ?? []
+}: LocationFormSectionProps) {
+  const essence = draft?.essence || (draft as any)?.data?.essence || {}
+  const isOpen = Boolean(openSections["essence"])
+
+  const updateEssenceField = (fieldKey: string, value: any) => {
+    updateField(`essence.${fieldKey}`, value)
+  }
+
+  // Handle rich-text or string paragraphs seamlessly
+  const paragraphsValue = essence.paragraphs
 
   return (
     <FormSection
-      title="Essence"
-      active={!!openSections["essence"]}
+      title="03. Essence of Location"
+      active={isOpen}
       onClick={() => toggleSection("essence")}
     >
-      <div className="space-y-6">
-        <div className="space-y-4">
-          <DynamicStyledField
-            type="text"
-            label="Eyebrow Label"
-            value={essence.label ?? ""}
-            onChange={(value: string) =>
-              updateField("data.essence.label", value)
-            }
-            enableStyle
-            style={(essence as any).labelStyle}
-            onStyleChange={(style) =>
-              updateField("data.essence.labelStyle", style)
-            }
-          />
+      <div className="flex flex-col gap-5">
+        {/* Eyebrow Label */}
+        <DynamicStyledField
+          type="text"
+          label="Eyebrow / Category Tag"
+          fieldName="essence.label"
+          placeholder="e.g. THE ESSENCE OF ALBANIA"
+          value={essence.label}
+          onChange={(val) => updateEssenceField("label", val)}
+        />
 
-          <DynamicStyledField
-            type="text"
-            label="Title"
-            value={essence.title ?? ""}
-            onChange={(value: string) =>
-              updateField("data.essence.title", value)
-            }
-            enableStyle
-            style={(essence as any).titleStyle}
-            onStyleChange={(style) =>
-              updateField("data.essence.titleStyle", style)
-            }
-          />
+        {/* Main Heading / Title */}
+        <DynamicStyledField
+          type="text"
+          label="Main Heading / Title"
+          fieldName="essence.title"
+          placeholder="e.g. A country that kept its secrets for fifty years"
+          value={essence.title}
+          onChange={(val) => updateEssenceField("title", val)}
+        />
 
-          <div className="space-y-3">
-            <div className="flex items-center justify-between">
-              <h4 className="text-sm font-semibold">Paragraphs</h4>
-              <button
-                type="button"
-                onClick={() => {
-                  updateField("data.essence.paragraphs", [...paragraphs, ""])
-                  updateField("data.essence.paragraphStyles", [
-                    ...paragraphStyles,
-                    {},
-                  ])
-                }}
-                className="flex items-center gap-1 text-xs text-primary"
-              >
-                <Plus className="h-3.5 w-3.5" />
-                Add Paragraph
-              </button>
-            </div>
+        {/* Editorial Story Paragraphs with Rich Text */}
+        <DynamicStyledField
+          type="richtext"
+          label="Story Paragraphs / Editorial Text"
+          fieldName="essence.paragraphs"
+          placeholder="Write the editorial narrative paragraphs for the essence section..."
+          value={paragraphsValue}
+          onChange={(val) => updateEssenceField("paragraphs", val)}
+        />
 
-            {paragraphs.map((paragraph, index) => (
-              <div
-                key={index}
-                className="space-y-3 rounded-xl border border-border/60 p-4"
-              >
-                <div className="flex items-center justify-between">
-                  <span className="text-xs font-semibold">
-                    Paragraph {index + 1}
-                  </span>
-                  <button
-                    type="button"
-                    onClick={() => {
-                      updateField(
-                        "data.essence.paragraphs",
-                        paragraphs.filter((_, i) => i !== index)
-                      )
-                      updateField(
-                        "data.essence.paragraphStyles",
-                        paragraphStyles.filter(
-                          (_: any, i: number) => i !== index
-                        )
-                      )
-                    }}
-                    className="text-destructive"
-                  >
-                    <Trash2 className="h-4 w-4" />
-                  </button>
-                </div>
+        {/* Editorial Quote / Callout */}
+        <DynamicStyledField
+          type="textarea"
+          label="Editorial Highlight Quote"
+          fieldName="essence.quote"
+          placeholder="e.g. You arrive with no preconceptions and leave with stories nobody else has told."
+          value={essence.quote}
+          onChange={(val) => updateEssenceField("quote", val)}
+        />
 
-                <DynamicStyledField
-                  type="textarea"
-                  label={`Paragraph ${index + 1}`}
-                  value={paragraph ?? ""}
-                  onChange={(val: string) => {
-                    const next = [...paragraphs]
-                    next[index] = val
-                    updateField("data.essence.paragraphs", next)
-                  }}
-                  enableStyle
-                  style={paragraphStyles[index]}
-                  onStyleChange={(style) => {
-                    const nextStyles = [...paragraphStyles]
-                    nextStyles[index] = style
-                    updateField("data.essence.paragraphStyles", nextStyles)
-                  }}
-                />
-              </div>
-            ))}
+        {/* Featured Image / Multimedia on the Right */}
+        <UniversalMultimediaForm
+          title="Featured Essence Media (Right Side Card)"
+          fieldName="essence.imageMultimedia"
+          imageFieldName="locationEssenceImage"
+          videoFieldName="locationEssenceVideo"
+          value={essence.imageMultimedia || essence.multimedia}
+          onChange={(multimedia) => updateEssenceField("imageMultimedia", multimedia)}
+        />
+
+        {/* Overlay Stat Badge (Absolute Badge on the Image) */}
+        <div className="rounded-lg border border-border/70 bg-card p-4">
+          <div className="mb-3 flex items-center justify-between">
+            <h4 className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
+              Absolute Image Stat Badge
+            </h4>
+            <span className="rounded bg-[#B86B3A]/20 px-2 py-0.5 text-[10px] font-medium text-[#B86B3A]">
+              Overlaid on Media
+            </span>
           </div>
 
-          <DynamicStyledField
-            type="textarea"
-            label="Quote"
-            value={essence.quote ?? ""}
-            onChange={(value: string) =>
-              updateField("data.essence.quote", value)
-            }
-            enableStyle
-            style={(essence as any).quoteStyle}
-            onStyleChange={(style) =>
-              updateField("data.essence.quoteStyle", style)
-            }
-          />
-
-          <UniversalMultimediaForm
-            section={essence as any}
-            content={essence as Record<string, any>}
-            updateSection={(patch) =>
-              updateField("data.essence", { ...essence, ...patch })
-            }
-            updateSectionContent={(patch) =>
-              updateField("data.essence", { ...essence, ...patch })
-            }
-            contentMediaKey="backgroundMultimedia"
-            backgroundType={(essence as any).backgroundMultimedia?.type}
-            backgroundTypeStyleKey="locationEssenceBackgroundTypeStyle"
-            sectionTitle="Background"
-            showColorPicker
-            colorLabel="Background color"
-            defaultColor="#FFFFFF"
-            imageTitle="Background Image"
-            imageLabel="Background image"
-            imageFieldName="locationEssenceBackgroundImage"
-            videoTitle="Background Video"
-            videoLabel="Background video"
-            videoFieldName="locationEssenceBackgroundVideo"
-            showImageAltField
-            showVideoSwitches
-          />
-
-          <UniversalMultimediaForm
-            section={essence as any}
-            content={essence as Record<string, any>}
-            updateSection={(patch) =>
-              updateField("data.essence", { ...essence, ...patch })
-            }
-            updateSectionContent={(patch) =>
-              updateField("data.essence", { ...essence, ...patch })
-            }
-            contentMediaKey="imageMultimedia"
-            backgroundType={essence.imageMultimedia?.type}
-            sectionTitle="Essence Image"
-            imageTitle="Essence Image"
-            imageLabel="Essence image"
-            imageFieldName="locationEssenceImage"
-            showImageAltField
-          />
-
-          <DynamicStyledField
-            type="text"
-            label="Image Alt Text"
-            value={essence.imageAlt ?? ""}
-            onChange={(value: string) =>
-              updateField("data.essence.imageAlt", value)
-            }
-          />
-
-          <div className="grid grid-cols-2 gap-3">
+          <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
             <DynamicStyledField
               type="text"
               label="Stat Value"
-              value={essence.statValue ?? ""}
+              fieldName="essence.statValue"
               placeholder="e.g. 2,753"
-              onChange={(value: string) =>
-                updateField("data.essence.statValue", value)
-              }
+              value={essence.statValue}
+              onChange={(val) => updateEssenceField("statValue", val)}
             />
 
             <DynamicStyledField
               type="text"
-              label="Stat Label"
-              value={essence.statLabel ?? ""}
+              label="Stat Label / Unit"
+              fieldName="essence.statLabel"
               placeholder="e.g. km of rivers and lakes"
-              onChange={(value: string) =>
-                updateField("data.essence.statLabel", value)
+              value={essence.statLabel}
+              onChange={(val) => updateEssenceField("statLabel", val)}
+            />
+          </div>
+
+          <div className="mt-4 pt-3 border-t border-border/50">
+            <DynamicStyledField
+              type="color"
+              label="Badge Background Color"
+              fieldName="essence.statBadgeBg"
+              placeholder="#B86B3A"
+              value={
+                essence.statBadgeBg ||
+                (typeof essence.statValue === "object" ? essence.statValue?.backgroundColor : null) ||
+                "#B86B3A"
               }
+              onChange={(val) => {
+                updateEssenceField("statBadgeBg", val)
+                if (typeof essence.statValue === "object" && essence.statValue !== null) {
+                  updateEssenceField("statValue", { ...essence.statValue, backgroundColor: val })
+                }
+              }}
             />
           </div>
         </div>
+
+        {/* Universal Background Media for the Entire Section */}
+        <UniversalMultimediaForm
+          title="Section Background Media"
+          fieldName="essence.backgroundMultimedia"
+          imageFieldName="locationEssenceBackgroundImage"
+          videoFieldName="locationEssenceBackgroundVideo"
+          value={essence.backgroundMultimedia}
+          onChange={(multimedia) => updateEssenceField("backgroundMultimedia", multimedia)}
+        />
       </div>
     </FormSection>
   )
 }
+
+export default EssenceForm

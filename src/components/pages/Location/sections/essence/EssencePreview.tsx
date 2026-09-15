@@ -1,155 +1,138 @@
-/* =====================================================
-   ESSENCE — PREVIEW SECTION
-   Visually mirrors the real frontend `<Essence />`
-   component's layout (eyebrow label, heading, paragraphs,
-   bordered quote, image with a stat badge overlay), built
-   with plain markup for the admin preview, with every
-   color / font size / image driven by `data.essence`.
-===================================================== */
+import { DynamicStyledPreview } from "@/components/shared/DynamicStyledPreview"
+import { UniversalMultimediaPreview } from "@/components/pages/CMS/Home/shared/preview/UniversalMultimediaPreview"
+import type { LocationPreviewSectionProps } from "../../config/locationSections"
 
-import type { LocationData } from "../../locationTypes"
-import { getLocationBasics, FALLBACK_IMAGE } from "../../shared/previewBasics"
-import { UniversalMultimediaPreview } from "../../../CMS/Home/shared/preview/UniversalMultimediaPreview"
-import { fieldCssStyle } from "../../../CMS/shared/fieldStyle"
+const defaultFallbackImage = "/images/albania-essence.png"
 
-export type EssencePreviewProps = {
-  draft: LocationData | null
-}
-
-export function EssencePreview({ draft }: EssencePreviewProps) {
-  const { data, name } = getLocationBasics(draft)
-
-  const essence = data.essence ?? {}
-  const style = essence.style ?? {}
-
-  const paragraphs = Array.isArray(essence.paragraphs)
-    ? essence.paragraphs
-    : [
-        "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Integer vitae justo nec erat commodo volutpat.",
-        "Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque laudantium.",
-      ]
-
-  const imageSrc = essence.imageSrc || FALLBACK_IMAGE
-  const imageAlt = essence.imageAlt || `${name} landscape`
-
-  const labelStyle = style.label ?? {}
-  const titleStyle = style.title ?? {}
-  const paragraphStyle = style.paragraph ?? {}
-  const quoteStyle = style.quote ?? {}
-  const statBadgeStyle = style.statBadge ?? {}
-
-  const background = (essence as any)?.backgroundMultimedia
+export function EssencePreview({ draft }: LocationPreviewSectionProps) {
+  const essence = draft?.essence || (draft as any)?.data?.essence || {}
 
   return (
-    <section className="relative w-full overflow-hidden pb-12 md:pb-16 xl:pb-20">
+    <section
+      className="relative w-full overflow-hidden pt-[45px] @xs:pt-[55px] @sm:pt-[65px] @md:pt-[90px] @lg:pt-[100px] @xlg:pt-[110px] @xl:pt-[120px] pb-[40px] @xs:pb-[45px] @sm:pb-[48px] @md:pb-[50px] @lg:pb-[55px] @xl:pb-[59px]"
+    >
+      {/* Background Media (Image / Video / Color) */}
       <UniversalMultimediaPreview
-        multimedia={background}
-        fallbackColor={style.sectionBackgroundColor || "#FAF7F2"}
+        multimedia={essence.backgroundMultimedia}
+        fallbackColor="#F9F9F9"
         mode="background"
-        className="h-full w-full object-cover"
-        containerClassName="absolute inset-0 z-0 pointer-events-none"
       />
-      <div className="relative z-10 container mx-auto px-5 sm:px-8 xl:px-12 2xl:px-16">
-        <div className="flex w-full flex-col items-start gap-12 md:gap-16 xl:gap-16.75">
-          <div className="flex w-full max-w-[1280px] mx-auto flex-col-reverse lg:flex-row lg:items-center items-start gap-10 md:gap-12 lg:gap-10 xl:gap-16">
+
+      <div
+        id="essence-section"
+        className="relative z-10 w-full scroll-mt-20 md:scroll-mt-24 container mx-auto px-4 @xs:px-5 @sm:px-6 @md:px-8 @lg:px-6 @xl:px-0"
+      >
+        <div className="w-full">
+          <div className="max-w-[1280px] flex flex-col-reverse @lg:flex-row @lg:items-center items-start gap-8 @xs:gap-10 @sm:gap-12 @md:gap-12 @lg:gap-10 @xlg:gap-12 @xl:gap-16 w-full">
+            {/* Left Story Column */}
             <div className="flex w-full flex-col items-start">
-              <span
-                className="justify-start font-normal uppercase text-sm md:text-[15px] xl:text-base xl:leading-4 md:leading-3.5 leading-3 tracking-[2px] md:tracking-[3.5px] xl:tracking-[4.2px]"
-                style={{
-                  color: labelStyle.textColor || "var(--accent)",
-                  fontSize: labelStyle.fontSize || undefined,
-                  ...fieldCssStyle((essence as any).labelStyle),
-                }}
-              >
-                {essence.label || `THE ESSENCE OF ${name.toUpperCase()}`}
-              </span>
-
-              <h2
-                className="w-full justify-start font-semibold font-heading text-[30px] md:text-[36px] lg:text-[40px] xl:text-[48px] leading-[40px] md:leading-[48px] lg:leading-[52px] xl:leading-[64px]"
-                style={{
-                  color: titleStyle.textColor || "var(--primary)",
-                  fontSize: titleStyle.fontSize || undefined,
-                  ...fieldCssStyle((essence as any).titleStyle),
-                }}
-              >
-                {essence.title || "Lorem ipsum dolor sit amet"}
-              </h2>
-
-              <div className="mt-6 flex w-full flex-col items-start gap-3.5 md:mt-7 md:gap-4 xl:mt-7.5 xl:gap-5">
-                {paragraphs.map((paragraph, index) => (
-                  <p
-                    key={`${paragraph}-${index}`}
-                    className="w-full justify-start font-normal text-[14px] md:text-[15px] xl:text-base leading-6 md:leading-[26px] xl:leading-7 tracking-[1px] text-justify"
-                    style={{
-                      color: paragraphStyle.textColor || "#4b5563",
-                      fontSize: paragraphStyle.fontSize || undefined,
-                      ...fieldCssStyle(
-                        (essence as any).paragraphStyles?.[index]
-                      ),
-                    }}
-                  >
-                    {paragraph}
-                  </p>
-                ))}
+              {/* Eyebrow Label */}
+              <div className="self-stretch flex flex-col justify-start items-start">
+                <DynamicStyledPreview
+                  as="span"
+                  field={essence.label}
+                  fallback="THE ESSENCE OF ALBANIA"
+                  fallbackColor="#af6348"
+                  className="justify-start text-accent font-normal uppercase text-xs @xs:text-sm @md:text-[15px] @xl:text-base leading-3 @xs:leading-3.5 @md:leading-3.5 @xl:leading-4 tracking-[2px] @xs:tracking-[2.5px] @md:tracking-[3.5px] @xl:tracking-[4.2px]"
+                />
               </div>
 
-              <div className="mt-8 w-full border-t border-neutral-900/10 pt-6">
-                <blockquote
-                  className="w-full justify-start font-normal italic text-[15px] md:text-[16px] lg:text-[18px] xl:text-[20px] leading-[22px] md:leading-[24px] lg:leading-[28px] xl:leading-[32px]"
-                  style={{
-                    color: quoteStyle.textColor || "#57534e",
-                    fontSize: quoteStyle.fontSize || undefined,
-                    ...fieldCssStyle((essence as any).quoteStyle),
-                  }}
-                >
-                  &ldquo;
-                  {essence.quote ||
-                    "Lorem ipsum dolor sit amet, consectetur adipiscing elit."}
-                  &rdquo;
-                </blockquote>
+              {/* Main Heading */}
+              <div className="self-stretch mt-3 @xs:mt-3.5 @sm:mt-4 @md:mt-4 @lg:mt-5 @xl:mt-6 flex flex-col justify-start items-start">
+                <DynamicStyledPreview
+                  as="h2"
+                  field={essence.title}
+                  fallback="A country that kept its secrets for fifty years"
+                  fallbackColor="#182d09"
+                  className="w-full justify-start text-primary font-semibold font-heading text-[24px] @xs:text-[28px] @sm:text-[32px] @md:text-[36px] @lg:text-[40px] @xlg:text-[44px] @xl:text-[48px] leading-[32px] @xs:leading-[36px] @sm:leading-[42px] @md:leading-[48px] @lg:leading-[52px] @xlg:leading-[58px] @xl:leading-[64px]"
+                />
+              </div>
+
+              {/* Story Paragraphs Container with Full RichText HTML rendering */}
+              <div className="w-full mt-4 @xs:mt-5 @sm:mt-6 @md:mt-6 @lg:mt-7 @xlg:mt-8 @xl:mt-8 flex flex-col justify-start items-start">
+                <DynamicStyledPreview
+                  as="div"
+                  type="richtext"
+                  field={essence.paragraphs}
+                  fallbackColor="#565e69"
+                  className="w-full text-subtitle font-normal text-[13px] @xs:text-[14px] @md:text-[15px] @xl:text-base leading-[22px] @xs:leading-6 @md:leading-[26px] @xl:leading-7 tracking-normal @xs:tracking-[0.5px] @md:tracking-[1px] text-justify"
+                />
+              </div>
+
+              {/* Editorial Quote */}
+              <div className="self-stretch pt-5 @xs:pt-6 @sm:pt-7 @md:pt-8 @lg:pt-9 @xl:pt-10 flex flex-col justify-start items-start">
+                <div className="self-stretch pt-3.5 @xs:pt-4 @sm:pt-5 @md:pt-6 @lg:pt-7 @xl:pt-8 border-t border-border-muted flex flex-col justify-start items-start">
+                  <DynamicStyledPreview
+                    as="blockquote"
+                    field={essence.quote}
+                    prefix="“"
+                    suffix="”"
+                    fallbackColor="#1A1209"
+                    className="w-full justify-start text-qoute font-normal italic text-[13px] @xs:text-[14px] @sm:text-[15px] @md:text-[16px] @lg:text-[18px] @xl:text-[20px] leading-5 @xs:leading-[22px] @sm:leading-[23px] @md:leading-[24px] @lg:leading-[28px] @xl:leading-[32px]"
+                  />
+                </div>
               </div>
             </div>
 
-            <div className="relative mb-4 flex w-full justify-center self-stretch sm:mb-6 lg:mb-0 lg:justify-end">
-              <div className="relative w-full max-w-[340px] xs:max-w-[390px] sm:max-w-[450px] md:max-w-[490px] lg:max-w-full xl:max-w-[536px] 2xl:max-w-[620px] h-[425px] xs:h-[488px] sm:h-[562px] md:h-[612px] lg:h-[520px] xl:h-[640px] 2xl:h-[700px]">
-                {essence.imageMultimedia ? (
+            {/* Right Image Column with Absolute Stat Badge */}
+            <div className="relative flex w-full justify-center @lg:justify-end items-center self-stretch">
+              <div
+                className="relative w-full max-w-[280px] @xs:max-w-[340px] @sm:max-w-[420px] @md:max-w-[480px] @lg:max-w-[440px] @xlg:max-w-[480px] @xl:max-w-[536px] @2xl:max-w-[620px]
+                h-[350px] @xs:h-[425px] @sm:h-[520px] @md:h-[600px] @lg:h-[520px] @xlg:h-[580px] @xl:h-[640px] @2xl:h-[700px]"
+              >
+                {/* Image Box - Constrained inside Mother Bounding Frame */}
+                <div className="relative size-full overflow-hidden rounded-[2px] flex items-center justify-center bg-[#EDE7D8]">
                   <UniversalMultimediaPreview
-                    multimedia={essence.imageMultimedia}
-                    fallbackImageSrc={imageSrc}
-                    fallbackAlt={imageAlt}
+                    multimedia={essence.imageMultimedia || essence.multimedia}
+                    fallbackImageSrc={defaultFallbackImage}
+                    fallbackBg="#EDE7D8"
                     mode="inline"
-                    className="size-full rounded-xs object-cover object-center"
+                    className="size-full object-cover object-center"
+                    containerClassName="size-full"
                   />
-                ) : (
-                  <img
-                    src={imageSrc}
-                    alt={imageAlt}
-                    className="size-full rounded-xs object-cover object-center"
-                    onError={(event) => {
-                      event.currentTarget.src = FALLBACK_IMAGE
-                    }}
-                  />
-                )}
+                </div>
 
-                {essence.statValue && (
-                  <div
-                    className="bg-accent-muted absolute -bottom-5 -left-3 flex w-49 flex-col items-start px-5 py-4 sm:-bottom-6 sm:-left-4 md:-left-5 md:px-6 md:py-4.5 xl:-left-6 xl:px-7 xl:py-5"
-                    style={{
-                      backgroundColor:
-                        statBadgeStyle.backgroundColor || "var(--accent-muted)",
-                      color: statBadgeStyle.textColor || "#f5f5f5",
-                    }}
-                  >
-                    <span className="font-heading text-[24px] leading-7 font-medium md:text-[26px] md:leading-8 xl:text-[30px] xl:leading-9">
-                      {essence.statValue}
-                    </span>
-                    {essence.statLabel && (
-                      <span className="pt-0.5 text-[13px] leading-4 font-normal opacity-75 md:text-[13.5px] md:leading-4.5 xl:text-sm xl:leading-5">
-                        {essence.statLabel}
-                      </span>
-                    )}
-                  </div>
-                )}
+                {/* Absolute Stat Badge Overlaid on the Media */}
+                {(() => {
+                  const rawBadgeBg =
+                    essence.statBadgeBg ||
+                    (typeof essence.statValue === "object" && essence.statValue?.backgroundColor) ||
+                    (typeof essence.statBadge === "object" && essence.statBadge?.backgroundColor) ||
+                    "#B86B3A"
+                  const rawBadgeOpacity =
+                    (typeof essence.statValue === "object" && essence.statValue?.backgroundOpacity !== undefined
+                      ? essence.statValue.backgroundOpacity
+                      : 1)
+
+                  return (
+                    <div
+                      className="absolute w-[145px] @xs:w-[165px] @sm:w-[180px] @md:w-[195px] @xl:w-[195.922px] -bottom-3 @xs:-bottom-4 @sm:-bottom-5 @md:-bottom-6 -left-2 @xs:-left-3 @sm:-left-4 @md:-left-5 @xl:-left-6 px-3.5 @xs:px-4 @sm:px-5 @md:px-6 @lg:px-[26px] @xl:px-7 py-2.5 @xs:py-3 @sm:py-3.5 @md:py-[18px] @lg:py-[19px] @xl:py-5 flex flex-col justify-start items-start z-10 shadow-md transition-colors"
+                      style={{
+                        backgroundColor: rawBadgeBg || "#B86B3A",
+                        opacity: rawBadgeOpacity,
+                      }}
+                    >
+                      <div className="self-stretch flex flex-col justify-start items-start">
+                        <DynamicStyledPreview
+                          as="span"
+                          field={essence.statValue}
+                          fallback="2,753"
+                          fallbackColor="#ffffff"
+                          className="justify-start font-medium font-heading text-[18px] @xs:text-[20px] @sm:text-[24px] @md:text-[26px] @lg:text-[28px] @xl:text-[30px] leading-6 @xs:leading-7 @md:leading-8 @lg:leading-[34px] @xl:leading-9"
+                        />
+                      </div>
+                      <div className="w-full pt-0.5 flex flex-col justify-start items-start">
+                        <DynamicStyledPreview
+                          as="span"
+                          field={essence.statLabel}
+                          fallback="km of rivers and lakes"
+                          fallbackColor="rgba(255, 255, 255, 0.75)"
+                          className="justify-start font-normal text-[10px] @xs:text-[11px] @sm:text-[12px] @md:text-[13px] @lg:text-[13.5px] @xl:text-sm leading-3.5 @xs:leading-4 @md:leading-[18px] @xl:leading-5"
+                        />
+                      </div>
+                    </div>
+                  )
+                })()}
               </div>
             </div>
           </div>
@@ -158,3 +141,5 @@ export function EssencePreview({ draft }: EssencePreviewProps) {
     </section>
   )
 }
+
+export default EssencePreview

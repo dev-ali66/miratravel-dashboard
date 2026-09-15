@@ -167,6 +167,29 @@ export const LOCATION_TYPES = [
 
 export type LocationType = (typeof LOCATION_TYPES)[number]
 
+export type HighlightLocationItem = {
+  id: string
+  locationId?: string
+  country: string
+  region: string
+  tags?: string
+  image?: string
+  imageMultimedia?: Record<string, any> | null
+  countrySlug?: string
+  regionSlug?: string
+  href?: string
+}
+
+export type HighlightsSectionData = {
+  id?: string
+  label?: string | Record<string, any>
+  title?: string | Record<string, any>
+  description?: string | Record<string, any>
+  items?: string[]
+  backgroundMultimedia?: Record<string, any> | null
+  style?: Record<string, any> | null
+}
+
 export type LocationData = {
   id?: string
 
@@ -196,23 +219,23 @@ export type LocationData = {
   createdAt?: string
   updatedAt?: string
 
-  geoData: {
-    area: {
-      unit: string
-      value: number
+  geoData?: {
+    area?: {
+      unit?: string
+      value?: number
     }
-    mapZoom: number
-    latitude: number
-    longitude: number
-    timezone: string
+    mapZoom?: number
+    latitude?: number
+    longitude?: number
+    timezone?: string
   }
 
-  metadata: {
-    seo: {
-      title: string
-      keywords: string[]
-      description: string
-      canonicalUrl: string
+  metadata?: {
+    seo?: {
+      title?: string
+      keywords?: string[]
+      description?: string
+      canonicalUrl?: string
       robots?: {
         index?: boolean
         follow?: boolean
@@ -220,12 +243,34 @@ export type LocationData = {
     }
   }
 
-  data: {
-    name: string
-    title: string
-    subtitle: string
-    description: string
-    shortDescription: string
+  // Dedicated section JSON fields
+  hero?: any
+  card?: any
+  essence?: any
+  highlights?: HighlightsSectionData
+  infoCard?: any
+  highlightsStatistics?: any
+  why?: any
+  explore?: any
+  glance?: any
+  experience?: any
+  character?: any
+  travelInsight?: any
+  journeyList?: any
+  sharedInfo?: any
+  signatureExperiences?: any
+  stories?: any
+  accommodation?: any
+  faq?: any
+  travelInfo?: any
+  cta?: any
+
+  data?: {
+    name?: string
+    title?: string
+    subtitle?: string
+    description?: string
+    shortDescription?: string
 
     hero: {
       title: string

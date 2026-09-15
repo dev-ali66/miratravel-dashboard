@@ -848,7 +848,7 @@ export function UniversalEditorLayout({
                     {useWorkspaceScale ? (
                       <ScaledWorkspace>{previewContent}</ScaledWorkspace>
                     ) : (
-                      <div className="w-full">{previewContent}</div>
+                      <div className="@container w-full">{previewContent}</div>
                     )}
                   </div>
 

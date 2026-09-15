@@ -23,21 +23,69 @@ export function normalizeMultimedia(media: any): any {
     return null
   }
 
-  const type = media.type ?? "image"
-  const resolvedUrl = media.url || null
-  const resolvedAlt = media.alt || null
+  const show = media.show ?? media.type ?? "image"
+  const type = media.type ?? media.show ?? "image"
 
-  const imageObj = media.imageData ?? {}
-  const videoObj = media.videoData ?? {}
+  const imageObj = media.image ?? media.imageData ?? {}
+  const videoObj = media.video ?? media.videoData ?? {}
+  const colorObj =
+    typeof media.color === "object"
+      ? media.color
+      : { color: media.color || "#171717", opacity: 100 }
+
+  const resolvedUrl =
+    media.url ||
+    (show === "video" ? videoObj.url : imageObj.url) ||
+    videoObj.url ||
+    imageObj.url ||
+    null
+
+  const resolvedAlt =
+    media.alt ||
+    (show === "video" ? videoObj.alt : imageObj.alt) ||
+    videoObj.alt ||
+    imageObj.alt ||
+    null
 
   return {
+    show,
     type,
     url: resolvedUrl,
     alt: resolvedAlt,
-    color: media.color || null,
-    opacity: media.opacity ?? null,
-    overlayColor: media.overlayColor || null,
-    overlayOpacity: media.overlayOpacity ?? null,
+    color: colorObj,
+    opacity: media.opacity ?? imageObj.opacity ?? videoObj.opacity ?? 100,
+    overlayColor:
+      media.overlayColor ?? imageObj.overlayColor ?? videoObj.overlayColor ?? null,
+    overlayOpacity:
+      media.overlayOpacity ??
+      imageObj.overlayOpacity ??
+      videoObj.overlayOpacity ??
+      null,
+    image: {
+      url: imageObj.url || (type === "image" ? resolvedUrl : null) || null,
+      alt: imageObj.alt || resolvedAlt || null,
+      opacity: imageObj.opacity ?? 100,
+      overlayColor: imageObj.overlayColor || null,
+      overlayOpacity: imageObj.overlayOpacity ?? null,
+      width: imageObj.width || "100%",
+      height: imageObj.height || "auto",
+      aspectRatio: imageObj.aspectRatio || "auto",
+      fit: imageObj.fit || "cover",
+    },
+    video: {
+      url: videoObj.url || (type === "video" ? resolvedUrl : null) || null,
+      alt: videoObj.alt || resolvedAlt || null,
+      opacity: videoObj.opacity ?? 100,
+      overlayColor: videoObj.overlayColor || null,
+      overlayOpacity: videoObj.overlayOpacity ?? null,
+      autoplay: videoObj.autoplay ?? true,
+      loop: videoObj.loop ?? true,
+      muted: videoObj.muted ?? true,
+      width: videoObj.width || "100%",
+      height: videoObj.height || "auto",
+      aspectRatio: videoObj.aspectRatio || "auto",
+      fit: videoObj.fit || "cover",
+    },
     imageData: {
       url: imageObj.url || (type === "image" ? resolvedUrl : null) || null,
       alt: imageObj.alt || resolvedAlt || null,
@@ -96,40 +144,547 @@ export function normalizeLocationPayload(
   const safeDraft = draft ?? {}
   const safeData = (safeDraft.data ?? {}) as Record<string, any>
 
-  const hero = safeData.hero ?? {}
-  const why = safeData.why ?? {}
-  const card = safeData.card ?? {}
-  const info = safeData.info ?? {}
-  const sharedInfo = safeData.sharedInfo ?? {}
-  const regionGlance = safeData.regionGlance ?? {}
-  const regionCharacter = safeData.regionCharacter ?? {}
-  const essence = safeData.essence ?? {}
-  const statistics = safeData.statistics ?? {}
-  const travelInfo = safeData.travelInfo ?? {}
-  const beforeTravel = travelInfo.beforeTravel ?? {}
-  const experiences = safeData.experiences ?? {}
-  const featuredExperience = experiences.featured_experience ?? {}
+  const hero = safeDraft.hero ?? safeData.hero ?? {}
+  const why = safeDraft.why ?? safeData.why ?? {}
+  const card = safeDraft.card ?? safeData.card ?? {}
+  const info = safeDraft.info ?? safeData.info ?? {}
+  const sharedInfo = safeDraft.sharedInfo ?? safeData.sharedInfo ?? {}
+  const regionGlance =
+    safeDraft.glance ??
+    safeDraft.regionGlance ??
+    safeData.regionGlance ??
+    safeData.glance ??
+    {}
+  const regionCharacter =
+    safeDraft.character ??
+    safeDraft.regionCharacter ??
+    safeData.regionCharacter ??
+    safeData.character ??
+    {}
+  const essence = safeDraft.essence ?? safeData.essence ?? {}
+  const highlights = safeDraft.highlights ?? safeData.highlights ?? {}
+  const statistics =
+    safeDraft.highlightsStatistics ??
+    safeDraft.statistics ??
+    safeData.statistics ??
+    safeData.highlightsStatistics ??
+    {}
+  const travelInfo = safeDraft.travelInfo ?? safeData.travelInfo ?? {}
+  const experiences =
+    safeDraft.experience ??
+    safeDraft.experiences ??
+    safeData.experiences ??
+    safeData.experience ??
+    {}
   const signatureExperiences =
-    safeData.signature_experiences ?? safeData.signatureExperiences ?? {}
-  const practicalInformation = safeData.practical_information ?? {}
-  const faqSection = safeData.faq_section ?? {}
-  const travelInsights = safeData.travel_insights ?? {}
-  const accommodationStays = safeData.accommodation_stays ?? {}
-  const culture = safeData.culture ?? {}
-  const climate = safeData.climate ?? {}
-  const safety = safeData.safety ?? {}
-  const geography = safeData.geography ?? {}
-  const localGuide = safeData.local_guide ?? {}
-  const videoGalary = safeData.videoGalary ?? {}
+    safeDraft.signatureExperiences ??
+    safeDraft.signature_experiences ??
+    safeData.signature_experiences ??
+    safeData.signatureExperiences ??
+    {}
+  const practicalInformation =
+    safeDraft.practicalInformation ??
+    safeDraft.practical_information ??
+    safeData.practical_information ??
+    safeData.practicalInformation ??
+    {}
+  const faqSection =
+    safeDraft.faq ??
+    safeDraft.faqSection ??
+    safeDraft.faq_section ??
+    safeData.faq_section ??
+    safeData.faq ??
+    {}
+  const travelInsights =
+    safeDraft.travelInsight ??
+    safeDraft.travelInsights ??
+    safeDraft.travel_insights ??
+    safeData.travel_insights ??
+    safeData.travelInsight ??
+    {}
+  const accommodationStays =
+    safeDraft.accommodation ??
+    safeDraft.accommodationStays ??
+    safeDraft.accommodation_stays ??
+    safeData.accommodation_stays ??
+    safeData.accommodation ??
+    {}
+  const culture = safeDraft.culture ?? safeData.culture ?? {}
+  const climate = safeDraft.climate ?? safeData.climate ?? {}
+  const safety = safeDraft.safety ?? safeData.safety ?? {}
+  const geography = safeDraft.geography ?? safeData.geography ?? {}
+  const localGuide =
+    safeDraft.localGuide ?? safeDraft.local_guide ?? safeData.local_guide ?? {}
+  const videoGalary = safeDraft.videoGalary ?? safeData.videoGalary ?? {}
+
+  const normalizedHero = {
+    ...hero,
+    title: hero.title ?? "",
+    description: hero.description ?? "",
+    breadcrumb: hero.breadcrumb ?? "",
+    subtitle: hero.subtitle ?? "",
+    isCenter: Boolean(hero.isCenter),
+    background_image: hero.background_image ?? "",
+    video: hero.video ?? "",
+    showVideo: Boolean(hero.showVideo),
+    button: hero.button ?? { name: "Explore Journey", url: "" },
+    buttons: Array.isArray(hero.buttons) ? hero.buttons : [],
+    titleStyle: hero.titleStyle ?? null,
+    breadcrumbStyle: hero.breadcrumbStyle ?? null,
+    descriptionStyle: hero.descriptionStyle ?? null,
+    backgroundMultimedia: normalizeMultimedia(
+      hero.backgroundMultimedia ?? hero.multimedia
+    ),
+  }
+
+  const normalizedEssence = {
+    ...essence,
+    label: essence.label ?? "",
+    title: essence.title ?? "",
+    paragraphs: essence.paragraphs ?? "",
+    paragraphStyles: Array.isArray(essence.paragraphStyles)
+      ? essence.paragraphStyles
+      : [],
+    quote: essence.quote ?? "",
+    imageSrc: essence.imageSrc ?? "",
+    imageAlt: essence.imageAlt ?? "",
+    statValue: essence.statValue ?? "",
+    statLabel: essence.statLabel ?? "",
+    statBadgeBg: essence.statBadgeBg ?? "#B86B3A",
+    facts: Array.isArray(essence.facts) ? essence.facts : [],
+    style: essence.style ?? null,
+    labelStyle: essence.labelStyle ?? null,
+    quoteStyle: essence.quoteStyle ?? null,
+    titleStyle: essence.titleStyle ?? null,
+    imageMultimedia: normalizeMultimedia(
+      essence.imageMultimedia || essence.multimedia
+    ),
+    backgroundMultimedia: normalizeMultimedia(essence.backgroundMultimedia),
+  }
+
+  const rawItemIds: string[] = Array.isArray(highlights.items)
+    ? highlights.items
+        .map((it: any) => (typeof it === "string" ? it : it?.id || it?.locationId))
+        .filter(Boolean)
+    : Array.isArray(highlights.locationIds)
+    ? highlights.locationIds
+    : []
+
+  const normalizedHighlights = {
+    ...highlights,
+    id: highlights.id ?? "highlights",
+    label: highlights.label ?? "",
+    title: highlights.title ?? "",
+    description: highlights.description ?? "",
+    items: rawItemIds,
+    backgroundMultimedia: normalizeMultimedia(highlights.backgroundMultimedia),
+    style: highlights.style ?? null,
+  }
+
+  const normalizedWhy = {
+    ...why,
+    title: why.title ?? "",
+    subtitle: why.subtitle ?? "",
+    subtitleStyle: why.subtitleStyle ?? null,
+    tags: Array.isArray(why.tags) ? why.tags : [],
+    image: why.image ?? "",
+    imageMultimedia: normalizeMultimedia(why.imageMultimedia),
+    backgroundMultimedia: normalizeMultimedia(why.backgroundMultimedia),
+    description_paragraphs: Array.isArray(why.description_paragraphs)
+      ? why.description_paragraphs
+      : [],
+  }
+
+  const normalizedCard = {
+    ...card,
+    title: card.title ?? "",
+    subtitle: card.subtitle ?? "",
+    background_image: card.background_image ?? "",
+    titleStyle: card.titleStyle ?? null,
+    subtitleStyle: card.subtitleStyle ?? null,
+    backgroundMultimedia: normalizeMultimedia(card.backgroundMultimedia),
+    button: card.button ?? { label: "EXPLORE", url: "" },
+  }
+
+  const normalizedInfo = {
+    ...info,
+    headline: info.headline ?? "",
+    description: info.description ?? "",
+    headlineStyle: info.headlineStyle ?? null,
+    descriptionStyle: info.descriptionStyle ?? null,
+    backgroundMultimedia: normalizeMultimedia(info.backgroundMultimedia),
+  }
+
+  const normalizedSharedInfo = {
+    ...sharedInfo,
+    text: sharedInfo.text ?? "",
+    style: sharedInfo.style ?? null,
+    textStyle: sharedInfo.textStyle ?? null,
+    backgroundMultimedia: normalizeMultimedia(sharedInfo.backgroundMultimedia),
+  }
+
+  const normalizedGlance = {
+    ...regionGlance,
+    label: regionGlance.label ?? "",
+    title: regionGlance.title ?? "",
+    description: regionGlance.description ?? "",
+    style: regionGlance.style ?? null,
+    labelStyle: regionGlance.labelStyle ?? null,
+    descriptionStyle: regionGlance.descriptionStyle ?? null,
+    backgroundMultimedia: normalizeMultimedia(
+      regionGlance.backgroundMultimedia
+    ),
+  }
+
+  const normalizedCharacter = {
+    ...regionCharacter,
+    label: regionCharacter.label ?? "",
+    title: regionCharacter.title ?? "",
+    style: regionCharacter.style ?? null,
+    items: Array.isArray(regionCharacter.items)
+      ? regionCharacter.items.map((it: any) => ({
+          id: it.id ?? "",
+          icon: it.icon ?? "",
+          iconImage: it.iconImage ?? "",
+          title: it.title ?? "",
+          description: it.description ?? "",
+          href: it.href ?? "",
+          linkText: it.linkText ?? "",
+          multimedia: normalizeMultimedia(it.multimedia ?? it.iconMultimedia),
+          titleStyle: it.titleStyle ?? null,
+          descriptionStyle: it.descriptionStyle ?? null,
+        }))
+      : [],
+    backgroundMultimedia: normalizeMultimedia(
+      regionCharacter.backgroundMultimedia
+    ),
+  }
+
+  const normalizedStatistics = {
+    ...statistics,
+    area: {
+      unit: statistics.area?.unit ?? "km²",
+      value: statistics.area?.value ?? 0,
+    },
+    elevation: {
+      unit: statistics.elevation?.unit ?? "m",
+      value: statistics.elevation?.value ?? 0,
+    },
+    population: {
+      year: statistics.population?.year ?? 2026,
+      value: statistics.population?.value ?? 0,
+    },
+    facts: Array.isArray(statistics.facts)
+      ? statistics.facts.map((f: any) => ({
+          label: f.label ?? "",
+          value: f.value ?? "",
+          description: f.description ?? "",
+          media: normalizeMultimedia(f.media),
+          labelStyle: f.labelStyle ?? null,
+          valueStyle: f.valueStyle ?? null,
+          descriptionStyle: f.descriptionStyle ?? null,
+        }))
+      : [],
+    style: statistics.style ?? null,
+    backgroundMultimedia: normalizeMultimedia(
+      statistics.backgroundMultimedia
+    ),
+  }
+
+  const beforeTravel = travelInfo.beforeTravel ?? {}
+  const normalizedTravelInfo = {
+    ...travelInfo,
+    visa: {
+      description: travelInfo.visa?.description ?? "",
+    },
+    currency: {
+      description: travelInfo.currency?.description ?? "",
+      majorCurrency: travelInfo.currency?.majorCurrency ?? "",
+    },
+    bestTimeToVisit: {
+      summer: travelInfo.bestTimeToVisit?.summer ?? "",
+      winter: travelInfo.bestTimeToVisit?.winter ?? "",
+      general: travelInfo.bestTimeToVisit?.general ?? "",
+    },
+    popularTransportation: Array.isArray(travelInfo.popularTransportation)
+      ? travelInfo.popularTransportation
+      : [],
+    beforeTravel: {
+      label: beforeTravel.label ?? "",
+      title: beforeTravel.title ?? "",
+      image: beforeTravel.image ?? "",
+      imageAlt: beforeTravel.imageAlt ?? "",
+      items: Array.isArray(beforeTravel.items)
+        ? beforeTravel.items.map((it: any) => ({
+            id: it.id ?? "",
+            title: it.title ?? "",
+            content: it.content ?? "",
+            titleStyle: it.titleStyle ?? null,
+          }))
+        : [],
+      style: beforeTravel.style ?? null,
+      imageMultimedia: normalizeMultimedia(beforeTravel.imageMultimedia),
+      backgroundMultimedia: normalizeMultimedia(
+        beforeTravel.backgroundMultimedia
+      ),
+    },
+  }
+
+  const featuredExperience = experiences.featured_experience ?? {}
+  const normalizedExperiences = {
+    ...experiences,
+    title: experiences.title ?? "",
+    location: experiences.location ?? "",
+    description: experiences.description ?? "",
+    seasonInfo: experiences.seasonInfo ?? "",
+    seasonLocation: experiences.seasonLocation ?? "",
+    load_more_button: experiences.load_more_button ?? "Load More",
+    loadMoreButtonStyle: experiences.loadMoreButtonStyle ?? null,
+    titleStyle: experiences.titleStyle ?? null,
+    locationStyle: experiences.locationStyle ?? null,
+    descriptionStyle: experiences.descriptionStyle ?? null,
+    featured_experience: {
+      image: featuredExperience.image ?? "",
+      title: featuredExperience.title ?? "",
+      category: featuredExperience.category ?? "",
+      duration: featuredExperience.duration ?? "",
+      subtitle: featuredExperience.subtitle ?? "",
+      action_text: featuredExperience.action_text ?? "More info",
+      button: featuredExperience.button ?? null,
+      buttons: Array.isArray(featuredExperience.buttons)
+        ? featuredExperience.buttons
+        : [],
+      imageMultimedia: normalizeMultimedia(
+        featuredExperience.imageMultimedia
+      ),
+    },
+    cards: Array.isArray(experiences.cards)
+      ? experiences.cards.map((c: any) => ({
+          id: c.id ?? Date.now(),
+          image: c.image ?? "",
+          price: c.price ?? "",
+          title: c.title ?? "",
+          category: c.category ?? "",
+          subtitle: c.subtitle ?? "",
+          action_text: c.action_text ?? "More info",
+          description: c.description ?? "",
+          button: c.button ?? null,
+          buttons: Array.isArray(c.buttons) ? c.buttons : [],
+          imageMultimedia: normalizeMultimedia(c.imageMultimedia),
+        }))
+      : [],
+    footer: {
+      note: experiences.footer?.note ?? "",
+      region: experiences.footer?.region ?? "",
+    },
+  }
+
+  const normalizedSignatureExperiences = {
+    ...signatureExperiences,
+    label: signatureExperiences.label ?? "Signature Experiences",
+    labelStyle: signatureExperiences.labelStyle ?? null,
+    title: signatureExperiences.title ?? "",
+    titleStyle: signatureExperiences.titleStyle ?? null,
+    description: signatureExperiences.description ?? "",
+    descriptionStyle: signatureExperiences.descriptionStyle ?? null,
+    backgroundMultimedia: normalizeMultimedia(
+      signatureExperiences.backgroundMultimedia
+    ),
+    style: signatureExperiences.style ?? null,
+    experiences: Array.isArray(signatureExperiences.experiences)
+      ? signatureExperiences.experiences.map((exp: any, idx: number) => ({
+          id: exp.id ?? `exp-${String(idx + 1).padStart(2, "0")}`,
+          number: exp.number ?? String(idx + 1).padStart(2, "0"),
+          numberStyle: exp.numberStyle ?? null,
+          title: exp.title ?? "",
+          titleStyle: exp.titleStyle ?? null,
+          description: exp.description ?? "",
+          descriptionStyle: exp.descriptionStyle ?? null,
+          href: exp.href ?? "#",
+          linkText: exp.linkText ?? "Explore this experience",
+          button: exp.button ?? null,
+          buttons: Array.isArray(exp.buttons) ? exp.buttons : [],
+        }))
+      : [],
+  }
+
+  const normalizedPracticalInformation = {
+    ...practicalInformation,
+    title: practicalInformation.title ?? "",
+    sub_heading: practicalInformation.sub_heading ?? "",
+    side_image: practicalInformation.side_image ?? "",
+    accordion_items: Array.isArray(practicalInformation.accordion_items)
+      ? practicalInformation.accordion_items.map((ai: any) => ({
+          id: ai.id ?? String(Date.now()),
+          title: ai.title ?? "",
+          content: ai.content ?? "",
+          is_expanded: Boolean(ai.is_expanded),
+          titleStyle: ai.titleStyle ?? null,
+        }))
+      : [],
+    sideImageMultimedia: normalizeMultimedia(
+      practicalInformation.sideImageMultimedia
+    ),
+    backgroundMultimedia: normalizeMultimedia(
+      practicalInformation.backgroundMultimedia
+    ),
+  }
+
+  const normalizedFaq = {
+    ...faqSection,
+    title: faqSection.title ?? "",
+    image: faqSection.image ?? "",
+    questions: Array.isArray(faqSection.questions)
+      ? faqSection.questions.map((q: any) => ({
+          id: q.id ?? Date.now(),
+          question: q.question ?? "",
+          answer: q.answer ?? "",
+          questionStyle: q.questionStyle ?? null,
+          answerStyle: q.answerStyle ?? null,
+        }))
+      : [],
+    imageMultimedia: normalizeMultimedia(faqSection.imageMultimedia),
+    backgroundMultimedia: normalizeMultimedia(
+      faqSection.backgroundMultimedia
+    ),
+  }
+
+  const normalizedTravelInsights = {
+    ...travelInsights,
+    title: travelInsights.title ?? "",
+    sub_heading: travelInsights.sub_heading ?? "",
+    main_image: travelInsights.main_image ?? "",
+    articles: Array.isArray(travelInsights.articles)
+      ? travelInsights.articles.map((art: any) => ({
+          id: art.id ?? String(Date.now()),
+          number: art.number ?? "",
+          category: art.category ?? "",
+          title: art.title ?? "",
+          description: art.description ?? "",
+          href: art.href ?? "",
+          button: art.button ?? null,
+          buttons: Array.isArray(art.buttons) ? art.buttons : [],
+          thumbnail: art.thumbnail ?? "",
+          thumbnailMultimedia: normalizeMultimedia(art.thumbnailMultimedia),
+          descriptionStyle: art.descriptionStyle ?? null,
+        }))
+      : [],
+    mainImageMultimedia: normalizeMultimedia(
+      travelInsights.mainImageMultimedia
+    ),
+  }
+
+  const normalizedAccommodationStays = {
+    ...accommodationStays,
+    badge: accommodationStays.badge ?? "",
+    badgeStyle: accommodationStays.badgeStyle ?? null,
+    title: accommodationStays.title ?? "",
+    titleStyle: accommodationStays.titleStyle ?? null,
+    description: accommodationStays.description ?? "",
+    descriptionStyle: accommodationStays.descriptionStyle ?? null,
+    stays: Array.isArray(accommodationStays.stays)
+      ? accommodationStays.stays.map((st: any) => ({
+          id: st.id ?? Date.now(),
+          day: st.day ?? null,
+          city: st.city ?? "",
+          step: st.step ?? "",
+          image: st.image ?? "",
+          nights: st.nights ?? null,
+          buttons: Array.isArray(st.buttons) ? st.buttons : [],
+          duration: st.duration ?? "",
+          location: st.location ?? "",
+          stayType: st.stayType ?? "",
+          subtitle: st.subtitle ?? "",
+          confirmedBy: st.confirmedBy ?? "",
+          description: st.description ?? "",
+          imageMultimedia: normalizeMultimedia(st.imageMultimedia),
+          confirmationBadge: st.confirmationBadge ?? "",
+        }))
+      : [],
+    backgroundMultimedia: normalizeMultimedia(
+      accommodationStays.backgroundMultimedia
+    ),
+  }
+
+  const normalizedCulture = {
+    ...culture,
+    cuisine: Array.isArray(culture.cuisine) ? culture.cuisine : [],
+    description: culture.description ?? "",
+    majorLanguages: Array.isArray(culture.majorLanguages)
+      ? culture.majorLanguages
+      : [],
+    majorReligions: Array.isArray(culture.majorReligions)
+      ? culture.majorReligions
+      : [],
+    famousFestivals: Array.isArray(culture.famousFestivals)
+      ? culture.famousFestivals
+      : [],
+    style: culture.style ?? null,
+  }
+
+  const normalizedClimate = {
+    ...climate,
+    types: Array.isArray(climate.types) ? climate.types : [],
+    description: climate.description ?? "",
+  }
+
+  const normalizedSafety = {
+    ...safety,
+    description: safety.description ?? "",
+    emergencyNumber: safety.emergencyNumber ?? "",
+  }
+
+  const normalizedGeography = {
+    ...geography,
+    highestPoint: {
+      name: geography.highestPoint?.name ?? "",
+      unit: geography.highestPoint?.unit ?? "m",
+      elevation: geography.highestPoint?.elevation ?? 0,
+    },
+    majorLandscapes: Array.isArray(geography.majorLandscapes)
+      ? geography.majorLandscapes
+      : [],
+  }
+
+  const normalizedLocalGuide = {
+    ...localGuide,
+    title: localGuide.title ?? "",
+    sub_heading: localGuide.sub_heading ?? "",
+    main_image: localGuide.main_image ?? "",
+    articles: Array.isArray(localGuide.articles) ? localGuide.articles : [],
+  }
+
+  const normalizedVideoGalary = {
+    ...videoGalary,
+    alt: videoGalary.alt ?? "",
+    url: videoGalary.url ?? "",
+    thumbnail: videoGalary.thumbnail ?? "",
+    multimedia: normalizeMultimedia(videoGalary.multimedia),
+  }
 
   const normalized: LocationData = {
     id: safeDraft.id ?? undefined,
     name: safeDraft.name ?? "",
     slug: safeDraft.slug ?? "",
     type: safeDraft.type ?? "PLACE",
-    parentId: safeDraft.parentId ?? null,
-    parent: safeDraft.parent ?? null,
-    children: Array.isArray(safeDraft.children) ? safeDraft.children : [],
+    parentId: safeDraft.parentId || null,
+
+    // Dedicated root section JSON fields for Prisma columns
+    hero: normalizedHero,
+    essence: normalizedEssence,
+    highlights: normalizedHighlights,
+    card: normalizedCard,
+    why: normalizedWhy,
+    sharedInfo: normalizedSharedInfo,
+    glance: normalizedGlance,
+    character: normalizedCharacter,
+    highlightsStatistics: normalizedStatistics,
+    experience: normalizedExperiences,
+    signatureExperiences: normalizedSignatureExperiences,
+    travelInfo: normalizedTravelInfo,
+    travelInsight: normalizedTravelInsights,
+    accommodation: normalizedAccommodationStays,
+    faq: normalizedFaq,
 
     geoData: {
       area: {
@@ -163,408 +718,33 @@ export function normalizeLocationPayload(
       subtitle: safeData.subtitle ?? "",
       description: safeData.description ?? "",
       shortDescription: safeData.shortDescription ?? "",
-
-      hero: {
-        title: hero.title ?? "",
-        description: hero.description ?? "",
-        breadcrumb: hero.breadcrumb ?? "",
-        background_image: hero.background_image ?? "",
-        video: hero.video ?? "",
-        showVideo: Boolean(hero.showVideo),
-        button: hero.button ?? { name: "Explore Journey", url: "" },
-        buttons: Array.isArray(hero.buttons) ? hero.buttons : [],
-        titleStyle: hero.titleStyle ?? null,
-        breadcrumbStyle: hero.breadcrumbStyle ?? null,
-        descriptionStyle: hero.descriptionStyle ?? null,
-        backgroundMultimedia: normalizeMultimedia(hero.backgroundMultimedia),
-      },
-
-      why: {
-        title: why.title ?? "",
-        subtitle: why.subtitle ?? "",
-        description_paragraphs: Array.isArray(why.description_paragraphs)
-          ? why.description_paragraphs
-          : [],
-        image: why.image ?? "",
-        tags: Array.isArray(why.tags) ? why.tags : [],
-        subtitleStyle: why.subtitleStyle ?? null,
-        imageMultimedia: normalizeMultimedia(why.imageMultimedia),
-        backgroundMultimedia: normalizeMultimedia(why.backgroundMultimedia),
-      },
-
-      card: {
-        title: card.title ?? "",
-        subtitle: card.subtitle ?? "",
-        background_image: card.background_image ?? "",
-        button: card.button ?? { label: "EXPLORE", url: "" },
-        titleStyle: card.titleStyle ?? null,
-        subtitleStyle: card.subtitleStyle ?? null,
-        backgroundMultimedia: normalizeMultimedia(card.backgroundMultimedia),
-      },
-
-      info: {
-        headline: info.headline ?? "",
-        description: info.description ?? "",
-        headlineStyle: info.headlineStyle ?? null,
-        descriptionStyle: info.descriptionStyle ?? null,
-        backgroundMultimedia: normalizeMultimedia(info.backgroundMultimedia),
-      },
-
-      sharedInfo: {
-        text: sharedInfo.text ?? "",
-        style: sharedInfo.style ?? null,
-        textStyle: sharedInfo.textStyle ?? null,
-        backgroundMultimedia: normalizeMultimedia(
-          sharedInfo.backgroundMultimedia
-        ),
-      },
-
-      regionGlance: {
-        label: regionGlance.label ?? "",
-        title: regionGlance.title ?? "",
-        description: regionGlance.description ?? "",
-        style: regionGlance.style ?? null,
-        labelStyle: regionGlance.labelStyle ?? null,
-        descriptionStyle: regionGlance.descriptionStyle ?? null,
-        backgroundMultimedia: normalizeMultimedia(
-          regionGlance.backgroundMultimedia
-        ),
-      },
-
-      regionCharacter: {
-        label: regionCharacter.label ?? "",
-        title: regionCharacter.title ?? "",
-        items: Array.isArray(regionCharacter.items)
-          ? regionCharacter.items.map((item: any) => ({
-              id: item.id ?? "",
-              icon: item.icon ?? "",
-              iconImage: item.iconImage ?? null,
-              title: item.title ?? "",
-              description: item.description ?? "",
-              href: item.href ?? "",
-              linkText: item.linkText ?? "",
-              titleStyle: item.titleStyle ?? null,
-              descriptionStyle: item.descriptionStyle ?? null,
-              multimedia: normalizeMultimedia(item.multimedia),
-              iconMultimedia: normalizeMultimedia(item.iconMultimedia),
-            }))
-          : [],
-        style: regionCharacter.style ?? null,
-        backgroundMultimedia: normalizeMultimedia(
-          regionCharacter.backgroundMultimedia
-        ),
-      },
-
-      essence: {
-        label: essence.label ?? "",
-        title: essence.title ?? "",
-        paragraphs: Array.isArray(essence.paragraphs) ? essence.paragraphs : [],
-        paragraphStyles: Array.isArray(essence.paragraphStyles)
-          ? essence.paragraphStyles
-          : [],
-        quote: essence.quote ?? "",
-        imageSrc: essence.imageSrc ?? "",
-        imageAlt: essence.imageAlt ?? "",
-        statValue: essence.statValue ?? "",
-        statLabel: essence.statLabel ?? "",
-        facts: Array.isArray(essence.facts) ? essence.facts : [],
-        style: essence.style ?? null,
-        labelStyle: essence.labelStyle ?? null,
-        quoteStyle: essence.quoteStyle ?? null,
-        titleStyle: essence.titleStyle ?? null,
-        imageMultimedia: normalizeMultimedia(essence.imageMultimedia),
-        backgroundMultimedia: normalizeMultimedia(essence.backgroundMultimedia),
-      },
-
-      statistics: {
-        area: {
-          unit: statistics.area?.unit ?? "km²",
-          value: statistics.area?.value ?? 0,
-        },
-        elevation: {
-          unit: statistics.elevation?.unit ?? "m",
-          value: statistics.elevation?.value ?? 0,
-        },
-        population: {
-          year: statistics.population?.year ?? 2026,
-          value: statistics.population?.value ?? 0,
-        },
-        facts: Array.isArray(statistics.facts)
-          ? statistics.facts.map((f: any) => ({
-              label: f.label ?? "",
-              value: f.value ?? "",
-              description: f.description ?? "",
-              media: normalizeMultimedia(f.media),
-              labelStyle: f.labelStyle ?? null,
-              valueStyle: f.valueStyle ?? null,
-              descriptionStyle: f.descriptionStyle ?? null,
-            }))
-          : [],
-        style: statistics.style ?? null,
-        backgroundMultimedia: normalizeMultimedia(
-          statistics.backgroundMultimedia
-        ),
-      },
-
-      travelInfo: {
-        visa: {
-          description: travelInfo.visa?.description ?? "",
-        },
-        currency: {
-          description: travelInfo.currency?.description ?? "",
-          majorCurrency: travelInfo.currency?.majorCurrency ?? "",
-        },
-        bestTimeToVisit: {
-          summer: travelInfo.bestTimeToVisit?.summer ?? "",
-          winter: travelInfo.bestTimeToVisit?.winter ?? "",
-          general: travelInfo.bestTimeToVisit?.general ?? "",
-        },
-        popularTransportation: Array.isArray(travelInfo.popularTransportation)
-          ? travelInfo.popularTransportation
-          : [],
-        beforeTravel: {
-          label: beforeTravel.label ?? "",
-          title: beforeTravel.title ?? "",
-          image: beforeTravel.image ?? "",
-          imageAlt: beforeTravel.imageAlt ?? "",
-          items: Array.isArray(beforeTravel.items)
-            ? beforeTravel.items.map((it: any) => ({
-                id: it.id ?? "",
-                title: it.title ?? "",
-                content: it.content ?? "",
-                titleStyle: it.titleStyle ?? null,
-              }))
-            : [],
-          style: beforeTravel.style ?? null,
-          imageMultimedia: normalizeMultimedia(beforeTravel.imageMultimedia),
-          backgroundMultimedia: normalizeMultimedia(
-            beforeTravel.backgroundMultimedia
-          ),
-        },
-      },
-
-      experiences: {
-        title: experiences.title ?? "",
-        location: experiences.location ?? "",
-        description: experiences.description ?? "",
-        seasonInfo: experiences.seasonInfo ?? "",
-        seasonLocation: experiences.seasonLocation ?? "",
-        load_more_button: experiences.load_more_button ?? "Load More",
-        loadMoreButtonStyle: experiences.loadMoreButtonStyle ?? null,
-        titleStyle: experiences.titleStyle ?? null,
-        locationStyle: experiences.locationStyle ?? null,
-        descriptionStyle: experiences.descriptionStyle ?? null,
-        featured_experience: {
-          image: featuredExperience.image ?? "",
-          title: featuredExperience.title ?? "",
-          category: featuredExperience.category ?? "",
-          duration: featuredExperience.duration ?? "",
-          subtitle: featuredExperience.subtitle ?? "",
-          action_text: featuredExperience.action_text ?? "More info",
-          button: featuredExperience.button ?? null,
-          buttons: Array.isArray(featuredExperience.buttons)
-            ? featuredExperience.buttons
-            : [],
-          imageMultimedia: normalizeMultimedia(
-            featuredExperience.imageMultimedia
-          ),
-        },
-        cards: Array.isArray(experiences.cards)
-          ? experiences.cards.map((c: any) => ({
-              id: c.id ?? Date.now(),
-              image: c.image ?? "",
-              price: c.price ?? "",
-              title: c.title ?? "",
-              category: c.category ?? "",
-              subtitle: c.subtitle ?? "",
-              action_text: c.action_text ?? "More info",
-              description: c.description ?? "",
-              button: c.button ?? null,
-              buttons: Array.isArray(c.buttons) ? c.buttons : [],
-              imageMultimedia: normalizeMultimedia(c.imageMultimedia),
-            }))
-          : [],
-        footer: {
-          note: experiences.footer?.note ?? "",
-          region: experiences.footer?.region ?? "",
-        },
-      },
-
-      signature_experiences: {
-        label: signatureExperiences.label ?? "Signature Experiences",
-        labelStyle: signatureExperiences.labelStyle ?? null,
-        title: signatureExperiences.title ?? "",
-        titleStyle: signatureExperiences.titleStyle ?? null,
-        description: signatureExperiences.description ?? "",
-        descriptionStyle: signatureExperiences.descriptionStyle ?? null,
-        backgroundMultimedia: normalizeMultimedia(
-          signatureExperiences.backgroundMultimedia
-        ),
-        style: signatureExperiences.style ?? null,
-        experiences: Array.isArray(signatureExperiences.experiences)
-          ? signatureExperiences.experiences.map((exp: any, idx: number) => ({
-              id: exp.id ?? `exp-${String(idx + 1).padStart(2, "0")}`,
-              number: exp.number ?? String(idx + 1).padStart(2, "0"),
-              numberStyle: exp.numberStyle ?? null,
-              title: exp.title ?? "",
-              titleStyle: exp.titleStyle ?? null,
-              description: exp.description ?? "",
-              descriptionStyle: exp.descriptionStyle ?? null,
-              href: exp.href ?? "#",
-              linkText: exp.linkText ?? "Explore this experience",
-              button: exp.button ?? null,
-              buttons: Array.isArray(exp.buttons) ? exp.buttons : [],
-            }))
-          : [],
-      },
-
-      practical_information: {
-        title: practicalInformation.title ?? "",
-        sub_heading: practicalInformation.sub_heading ?? "",
-        side_image: practicalInformation.side_image ?? "",
-        accordion_items: Array.isArray(practicalInformation.accordion_items)
-          ? practicalInformation.accordion_items.map((ai: any) => ({
-              id: ai.id ?? String(Date.now()),
-              title: ai.title ?? "",
-              content: ai.content ?? "",
-              is_expanded: Boolean(ai.is_expanded),
-              titleStyle: ai.titleStyle ?? null,
-            }))
-          : [],
-        sideImageMultimedia: normalizeMultimedia(
-          practicalInformation.sideImageMultimedia
-        ),
-        backgroundMultimedia: normalizeMultimedia(
-          practicalInformation.backgroundMultimedia
-        ),
-      },
-
-      faq_section: {
-        title: faqSection.title ?? "",
-        image: faqSection.image ?? "",
-        questions: Array.isArray(faqSection.questions)
-          ? faqSection.questions.map((q: any) => ({
-              id: q.id ?? Date.now(),
-              question: q.question ?? "",
-              answer: q.answer ?? "",
-              questionStyle: q.questionStyle ?? null,
-              answerStyle: q.answerStyle ?? null,
-            }))
-          : [],
-        imageMultimedia: normalizeMultimedia(faqSection.imageMultimedia),
-        backgroundMultimedia: normalizeMultimedia(
-          faqSection.backgroundMultimedia
-        ),
-      },
-
-      travel_insights: {
-        title: travelInsights.title ?? "",
-        sub_heading: travelInsights.sub_heading ?? "",
-        main_image: travelInsights.main_image ?? "",
-        articles: Array.isArray(travelInsights.articles)
-          ? travelInsights.articles.map((art: any) => ({
-              id: art.id ?? String(Date.now()),
-              number: art.number ?? "",
-              category: art.category ?? "",
-              title: art.title ?? "",
-              description: art.description ?? "",
-              href: art.href ?? "",
-              button: art.button ?? null,
-              buttons: Array.isArray(art.buttons) ? art.buttons : [],
-              thumbnail: art.thumbnail ?? "",
-              thumbnailMultimedia: normalizeMultimedia(art.thumbnailMultimedia),
-              descriptionStyle: art.descriptionStyle ?? null,
-            }))
-          : [],
-        mainImageMultimedia: normalizeMultimedia(
-          travelInsights.mainImageMultimedia
-        ),
-      },
-
-      accommodation_stays: {
-        badge: accommodationStays.badge ?? "",
-        badgeStyle: accommodationStays.badgeStyle ?? null,
-        title: accommodationStays.title ?? "",
-        titleStyle: accommodationStays.titleStyle ?? null,
-        description: accommodationStays.description ?? "",
-        descriptionStyle: accommodationStays.descriptionStyle ?? null,
-        stays: Array.isArray(accommodationStays.stays)
-          ? accommodationStays.stays.map((st: any) => ({
-              id: st.id ?? Date.now(),
-              day: st.day ?? null,
-              city: st.city ?? "",
-              step: st.step ?? "",
-              image: st.image ?? "",
-              nights: st.nights ?? null,
-              buttons: Array.isArray(st.buttons) ? st.buttons : [],
-              duration: st.duration ?? "",
-              location: st.location ?? "",
-              stayType: st.stayType ?? "",
-              subtitle: st.subtitle ?? "",
-              confirmedBy: st.confirmedBy ?? "",
-              description: st.description ?? "",
-              imageMultimedia: normalizeMultimedia(st.imageMultimedia),
-              confirmationBadge: st.confirmationBadge ?? "",
-            }))
-          : [],
-        backgroundMultimedia: normalizeMultimedia(
-          accommodationStays.backgroundMultimedia
-        ),
-      },
-
-      culture: {
-        cuisine: Array.isArray(culture.cuisine) ? culture.cuisine : [],
-        description: culture.description ?? "",
-        majorLanguages: Array.isArray(culture.majorLanguages)
-          ? culture.majorLanguages
-          : [],
-        majorReligions: Array.isArray(culture.majorReligions)
-          ? culture.majorReligions
-          : [],
-        famousFestivals: Array.isArray(culture.famousFestivals)
-          ? culture.famousFestivals
-          : [],
-        style: culture.style ?? null,
-      },
-
-      climate: {
-        types: Array.isArray(climate.types) ? climate.types : [],
-        description: climate.description ?? "",
-      },
-
-      safety: {
-        description: safety.description ?? "",
-        emergencyNumber: safety.emergencyNumber ?? "",
-      },
-
-      geography: {
-        highestPoint: {
-          name: geography.highestPoint?.name ?? "",
-          unit: geography.highestPoint?.unit ?? "m",
-          elevation: geography.highestPoint?.elevation ?? 0,
-        },
-        majorLandscapes: Array.isArray(geography.majorLandscapes)
-          ? geography.majorLandscapes
-          : [],
-      },
-
+      hero: normalizedHero,
+      essence: normalizedEssence,
+      highlights: normalizedHighlights,
+      why: normalizedWhy,
+      card: normalizedCard,
+      info: normalizedInfo,
+      sharedInfo: normalizedSharedInfo,
+      regionGlance: normalizedGlance,
+      regionCharacter: normalizedCharacter,
+      statistics: normalizedStatistics,
+      travelInfo: normalizedTravelInfo,
+      experiences: normalizedExperiences,
+      signature_experiences: normalizedSignatureExperiences,
+      signatureExperiences: normalizedSignatureExperiences,
+      practical_information: normalizedPracticalInformation,
+      faq_section: normalizedFaq,
+      travel_insights: normalizedTravelInsights,
+      accommodation_stays: normalizedAccommodationStays,
+      culture: normalizedCulture,
+      climate: normalizedClimate,
+      safety: normalizedSafety,
+      geography: normalizedGeography,
       imageGalary: Array.isArray(safeData.imageGalary)
         ? safeData.imageGalary
         : [],
-
-      local_guide: {
-        title: localGuide.title ?? "",
-        sub_heading: localGuide.sub_heading ?? "",
-        main_image: localGuide.main_image ?? "",
-        articles: Array.isArray(localGuide.articles) ? localGuide.articles : [],
-      },
-
-      videoGalary: {
-        alt: videoGalary.alt ?? "",
-        url: videoGalary.url ?? "",
-        thumbnail: videoGalary.thumbnail ?? "",
-        multimedia: normalizeMultimedia(videoGalary.multimedia),
-      },
+      local_guide: normalizedLocalGuide,
+      videoGalary: normalizedVideoGalary,
     },
   }
 
