@@ -363,8 +363,6 @@ export function GuideSection({
                         if (onArticlePatch) {
                           onArticlePatch(index, {
                             thumbnailMultimedia: multimedia,
-                            thumbnail:
-                              multimedia?.image?.url || article.thumbnail,
                           })
                         } else {
                           onArticleChange(
@@ -372,13 +370,6 @@ export function GuideSection({
                             "thumbnailMultimedia",
                             multimedia
                           )
-                          if (multimedia?.image?.url) {
-                            onArticleChange(
-                              index,
-                              "thumbnail",
-                              multimedia.image.url
-                            )
-                          }
                         }
                       }}
                       updateSectionContent={(patch) => {
@@ -387,8 +378,6 @@ export function GuideSection({
                         if (onArticlePatch) {
                           onArticlePatch(index, {
                             thumbnailMultimedia: multimedia,
-                            thumbnail:
-                              multimedia?.image?.url || article.thumbnail,
                           })
                         } else {
                           onArticleChange(
@@ -396,13 +385,6 @@ export function GuideSection({
                             "thumbnailMultimedia",
                             multimedia
                           )
-                          if (multimedia?.image?.url) {
-                            onArticleChange(
-                              index,
-                              "thumbnail",
-                              multimedia.image.url
-                            )
-                          }
                         }
                       }}
                       contentMediaKey="thumbnailMultimedia"

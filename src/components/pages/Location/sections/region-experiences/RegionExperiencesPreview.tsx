@@ -202,12 +202,12 @@ export function RegionExperiencesPreview({ draft }: LocationPreviewSectionProps)
 
                     const exploreUrl =
                       region.button?.url ||
-                      region.buttonUrl ||
+                      (region as any).buttonUrl ||
                       `/destinations/${region.id || `region-${idx + 1}`}`
 
                     const exploreLabel =
                       region.button?.label ||
-                      region.buttonText ||
+                      (region as any).buttonText ||
                       `Explore ${itemTitleFallback}`
 
                     return (

@@ -19,44 +19,40 @@ export function FaqPreview({ draft }: LocationPreviewSectionProps) {
         backgroundColor: null,
         backgroundOpacity: 1,
       },
-      image: "/images/faq.jpg",
-      imageAlt: "Frequently Asked Questions about traveling to the destination",
       imageMultimedia: null,
       backgroundMultimedia: null,
-      questions: [],
+      items: [],
     }
 
-  const questions: FAQItemData[] = Array.isArray(faqData.questions)
+  const items: FAQItemData[] = Array.isArray(faqData.items)
+    ? faqData.items
+    : Array.isArray(faqData.questions)
     ? faqData.questions
     : []
 
-  const [openId, setOpenId] = useState<string | number | null>(
-    questions[0]?.id || null
+  const [openIndex, setOpenIndex] = useState<number | null>(
+    items.length > 0 ? 0 : null
   )
 
-  const toggleFaq = (id: string | number) => {
-    setOpenId((prev) => (prev === id ? null : id))
+  const toggleFaq = (idx: number) => {
+    setOpenIndex((prev) => (prev === idx ? null : idx))
   }
 
-  // Resolve image multimedia or direct url
-  const featuredMedia =
-    faqData.imageMultimedia ||
-    (faqData.image
-      ? {
-          show: "image",
-          image: {
-            url: faqData.image,
-            alt: faqData.imageAlt || "FAQ Visual",
-            opacity: 100,
-            overlayColor: "#000000",
-            overlayOpacity: 0,
-            width: "100%",
-            height: "100%",
-            aspectRatio: "1:1",
-            fit: "cover",
-          },
-        }
-      : null)
+  const activeItem = openIndex !== null && items[openIndex] ? items[openIndex] : null
+  const activeItemMedia = activeItem?.multimedia || activeItem?.imageMultimedia
+
+  const hasMediaContent = (media: any) => {
+    if (!media) return false
+    const show = media.show || "image"
+    if (show === "image" && media.image?.url) return true
+    if (show === "video" && media.video?.url) return true
+    if (show === "color" && media.color?.color) return true
+    return false
+  }
+
+  const featuredMedia = hasMediaContent(activeItemMedia)
+    ? activeItemMedia
+    : faqData.imageMultimedia
 
   return (
     <section
@@ -93,7 +89,7 @@ export function FaqPreview({ draft }: LocationPreviewSectionProps) {
                 {featuredMedia ? (
                   <UniversalMultimediaPreview
                     multimedia={featuredMedia}
-                    mode="card"
+                    mode="inline"
                     className="w-full h-full object-cover transition-transform duration-700 hover:scale-105"
                   />
                 ) : (
@@ -107,7 +103,7 @@ export function FaqPreview({ draft }: LocationPreviewSectionProps) {
 
             {/* Right Column: FAQ Accordions */}
             <div className="flex w-full flex-1 flex-col gap-3.5 md:gap-5 lg:gap-6 xlg:gap-7 xl:gap-8">
-              {questions.length === 0 ? (
+              {items.length === 0 ? (
                 <div className="flex w-full flex-col items-center justify-center rounded-xl border border-dashed border-border/80 bg-muted/20 p-8 text-center">
                   <HelpCircle className="h-8 w-8 text-muted-foreground/60 mb-2" />
                   <p className="text-xs font-medium text-foreground">
@@ -118,13 +114,12 @@ export function FaqPreview({ draft }: LocationPreviewSectionProps) {
                   </p>
                 </div>
               ) : (
-                questions.map((q, idx) => {
-                  const itemKey = q.id || `faq-${idx}`
-                  const isOpen = openId === itemKey
+                items.map((q, idx) => {
+                  const isOpen = openIndex === idx
 
                   return (
                     <div
-                      key={itemKey}
+                      key={`faq-item-${idx}`}
                       className={`md:rounded-[14px] rounded-[12px] xl:rounded-[16px] transition-all duration-300 overflow-hidden border border-border/40 ${
                         isOpen
                           ? "bg-accent/10 border-accent/30 shadow-xs"
@@ -133,7 +128,7 @@ export function FaqPreview({ draft }: LocationPreviewSectionProps) {
                     >
                       <button
                         type="button"
-                        onClick={() => toggleFaq(itemKey)}
+                        onClick={() => toggleFaq(idx)}
                         aria-expanded={isOpen}
                         className="group flex w-full cursor-pointer items-center justify-between gap-4 px-4 md:px-5 xl:px-6 py-3.5 md:py-4 xl:py-5 text-left outline-none focus-visible:ring-1 focus-visible:ring-primary"
                       >
@@ -199,3 +194,4 @@ export function FaqPreview({ draft }: LocationPreviewSectionProps) {
     </section>
   )
 }
+

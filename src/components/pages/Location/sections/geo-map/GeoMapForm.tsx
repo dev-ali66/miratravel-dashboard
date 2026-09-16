@@ -1,4 +1,3 @@
-import { Globe2 } from "lucide-react"
 import { DynamicStyledField } from "@/components/pages/CMS/shared/FormControls"
 import { UniversalMultimediaForm } from "@/components/pages/CMS/shared/UniversalMultimediaForm"
 import { FormSection } from "../../shared/fields"
@@ -74,7 +73,8 @@ export function GeoMapForm({
           videoFieldName="locationGeoMapBackgroundVideo"
           value={
             geoData.backgroundMultimedia ||
-            emptyLocation.geoData.backgroundMultimedia
+            emptyLocation.geoData?.backgroundMultimedia ||
+            null
           }
           onChange={(multimedia) =>
             updateGeoField("backgroundMultimedia", multimedia)

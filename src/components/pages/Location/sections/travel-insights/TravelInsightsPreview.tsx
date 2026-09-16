@@ -13,8 +13,6 @@ export function TravelInsightsPreview({ draft }: LocationPreviewSectionProps) {
     (draft as any)?.data?.travel_insights || {
       label: "TRAVEL INSIGHTS",
       title: "Everything you need to know before you go",
-      featuredImage: "",
-      featuredImageAlt: "Featured Local Guide Article",
       featuredMultimedia: null,
       backgroundMultimedia: null,
       articles: [],
@@ -103,18 +101,17 @@ export function TravelInsightsPreview({ draft }: LocationPreviewSectionProps) {
                     </div>
                   ) : (
                     articles.map((article, idx) => {
-                      const itemKey =
-                        article.id || article.number || `article-${idx}`
-                      const itemHref = article.href || "#"
-                      const displayNum =
-                        article.number || String(idx + 1).padStart(2, "0")
+                      const itemKey = `article-${idx}`
+                      const firstBtn = Array.isArray(article.buttons) && article.buttons.length > 0 ? article.buttons[0] : (article.button || null)
+                      const itemHref = firstBtn?.url || article.href || "#"
+                      const displayNum = String(idx + 1).padStart(2, "0")
                       const thumbUrl =
-                        article.thumbnail ||
                         (article.thumbnailMultimedia as any)?.image?.url ||
                         (article.thumbnailMultimedia as any)?.imageData?.url ||
                         (typeof article.thumbnailMultimedia === "string"
                           ? article.thumbnailMultimedia
                           : "") ||
+                        article.thumbnail ||
                         ""
 
                       return (

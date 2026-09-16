@@ -37,11 +37,13 @@ export function SignatureExperiencesPreview({
       experiences: [],
     }
 
-  const experiences: SignatureExperienceItem[] = Array.isArray(
-    signatureExperiences.experiences
+  const items: SignatureExperienceItem[] = Array.isArray(
+    signatureExperiences.items
   )
-    ? signatureExperiences.experiences
-    : []
+    ? signatureExperiences.items
+    : Array.isArray(signatureExperiences.experiences)
+      ? signatureExperiences.experiences
+      : []
 
   return (
     <section
@@ -96,7 +98,7 @@ export function SignatureExperiencesPreview({
 
           {/* Experiences List */}
           <ol className="mt-14 @md:mt-[60.9px] @lg:mt-[71px] @lgx:mt-[74.5px] @xlg:mt-[80.6px] @mid:mt-[86.8px] @xl:mt-24 @md:pl-6 flex w-full flex-col">
-            {experiences.length === 0 ? (
+            {items.length === 0 ? (
               <div className="mt-4 flex w-full flex-col items-center justify-center rounded-xl border border-dashed border-border/80 bg-muted/20 p-8 text-center">
                 <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-primary/10 text-primary mb-2">
                   <Sparkles className="h-5 w-5 opacity-80" />
@@ -109,11 +111,20 @@ export function SignatureExperiencesPreview({
                 </p>
               </div>
             ) : (
-              experiences.map((exp, idx) => {
-                const expNum = exp.number || String(idx + 1).padStart(2, "0")
+              items.map((exp, idx) => {
+                const expNum = String(idx + 1).padStart(2, "0")
                 const itemKey = exp.id || `exp-${idx}`
-                const linkHref = exp.href || "#"
-                const actionText = exp.linkText || "Explore this experience"
+                const firstBtn = Array.isArray(exp.buttons) && exp.buttons.length > 0 ? exp.buttons[0] : (exp.button || null)
+                const linkHref =
+                  firstBtn?.url ||
+                  (typeof exp.linkText === "object" ? exp.linkText?.href : null) ||
+                  exp.href ||
+                  "#"
+                const actionText =
+                  firstBtn?.label ||
+                  (typeof exp.linkText === "object" ? exp.linkText?.value : null) ||
+                  (typeof exp.linkText === "string" ? exp.linkText : null) ||
+                  "Explore this experience"
 
                 return (
                   <li
@@ -148,7 +159,7 @@ export function SignatureExperiencesPreview({
                       <a
                         href={linkHref}
                         className="mt-3.5 @md:mt-4 group/link inline-flex items-center gap-2 text-accent text-xs @md:text-[12.3px] @lg:text-[12.8px] @lgx:text-[13px] @xlg:text-[13.3px] @mid:text-[13.6px] @xl:text-sm font-medium transition-colors duration-200 hover:text-accent-hover group-hover/item:text-accent-hover outline-none focus-visible:underline"
-                        style={{ color: "#af6348" }}
+                        style={{ color: firstBtn?.textColor || "#af6348" }}
                       >
                         <span>{actionText}</span>
                         <svg

@@ -6,8 +6,6 @@ import {
   ChevronUp,
   ChevronDown,
   Sparkles,
-  ExternalLink,
-  Tag,
   Check,
   X,
   Loader2,
@@ -84,15 +82,6 @@ export function RegionExperiencesForm({
   const handleAddLocationFromSearch = (loc: LocationSearchItem) => {
     if (!loc) return
 
-    // Extract best thumbnail image from location
-    const heroMedia = (loc as any).hero?.backgroundMultimedia
-    const heroImg =
-      heroMedia?.image?.url ||
-      (loc as any).hero?.image?.url ||
-      (loc as any).card?.background_image ||
-      (heroMedia?.show === "image" ? heroMedia?.image?.url : "") ||
-      ""
-
     // Extract subtitle or why tags
     const subtitleText =
       (loc as any).hero?.subtitle?.value ||
@@ -107,9 +96,6 @@ export function RegionExperiencesForm({
       (loc as any).hero?.description ||
       (loc as any).essence?.paragraphs?.value ||
       `Explore the unique character, heritage, and landscapes of ${loc.name}.`
-
-    const parentSlug = loc.parent?.slug || draft?.slug || "albania"
-    const nextNum = (items.length + 1).toString().padStart(2, "0")
 
     const newItem: RegionExperienceItemData = {
       id: loc.id || loc.slug,
@@ -288,7 +274,8 @@ export function RegionExperiencesForm({
           videoFieldName="regionExperiencesBgVideo"
           value={
             regionExperiences.backgroundMultimedia ||
-            emptyLocation.regionExperiences.backgroundMultimedia
+            emptyLocation.regionExperiences?.backgroundMultimedia ||
+            null
           }
           onChange={(multimedia) =>
             updateRegionExperiencesField("backgroundMultimedia", multimedia)

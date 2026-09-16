@@ -82,9 +82,9 @@ export function EssenceForm({
           const statValue = stat.statValue ?? stat.value ?? essence.statValue
           const statLabel = stat.statLabel ?? stat.label ?? essence.statLabel
           const statBadgeBg =
-            stat.statBadgeBg ??
+            (stat.statBadgeBg ??
             stat.badgeBg ??
-            (typeof statValue === "object" ? statValue?.backgroundColor : null) ||
+            (typeof statValue === "object" ? statValue?.backgroundColor : null)) ||
             essence.statBadgeBg ||
             "#B86B3A"
 

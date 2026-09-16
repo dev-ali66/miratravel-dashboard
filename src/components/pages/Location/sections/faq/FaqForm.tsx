@@ -11,14 +11,9 @@ import { DynamicStyledField } from "@/components/pages/CMS/shared/FormControls"
 import { UniversalMultimediaForm } from "@/components/pages/CMS/shared/UniversalMultimediaForm"
 import { FormSection } from "../../shared/fields"
 import type { LocationFormSectionProps } from "../../config/locationSections"
+import type { FAQItem } from "../../locationTypes"
 
-export type FAQItemData = {
-  id: string | number
-  question: any
-  questionStyle?: Record<string, any> | null
-  answer: any
-  answerStyle?: Record<string, any> | null
-}
+export type FAQItemData = FAQItem
 
 export function FaqForm({
   draft,
@@ -39,16 +34,16 @@ export function FaqForm({
         backgroundColor: null,
         backgroundOpacity: 1,
       },
-      image: "/images/faq.jpg",
-      imageAlt: "Frequently Asked Questions",
       imageMultimedia: null,
       backgroundMultimedia: null,
-      questions: [],
+      items: [],
     }
 
-  const questions: FAQItemData[] = Array.isArray(faqData.questions)
-    ? faqData.questions
-    : []
+  const items: FAQItemData[] = Array.isArray(faqData.items)
+    ? faqData.items
+    : Array.isArray(faqData.questions)
+      ? faqData.questions
+      : []
 
   const isOpen = Boolean(openSections["faq"])
   const [expandedIndex, setExpandedIndex] = useState<number | null>(0)
@@ -57,16 +52,12 @@ export function FaqForm({
     updateField(`faq.${fieldKey}`, value)
   }
 
-  const updateQuestions = (newQuestions: FAQItemData[]) => {
-    updateFaqField("questions", newQuestions)
+  const updateItems = (newItems: FAQItemData[]) => {
+    updateFaqField("items", newItems)
   }
 
   const handleAddQuestion = () => {
-    const nextIndex = questions.length + 1
-    const nextNum = nextIndex.toString().padStart(2, "0")
-
     const newQ: FAQItemData = {
-      id: `faq-${nextNum}-${Date.now()}`,
       question: {
         value: "",
         textColor: "#182d09",
@@ -81,16 +72,17 @@ export function FaqForm({
         backgroundColor: null,
         backgroundOpacity: 1,
       },
+      multimedia: null,
     }
 
-    const updated = [...questions, newQ]
-    updateQuestions(updated)
+    const updated = [...items, newQ]
+    updateItems(updated)
     setExpandedIndex(updated.length - 1)
   }
 
   const handleRemoveQuestion = (indexToRemove: number) => {
-    const updated = questions.filter((_, idx) => idx !== indexToRemove)
-    updateQuestions(updated)
+    const updated = items.filter((_, idx) => idx !== indexToRemove)
+    updateItems(updated)
     if (expandedIndex === indexToRemove) {
       setExpandedIndex(null)
     } else if (expandedIndex !== null && expandedIndex > indexToRemove) {
@@ -100,51 +92,30 @@ export function FaqForm({
 
   const handleMoveQuestion = (index: number, direction: "up" | "down") => {
     const targetIndex = direction === "up" ? index - 1 : index + 1
-    if (targetIndex < 0 || targetIndex >= questions.length) return
+    if (targetIndex < 0 || targetIndex >= items.length) return
 
-    const updated = [...questions]
+    const updated = [...items]
     const temp = updated[index]
     updated[index] = updated[targetIndex]
     updated[targetIndex] = temp
 
-    updateQuestions(updated)
+    updateItems(updated)
     setExpandedIndex(targetIndex)
   }
 
   const handleUpdateItem = (
     index: number,
-    fieldKey: "question" | "answer",
+    fieldKey: keyof FAQItemData,
     value: any
   ) => {
-    const updated = questions.map((q, idx) => {
+    const updated = items.map((q, idx) => {
       if (idx !== index) return q
       return {
         ...q,
         [fieldKey]: value,
       }
     })
-    updateQuestions(updated)
-  }
-
-  // Handle Featured Media change with direct image url sync
-  const handleFeaturedMediaChange = (multimedia: any) => {
-    const resolvedUrl =
-      multimedia?.image?.url ||
-      multimedia?.url ||
-      multimedia?.imageData?.url ||
-      ""
-    const resolvedAlt =
-      multimedia?.image?.alt ||
-      multimedia?.alt ||
-      multimedia?.imageData?.alt ||
-      "Frequently Asked Questions"
-
-    updateField("faq", {
-      ...faqData,
-      imageMultimedia: multimedia,
-      image: resolvedUrl,
-      imageAlt: resolvedAlt,
-    })
+    updateItems(updated)
   }
 
   return (
@@ -174,31 +145,13 @@ export function FaqForm({
 
         {/* Featured Side Media (Square Image / Video) */}
         <UniversalMultimediaForm
-          title="Featured Side Media (Left Column Visual)"
+          title="Featured Side Media (Default Main Visual)"
           fieldName="faq.imageMultimedia"
           imageFieldName="locationFaqFeaturedImage"
           videoFieldName="locationFaqFeaturedVideo"
           hideFieldNameBadge={true}
-          value={
-            faqData.imageMultimedia ||
-            (faqData.image
-              ? {
-                  show: "image",
-                  image: {
-                    url: faqData.image,
-                    alt: faqData.imageAlt || "FAQ Visual",
-                    opacity: 100,
-                    overlayColor: "#000000",
-                    overlayOpacity: 0,
-                    width: "100%",
-                    height: "100%",
-                    aspectRatio: "1:1",
-                    fit: "cover",
-                  },
-                }
-              : null)
-          }
-          onChange={handleFeaturedMediaChange}
+          value={faqData.imageMultimedia}
+          onChange={(multimedia) => updateFaqField("imageMultimedia", multimedia)}
         />
 
         {/* Section Background Multimedia */}
@@ -220,7 +173,7 @@ export function FaqForm({
             <div>
               <h4 className="text-sm font-semibold text-foreground flex items-center gap-2">
                 <HelpCircle className="h-4 w-4 text-primary" />
-                FAQ Questions & Answers ({questions.length})
+                FAQ Questions & Answers ({items.length})
               </h4>
               <p className="text-xs text-muted-foreground mt-0.5">
                 Add and curate frequently asked questions for this destination.
@@ -237,7 +190,7 @@ export function FaqForm({
             </button>
           </div>
 
-          {questions.length === 0 ? (
+          {items.length === 0 ? (
             <div className="rounded-xl border border-dashed border-border/80 bg-muted/20 p-8 text-center">
               <HelpCircle className="mx-auto h-8 w-8 text-muted-foreground/60 mb-2" />
               <p className="text-sm font-medium text-muted-foreground">
@@ -257,7 +210,7 @@ export function FaqForm({
             </div>
           ) : (
             <div className="space-y-3">
-              {questions.map((q, index) => {
+              {items.map((q, index) => {
                 const isItemOpen = expandedIndex === index
                 const qTitle =
                   typeof q.question === "object"
@@ -266,7 +219,7 @@ export function FaqForm({
 
                 return (
                   <div
-                    key={q.id || `faq-${index}`}
+                    key={`faq-${index}`}
                     className={`rounded-xl border transition-all duration-200 ${
                       isItemOpen
                         ? "border-primary/50 bg-card shadow-sm"
@@ -308,7 +261,7 @@ export function FaqForm({
                         </button>
                         <button
                           type="button"
-                          disabled={index === questions.length - 1}
+                          disabled={index === items.length - 1}
                           onClick={() => handleMoveQuestion(index, "down")}
                           className="rounded p-1 text-muted-foreground hover:bg-accent hover:text-foreground disabled:opacity-30 transition-colors cursor-pointer"
                           title="Move down"
@@ -346,7 +299,7 @@ export function FaqForm({
                         <DynamicStyledField
                           type="text"
                           label="Question"
-                          fieldName={`faq.questions.${index}.question`}
+                          fieldName={`faq.items.${index}.question`}
                           placeholder="e.g. What is the best time of year to visit?"
                           value={q.question}
                           onChange={(val) =>
@@ -359,11 +312,25 @@ export function FaqForm({
                           type="textarea"
                           label="Answer"
                           rows={4}
-                          fieldName={`faq.questions.${index}.answer`}
+                          fieldName={`faq.items.${index}.answer`}
                           placeholder="e.g. Spring and Autumn offer pleasant temperatures and fewer crowds..."
                           value={q.answer}
                           onChange={(val) =>
                             handleUpdateItem(index, "answer", val)
+                          }
+                        />
+
+                        {/* Item Custom Side Media */}
+                        <UniversalMultimediaForm
+                          title="Question Custom Side Media (Shown when opened)"
+                          fieldName={`faq.items.${index}.multimedia`}
+                          imageFieldName={`locationFaqItemImg_${index}`}
+                          videoFieldName={`locationFaqItemVid_${index}`}
+                          hideFieldNameBadge={true}
+                          collapsible={true}
+                          value={q.multimedia || q.imageMultimedia}
+                          onChange={(multimedia) =>
+                            handleUpdateItem(index, "multimedia", multimedia)
                           }
                         />
                       </div>

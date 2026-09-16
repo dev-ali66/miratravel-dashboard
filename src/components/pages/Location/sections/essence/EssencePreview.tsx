@@ -85,7 +85,7 @@ export function EssencePreview({ draft }: LocationPreviewSectionProps) {
                   <UniversalMultimediaPreview
                     multimedia={essence.imageMultimedia || essence.multimedia}
                     fallbackImageSrc={defaultFallbackImage}
-                    fallbackBg="#EDE7D8"
+                    fallbackColor="#EDE7D8"
                     mode="inline"
                     className="size-full object-cover object-center"
                     containerClassName="size-full"
@@ -98,9 +98,9 @@ export function EssencePreview({ draft }: LocationPreviewSectionProps) {
                   const statValue = stat.statValue ?? stat.value ?? essence.statValue
                   const statLabel = stat.statLabel ?? stat.label ?? essence.statLabel
                   const rawBadgeBg =
-                    stat.statBadgeBg ??
+                    (stat.statBadgeBg ??
                     stat.badgeBg ??
-                    (typeof statValue === "object" && statValue?.backgroundColor) ||
+                    (typeof statValue === "object" && statValue?.backgroundColor)) ||
                     essence.statBadgeBg ||
                     "#B86B3A"
                   const rawBadgeOpacity =

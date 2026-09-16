@@ -1,5 +1,6 @@
 import { DynamicStyledPreview } from "@/components/shared/DynamicStyledPreview"
 import { UniversalMultimediaPreview } from "@/components/pages/CMS/Home/shared/preview/UniversalMultimediaPreview"
+import { colorWithOpacity } from "@/components/pages/CMS/shared/ButtonsField"
 import type { LocationPreviewSectionProps } from "../../config/locationSections"
 
 export function DestinationCtaPreview({ draft }: LocationPreviewSectionProps) {
@@ -23,35 +24,30 @@ export function DestinationCtaPreview({ draft }: LocationPreviewSectionProps) {
         backgroundColor: null,
         backgroundOpacity: 1,
       },
-      buttonText: "Plan a tailor-made journey",
-      buttonUrl: "/contact",
-      image: "/images/cta.png",
+      buttons: [
+        {
+          label: "Plan a tailor-made journey",
+          url: "/contact",
+          style: "primary",
+          variant: "PRIMARY",
+          backgroundColor: "#af6348",
+          textColor: "#ffffff",
+        },
+      ],
       imageMultimedia: null,
       backgroundMultimedia: null,
     }
 
-  const btnLabel =
-    ctaData.button?.label || ctaData.buttonText || "Plan a tailor-made journey"
-  const btnUrl = ctaData.button?.url || ctaData.buttonUrl || "/contact"
+  const rawButtons =
+    Array.isArray(ctaData.buttons) && ctaData.buttons.length > 0
+      ? ctaData.buttons
+      : Array.isArray(ctaData.button)
+      ? ctaData.button
+      : ctaData.button
+      ? [ctaData.button]
+      : []
 
-  const motifMedia =
-    ctaData.imageMultimedia ||
-    (ctaData.image
-      ? {
-          show: "image",
-          image: {
-            url: ctaData.image,
-            alt: "Decorative CTA Motif",
-            opacity: 100,
-            overlayColor: "#000000",
-            overlayOpacity: 0,
-            width: "100%",
-            height: "100%",
-            aspectRatio: "auto",
-            fit: "contain",
-          },
-        }
-      : null)
+  const motifMedia = ctaData.imageMultimedia
 
   // Split multi-line descriptions into individual paragraphs
   const rawDescValue =
@@ -98,59 +94,97 @@ export function DestinationCtaPreview({ draft }: LocationPreviewSectionProps) {
                 <div className="flex flex-col items-start justify-start gap-1 @sm:gap-1.5 text-subtitle text-sm @md:text-[15px] @xl:text-base font-normal leading-5 @md:leading-[22px] @xl:leading-6 tracking-[1px]">
                   {descLines.length > 0 ? (
                     descLines.map((line, idx) => (
-                      <p key={idx} style={{ color: "#565e69" }}>
-                        {line}
-                      </p>
+                      <DynamicStyledPreview
+                        key={idx}
+                        as="p"
+                        field={{
+                          ...(typeof ctaData.description === "object"
+                            ? ctaData.description
+                            : {}),
+                          value: line,
+                        }}
+                        fallbackColor="#565e69"
+                      />
                     ))
                   ) : (
-                    <>
-                      <p style={{ color: "#565e69" }}>
-                        Our collection is carefully designed but every travel is
-                        different.
-                      </p>
-                      <p style={{ color: "#565e69" }}>
-                        If you'd like something more personal, we'd love to
-                        create it together.
-                      </p>
-                    </>
+                    <DynamicStyledPreview
+                      as="p"
+                      type="textarea"
+                      field={ctaData.description}
+                      fallback="Our collection is carefully designed but every travel is different.&#10;If you'd like something more personal, we'd love to create it together."
+                      fallbackColor="#565e69"
+                    />
                   )}
                 </div>
               </div>
 
-              {/* Action Button */}
-              <div>
-                <a
-                  href={btnUrl}
-                  className="group relative inline-flex w-auto min-w-[236px] @md:h-[56px] h-[52px] px-3 @md:px-[17px] @md:py-[10px] py-2 justify-center items-center rounded-[2px] bg-[#af6348] text-white text-sm @md:text-base font-semibold leading-5 overflow-hidden transition-all duration-200 cursor-pointer outline-none focus-visible:ring-2 focus-visible:ring-[#6c2813] whitespace-nowrap shadow-sm hover:shadow-md hover:bg-[#974d35]"
-                >
-                  <span className="relative z-10 whitespace-nowrap">
-                    {btnLabel}
-                  </span>
-                </a>
+              {/* Action Buttons */}
+              <div className="flex flex-wrap items-center gap-3">
+                {rawButtons.map((btn: any, idx: number) => {
+                  const variant = (btn.variant || btn.style || "primary").toLowerCase()
+                  const isOutline = variant === "outline"
+
+                  const roundedClass =
+                    btn.rounded === "none"
+                      ? "rounded-none"
+                      : btn.rounded === "sm"
+                      ? "rounded-md"
+                      : btn.rounded === "md"
+                      ? "rounded-lg"
+                      : btn.rounded === "xl"
+                      ? "rounded-2xl"
+                      : "rounded-[2px]"
+
+                  const bg =
+                    btn.backgroundColor !== undefined
+                      ? colorWithOpacity(btn.backgroundColor, btn.backgroundOpacity)
+                      : "#af6348"
+
+                  const textColor =
+                    btn.textColor !== undefined
+                      ? colorWithOpacity(btn.textColor, btn.textOpacity)
+                      : "#ffffff"
+
+                  const borderColor =
+                    btn.borderColor || (isOutline ? "rgba(175, 99, 72, 0.7)" : undefined)
+
+                  const borderWidth =
+                    btn.borderWidth || (isOutline || btn.borderColor ? "1px" : undefined)
+
+                  return (
+                    <a
+                      key={idx}
+                      href={btn.url || "#"}
+                      target={btn.target || "_self"}
+                      rel={btn.target === "_blank" ? "noopener noreferrer" : undefined}
+                      style={{
+                        backgroundColor: bg,
+                        color: textColor,
+                        borderColor: borderColor,
+                        borderWidth: borderWidth,
+                        borderStyle: borderColor ? "solid" : undefined,
+                      }}
+                      className={`group relative inline-flex w-auto min-w-[236px] @md:h-[56px] h-[52px] px-3 @md:px-[17px] @md:py-[10px] py-2 justify-center items-center ${roundedClass} text-sm @md:text-base font-semibold leading-5 overflow-hidden transition-all duration-200 cursor-pointer outline-none focus-visible:ring-2 focus-visible:ring-[#6c2813] whitespace-nowrap shadow-sm hover:shadow-md hover:scale-[1.02]`}
+                    >
+                      <span className="relative z-10 whitespace-nowrap">
+                        {btn.label || "Plan a tailor-made journey"}
+                      </span>
+                    </a>
+                  )
+                })}
               </div>
             </div>
 
             {/* Right Decorative Floating Motif */}
             <div className="pointer-events-none absolute right-[-80px] @md:right-[-130px] @lg:right-[-140px] @xl:right-[-142px] top-[-100px] @sm:top-[-150px] @md:top-[-200px] @xl:top-[-260px] w-[500px] @sm:w-[650px] @md:w-[780px] @lg:w-[880px] @xl:w-[947px] h-[516px] @sm:h-[671px] @md:h-[805px] @lg:h-[908px] @xl:h-[978px] opacity-40 z-0">
-              {motifMedia ? (
+              {motifMedia && (motifMedia?.image?.url || motifMedia?.url) ? (
                 <img
-                  src={
-                    motifMedia?.image?.url ||
-                    motifMedia?.url ||
-                    "/images/cta.png"
-                  }
-                  alt=""
+                  src={motifMedia?.image?.url || motifMedia?.url}
+                  alt={motifMedia?.image?.alt || motifMedia?.alt || ""}
                   aria-hidden="true"
                   className="w-full h-full object-contain object-right"
                 />
-              ) : (
-                <img
-                  src="/images/cta.png"
-                  alt=""
-                  aria-hidden="true"
-                  className="w-full h-full object-contain object-right"
-                />
-              )}
+              ) : null}
             </div>
           </div>
         </div>

@@ -5,11 +5,11 @@ import {
   ChevronUp,
   ChevronDown,
   BookOpen,
-  Link as LinkIcon,
   Image as ImageIcon,
 } from "lucide-react"
 import { DynamicStyledField } from "@/components/pages/CMS/shared/FormControls"
 import { UniversalMultimediaForm } from "@/components/pages/CMS/shared/UniversalMultimediaForm"
+import { ButtonsField } from "@/components/pages/CMS/shared/ButtonsField"
 import { FormSection } from "../../shared/fields"
 import type { LocationFormSectionProps } from "../../config/locationSections"
 import type { TravelInsightArticle } from "../../locationTypes"
@@ -39,8 +39,6 @@ export function TravelInsightsForm({
         backgroundColor: null,
         backgroundOpacity: 1,
       },
-      featuredImage: "",
-      featuredImageAlt: "Featured Local Guide Article",
       featuredMultimedia: null,
       backgroundMultimedia: null,
       articles: [],
@@ -62,12 +60,7 @@ export function TravelInsightsForm({
   }
 
   const handleAddArticle = () => {
-    const nextIndex = articles.length + 1
-    const nextNum = nextIndex.toString().padStart(2, "0")
-
     const newArticle: TravelInsightArticle = {
-      id: `article-${nextNum}-${Date.now()}`,
-      number: nextNum,
       category: {
         value: "Guide",
         textColor: "#af6348",
@@ -82,8 +75,13 @@ export function TravelInsightsForm({
         backgroundColor: null,
         backgroundOpacity: 1,
       },
-      href: "",
-      thumbnail: "",
+      buttons: [
+        {
+          label: "Read Article",
+          url: "#",
+          variant: "primary",
+        },
+      ],
       thumbnailMultimedia: {
         show: "image",
         image: {
@@ -107,12 +105,7 @@ export function TravelInsightsForm({
 
   const handleRemoveArticle = (indexToRemove: number) => {
     const updated = articles.filter((_, idx) => idx !== indexToRemove)
-    // Re-index remaining item numbers if standard format
-    const reindexed = updated.map((art, idx) => ({
-      ...art,
-      number: (idx + 1).toString().padStart(2, "0"),
-    }))
-    updateArticles(reindexed)
+    updateArticles(updated)
     if (expandedArticleIndex === indexToRemove) {
       setExpandedArticleIndex(null)
     } else if (
@@ -132,13 +125,7 @@ export function TravelInsightsForm({
     updated[index] = updated[targetIndex]
     updated[targetIndex] = temp
 
-    // Re-index numbering
-    const reindexed = updated.map((art, idx) => ({
-      ...art,
-      number: (idx + 1).toString().padStart(2, "0"),
-    }))
-
-    updateArticles(reindexed)
+    updateArticles(updated)
     setExpandedArticleIndex(targetIndex)
   }
 
@@ -157,19 +144,7 @@ export function TravelInsightsForm({
     updateArticles(updated)
   }
 
-  const handleUpdateArticleItemFields = (
-    index: number,
-    fields: Partial<TravelInsightArticle>
-  ) => {
-    const updated = articles.map((art, idx) => {
-      if (idx !== index) return art
-      return {
-        ...art,
-        ...fields,
-      }
-    })
-    updateArticles(updated)
-  }
+
 
   return (
     <FormSection
@@ -226,15 +201,7 @@ export function TravelInsightsForm({
               : null)
           }
           onChange={(multimedia) => {
-            const resolvedUrl =
-              multimedia?.image?.url ||
-              multimedia?.imageData?.url ||
-              (typeof multimedia === "string" ? multimedia : "") ||
-              ""
             updateField("travelInsight.featuredMultimedia", multimedia)
-            if (resolvedUrl) {
-              updateField("travelInsight.featuredImage", resolvedUrl)
-            }
           }}
         />
 
@@ -305,17 +272,17 @@ export function TravelInsightsForm({
                     ? (article.category as any)?.value || ""
                     : article.category || ""
                 const thumbUrl =
-                  article.thumbnail ||
                   (article.thumbnailMultimedia as any)?.image?.url ||
                   (article.thumbnailMultimedia as any)?.imageData?.url ||
                   (typeof article.thumbnailMultimedia === "string"
                     ? article.thumbnailMultimedia
                     : "") ||
+                  article.thumbnail ||
                   ""
 
                 return (
                   <div
-                    key={article.id || `art-${index}`}
+                    key={`article-${index}`}
                     className={`rounded-xl border transition-all duration-200 ${
                       isItemOpen
                         ? "border-primary/50 bg-card shadow-sm"
@@ -333,7 +300,7 @@ export function TravelInsightsForm({
                       >
                         {/* Number Badge */}
                         <span className="flex h-6 w-7 shrink-0 items-center justify-center rounded bg-primary/10 text-xs font-mono font-semibold text-primary">
-                          {article.number || String(index + 1).padStart(2, "0")}
+                          {String(index + 1).padStart(2, "0")}
                         </span>
 
                         {/* Thumbnail Preview in Form */}
@@ -407,40 +374,17 @@ export function TravelInsightsForm({
                     {/* Item Form Body */}
                     {isItemOpen && (
                       <div className="border-t border-border/60 p-4 space-y-4 bg-muted/5 rounded-b-xl">
-                        {/* Number & Category Row */}
-                        <div className="grid grid-cols-1 sm:grid-cols-4 gap-4">
-                          <div className="sm:col-span-1">
-                            <label className="block text-xs font-semibold text-foreground mb-1">
-                              Index Number
-                            </label>
-                            <input
-                              type="text"
-                              value={article.number || ""}
-                              onChange={(e) =>
-                                handleUpdateArticleItem(
-                                  index,
-                                  "number",
-                                  e.target.value
-                                )
-                              }
-                              placeholder="01"
-                              className="w-full rounded-md border border-input bg-background px-3 py-1.5 text-xs text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-1 focus:ring-primary"
-                            />
-                          </div>
-
-                          <div className="sm:col-span-3">
-                            <DynamicStyledField
-                              type="text"
-                              label="Category Tag (e.g. Accommodation, Hiking, Food & Drink)"
-                              fieldName={`travelInsight.articles.${index}.category`}
-                              placeholder="e.g. Accommodation"
-                              value={article.category}
-                              onChange={(val) =>
-                                handleUpdateArticleItem(index, "category", val)
-                              }
-                            />
-                          </div>
-                        </div>
+                        {/* Category Tag */}
+                        <DynamicStyledField
+                          type="text"
+                          label="Category Tag (e.g. Accommodation, Hiking, Food & Drink)"
+                          fieldName={`travelInsight.articles.${index}.category`}
+                          placeholder="e.g. Accommodation"
+                          value={article.category}
+                          onChange={(val) =>
+                            handleUpdateArticleItem(index, "category", val)
+                          }
+                        />
 
                         {/* Article Headline / Title */}
                         <DynamicStyledField
@@ -454,26 +398,31 @@ export function TravelInsightsForm({
                           }
                         />
 
-                        {/* Article Target Link */}
-                        <div>
-                          <label className="block text-xs font-semibold text-foreground mb-1 flex items-center gap-1.5">
-                            <LinkIcon className="h-3.5 w-3.5 text-muted-foreground" />
-                            Target Route / URL (e.g. /guides/berat-accommodation)
-                          </label>
-                          <input
-                            type="text"
-                            value={article.href || ""}
-                            onChange={(e) =>
-                              handleUpdateArticleItem(
-                                index,
-                                "href",
-                                e.target.value
-                              )
-                            }
-                            placeholder="/guides/berat-accommodation"
-                            className="w-full rounded-md border border-input bg-background px-3 py-1.5 text-xs text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-1 focus:ring-primary"
-                          />
-                        </div>
+                        {/* Action Buttons Component (Same as Hero buttons) */}
+                        <ButtonsField
+                          label="Action Buttons"
+                          fieldName={`travelInsight.articles.${index}.buttons`}
+                          value={
+                            Array.isArray(article.buttons) && article.buttons.length > 0
+                              ? article.buttons
+                              : article.button
+                                ? [
+                                    {
+                                      label: article.button.label || "Read Article",
+                                      url: article.button.url || article.href || "#",
+                                      style: article.button.style,
+                                      backgroundColor: article.button.backgroundColor,
+                                      textColor: article.button.textColor,
+                                    },
+                                  ]
+                                : article.href
+                                  ? [{ label: "Read Article", url: article.href || "#" }]
+                                  : [{ label: "Read Article", url: "#" }]
+                          }
+                          onChange={(newButtons) =>
+                            handleUpdateArticleItem(index, "buttons", newButtons)
+                          }
+                        />
 
                         {/* Article Thumbnail Media */}
                         <UniversalMultimediaForm
@@ -495,17 +444,11 @@ export function TravelInsightsForm({
                               : null)
                           }
                           onChange={(multimedia) => {
-                            const imageUrl =
-                              multimedia?.image?.url ||
-                              multimedia?.imageData?.url ||
-                              (typeof multimedia === "string"
-                                ? multimedia
-                                : "") ||
-                              ""
-                            handleUpdateArticleItemFields(index, {
-                              thumbnailMultimedia: multimedia,
-                              thumbnail: imageUrl,
-                            })
+                            handleUpdateArticleItem(
+                              index,
+                              "thumbnailMultimedia",
+                              multimedia
+                            )
                           }}
                         />
                       </div>

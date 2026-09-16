@@ -1,21 +1,22 @@
 import { useLocationDraft } from "./shared/LocationDraftContext"
 import {
-  locationSectionOrder,
+  getSectionsForLocationType,
   locationSectionRegistry,
 } from "./config/locationSections"
 
 /* =====================================================
    COMPONENT
    Dynamic Live Preview: Renders active registered sections
-   strictly driven by config/locationSections.ts.
+   strictly driven by getSectionsForLocationType(draft?.type).
 ===================================================== */
 
 export const LocationPreview = () => {
   const { draft } = useLocationDraft()
+  const activeSections = getSectionsForLocationType(draft?.type)
 
   return (
     <div className="@container w-full min-h-full bg-[#F9F9F9] text-foreground text-sm md:text-base">
-      {locationSectionOrder.map((key) => {
+      {activeSections.map((key) => {
         const SectionPreview = locationSectionRegistry[key]?.preview
 
         if (!SectionPreview) {

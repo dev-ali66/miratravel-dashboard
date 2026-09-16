@@ -6,7 +6,6 @@ import {
   ChevronUp,
   ChevronDown,
   Sparkles,
-  Link as LinkIcon,
   MapPin,
   Check,
   X,
@@ -15,9 +14,10 @@ import {
 import { DynamicStyledField } from "@/components/pages/CMS/shared/FormControls"
 import { UniversalMultimediaForm } from "@/components/pages/CMS/shared/UniversalMultimediaForm"
 import { FormSection } from "../../shared/fields"
-import type { LocationFormSectionProps } from "../../config/locationSections"
 import type { SignatureExperienceItem } from "../../locationTypes"
+import type { LocationFormSectionProps } from "../../config/locationSections"
 import { useSearchLocations, type LocationSearchItem } from "@/hooks/location/useGetLocation"
+import { ButtonsField } from "@/components/pages/CMS/shared/ButtonsField"
 
 export function SignatureExperiencesForm({
   draft,
@@ -52,14 +52,14 @@ export function SignatureExperiencesForm({
         backgroundOpacity: 1,
       },
       backgroundMultimedia: null,
-      experiences: [],
+      items: [],
     }
 
-  const experiences: SignatureExperienceItem[] = Array.isArray(
-    signatureExperiences.experiences
-  )
-    ? signatureExperiences.experiences
-    : []
+  const items: SignatureExperienceItem[] = Array.isArray(signatureExperiences.items)
+    ? signatureExperiences.items
+    : Array.isArray(signatureExperiences.experiences)
+      ? signatureExperiences.experiences
+      : []
 
   const isOpen = Boolean(openSections["signature-experiences"])
   const [expandedIndex, setExpandedIndex] = useState<number | null>(0)
@@ -95,8 +95,8 @@ export function SignatureExperiencesForm({
     updateField(`signatureExperiences.${fieldKey}`, value)
   }
 
-  const updateExperiences = (newExperiences: SignatureExperienceItem[]) => {
-    updateSectionField("experiences", newExperiences)
+  const updateItems = (newItems: SignatureExperienceItem[]) => {
+    updateSectionField("items", newItems)
   }
 
   // Add location directly from live DB Search
@@ -110,12 +110,13 @@ export function SignatureExperiencesForm({
       (loc as any).essence?.paragraphs?.value ||
       `Experience the unique character, heritage, and wilderness of ${loc.name}.`
 
-    const parentSlug = loc.parent?.slug || draft?.slug || "explore"
-    const nextNum = (experiences.length + 1).toString().padStart(2, "0")
+    const targetSlug = loc.slug || loc.name.toLowerCase().replace(/\s+/g, "-")
+    const targetUrl = targetSlug.startsWith("/") ? targetSlug : `/${targetSlug}`
+
+    const locationId = loc.id || targetSlug
 
     const newExp: SignatureExperienceItem = {
-      id: loc.slug || loc.id,
-      number: nextNum,
+      id: locationId,
       title: {
         value: loc.name,
         textColor: "#182d09",
@@ -130,12 +131,17 @@ export function SignatureExperiencesForm({
         backgroundColor: null,
         backgroundOpacity: 1,
       },
-      href: `/destinations/${parentSlug}/${loc.slug}`,
-      linkText: `Explore ${loc.name}`,
+      buttons: [
+        {
+          label: `Explore ${loc.name}`,
+          url: targetUrl,
+          variant: "primary",
+        },
+      ],
     }
 
-    const updated = [...experiences, newExp]
-    updateExperiences(updated)
+    const updated = [...items, newExp]
+    updateItems(updated)
     setExpandedIndex(updated.length - 1)
     setSearchQuery("")
     setIsSearchOpen(false)
@@ -145,72 +151,48 @@ export function SignatureExperiencesForm({
   const handleImportChildren = () => {
     if (!draft?.children || draft.children.length === 0) return
 
-    const childItems: SignatureExperienceItem[] = draft.children.map((child, idx) => {
-      const num = (idx + 1).toString().padStart(2, "0")
-      return {
-        id: child.id || child.name.toLowerCase().replace(/\s+/g, "-"),
-        number: num,
-        title: {
-          value: child.name,
-          textColor: "#182d09",
-          textOpacity: 1,
-          backgroundColor: null,
-          backgroundOpacity: 1,
-        },
-        description: {
-          value: `Experience the unique character, heritage, and landscapes of ${child.name}.`,
-          textColor: "#565e69",
-          textOpacity: 1,
-          backgroundColor: null,
-          backgroundOpacity: 1,
-        },
-        href: `/destinations/${draft.slug || "explore"}/${child.slug || child.name.toLowerCase().replace(/\s+/g, "-")}`,
-        linkText: `Explore ${child.name}`,
-      }
-    })
+    const childItems: SignatureExperienceItem[] = draft.children.map(
+      (child: { id?: string; slug?: string; name: string }) => {
+        const childId = child.id || child.slug || child.name.toLowerCase().replace(/\s+/g, "-")
+        const childSlug = child.slug || child.name.toLowerCase().replace(/\s+/g, "-")
+        const targetUrl = childSlug.startsWith("/") ? childSlug : `/${childSlug}`
 
-    updateExperiences(childItems)
+        return {
+          id: childId,
+          title: {
+            value: child.name,
+            textColor: "#182d09",
+            textOpacity: 1,
+            backgroundColor: null,
+            backgroundOpacity: 1,
+          },
+          description: {
+            value: `Experience the unique character, heritage, and landscapes of ${child.name}.`,
+            textColor: "#565e69",
+            textOpacity: 1,
+            backgroundColor: null,
+            backgroundOpacity: 1,
+          },
+          buttons: [
+            {
+              label: `Explore ${child.name}`,
+              url: targetUrl,
+              variant: "primary",
+            },
+          ],
+        }
+      }
+    )
+
+    updateItems(childItems)
     setExpandedIndex(0)
   }
 
-  const handleAddExperience = () => {
-    const nextIndex = experiences.length + 1
-    const nextNum = nextIndex.toString().padStart(2, "0")
 
-    const newExp: SignatureExperienceItem = {
-      id: `exp-${nextNum}-${Date.now()}`,
-      number: nextNum,
-      title: {
-        value: "",
-        textColor: "#182d09",
-        textOpacity: 1,
-        backgroundColor: null,
-        backgroundOpacity: 1,
-      },
-      description: {
-        value: "",
-        textColor: "#565e69",
-        textOpacity: 1,
-        backgroundColor: null,
-        backgroundOpacity: 1,
-      },
-      href: "#",
-      linkText: "Explore this experience",
-    }
-
-    const updated = [...experiences, newExp]
-    updateExperiences(updated)
-    setExpandedIndex(updated.length - 1)
-  }
 
   const handleRemoveExperience = (indexToRemove: number) => {
-    const updated = experiences.filter((_, idx) => idx !== indexToRemove)
-    // Re-index remaining item numbers
-    const reindexed = updated.map((exp, idx) => ({
-      ...exp,
-      number: (idx + 1).toString().padStart(2, "0"),
-    }))
-    updateExperiences(reindexed)
+    const updated = items.filter((_, idx) => idx !== indexToRemove)
+    updateItems(updated)
     if (expandedIndex === indexToRemove) {
       setExpandedIndex(null)
     } else if (expandedIndex !== null && expandedIndex > indexToRemove) {
@@ -220,20 +202,14 @@ export function SignatureExperiencesForm({
 
   const handleMoveExperience = (index: number, direction: "up" | "down") => {
     const targetIndex = direction === "up" ? index - 1 : index + 1
-    if (targetIndex < 0 || targetIndex >= experiences.length) return
+    if (targetIndex < 0 || targetIndex >= items.length) return
 
-    const updated = [...experiences]
+    const updated = [...items]
     const temp = updated[index]
     updated[index] = updated[targetIndex]
     updated[targetIndex] = temp
 
-    // Re-index numbering
-    const reindexed = updated.map((exp, idx) => ({
-      ...exp,
-      number: (idx + 1).toString().padStart(2, "0"),
-    }))
-
-    updateExperiences(reindexed)
+    updateItems(updated)
     setExpandedIndex(targetIndex)
   }
 
@@ -242,14 +218,14 @@ export function SignatureExperiencesForm({
     fieldKey: keyof SignatureExperienceItem,
     value: any
   ) => {
-    const updated = experiences.map((exp, idx) => {
+    const updated = items.map((exp, idx) => {
       if (idx !== index) return exp
       return {
         ...exp,
         [fieldKey]: value,
       }
     })
-    updateExperiences(updated)
+    updateItems(updated)
   }
 
   return (
@@ -316,10 +292,10 @@ export function SignatureExperiencesForm({
             <div>
               <h4 className="text-sm font-semibold text-foreground flex items-center gap-2">
                 <Sparkles className="h-4 w-4 text-primary" />
-                Signature Experiences List ({experiences.length})
+                Signature Experiences List ({items.length})
               </h4>
               <p className="text-xs text-muted-foreground mt-0.5">
-                Search & import locations or add custom signature experiences.
+                Search & import locations from database to populate signature experiences.
               </p>
             </div>
 
@@ -336,16 +312,6 @@ export function SignatureExperiencesForm({
                   Import Children ({draft.children.length})
                 </button>
               )}
-
-              {/* Add Custom Button */}
-              <button
-                type="button"
-                onClick={handleAddExperience}
-                className="inline-flex items-center justify-center gap-1.5 rounded-lg bg-primary px-3 py-1.5 text-xs font-medium text-primary-foreground shadow-xs hover:bg-primary/90 transition-colors cursor-pointer"
-              >
-                <Plus className="h-3.5 w-3.5" />
-                Add Custom
-              </button>
             </div>
           </div>
 
@@ -390,8 +356,10 @@ export function SignatureExperiencesForm({
                 ) : (
                   <div className="space-y-0.5">
                     {searchResults.map((loc) => {
-                      const isAlreadyAdded = experiences.some(
-                        (e) => (e.id || "").toLowerCase() === (loc.slug || loc.id || "").toLowerCase()
+                      const isAlreadyAdded = items.some(
+                        (e: SignatureExperienceItem) =>
+                          (e.id || "").toLowerCase() === (loc.id || "").toLowerCase() ||
+                          (e.id || "").toLowerCase() === (loc.slug || "").toLowerCase()
                       )
 
                       return (
@@ -437,17 +405,17 @@ export function SignatureExperiencesForm({
             )}
           </div>
 
-          {experiences.length === 0 ? (
+          {items.length === 0 ? (
             <div className="rounded-xl border border-dashed border-border/80 bg-muted/20 p-8 text-center">
               <Sparkles className="mx-auto h-8 w-8 text-muted-foreground/60 mb-2" />
               <p className="text-sm font-medium text-muted-foreground">
                 No signature experiences added yet
               </p>
               <p className="text-xs text-muted-foreground/80 mt-1 mb-4">
-                Use the search box above to import locations, or click Add Custom.
+                Use the search box above to search and import destinations from the database.
               </p>
-              <div className="flex items-center justify-center gap-2">
-                {draft?.children && draft.children.length > 0 && (
+              {draft?.children && draft.children.length > 0 && (
+                <div className="flex items-center justify-center gap-2">
                   <button
                     type="button"
                     onClick={handleImportChildren}
@@ -456,20 +424,12 @@ export function SignatureExperiencesForm({
                     <MapPin className="h-3.5 w-3.5 text-primary" />
                     Import Child Destinations ({draft.children.length})
                   </button>
-                )}
-                <button
-                  type="button"
-                  onClick={handleAddExperience}
-                  className="inline-flex items-center gap-1.5 rounded-lg bg-primary px-3 py-1.5 text-xs font-medium text-primary-foreground hover:bg-primary/90 transition-colors cursor-pointer"
-                >
-                  <Plus className="h-3.5 w-3.5" />
-                  Add Custom Experience
-                </button>
-              </div>
+                </div>
+              )}
             </div>
           ) : (
             <div className="space-y-3">
-              {experiences.map((exp, index) => {
+              {items.map((exp: SignatureExperienceItem, index: number) => {
                 const isItemOpen = expandedIndex === index
                 const expTitle =
                   typeof exp.title === "object"
@@ -496,7 +456,7 @@ export function SignatureExperiencesForm({
                       >
                         {/* Number Badge */}
                         <span className="flex h-6 w-7 shrink-0 items-center justify-center rounded bg-primary/10 text-xs font-mono font-semibold text-primary">
-                          {exp.number || String(index + 1).padStart(2, "0")}
+                          {String(index + 1).padStart(2, "0")}
                         </span>
 
                         {/* Title Snippet */}
@@ -520,7 +480,7 @@ export function SignatureExperiencesForm({
                         </button>
                         <button
                           type="button"
-                          disabled={index === experiences.length - 1}
+                          disabled={index === items.length - 1}
                           onClick={() => handleMoveExperience(index, "down")}
                           className="rounded p-1 text-muted-foreground hover:bg-accent hover:text-foreground disabled:opacity-30 transition-colors cursor-pointer"
                           title="Move down"
@@ -554,19 +514,20 @@ export function SignatureExperiencesForm({
                     {/* Item Form Body */}
                     {isItemOpen && (
                       <div className="border-t border-border/60 p-4 space-y-4 bg-muted/5 rounded-b-xl">
-                        {/* Number Input */}
+                        {/* Linked Location ID / Slug */}
                         <div>
-                          <label className="block text-xs font-semibold text-foreground mb-1">
-                            Sequence Number
+                          <label className="block text-xs font-semibold text-foreground mb-1 flex items-center gap-1.5">
+                            <MapPin className="h-3.5 w-3.5 text-primary" />
+                            Location ID / Slug (e.g. albania, sreemangal)
                           </label>
                           <input
                             type="text"
-                            value={exp.number || ""}
+                            value={exp.id || ""}
                             onChange={(e) =>
-                              handleUpdateItem(index, "number", e.target.value)
+                              handleUpdateItem(index, "id", e.target.value)
                             }
-                            placeholder="01"
-                            className="w-full max-w-[120px] rounded-md border border-input bg-background px-3 py-1.5 text-xs text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-1 focus:ring-primary font-mono"
+                            placeholder="e.g. albania"
+                            className="w-full rounded-md border border-input bg-background px-3 py-1.5 text-xs text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-1 focus:ring-primary font-mono"
                           />
                         </div>
 
@@ -574,7 +535,7 @@ export function SignatureExperiencesForm({
                         <DynamicStyledField
                           type="text"
                           label="Experience Title / Heading"
-                          fieldName={`signatureExperiences.experiences.${index}.title`}
+                          fieldName={`signatureExperiences.items.${index}.title`}
                           placeholder="e.g. Hike the Albanian Alps"
                           value={exp.title}
                           onChange={(val) =>
@@ -586,7 +547,7 @@ export function SignatureExperiencesForm({
                         <DynamicStyledField
                           type="textarea"
                           label="Experience Description"
-                          fieldName={`signatureExperiences.experiences.${index}.description`}
+                          fieldName={`signatureExperiences.items.${index}.description`}
                           placeholder="e.g. Trek through dramatic limestone peaks, pristine mountain passes..."
                           value={exp.description}
                           onChange={(val) =>
@@ -594,43 +555,33 @@ export function SignatureExperiencesForm({
                           }
                         />
 
-                        {/* Link & Action Text Row */}
-                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                          <div>
-                            <label className="block text-xs font-semibold text-foreground mb-1 flex items-center gap-1.5">
-                              <LinkIcon className="h-3.5 w-3.5 text-muted-foreground" />
-                              Action Link URL
-                            </label>
-                            <input
-                              type="text"
-                              value={exp.href || ""}
-                              onChange={(e) =>
-                                handleUpdateItem(index, "href", e.target.value)
-                              }
-                              placeholder="/destinations/albania/albanian-alps"
-                              className="w-full rounded-md border border-input bg-background px-3 py-1.5 text-xs text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-1 focus:ring-primary"
-                            />
-                          </div>
-
-                          <div>
-                            <label className="block text-xs font-semibold text-foreground mb-1">
-                              Action Button / Link Text
-                            </label>
-                            <input
-                              type="text"
-                              value={exp.linkText || ""}
-                              onChange={(e) =>
-                                handleUpdateItem(
-                                  index,
-                                  "linkText",
-                                  e.target.value
-                                )
-                              }
-                              placeholder="Explore this experience"
-                              className="w-full rounded-md border border-input bg-background px-3 py-1.5 text-xs text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-1 focus:ring-primary"
-                            />
-                          </div>
-                        </div>
+                        {/* Action Buttons Component (Same as Hero buttons) */}
+                        <ButtonsField
+                          label="Action Buttons"
+                          fieldName={`signatureExperiences.items.${index}.buttons`}
+                          value={
+                            Array.isArray(exp.buttons) && exp.buttons.length > 0
+                              ? exp.buttons
+                              : exp.button
+                                ? [
+                                    {
+                                      label: exp.button.label || "Explore this experience",
+                                      url: exp.button.url || "#",
+                                      style: exp.button.style,
+                                      backgroundColor: exp.button.backgroundColor,
+                                      textColor: exp.button.textColor,
+                                    },
+                                  ]
+                                : typeof exp.linkText === "object" && (exp.linkText as any)?.value
+                                  ? [{ label: (exp.linkText as any).value || "Explore", url: (exp.linkText as any).href || exp.href || "#" }]
+                                  : typeof exp.linkText === "string"
+                                    ? [{ label: exp.linkText || "Explore", url: exp.href || "#" }]
+                                    : [{ label: "Explore this experience", url: "#" }]
+                          }
+                          onChange={(newButtons) =>
+                            handleUpdateItem(index, "buttons", newButtons)
+                          }
+                        />
                       </div>
                     )}
                   </div>

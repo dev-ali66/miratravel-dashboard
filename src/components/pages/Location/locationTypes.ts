@@ -1,3 +1,5 @@
+import type { CmsButton } from "@/components/pages/CMS/shared/ButtonsField"
+
 export type ExperienceCard = {
   id: number
   image: string
@@ -14,26 +16,16 @@ export type ExperienceCard = {
     backgroundColor?: string
     textColor?: string
   }
-  buttons?: Array<{
-    label: string
-    url: string
-    style?: string
-    backgroundColor?: string
-    textColor?: string
-  }>
+  buttons?: CmsButton[]
   description: string
 }
 
 export type SignatureExperienceItem = {
   id: string
-  number?: string | Record<string, any>
-  numberStyle?: Record<string, any> | null
   title?: string | Record<string, any>
   titleStyle?: Record<string, any> | null
   description?: string | Record<string, any>
   descriptionStyle?: Record<string, any> | null
-  href?: string
-  linkText?: string
   button?: {
     label?: string
     url?: string
@@ -41,13 +33,9 @@ export type SignatureExperienceItem = {
     backgroundColor?: string
     textColor?: string
   }
-  buttons?: Array<{
-    label: string
-    url: string
-    style?: string
-    backgroundColor?: string
-    textColor?: string
-  }>
+  buttons?: CmsButton[]
+  href?: string
+  linkText?: string | Record<string, any>
 }
 
 export type SignatureExperiencesSection = {
@@ -59,7 +47,8 @@ export type SignatureExperiencesSection = {
   descriptionStyle?: Record<string, any> | null
   backgroundMultimedia?: Record<string, any> | null
   style?: Record<string, any> | null
-  experiences: SignatureExperienceItem[]
+  items: SignatureExperienceItem[]
+  experiences?: SignatureExperienceItem[]
 }
 
 export type AccommodationStayItem = {
@@ -111,9 +100,13 @@ export type PracticalItem = {
 }
 
 export type FAQItem = {
-  id: number
-  question: string
-  answer: string
+  id?: string | number
+  question: string | Record<string, any>
+  questionStyle?: Record<string, any> | null
+  answer: string | Record<string, any>
+  answerStyle?: Record<string, any> | null
+  multimedia?: Record<string, any> | null
+  imageMultimedia?: Record<string, any> | null
 }
 
 export type GalleryItem = {
@@ -153,16 +146,11 @@ export type GuideArticle = {
 
 export const LOCATION_TYPES = [
   "CONTINENT",
-  "SUBCONTINENT",
-  "REGION",
   "COUNTRY",
-  "ADMINISTRATIVE_AREA",
-  "CITY",
-  "TOWN",
-  "VILLAGE",
-  "DESTINATION",
+  "REGION",
   "PLACE",
   "LANDMARK",
+  "ACCOMMODATION",
 ] as const
 
 export type LocationType = (typeof LOCATION_TYPES)[number]
@@ -206,23 +194,7 @@ export type RegionExperienceItemData = {
   imageMultimedia?: Record<string, any> | null
   tag?: string | Record<string, any>
   tagStyle?: Record<string, any> | null
-  buttons?: Array<{
-    label?: string
-    url?: string
-    variant?: string
-    style?: string
-    rounded?: string
-    backgroundColor?: string
-    backgroundOpacity?: number
-    textColor?: string
-    textOpacity?: number
-    hoverBackgroundColor?: string
-    hoverTextColor?: string
-    borderColor?: string
-    borderWidth?: number | string
-    target?: string
-    showIcon?: boolean
-  }>
+  buttons?: CmsButton[] | any[]
   button?: Record<string, any> | null
 }
 
@@ -284,14 +256,20 @@ export type GeoData = {
 }
 
 export type TravelInsightArticle = {
-  id?: string
-  number?: string
   category?: string | Record<string, any>
   categoryStyle?: Record<string, any> | null
   title?: string | Record<string, any>
   titleStyle?: Record<string, any> | null
   description?: string | Record<string, any>
   descriptionStyle?: Record<string, any> | null
+  button?: {
+    label?: string
+    url?: string
+    style?: string
+    backgroundColor?: string
+    textColor?: string
+  }
+  buttons?: CmsButton[]
   href?: string
   thumbnail?: string
   thumbnailMultimedia?: Record<string, any> | null
@@ -305,8 +283,6 @@ export type TravelInsightsSectionData = {
   labelStyle?: Record<string, any> | null
   title?: string | Record<string, any>
   titleStyle?: Record<string, any> | null
-  featuredImage?: string
-  featuredImageAlt?: string
   featuredMultimedia?: Record<string, any> | null
   backgroundMultimedia?: Record<string, any> | null
   articles: TravelInsightArticle[]
@@ -689,12 +665,12 @@ export type LocationData = {
       accordion_items: PracticalItem[]
     }
 
-    faq_section: {
-      image: string
+    faq_section?: {
       imageMultimedia?: Record<string, any> | null
       backgroundMultimedia?: Record<string, any> | null
-      title: string
-      questions: FAQItem[]
+      title: string | Record<string, any>
+      items: FAQItem[]
+      questions?: FAQItem[]
     }
 
     imageGalary: GalleryItem[]
@@ -727,7 +703,7 @@ export type LocationData = {
     }
 
     regionExperiences?: RegionExperiencesSectionData
-    highlights?: HighlightsSection | any
+    highlights?: HighlightsSectionData | any
 
     videoGalary: {
       alt: string

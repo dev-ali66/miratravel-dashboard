@@ -403,8 +403,6 @@ export const emptyLocation: LocationData = {
       backgroundColor: null,
       backgroundOpacity: 1,
     },
-    featuredImage: "",
-    featuredImageAlt: "Featured Local Guide Article",
     featuredMultimedia: {
       show: "image",
       image: {
@@ -536,7 +534,7 @@ export const emptyLocation: LocationData = {
         fit: "cover",
       },
     },
-    experiences: [],
+    items: [],
   },
 
   faq: {
@@ -547,8 +545,6 @@ export const emptyLocation: LocationData = {
       backgroundColor: null,
       backgroundOpacity: 1,
     },
-    image: "/images/faq.jpg",
-    imageAlt: "Frequently Asked Questions about traveling to the destination",
     imageMultimedia: {
       show: "image",
       image: {
@@ -619,9 +615,8 @@ export const emptyLocation: LocationData = {
         fit: "cover",
       },
     },
-    questions: [
+    items: [
       {
-        id: "faq-1",
         question: {
           value: "What is the best time of year to visit Albania and the Balkans?",
           textColor: "#182d09",
@@ -638,7 +633,6 @@ export const emptyLocation: LocationData = {
         },
       },
       {
-        id: "faq-2",
         question: {
           value: "Do I need a visa to travel to Albania?",
           textColor: "#182d09",
@@ -655,7 +649,6 @@ export const emptyLocation: LocationData = {
         },
       },
       {
-        id: "faq-3",
         question: {
           value: "How do we travel between mountains, UNESCO towns, and the coast?",
           textColor: "#182d09",
@@ -672,7 +665,6 @@ export const emptyLocation: LocationData = {
         },
       },
       {
-        id: "faq-4",
         question: {
           value: "Is Albania safe for solo travelers, couples, and families?",
           textColor: "#182d09",
@@ -689,7 +681,6 @@ export const emptyLocation: LocationData = {
         },
       },
       {
-        id: "faq-5",
         question: {
           value: "Can dietary preferences and boutique accommodations be tailored?",
           textColor: "#182d09",
@@ -706,7 +697,6 @@ export const emptyLocation: LocationData = {
         },
       },
       {
-        id: "faq-6",
         question: {
           value: "How does Mira design and support our personalized journey?",
           textColor: "#182d09",
@@ -741,18 +731,16 @@ export const emptyLocation: LocationData = {
       backgroundColor: null,
       backgroundOpacity: 1,
     },
-    line1: "Our collection is carefully designed but every travel is different.",
-    line2: "If you'd like something more personal, we'd love to create it together.",
-    buttonText: "Plan a tailor-made journey",
-    buttonUrl: "/contact",
-    button: {
-      label: "Plan a tailor-made journey",
-      url: "/contact",
-      style: "primary",
-      backgroundColor: "#af6348",
-      textColor: "#ffffff",
-    },
-    image: "/images/cta.png",
+    buttons: [
+      {
+        label: "Plan a tailor-made journey",
+        url: "/contact",
+        style: "primary",
+        variant: "PRIMARY",
+        backgroundColor: "#af6348",
+        textColor: "#ffffff",
+      },
+    ],
     imageMultimedia: {
       show: "image",
       image: {

@@ -1,13 +1,14 @@
 import { useEffect, useState, useRef } from "react"
-import { Loader2, Save, RotateCcw, Terminal } from "lucide-react"
+import { Loader2, Save, Terminal } from "lucide-react"
 import { useParams, useSearchParams } from "react-router-dom"
 
 import { useLocationPage } from "@/hooks/location/useLocationPage"
 import { useLocationDraft } from "./shared/LocationDraftContext"
 import { emptyLocation } from "./shared/emptyLocation"
 import { mergeWithDefaults } from "./shared/mergeWithDefaults"
+import { normalizeLocationPayload } from "./shared/normalizeLocationPayload"
 import {
-  locationSectionOrder,
+  getSectionsForLocationType,
   locationSectionRegistry,
 } from "./config/locationSections"
 
@@ -22,8 +23,8 @@ type LocationFormProps = {}
 
    Thin shell only: all section-specific fields live in
    sections/<key>/<Name>Form.tsx, ordered and looked up via
-   config/locationSections.ts. This same component is used
-   for both Add (no :id param) and Edit (:id present).
+   config/locationSections.ts. Dynamic section order and
+   visibility is driven by getSectionsForLocationType(draft?.type).
 ===================================================== */
 
 export function LocationForm({ }: LocationFormProps) {
@@ -38,6 +39,17 @@ export function LocationForm({ }: LocationFormProps) {
   const [openSections, setOpenSections] = useState<Record<string, boolean>>({})
 
   const autoAddTriggered = useRef(false)
+  const prevTypeRef = useRef(draft?.type)
+
+  // Auto-clean draft in memory whenever location type changes (removes inactive sections)
+  useEffect(() => {
+    if (draft?.type && prevTypeRef.current && prevTypeRef.current !== draft.type) {
+      prevTypeRef.current = draft.type
+      setDraft((current) => (current ? (normalizeLocationPayload(current) as any) : current))
+    } else {
+      prevTypeRef.current = draft?.type
+    }
+  }, [draft?.type, setDraft])
 
   /* ================================================
        ADD MODE: start from completely empty skeleton.
@@ -120,6 +132,8 @@ export function LocationForm({ }: LocationFormProps) {
     })
   }
 
+  const activeSections = getSectionsForLocationType(draft?.type)
+
   return (
     <div className="flex min-h-full flex-col">
       {/* =================================================
@@ -139,23 +153,29 @@ export function LocationForm({ }: LocationFormProps) {
           </div>
 
           <div className="flex items-center gap-2">
-            {!isEditMode && (
-              <button
-                type="button"
-                onClick={() => resetDraft(structuredClone(emptyLocation))}
-                className="flex shrink-0 items-center gap-1.5 rounded-lg border border-border/80 bg-background px-3 py-2 text-xs font-medium text-foreground transition hover:bg-muted cursor-pointer"
-                title="Clear all fields to empty draft"
-              >
-                <RotateCcw className="h-3.5 w-3.5" />
-                Clear Form
-              </button>
-            )}
+            <button
+              type="button"
+              onClick={() => {
+                const cleanPayload = normalizeLocationPayload(draft)
+                if (!isEditMode) {
+                  delete (cleanPayload as any).id
+                  if (!cleanPayload.slug) delete (cleanPayload as any).slug
+                }
+                console.log("📍 [RAW MEMORY DRAFT]:", draft)
+                console.log("📍 [CLEAN API PAYLOAD SENT TO BACKEND]:", cleanPayload)
+              }}
+              className="flex shrink-0 items-center gap-1.5 rounded-lg border border-border/80 bg-background px-3 py-2 text-xs font-medium text-foreground transition hover:bg-muted cursor-pointer"
+              title="Inspect clean location payload sent to backend API in browser console (F12)"
+            >
+              <Terminal className="h-3.5 w-3.5 text-primary" />
+              Console Data
+            </button>
 
             <button
               type="button"
               onClick={save}
               disabled={isSaving}
-              className="flex shrink-0 items-center gap-2 rounded-lg bg-primary px-4 py-2 text-xs font-medium text-primary-foreground transition hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-50"
+              className="flex shrink-0 items-center gap-2 rounded-lg bg-primary px-4 py-2 text-xs font-medium text-primary-foreground transition hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-50 cursor-pointer"
             >
               {isSaving ? (
                 <Loader2 className="h-4 w-4 animate-spin" />
@@ -170,13 +190,12 @@ export function LocationForm({ }: LocationFormProps) {
       </div>
 
       {/* =================================================
-                SECTIONS — order + components come from
-                config/locationSections.ts, the single source
-                of truth shared with LocationPreview.tsx.
+                SECTIONS — order + components come dynamically
+                from getSectionsForLocationType(draft?.type).
             ================================================= */}
 
       <div className="flex-1 divide-y divide-border/60">
-        {locationSectionOrder.map((key) => {
+        {activeSections.map((key) => {
           const sectionEntry = locationSectionRegistry[key]
           const SectionForm = sectionEntry?.form
 
@@ -193,39 +212,6 @@ export function LocationForm({ }: LocationFormProps) {
             </div>
           )
         })}
-
-        {/* =================================================
-                    ACTION & CONSOLE BUTTONS
-                ================================================= */}
-
-        <div className="flex items-center justify-between gap-3 p-4">
-          <button
-            type="button"
-            onClick={() => {
-              console.log("📍 [LOCATION DRAFT DATA]:", draft)
-            }}
-            className="flex items-center gap-2 rounded-lg border border-border/80 bg-muted/60 px-3.5 py-2 text-xs font-semibold text-foreground transition-colors hover:bg-muted cursor-pointer shadow-2xs"
-            title="Inspect full current location draft in browser console (F12)"
-          >
-            <Terminal className="h-3.5 w-3.5 text-primary" />
-            Console Log Draft
-          </button>
-
-          <button
-            type="button"
-            onClick={save}
-            disabled={isSaving}
-            className="flex items-center gap-2 rounded-lg bg-primary px-5 py-2.5 text-sm font-medium text-primary-foreground hover:opacity-90 disabled:opacity-50 cursor-pointer"
-          >
-            {isSaving ? (
-              <Loader2 className="h-4 w-4 animate-spin" />
-            ) : (
-              <Save className="h-4 w-4" />
-            )}
-
-            {isEditMode ? "Update Location" : "Create Location"}
-          </button>
-        </div>
       </div>
     </div>
   )
