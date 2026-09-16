@@ -58,7 +58,11 @@ export function ImageUploadField({
       },
       {
         onSuccess: (res) => {
-          const uploadedImages = res.data?.[fieldName]
+          const uploadedImages =
+            res.data?.[fieldName] ||
+            (res.data && typeof res.data === "object"
+              ? Object.values(res.data)[0]
+              : null)
 
           const newImage = uploadedImages?.[0]
 

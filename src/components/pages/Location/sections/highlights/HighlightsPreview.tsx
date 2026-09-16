@@ -15,63 +15,153 @@ export function HighlightsPreview({ draft }: LocationPreviewSectionProps) {
   const highlights =
     draft?.highlights ||
     (draft as any)?.data?.highlights || {
-      label: "",
-      title: "",
-      description: "",
+      label: "SEASONAL HIGHLIGHTS",
+      title: "Regions of Albania",
+      description:
+        "A selection of destinations currently resonating with our most discerning travelers.",
       items: [],
       backgroundMultimedia: null,
     }
 
-  // Get list of location IDs from highlights.items
-  const rawItemIds: string[] = Array.isArray(highlights.items)
-    ? highlights.items
-        .map((it: any) => (typeof it === "string" ? it : it?.id || it?.locationId))
-        .filter(Boolean)
-    : []
+  // Normalize highlights.items (supports both rich objects and legacy string IDs)
+  const rawItems: any[] = Array.isArray(highlights.items) ? highlights.items : []
 
-  // Resolve dynamic cards from selected Location IDs by aggregating each location's data
-  const dynamicItems: HighlightLocationItem[] = rawItemIds
-    .map((locId, idx) => {
-      const loc = availableLocations.find((l) => l.id === locId)
-      if (!loc) return null
+  const dynamicItems: HighlightLocationItem[] = rawItems
+    .map((it: any, idx: number) => {
+      if (typeof it === "string") {
+        const loc =
+          availableLocations.find((l) => l.id === it || l.slug === it) ||
+          (draft?.children as any[])?.find((c: any) => c.id === it || c.slug === it)
+        const parentName = loc?.parent?.name || draft?.name || "Country"
+        const parentSlug = loc?.parent?.slug || draft?.slug || "explore"
+        const childSlug = loc?.slug || `highlight-${idx + 1}`
+        const subtitleTag =
+          loc?.hero?.subtitle?.value ||
+          loc?.hero?.subtitle ||
+          (Array.isArray(loc?.why?.tags) ? loc.why.tags.join(" • ") : "") ||
+          loc?.hero?.breadcrumb?.value ||
+          loc?.type ||
+          ""
 
-      const heroMedia = loc.hero?.backgroundMultimedia
-      const imgUrl =
-        heroMedia?.image?.url ||
-        loc.hero?.image?.url ||
-        loc.card?.background_image ||
-        (heroMedia?.show === "image" ? heroMedia?.image?.url : "") ||
-        "https://images.unsplash.com/photo-1500534623283-312aade485b7?auto=format&fit=crop&w=1200&q=85"
+        const heroMedia = loc?.hero?.backgroundMultimedia
+        const imgUrl =
+          heroMedia?.image?.url ||
+          loc?.hero?.image?.url ||
+          loc?.card?.background_image ||
+          (heroMedia?.show === "image" ? heroMedia?.image?.url : "") ||
+          "https://images.unsplash.com/photo-1500534623283-312aade485b7?auto=format&fit=crop&w=1200&q=85"
 
-      const parentName = loc.parent?.name || draft?.name || "Country"
-      const parentSlug = loc.parent?.slug || draft?.slug || "explore"
+        return {
+          id: it,
+          locationId: it,
+          region: loc?.name || loc?.hero?.title?.value || `Region ${idx + 1}`,
+          country: parentName,
+          tags: subtitleTag,
+          imageMultimedia: {
+            show: "image",
+            image: {
+              url: imgUrl,
+              alt: loc?.name || "Highlight",
+              fit: "cover",
+            },
+          },
+          countrySlug: parentSlug,
+          regionSlug: childSlug,
+          href: `/destinations/${parentSlug}/${childSlug}`,
+        }
+      }
 
-      const subtitleTag =
-        loc.hero?.subtitle?.value ||
-        loc.hero?.subtitle ||
-        (Array.isArray(loc.why?.tags) ? loc.why.tags.join(" • ") : "") ||
-        loc.hero?.breadcrumb?.value ||
-        loc.type
+      // If it is an object
+      const loc = it.locationId
+        ? availableLocations.find((l) => l.id === it.locationId || l.slug === it.locationId)
+        : null
+
+      const fallbackRegion = loc?.name || loc?.hero?.title?.value || `Region ${idx + 1}`
+      const fallbackCountry = loc?.parent?.name || draft?.name || "Country"
+      const fallbackTags =
+        loc?.hero?.subtitle?.value ||
+        loc?.hero?.subtitle ||
+        (Array.isArray(loc?.why?.tags) ? loc.why.tags.join(" • ") : "") ||
+        ""
 
       return {
-        id: loc.id || `hl-${idx}`,
-        locationId: loc.id,
-        region: loc.name || loc.hero?.title?.value || "Region",
-        country: parentName,
-        tags: subtitleTag,
-        image: imgUrl,
-        countrySlug: parentSlug,
-        regionSlug: loc.slug,
-        href: `/destinations/${parentSlug}/${loc.slug}`,
+        ...it,
+        id: it.id || loc?.id || `hl-${idx}`,
+        locationId: it.locationId || loc?.id,
+        region: it.region || fallbackRegion,
+        country: it.country || fallbackCountry,
+        tags: it.tags !== undefined ? it.tags : fallbackTags,
+        href:
+          it.href ||
+          (it.countrySlug && it.regionSlug
+            ? `/destinations/${it.countrySlug}/${it.regionSlug}`
+            : "#"),
       }
     })
     .filter(Boolean) as HighlightLocationItem[]
 
-  // If no IDs are selected yet, fallback to sample preview cards so user sees layout
+  // Sample items shown only if no items have been added
+  const sampleItems: HighlightLocationItem[] = [
+    {
+      id: "sample-1",
+      region: "North Albania",
+      country: draft?.name || "Albania",
+      tags: "Alpine & Peaks",
+      imageMultimedia: {
+        show: "image",
+        image: {
+          url: "https://images.unsplash.com/photo-1500534623283-312aade485b7?auto=format&fit=crop&w=1200&q=85",
+          alt: "North Albania",
+          fit: "cover",
+        },
+      },
+    },
+    {
+      id: "sample-2",
+      region: "Central Albania",
+      country: draft?.name || "Albania",
+      tags: "Culture & Heritage",
+      imageMultimedia: {
+        show: "image",
+        image: {
+          url: "https://images.unsplash.com/photo-1506744038136-46273834b3fb?auto=format&fit=crop&w=1200&q=85",
+          alt: "Central Albania",
+          fit: "cover",
+        },
+      },
+    },
+    {
+      id: "sample-3",
+      region: "Albanian Riviera",
+      country: draft?.name || "Albania",
+      tags: "Coastal & Coves",
+      imageMultimedia: {
+        show: "image",
+        image: {
+          url: "https://images.unsplash.com/photo-1507525428034-b723cf961d3e?auto=format&fit=crop&w=1200&q=85",
+          alt: "Albanian Riviera",
+          fit: "cover",
+        },
+      },
+    },
+    {
+      id: "sample-4",
+      region: "South Albania",
+      country: draft?.name || "Albania",
+      tags: "UNESCO Sites",
+      imageMultimedia: {
+        show: "image",
+        image: {
+          url: "https://images.unsplash.com/photo-1519681393784-d120267933ba?auto=format&fit=crop&w=1200&q=85",
+          alt: "South Albania",
+          fit: "cover",
+        },
+      },
+    },
+  ]
+
   const items: HighlightLocationItem[] =
-    dynamicItems.length > 0
-      ? dynamicItems
-      : []
+    dynamicItems.length > 0 ? dynamicItems : sampleItems
 
   // Create a 3x set for seamless infinite marquee loop ticker
   const marqueeItems = [...items, ...items, ...items]
@@ -151,26 +241,58 @@ export function HighlightsPreview({ draft }: LocationPreviewSectionProps) {
               }}
             >
               {marqueeItems.map((item, index) => {
-                const cardImage =
-                  item.image ||
+                const cardMedia =
                   item.imageMultimedia?.image?.url ||
-                  item.imageMultimedia?.url ||
-                  "https://images.unsplash.com/photo-1500534623283-312aade485b7?auto=format&fit=crop&w=1200&q=85"
+                  item.imageMultimedia?.video?.url ||
+                  item.imageMultimedia?.color
+                    ? item.imageMultimedia
+                    : (item as any).image
+                    ? {
+                        show: "image",
+                        image: {
+                          url: (item as any).image,
+                          alt:
+                            typeof item.region === "object"
+                              ? item.region?.value
+                              : item.region || "Highlight",
+                          fit: "cover",
+                        },
+                      }
+                    : {
+                        show: "image",
+                        image: {
+                          url: "https://images.unsplash.com/photo-1500534623283-312aade485b7?auto=format&fit=crop&w=1200&q=85",
+                          alt:
+                            typeof item.region === "object"
+                              ? item.region?.value
+                              : item.region || "Highlight",
+                          fit: "cover",
+                        },
+                      }
+
+                const regionLabel =
+                  typeof item.region === "object"
+                    ? item.region?.value || ""
+                    : item.region || ""
+                const countryLabel =
+                  typeof item.country === "object"
+                    ? item.country?.value || ""
+                    : item.country || ""
 
                 return (
                   <div
                     key={`${item.id}-${index}`}
                     className="group relative shrink-0 block overflow-hidden shadow-md transition-shadow duration-500 hover:shadow-2xl focus:outline-none focus-visible:ring-2 focus-visible:ring-primary w-[300px] md:w-[440px] lg:w-[487px] xlg:w-[507px] xl:w-[527px] h-[340px] md:h-[500px] lg:h-[520px] xlg:h-[540px] xl:h-[551px]"
-                    aria-label={`Explore ${item.region}, ${item.country}`}
+                    aria-label={`Explore ${regionLabel}, ${countryLabel}`}
                   >
-                    {/* Background Image Container with Hover Scale */}
+                    {/* Background Media Container with Hover Scale */}
                     <div className="absolute inset-0 size-full transition-transform duration-1000 ease-out group-hover:scale-105">
-                      <img
-                        alt={`${item.region} — ${item.country}`}
-                        loading="lazy"
-                        decoding="async"
-                        className="object-cover object-center h-full w-full"
-                        src={cardImage}
+                      <UniversalMultimediaPreview
+                        multimedia={cardMedia}
+                        fallbackImageSrc="https://images.unsplash.com/photo-1500534623283-312aade485b7?auto=format&fit=crop&w=1200&q=85"
+                        fallbackAlt={`${regionLabel} — ${countryLabel}`}
+                        mode="background"
+                        className="size-full object-cover object-center"
                       />
                     </div>
 
@@ -199,20 +321,32 @@ export function HighlightsPreview({ draft }: LocationPreviewSectionProps) {
                     {/* Content Box Positioned at Bottom Left */}
                     <div className="absolute inset-x-0 bottom-0 z-10 flex flex-col justify-start items-start gap-1.5 p-6 sm:p-7 md:p-8 lg:p-9 xl:p-[36px] text-left">
                       {/* Country Tag */}
-                      <span className="text-neutral-100/60 uppercase text-xs md:text-[13.5px] xl:text-sm font-normal xl:leading-[22.5px] md:leading-[20px] leading-[18px] tracking-[1.4px]">
-                        {item.country || draft?.name || "Albania"}
-                      </span>
+                      <DynamicStyledPreview
+                        as="span"
+                        field={item.country}
+                        fallback={draft?.name || "Country"}
+                        fallbackColor="#f3f4f6"
+                        className="text-neutral-100/60 uppercase text-xs md:text-[13.5px] xl:text-sm font-normal xl:leading-[22.5px] md:leading-[20px] leading-[18px] tracking-[1.4px]"
+                      />
 
                       {/* Region Title */}
-                      <h3 className="text-neutral-100 font-heading text-xl md:text-[26px] xl:text-[27px] font-normal leading-9 md:leading-[38px] xl:leading-[41px] transition-colors duration-300 group-hover:text-accent">
-                        {item.region || "Untitled Region"}
-                      </h3>
+                      <DynamicStyledPreview
+                        as="h3"
+                        field={item.region}
+                        fallback="Untitled Region"
+                        fallbackColor="#ffffff"
+                        className="text-neutral-100 font-heading text-xl md:text-[26px] xl:text-[27px] font-normal leading-9 md:leading-[38px] xl:leading-[41px] transition-colors duration-300 group-hover:text-accent"
+                      />
 
                       {/* Subtitle / Activity Tags */}
-                      {item.tags && (
-                        <p className="text-neutral-100 text-sm md:text-[15px] xl:text-base font-normal xl:leading-5 md:leading-[18px] leading-4 tracking-[1px] pt-[5px] transition-colors duration-300 group-hover:text-neutral-100/95 line-clamp-1">
-                          {item.tags}
-                        </p>
+                      {Boolean(item.tags) && (
+                        <DynamicStyledPreview
+                          as="p"
+                          field={item.tags}
+                          fallback=""
+                          fallbackColor="#ffffff"
+                          className="text-neutral-100 text-sm md:text-[15px] xl:text-base font-normal xl:leading-5 md:leading-[18px] leading-4 tracking-[1px] pt-[5px] transition-colors duration-300 group-hover:text-neutral-100/95 line-clamp-1"
+                        />
                       )}
                     </div>
                   </div>

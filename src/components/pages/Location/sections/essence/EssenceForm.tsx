@@ -77,56 +77,74 @@ export function EssenceForm({
         />
 
         {/* Overlay Stat Badge (Absolute Badge on the Image) */}
-        <div className="rounded-lg border border-border/70 bg-card p-4">
-          <div className="mb-3 flex items-center justify-between">
-            <h4 className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
-              Absolute Image Stat Badge
-            </h4>
-            <span className="rounded bg-[#B86B3A]/20 px-2 py-0.5 text-[10px] font-medium text-[#B86B3A]">
-              Overlaid on Media
-            </span>
-          </div>
+        {(() => {
+          const stat = essence.stat || {}
+          const statValue = stat.statValue ?? stat.value ?? essence.statValue
+          const statLabel = stat.statLabel ?? stat.label ?? essence.statLabel
+          const statBadgeBg =
+            stat.statBadgeBg ??
+            stat.badgeBg ??
+            (typeof statValue === "object" ? statValue?.backgroundColor : null) ||
+            essence.statBadgeBg ||
+            "#B86B3A"
 
-          <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-            <DynamicStyledField
-              type="text"
-              label="Stat Value"
-              fieldName="essence.statValue"
-              placeholder="e.g. 2,753"
-              value={essence.statValue}
-              onChange={(val) => updateEssenceField("statValue", val)}
-            />
+          const updateStatField = (key: string, val: any) => {
+            const currentStat = essence.stat || {}
+            updateEssenceField("stat", {
+              ...currentStat,
+              [key]: val,
+            })
+          }
 
-            <DynamicStyledField
-              type="text"
-              label="Stat Label / Unit"
-              fieldName="essence.statLabel"
-              placeholder="e.g. km of rivers and lakes"
-              value={essence.statLabel}
-              onChange={(val) => updateEssenceField("statLabel", val)}
-            />
-          </div>
+          return (
+            <div className="rounded-lg border border-border/70 bg-card p-4">
+              <div className="mb-3 flex items-center justify-between">
+                <h4 className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
+                  Absolute Image Stat Badge
+                </h4>
+                <span className="rounded bg-[#B86B3A]/20 px-2 py-0.5 text-[10px] font-medium text-[#B86B3A]">
+                  Overlaid on Media
+                </span>
+              </div>
 
-          <div className="mt-4 pt-3 border-t border-border/50">
-            <DynamicStyledField
-              type="color"
-              label="Badge Background Color"
-              fieldName="essence.statBadgeBg"
-              placeholder="#B86B3A"
-              value={
-                essence.statBadgeBg ||
-                (typeof essence.statValue === "object" ? essence.statValue?.backgroundColor : null) ||
-                "#B86B3A"
-              }
-              onChange={(val) => {
-                updateEssenceField("statBadgeBg", val)
-                if (typeof essence.statValue === "object" && essence.statValue !== null) {
-                  updateEssenceField("statValue", { ...essence.statValue, backgroundColor: val })
-                }
-              }}
-            />
-          </div>
-        </div>
+              <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+                <DynamicStyledField
+                  type="text"
+                  label="Stat Value"
+                  fieldName="essence.stat.statValue"
+                  placeholder="e.g. 50+"
+                  value={statValue}
+                  onChange={(val) => updateStatField("statValue", val)}
+                />
+
+                <DynamicStyledField
+                  type="text"
+                  label="Stat Label / Unit"
+                  fieldName="essence.stat.statLabel"
+                  placeholder="e.g. Countries & Sovereign Territories"
+                  value={statLabel}
+                  onChange={(val) => updateStatField("statLabel", val)}
+                />
+              </div>
+
+              <div className="mt-4 pt-3 border-t border-border/50">
+                <DynamicStyledField
+                  type="color"
+                  label="Badge Background Color"
+                  fieldName="essence.stat.statBadgeBg"
+                  placeholder="#B86B3A"
+                  value={statBadgeBg}
+                  onChange={(val) => {
+                    updateStatField("statBadgeBg", val)
+                    if (typeof statValue === "object" && statValue !== null) {
+                      updateStatField("statValue", { ...statValue, backgroundColor: val })
+                    }
+                  }}
+                />
+              </div>
+            </div>
+          )
+        })()}
 
         {/* Universal Background Media for the Entire Section */}
         <UniversalMultimediaForm

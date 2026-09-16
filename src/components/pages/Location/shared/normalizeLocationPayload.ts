@@ -107,6 +107,36 @@ export function normalizeMultimedia(media: any): any {
 }
 
 /**
+ * Normalizes any styled text/value field into the standard structured object format:
+ * { value: "...", textColor: "#...", textOpacity: 1, backgroundColor: null, backgroundOpacity: 1 }
+ * Prevents plain string conversion and keeps schema unified across frontend and CMS.
+ */
+export function normalizeStyledField(
+  raw: any,
+  defaultVal: string = "",
+  defaultTextColor: string | null = null,
+  defaultBgColor: string | null = null
+) {
+  if (raw && typeof raw === "object" && !Array.isArray(raw)) {
+    return {
+      value: raw.value !== undefined && raw.value !== null ? raw.value : defaultVal,
+      textColor: raw.textColor !== undefined ? raw.textColor : defaultTextColor,
+      textOpacity: raw.textOpacity !== undefined ? Number(raw.textOpacity) : 1,
+      backgroundColor: raw.backgroundColor !== undefined ? raw.backgroundColor : defaultBgColor,
+      backgroundOpacity: raw.backgroundOpacity !== undefined ? Number(raw.backgroundOpacity) : 1,
+    }
+  }
+
+  return {
+    value: raw !== undefined && raw !== null ? raw : defaultVal,
+    textColor: defaultTextColor,
+    textOpacity: 1,
+    backgroundColor: defaultBgColor,
+    backgroundOpacity: 1,
+  }
+}
+
+/**
  * Recursively converts any remaining `undefined` values into `null`
  * so that JSON.stringify never strips empty fields.
  */
@@ -141,7 +171,7 @@ export function recursivelyReplaceUndefinedWithNull<T>(input: T): T {
 export function normalizeLocationPayload(
   draft: Partial<LocationData>
 ): LocationData {
-  const safeDraft = draft ?? {}
+  const safeDraft: any = draft ?? {}
   const safeData = (safeDraft.data ?? {}) as Record<string, any>
 
   const hero = safeDraft.hero ?? safeData.hero ?? {}
@@ -195,6 +225,12 @@ export function normalizeLocationPayload(
     safeData.faq_section ??
     safeData.faq ??
     {}
+  const ctaSection =
+    safeDraft.cta ??
+    safeDraft.destinationCta ??
+    safeData.destinationCta ??
+    safeData.cta ??
+    {}
   const travelInsights =
     safeDraft.travelInsight ??
     safeDraft.travelInsights ??
@@ -212,6 +248,12 @@ export function normalizeLocationPayload(
   const culture = safeDraft.culture ?? safeData.culture ?? {}
   const climate = safeDraft.climate ?? safeData.climate ?? {}
   const safety = safeDraft.safety ?? safeData.safety ?? {}
+  const regionExperiences =
+    safeDraft.regionExperiences ??
+    safeData.regionExperiences ??
+    safeDraft.experience ??
+    safeData.experience ??
+    {}
   const geography = safeDraft.geography ?? safeData.geography ?? {}
   const localGuide =
     safeDraft.localGuide ?? safeDraft.local_guide ?? safeData.local_guide ?? {}
@@ -219,10 +261,10 @@ export function normalizeLocationPayload(
 
   const normalizedHero = {
     ...hero,
-    title: hero.title ?? "",
-    description: hero.description ?? "",
-    breadcrumb: hero.breadcrumb ?? "",
-    subtitle: hero.subtitle ?? "",
+    title: normalizeStyledField(hero.title, "", "#FFFFFF"),
+    description: normalizeStyledField(hero.description, "", "#FFFFFF"),
+    breadcrumb: normalizeStyledField(hero.breadcrumb, "", null),
+    subtitle: normalizeStyledField(hero.subtitle, "", null),
     isCenter: Boolean(hero.isCenter),
     background_image: hero.background_image ?? "",
     video: hero.video ?? "",
@@ -237,25 +279,27 @@ export function normalizeLocationPayload(
     ),
   }
 
+  const rawStat = essence.stat ?? {}
+  const rawStatValue = rawStat.statValue ?? rawStat.value ?? essence.statValue
+  const rawStatLabel = rawStat.statLabel ?? rawStat.label ?? essence.statLabel
+  const rawStatBadgeBg =
+    rawStat.statBadgeBg ??
+    rawStat.badgeBg ??
+    rawStat.backgroundColor ??
+    essence.statBadgeBg ??
+    "#B86B3A"
+
   const normalizedEssence = {
     ...essence,
-    label: essence.label ?? "",
-    title: essence.title ?? "",
-    paragraphs: essence.paragraphs ?? "",
-    paragraphStyles: Array.isArray(essence.paragraphStyles)
-      ? essence.paragraphStyles
-      : [],
-    quote: essence.quote ?? "",
-    imageSrc: essence.imageSrc ?? "",
-    imageAlt: essence.imageAlt ?? "",
-    statValue: essence.statValue ?? "",
-    statLabel: essence.statLabel ?? "",
-    statBadgeBg: essence.statBadgeBg ?? "#B86B3A",
-    facts: Array.isArray(essence.facts) ? essence.facts : [],
-    style: essence.style ?? null,
-    labelStyle: essence.labelStyle ?? null,
-    quoteStyle: essence.quoteStyle ?? null,
-    titleStyle: essence.titleStyle ?? null,
+    label: normalizeStyledField(essence.label, "", "#af6348"),
+    title: normalizeStyledField(essence.title, "", "#182d09"),
+    paragraphs: normalizeStyledField(essence.paragraphs, "", "#565e69"),
+    quote: normalizeStyledField(essence.quote, "", "#1A1209"),
+    stat: {
+      statValue: normalizeStyledField(rawStatValue, "", "#ffffff"),
+      statLabel: normalizeStyledField(rawStatLabel, "", "#ffffff", 0.75),
+      statBadgeBg: typeof rawStatBadgeBg === "string" ? rawStatBadgeBg : "#B86B3A",
+    },
     imageMultimedia: normalizeMultimedia(
       essence.imageMultimedia || essence.multimedia
     ),
@@ -264,18 +308,18 @@ export function normalizeLocationPayload(
 
   const rawItemIds: string[] = Array.isArray(highlights.items)
     ? highlights.items
-        .map((it: any) => (typeof it === "string" ? it : it?.id || it?.locationId))
-        .filter(Boolean)
+      .map((it: any) => (typeof it === "string" ? it : it?.id || it?.locationId))
+      .filter(Boolean)
     : Array.isArray(highlights.locationIds)
-    ? highlights.locationIds
-    : []
+      ? highlights.locationIds
+      : []
 
   const normalizedHighlights = {
     ...highlights,
     id: highlights.id ?? "highlights",
-    label: highlights.label ?? "",
-    title: highlights.title ?? "",
-    description: highlights.description ?? "",
+    label: normalizeStyledField(highlights.label, "SEASONAL HIGHLIGHTS", "#af6348"),
+    title: normalizeStyledField(highlights.title, "", "#182d09"),
+    description: normalizeStyledField(highlights.description, "", "#565e69"),
     items: rawItemIds,
     backgroundMultimedia: normalizeMultimedia(highlights.backgroundMultimedia),
     style: highlights.style ?? null,
@@ -283,8 +327,8 @@ export function normalizeLocationPayload(
 
   const normalizedWhy = {
     ...why,
-    title: why.title ?? "",
-    subtitle: why.subtitle ?? "",
+    title: normalizeStyledField(why.title, "", "#182d09"),
+    subtitle: normalizeStyledField(why.subtitle, "", "#565e69"),
     subtitleStyle: why.subtitleStyle ?? null,
     tags: Array.isArray(why.tags) ? why.tags : [],
     image: why.image ?? "",
@@ -297,8 +341,8 @@ export function normalizeLocationPayload(
 
   const normalizedCard = {
     ...card,
-    title: card.title ?? "",
-    subtitle: card.subtitle ?? "",
+    title: normalizeStyledField(card.title, "", "#182d09"),
+    subtitle: normalizeStyledField(card.subtitle, "", "#565e69"),
     background_image: card.background_image ?? "",
     titleStyle: card.titleStyle ?? null,
     subtitleStyle: card.subtitleStyle ?? null,
@@ -308,8 +352,8 @@ export function normalizeLocationPayload(
 
   const normalizedInfo = {
     ...info,
-    headline: info.headline ?? "",
-    description: info.description ?? "",
+    headline: normalizeStyledField(info.headline, "", "#182d09"),
+    description: normalizeStyledField(info.description, "", "#565e69"),
     headlineStyle: info.headlineStyle ?? null,
     descriptionStyle: info.descriptionStyle ?? null,
     backgroundMultimedia: normalizeMultimedia(info.backgroundMultimedia),
@@ -317,7 +361,7 @@ export function normalizeLocationPayload(
 
   const normalizedSharedInfo = {
     ...sharedInfo,
-    text: sharedInfo.text ?? "",
+    text: normalizeStyledField(sharedInfo.text, "", "#565e69"),
     style: sharedInfo.style ?? null,
     textStyle: sharedInfo.textStyle ?? null,
     backgroundMultimedia: normalizeMultimedia(sharedInfo.backgroundMultimedia),
@@ -325,9 +369,9 @@ export function normalizeLocationPayload(
 
   const normalizedGlance = {
     ...regionGlance,
-    label: regionGlance.label ?? "",
-    title: regionGlance.title ?? "",
-    description: regionGlance.description ?? "",
+    label: normalizeStyledField(regionGlance.label, "", "#af6348"),
+    title: normalizeStyledField(regionGlance.title, "", "#182d09"),
+    description: normalizeStyledField(regionGlance.description, "", "#565e69"),
     style: regionGlance.style ?? null,
     labelStyle: regionGlance.labelStyle ?? null,
     descriptionStyle: regionGlance.descriptionStyle ?? null,
@@ -338,22 +382,22 @@ export function normalizeLocationPayload(
 
   const normalizedCharacter = {
     ...regionCharacter,
-    label: regionCharacter.label ?? "",
-    title: regionCharacter.title ?? "",
+    label: normalizeStyledField(regionCharacter.label, "", "#af6348"),
+    title: normalizeStyledField(regionCharacter.title, "", "#182d09"),
     style: regionCharacter.style ?? null,
     items: Array.isArray(regionCharacter.items)
       ? regionCharacter.items.map((it: any) => ({
-          id: it.id ?? "",
-          icon: it.icon ?? "",
-          iconImage: it.iconImage ?? "",
-          title: it.title ?? "",
-          description: it.description ?? "",
-          href: it.href ?? "",
-          linkText: it.linkText ?? "",
-          multimedia: normalizeMultimedia(it.multimedia ?? it.iconMultimedia),
-          titleStyle: it.titleStyle ?? null,
-          descriptionStyle: it.descriptionStyle ?? null,
-        }))
+        id: it.id ?? "",
+        icon: it.icon ?? "",
+        iconImage: it.iconImage ?? "",
+        title: normalizeStyledField(it.title, "", "#182d09"),
+        description: normalizeStyledField(it.description, "", "#565e69"),
+        href: it.href ?? "",
+        linkText: it.linkText ?? "",
+        multimedia: normalizeMultimedia(it.multimedia ?? it.iconMultimedia),
+        titleStyle: it.titleStyle ?? null,
+        descriptionStyle: it.descriptionStyle ?? null,
+      }))
       : [],
     backgroundMultimedia: normalizeMultimedia(
       regionCharacter.backgroundMultimedia
@@ -376,14 +420,14 @@ export function normalizeLocationPayload(
     },
     facts: Array.isArray(statistics.facts)
       ? statistics.facts.map((f: any) => ({
-          label: f.label ?? "",
-          value: f.value ?? "",
-          description: f.description ?? "",
-          media: normalizeMultimedia(f.media),
-          labelStyle: f.labelStyle ?? null,
-          valueStyle: f.valueStyle ?? null,
-          descriptionStyle: f.descriptionStyle ?? null,
-        }))
+        label: normalizeStyledField(f.label, "", "#af6348"),
+        value: normalizeStyledField(f.value, "", "#182d09"),
+        description: normalizeStyledField(f.description, "", "#565e69"),
+        media: normalizeMultimedia(f.media),
+        labelStyle: f.labelStyle ?? null,
+        valueStyle: f.valueStyle ?? null,
+        descriptionStyle: f.descriptionStyle ?? null,
+      }))
       : [],
     style: statistics.style ?? null,
     backgroundMultimedia: normalizeMultimedia(
@@ -410,17 +454,17 @@ export function normalizeLocationPayload(
       ? travelInfo.popularTransportation
       : [],
     beforeTravel: {
-      label: beforeTravel.label ?? "",
-      title: beforeTravel.title ?? "",
+      label: normalizeStyledField(beforeTravel.label, "", "#af6348"),
+      title: normalizeStyledField(beforeTravel.title, "", "#182d09"),
       image: beforeTravel.image ?? "",
       imageAlt: beforeTravel.imageAlt ?? "",
       items: Array.isArray(beforeTravel.items)
         ? beforeTravel.items.map((it: any) => ({
-            id: it.id ?? "",
-            title: it.title ?? "",
-            content: it.content ?? "",
-            titleStyle: it.titleStyle ?? null,
-          }))
+          id: it.id ?? "",
+          title: normalizeStyledField(it.title, "", "#182d09"),
+          content: normalizeStyledField(it.content, "", "#565e69"),
+          titleStyle: it.titleStyle ?? null,
+        }))
         : [],
       style: beforeTravel.style ?? null,
       imageMultimedia: normalizeMultimedia(beforeTravel.imageMultimedia),
@@ -433,9 +477,9 @@ export function normalizeLocationPayload(
   const featuredExperience = experiences.featured_experience ?? {}
   const normalizedExperiences = {
     ...experiences,
-    title: experiences.title ?? "",
+    title: normalizeStyledField(experiences.title, "", "#182d09"),
     location: experiences.location ?? "",
-    description: experiences.description ?? "",
+    description: normalizeStyledField(experiences.description, "", "#565e69"),
     seasonInfo: experiences.seasonInfo ?? "",
     seasonLocation: experiences.seasonLocation ?? "",
     load_more_button: experiences.load_more_button ?? "Load More",
@@ -445,10 +489,10 @@ export function normalizeLocationPayload(
     descriptionStyle: experiences.descriptionStyle ?? null,
     featured_experience: {
       image: featuredExperience.image ?? "",
-      title: featuredExperience.title ?? "",
+      title: normalizeStyledField(featuredExperience.title, "", "#182d09"),
       category: featuredExperience.category ?? "",
       duration: featuredExperience.duration ?? "",
-      subtitle: featuredExperience.subtitle ?? "",
+      subtitle: normalizeStyledField(featuredExperience.subtitle, "", "#565e69"),
       action_text: featuredExperience.action_text ?? "More info",
       button: featuredExperience.button ?? null,
       buttons: Array.isArray(featuredExperience.buttons)
@@ -460,18 +504,18 @@ export function normalizeLocationPayload(
     },
     cards: Array.isArray(experiences.cards)
       ? experiences.cards.map((c: any) => ({
-          id: c.id ?? Date.now(),
-          image: c.image ?? "",
-          price: c.price ?? "",
-          title: c.title ?? "",
-          category: c.category ?? "",
-          subtitle: c.subtitle ?? "",
-          action_text: c.action_text ?? "More info",
-          description: c.description ?? "",
-          button: c.button ?? null,
-          buttons: Array.isArray(c.buttons) ? c.buttons : [],
-          imageMultimedia: normalizeMultimedia(c.imageMultimedia),
-        }))
+        id: c.id ?? Date.now(),
+        image: c.image ?? "",
+        price: c.price ?? "",
+        title: normalizeStyledField(c.title, "", "#182d09"),
+        category: c.category ?? "",
+        subtitle: normalizeStyledField(c.subtitle, "", "#565e69"),
+        action_text: c.action_text ?? "More info",
+        description: normalizeStyledField(c.description, "", "#565e69"),
+        button: c.button ?? null,
+        buttons: Array.isArray(c.buttons) ? c.buttons : [],
+        imageMultimedia: normalizeMultimedia(c.imageMultimedia),
+      }))
       : [],
     footer: {
       note: experiences.footer?.note ?? "",
@@ -479,13 +523,75 @@ export function normalizeLocationPayload(
     },
   }
 
+  const normalizedRegionExperiences = {
+    ...regionExperiences,
+    id: regionExperiences.id ?? "region-experiences",
+    label: normalizeStyledField(regionExperiences.label, "", "#af6348"),
+    title: normalizeStyledField(regionExperiences.title, "", "#182d09"),
+    backgroundMultimedia: normalizeMultimedia(
+      regionExperiences.backgroundMultimedia
+    ),
+    items: Array.isArray(regionExperiences.items)
+      ? regionExperiences.items.map((it: any) => {
+        const rawButtons = Array.isArray(it.buttons) && it.buttons.length > 0
+          ? it.buttons
+          : it.button
+            ? [it.button]
+            : []
+
+        const normalizedButtons = rawButtons.map((btn: any) => ({
+          label: btn.label ?? it.buttonText ?? "Explore Region",
+          url: btn.url ?? it.buttonUrl ?? "",
+          style: btn.style ?? (btn.variant ? String(btn.variant).toLowerCase() : "primary"),
+          variant: (btn.variant ?? btn.style ?? "PRIMARY").toUpperCase(),
+          textColor: btn.textColor ?? "#ffffff",
+          backgroundColor: btn.backgroundColor ?? "#af6348",
+        }))
+
+        if (normalizedButtons.length === 0) {
+          normalizedButtons.push({
+            label: it.buttonText ?? "Explore Region",
+            url: it.buttonUrl ?? "",
+            style: "primary",
+            variant: "PRIMARY",
+            textColor: "#ffffff",
+            backgroundColor: "#af6348",
+          })
+        }
+
+        return {
+          id: it.id ?? "",
+          title: normalizeStyledField(it.title, "", "#182d09"),
+          subtitle: normalizeStyledField(it.subtitle, "", "#9c705d"),
+          description: normalizeStyledField(it.description, "", "#565e69"),
+          imageMultimedia: normalizeMultimedia(it.imageMultimedia),
+          tag: normalizeStyledField(it.tag, "REGION", "#9c705d"),
+          buttons: normalizedButtons,
+        }
+      })
+      : [],
+    style: regionExperiences.style ?? null,
+  }
+
   const normalizedSignatureExperiences = {
     ...signatureExperiences,
-    label: signatureExperiences.label ?? "Signature Experiences",
+    label: normalizeStyledField(
+      signatureExperiences.label,
+      "Signature Experiences",
+      "#af6348"
+    ),
     labelStyle: signatureExperiences.labelStyle ?? null,
-    title: signatureExperiences.title ?? "",
+    title: normalizeStyledField(
+      signatureExperiences.title,
+      "Five ways to fall in love with " + (safeDraft.name || "the destination"),
+      "#182d09"
+    ),
     titleStyle: signatureExperiences.titleStyle ?? null,
-    description: signatureExperiences.description ?? "",
+    description: normalizeStyledField(
+      signatureExperiences.description,
+      "",
+      "#565e69"
+    ),
     descriptionStyle: signatureExperiences.descriptionStyle ?? null,
     backgroundMultimedia: normalizeMultimedia(
       signatureExperiences.backgroundMultimedia
@@ -493,34 +599,34 @@ export function normalizeLocationPayload(
     style: signatureExperiences.style ?? null,
     experiences: Array.isArray(signatureExperiences.experiences)
       ? signatureExperiences.experiences.map((exp: any, idx: number) => ({
-          id: exp.id ?? `exp-${String(idx + 1).padStart(2, "0")}`,
-          number: exp.number ?? String(idx + 1).padStart(2, "0"),
-          numberStyle: exp.numberStyle ?? null,
-          title: exp.title ?? "",
-          titleStyle: exp.titleStyle ?? null,
-          description: exp.description ?? "",
-          descriptionStyle: exp.descriptionStyle ?? null,
-          href: exp.href ?? "#",
-          linkText: exp.linkText ?? "Explore this experience",
-          button: exp.button ?? null,
-          buttons: Array.isArray(exp.buttons) ? exp.buttons : [],
-        }))
+        id: exp.id ?? `exp-${String(idx + 1).padStart(2, "0")}`,
+        number: exp.number ?? String(idx + 1).padStart(2, "0"),
+        numberStyle: exp.numberStyle ?? null,
+        title: normalizeStyledField(exp.title, "", "#182d09"),
+        titleStyle: exp.titleStyle ?? null,
+        description: normalizeStyledField(exp.description, "", "#565e69"),
+        descriptionStyle: exp.descriptionStyle ?? null,
+        href: exp.href ?? "#",
+        linkText: exp.linkText ?? "Explore this experience",
+        button: exp.button ?? null,
+        buttons: Array.isArray(exp.buttons) ? exp.buttons : [],
+      }))
       : [],
   }
 
   const normalizedPracticalInformation = {
     ...practicalInformation,
-    title: practicalInformation.title ?? "",
-    sub_heading: practicalInformation.sub_heading ?? "",
+    title: normalizeStyledField(practicalInformation.title, "", "#182d09"),
+    sub_heading: normalizeStyledField(practicalInformation.sub_heading, "", "#565e69"),
     side_image: practicalInformation.side_image ?? "",
     accordion_items: Array.isArray(practicalInformation.accordion_items)
       ? practicalInformation.accordion_items.map((ai: any) => ({
-          id: ai.id ?? String(Date.now()),
-          title: ai.title ?? "",
-          content: ai.content ?? "",
-          is_expanded: Boolean(ai.is_expanded),
-          titleStyle: ai.titleStyle ?? null,
-        }))
+        id: ai.id ?? String(Date.now()),
+        title: normalizeStyledField(ai.title, "", "#182d09"),
+        content: normalizeStyledField(ai.content, "", "#565e69"),
+        is_expanded: Boolean(ai.is_expanded),
+        titleStyle: ai.titleStyle ?? null,
+      }))
       : [],
     sideImageMultimedia: normalizeMultimedia(
       practicalInformation.sideImageMultimedia
@@ -532,74 +638,208 @@ export function normalizeLocationPayload(
 
   const normalizedFaq = {
     ...faqSection,
-    title: faqSection.title ?? "",
-    image: faqSection.image ?? "",
-    questions: Array.isArray(faqSection.questions)
-      ? faqSection.questions.map((q: any) => ({
-          id: q.id ?? Date.now(),
-          question: q.question ?? "",
-          answer: q.answer ?? "",
-          questionStyle: q.questionStyle ?? null,
-          answerStyle: q.answerStyle ?? null,
-        }))
-      : [],
-    imageMultimedia: normalizeMultimedia(faqSection.imageMultimedia),
+    title: normalizeStyledField(
+      faqSection.title,
+      "Frequently Asked Questions",
+      "#182d09"
+    ),
+    image: faqSection.image ?? faqSection.imageMultimedia?.image?.url ?? "",
+    imageAlt:
+      faqSection.imageAlt ??
+      faqSection.imageMultimedia?.image?.alt ??
+      "Frequently Asked Questions",
+    imageMultimedia: normalizeMultimedia(
+      faqSection.imageMultimedia ??
+      (faqSection.image
+        ? {
+          show: "image",
+          image: {
+            url: faqSection.image,
+            alt: faqSection.imageAlt || "Frequently Asked Questions",
+          },
+        }
+        : null)
+    ),
     backgroundMultimedia: normalizeMultimedia(
       faqSection.backgroundMultimedia
+    ),
+    questions: Array.isArray(faqSection.questions)
+      ? faqSection.questions.map((q: any, idx: number) => ({
+        id: q.id ?? `faq-${String(idx + 1).padStart(2, "0")}`,
+        question: normalizeStyledField(q.question, "", "#182d09"),
+        answer: normalizeStyledField(q.answer, "", "#565e69"),
+        questionStyle: q.questionStyle ?? null,
+        answerStyle: q.answerStyle ?? null,
+      }))
+      : [],
+  }
+
+  const normalizedCta = {
+    ...ctaSection,
+    title: normalizeStyledField(
+      ctaSection.title,
+      "Didn't find your perfect journey?",
+      "#182d09"
+    ),
+    description: normalizeStyledField(
+      ctaSection.description,
+      "Our collection is carefully designed but every travel is different.\nIf you'd like something more personal, we'd love to create it together.",
+      "#565e69"
+    ),
+    line1:
+      ctaSection.line1 ??
+      "Our collection is carefully designed but every travel is different.",
+    line2:
+      ctaSection.line2 ??
+      "If you'd like something more personal, we'd love to create it together.",
+    buttonText:
+      ctaSection.buttonText ??
+      ctaSection.button?.label ??
+      "Plan a tailor-made journey",
+    buttonUrl: ctaSection.buttonUrl ?? ctaSection.button?.url ?? "/contact",
+    button: ctaSection.button ?? {
+      label: ctaSection.buttonText || "Plan a tailor-made journey",
+      url: ctaSection.buttonUrl || "/contact",
+      style: "primary",
+      backgroundColor: "#af6348",
+      textColor: "#ffffff",
+    },
+    image:
+      ctaSection.image ??
+      ctaSection.imageMultimedia?.image?.url ??
+      "/images/cta.png",
+    imageMultimedia: normalizeMultimedia(
+      ctaSection.imageMultimedia ??
+      (ctaSection.image
+        ? {
+          show: "image",
+          image: {
+            url: ctaSection.image,
+            alt: "CTA Motif",
+            opacity: 100,
+            overlayColor: "#000000",
+            overlayOpacity: 0,
+            width: "100%",
+            height: "100%",
+            aspectRatio: "auto",
+            fit: "contain",
+          },
+        }
+        : null)
+    ),
+    backgroundMultimedia: normalizeMultimedia(
+      ctaSection.backgroundMultimedia
     ),
   }
 
   const normalizedTravelInsights = {
     ...travelInsights,
-    title: travelInsights.title ?? "",
-    sub_heading: travelInsights.sub_heading ?? "",
-    main_image: travelInsights.main_image ?? "",
-    articles: Array.isArray(travelInsights.articles)
-      ? travelInsights.articles.map((art: any) => ({
-          id: art.id ?? String(Date.now()),
-          number: art.number ?? "",
-          category: art.category ?? "",
-          title: art.title ?? "",
-          description: art.description ?? "",
-          href: art.href ?? "",
-          button: art.button ?? null,
-          buttons: Array.isArray(art.buttons) ? art.buttons : [],
-          thumbnail: art.thumbnail ?? "",
-          thumbnailMultimedia: normalizeMultimedia(art.thumbnailMultimedia),
-          descriptionStyle: art.descriptionStyle ?? null,
-        }))
-      : [],
-    mainImageMultimedia: normalizeMultimedia(
-      travelInsights.mainImageMultimedia
+    label: normalizeStyledField(
+      travelInsights.label,
+      "TRAVEL INSIGHTS",
+      "#d29393"
     ),
+    labelStyle: travelInsights.labelStyle ?? null,
+    title: normalizeStyledField(
+      travelInsights.title,
+      "Everything you need to know before you go",
+      "#e5e5e5"
+    ),
+    titleStyle: travelInsights.titleStyle ?? null,
+    featuredImage:
+      travelInsights.featuredImage ??
+      travelInsights.featuredMultimedia?.image?.url ??
+      travelInsights.main_image ??
+      "",
+    featuredImageAlt:
+      travelInsights.featuredImageAlt ??
+      travelInsights.featuredMultimedia?.image?.alt ??
+      "Featured Local Guide Article",
+    featuredMultimedia: normalizeMultimedia(
+      travelInsights.featuredMultimedia ??
+      travelInsights.mainImageMultimedia ??
+      (travelInsights.featuredImage
+        ? {
+          show: "image",
+          image: {
+            url: travelInsights.featuredImage,
+            alt: travelInsights.featuredImageAlt || "Featured Article",
+          },
+        }
+        : null)
+    ),
+    backgroundMultimedia: normalizeMultimedia(
+      travelInsights.backgroundMultimedia
+    ),
+    articles: Array.isArray(travelInsights.articles)
+      ? travelInsights.articles.map((art: any, idx: number) => {
+        const autoNum = String(idx + 1).padStart(2, "0")
+        const resolvedThumb =
+          art.thumbnail ??
+          art.thumbnailMultimedia?.image?.url ??
+          art.imageMultimedia?.image?.url ??
+          art.image ??
+          ""
+        return {
+          id: art.id ?? `article-${autoNum}-${Date.now()}`,
+          number: art.number ?? autoNum,
+          category: normalizeStyledField(art.category, "Guide", "#af6348"),
+          categoryStyle: art.categoryStyle ?? null,
+          title: normalizeStyledField(art.title, "", "#F3F4F6"),
+          titleStyle: art.titleStyle ?? null,
+          description: normalizeStyledField(art.description, "", "#9CA3AF"),
+          descriptionStyle: art.descriptionStyle ?? null,
+          href: art.href ?? "",
+          thumbnail: resolvedThumb,
+          thumbnailMultimedia: normalizeMultimedia(
+            art.thumbnailMultimedia ??
+            art.imageMultimedia ??
+            (resolvedThumb
+              ? {
+                show: "image",
+                image: {
+                  url: resolvedThumb,
+                  alt:
+                    typeof art.title === "string"
+                      ? art.title
+                      : art.title?.value || "Article thumbnail",
+                },
+              }
+              : null)
+          ),
+          style: art.style ?? null,
+        }
+      })
+      : [],
+    style: travelInsights.style ?? null,
   }
 
   const normalizedAccommodationStays = {
     ...accommodationStays,
-    badge: accommodationStays.badge ?? "",
+    badge: normalizeStyledField(accommodationStays.badge, "", "#af6348"),
     badgeStyle: accommodationStays.badgeStyle ?? null,
-    title: accommodationStays.title ?? "",
+    title: normalizeStyledField(accommodationStays.title, "", "#182d09"),
     titleStyle: accommodationStays.titleStyle ?? null,
-    description: accommodationStays.description ?? "",
+    description: normalizeStyledField(accommodationStays.description, "", "#565e69"),
     descriptionStyle: accommodationStays.descriptionStyle ?? null,
     stays: Array.isArray(accommodationStays.stays)
       ? accommodationStays.stays.map((st: any) => ({
-          id: st.id ?? Date.now(),
-          day: st.day ?? null,
-          city: st.city ?? "",
-          step: st.step ?? "",
-          image: st.image ?? "",
-          nights: st.nights ?? null,
-          buttons: Array.isArray(st.buttons) ? st.buttons : [],
-          duration: st.duration ?? "",
-          location: st.location ?? "",
-          stayType: st.stayType ?? "",
-          subtitle: st.subtitle ?? "",
-          confirmedBy: st.confirmedBy ?? "",
-          description: st.description ?? "",
-          imageMultimedia: normalizeMultimedia(st.imageMultimedia),
-          confirmationBadge: st.confirmationBadge ?? "",
-        }))
+        id: st.id ?? Date.now(),
+        day: st.day ?? null,
+        city: st.city ?? "",
+        step: st.step ?? "",
+        image: st.image ?? "",
+        nights: st.nights ?? null,
+        buttons: Array.isArray(st.buttons) ? st.buttons : [],
+        duration: st.duration ?? "",
+        location: st.location ?? "",
+        stayType: st.stayType ?? "",
+        subtitle: normalizeStyledField(st.subtitle, "", "#565e69"),
+        confirmedBy: st.confirmedBy ?? "",
+        description: normalizeStyledField(st.description, "", "#565e69"),
+        imageMultimedia: normalizeMultimedia(st.imageMultimedia),
+        confirmationBadge: st.confirmationBadge ?? "",
+      }))
       : [],
     backgroundMultimedia: normalizeMultimedia(
       accommodationStays.backgroundMultimedia
@@ -662,6 +902,47 @@ export function normalizeLocationPayload(
     multimedia: normalizeMultimedia(videoGalary.multimedia),
   }
 
+  const rawGeoObj = rawGeoData.geo ?? rawGeoData.location ?? rawGeoData.map ?? {}
+  const geoLat = Number(rawGeoObj.latitude ?? rawGeoData.latitude ?? 41.1533)
+  const geoLng = Number(rawGeoObj.longitude ?? rawGeoData.longitude ?? 20.1683)
+  const geoZoom = Number(rawGeoObj.mapZoom ?? rawGeoData.mapZoom ?? 4)
+  const geoPitch = Number(rawGeoObj.pitch ?? rawGeoData.pitch ?? 0)
+  const geoBearing = Number(rawGeoObj.bearing ?? rawGeoData.bearing ?? 0)
+  const geoTz = rawGeoObj.timezone ?? rawGeoData.timezone ?? "UTC+1 (CET)"
+  const geoArea = {
+    value: Number(rawGeoObj.area?.value ?? rawGeoData.area?.value ?? 28748),
+    unit: rawGeoObj.area?.unit ?? rawGeoData.area?.unit ?? "km²",
+  }
+
+  const normalizedGeoData = {
+    title: normalizeStyledField(
+      rawGeoData.title,
+      "Interactive Map",
+      "#0a0a0a"
+    ),
+    description: normalizeStyledField(
+      rawGeoData.description,
+      "Spin the globe, then zoom into the destination to explore our properties.",
+      "#565e69"
+    ),
+    backgroundMultimedia: normalizeMultimedia(
+      rawGeoData.backgroundMultimedia
+    ),
+    geo: {
+      latitude: geoLat,
+      longitude: geoLng,
+      mapZoom: geoZoom,
+      pitch: geoPitch,
+      bearing: geoBearing,
+      timezone: geoTz,
+      area: geoArea,
+    },
+    showChildren:
+      rawGeoData.showChildren !== undefined
+        ? Boolean(rawGeoData.showChildren)
+        : rawGeoData.children?.showChildren !== false,
+  }
+
   const normalized: LocationData = {
     id: safeDraft.id ?? undefined,
     name: safeDraft.name ?? "",
@@ -680,22 +961,15 @@ export function normalizeLocationPayload(
     character: normalizedCharacter,
     highlightsStatistics: normalizedStatistics,
     experience: normalizedExperiences,
+    regionExperiences: normalizedRegionExperiences,
     signatureExperiences: normalizedSignatureExperiences,
     travelInfo: normalizedTravelInfo,
     travelInsight: normalizedTravelInsights,
     accommodation: normalizedAccommodationStays,
     faq: normalizedFaq,
+    cta: normalizedCta,
 
-    geoData: {
-      area: {
-        unit: safeDraft.geoData?.area?.unit ?? "km²",
-        value: safeDraft.geoData?.area?.value ?? 0,
-      },
-      mapZoom: safeDraft.geoData?.mapZoom ?? 6,
-      latitude: safeDraft.geoData?.latitude ?? 0,
-      longitude: safeDraft.geoData?.longitude ?? 0,
-      timezone: safeDraft.geoData?.timezone ?? "",
-    },
+    geoData: normalizedGeoData,
 
     metadata: {
       seo: {
@@ -730,6 +1004,7 @@ export function normalizeLocationPayload(
       statistics: normalizedStatistics,
       travelInfo: normalizedTravelInfo,
       experiences: normalizedExperiences,
+      regionExperiences: normalizedRegionExperiences,
       signature_experiences: normalizedSignatureExperiences,
       signatureExperiences: normalizedSignatureExperiences,
       practical_information: normalizedPracticalInformation,
@@ -740,6 +1015,7 @@ export function normalizeLocationPayload(
       climate: normalizedClimate,
       safety: normalizedSafety,
       geography: normalizedGeography,
+      geoData: normalizedGeoData,
       imageGalary: Array.isArray(safeData.imageGalary)
         ? safeData.imageGalary
         : [],

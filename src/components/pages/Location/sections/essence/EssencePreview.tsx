@@ -94,14 +94,18 @@ export function EssencePreview({ draft }: LocationPreviewSectionProps) {
 
                 {/* Absolute Stat Badge Overlaid on the Media */}
                 {(() => {
+                  const stat = essence.stat || {}
+                  const statValue = stat.statValue ?? stat.value ?? essence.statValue
+                  const statLabel = stat.statLabel ?? stat.label ?? essence.statLabel
                   const rawBadgeBg =
+                    stat.statBadgeBg ??
+                    stat.badgeBg ??
+                    (typeof statValue === "object" && statValue?.backgroundColor) ||
                     essence.statBadgeBg ||
-                    (typeof essence.statValue === "object" && essence.statValue?.backgroundColor) ||
-                    (typeof essence.statBadge === "object" && essence.statBadge?.backgroundColor) ||
                     "#B86B3A"
                   const rawBadgeOpacity =
-                    (typeof essence.statValue === "object" && essence.statValue?.backgroundOpacity !== undefined
-                      ? essence.statValue.backgroundOpacity
+                    (typeof statValue === "object" && statValue?.backgroundOpacity !== undefined
+                      ? statValue.backgroundOpacity
                       : 1)
 
                   return (
@@ -115,8 +119,8 @@ export function EssencePreview({ draft }: LocationPreviewSectionProps) {
                       <div className="self-stretch flex flex-col justify-start items-start">
                         <DynamicStyledPreview
                           as="span"
-                          field={essence.statValue}
-                          fallback="2,753"
+                          field={statValue}
+                          fallback="50+"
                           fallbackColor="#ffffff"
                           className="justify-start font-medium font-heading text-[18px] @xs:text-[20px] @sm:text-[24px] @md:text-[26px] @lg:text-[28px] @xl:text-[30px] leading-6 @xs:leading-7 @md:leading-8 @lg:leading-[34px] @xl:leading-9"
                         />
@@ -124,8 +128,8 @@ export function EssencePreview({ draft }: LocationPreviewSectionProps) {
                       <div className="w-full pt-0.5 flex flex-col justify-start items-start">
                         <DynamicStyledPreview
                           as="span"
-                          field={essence.statLabel}
-                          fallback="km of rivers and lakes"
+                          field={statLabel}
+                          fallback="Countries & Sovereign Territories"
                           fallbackColor="rgba(255, 255, 255, 0.75)"
                           className="justify-start font-normal text-[10px] @xs:text-[11px] @sm:text-[12px] @md:text-[13px] @lg:text-[13.5px] @xl:text-sm leading-3.5 @xs:leading-4 @md:leading-[18px] @xl:leading-5"
                         />

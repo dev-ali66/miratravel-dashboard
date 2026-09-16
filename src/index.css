@@ -70,7 +70,7 @@
   --color-text-card-title: #1b1712;
   --color-extra-light: #8A8070;
   --color-body: #4a4a4a;
-  --color-muted: #7E7E7E;
+  --color-muted: var(--muted);
   --color-surface: #EDE7D8;
   --color-surface-light: #FFF8F2;
   --color-surface-muted: #E8E5DD;

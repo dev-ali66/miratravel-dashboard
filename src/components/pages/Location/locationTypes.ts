@@ -26,11 +26,11 @@ export type ExperienceCard = {
 
 export type SignatureExperienceItem = {
   id: string
-  number: string
+  number?: string | Record<string, any>
   numberStyle?: Record<string, any> | null
-  title: string
+  title?: string | Record<string, any>
   titleStyle?: Record<string, any> | null
-  description: string
+  description?: string | Record<string, any>
   descriptionStyle?: Record<string, any> | null
   href?: string
   linkText?: string
@@ -51,11 +51,11 @@ export type SignatureExperienceItem = {
 }
 
 export type SignatureExperiencesSection = {
-  label: string
+  label?: string | Record<string, any>
   labelStyle?: Record<string, any> | null
-  title: string
+  title?: string | Record<string, any>
   titleStyle?: Record<string, any> | null
-  description: string
+  description?: string | Record<string, any>
   descriptionStyle?: Record<string, any> | null
   backgroundMultimedia?: Record<string, any> | null
   style?: Record<string, any> | null
@@ -170,10 +170,12 @@ export type LocationType = (typeof LOCATION_TYPES)[number]
 export type HighlightLocationItem = {
   id: string
   locationId?: string
-  country: string
-  region: string
-  tags?: string
-  image?: string
+  region: string | Record<string, any>
+  regionStyle?: Record<string, any> | null
+  country: string | Record<string, any>
+  countryStyle?: Record<string, any> | null
+  tags?: string | Record<string, any>
+  tagStyle?: Record<string, any> | null
   imageMultimedia?: Record<string, any> | null
   countrySlug?: string
   regionSlug?: string
@@ -183,10 +185,131 @@ export type HighlightLocationItem = {
 export type HighlightsSectionData = {
   id?: string
   label?: string | Record<string, any>
+  labelStyle?: Record<string, any> | null
   title?: string | Record<string, any>
+  titleStyle?: Record<string, any> | null
   description?: string | Record<string, any>
-  items?: string[]
+  descriptionStyle?: Record<string, any> | null
+  items?: HighlightLocationItem[] | any[]
   backgroundMultimedia?: Record<string, any> | null
+  style?: Record<string, any> | null
+}
+
+export type RegionExperienceItemData = {
+  id: string
+  title: string | Record<string, any>
+  titleStyle?: Record<string, any> | null
+  subtitle: string | Record<string, any>
+  subtitleStyle?: Record<string, any> | null
+  description: string | Record<string, any>
+  descriptionStyle?: Record<string, any> | null
+  imageMultimedia?: Record<string, any> | null
+  tag?: string | Record<string, any>
+  tagStyle?: Record<string, any> | null
+  buttons?: Array<{
+    label?: string
+    url?: string
+    variant?: string
+    style?: string
+    rounded?: string
+    backgroundColor?: string
+    backgroundOpacity?: number
+    textColor?: string
+    textOpacity?: number
+    hoverBackgroundColor?: string
+    hoverTextColor?: string
+    borderColor?: string
+    borderWidth?: number | string
+    target?: string
+    showIcon?: boolean
+  }>
+  button?: Record<string, any> | null
+}
+
+export type RegionExperiencesSectionData = {
+  id?: string
+  label?: string | Record<string, any>
+  labelStyle?: Record<string, any> | null
+  title?: string | Record<string, any>
+  titleStyle?: Record<string, any> | null
+  description?: string | Record<string, any>
+  descriptionStyle?: Record<string, any> | null
+  countrySlug?: string
+  backgroundMultimedia?: Record<string, any> | null
+  style?: Record<string, any> | null
+  items: RegionExperienceItemData[]
+}
+
+export type GeoPinItem = {
+  id: string
+  name?: string
+  category?: string
+  lat: number
+  lng: number
+  image?: string
+  href?: string
+}
+
+export type GeoData = {
+  title?: string | Record<string, any>
+  titleStyle?: Record<string, any> | null
+  description?: string | Record<string, any>
+  descriptionStyle?: Record<string, any> | null
+  backgroundMultimedia?: Record<string, any> | null
+  geo?: {
+    latitude?: number
+    longitude?: number
+    mapZoom?: number
+    pitch?: number
+    bearing?: number
+    timezone?: string
+    area?: {
+      unit?: string
+      value?: number
+    }
+  }
+  latitude?: number
+  longitude?: number
+  mapZoom?: number
+  pitch?: number
+  bearing?: number
+  timezone?: string
+  area?: {
+    unit?: string
+    value?: number
+  }
+  showChildren?: boolean
+  sceneBg?: string
+  pinColor?: string
+}
+
+export type TravelInsightArticle = {
+  id?: string
+  number?: string
+  category?: string | Record<string, any>
+  categoryStyle?: Record<string, any> | null
+  title?: string | Record<string, any>
+  titleStyle?: Record<string, any> | null
+  description?: string | Record<string, any>
+  descriptionStyle?: Record<string, any> | null
+  href?: string
+  thumbnail?: string
+  thumbnailMultimedia?: Record<string, any> | null
+  imageMultimedia?: Record<string, any> | null
+  style?: Record<string, any> | null
+}
+
+export type TravelInsightsSectionData = {
+  id?: string
+  label?: string | Record<string, any>
+  labelStyle?: Record<string, any> | null
+  title?: string | Record<string, any>
+  titleStyle?: Record<string, any> | null
+  featuredImage?: string
+  featuredImageAlt?: string
+  featuredMultimedia?: Record<string, any> | null
+  backgroundMultimedia?: Record<string, any> | null
+  articles: TravelInsightArticle[]
   style?: Record<string, any> | null
 }
 
@@ -194,16 +317,10 @@ export type LocationData = {
   id?: string
 
   name: string
-  slug: string
+  slug?: string
   type: string
   parentId?: string | null
 
-  /**
-   * Included by the backend on every GET /locations response
-   * (Prisma `include: { parent: true, children: true }`), so
-   * edit-mode can resolve/display the current parent's name
-   * without an extra request.
-   */
   parent?: {
     id: string
     name: string
@@ -219,16 +336,7 @@ export type LocationData = {
   createdAt?: string
   updatedAt?: string
 
-  geoData?: {
-    area?: {
-      unit?: string
-      value?: number
-    }
-    mapZoom?: number
-    latitude?: number
-    longitude?: number
-    timezone?: string
-  }
+  geoData?: GeoData
 
   metadata?: {
     seo?: {
@@ -248,6 +356,7 @@ export type LocationData = {
   card?: any
   essence?: any
   highlights?: HighlightsSectionData
+  regionExperiences?: RegionExperiencesSectionData
   infoCard?: any
   highlightsStatistics?: any
   why?: any
@@ -255,7 +364,7 @@ export type LocationData = {
   glance?: any
   experience?: any
   character?: any
-  travelInsight?: any
+  travelInsight?: TravelInsightsSectionData
   journeyList?: any
   sharedInfo?: any
   signatureExperiences?: any
@@ -617,11 +726,18 @@ export type LocationData = {
       stays?: AccommodationStayItem[]
     }
 
+    regionExperiences?: RegionExperiencesSectionData
+    highlights?: HighlightsSection | any
+
     videoGalary: {
       alt: string
       url: string
       thumbnail: string
       multimedia?: Record<string, any> | null
     }
+
+    [key: string]: any
   }
+
+  [key: string]: any
 }

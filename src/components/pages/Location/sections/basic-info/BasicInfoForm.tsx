@@ -40,19 +40,6 @@ export function BasicInfoForm({
 
   const handleNameChange = (val: string) => {
     updateField("name", val)
-    // Auto-generate slug only if slug is currently empty or matches previous slugified name
-    if (!draft.slug || draft.slug === slugify(draft.name || "")) {
-      updateField("slug", slugify(val))
-    }
-  }
-
-  const slugify = (text: string) => {
-    return text
-      .toLowerCase()
-      .trim()
-      .replace(/[^\w\s-]/g, "")
-      .replace(/[\s_-]+/g, "-")
-      .replace(/^-+|-+$/g, "")
   }
 
   return (
@@ -73,16 +60,6 @@ export function BasicInfoForm({
           onChange={handleNameChange}
         />
 
-        <DynamicStyledField
-          type="text"
-          label="URL Slug (Preview / Auto-Generated)"
-          fieldName="slug"
-          placeholder="e.g. theth"
-          enableStyle={false}
-          disabled={true}
-          value={draft.slug || ""}
-          hint="URL slug is auto-generated from name and cannot be edited directly."
-        />
 
         <DynamicStyledField
           type="select"

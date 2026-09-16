@@ -13,6 +13,19 @@ import { EssenceForm } from "../sections/essence/EssenceForm"
 import { EssencePreview } from "../sections/essence/EssencePreview"
 import { HighlightsForm } from "../sections/highlights/HighlightsForm"
 import { HighlightsPreview } from "../sections/highlights/HighlightsPreview"
+import { RegionExperiencesForm } from "../sections/region-experiences/RegionExperiencesForm"
+import { RegionExperiencesPreview } from "../sections/region-experiences/RegionExperiencesPreview"
+import { GeoMapForm } from "../sections/geo-map/GeoMapForm"
+import { GeoMapPreview } from "../sections/geo-map/GeoMapPreview"
+import { TravelInsightsForm } from "../sections/travel-insights/TravelInsightsForm"
+import { TravelInsightsPreview } from "../sections/travel-insights/TravelInsightsPreview"
+import { SignatureExperiencesForm } from "../sections/signature-experiences/SignatureExperiencesForm"
+import { SignatureExperiencesPreview } from "../sections/signature-experiences/SignatureExperiencesPreview"
+import { FaqForm } from "../sections/faq/FaqForm"
+import { FaqPreview } from "../sections/faq/FaqPreview"
+import { DestinationCtaForm } from "../sections/cta/DestinationCtaForm"
+import { DestinationCtaPreview } from "../sections/cta/DestinationCtaPreview"
+import { SeoForm } from "../sections/seo/SeoForm"
 
 export type LocationFormSectionProps = {
   draft: LocationData
@@ -30,6 +43,13 @@ export type LocationSectionKey =
   | "hero"
   | "essence"
   | "highlights"
+  | "region-experiences"
+  | "geo-map"
+  | "travel-insights"
+  | "signature-experiences"
+  | "faq"
+  | "cta"
+  | "seo"
 
 export type SectionRegistryEntry = {
   label: string
@@ -58,6 +78,41 @@ export const locationSectionRegistry: Record<LocationSectionKey, SectionRegistry
     form: HighlightsForm,
     preview: HighlightsPreview,
   },
+  "region-experiences": {
+    label: "05. Region Experiences",
+    form: RegionExperiencesForm,
+    preview: RegionExperiencesPreview,
+  },
+  "geo-map": {
+    label: "06. Interactive Map & Geo Data",
+    form: GeoMapForm,
+    preview: GeoMapPreview,
+  },
+  "travel-insights": {
+    label: "07. Travel Insights & Guide Articles",
+    form: TravelInsightsForm,
+    preview: TravelInsightsPreview,
+  },
+  "signature-experiences": {
+    label: "08. Signature Experiences",
+    form: SignatureExperiencesForm,
+    preview: SignatureExperiencesPreview,
+  },
+  faq: {
+    label: "09. Frequently Asked Questions",
+    form: FaqForm,
+    preview: FaqPreview,
+  },
+  cta: {
+    label: "10. Call to Action (CTA)",
+    form: DestinationCtaForm,
+    preview: DestinationCtaPreview,
+  },
+  seo: {
+    label: "11. SEO & Metadata",
+    form: SeoForm,
+    preview: null,
+  },
 }
 
 export const locationSectionOrder: LocationSectionKey[] = [
@@ -65,4 +120,11 @@ export const locationSectionOrder: LocationSectionKey[] = [
   "hero",
   "essence",
   "highlights",
+  "region-experiences",
+  "geo-map",
+  "travel-insights",
+  "signature-experiences",
+  "faq",
+  "cta",
+  "seo",
 ]

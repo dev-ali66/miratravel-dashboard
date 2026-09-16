@@ -35,9 +35,7 @@ export function LocationForm({ }: LocationFormProps) {
   const { updateField, save, isEditMode, isLoading, isError, isSaving } =
     useLocationPage(id, slug)
 
-  const [openSections, setOpenSections] = useState<Record<string, boolean>>({
-    "basic-info": true,
-  })
+  const [openSections, setOpenSections] = useState<Record<string, boolean>>({})
 
   const autoAddTriggered = useRef(false)
 
@@ -116,10 +114,10 @@ export function LocationForm({ }: LocationFormProps) {
   }
 
   const toggleSection = (section: string) => {
-    setOpenSections((current) => ({
-      ...current,
-      [section]: !current[section],
-    }))
+    setOpenSections((current) => {
+      const isCurrentlyOpen = !!current[section]
+      return isCurrentlyOpen ? {} : { [section]: true }
+    })
   }
 
   return (

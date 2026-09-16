@@ -385,10 +385,18 @@ export function DynamicStyledField(props: DynamicStyledFieldProps) {
   // Unified change handler that updates value + preserves / includes styles
   const handleValueChange = (newVal: any) => {
     if (!onChange) return
-    if (typeof value === "object" && value !== null && !Array.isArray(value) && value.value !== undefined) {
+    if (typeof value === "object" && value !== null && !Array.isArray(value)) {
       onChange({
         ...value,
         value: newVal,
+      })
+    } else if (enableStyle && (type === "text" || type === "textarea" || type === "richtext" || type === "number")) {
+      onChange({
+        value: newVal,
+        textColor: activeStyle?.textColor ?? null,
+        textOpacity: activeStyle?.textOpacity ?? 1,
+        backgroundColor: activeStyle?.backgroundColor ?? null,
+        backgroundOpacity: activeStyle?.backgroundOpacity ?? 1,
       })
     } else {
       onChange(newVal)
@@ -405,8 +413,11 @@ export function DynamicStyledField(props: DynamicStyledFieldProps) {
       })
     } else {
       onChange?.({
-        value: rawValue,
-        ...newStyle,
+        value: rawValue ?? "",
+        textColor: newStyle.textColor ?? activeStyle?.textColor ?? null,
+        textOpacity: newStyle.textOpacity ?? activeStyle?.textOpacity ?? 1,
+        backgroundColor: newStyle.backgroundColor ?? activeStyle?.backgroundColor ?? null,
+        backgroundOpacity: newStyle.backgroundOpacity ?? activeStyle?.backgroundOpacity ?? 1,
       })
     }
   }

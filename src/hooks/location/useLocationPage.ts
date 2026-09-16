@@ -50,6 +50,7 @@ export function useLocationPage(locationId?: string, _slug?: string) {
         card: location.card ?? location.data?.card ?? emptyLocation.card,
         why: location.why ?? location.data?.why ?? emptyLocation.data?.why,
         sharedInfo: location.sharedInfo ?? location.data?.sharedInfo ?? emptyLocation.data?.sharedInfo,
+        geoData: location.geoData ?? location.data?.geoData ?? emptyLocation.geoData,
       }
 
       setDraft(
