@@ -21,6 +21,8 @@ export type PracticalInfoItem = {
   id?: string
   title: any
   content: any
+  multimedia?: any
+  imageMultimedia?: any
 }
 
 export function PracticalInfoForm({
@@ -97,7 +99,7 @@ export function PracticalInfoForm({
     setExpandedIndex(targetIndex)
   }
 
-  const handleItemFieldChange = (index: number, field: "title" | "content", value: any) => {
+  const handleItemFieldChange = (index: number, field: string, value: any) => {
     const updated = [...items]
     updated[index] = {
       ...updated[index],
