@@ -18,12 +18,14 @@ import type { SignatureExperienceItem } from "../../locationTypes"
 import type { LocationFormSectionProps } from "../../config/locationSections"
 import { useSearchLocations, type LocationSearchItem } from "@/hooks/location/useGetLocation"
 import { ButtonsField } from "@/components/pages/CMS/shared/ButtonsField"
+import { emptyLocation } from "../../shared/emptyLocation"
 
 export function SignatureExperiencesForm({
   draft,
   updateField,
   openSections,
   toggleSection,
+  sectionNumber,
 }: LocationFormSectionProps) {
   const signatureExperiences =
     draft?.signatureExperiences ||
@@ -230,7 +232,8 @@ export function SignatureExperiencesForm({
 
   return (
     <FormSection
-      title="08. Signature Experiences"
+      title="Signature Experiences"
+      sectionNumber={sectionNumber}
       active={isOpen}
       onClick={() => toggleSection("signature-experiences")}
     >
@@ -280,7 +283,7 @@ export function SignatureExperiencesForm({
           imageFieldName="locationSignatureExpBgImage"
           videoFieldName="locationSignatureExpBgVideo"
           hideFieldNameBadge={true}
-          value={signatureExperiences.backgroundMultimedia}
+          value={signatureExperiences.backgroundMultimedia || emptyLocation.signatureExperiences?.backgroundMultimedia}
           onChange={(multimedia) =>
             updateSectionField("backgroundMultimedia", multimedia)
           }

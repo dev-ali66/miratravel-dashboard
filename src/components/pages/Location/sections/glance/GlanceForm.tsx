@@ -1,17 +1,5 @@
 import { useState, useRef, useEffect } from "react"
-import {
-  Search,
-  Plus,
-  Trash2,
-  ChevronUp,
-  ChevronDown,
-  Sparkles,
-  Check,
-  X,
-  Loader2,
-  Image as ImageIcon,
-  MapPin,
-} from "lucide-react"
+import { Search, Plus, Trash2, ChevronUp, ChevronDown, Sparkles, Check, X, Loader2, Image as ImageIcon, MapPin, Star } from "lucide-react"
 import { DynamicStyledField } from "@/components/pages/CMS/shared/FormControls"
 import { UniversalMultimediaForm } from "@/components/pages/CMS/shared/UniversalMultimediaForm"
 import { FormSection } from "../../shared/fields"
@@ -23,20 +11,23 @@ import {
 } from "@/hooks/location/useGetLocation"
 import { emptyLocation } from "../../shared/emptyLocation"
 
-export function HighlightsForm({
+export function GlanceForm({
   draft,
   updateField,
   openSections,
   toggleSection,
   sectionNumber,
 }: LocationFormSectionProps) {
-  const highlights =
-    draft?.highlights ||
-    (draft as any)?.data?.highlights || {
-      label: "SEASONAL HIGHLIGHTS",
-      title: "Regions of Europe",
-      description:
-        "A selection of destinations currently resonating with our most discerning travelers.",
+  const glanceData =
+    draft?.glance ||
+    draft?.regionGlance ||
+    (draft as any)?.data?.glance ||
+    (draft as any)?.data?.regionGlance ||
+    emptyLocation.glance ||
+    {
+      label: "REGIONAL ORIENTATION",
+      title: "The Region at a Glance",
+      description: "",
       items: [],
       backgroundMultimedia: null,
     }
@@ -45,13 +36,13 @@ export function HighlightsForm({
   const { data: locationPagesResponse } = useGetLocationPages({ limit: 100 })
   const availableLocations = locationPagesResponse?.data || []
 
-  // Extract raw string IDs from highlights.items (supports legacy items as objects or strings)
-  const rawItems: any[] = Array.isArray(highlights.items) ? highlights.items : []
+  // Extract raw string IDs from glance.items (supports both legacy items objects and string IDs)
+  const rawItems: any[] = Array.isArray(glanceData.items) ? glanceData.items : []
   const itemIds: string[] = rawItems
     .map((it: any) => (typeof it === "string" ? it : it?.id || it?.locationId))
     .filter(Boolean)
 
-  const isOpen = Boolean(openSections["highlights"])
+  const isOpen = Boolean(openSections["glance"])
 
   // Live Location Search State
   const [searchQuery, setSearchQuery] = useState<string>("")
@@ -80,12 +71,12 @@ export function HighlightsForm({
     return () => document.removeEventListener("mousedown", handleClickOutside)
   }, [])
 
-  const updateHighlightsField = (fieldKey: string, value: any) => {
-    updateField(`highlights.${fieldKey}`, value)
+  const updateGlanceField = (fieldKey: string, value: any) => {
+    updateField(`glance.${fieldKey}`, value)
   }
 
   const updateItemIds = (newItemIds: string[]) => {
-    updateHighlightsField("items", newItemIds)
+    updateGlanceField("items", newItemIds)
   }
 
   // Add location ID directly from live DB Search
@@ -108,10 +99,9 @@ export function HighlightsForm({
     if (!draft?.children || draft.children.length === 0) return
 
     const childIds = draft.children
-      .map((child: any) => child.id)
+      .map((child: any) => child.id || child.slug)
       .filter(Boolean) as string[]
 
-    // Merge unique IDs
     const combined = Array.from(new Set([...itemIds, ...childIds]))
     updateItemIds(combined)
   }
@@ -134,51 +124,51 @@ export function HighlightsForm({
 
   return (
     <FormSection
-      title="Seasonal Highlights & Regions"
+      title="Glance"
       sectionNumber={sectionNumber}
       active={isOpen}
-      onClick={() => toggleSection("highlights")}
+      onClick={() => toggleSection("glance")}
     >
       <div className="flex flex-col gap-5">
         {/* 1. Eyebrow / Label */}
         <DynamicStyledField
           type="text"
           label="Eyebrow / Category Tag"
-          fieldName="highlights.label"
-          placeholder="e.g. SEASONAL HIGHLIGHTS"
-          value={highlights.label}
-          onChange={(val) => updateHighlightsField("label", val)}
+          fieldName="glance.label"
+          placeholder="e.g. REGIONAL ORIENTATION"
+          value={glanceData.label}
+          onChange={(val) => updateGlanceField("label", val)}
         />
 
         {/* 2. Section Main Title */}
         <DynamicStyledField
           type="text"
           label="Section Title"
-          fieldName="highlights.title"
-          placeholder="e.g. Regions of Europe"
-          value={highlights.title}
-          onChange={(val) => updateHighlightsField("title", val)}
+          fieldName="glance.title"
+          placeholder="e.g. The Region at a Glance"
+          value={glanceData.title}
+          onChange={(val) => updateGlanceField("title", val)}
         />
 
-        {/* 3. Section Subtitle / Description */}
+        {/* 3. Section Subtitle / Narrative Description */}
         <DynamicStyledField
           type="textarea"
-          label="Subtitle / Description"
-          fieldName="highlights.description"
-          placeholder="e.g. A selection of destinations currently resonating with our most discerning travelers."
-          value={highlights.description}
-          onChange={(val) => updateHighlightsField("description", val)}
+          label="Subtitle / Narrative Description"
+          fieldName="glance.description"
+          placeholder="Write a brief regional orientation overview..."
+          value={glanceData.description}
+          onChange={(val) => updateGlanceField("description", val)}
         />
 
         {/* 4. Universal Multimedia / Section Background Media */}
         <UniversalMultimediaForm
           title="Section Background Media"
-          fieldName="highlights.backgroundMultimedia"
-          imageFieldName="locationHighlightsBackgroundImage"
-          videoFieldName="locationHighlightsBackgroundVideo"
+          fieldName="glance.backgroundMultimedia"
+          imageFieldName="glanceBackgroundImg"
+          videoFieldName="glanceBackgroundVid"
           value={
-            highlights.backgroundMultimedia ||
-            emptyLocation.highlights?.backgroundMultimedia || {
+            glanceData.backgroundMultimedia ||
+            emptyLocation.glance?.backgroundMultimedia || {
               show: "color",
               color: {
                 color: "#FFFFFF",
@@ -187,21 +177,46 @@ export function HighlightsForm({
                 height: "100%",
                 aspectRatio: "auto",
               },
+              image: {
+                url: "",
+                alt: "Glance section background",
+                opacity: 100,
+                overlayColor: "#000000",
+                overlayOpacity: 0,
+                width: "100%",
+                height: "auto",
+                aspectRatio: "auto",
+                fit: "cover",
+              },
+              video: {
+                url: "",
+                alt: "Glance section background video",
+                autoplay: true,
+                loop: true,
+                muted: true,
+                opacity: 100,
+                overlayColor: "#000000",
+                overlayOpacity: 0,
+                width: "100%",
+                height: "auto",
+                aspectRatio: "auto",
+                fit: "cover",
+              },
             }
           }
           onChange={(multimedia) =>
-            updateHighlightsField("backgroundMultimedia", multimedia)
+            updateGlanceField("backgroundMultimedia", multimedia)
           }
         />
 
-        {/* 5. Highlight Locations Header & Actions */}
+        {/* 5. Glance Location Cards Header & Actions */}
         <div className="flex flex-wrap items-center justify-between gap-2 border-b border-border/60 pb-2.5 pt-2">
           <div>
             <h4 className="text-xs font-semibold uppercase tracking-wider text-foreground">
-              Highlight Locations ({itemIds.length})
+              Glance Destination Cards ({itemIds.length}) — Position #1 is Featured
             </h4>
             <p className="text-[11px] text-muted-foreground">
-              Select locations by ID to feature in this seasonal highlights marquee.
+              Select locations by ID to feature in this region glance marquee.
             </p>
           </div>
 
@@ -221,7 +236,7 @@ export function HighlightsForm({
         {/* 6. Live Search Input & Popover */}
         <div ref={searchContainerRef} className="relative">
           <label className="text-xs font-semibold text-foreground mb-1.5 block">
-            Search & Add Location by ID:
+            Search & Add Location Card by ID:
           </label>
           <div className="relative flex items-center">
             <Search className="absolute left-3 h-4 w-4 text-muted-foreground pointer-events-none" />
@@ -266,12 +281,11 @@ export function HighlightsForm({
                 <div className="divide-y divide-border/40">
                   {searchResults.map((loc) => {
                     const isAlreadyAdded = itemIds.includes(loc.id) || itemIds.includes(loc.slug)
-                    const heroMedia = (loc as any).hero?.backgroundMultimedia
+                    const heroMedia = loc.hero?.backgroundMultimedia
                     const thumbUrl =
                       heroMedia?.image?.url ||
-                      (loc as any).hero?.image?.url ||
-                      (loc as any).card?.background_image ||
-                      (heroMedia?.show === "image" ? heroMedia?.image?.url : "") ||
+                      loc.hero?.image?.url ||
+                      loc.card?.background_image ||
                       ""
 
                     return (
@@ -335,7 +349,7 @@ export function HighlightsForm({
                           ) : (
                             <>
                               <Plus className="h-3 w-3" />
-                              Add ID
+                              Add Card
                             </>
                           )}
                         </button>
@@ -348,20 +362,21 @@ export function HighlightsForm({
           )}
         </div>
 
-        {/* 7. Highlight Location IDs List */}
+        {/* 7. Glance Location IDs List */}
         {itemIds.length === 0 ? (
           <div className="flex flex-col items-center justify-center rounded-xl border border-dashed border-border/80 bg-muted/20 p-8 text-center">
             <ImageIcon className="h-8 w-8 text-muted-foreground/50 mb-2" />
             <p className="text-xs font-medium text-muted-foreground">
-              No highlight location IDs added yet.
+              No glance location cards added yet.
             </p>
             <p className="text-[11px] text-muted-foreground/80 mt-1 max-w-xs">
-              Search locations in the search box above or click &quot;Import Children&quot; to select highlight locations.
+              Search locations in the search box above or click &quot;Import Children&quot; to select glance destination cards.
             </p>
           </div>
         ) : (
           <div className="space-y-2">
             {itemIds.map((id, idx) => {
+              const isFeatured = idx === 0
               const loc =
                 availableLocations.find((l: any) => l.id === id || l.slug === id) ||
                 (draft?.children as any[])?.find((c: any) => c.id === id || c.slug === id)
@@ -381,7 +396,11 @@ export function HighlightsForm({
               return (
                 <div
                   key={`${id}-${idx}`}
-                  className="flex items-center justify-between gap-3 p-3 rounded-xl border border-border/70 bg-card hover:border-border transition-all shadow-2xs"
+                  className={`flex items-center justify-between gap-3 p-3 rounded-xl border transition-all shadow-2xs ${
+                    isFeatured
+                      ? "border-amber-500/50 bg-amber-500/5 dark:bg-amber-500/10"
+                      : "border-border/70 bg-card hover:border-border"
+                  }`}
                 >
                   <div className="flex items-center gap-3 min-w-0 flex-1">
                     <span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-md bg-primary/10 text-primary text-[11px] font-bold">
@@ -408,9 +427,16 @@ export function HighlightsForm({
                         <p className="text-xs font-semibold text-foreground truncate">
                           {locationTitle}
                         </p>
-                        <span className="shrink-0 rounded bg-primary/10 px-1.5 py-0.5 text-[9px] font-semibold text-primary uppercase">
-                          {locationType}
-                        </span>
+                        {isFeatured ? (
+                          <span className="flex items-center gap-1 rounded-full bg-amber-500/15 px-2 py-0.5 text-[9px] font-semibold text-amber-700 dark:text-amber-300">
+                            <Star className="h-2.5 w-2.5 fill-current text-amber-500" />
+                            #1 Featured Card
+                          </span>
+                        ) : (
+                          <span className="shrink-0 rounded bg-primary/10 px-1.5 py-0.5 text-[9px] font-semibold text-primary uppercase">
+                            {locationType}
+                          </span>
+                        )}
                       </div>
                       <div className="flex items-center gap-2 text-[10px] text-muted-foreground mt-0.5">
                         {locationParent && <span>In {locationParent}</span>}
@@ -449,7 +475,7 @@ export function HighlightsForm({
                       type="button"
                       onClick={() => handleDeleteItem(idx)}
                       className="rounded p-1 text-destructive/80 hover:bg-destructive/10 hover:text-destructive cursor-pointer"
-                      title="Remove highlight"
+                      title="Remove card"
                     >
                       <Trash2 className="h-4 w-4" />
                     </button>
@@ -464,4 +490,4 @@ export function HighlightsForm({
   )
 }
 
-export default HighlightsForm
+export default GlanceForm

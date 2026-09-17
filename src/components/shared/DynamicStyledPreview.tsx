@@ -35,6 +35,38 @@ export interface DynamicStyledPreviewProps
   style?: React.CSSProperties
 }
 
+/**
+ * Safely unwrap nested unified objects { value, textColor, ... } to primitive values or React elements.
+ * Prevents React child rendering errors when objects are passed to JSX.
+ */
+function unwrapFieldValue(val: any): any {
+  if (val === null || val === undefined) return ""
+  if (typeof val === "string" || typeof val === "number" || typeof val === "boolean") return val
+  if (React.isValidElement(val)) return val
+
+  if (Array.isArray(val)) {
+    return val.map((item) => unwrapFieldValue(item))
+  }
+
+  if (typeof val === "object") {
+    if (val.value !== undefined) {
+      return unwrapFieldValue(val.value)
+    }
+    if (val.text !== undefined) {
+      return unwrapFieldValue(val.text)
+    }
+    if (val.title !== undefined) {
+      return unwrapFieldValue(val.title)
+    }
+    if (val.label !== undefined) {
+      return unwrapFieldValue(val.label)
+    }
+    return ""
+  }
+
+  return String(val)
+}
+
 /* Helper to detect if a string contains HTML markup */
 function isHtml(input: any): boolean {
   if (typeof input !== "string") return false
@@ -49,31 +81,29 @@ function isHtml(input: any): boolean {
 export function DynamicStyledPreview({
   as: Component = "span",
   type = "auto",
-  field,
+  field: fieldProp,
   styleObj,
-  fallback = null,
+  fallback: fallbackProp = null,
   fallbackColor,
-  prefix,
-  suffix,
+  prefix: prefixProp,
+  suffix: suffixProp,
   formatNumber = false,
   className,
   style: explicitStyle,
+  children,
   ...rest
 }: DynamicStyledPreviewProps) {
-  // Extract raw value and style object
-  let rawValue: any
-  if (Array.isArray(field)) {
-    rawValue = field.map((item) =>
-      item && typeof item === "object" && item.value !== undefined ? item.value : item
-    )
-  } else if (field && typeof field === "object" && field.value !== undefined) {
-    rawValue = field.value
-  } else {
-    rawValue = field
-  }
+  const actualField = fieldProp !== undefined ? fieldProp : children
+  const rawValue = unwrapFieldValue(actualField)
+  const safeFallback = unwrapFieldValue(fallbackProp)
+  const safePrefix = React.isValidElement(prefixProp) ? prefixProp : unwrapFieldValue(prefixProp)
+  const safeSuffix = React.isValidElement(suffixProp) ? suffixProp : unwrapFieldValue(suffixProp)
 
+  // Find style object (prefer styleObj, fallback to fieldProp if it's an object)
   const targetStyle =
-    styleObj || (field && typeof field === "object" && !Array.isArray(field) ? field : undefined)
+    styleObj ||
+    (fieldProp && typeof fieldProp === "object" && !Array.isArray(fieldProp) ? fieldProp : undefined) ||
+    (children && typeof children === "object" && !Array.isArray(children) ? children : undefined)
 
   // Generate dynamic CSS properties from style object
   const dynamicCss = fieldCssStyle(targetStyle, fallbackColor)
@@ -92,7 +122,7 @@ export function DynamicStyledPreview({
     (Array.isArray(rawValue) && rawValue.length === 0)
 
   if (isEmpty) {
-    if (!fallback) return null
+    if (!safeFallback && safeFallback !== 0) return null
 
     return (
       <Component
@@ -100,9 +130,9 @@ export function DynamicStyledPreview({
         style={mergedStyle}
         {...rest}
       >
-        {prefix}
-        {fallback}
-        {suffix}
+        {safePrefix}
+        {safeFallback}
+        {safeSuffix}
       </Component>
     )
   }
@@ -129,7 +159,6 @@ export function DynamicStyledPreview({
     } else if (typeof rawValue === "string") {
       const trimmed = rawValue.trim()
       if (isHtml(trimmed)) {
-        // Ensure empty paragraph tags contain <br /> so browsers don't collapse them to 0 height
         htmlContent = trimmed.replace(/<p>\s*<\/p>/gi, "<p><br /></p>")
       } else {
         htmlContent = rawValue
@@ -193,9 +222,9 @@ export function DynamicStyledPreview({
         style={mergedStyle}
         {...rest}
       >
-        {prefix}
+        {safePrefix}
         {displayValue}
-        {suffix}
+        {safeSuffix}
       </Component>
     )
   }
@@ -204,9 +233,9 @@ export function DynamicStyledPreview({
   if (type === "textarea" || (typeof rawValue === "string" && rawValue.includes("\n"))) {
     return (
       <Component className={cn("whitespace-pre-line", className)} style={mergedStyle} {...rest}>
-        {prefix}
+        {safePrefix}
         {displayValue}
-        {suffix}
+        {safeSuffix}
       </Component>
     )
   }
@@ -214,9 +243,9 @@ export function DynamicStyledPreview({
   // Default standard rendering
   return (
     <Component className={className} style={mergedStyle} {...rest}>
-      {prefix}
+      {safePrefix}
       {displayValue}
-      {suffix}
+      {safeSuffix}
     </Component>
   )
 }
@@ -224,3 +253,4 @@ export function DynamicStyledPreview({
 /* Convenience alias */
 export const DynamicStyledText = DynamicStyledPreview
 export default DynamicStyledPreview
+

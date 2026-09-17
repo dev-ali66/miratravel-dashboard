@@ -2,12 +2,14 @@ import { DynamicStyledField } from "@/components/pages/CMS/shared/FormControls"
 import { UniversalMultimediaForm } from "@/components/pages/CMS/shared/UniversalMultimediaForm"
 import { FormSection } from "../../shared/fields"
 import type { LocationFormSectionProps } from "../../config/locationSections"
+import { emptyLocation } from "../../shared/emptyLocation"
 
 export function EssenceForm({
   draft,
   updateField,
   openSections,
   toggleSection,
+  sectionNumber,
 }: LocationFormSectionProps) {
   const essence = draft?.essence || (draft as any)?.data?.essence || {}
   const isOpen = Boolean(openSections["essence"])
@@ -21,7 +23,8 @@ export function EssenceForm({
 
   return (
     <FormSection
-      title="03. Essence of Location"
+      title="Essence of Location"
+      sectionNumber={sectionNumber}
       active={isOpen}
       onClick={() => toggleSection("essence")}
     >
@@ -72,7 +75,7 @@ export function EssenceForm({
           fieldName="essence.imageMultimedia"
           imageFieldName="locationEssenceImage"
           videoFieldName="locationEssenceVideo"
-          value={essence.imageMultimedia || essence.multimedia}
+          value={essence.imageMultimedia || essence.multimedia || emptyLocation.essence?.imageMultimedia}
           onChange={(multimedia) => updateEssenceField("imageMultimedia", multimedia)}
         />
 
@@ -107,7 +110,7 @@ export function EssenceForm({
                 </span>
               </div>
 
-              <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+              <div className="flex flex-col gap-4">
                 <DynamicStyledField
                   type="text"
                   label="Stat Value"
@@ -152,7 +155,7 @@ export function EssenceForm({
           fieldName="essence.backgroundMultimedia"
           imageFieldName="locationEssenceBackgroundImage"
           videoFieldName="locationEssenceBackgroundVideo"
-          value={essence.backgroundMultimedia}
+          value={essence.backgroundMultimedia || emptyLocation.essence?.backgroundMultimedia}
           onChange={(multimedia) => updateEssenceField("backgroundMultimedia", multimedia)}
         />
       </div>

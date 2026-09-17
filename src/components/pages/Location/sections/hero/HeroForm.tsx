@@ -3,12 +3,14 @@ import { ButtonsField } from "@/components/pages/CMS/shared/ButtonsField"
 import { UniversalMultimediaForm } from "@/components/pages/CMS/shared/UniversalMultimediaForm"
 import { FormSection } from "../../shared/fields"
 import type { LocationFormSectionProps } from "../../config/locationSections"
+import { emptyLocation } from "../../shared/emptyLocation"
 
 export function HeroForm({
   draft,
   updateField,
   openSections,
   toggleSection,
+  sectionNumber,
 }: LocationFormSectionProps) {
   const hero = draft?.hero || (draft as any)?.data?.hero || {}
   const isOpen = Boolean(openSections["hero"])
@@ -19,7 +21,8 @@ export function HeroForm({
 
   return (
     <FormSection
-      title="02. Hero Banner"
+      title="Hero Banner"
+      sectionNumber={sectionNumber}
       active={isOpen}
       onClick={() => toggleSection("hero")}
     >
@@ -93,7 +96,7 @@ export function HeroForm({
           fieldName="hero.backgroundMultimedia"
           imageFieldName="locationHeroBackgroundImage"
           videoFieldName="locationHeroBackgroundVideo"
-          value={hero.backgroundMultimedia || hero.multimedia}
+          value={hero.backgroundMultimedia || hero.multimedia || emptyLocation.hero?.backgroundMultimedia}
           onChange={(multimedia) => updateHeroField("backgroundMultimedia", multimedia)}
         />
       </div>

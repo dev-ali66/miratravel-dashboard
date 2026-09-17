@@ -19,7 +19,7 @@ export function StatsPreview({ draft }: LocationPreviewSectionProps) {
     (draft as any)?.data?.statistics ||
     {}
 
-  const rawFacts = statsData.facts || draft?.essence?.facts || (draft as any)?.data?.essence?.facts
+  const rawFacts = statsData.items || statsData.facts || (draft as any)?.data?.stats?.items || (draft as any)?.data?.stats?.facts || (draft as any)?.data?.statistics?.items || (draft as any)?.data?.statistics?.facts
   const facts = Array.isArray(rawFacts) && rawFacts.length > 0 ? rawFacts : defaultFacts
 
   return (
@@ -30,7 +30,7 @@ export function StatsPreview({ draft }: LocationPreviewSectionProps) {
       {/* Background Media / Color */}
       <UniversalMultimediaPreview
         multimedia={statsData.backgroundMultimedia}
-        fallbackColor="transparent"
+        fallbackColor="#FFFFFF"
         mode="background"
       />
 

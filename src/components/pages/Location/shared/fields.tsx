@@ -21,15 +21,20 @@ export { DynamicStyledField, ColorField }
 
 export function FormSection({
   title,
+  sectionNumber,
   active,
   onClick,
   children,
 }: {
   title: string
+  sectionNumber?: string
   active: boolean
   onClick: () => void
   children: React.ReactNode
 }) {
+  const rawTitle = title.replace(/^\d+[a-z]?\.\s*/i, "")
+  const displayTitle = sectionNumber ? `${sectionNumber}. ${rawTitle}` : title
+
   return (
     <div
       className={cn(
@@ -42,7 +47,7 @@ export function FormSection({
         onClick={onClick}
         className="flex w-full items-center justify-between px-4 py-3.5 text-left transition-colors hover:bg-muted/40 cursor-pointer"
       >
-        <span className="text-sm font-semibold text-foreground">{title}</span>
+        <span className="text-sm font-semibold text-foreground">{displayTitle}</span>
 
         <ChevronDown
           className={cn(

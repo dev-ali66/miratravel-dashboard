@@ -25,6 +25,7 @@ export function RegionExperiencesForm({
   updateField,
   openSections,
   toggleSection,
+  sectionNumber,
 }: LocationFormSectionProps) {
   const regionExperiences =
     draft?.regionExperiences ||
@@ -240,7 +241,8 @@ export function RegionExperiencesForm({
 
   return (
     <FormSection
-      title="05. Region Experiences"
+      title="Region Experiences"
+      sectionNumber={sectionNumber}
       active={isOpen}
       onClick={() => toggleSection("region-experiences")}
     >
@@ -274,8 +276,16 @@ export function RegionExperiencesForm({
           videoFieldName="regionExperiencesBgVideo"
           value={
             regionExperiences.backgroundMultimedia ||
-            emptyLocation.regionExperiences?.backgroundMultimedia ||
-            null
+            emptyLocation.regionExperiences?.backgroundMultimedia || {
+              show: "color",
+              color: {
+                color: "#FFFFFF",
+                opacity: 100,
+                width: "100%",
+                height: "100%",
+                aspectRatio: "auto",
+              },
+            }
           }
           onChange={(multimedia) =>
             updateRegionExperiencesField("backgroundMultimedia", multimedia)

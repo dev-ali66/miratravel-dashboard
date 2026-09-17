@@ -348,6 +348,7 @@ export type LocationData = {
   accommodation?: any
   faq?: any
   travelInfo?: any
+  practicalInfo?: any
   cta?: any
 
   data?: {

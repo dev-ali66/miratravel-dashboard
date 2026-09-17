@@ -16,33 +16,32 @@ import { getSectionsForLocationType } from "../config/locationSections"
  * explicitly serialized as `"key": null` instead of being dropped.
  */
 export function normalizeMultimedia(media: any): any {
-  if (media === undefined || media === null) {
-    return null
-  }
+  const safeMedia = media && typeof media === "object" ? media : {}
 
-  if (typeof media !== "object") {
-    return null
-  }
+  const show = safeMedia.show ?? safeMedia.type ?? "color"
 
-  const show = media.show ?? media.type ?? "image"
-  const type = media.type ?? media.show ?? "image"
-
-  const imageObj = media.image ?? media.imageData ?? {}
-  const videoObj = media.video ?? media.videoData ?? {}
+  const imageObj = safeMedia.image ?? safeMedia.imageData ?? {}
+  const videoObj = safeMedia.video ?? safeMedia.videoData ?? {}
   const colorObj =
-    typeof media.color === "object"
-      ? media.color
-      : { color: media.color || "#171717", opacity: 100 }
+    typeof safeMedia.color === "object"
+      ? safeMedia.color
+      : {
+          color: typeof safeMedia.color === "string" ? safeMedia.color : "#FFFFFF",
+          opacity: 100,
+          width: "100%",
+          height: "100%",
+          aspectRatio: "auto",
+        }
 
   const resolvedUrl =
-    media.url ||
+    safeMedia.url ||
     (show === "video" ? videoObj.url : imageObj.url) ||
     videoObj.url ||
     imageObj.url ||
     null
 
   const resolvedAlt =
-    media.alt ||
+    safeMedia.alt ||
     (show === "video" ? videoObj.alt : imageObj.alt) ||
     videoObj.alt ||
     imageObj.alt ||
@@ -50,35 +49,30 @@ export function normalizeMultimedia(media: any): any {
 
   return {
     show,
-    type,
-    url: resolvedUrl,
-    alt: resolvedAlt,
-    color: colorObj,
-    opacity: media.opacity ?? imageObj.opacity ?? videoObj.opacity ?? 100,
-    overlayColor:
-      media.overlayColor ?? imageObj.overlayColor ?? videoObj.overlayColor ?? null,
-    overlayOpacity:
-      media.overlayOpacity ??
-      imageObj.overlayOpacity ??
-      videoObj.overlayOpacity ??
-      null,
+    color: {
+      color: colorObj.color ?? "#FFFFFF",
+      opacity: colorObj.opacity ?? 100,
+      width: colorObj.width || "100%",
+      height: colorObj.height || "100%",
+      aspectRatio: colorObj.aspectRatio || "auto",
+    },
     image: {
-      url: imageObj.url || (type === "image" ? resolvedUrl : null) || null,
+      url: imageObj.url || (show === "image" ? resolvedUrl : null) || null,
       alt: imageObj.alt || resolvedAlt || null,
       opacity: imageObj.opacity ?? 100,
-      overlayColor: imageObj.overlayColor || null,
-      overlayOpacity: imageObj.overlayOpacity ?? null,
+      overlayColor: imageObj.overlayColor || "#000000",
+      overlayOpacity: imageObj.overlayOpacity ?? 0,
       width: imageObj.width || "100%",
       height: imageObj.height || "auto",
       aspectRatio: imageObj.aspectRatio || "auto",
       fit: imageObj.fit || "cover",
     },
     video: {
-      url: videoObj.url || (type === "video" ? resolvedUrl : null) || null,
+      url: videoObj.url || (show === "video" ? resolvedUrl : null) || null,
       alt: videoObj.alt || resolvedAlt || null,
       opacity: videoObj.opacity ?? 100,
-      overlayColor: videoObj.overlayColor || null,
-      overlayOpacity: videoObj.overlayOpacity ?? null,
+      overlayColor: videoObj.overlayColor || "#000000",
+      overlayOpacity: videoObj.overlayOpacity ?? 0,
       autoplay: videoObj.autoplay ?? true,
       loop: videoObj.loop ?? true,
       muted: videoObj.muted ?? true,
@@ -86,23 +80,6 @@ export function normalizeMultimedia(media: any): any {
       height: videoObj.height || "auto",
       aspectRatio: videoObj.aspectRatio || "auto",
       fit: videoObj.fit || "cover",
-    },
-    imageData: {
-      url: imageObj.url || (type === "image" ? resolvedUrl : null) || null,
-      alt: imageObj.alt || resolvedAlt || null,
-      opacity: imageObj.opacity ?? null,
-      overlayColor: imageObj.overlayColor || null,
-      overlayOpacity: imageObj.overlayOpacity ?? null,
-    },
-    videoData: {
-      url: videoObj.url || (type === "video" ? resolvedUrl : null) || null,
-      alt: videoObj.alt || resolvedAlt || null,
-      opacity: videoObj.opacity ?? null,
-      overlayColor: videoObj.overlayColor || null,
-      overlayOpacity: videoObj.overlayOpacity ?? null,
-      autoplay: videoObj.autoplay ?? true,
-      loop: videoObj.loop ?? true,
-      muted: videoObj.muted ?? true,
     },
   }
 }
@@ -195,8 +172,10 @@ export function normalizeLocationPayload(
   const essence = safeDraft.essence ?? safeData.essence ?? {}
   const highlights = safeDraft.highlights ?? safeData.highlights ?? {}
   const statistics =
-    safeDraft.highlightsStatistics ??
+    safeDraft.stats ??
     safeDraft.statistics ??
+    safeDraft.highlightsStatistics ??
+    safeData.stats ??
     safeData.statistics ??
     safeData.highlightsStatistics ??
     {}
@@ -212,12 +191,6 @@ export function normalizeLocationPayload(
     safeDraft.signature_experiences ??
     safeData.signature_experiences ??
     safeData.signatureExperiences ??
-    {}
-  const practicalInformation =
-    safeDraft.practicalInformation ??
-    safeDraft.practical_information ??
-    safeData.practical_information ??
-    safeData.practicalInformation ??
     {}
   const faqSection =
     safeDraft.faq ??
@@ -246,25 +219,18 @@ export function normalizeLocationPayload(
     safeData.accommodation_stays ??
     safeData.accommodation ??
     {}
-  const culture = safeDraft.culture ?? safeData.culture ?? {}
-  const climate = safeDraft.climate ?? safeData.climate ?? {}
-  const safety = safeDraft.safety ?? safeData.safety ?? {}
   const regionExperiences =
     safeDraft.regionExperiences ??
     safeData.regionExperiences ??
     safeDraft.experience ??
     safeData.experience ??
     {}
-  const geography = safeDraft.geography ?? safeData.geography ?? {}
   const rawGeoData =
     safeDraft.geoData ??
     safeDraft.geo_data ??
     safeData.geo_data ??
     safeData.geoData ??
     {}
-  const localGuide =
-    safeDraft.localGuide ?? safeDraft.local_guide ?? safeData.local_guide ?? {}
-  const videoGalary = safeDraft.videoGalary ?? safeData.videoGalary ?? {}
 
   const normalizedHero = {
     ...hero,
@@ -329,7 +295,6 @@ export function normalizeLocationPayload(
 
   const normalizedHighlights = {
     ...highlights,
-    id: highlights.id ?? "highlights",
     label: normalizeStyledField(highlights.label, "SEASONAL HIGHLIGHTS", "#af6348"),
     title: normalizeStyledField(highlights.title, "", "#182d09"),
     description: normalizeStyledField(highlights.description, "", "#565e69"),
@@ -337,6 +302,7 @@ export function normalizeLocationPayload(
     backgroundMultimedia: normalizeMultimedia(highlights.backgroundMultimedia),
     style: highlights.style ?? null,
   }
+  delete (normalizedHighlights as any).id
 
   const normalizedWhy = {
     ...why,
@@ -380,14 +346,22 @@ export function normalizeLocationPayload(
     backgroundMultimedia: normalizeMultimedia(sharedInfo.backgroundMultimedia),
   }
 
+  const rawGlanceItems = Array.isArray(regionGlance.items)
+    ? regionGlance.items
+    : Array.isArray(regionGlance.locationIds)
+    ? regionGlance.locationIds
+    : []
+
+  const rawGlanceItemIds: string[] = rawGlanceItems
+    .map((it: any) => (typeof it === "string" ? it : it?.id || it?.locationId))
+    .filter(Boolean)
+
   const normalizedGlance = {
     ...regionGlance,
-    label: normalizeStyledField(regionGlance.label, "", "#af6348"),
-    title: normalizeStyledField(regionGlance.title, "", "#182d09"),
+    label: normalizeStyledField(regionGlance.label, "REGIONAL ORIENTATION", "#af6348"),
+    title: normalizeStyledField(regionGlance.title, "The Region at a Glance", "#182d09"),
     description: normalizeStyledField(regionGlance.description, "", "#565e69"),
-    style: regionGlance.style ?? null,
-    labelStyle: regionGlance.labelStyle ?? null,
-    descriptionStyle: regionGlance.descriptionStyle ?? null,
+    items: rawGlanceItemIds,
     backgroundMultimedia: normalizeMultimedia(
       regionGlance.backgroundMultimedia
     ),
@@ -397,52 +371,113 @@ export function normalizeLocationPayload(
     ...regionCharacter,
     label: normalizeStyledField(regionCharacter.label, "", "#af6348"),
     title: normalizeStyledField(regionCharacter.title, "", "#182d09"),
-    style: regionCharacter.style ?? null,
     items: Array.isArray(regionCharacter.items)
-      ? regionCharacter.items.map((it: any) => ({
-        id: it.id ?? "",
-        icon: it.icon ?? "",
-        iconImage: it.iconImage ?? "",
-        title: normalizeStyledField(it.title, "", "#182d09"),
-        description: normalizeStyledField(it.description, "", "#565e69"),
-        href: it.href ?? "",
-        linkText: it.linkText ?? "",
-        multimedia: normalizeMultimedia(it.multimedia ?? it.iconMultimedia),
-        titleStyle: it.titleStyle ?? null,
-        descriptionStyle: it.descriptionStyle ?? null,
-      }))
+      ? regionCharacter.items.map((it: any) => {
+          const rawButtons = Array.isArray(it.buttons) && it.buttons.length > 0
+            ? it.buttons
+            : it.button
+              ? [it.button]
+              : it.href || it.linkText
+                ? [{ label: it.linkText || "Read More", url: it.href || "#", variant: "primary" }]
+                : []
+
+          const normalizedButtons = rawButtons.map((btn: any) => ({
+            label: btn.label || btn.text || "Read More",
+            url: btn.url || btn.href || "#",
+            variant: btn.variant || btn.style || "primary",
+            style: btn.style || btn.variant || "primary",
+            ...(btn.backgroundColor ? { backgroundColor: btn.backgroundColor } : {}),
+            ...(btn.textColor ? { textColor: btn.textColor } : {}),
+            ...(btn.rounded ? { rounded: btn.rounded } : {}),
+            ...(btn.target ? { target: btn.target } : {}),
+          }))
+
+          const itemObj: any = {
+            title: normalizeStyledField(it.title, "", "#182d09"),
+            description: normalizeStyledField(it.description, "", "#565e69"),
+            buttons: normalizedButtons,
+            multimedia: normalizeMultimedia(it.multimedia ?? it.iconMultimedia),
+          }
+
+          if (it.href) itemObj.href = it.href
+          if (it.linkText) itemObj.linkText = it.linkText
+
+          return itemObj
+        })
       : [],
     backgroundMultimedia: normalizeMultimedia(
       regionCharacter.backgroundMultimedia
     ),
   }
+  delete (normalizedCharacter as any).style
+
+  const rawPracticalData =
+    safeDraft.practicalInfo ??
+    safeDraft.beforeTravel ??
+    safeData.practicalInfo ??
+    safeData.beforeTravel ??
+    {}
+
+  const normalizedPracticalInfo = {
+    ...rawPracticalData,
+    label: normalizeStyledField(rawPracticalData.label, "PRACTICAL INFORMATION", "#af6348"),
+    title: normalizeStyledField(rawPracticalData.title, "Essential Insights Before You Travel", "#182d09"),
+    imageMultimedia: normalizeMultimedia(
+      rawPracticalData.imageMultimedia ??
+      (rawPracticalData.image
+        ? {
+            show: "image",
+            image: { url: rawPracticalData.image, alt: rawPracticalData.imageAlt || "Practical Information" },
+          }
+        : null)
+    ),
+    items: Array.isArray(rawPracticalData.items)
+      ? rawPracticalData.items.map((it: any) => ({
+          title: normalizeStyledField(it.title, "", "#182d09"),
+          content: normalizeStyledField(it.content, "", "#565e69"),
+        }))
+      : [],
+    backgroundMultimedia: normalizeMultimedia(
+      rawPracticalData.backgroundMultimedia
+    ),
+  }
+  delete (normalizedPracticalInfo as any).style
+
+  const rawItems = Array.isArray(statistics.items) && statistics.items.length > 0
+    ? statistics.items
+    : Array.isArray(statistics.facts) && statistics.facts.length > 0
+      ? statistics.facts
+      : []
+
+  const { facts: _facts, style: _style, ...cleanStats } = statistics
 
   const normalizedStatistics = {
-    ...statistics,
-    area: {
-      unit: statistics.area?.unit ?? "km²",
-      value: statistics.area?.value ?? 0,
-    },
-    elevation: {
-      unit: statistics.elevation?.unit ?? "m",
-      value: statistics.elevation?.value ?? 0,
-    },
-    population: {
-      year: statistics.population?.year ?? 2026,
-      value: statistics.population?.value ?? 0,
-    },
-    facts: Array.isArray(statistics.facts)
-      ? statistics.facts.map((f: any) => ({
-        label: normalizeStyledField(f.label, "", "#af6348"),
-        value: normalizeStyledField(f.value, "", "#182d09"),
-        description: normalizeStyledField(f.description, "", "#565e69"),
-        media: normalizeMultimedia(f.media),
-        labelStyle: f.labelStyle ?? null,
-        valueStyle: f.valueStyle ?? null,
-        descriptionStyle: f.descriptionStyle ?? null,
-      }))
-      : [],
-    style: statistics.style ?? null,
+    ...cleanStats,
+    title: normalizeStyledField(statistics.title, "Key Regional Statistics", "#182d09"),
+    items: rawItems.map((f: any) => ({
+      label: normalizeStyledField(f.label, "", "#565e69"),
+      value: normalizeStyledField(f.value, "", "#182d09"),
+      description: normalizeStyledField(f.description, "", "#565e69"),
+    })),
+    ...(statistics.area ? {
+      area: {
+        unit: statistics.area.unit ?? "km²",
+        value: statistics.area.value ?? 0,
+      },
+    } : {}),
+    ...(statistics.elevation ? {
+      elevation: {
+        unit: statistics.elevation.unit ?? "m",
+        value: statistics.elevation.value ?? 0,
+      },
+    } : {}),
+    ...(statistics.population ? {
+      population: {
+        year: statistics.population.year ?? 2026,
+        value: statistics.population.value ?? 0,
+      },
+    } : {}),
+    ...(statistics.style ? { style: statistics.style } : {}),
     backgroundMultimedia: normalizeMultimedia(
       statistics.backgroundMultimedia
     ),
@@ -538,7 +573,6 @@ export function normalizeLocationPayload(
 
   const normalizedRegionExperiences = {
     ...regionExperiences,
-    id: regionExperiences.id ?? "region-experiences",
     label: normalizeStyledField(regionExperiences.label, "", "#af6348"),
     title: normalizeStyledField(regionExperiences.title, "", "#182d09"),
     backgroundMultimedia: normalizeMultimedia(
@@ -585,6 +619,7 @@ export function normalizeLocationPayload(
       : [],
     style: regionExperiences.style ?? null,
   }
+  delete (normalizedRegionExperiences as any).id
 
   const rawSignatureItems = Array.isArray(signatureExperiences.items)
     ? signatureExperiences.items
@@ -659,27 +694,6 @@ export function normalizeLocationPayload(
     experiences: normalizedSignatureItems,
   }
 
-  const normalizedPracticalInformation = {
-    ...practicalInformation,
-    title: normalizeStyledField(practicalInformation.title, "", "#182d09"),
-    sub_heading: normalizeStyledField(practicalInformation.sub_heading, "", "#565e69"),
-    side_image: practicalInformation.side_image ?? "",
-    accordion_items: Array.isArray(practicalInformation.accordion_items)
-      ? practicalInformation.accordion_items.map((ai: any) => ({
-        id: ai.id ?? String(Date.now()),
-        title: normalizeStyledField(ai.title, "", "#182d09"),
-        content: normalizeStyledField(ai.content, "", "#565e69"),
-        is_expanded: Boolean(ai.is_expanded),
-        titleStyle: ai.titleStyle ?? null,
-      }))
-      : [],
-    sideImageMultimedia: normalizeMultimedia(
-      practicalInformation.sideImageMultimedia
-    ),
-    backgroundMultimedia: normalizeMultimedia(
-      practicalInformation.backgroundMultimedia
-    ),
-  }
 
   const rawFaqItems = Array.isArray(faqSection.items)
     ? faqSection.items
@@ -878,61 +892,6 @@ export function normalizeLocationPayload(
     ),
   }
 
-  const normalizedCulture = {
-    ...culture,
-    cuisine: Array.isArray(culture.cuisine) ? culture.cuisine : [],
-    description: culture.description ?? "",
-    majorLanguages: Array.isArray(culture.majorLanguages)
-      ? culture.majorLanguages
-      : [],
-    majorReligions: Array.isArray(culture.majorReligions)
-      ? culture.majorReligions
-      : [],
-    famousFestivals: Array.isArray(culture.famousFestivals)
-      ? culture.famousFestivals
-      : [],
-    style: culture.style ?? null,
-  }
-
-  const normalizedClimate = {
-    ...climate,
-    types: Array.isArray(climate.types) ? climate.types : [],
-    description: climate.description ?? "",
-  }
-
-  const normalizedSafety = {
-    ...safety,
-    description: safety.description ?? "",
-    emergencyNumber: safety.emergencyNumber ?? "",
-  }
-
-  const normalizedGeography = {
-    ...geography,
-    highestPoint: {
-      name: geography.highestPoint?.name ?? "",
-      unit: geography.highestPoint?.unit ?? "m",
-      elevation: geography.highestPoint?.elevation ?? 0,
-    },
-    majorLandscapes: Array.isArray(geography.majorLandscapes)
-      ? geography.majorLandscapes
-      : [],
-  }
-
-  const normalizedLocalGuide = {
-    ...localGuide,
-    title: localGuide.title ?? "",
-    sub_heading: localGuide.sub_heading ?? "",
-    main_image: localGuide.main_image ?? "",
-    articles: Array.isArray(localGuide.articles) ? localGuide.articles : [],
-  }
-
-  const normalizedVideoGalary = {
-    ...videoGalary,
-    alt: videoGalary.alt ?? "",
-    url: videoGalary.url ?? "",
-    thumbnail: videoGalary.thumbnail ?? "",
-    multimedia: normalizeMultimedia(videoGalary.multimedia),
-  }
 
   const rawGeoObj = rawGeoData.geo ?? rawGeoData.location ?? rawGeoData.map ?? {}
   const geoLat = Number(rawGeoObj.latitude ?? rawGeoData.latitude ?? 41.1533)
@@ -978,16 +937,35 @@ export function normalizeLocationPayload(
   const activeSectionKeys = getSectionsForLocationType(safeDraft.type)
   const isSectionActive = (key: string) => activeSectionKeys.includes(key as any)
 
-  const finalHero = isSectionActive("hero") ? normalizedHero : {}
-  const finalEssence = isSectionActive("essence") ? normalizedEssence : {}
-  const finalStats = isSectionActive("stats") ? normalizedStatistics : {}
-  const finalHighlights = isSectionActive("highlights") ? normalizedHighlights : {}
-  const finalRegionExperiences = isSectionActive("region-experiences") ? normalizedRegionExperiences : {}
-  const finalGeoData = isSectionActive("geo-map") ? normalizedGeoData : {}
-  const finalTravelInsights = isSectionActive("travel-insights") ? normalizedTravelInsights : {}
-  const finalSignatureExperiences = isSectionActive("signature-experiences") ? normalizedSignatureExperiences : {}
-  const finalFaq = isSectionActive("faq") ? normalizedFaq : {}
-  const finalCta = isSectionActive("cta") ? normalizedCta : {}
+  const hasSectionData = (rawDraftVal: any, rawDataVal: any) => {
+    return (
+      (rawDraftVal && typeof rawDraftVal === "object" && Object.keys(rawDraftVal).length > 0) ||
+      (rawDataVal && typeof rawDataVal === "object" && Object.keys(rawDataVal).length > 0)
+    )
+  }
+
+  const finalHero = isSectionActive("hero") || hasSectionData(safeDraft.hero, safeData.hero) ? normalizedHero : null
+  const finalEssence = isSectionActive("essence") || hasSectionData(safeDraft.essence, safeData.essence) ? normalizedEssence : null
+  const finalStats = isSectionActive("stats") || hasSectionData(safeDraft.stats ?? safeDraft.statistics, safeData.stats ?? safeData.statistics) ? normalizedStatistics : null
+  const finalGlance = isSectionActive("glance") || hasSectionData(safeDraft.glance ?? safeDraft.regionGlance, safeData.glance ?? safeData.regionGlance) ? normalizedGlance : null
+  const finalHighlights = isSectionActive("highlights") || hasSectionData(safeDraft.highlights, safeData.highlights) ? normalizedHighlights : null
+  const finalRegionExperiences = isSectionActive("region-experiences") || hasSectionData(safeDraft.regionExperiences, safeData.regionExperiences) ? normalizedRegionExperiences : null
+  const finalGeoData = isSectionActive("geo-map") || hasSectionData(safeDraft.geoData, safeData.geoData) ? normalizedGeoData : null
+  const finalTravelInsights = isSectionActive("travel-insights") || hasSectionData(safeDraft.travelInsight ?? safeDraft.travelInsights, safeData.travelInsight ?? safeData.travelInsights) ? normalizedTravelInsights : null
+  const finalSignatureExperiences = isSectionActive("signature-experiences") || hasSectionData(safeDraft.signatureExperiences ?? safeDraft.signature_experiences, safeData.signatureExperiences ?? safeData.signature_experiences) ? normalizedSignatureExperiences : null
+  const finalFaq = isSectionActive("faq") || hasSectionData(safeDraft.faq ?? safeDraft.faqSection, safeData.faq ?? safeData.faqSection) ? normalizedFaq : null
+  const finalCta = isSectionActive("cta") || hasSectionData(safeDraft.cta ?? safeDraft.ctaSection, safeData.cta ?? safeData.ctaSection) ? normalizedCta : null
+
+  // Legacy fields: only include if explicitly passed in draft/data with content
+  const finalCard = hasSectionData(safeDraft.card, safeData.card) ? normalizedCard : null
+  const finalWhy = hasSectionData(safeDraft.why, safeData.why) ? normalizedWhy : null
+  const finalInfo = hasSectionData(safeDraft.info, safeData.info) ? normalizedInfo : null
+  const finalSharedInfo = hasSectionData(safeDraft.sharedInfo, safeData.sharedInfo) ? normalizedSharedInfo : null
+  const finalCharacter = isSectionActive("character") || hasSectionData(safeDraft.character ?? safeDraft.regionCharacter, safeData.character ?? safeData.regionCharacter) ? normalizedCharacter : null
+  const finalPracticalInfo = isSectionActive("practical-info") || hasSectionData(safeDraft.practicalInfo ?? safeDraft.beforeTravel, safeData.practicalInfo ?? safeData.beforeTravel) ? normalizedPracticalInfo : null
+  const finalTravelInfo = hasSectionData(safeDraft.travelInfo, safeData.travelInfo) ? normalizedTravelInfo : null
+  const finalExperiences = hasSectionData(safeDraft.experience ?? safeDraft.experiences, safeData.experience ?? safeData.experiences) ? normalizedExperiences : null
+  const finalAccommodation = hasSectionData(safeDraft.accommodation ?? safeDraft.accommodationStays, safeData.accommodation ?? safeData.accommodationStays) ? normalizedAccommodationStays : null
 
   const normalized: LocationData = {
     ...(safeDraft.id ? { id: safeDraft.id } : {}),
@@ -1000,22 +978,23 @@ export function normalizeLocationPayload(
     hero: finalHero,
     essence: finalEssence,
     highlights: finalHighlights,
-    card: isSectionActive("highlights") ? normalizedCard : {},
-    why: isSectionActive("essence") ? normalizedWhy : {},
-    sharedInfo: normalizedSharedInfo,
-    glance: isSectionActive("highlights") ? normalizedGlance : {},
-    character: isSectionActive("highlights") ? normalizedCharacter : {},
-    highlightsStatistics: finalStats,
-    experience: isSectionActive("region-experiences") ? normalizedExperiences : {},
+    ...(finalCard ? { card: finalCard } : {}),
+    ...(finalWhy ? { why: finalWhy } : {}),
+    ...(finalInfo ? { infoCard: finalInfo } : {}),
+    ...(finalSharedInfo ? { sharedInfo: finalSharedInfo } : {}),
+    ...(finalGlance ? { glance: finalGlance } : {}),
+    ...(finalCharacter ? { character: finalCharacter } : {}),
+    ...(finalPracticalInfo ? { practicalInfo: finalPracticalInfo } : {}),
+    statistics: finalStats,
+    ...(finalExperiences ? { experience: finalExperiences } : {}),
     regionExperiences: finalRegionExperiences,
     signatureExperiences: finalSignatureExperiences,
-    travelInfo: isSectionActive("faq") ? normalizedTravelInfo : {},
+    ...(finalTravelInfo ? { travelInfo: finalTravelInfo } : {}),
     travelInsight: finalTravelInsights,
-    accommodation: normalizedAccommodationStays,
+    ...(finalAccommodation ? { accommodation: finalAccommodation } : {}),
     faq: finalFaq,
     cta: finalCta,
-
-    geoData: finalGeoData,
+    ...(finalGeoData ? { geoData: finalGeoData as any } : {}),
 
     metadata: {
       seo: {
@@ -1030,43 +1009,6 @@ export function normalizeLocationPayload(
           follow: safeDraft.metadata?.seo?.robots?.follow ?? true,
         },
       },
-    },
-
-    data: {
-      name: safeData.name ?? safeDraft.name ?? "",
-      title: safeData.title ?? "",
-      subtitle: safeData.subtitle ?? "",
-      description: safeData.description ?? "",
-      shortDescription: safeData.shortDescription ?? "",
-      hero: finalHero,
-      essence: finalEssence,
-      highlights: finalHighlights,
-      why: isSectionActive("essence") ? normalizedWhy : {},
-      card: isSectionActive("highlights") ? normalizedCard : {},
-      info: normalizedInfo,
-      sharedInfo: normalizedSharedInfo,
-      regionGlance: isSectionActive("highlights") ? normalizedGlance : {},
-      regionCharacter: isSectionActive("highlights") ? normalizedCharacter : {},
-      statistics: finalStats,
-      travelInfo: isSectionActive("faq") ? normalizedTravelInfo : {},
-      experiences: isSectionActive("region-experiences") ? normalizedExperiences : {},
-      regionExperiences: finalRegionExperiences,
-      signature_experiences: finalSignatureExperiences,
-      signatureExperiences: finalSignatureExperiences,
-      practical_information: isSectionActive("faq") ? normalizedPracticalInformation : {},
-      faq_section: finalFaq,
-      travel_insights: finalTravelInsights,
-      accommodation_stays: normalizedAccommodationStays,
-      culture: normalizedCulture,
-      climate: normalizedClimate,
-      safety: normalizedSafety,
-      geography: normalizedGeography,
-      geoData: finalGeoData,
-      imageGalary: Array.isArray(safeData.imageGalary)
-        ? safeData.imageGalary
-        : [],
-      local_guide: normalizedLocalGuide,
-      videoGalary: normalizedVideoGalary,
     },
   }
 

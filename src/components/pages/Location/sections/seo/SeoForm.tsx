@@ -13,13 +13,15 @@ export function SeoForm({
   updateField,
   openSections,
   toggleSection,
+  sectionNumber,
 }: LocationFormSectionProps) {
   const isOpen = Boolean(openSections["seo"])
   const seoData = draft?.metadata?.seo || (draft?.metadata as any) || {}
 
   return (
     <FormSection
-      title="11. SEO & Metadata"
+      title="SEO & Metadata"
+      sectionNumber={sectionNumber}
       active={isOpen}
       onClick={() => toggleSection("seo")}
     >

@@ -12,6 +12,7 @@ import { UniversalMultimediaForm } from "@/components/pages/CMS/shared/Universal
 import { FormSection } from "../../shared/fields"
 import type { LocationFormSectionProps } from "../../config/locationSections"
 import type { FAQItem } from "../../locationTypes"
+import { emptyLocation } from "../../shared/emptyLocation"
 
 export type FAQItemData = FAQItem
 
@@ -20,6 +21,7 @@ export function FaqForm({
   updateField,
   openSections,
   toggleSection,
+  sectionNumber,
 }: LocationFormSectionProps) {
   const faqData =
     draft?.faq ||
@@ -120,7 +122,8 @@ export function FaqForm({
 
   return (
     <FormSection
-      title="09. Frequently Asked Questions (FAQ)"
+      title="Frequently Asked Questions (FAQ)"
+      sectionNumber={sectionNumber}
       active={isOpen}
       onClick={() => toggleSection("faq")}
     >
@@ -150,7 +153,7 @@ export function FaqForm({
           imageFieldName="locationFaqFeaturedImage"
           videoFieldName="locationFaqFeaturedVideo"
           hideFieldNameBadge={true}
-          value={faqData.imageMultimedia}
+          value={faqData.imageMultimedia || emptyLocation.faqSection?.imageMultimedia || (emptyLocation as any).faq?.imageMultimedia}
           onChange={(multimedia) => updateFaqField("imageMultimedia", multimedia)}
         />
 
@@ -161,7 +164,7 @@ export function FaqForm({
           imageFieldName="locationFaqBgImage"
           videoFieldName="locationFaqBgVideo"
           hideFieldNameBadge={true}
-          value={faqData.backgroundMultimedia}
+          value={faqData.backgroundMultimedia || emptyLocation.faqSection?.backgroundMultimedia || (emptyLocation as any).faq?.backgroundMultimedia}
           onChange={(multimedia) =>
             updateFaqField("backgroundMultimedia", multimedia)
           }

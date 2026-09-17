@@ -13,12 +13,14 @@ import { ButtonsField } from "@/components/pages/CMS/shared/ButtonsField"
 import { FormSection } from "../../shared/fields"
 import type { LocationFormSectionProps } from "../../config/locationSections"
 import type { TravelInsightArticle } from "../../locationTypes"
+import { emptyLocation } from "../../shared/emptyLocation"
 
 export function TravelInsightsForm({
   draft,
   updateField,
   openSections,
   toggleSection,
+  sectionNumber,
 }: LocationFormSectionProps) {
   const travelInsight =
     draft?.travelInsight ||
@@ -148,7 +150,8 @@ export function TravelInsightsForm({
 
   return (
     <FormSection
-      title="07. Travel Insights & Guide Articles"
+      title="Travel Insights & Guide Articles"
+      sectionNumber={sectionNumber}
       active={isOpen}
       onClick={() => toggleSection("travel-insights")}
     >
@@ -212,7 +215,7 @@ export function TravelInsightsForm({
           imageFieldName="locationTravelInsightBgImage"
           videoFieldName="locationTravelInsightBgVideo"
           hideFieldNameBadge={true}
-          value={travelInsight.backgroundMultimedia}
+          value={travelInsight.backgroundMultimedia || emptyLocation.travelInsights?.backgroundMultimedia || emptyLocation.travelInfo?.backgroundMultimedia}
           onChange={(multimedia) =>
             updateTravelInsightField("backgroundMultimedia", multimedia)
           }

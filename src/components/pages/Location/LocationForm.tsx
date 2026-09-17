@@ -195,11 +195,13 @@ export function LocationForm({ }: LocationFormProps) {
             ================================================= */}
 
       <div className="flex-1 divide-y divide-border/60">
-        {activeSections.map((key) => {
+        {activeSections.map((key, index) => {
           const sectionEntry = locationSectionRegistry[key]
           const SectionForm = sectionEntry?.form
 
           if (!SectionForm) return null
+
+          const sectionNumber = String(index + 1).padStart(2, "0")
 
           return (
             <div key={key} data-section={key} className="transition-all">
@@ -208,6 +210,7 @@ export function LocationForm({ }: LocationFormProps) {
                 updateField={updateField}
                 openSections={openSections}
                 toggleSection={toggleSection}
+                sectionNumber={sectionNumber}
               />
             </div>
           )

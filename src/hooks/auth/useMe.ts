@@ -86,7 +86,7 @@ export function useMe() {
   return useQuery({
     queryKey: ["GET_ME"],
     queryFn: async () => {
-      const res = await apiPrivate.get<MeResponse>("/auth/user-info")
+      const res = await apiPrivate.get<MeResponse>("/auth/me")
       return res.data.data
     },
     enabled: Boolean(token),

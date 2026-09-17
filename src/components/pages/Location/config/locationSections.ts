@@ -28,12 +28,19 @@ import { DestinationCtaPreview } from "../sections/cta/DestinationCtaPreview"
 import { SeoForm } from "../sections/seo/SeoForm"
 import { StatsForm } from "../sections/stats/StatsForm"
 import { StatsPreview } from "../sections/stats/StatsPreview"
+import { GlanceForm } from "../sections/glance/GlanceForm"
+import { GlancePreview } from "../sections/glance/GlancePreview"
+import { CharacterForm } from "../sections/character/CharacterForm"
+import { CharacterPreview } from "../sections/character/CharacterPreview"
+import { PracticalInfoForm } from "../sections/practical-info/PracticalInfoForm"
+import { PracticalInfoPreview } from "../sections/practical-info/PracticalInfoPreview"
 
 export type LocationFormSectionProps = {
   draft: LocationData
   updateField: (path: string, value: unknown) => void
   openSections: Record<string, boolean>
   toggleSection: (section: string) => void
+  sectionNumber?: string
 }
 
 export type LocationPreviewSectionProps = {
@@ -45,6 +52,9 @@ export type LocationSectionKey =
   | "hero"
   | "essence"
   | "stats"
+  | "glance"
+  | "character"
+  | "practical-info"
   | "highlights"
   | "region-experiences"
   | "geo-map"
@@ -62,62 +72,77 @@ export type SectionRegistryEntry = {
 
 export const locationSectionRegistry: Record<LocationSectionKey, SectionRegistryEntry> = {
   "basic-info": {
-    label: "01. Basic Information",
+    label: "Basic Information",
     form: BasicInfoForm,
     preview: null,
   },
   hero: {
-    label: "02. Hero Banner",
+    label: "Hero Banner",
     form: HeroForm,
     preview: HeroPreview,
   },
   essence: {
-    label: "03. Essence of Location",
+    label: "Essence of Location",
     form: EssenceForm,
     preview: EssencePreview,
   },
   stats: {
-    label: "03b. Location Statistics",
+    label: "Location Statistics",
     form: StatsForm,
     preview: StatsPreview,
   },
+  glance: {
+    label: "Glance",
+    form: GlanceForm,
+    preview: GlancePreview,
+  },
+  character: {
+    label: "Character",
+    form: CharacterForm,
+    preview: CharacterPreview,
+  },
+  "practical-info": {
+    label: "Practical Information (Before Travel)",
+    form: PracticalInfoForm,
+    preview: PracticalInfoPreview,
+  },
   highlights: {
-    label: "04. Seasonal Highlights & Regions",
+    label: "Seasonal Highlights & Regions",
     form: HighlightsForm,
     preview: HighlightsPreview,
   },
   "region-experiences": {
-    label: "05. Region Experiences",
+    label: "Region Experiences",
     form: RegionExperiencesForm,
     preview: RegionExperiencesPreview,
   },
   "geo-map": {
-    label: "06. Interactive Map & Geo Data",
+    label: "Interactive Map & Geo Data",
     form: GeoMapForm,
     preview: GeoMapPreview,
   },
   "travel-insights": {
-    label: "07. Travel Insights & Guide Articles",
+    label: "Travel Insights & Guide Articles",
     form: TravelInsightsForm,
     preview: TravelInsightsPreview,
   },
   "signature-experiences": {
-    label: "08. Signature Experiences",
+    label: "Signature Experiences",
     form: SignatureExperiencesForm,
     preview: SignatureExperiencesPreview,
   },
   faq: {
-    label: "09. Frequently Asked Questions",
+    label: "Frequently Asked Questions",
     form: FaqForm,
     preview: FaqPreview,
   },
   cta: {
-    label: "10. Call to Action (CTA)",
+    label: "Call to Action (CTA)",
     form: DestinationCtaForm,
     preview: DestinationCtaPreview,
   },
   seo: {
-    label: "11. SEO & Metadata",
+    label: "SEO & Metadata",
     form: SeoForm,
     preview: null,
   },
@@ -142,6 +167,9 @@ export const LOCATION_TYPE_SECTION_CONFIG: Record<string, LocationSectionKey[]> 
     "hero",
     "essence",
     "stats",
+    "glance",
+    "character",
+    "practical-info",
     "seo",
   ],
 }

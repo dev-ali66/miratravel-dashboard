@@ -10,6 +10,7 @@ export function BasicInfoForm({
   updateField,
   openSections,
   toggleSection,
+  sectionNumber,
 }: LocationFormSectionProps) {
   const isOpen = Boolean(openSections["basic-info"])
 
@@ -44,11 +45,12 @@ export function BasicInfoForm({
 
   return (
     <FormSection
-      title="01. Basic Information"
+      title="Basic Information"
+      sectionNumber={sectionNumber}
       active={isOpen}
       onClick={() => toggleSection("basic-info")}
     >
-      <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+      <div className="flex flex-col gap-4">
         <DynamicStyledField
           type="text"
           label="Location Name"
@@ -59,7 +61,6 @@ export function BasicInfoForm({
           value={draft.name || ""}
           onChange={handleNameChange}
         />
-
 
         <DynamicStyledField
           type="select"

@@ -4,12 +4,14 @@ import { ButtonsField } from "@/components/pages/CMS/shared/ButtonsField"
 import { UniversalMultimediaForm } from "@/components/pages/CMS/shared/UniversalMultimediaForm"
 import { FormSection } from "../../shared/fields"
 import type { LocationFormSectionProps } from "../../config/locationSections"
+import { emptyLocation } from "../../shared/emptyLocation"
 
 export function DestinationCtaForm({
   draft,
   updateField,
   openSections,
   toggleSection,
+  sectionNumber,
 }: LocationFormSectionProps) {
   const ctaData =
     draft?.cta ||
@@ -83,7 +85,8 @@ export function DestinationCtaForm({
 
   return (
     <FormSection
-      title="10. Destination Call to Action (CTA)"
+      title="Destination Call to Action (CTA)"
+      sectionNumber={sectionNumber}
       active={isOpen}
       onClick={() => toggleSection("cta")}
     >
@@ -136,7 +139,7 @@ export function DestinationCtaForm({
           imageFieldName="locationCtaMotifImage"
           hideFieldNameBadge={true}
           allowVideo={false}
-          value={ctaData.imageMultimedia}
+          value={ctaData.imageMultimedia || emptyLocation.ctaSection?.imageMultimedia || (emptyLocation as any).cta?.imageMultimedia}
           onChange={handleMotifMediaChange}
         />
 
@@ -147,7 +150,7 @@ export function DestinationCtaForm({
           imageFieldName="locationCtaBgImage"
           videoFieldName="locationCtaBgVideo"
           hideFieldNameBadge={true}
-          value={ctaData.backgroundMultimedia}
+          value={ctaData.backgroundMultimedia || emptyLocation.ctaSection?.backgroundMultimedia || (emptyLocation as any).cta?.backgroundMultimedia}
           onChange={(multimedia) =>
             updateCtaField("backgroundMultimedia", multimedia)
           }

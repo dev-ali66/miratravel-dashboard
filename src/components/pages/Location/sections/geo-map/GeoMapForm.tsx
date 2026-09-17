@@ -9,6 +9,7 @@ export function GeoMapForm({
   updateField,
   openSections,
   toggleSection,
+  sectionNumber,
 }: LocationFormSectionProps) {
   const geoData = draft?.geoData || {
     title: "Interactive Map",
@@ -40,7 +41,8 @@ export function GeoMapForm({
 
   return (
     <FormSection
-      title="06. Interactive Map & Geo Data"
+      title="Interactive Map & Geo Data"
+      sectionNumber={sectionNumber}
       active={isOpen}
       onClick={() => toggleSection("geo-map")}
     >
@@ -73,8 +75,16 @@ export function GeoMapForm({
           videoFieldName="locationGeoMapBackgroundVideo"
           value={
             geoData.backgroundMultimedia ||
-            emptyLocation.geoData?.backgroundMultimedia ||
-            null
+            emptyLocation.geoData?.backgroundMultimedia || {
+              show: "color",
+              color: {
+                color: "#FFFFFF",
+                opacity: 100,
+                width: "100%",
+                height: "100%",
+                aspectRatio: "auto",
+              },
+            }
           }
           onChange={(multimedia) =>
             updateGeoField("backgroundMultimedia", multimedia)
@@ -87,7 +97,7 @@ export function GeoMapForm({
             Map Viewport & Coordinates
           </h4>
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+          <div className="flex flex-col gap-3">
             {/* Latitude */}
             <div className="flex flex-col gap-1.5">
               <label className="text-xs font-medium text-foreground">
