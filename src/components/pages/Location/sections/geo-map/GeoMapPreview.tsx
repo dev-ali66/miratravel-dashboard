@@ -3,7 +3,7 @@ import * as maplibregl from "maplibre-gl"
 import "maplibre-gl/dist/maplibre-gl.css"
 // @ts-ignore
 import maplibreWorkerUrl from "maplibre-gl/dist/maplibre-gl-worker.mjs?url"
-import { DynamicStyledPreview } from "@/components/shared/DynamicStyledPreview"
+import { DynamicStyledTextPreview } from "@/components/pages/CMS/shared/DynamicStyledTextPreview"
 import { UniversalMultimediaPreview } from "@/components/pages/CMS/Home/shared/preview/UniversalMultimediaPreview"
 import type { LocationPreviewSectionProps } from "../../config/locationSections"
 import { useGetLocationPages } from "@/hooks/location/useGetLocation"
@@ -39,8 +39,8 @@ export function GeoMapPreview({ draft }: LocationPreviewSectionProps) {
   const availableLocations = locationPagesResponse?.data || []
 
   const geoData = draft?.geoData || (draft as any)?.data?.geoData || {
-    title: "Interactive Map",
-    description: "Spin the globe, then zoom into the destination to explore our properties.",
+    title: null,
+    description: null,
     backgroundMultimedia: null,
     latitude: 41.1533,
     longitude: 20.1683,
@@ -308,7 +308,6 @@ export function GeoMapPreview({ draft }: LocationPreviewSectionProps) {
       if (!lat || !lng) return
 
       // Create Custom Pin DOM element
-      // Notice: No CSS hover:scale or scale transforms on the container to prevent cursor flickering!
       const el = document.createElement("div")
       el.className =
         "relative flex cursor-pointer items-center justify-center select-none pin-marker-container"
@@ -317,7 +316,7 @@ export function GeoMapPreview({ draft }: LocationPreviewSectionProps) {
       el.style.pointerEvents = "auto"
 
       if (place.isMother) {
-        // 🌟 MOTHER LOCATION PIN (Special Distinct Emerald Star Icon & Halo)
+        // MOTHER LOCATION PIN
         const ping = document.createElement("span")
         ping.className = "absolute h-9 w-9 rounded-full pointer-events-none"
         ping.style.backgroundColor = "#1f3d2b"
@@ -356,7 +355,7 @@ export function GeoMapPreview({ draft }: LocationPreviewSectionProps) {
 
         el.appendChild(svg)
       } else {
-        // 📍 CHILD LOCATION PIN (Standard Accent Terracotta)
+        // CHILD LOCATION PIN
         const ping = document.createElement("span")
         ping.className = "absolute h-7 w-7 rounded-full pointer-events-none"
         ping.style.backgroundColor = "var(--color-accent, #af6348)"
@@ -404,7 +403,6 @@ export function GeoMapPreview({ draft }: LocationPreviewSectionProps) {
         if (hoverTimeoutRef.current) {
           clearTimeout(hoverTimeoutRef.current)
         }
-        // Small graceful debounce to avoid abrupt hiding
         hoverTimeoutRef.current = setTimeout(() => {
           setActivePin(null)
         }, 300)
@@ -482,18 +480,16 @@ export function GeoMapPreview({ draft }: LocationPreviewSectionProps) {
         <div className="mx-auto flex w-full flex-col items-center self-stretch">
           {/* Header Block */}
           <div className="flex w-full flex-col items-center self-stretch text-center">
-            <DynamicStyledPreview
+            <DynamicStyledTextPreview
               as="h2"
-              field={geoData.title}
-              fallback="Interactive Map"
+              data={geoData.title}
               fallbackColor="#0a0a0a"
               className="self-stretch shrink-0 h-auto justify-start font-medium font-heading text-[28px] leading-[38px] md:text-[38px] md:leading-[47px] lg:text-[42px] lg:leading-[50px] lgx:text-[43px] lgx:leading-[51px] xlg:text-[44px] xlg:leading-[52px] mid:text-[46px] mid:leading-[54px] xl:text-[48px] xl:leading-[56px] 2xl:text-[50px] 2xl:leading-[58px] text-title text-center"
             />
 
-            <DynamicStyledPreview
+            <DynamicStyledTextPreview
               as="p"
-              field={geoData.description}
-              fallback="Spin the globe, then zoom into the destination to explore our properties."
+              data={geoData.description}
               fallbackColor="#565e69"
               className="mt-[11px] md:mt-3 lgx:mt-[13px] mid:mt-[14px] xl:mt-[15px] w-full max-w-[672px] text-center font-normal text-subtitle text-sm md:text-[15px] lg:text-[15.5px] lgx:text-base xlg:text-[16.5px] mid:text-[17px] xl:text-[18px] leading-[20px] md:leading-[22px] lg:leading-[23px] lgx:leading-[24px] xlg:leading-[25px] mid:leading-[26px] xl:leading-[28px] tracking-[1.2px] md:tracking-[1.6px] lg:tracking-[1.7px] lgx:tracking-[1.8px] xlg:tracking-[1.85px] mid:tracking-[1.9px] xl:tracking-[2px]"
             />
@@ -580,9 +576,7 @@ export function GeoMapPreview({ draft }: LocationPreviewSectionProps) {
               © <span className="font-semibold">CARTO</span>, © OpenStreetMap contributors
             </div>
 
-            {/* =========================================================
-                SMOOTH FLOATING LOCATION HERO DATA CARD ON HOVER / CLICK
-            ========================================================= */}
+            {/* FLOATING LOCATION HERO DATA CARD ON HOVER / CLICK */}
             {activePin && (
               <div
                 onMouseEnter={handleCardMouseEnter}

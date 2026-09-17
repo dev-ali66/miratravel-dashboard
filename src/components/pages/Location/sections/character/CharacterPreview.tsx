@@ -1,12 +1,6 @@
-/* =====================================================
-   LOCATION — CHARACTER PREVIEW SECTION
-   Renders pixel-perfect 1:1 preview matching frontend RegionCharacter component
-   (frontend/components/region/character.tsx).
-   Includes admin empty-state placeholder when no items exist.
-===================================================== */
-
 import { Sparkles } from "lucide-react"
-import { DynamicStyledPreview } from "@/components/shared/DynamicStyledPreview"
+import { DynamicStyledTextPreview } from "@/components/pages/CMS/shared/DynamicStyledTextPreview"
+import { DynamicCmsButtonPreview } from "@/components/pages/CMS/shared/DynamicCmsButtonPreview"
 import { UniversalMultimediaPreview } from "@/components/pages/CMS/Home/shared/preview/UniversalMultimediaPreview"
 import type { LocationPreviewSectionProps } from "../../config/locationSections"
 
@@ -38,18 +32,16 @@ export function CharacterPreview({ draft }: LocationPreviewSectionProps) {
         <div className="w-full flex flex-col items-start gap-8 sm:gap-10 md:gap-12 xl:gap-14 pt-8">
           {/* Section Header */}
           <div className="w-full flex flex-col items-start">
-            <DynamicStyledPreview
+            <DynamicStyledTextPreview
               as="span"
-              field={characterData.label}
-              fallback="CHARACTER"
+              data={characterData.label}
               fallbackColor="#af6348"
               className="font-normal uppercase text-xs @xs:text-sm @md:text-[15px] @xl:text-base tracking-[3px] leading-tight"
             />
             <div className="w-full max-w-[1023px] pt-3">
-              <DynamicStyledPreview
+              <DynamicStyledTextPreview
                 as="h2"
-                field={characterData.title}
-                fallback={`What makes ${draft?.name || "this region"} singular`}
+                data={characterData.title}
                 fallbackColor="#182d09"
                 className="font-serif text-2xl sm:text-3xl md:text-4xl lg:text-[42px] leading-tight font-normal tracking-tight"
               />
@@ -72,20 +64,13 @@ export function CharacterPreview({ draft }: LocationPreviewSectionProps) {
           ) : (
             <div className="w-full border-t border-[#182d09]/15 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 divide-y md:divide-y-0 md:divide-x divide-[#182d09]/15">
               {items.map((item: any, index: number) => {
-                const itemTitle =
-                  typeof item.title === "object" ? item.title?.value : item.title || ""
-                const itemTitleStr = typeof itemTitle === "string" ? itemTitle : ""
-                const itemDesc =
-                  typeof item.description === "object"
-                    ? item.description?.value
-                    : item.description || ""
                 const rawButtons =
                   Array.isArray(item.buttons) && item.buttons.length > 0
                     ? item.buttons
                     : item.button
                     ? [item.button]
                     : item.href || item.linkText
-                    ? [{ label: item.linkText || "Read More", url: item.href || "#", variant: "primary" }]
+                    ? [{ label: item.linkText || "Read More", url: item.href || "#", variant: "link" }]
                     : []
 
                 return (
@@ -99,7 +84,7 @@ export function CharacterPreview({ draft }: LocationPreviewSectionProps) {
                         <div className="size-10 rounded-lg overflow-hidden border border-black/10">
                           <img
                             src={item.multimedia.image.url}
-                            alt={item.multimedia.image.alt || itemTitleStr}
+                            alt={item.multimedia.image.alt || ""}
                             className="w-full h-full object-cover"
                           />
                         </div>
@@ -107,7 +92,7 @@ export function CharacterPreview({ draft }: LocationPreviewSectionProps) {
                         <div className="size-10 rounded-lg overflow-hidden border border-black/10">
                           <img
                             src={item.iconImage}
-                            alt={itemTitleStr}
+                            alt=""
                             className="w-full h-full object-cover"
                           />
                         </div>
@@ -133,19 +118,17 @@ export function CharacterPreview({ draft }: LocationPreviewSectionProps) {
                       )}
 
                       {/* Pillar Title */}
-                      <DynamicStyledPreview
+                      <DynamicStyledTextPreview
                         as="h3"
-                        field={item.title}
-                        fallback={itemTitleStr || "Pillar Title"}
+                        data={item.title}
                         fallbackColor="#182d09"
                         className="font-serif text-lg sm:text-xl md:text-2xl font-normal leading-snug"
                       />
 
                       {/* Pillar Description */}
-                      <DynamicStyledPreview
+                      <DynamicStyledTextPreview
                         as="p"
-                        field={item.description}
-                        fallback={typeof itemDesc === "string" ? itemDesc : "Pillar description goes here..."}
+                        data={item.description}
                         fallbackColor="#565e69"
                         className="text-sm md:text-[15px] leading-relaxed font-sans"
                       />
@@ -154,36 +137,7 @@ export function CharacterPreview({ draft }: LocationPreviewSectionProps) {
                     {/* Read More / Action Buttons */}
                     {rawButtons.length > 0 && (
                       <div className="pt-2 flex flex-wrap items-center gap-3">
-                        {rawButtons.map((btn: any, bIdx: number) => {
-                          const label = btn.label || btn.text || "Read More"
-                          const url = btn.url || btn.href || "#"
-                          return (
-                            <a
-                              key={bIdx}
-                              href={url}
-                              onClick={(e) => e.preventDefault()}
-                              className="inline-flex items-center gap-2 text-xs md:text-sm font-medium text-[#af6348] group cursor-pointer hover:underline"
-                            >
-                              <span>{label}</span>
-                              <svg
-                                width="12"
-                                height="12"
-                                viewBox="0 0 12 12"
-                                fill="none"
-                                xmlns="http://www.w3.org/2000/svg"
-                                className="size-3 transition-transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5"
-                              >
-                                <path
-                                  d="M2.5 9.5L9.5 2.5M9.5 2.5H4M9.5 2.5V8"
-                                  stroke="currentColor"
-                                  strokeWidth="1.5"
-                                  strokeLinecap="round"
-                                  strokeLinejoin="round"
-                                />
-                              </svg>
-                            </a>
-                          )
-                        })}
+                        <DynamicCmsButtonPreview buttons={rawButtons} defaultVariant="link" />
                       </div>
                     )}
                   </div>
@@ -196,3 +150,5 @@ export function CharacterPreview({ draft }: LocationPreviewSectionProps) {
     </section>
   )
 }
+
+export default CharacterPreview

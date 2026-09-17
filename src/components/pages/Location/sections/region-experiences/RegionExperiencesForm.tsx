@@ -372,7 +372,7 @@ export function RegionExperiencesForm({
                       (loc as any).hero?.image?.url ||
                       (loc as any).card?.background_image ||
                       (heroMedia?.show === "image" ? heroMedia?.image?.url : "") ||
-                      "https://images.unsplash.com/photo-1500534623283-312aade485b7?auto=format&fit=crop&w=300&q=80"
+                      ""
 
                     return (
                       <div

@@ -1,5 +1,5 @@
 import { motion } from "framer-motion"
-import { DynamicStyledPreview } from "@/components/shared/DynamicStyledPreview"
+import { DynamicStyledTextPreview } from "@/components/pages/CMS/shared/DynamicStyledTextPreview"
 import { UniversalMultimediaPreview } from "@/components/pages/CMS/Home/shared/preview/UniversalMultimediaPreview"
 import type { LocationPreviewSectionProps } from "../../config/locationSections"
 import type { TravelInsightArticle } from "../../locationTypes"
@@ -11,8 +11,8 @@ export function TravelInsightsPreview({ draft }: LocationPreviewSectionProps) {
     (draft as any)?.data?.travelInsight ||
     (draft as any)?.travel_insights ||
     (draft as any)?.data?.travel_insights || {
-      label: "TRAVEL INSIGHTS",
-      title: "Everything you need to know before you go",
+      label: null,
+      title: null,
       featuredMultimedia: null,
       backgroundMultimedia: null,
       articles: [],
@@ -63,10 +63,9 @@ export function TravelInsightsPreview({ draft }: LocationPreviewSectionProps) {
                 className="h-px w-6 @md:w-8 @lg:w-9 @xl:w-10 bg-accent shrink-0"
                 style={{ backgroundColor: "#af6348" }}
               />
-              <DynamicStyledPreview
+              <DynamicStyledTextPreview
                 as="span"
-                field={travelInsight.label}
-                fallback="TRAVEL INSIGHTS"
+                data={travelInsight.label}
                 fallbackColor="#af6348"
                 className="text-accent [text-shadow:-1px_-1px_0_#000,1px_-1px_0_#000,-1px_1px_0_#000,1px_1px_0_#000] text-[16px] @md:text-[20px] @lg:text-[21px] @lgx:text-[22px] @xlg:text-[23px] @mid:text-[23.5px] @xl:text-[24px] leading-[22px] @md:leading-[27px] @lg:leading-[28px] @lgx:leading-[29px] @xlg:leading-[30px] @mid:leading-[31px] @xl:leading-8 tracking-[0.9px] @md:tracking-[1.17px] @lg:tracking-[1.22px] @lgx:tracking-[1.28px] @xlg:tracking-[1.34px] @mid:tracking-[1.37px] @xl:tracking-[1.4px] font-medium uppercase"
               />
@@ -77,10 +76,9 @@ export function TravelInsightsPreview({ draft }: LocationPreviewSectionProps) {
               {/* Left Column: Title & Articles List */}
               <div className="flex w-full flex-1 max-w-[640px] @lg:max-w-[644px] @lgx:max-w-[648px] @xlg:max-w-[652px] @mid:max-w-[656px] @xl:max-w-[660px] flex-col items-start justify-start">
                 {/* Section Title */}
-                <DynamicStyledPreview
+                <DynamicStyledTextPreview
                   as="h3"
-                  field={travelInsight.title}
-                  fallback="Everything you need to know before you go"
+                  data={travelInsight.title}
                   fallbackColor="#e5e5e5"
                   className="text-2xl tracking-normal leading-8 @md:text-4xl @md:tracking-[0.5px] @md:leading-10 @lg:text-[36px] @lg:tracking-[1px] @lg:leading-[42px] @lgx:text-[38px] @lgx:leading-[44px] @xlg:text-[38px] @xlg:tracking-[1.5px] @xlg:leading-[46px] @mid:text-[40px] @mid:tracking-[2px] @mid:leading-[48px] @xl:text-[40px] @xl:tracking-[2px] @xl:leading-[48px] font-heading font-medium text-neutral-200"
                 />
@@ -146,18 +144,16 @@ export function TravelInsightsPreview({ draft }: LocationPreviewSectionProps) {
 
                           {/* Content (Category & Title) */}
                           <div className="relative z-10 flex flex-1 flex-col items-start justify-start gap-2 @md:gap-3 transition-transform duration-300 group-hover:translate-x-1 min-w-0">
-                            <DynamicStyledPreview
+                            <DynamicStyledTextPreview
                               as="span"
-                              field={article.category}
-                              fallback="Guide"
+                              data={article.category}
                               fallbackColor="#af6348"
                               className="text-sm @md:text-[15px] @lg:text-[15.3px] @lgx:text-[15.4px] @xlg:text-[15.6px] @mid:text-[15.7px] @xl:text-base leading-3 @md:leading-[14.6px] @lg:leading-[14.6px] @lgx:leading-[14.8px] @xlg:leading-[15.1px] @mid:leading-[15.5px] @xl:leading-4 uppercase tracking-[0.3px] text-accent font-heading font-medium"
                             />
 
-                            <DynamicStyledPreview
+                            <DynamicStyledTextPreview
                               as="p"
-                              field={article.title}
-                              fallback="Article Title"
+                              data={article.title}
                               fallbackColor="#d4d4d4"
                               className="text-xs @md:text-[13px] @lg:text-[13.3px] @lgx:text-[13.4px] @xlg:text-[13.6px] @mid:text-[13.7px] @xl:text-sm font-normal leading-4 @md:leading-[18px] @lg:leading-[18.6px] @lgx:leading-[18.8px] @xlg:leading-[19.1px] @mid:leading-[19.5px] @xl:leading-5 text-neutral-300 transition-colors duration-200 group-hover:text-neutral-100 line-clamp-2"
                             />
@@ -229,3 +225,5 @@ export function TravelInsightsPreview({ draft }: LocationPreviewSectionProps) {
     </section>
   )
 }
+
+export default TravelInsightsPreview

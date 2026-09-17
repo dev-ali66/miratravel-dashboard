@@ -108,8 +108,7 @@ export function getDefaultCmsPageData(slug: string, name: string) {
                 description:
                   "Discover the architectural marvels and hidden histories of the Balkans' most preserved medieval settlements.",
                 url: "/stories/explore-unesco-towns",
-                image:
-                  "https://images.unsplash.com/photo-1548625361-18da857bbf08?auto=format&fit=crop&w=800&q=80",
+                image: "",
               },
               {
                 tag: "STAYS",
@@ -117,8 +116,7 @@ export function getDefaultCmsPageData(slug: string, name: string) {
                 description:
                   "Curated accommodations that define luxury through authenticity.",
                 url: "/stories/the-art-of-balkan-hospitality",
-                image:
-                  "https://images.unsplash.com/photo-1566073771259-6a8506099945?auto=format&fit=crop&w=800&q=80",
+                image: "",
               },
               {
                 tag: "CULTURE",
@@ -126,8 +124,7 @@ export function getDefaultCmsPageData(slug: string, name: string) {
                 description:
                   "Mythology of the medieval tombstones and silent narratives.",
                 url: "/stories/decoding-the-stecci",
-                image:
-                  "https://images.unsplash.com/photo-1590523741831-ab7e8b8f9c7f?auto=format&fit=crop&w=800&q=80",
+                image: "",
               },
             ],
             buttons: [

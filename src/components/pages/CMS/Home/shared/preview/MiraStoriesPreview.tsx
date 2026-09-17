@@ -99,8 +99,6 @@ export function MiraStoriesPreview({
               ? { ...backgroundImage, type: "image" }
               : { color: backgroundMultimedia.color, type: "color" }
         }
-        fallbackImageSrc={PREVIEW_IMAGE_SOURCE}
-        fallbackVideoSrc={PREVIEW_VIDEO_SOURCE}
         fallbackAlt="Mira Stories background"
         fallbackColor={section.bgColor ?? "transparent"}
         mode="background"

@@ -1,5 +1,5 @@
 import { useState } from "react"
-import { DynamicStyledPreview } from "@/components/shared/DynamicStyledPreview"
+import { DynamicStyledTextPreview } from "@/components/pages/CMS/shared/DynamicStyledTextPreview"
 import { UniversalMultimediaPreview } from "@/components/pages/CMS/Home/shared/preview/UniversalMultimediaPreview"
 import type { LocationPreviewSectionProps } from "../../config/locationSections"
 import type { HighlightLocationItem } from "../../locationTypes"
@@ -15,10 +15,9 @@ export function HighlightsPreview({ draft }: LocationPreviewSectionProps) {
   const highlights =
     draft?.highlights ||
     (draft as any)?.data?.highlights || {
-      label: "SEASONAL HIGHLIGHTS",
-      title: "Regions of Albania",
-      description:
-        "A selection of destinations currently resonating with our most discerning travelers.",
+      label: null,
+      title: null,
+      description: null,
       items: [],
       backgroundMultimedia: null,
     }
@@ -49,7 +48,7 @@ export function HighlightsPreview({ draft }: LocationPreviewSectionProps) {
           loc?.hero?.image?.url ||
           loc?.card?.background_image ||
           (heroMedia?.show === "image" ? heroMedia?.image?.url : "") ||
-          "https://images.unsplash.com/photo-1500534623283-312aade485b7?auto=format&fit=crop&w=1200&q=85"
+          ""
 
         return {
           id: it,
@@ -110,7 +109,7 @@ export function HighlightsPreview({ draft }: LocationPreviewSectionProps) {
       imageMultimedia: {
         show: "image",
         image: {
-          url: "https://images.unsplash.com/photo-1500534623283-312aade485b7?auto=format&fit=crop&w=1200&q=85",
+          url: "",
           alt: "North Albania",
           fit: "cover",
         },
@@ -124,7 +123,7 @@ export function HighlightsPreview({ draft }: LocationPreviewSectionProps) {
       imageMultimedia: {
         show: "image",
         image: {
-          url: "https://images.unsplash.com/photo-1506744038136-46273834b3fb?auto=format&fit=crop&w=1200&q=85",
+          url: "",
           alt: "Central Albania",
           fit: "cover",
         },
@@ -138,7 +137,7 @@ export function HighlightsPreview({ draft }: LocationPreviewSectionProps) {
       imageMultimedia: {
         show: "image",
         image: {
-          url: "https://images.unsplash.com/photo-1507525428034-b723cf961d3e?auto=format&fit=crop&w=1200&q=85",
+          url: "",
           alt: "Albanian Riviera",
           fit: "cover",
         },
@@ -152,7 +151,7 @@ export function HighlightsPreview({ draft }: LocationPreviewSectionProps) {
       imageMultimedia: {
         show: "image",
         image: {
-          url: "https://images.unsplash.com/photo-1519681393784-d120267933ba?auto=format&fit=crop&w=1200&q=85",
+          url: "",
           alt: "South Albania",
           fit: "cover",
         },
@@ -189,10 +188,9 @@ export function HighlightsPreview({ draft }: LocationPreviewSectionProps) {
             <div className="mx-auto flex w-full md:max-w-[85%] max-w-[90%] lg:max-w-[863px] flex-col items-center text-center xl:gap-3 md:gap-2.5 gap-2">
               {/* Eyebrow Label */}
               <div className="self-stretch flex flex-col justify-center items-center font-normal text-sm md:text-base lg:text-lg xl:text-xl text-center tracking-[2.34px] xl:leading-9 lgx:leading-[34px] md:leading-8 leading-[30px]">
-                <DynamicStyledPreview
+                <DynamicStyledTextPreview
                   as="span"
-                  field={highlights.label}
-                  fallback="SEASONAL HIGHLIGHTS"
+                  data={highlights.label}
                   fallbackColor="#af6348"
                   className="text-center font-normal uppercase tracking-[2.34px]"
                 />
@@ -200,27 +198,23 @@ export function HighlightsPreview({ draft }: LocationPreviewSectionProps) {
 
               {/* Section Main Title */}
               <div className="self-stretch shrink-0 h-auto flex flex-col justify-center items-center text-center mb-2 md:mb-[9px] xl:mb-[11px] font-heading xl:leading-[56px] lgx:leading-[52px] md:leading-[48px] leading-[44px]">
-                <DynamicStyledPreview
+                <DynamicStyledTextPreview
                   as="h2"
-                  field={highlights.title}
-                  fallback={`Regions of ${draft?.name || "Albania"}`}
+                  data={highlights.title}
                   fallbackColor="#182d09"
                   className="font-semibold font-heading text-[28px] md:text-[38px] lg:text-[42px] lg:leading-[42px] lgx:text-[42px] mid:text-[44px] mid:leading-[44px] xlg:text-[46px] xlg:leading-[46px] xl:text-[48px] text-center"
                 />
               </div>
 
               {/* Subtitle / Description */}
-              {highlights.description && (
-                <div className="self-stretch h-auto shrink-0 flex flex-col justify-center items-center text-center">
-                  <DynamicStyledPreview
-                    as="p"
-                    field={highlights.description}
-                    fallback="A selection of destinations currently resonating with our most discerning travelers."
-                    fallbackColor="#565e69"
-                    className="text-center font-normal text-[16px] md:text-[18px] lg:text-[20px]"
-                  />
-                </div>
-              )}
+              <div className="self-stretch h-auto shrink-0 flex flex-col justify-center items-center text-center">
+                <DynamicStyledTextPreview
+                  as="p"
+                  data={highlights.description}
+                  fallbackColor="#565e69"
+                  className="text-center font-normal text-[16px] md:text-[18px] lg:text-[20px]"
+                />
+              </div>
             </div>
           </div>
 
@@ -242,11 +236,8 @@ export function HighlightsPreview({ draft }: LocationPreviewSectionProps) {
             >
               {marqueeItems.map((item, index) => {
                 const cardMedia =
-                  item.imageMultimedia?.image?.url ||
-                  item.imageMultimedia?.video?.url ||
-                  item.imageMultimedia?.color
-                    ? item.imageMultimedia
-                    : (item as any).image
+                  item.imageMultimedia ||
+                  ((item as any).image
                     ? {
                         show: "image",
                         image: {
@@ -261,14 +252,14 @@ export function HighlightsPreview({ draft }: LocationPreviewSectionProps) {
                     : {
                         show: "image",
                         image: {
-                          url: "https://images.unsplash.com/photo-1500534623283-312aade485b7?auto=format&fit=crop&w=1200&q=85",
+                          url: "",
                           alt:
                             typeof item.region === "object"
                               ? item.region?.value
                               : item.region || "Highlight",
                           fit: "cover",
                         },
-                      }
+                      })
 
                 const regionLabel =
                   typeof item.region === "object"
@@ -289,7 +280,6 @@ export function HighlightsPreview({ draft }: LocationPreviewSectionProps) {
                     <div className="absolute inset-0 size-full transition-transform duration-1000 ease-out group-hover:scale-105">
                       <UniversalMultimediaPreview
                         multimedia={cardMedia}
-                        fallbackImageSrc="https://images.unsplash.com/photo-1500534623283-312aade485b7?auto=format&fit=crop&w=1200&q=85"
                         fallbackAlt={`${regionLabel} — ${countryLabel}`}
                         mode="background"
                         className="size-full object-cover object-center"
@@ -321,33 +311,28 @@ export function HighlightsPreview({ draft }: LocationPreviewSectionProps) {
                     {/* Content Box Positioned at Bottom Left */}
                     <div className="absolute inset-x-0 bottom-0 z-10 flex flex-col justify-start items-start gap-1.5 p-6 sm:p-7 md:p-8 lg:p-9 xl:p-[36px] text-left">
                       {/* Country Tag */}
-                      <DynamicStyledPreview
+                      <DynamicStyledTextPreview
                         as="span"
-                        field={item.country}
-                        fallback={draft?.name || "Country"}
+                        data={item.country}
                         fallbackColor="#f3f4f6"
                         className="text-neutral-100/60 uppercase text-xs md:text-[13.5px] xl:text-sm font-normal xl:leading-[22.5px] md:leading-[20px] leading-[18px] tracking-[1.4px]"
                       />
 
                       {/* Region Title */}
-                      <DynamicStyledPreview
+                      <DynamicStyledTextPreview
                         as="h3"
-                        field={item.region}
-                        fallback="Untitled Region"
+                        data={item.region}
                         fallbackColor="#ffffff"
                         className="text-neutral-100 font-heading text-xl md:text-[26px] xl:text-[27px] font-normal leading-9 md:leading-[38px] xl:leading-[41px] transition-colors duration-300 group-hover:text-accent"
                       />
 
                       {/* Subtitle / Activity Tags */}
-                      {Boolean(item.tags) && (
-                        <DynamicStyledPreview
-                          as="p"
-                          field={item.tags}
-                          fallback=""
-                          fallbackColor="#ffffff"
-                          className="text-neutral-100 text-sm md:text-[15px] xl:text-base font-normal xl:leading-5 md:leading-[18px] leading-4 tracking-[1px] pt-[5px] transition-colors duration-300 group-hover:text-neutral-100/95 line-clamp-1"
-                        />
-                      )}
+                      <DynamicStyledTextPreview
+                        as="p"
+                        data={item.tags}
+                        fallbackColor="#ffffff"
+                        className="text-neutral-100 text-sm md:text-[15px] xl:text-base font-normal xl:leading-5 md:leading-[18px] leading-4 tracking-[1px] pt-[5px] transition-colors duration-300 group-hover:text-neutral-100/95 line-clamp-1"
+                      />
                     </div>
                   </div>
                 )

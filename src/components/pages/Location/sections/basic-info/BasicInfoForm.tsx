@@ -68,7 +68,7 @@ export function BasicInfoForm({
           fieldName="type"
           required={true}
           enableStyle={false}
-          value={draft.type || "DESTINATION"}
+          value={draft.type || "PLACE"}
           options={locationTypeOptions}
           onChange={(val) => updateField("type", val as LocationType)}
         />

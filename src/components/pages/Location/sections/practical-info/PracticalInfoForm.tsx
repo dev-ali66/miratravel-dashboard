@@ -159,7 +159,7 @@ export function PracticalInfoForm({
             practicalData.imageMultimedia || {
               show: "image",
               color: { color: "#FFFFFF", opacity: 100, width: "100%", height: "100%", aspectRatio: "auto" },
-              image: { url: "/images/region-essence.jpg", alt: "Practical Information" },
+              image: { url: "", alt: "Practical Information" },
               video: { url: null, alt: null },
             }
           }
@@ -294,6 +294,18 @@ export function PracticalInfoForm({
                           placeholder="Write the guide content, visa details, or travel advice for this item..."
                           value={item.content}
                           onChange={(val) => handleItemFieldChange(idx, "content", val)}
+                        />
+
+                        {/* Item Custom Side Media */}
+                        <UniversalMultimediaForm
+                          title="Item Custom Side Media (Shown when opened)"
+                          fieldName={`practicalInfo.items.${idx}.multimedia`}
+                          imageFieldName={`locationPracticalItemImg_${idx}`}
+                          videoFieldName={`locationPracticalItemVid_${idx}`}
+                          hideFieldNameBadge={true}
+                          collapsible={true}
+                          value={item.multimedia || item.imageMultimedia}
+                          onChange={(multimedia) => handleItemFieldChange(idx, "multimedia", multimedia)}
                         />
                       </div>
                     )}

@@ -5,7 +5,6 @@ import { useParams, useSearchParams } from "react-router-dom"
 import { useLocationPage } from "@/hooks/location/useLocationPage"
 import { useLocationDraft } from "./shared/LocationDraftContext"
 import { emptyLocation } from "./shared/emptyLocation"
-import { mergeWithDefaults } from "./shared/mergeWithDefaults"
 import { normalizeLocationPayload } from "./shared/normalizeLocationPayload"
 import {
   getSectionsForLocationType,
@@ -73,25 +72,7 @@ export function LocationForm({ }: LocationFormProps) {
     }
   }, [isEditMode, searchParams, draft, isSaving, save])
 
-  // When in Edit mode, normalize the fetched draft over defaults.
-  useEffect(() => {
-    if (!isEditMode) return
-    if (!draft) return
 
-    const normalizedDraft = mergeWithDefaults(emptyLocation, draft)
-
-    setDraft((current) => {
-      try {
-        if (JSON.stringify(current) === JSON.stringify(normalizedDraft)) {
-          return current
-        }
-      } catch (e) {
-        // fall back to replacing if serialization fails
-      }
-
-      return normalizedDraft
-    })
-  }, [draft, isEditMode, setDraft])
 
   if (isEditMode && isLoading) {
     return (

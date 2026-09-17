@@ -69,8 +69,6 @@ export function HeroPreview({
                 }
               : { color: backgroundMultimedia.color, type: "color" }
         }
-        fallbackImageSrc={PREVIEW_IMAGE_SOURCE}
-        fallbackVideoSrc={PREVIEW_VIDEO_SOURCE}
         fallbackAlt="Hero background"
         fallbackColor={section.bgColor ?? "#0F2A2E"}
         mode="background"

@@ -1,4 +1,4 @@
-import { DynamicStyledPreview } from "@/components/shared/DynamicStyledPreview"
+import { DynamicStyledTextPreview } from "@/components/pages/CMS/shared/DynamicStyledTextPreview"
 import { UniversalMultimediaPreview } from "@/components/pages/CMS/Home/shared/preview/UniversalMultimediaPreview"
 import type { LocationPreviewSectionProps } from "../../config/locationSections"
 import { useGetLocationPages } from "@/hooks/location/useGetLocation"
@@ -18,8 +18,53 @@ export function GlancePreview({ draft }: LocationPreviewSectionProps) {
 
   const rawItems: any[] = Array.isArray(glanceData.items) ? glanceData.items : []
 
+  // Sample items shown only if no items have been added
+  const sampleItems = [
+    {
+      id: "sample-glance-1",
+      country: draft?.name || "Albania",
+      title: "North Albania & Alpine Peaks",
+      multimedia: {
+        show: "image",
+        image: {
+          url: "",
+          alt: "North Albania",
+          fit: "cover",
+        },
+      },
+    },
+    {
+      id: "sample-glance-2",
+      country: draft?.name || "Albania",
+      title: "Central Albania & Living Heritage",
+      multimedia: {
+        show: "image",
+        image: {
+          url: "",
+          alt: "Central Albania",
+          fit: "cover",
+        },
+      },
+    },
+    {
+      id: "sample-glance-3",
+      country: draft?.name || "Albania",
+      title: "Albanian Riviera & Coastal Bays",
+      multimedia: {
+        show: "image",
+        image: {
+          url: "",
+          alt: "Albanian Riviera",
+          fit: "cover",
+        },
+      },
+    },
+  ]
+
+  const items: any[] = rawItems.length > 0 ? rawItems : sampleItems
+
   // Resolve dynamic cards from string location IDs or objects
-  const dynamicItems = rawItems
+  const dynamicItems = items
     .map((it: any, idx: number) => {
       if (typeof it === "string") {
         const loc =
@@ -55,18 +100,18 @@ export function GlancePreview({ draft }: LocationPreviewSectionProps) {
       }
 
       // Legacy object item fallback
-      const loc = it.id || it.locationId
+      const loc = (it.id && typeof it.id === "string" && !it.id.startsWith("sample-"))
         ? availableLocations.find((l: any) => l.id === (it.id || it.locationId) || l.slug === (it.id || it.locationId))
         : null
 
-      const fallbackTitle = loc?.name || loc?.hero?.title?.value || `Destination ${idx + 1}`
-      const fallbackCountry = loc?.parent?.name || draft?.name || "Destination"
+      const fallbackTitle = loc?.name || loc?.hero?.title?.value || it.title || `Destination ${idx + 1}`
+      const fallbackCountry = loc?.parent?.name || it.country || draft?.name || "Destination"
 
       return {
         ...it,
         id: it.id || loc?.id || `glance-${idx}`,
-        country: it.country || fallbackCountry,
-        title: it.title || fallbackTitle,
+        country: fallbackCountry,
+        title: fallbackTitle,
         multimedia: it.multimedia || it.imageMultimedia,
       }
     })
@@ -89,27 +134,24 @@ export function GlancePreview({ draft }: LocationPreviewSectionProps) {
         {/* Header Section */}
         <div className="w-full flex flex-col md:flex-row md:items-end justify-between gap-6 mb-10 md:mb-12">
           <div className="max-w-xl space-y-2">
-            <DynamicStyledPreview
+            <DynamicStyledTextPreview
               as="span"
-              field={glanceData.label}
-              fallback="REGIONAL ORIENTATION"
+              data={glanceData.label}
               fallbackColor="#af6348"
               className="text-xs font-semibold uppercase tracking-widest"
             />
-            <DynamicStyledPreview
+            <DynamicStyledTextPreview
               as="h2"
-              field={glanceData.title}
-              fallback="The Region at a Glance"
+              data={glanceData.title}
               fallbackColor="#182d09"
               className="text-2xl md:text-3xl font-normal font-serif"
             />
           </div>
 
           <div className="max-w-md">
-            <DynamicStyledPreview
+            <DynamicStyledTextPreview
               as="p"
-              field={glanceData.description}
-              fallback="North Albania spans Shkodër county in the northwest and Kukës in the northeast..."
+              data={glanceData.description}
               fallbackColor="#565e69"
               className="text-sm leading-relaxed"
             />
@@ -140,7 +182,6 @@ export function GlancePreview({ draft }: LocationPreviewSectionProps) {
               >
                 <UniversalMultimediaPreview
                   multimedia={featured.multimedia || featured.imageMultimedia}
-                  fallbackImageSrc="/images/north.jpg"
                   fallbackAlt="Featured region"
                   mode="background"
                 />
@@ -152,10 +193,9 @@ export function GlancePreview({ draft }: LocationPreviewSectionProps) {
                       {featured.country}
                     </span>
                   )}
-                  <DynamicStyledPreview
+                  <DynamicStyledTextPreview
                     as="h3"
-                    field={featured.title}
-                    fallback="Featured Destination"
+                    data={featured.title}
                     fallbackColor="#FFFFFF"
                     className="text-xl md:text-2xl font-serif text-white font-normal"
                   />
@@ -173,7 +213,6 @@ export function GlancePreview({ draft }: LocationPreviewSectionProps) {
                   >
                     <UniversalMultimediaPreview
                       multimedia={item.multimedia || item.imageMultimedia}
-                      fallbackImageSrc={index === 0 ? "/images/region-experience.jpg" : "/images/region-bg.jpg"}
                       fallbackAlt={item.country || "Sub region"}
                       mode="background"
                     />
@@ -185,10 +224,9 @@ export function GlancePreview({ draft }: LocationPreviewSectionProps) {
                           {item.country}
                         </span>
                       )}
-                      <DynamicStyledPreview
+                      <DynamicStyledTextPreview
                         as="h3"
-                        field={item.title}
-                        fallback="Sub Destination"
+                        data={item.title}
                         fallbackColor="#FFFFFF"
                         className="text-lg md:text-xl font-heading text-white font-normal"
                       />

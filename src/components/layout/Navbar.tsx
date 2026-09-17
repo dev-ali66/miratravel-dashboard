@@ -3,6 +3,7 @@ import { Link, useNavigate } from "react-router-dom"
 import { useMe } from "@/hooks/auth/useMe"
 import { useUserSessions } from "@/hooks/auth/useUserSessions"
 import { useGetCmsBySlug } from "@/hooks/cms/useGetCmsBySlug"
+import { useDevMode } from "@/context/DevModeContext"
 import { UniversalMultimediaPreview } from "../pages/CMS/Home/shared/preview/UniversalMultimediaPreview"
 import { ThemeToggle } from "@/components/ThemeToggle"
 import { LogoutModal } from "./LogoutModal"
@@ -32,7 +33,9 @@ import {
   Laptop,
   CheckCircle2,
   Clock,
+  Code2,
 } from "lucide-react"
+import { cn } from "@/lib/utils"
 import { toast } from "sonner"
 
 const defaultAvatar = "https://i.pravatar.cc/150?u=default"
@@ -113,6 +116,7 @@ export function Navbar({ onMenuClick }: NavbarProps) {
   const navigate = useNavigate()
   const { data: user } = useMe()
   const { data: sessionStats } = useUserSessions()
+  const { isDevMode, toggleDevMode } = useDevMode()
   const [isLogoutOpen, setIsLogoutOpen] = useState(false)
   const [isDevicesModalOpen, setIsDevicesModalOpen] = useState(false)
 
@@ -173,14 +177,37 @@ export function Navbar({ onMenuClick }: NavbarProps) {
             </button>
             <NavbarBrandLogo />
           </div>
-          
-          {/* Right: Theme Toggle + User Profile Dropdown */}
-          <div className="flex items-center gap-3 sm:gap-4">
+          {/* Right: Dev Mode Toggle + Theme Toggle + User Profile Dropdown */}
+          <div className="flex items-center gap-2.5 sm:gap-3">
+            {/* Dev Mode Toggle Button */}
+            <button
+              type="button"
+              onClick={toggleDevMode}
+              className={cn(
+                "inline-flex items-center gap-1.5 rounded-full px-2.5 py-1 text-xs font-semibold transition-all cursor-pointer shadow-2xs border select-none",
+                isDevMode
+                  ? "bg-amber-500/15 text-amber-700 dark:text-amber-300 border-amber-500/40"
+                  : "bg-muted/60 text-muted-foreground border-border/60 hover:bg-muted hover:text-foreground"
+              )}
+              title={
+                isDevMode
+                  ? "Dev Mode ON: All styling & multimedia controls visible"
+                  : "Dev Mode OFF: Simple editor mode (Default styles applied)"
+              }
+            >
+              <Code2 className="h-3.5 w-3.5 shrink-0" />
+              <span className="hidden sm:inline">Dev Mode</span>
+              <span
+                className={cn(
+                  "h-2 w-2 rounded-full shrink-0 transition-colors",
+                  isDevMode ? "bg-amber-500 animate-pulse" : "bg-muted-foreground/40"
+                )}
+              />
+            </button>
+
             <ThemeToggle />
             
             <div className="h-6 w-px bg-border/60" />
-
-            {/* User Profile Dropdown Menu */}
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
                 <button

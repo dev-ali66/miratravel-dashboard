@@ -1,5 +1,5 @@
 import { useState } from "react"
-import { DynamicStyledPreview } from "@/components/shared/DynamicStyledPreview"
+import { DynamicStyledTextPreview } from "@/components/pages/CMS/shared/DynamicStyledTextPreview"
 import { UniversalMultimediaPreview } from "@/components/pages/CMS/Home/shared/preview/UniversalMultimediaPreview"
 import type { LocationPreviewSectionProps } from "../../config/locationSections"
 import type { FAQItemData } from "./FaqForm"
@@ -12,13 +12,7 @@ export function FaqPreview({ draft }: LocationPreviewSectionProps) {
     (draft as any)?.faqSection ||
     (draft as any)?.faq_section ||
     (draft as any)?.data?.faq_section || {
-      title: {
-        value: "Frequently Asked Questions",
-        textColor: "#182d09",
-        textOpacity: 1,
-        backgroundColor: null,
-        backgroundOpacity: 1,
-      },
+      title: null,
       imageMultimedia: null,
       backgroundMultimedia: null,
       items: [],
@@ -73,10 +67,9 @@ export function FaqPreview({ draft }: LocationPreviewSectionProps) {
       >
         <div className="mx-auto flex w-full max-w-[1520px] flex-col items-center justify-start">
           {/* Main Heading Title */}
-          <DynamicStyledPreview
+          <DynamicStyledTextPreview
             as="h2"
-            field={faqData.title}
-            fallback="Frequently Asked Questions"
+            data={faqData.title}
             fallbackColor="#182d09"
             className="text-center font-heading font-semibold text-[34px] md:text-[38px] md:leading-[48px] lg:text-[42px] lg:leading-[52px] xlg:text-[46px] xlg:leading-[58px] xl:text-5xl xl:leading-[64px] text-title"
           />
@@ -86,18 +79,11 @@ export function FaqPreview({ draft }: LocationPreviewSectionProps) {
             {/* Left Column: Featured Visual / Square Media */}
             <div className="relative flex w-full justify-center lg:justify-start lg:w-auto shrink-0">
               <div className="relative flex-shrink-0 overflow-hidden w-[340px] md:w-[500px] lg:w-[460px] xlg:w-[520px] xl:w-[580px] h-[340px] md:h-[500px] lg:h-[460px] xlg:h-[520px] xl:h-[580px] max-w-full aspect-square shadow-[0_25px_50px_-12px_rgba(0,0,0,0.25)] rounded-[2px] cursor-pointer bg-muted/30">
-                {featuredMedia ? (
-                  <UniversalMultimediaPreview
-                    multimedia={featuredMedia}
-                    mode="inline"
-                    className="w-full h-full object-cover transition-transform duration-700 hover:scale-105"
-                  />
-                ) : (
-                  <div className="w-full h-full flex flex-col items-center justify-center p-6 text-center text-muted-foreground">
-                    <HelpCircle className="h-12 w-12 stroke-[1.5] mb-2 opacity-50" />
-                    <span className="text-xs">No FAQ visual configured</span>
-                  </div>
-                )}
+                <UniversalMultimediaPreview
+                  multimedia={featuredMedia}
+                  mode="inline"
+                  className="w-full h-full object-cover transition-transform duration-700 hover:scale-105"
+                />
               </div>
             </div>
 
@@ -132,10 +118,9 @@ export function FaqPreview({ draft }: LocationPreviewSectionProps) {
                         aria-expanded={isOpen}
                         className="group flex w-full cursor-pointer items-center justify-between gap-4 px-4 md:px-5 xl:px-6 py-3.5 md:py-4 xl:py-5 text-left outline-none focus-visible:ring-1 focus-visible:ring-primary"
                       >
-                        <DynamicStyledPreview
+                        <DynamicStyledTextPreview
                           as="span"
-                          field={q.question}
-                          fallback={`Question #${idx + 1}`}
+                          data={q.question}
                           fallbackColor="#182d09"
                           className="text-sm md:text-[15px] xl:text-base xl:leading-[30px] md:leading-[28px] leading-[26px] font-normal text-card-title transition-colors duration-200 group-hover:text-primary"
                         />
@@ -173,10 +158,9 @@ export function FaqPreview({ draft }: LocationPreviewSectionProps) {
                         <div className="overflow-hidden transition-all duration-300">
                           <div className="md:px-5 px-4 xl:px-6 pb-3.5 md:pb-4 xl:pb-5 pt-0">
                             <div className="h-px w-full bg-border/40 mb-3" />
-                            <DynamicStyledPreview
+                            <DynamicStyledTextPreview
                               as="p"
-                              field={q.answer}
-                              fallback="Detailed answer description..."
+                              data={q.answer}
                               fallbackColor="#565e69"
                               className="font-inter text-xs md:text-[13px] xl:text-sm font-normal leading-5 md:leading-[22px] xl:leading-6 text-muted-foreground"
                             />
@@ -194,4 +178,6 @@ export function FaqPreview({ draft }: LocationPreviewSectionProps) {
     </section>
   )
 }
+
+export default FaqPreview
 

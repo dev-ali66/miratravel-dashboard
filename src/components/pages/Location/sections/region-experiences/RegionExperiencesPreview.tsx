@@ -1,9 +1,8 @@
 import { useState, useEffect } from "react"
 import { motion, AnimatePresence } from "framer-motion"
-import { DynamicStyledPreview } from "@/components/shared/DynamicStyledPreview"
+import { DynamicStyledTextPreview } from "@/components/pages/CMS/shared/DynamicStyledTextPreview"
+import { DynamicCmsButtonPreview } from "@/components/pages/CMS/shared/DynamicCmsButtonPreview"
 import { UniversalMultimediaPreview } from "@/components/pages/CMS/Home/shared/preview/UniversalMultimediaPreview"
-import { colorWithOpacity } from "@/components/pages/CMS/shared/ButtonsField"
-import { cn } from "@/lib/utils"
 import type { LocationPreviewSectionProps } from "../../config/locationSections"
 import type { RegionExperienceItemData } from "../../locationTypes"
 import { MapPin } from "lucide-react"
@@ -19,10 +18,75 @@ export function RegionExperiencesPreview({ draft }: LocationPreviewSectionProps)
       backgroundMultimedia: null,
     }
 
+  const rawItems: RegionExperienceItemData[] =
+    Array.isArray(regionExperiences.items) ? regionExperiences.items : []
+
+  // Sample items shown only if no items have been added
+  const sampleItems: RegionExperienceItemData[] = [
+    {
+      id: "sample-1",
+      title: { value: "North Albania" },
+      subtitle: { value: "Alpine Peaks & High Passes" },
+      description: { value: "Soaring limestone peaks, ancient mountain villages, and pristine river valleys." },
+      tag: { value: "ALPINE" },
+      imageMultimedia: {
+        show: "image",
+        image: {
+          url: "",
+          alt: "North Albania",
+          fit: "cover",
+        },
+      },
+    },
+    {
+      id: "sample-2",
+      title: { value: "Central Albania" },
+      subtitle: { value: "Culture & Living Heritage" },
+      description: { value: "Historic castles, vibrant bazaars, and traditional hospitality in UNESCO heritage towns." },
+      tag: { value: "CULTURE" },
+      imageMultimedia: {
+        show: "image",
+        image: {
+          url: "",
+          alt: "Central Albania",
+          fit: "cover",
+        },
+      },
+    },
+    {
+      id: "sample-3",
+      title: { value: "Albanian Riviera" },
+      subtitle: { value: "Coastal Coves & Sea Caves" },
+      description: { value: "Turquoise Ionian waters, secluded beaches, and olive grove coastal hillsides." },
+      tag: { value: "COASTAL" },
+      imageMultimedia: {
+        show: "image",
+        image: {
+          url: "",
+          alt: "Albanian Riviera",
+          fit: "cover",
+        },
+      },
+    },
+    {
+      id: "sample-4",
+      title: { value: "South Albania" },
+      subtitle: { value: "Thermal Springs & Ancient Ruins" },
+      description: { value: "Stone architecture, ancient Greek and Ottoman ruins, and natural thermal springs." },
+      tag: { value: "HERITAGE" },
+      imageMultimedia: {
+        show: "image",
+        image: {
+          url: "",
+          alt: "South Albania",
+          fit: "cover",
+        },
+      },
+    },
+  ]
+
   const items: RegionExperienceItemData[] =
-    Array.isArray(regionExperiences.items) && regionExperiences.items.length > 0
-      ? regionExperiences.items
-      : []
+    rawItems.length > 0 ? rawItems : sampleItems
 
   const [activeId, setActiveId] = useState<string>("")
 
@@ -65,10 +129,9 @@ export function RegionExperiencesPreview({ draft }: LocationPreviewSectionProps)
             <div className="flex w-full flex-col items-center justify-center text-center mx-auto">
               {/* Eyebrow Label */}
               <div className="self-stretch flex flex-col justify-center items-center">
-                <DynamicStyledPreview
+                <DynamicStyledTextPreview
                   as="div"
-                  field={regionExperiences.label}
-                  fallback={`EXPLORE ${draft?.name?.toUpperCase() || "REGIONS"}`}
+                  data={regionExperiences.label}
                   fallbackColor="#af6348"
                   className="self-stretch text-accent text-sm @xs:text-base @md:text-lg @lgx:text-[20px] @mid:text-[22px] @xl:text-2xl leading-5 @xs:leading-6 @md:leading-[26px] @lgx:leading-7 @mid:leading-[30px] @xl:leading-8 mx-auto w-full text-center justify-center font-medium uppercase tracking-[2px] @md:tracking-[3px]"
                 />
@@ -76,35 +139,16 @@ export function RegionExperiencesPreview({ draft }: LocationPreviewSectionProps)
 
               {/* Main Heading Title */}
               <div className="self-stretch mt-3 @md:mt-4 flex flex-col justify-center items-center">
-                <DynamicStyledPreview
+                <DynamicStyledTextPreview
                   as="h2"
-                  field={regionExperiences.title}
-                  fallback={
-                    draft?.name
-                      ? `Regions of ${draft.name}. Distinct Experiences.`
-                      : "Explore Regional Experiences"
-                  }
+                  data={regionExperiences.title}
                   fallbackColor="#182d09"
                   className="self-stretch shrink-0 h-auto font-medium font-heading text-[24px] @xs:text-[28px] @sm:text-[32px] @md:text-[38px] @lg:text-[42px] @xlg:text-[44px] @xl:text-[48px] @2xl:text-[50px] leading-[32px] @xs:leading-[38px] @sm:leading-[42px] @md:leading-[47px] @lg:leading-[50px] @xlg:leading-[52px] @xl:leading-[56px] @2xl:leading-[58px] mx-auto w-full text-center justify-center text-primary max-w-full @md:max-w-[600px] @lg:max-w-[690px] @xlg:max-w-[780px] @xl:max-w-[920px]"
                 />
               </div>
             </div>
 
-            {/* If no region items are added: Render elegant inline empty message */}
-            {items.length === 0 ? (
-              <div className="mt-8 @md:mt-12 flex w-full flex-col items-center justify-center rounded-2xl border border-dashed border-border/80 bg-background/60 backdrop-blur-sm p-10 text-center shadow-xs">
-                <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-primary/10 text-primary mb-3">
-                  <MapPin className="h-6 w-6 opacity-80" />
-                </div>
-                <h4 className="text-sm font-semibold text-foreground">
-                  No Region Experiences Added Yet
-                </h4>
-                <p className="text-xs text-muted-foreground mt-1 max-w-md leading-relaxed">
-                  Search locations or click &quot;Import Children&quot; in the form on the left to display interactive region tabs and media showcase here.
-                </p>
-              </div>
-            ) : (
-              /* Interactive Content Layout (Image Frame on Left + Tabs on Right) */
+            {/* Interactive Content Layout (Image Frame on Left + Tabs on Right) */}
               <div className="mt-8 @md:mt-[36px] @lg:mt-[44px] @xl:mt-16 flex w-full flex-col @lg:flex-row items-center @lg:items-stretch justify-center @lg:justify-between gap-8 @md:gap-[38px] @lg:gap-[50px] @xlg:gap-[62px] @xl:gap-20">
                 {/* Left Column: Dynamic Animated Image Frame */}
                 <div
@@ -161,10 +205,9 @@ export function RegionExperiencesPreview({ draft }: LocationPreviewSectionProps)
                           {/* Overlaid Tag Badge */}
                           {activeRegion.tag && (
                             <div className="absolute top-4 left-4 z-20">
-                              <DynamicStyledPreview
+                              <DynamicStyledTextPreview
                                 as="span"
-                                field={activeRegion.tag}
-                                fallback="REGION"
+                                data={activeRegion.tag}
                                 fallbackColor="#ffffff"
                                 className="rounded bg-black/60 backdrop-blur-md px-3 py-1 text-[11px] font-medium uppercase tracking-wider text-white border border-white/20"
                               />
@@ -195,11 +238,6 @@ export function RegionExperiencesPreview({ draft }: LocationPreviewSectionProps)
                         ? region.title?.value
                         : region.title || `Region ${idx + 1}`
 
-                    const itemSubtitleFallback =
-                      typeof region.subtitle === "object"
-                        ? region.subtitle?.value
-                        : region.subtitle || ""
-
                     const exploreUrl =
                       region.button?.url ||
                       (region as any).buttonUrl ||
@@ -209,6 +247,12 @@ export function RegionExperiencesPreview({ draft }: LocationPreviewSectionProps)
                       region.button?.label ||
                       (region as any).buttonText ||
                       `Explore ${itemTitleFallback}`
+
+                    const regionButtons = Array.isArray(region.buttons) && region.buttons.length > 0
+                      ? region.buttons
+                      : region.button
+                      ? [region.button]
+                      : [{ label: exploreLabel, url: exploreUrl, variant: "primary" }]
 
                     return (
                       <div
@@ -253,19 +297,17 @@ export function RegionExperiencesPreview({ draft }: LocationPreviewSectionProps)
                         {/* Region Content Details */}
                         <div className="flex flex-1 flex-col justify-start items-start">
                           {/* Region Title */}
-                          <DynamicStyledPreview
+                          <DynamicStyledTextPreview
                             as="h3"
-                            field={region.title}
-                            fallback={itemTitleFallback}
+                            data={region.title}
                             fallbackColor="#182d09"
                             className="font-heading font-semibold text-base @md:text-[16.3px] @lg:text-[16.7px] @xlg:text-[17.2px] @xl:text-lg leading-[22px] @md:leading-[22.7px] @lg:leading-[24.2px] @xlg:leading-[25.7px] @xl:leading-7 transition-colors duration-300 mb-1 text-primary"
                           />
 
                           {/* Region Subtitle */}
-                          <DynamicStyledPreview
+                          <DynamicStyledTextPreview
                             as="p"
-                            field={region.subtitle}
-                            fallback={itemSubtitleFallback}
+                            data={region.subtitle}
                             fallbackColor={isActive ? "#af6348" : "#9c705d"}
                             className={`mb-2 text-xs @md:text-[12.3px] @xl:text-sm font-normal leading-4 italic transition-colors duration-300 ${
                               isActive ? "text-accent-hover font-medium" : "text-accent-muted"
@@ -273,106 +315,17 @@ export function RegionExperiencesPreview({ draft }: LocationPreviewSectionProps)
                           />
 
                           {/* Region Description */}
-                          <DynamicStyledPreview
+                          <DynamicStyledTextPreview
                             as="p"
-                            field={region.description}
-                            fallback=""
+                            data={region.description}
                             fallbackColor="#565e69"
                             className="w-full text-xs @md:text-[12.3px] @xl:text-sm font-normal leading-5 transition-colors duration-300 text-subtitle"
                           />
 
-                          {/* Explore Region Action Buttons (Hero Style) */}
+                          {/* Explore Region Action Buttons */}
                           {isActive && (
                             <div className="mt-3 flex flex-wrap items-center gap-2">
-                              {(Array.isArray(region.buttons) && region.buttons.length > 0
-                                ? region.buttons
-                                : region.button
-                                ? [region.button]
-                                : [{ label: exploreLabel, url: exploreUrl, style: "primary", variant: "PRIMARY", textColor: "#ffffff", backgroundColor: "#af6348" }]
-                              ).map((btn: any, bIdx: number) => {
-                                const variant = (btn.variant || btn.style || "primary").toLowerCase()
-                                const isPrimary = variant === "primary"
-                                const isSecondary = variant === "secondary"
-                                const isDark = variant === "dark"
-                                const isOutline = variant === "outline"
-
-                                const roundedClass =
-                                  btn.rounded === "none"
-                                    ? "rounded-none"
-                                    : btn.rounded === "sm"
-                                    ? "rounded-md"
-                                    : btn.rounded === "md"
-                                    ? "rounded-lg"
-                                    : btn.rounded === "xl"
-                                    ? "rounded-2xl"
-                                    : btn.rounded === "full"
-                                    ? "rounded-full"
-                                    : "rounded-sm"
-
-                                const bg =
-                                  btn.backgroundColor !== undefined
-                                    ? colorWithOpacity(btn.backgroundColor, btn.backgroundOpacity)
-                                    : isPrimary
-                                    ? "#af6348"
-                                    : isSecondary
-                                    ? "#182d09"
-                                    : isDark
-                                    ? "#171717"
-                                    : "transparent"
-
-                                const textColor =
-                                  btn.textColor !== undefined
-                                    ? colorWithOpacity(btn.textColor, btn.textOpacity)
-                                    : isPrimary
-                                    ? "#ffffff"
-                                    : isSecondary
-                                    ? "#ffffff"
-                                    : isOutline
-                                    ? "#af6348"
-                                    : "#ffffff"
-
-                                const borderColor =
-                                  btn.borderColor || (isOutline ? "#af6348" : undefined)
-                                const borderWidth =
-                                  btn.borderWidth || (isOutline || btn.borderColor ? "1px" : undefined)
-
-                                return (
-                                  <a
-                                    key={bIdx}
-                                    href={btn.url || exploreUrl}
-                                    target={btn.target || "_self"}
-                                    rel={btn.target === "_blank" ? "noopener noreferrer" : undefined}
-                                    onClick={(e) => e.preventDefault()}
-                                    style={{
-                                      backgroundColor: bg,
-                                      color: textColor,
-                                      borderColor: borderColor,
-                                      borderWidth: borderWidth,
-                                      borderStyle: borderColor ? "solid" : undefined,
-                                    }}
-                                    className={cn(
-                                      "group inline-flex items-center gap-2 px-4 py-2 text-xs font-semibold uppercase tracking-wider transition-all duration-200 hover:scale-[1.02] active:scale-[0.98] shadow-xs cursor-pointer",
-                                      roundedClass
-                                    )}
-                                  >
-                                    <span>{btn.label || exploreLabel}</span>
-                                    <svg
-                                      className="size-3.5 transition-transform duration-200 group-hover:translate-x-1"
-                                      fill="none"
-                                      viewBox="0 0 24 24"
-                                      strokeWidth="2.5"
-                                      stroke="currentColor"
-                                      aria-hidden="true"
-                                    >
-                                      <path
-                                        strokeLinecap="round"
-                                        strokeLinejoin="round"
-                                        d="M13.5 4.5 21 12m0 0-7.5 7.5M21 12H3"
-                                      />
-                                    </svg>
-                                  </a>
-                                )
-                              })}
+                              <DynamicCmsButtonPreview buttons={regionButtons} defaultVariant="primary" />
                             </div>
                           )}
                         </div>
@@ -381,7 +334,6 @@ export function RegionExperiencesPreview({ draft }: LocationPreviewSectionProps)
                   })}
                 </div>
               </div>
-            )}
           </div>
         </div>
       </div>

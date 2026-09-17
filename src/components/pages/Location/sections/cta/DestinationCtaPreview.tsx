@@ -1,42 +1,15 @@
-import { DynamicStyledPreview } from "@/components/shared/DynamicStyledPreview"
-import { UniversalMultimediaPreview } from "@/components/pages/CMS/Home/shared/preview/UniversalMultimediaPreview"
-import { colorWithOpacity } from "@/components/pages/CMS/shared/ButtonsField"
 import type { LocationPreviewSectionProps } from "../../config/locationSections"
+import { DynamicStyledTextPreview } from "@/components/pages/CMS/shared/DynamicStyledTextPreview"
+import { DynamicCmsButtonPreview } from "@/components/pages/CMS/shared/DynamicCmsButtonPreview"
+import { UniversalMultimediaPreview } from "@/components/pages/CMS/shared/UniversalMultimediaPreview"
 
 export function DestinationCtaPreview({ draft }: LocationPreviewSectionProps) {
   const ctaData =
     draft?.cta ||
     (draft as any)?.data?.cta ||
     (draft as any)?.destinationCta ||
-    (draft as any)?.data?.destinationCta || {
-      title: {
-        value: "Didn't find your perfect journey?",
-        textColor: "#182d09",
-        textOpacity: 1,
-        backgroundColor: null,
-        backgroundOpacity: 1,
-      },
-      description: {
-        value:
-          "Our collection is carefully designed but every travel is different.\nIf you'd like something more personal, we'd love to create it together.",
-        textColor: "#565e69",
-        textOpacity: 1,
-        backgroundColor: null,
-        backgroundOpacity: 1,
-      },
-      buttons: [
-        {
-          label: "Plan a tailor-made journey",
-          url: "/contact",
-          style: "primary",
-          variant: "PRIMARY",
-          backgroundColor: "#af6348",
-          textColor: "#ffffff",
-        },
-      ],
-      imageMultimedia: null,
-      backgroundMultimedia: null,
-    }
+    (draft as any)?.data?.destinationCta ||
+    {}
 
   const rawButtons =
     Array.isArray(ctaData.buttons) && ctaData.buttons.length > 0
@@ -48,16 +21,6 @@ export function DestinationCtaPreview({ draft }: LocationPreviewSectionProps) {
       : []
 
   const motifMedia = ctaData.imageMultimedia
-
-  // Split multi-line descriptions into individual paragraphs
-  const rawDescValue =
-    typeof ctaData.description === "object"
-      ? ctaData.description?.value || ""
-      : ctaData.description || ""
-  const descLines = String(rawDescValue)
-    .split("\n")
-    .map((l) => l.trim())
-    .filter(Boolean)
 
   return (
     <section
@@ -83,96 +46,22 @@ export function DestinationCtaPreview({ draft }: LocationPreviewSectionProps) {
             <div className="relative z-10 flex flex-col items-start justify-center gap-8 @sm:gap-10 @md:gap-12 @lg:gap-14 @xl:gap-16 px-6 py-10 @xs:px-8 @xs:py-12 @sm:px-12 @sm:py-14 @md:px-16 @md:py-16 @lg:px-20 @lg:py-20 @xl:px-[142px] @xl:py-[96px]">
               {/* Title & Description Group */}
               <div className="flex flex-col items-start justify-start gap-4 @sm:gap-5 @md:gap-6">
-                <DynamicStyledPreview
+                <DynamicStyledTextPreview
                   as="h2"
-                  field={ctaData.title}
-                  fallback="Didn't find your perfect journey?"
-                  fallbackColor="#182d09"
+                  data={ctaData.title}
                   className="font-heading text-[30px] leading-[38px] @md:text-[42px] @md:leading-[52px] @lg:text-[46px] @lg:leading-[56px] @xl:text-[50px] @xl:leading-[60px] font-semibold tracking-[2px] text-primary max-w-[882px]"
                 />
 
-                <div className="flex flex-col items-start justify-start gap-1 @sm:gap-1.5 text-subtitle text-sm @md:text-[15px] @xl:text-base font-normal leading-5 @md:leading-[22px] @xl:leading-6 tracking-[1px]">
-                  {descLines.length > 0 ? (
-                    descLines.map((line, idx) => (
-                      <DynamicStyledPreview
-                        key={idx}
-                        as="p"
-                        field={{
-                          ...(typeof ctaData.description === "object"
-                            ? ctaData.description
-                            : {}),
-                          value: line,
-                        }}
-                        fallbackColor="#565e69"
-                      />
-                    ))
-                  ) : (
-                    <DynamicStyledPreview
-                      as="p"
-                      type="textarea"
-                      field={ctaData.description}
-                      fallback="Our collection is carefully designed but every travel is different.&#10;If you'd like something more personal, we'd love to create it together."
-                      fallbackColor="#565e69"
-                    />
-                  )}
-                </div>
+                <DynamicStyledTextPreview
+                  as="div"
+                  isRichText
+                  data={ctaData.subtitle || ctaData.description}
+                  className="text-subtitle text-sm @md:text-[15px] @xl:text-base font-normal leading-5 @md:leading-[22px] @xl:leading-6 tracking-[1px] max-w-[720px]"
+                />
               </div>
 
               {/* Action Buttons */}
-              <div className="flex flex-wrap items-center gap-3">
-                {rawButtons.map((btn: any, idx: number) => {
-                  const variant = (btn.variant || btn.style || "primary").toLowerCase()
-                  const isOutline = variant === "outline"
-
-                  const roundedClass =
-                    btn.rounded === "none"
-                      ? "rounded-none"
-                      : btn.rounded === "sm"
-                      ? "rounded-md"
-                      : btn.rounded === "md"
-                      ? "rounded-lg"
-                      : btn.rounded === "xl"
-                      ? "rounded-2xl"
-                      : "rounded-[2px]"
-
-                  const bg =
-                    btn.backgroundColor !== undefined
-                      ? colorWithOpacity(btn.backgroundColor, btn.backgroundOpacity)
-                      : "#af6348"
-
-                  const textColor =
-                    btn.textColor !== undefined
-                      ? colorWithOpacity(btn.textColor, btn.textOpacity)
-                      : "#ffffff"
-
-                  const borderColor =
-                    btn.borderColor || (isOutline ? "rgba(175, 99, 72, 0.7)" : undefined)
-
-                  const borderWidth =
-                    btn.borderWidth || (isOutline || btn.borderColor ? "1px" : undefined)
-
-                  return (
-                    <a
-                      key={idx}
-                      href={btn.url || "#"}
-                      target={btn.target || "_self"}
-                      rel={btn.target === "_blank" ? "noopener noreferrer" : undefined}
-                      style={{
-                        backgroundColor: bg,
-                        color: textColor,
-                        borderColor: borderColor,
-                        borderWidth: borderWidth,
-                        borderStyle: borderColor ? "solid" : undefined,
-                      }}
-                      className={`group relative inline-flex w-auto min-w-[236px] @md:h-[56px] h-[52px] px-3 @md:px-[17px] @md:py-[10px] py-2 justify-center items-center ${roundedClass} text-sm @md:text-base font-semibold leading-5 overflow-hidden transition-all duration-200 cursor-pointer outline-none focus-visible:ring-2 focus-visible:ring-[#6c2813] whitespace-nowrap shadow-sm hover:shadow-md hover:scale-[1.02]`}
-                    >
-                      <span className="relative z-10 whitespace-nowrap">
-                        {btn.label || "Plan a tailor-made journey"}
-                      </span>
-                    </a>
-                  )
-                })}
-              </div>
+              <DynamicCmsButtonPreview data={rawButtons} />
             </div>
 
             {/* Right Decorative Floating Motif */}

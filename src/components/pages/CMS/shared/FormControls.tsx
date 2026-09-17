@@ -142,6 +142,8 @@ export function getValidationError(
    FIELD WRAPPER WITH FIELDNAME BADGE & STYLING POPOVER
    ============================================================ */
 
+import { useDevMode } from "@/context/DevModeContext"
+
 export interface FieldHeaderProps extends BaseProps {
   style?: FieldStyle
   onStyleChange?: (style: FieldStyle) => void
@@ -157,6 +159,10 @@ export function FieldHeader({
   enableStyle,
   required,
 }: FieldHeaderProps) {
+  const { isDevMode, config } = useDevMode()
+  const showStyleButton = enableStyle && onStyleChange && (config.showStyleControls || isDevMode)
+  const showCodeBadge = Boolean(fieldName) && (config.showFieldBadges || isDevMode)
+
   const hasCustomStyle = Boolean(
     (style?.textColor && style.textColor !== "") ||
     (style?.backgroundColor && style.backgroundColor !== "") ||
@@ -173,7 +179,7 @@ export function FieldHeader({
       )}
 
       <div className="flex items-center gap-1.5 shrink-0">
-        {enableStyle && onStyleChange && (
+        {showStyleButton && (
           <Popover>
             <PopoverTrigger asChild>
               <button
@@ -275,7 +281,7 @@ export function FieldHeader({
           </Popover>
         )}
 
-        {fieldName && (
+        {showCodeBadge && (
           <code className="rounded bg-muted/60 px-1 py-0.5 text-[9px] font-mono text-muted-foreground select-all shrink-0 max-w-[130px] truncate" title={fieldName}>
             {fieldName}
           </code>

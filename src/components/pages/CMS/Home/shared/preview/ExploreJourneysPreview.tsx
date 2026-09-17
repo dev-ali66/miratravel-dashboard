@@ -65,8 +65,6 @@ export function ExploreJourneysPreview({
               ? { ...backgroundImage, ...backgroundImageData, type: "image" }
               : { color: backgroundMultimedia.color, type: "color" }
         }
-        fallbackImageSrc={PREVIEW_IMAGE_SOURCE}
-        fallbackVideoSrc={PREVIEW_VIDEO_SOURCE}
         fallbackAlt="Explore Journeys background"
         fallbackColor={section.bgColor ?? "transparent"}
         mode="background"

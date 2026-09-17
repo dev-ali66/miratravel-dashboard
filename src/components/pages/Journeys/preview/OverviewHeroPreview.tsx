@@ -283,7 +283,6 @@ export function OverviewHeroPreview({ draft }: { draft: Journey }) {
         {/* Universal Multimedia Background */}
         <UniversalMultimediaPreview
           multimedia={heroBackground}
-          fallbackImageSrc="https://images.unsplash.com/photo-1506744038136-46273834b3fb?auto=format&fit=crop&w=1800&q=80"
           fallbackAlt={title}
           fallbackColor="#080c1d"
           mode="background"

@@ -1,13 +1,6 @@
-/* =====================================================
-   LOCATION — PRACTICAL INFORMATION PREVIEW SECTION
-   Renders pixel-perfect 1:1 preview matching frontend BeforeTravel component
-   (frontend/components/region/before-travel.tsx).
-   Includes admin empty-state placeholder when no items exist.
-===================================================== */
-
 import { useState } from "react"
 import { Sparkles, ChevronDown } from "lucide-react"
-import { DynamicStyledPreview } from "@/components/shared/DynamicStyledPreview"
+import { DynamicStyledTextPreview } from "@/components/pages/CMS/shared/DynamicStyledTextPreview"
 import { UniversalMultimediaPreview } from "@/components/pages/CMS/Home/shared/preview/UniversalMultimediaPreview"
 import type { LocationPreviewSectionProps } from "../../config/locationSections"
 
@@ -22,16 +15,29 @@ export function PracticalInfoPreview({ draft }: LocationPreviewSectionProps) {
   const rawItems = practicalData.items
   const items: any[] = Array.isArray(rawItems) ? rawItems : []
 
-  const [openIndex, setOpenIndex] = useState<number | null>(0)
+  const [openIndex, setOpenIndex] = useState<number | null>(
+    items.length > 0 ? 0 : null
+  )
 
   const toggleItem = (idx: number) => {
     setOpenIndex((prev) => (prev === idx ? null : idx))
   }
 
-  const leftMedia = practicalData.imageMultimedia || {
-    show: "image",
-    image: { url: "/images/region-essence.jpg", alt: "Practical Information" },
+  const activeItem = openIndex !== null && items[openIndex] ? items[openIndex] : null
+  const activeItemMedia = activeItem?.multimedia || activeItem?.imageMultimedia
+
+  const hasMediaContent = (media: any) => {
+    if (!media) return false
+    const show = media.show || "image"
+    if (show === "image" && media.image?.url) return true
+    if (show === "video" && media.video?.url) return true
+    if (show === "color" && media.color?.color) return true
+    return false
   }
+
+  const featuredMedia = hasMediaContent(activeItemMedia)
+    ? activeItemMedia
+    : (practicalData.sideImageMultimedia || practicalData.imageMultimedia)
 
   const bgMultimedia = practicalData.backgroundMultimedia
 
@@ -51,10 +57,9 @@ export function PracticalInfoPreview({ draft }: LocationPreviewSectionProps) {
           {/* Eyebrow Label with Amber Accent Line */}
           <div className="flex items-center gap-3 mb-4 xl:mb-6">
             <div className="w-8 h-px bg-[#af6348]" />
-            <DynamicStyledPreview
+            <DynamicStyledTextPreview
               as="span"
-              field={practicalData.label}
-              fallback="PRACTICAL INFORMATION"
+              data={practicalData.label}
               fallbackColor="#af6348"
               className="text-[#af6348] text-[11px] md:text-xs xl:text-sm font-normal uppercase leading-4 tracking-[3px] md:tracking-[4.2px]"
             />
@@ -64,20 +69,19 @@ export function PracticalInfoPreview({ draft }: LocationPreviewSectionProps) {
           <div className="w-full flex flex-col lg:flex-row items-start justify-between gap-10 md:gap-12 lg:gap-[60px] xl:gap-[80px]">
             {/* Left Column: Heading & Sticky/Square Image */}
             <div className="w-full lg:w-[360px] xlg:w-[370px] xl:w-[380px] shrink-0 flex flex-col items-start">
-              <DynamicStyledPreview
+              <DynamicStyledTextPreview
                 as="h2"
-                field={practicalData.title}
-                fallback="Essential Insights Before You Travel"
+                data={practicalData.title}
                 fallbackColor="#182d09"
                 className="text-[#182d09] font-serif text-[26px] sm:text-[28px] md:text-[30px] lg:text-[32px] xlg:text-[34px] xl:text-[36px] leading-[36px] lg:leading-[42px] xl:leading-[49.5px] font-semibold"
               />
 
               <div className="mt-6 md:mt-10 lg:mt-12 xlg:mt-[52px] xl:mt-[56px] relative w-[260px] md:w-[334px] xlg:w-[314px] lg:w-[300px] xl:w-[334px] aspect-square overflow-hidden group rounded-[2px] border border-black/10 shadow-xs">
                 <UniversalMultimediaPreview
-                  multimedia={leftMedia}
+                  multimedia={featuredMedia}
                   fallbackColor="#182d09"
                   mode="container"
-                  className="w-full h-full object-cover"
+                  className="w-full h-full object-cover transition-transform duration-700 hover:scale-105"
                 />
               </div>
             </div>
@@ -99,10 +103,6 @@ export function PracticalInfoPreview({ draft }: LocationPreviewSectionProps) {
               ) : (
                 items.map((item: any, idx: number) => {
                   const isOpen = openIndex === idx
-                  const itemTitle = typeof item.title === "object" ? item.title?.value : item.title || ""
-                  const itemTitleStr = typeof itemTitle === "string" ? itemTitle : ""
-                  const itemContent = typeof item.content === "object" ? item.content?.value : item.content || ""
-                  const itemContentStr = typeof itemContent === "string" ? itemContent : ""
 
                   return (
                     <div
@@ -115,10 +115,9 @@ export function PracticalInfoPreview({ draft }: LocationPreviewSectionProps) {
                         onClick={() => toggleItem(idx)}
                         className="group flex w-full cursor-pointer items-center justify-between gap-4 py-5 sm:py-6 text-left outline-none"
                       >
-                        <DynamicStyledPreview
+                        <DynamicStyledTextPreview
                           as="span"
-                          field={item.title}
-                          fallback={itemTitleStr || `Practical Guide #${idx + 1}`}
+                          data={item.title}
                           fallbackColor="#182d09"
                           className="text-[15px] md:text-base font-serif lg:text-[18px] xl:text-lg font-semibold leading-6 text-[#182d09] transition-colors duration-300 group-hover:text-[#af6348]"
                         />
@@ -136,11 +135,10 @@ export function PracticalInfoPreview({ draft }: LocationPreviewSectionProps) {
                       {/* Accordion Content Panel */}
                       {isOpen && (
                         <div className="pb-6">
-                          <DynamicStyledPreview
+                          <DynamicStyledTextPreview
                             as="p"
                             type="richtext"
-                            field={item.content}
-                            fallback={itemContentStr || "Practical travel guidance details go here..."}
+                            data={item.content}
                             fallbackColor="#565e69"
                             className="w-full md:text-sm text-xs font-normal leading-[18px] md:leading-[22.5px] text-[#565e69]"
                           />

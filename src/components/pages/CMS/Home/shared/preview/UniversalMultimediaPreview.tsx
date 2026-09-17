@@ -178,7 +178,7 @@ export function UniversalMultimediaPreview({
   return (
     <div
       className={cn(
-        "relative",
+        "relative w-full h-full",
         isBg && !hasRatio && "absolute inset-0 h-full w-full",
         isBg && hasRatio && "absolute inset-0 m-auto max-h-full max-w-full flex items-center justify-center",
         containerClassName
@@ -190,7 +190,7 @@ export function UniversalMultimediaPreview({
           src={videoConfig.url || ""}
           alt={videoConfig.alt || fallbackAlt}
           mode={mode === "background" ? "background" : undefined}
-          className={cn(isBg && !hasRatio ? "h-full w-full" : undefined, className)}
+          className={cn("h-full w-full", className)}
           style={mediaStyle}
           autoplay={videoConfig.autoplay ?? true}
           muted={videoConfig.muted ?? true}
@@ -206,7 +206,7 @@ export function UniversalMultimediaPreview({
           src={imageConfig.url || ""}
           alt={imageConfig.alt || fallbackAlt}
           mode={mode === "background" ? "background" : undefined}
-          className={cn(isBg && !hasRatio ? "h-full w-full" : undefined, className)}
+          className={cn("h-full w-full", className)}
           style={mediaStyle}
           opacity={imageConfig.opacity ?? 100}
           overlayColor={imageConfig.overlayColor || undefined}

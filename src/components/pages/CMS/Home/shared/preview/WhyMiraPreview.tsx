@@ -87,8 +87,6 @@ export function WhyMiraPreview({
               ? { ...backgroundImageData, type: "image" }
               : { color: backgroundMultimedia.color ?? section.bgColor ?? primaryColor ?? "#1F3A1B", type: "color" }
         }
-        fallbackImageSrc={PREVIEW_IMAGE_SOURCE}
-        fallbackVideoSrc={PREVIEW_VIDEO_SOURCE}
         fallbackAlt="Why MIRA background"
         fallbackColor={section.bgColor ?? primaryColor ?? "#1F3A1B"}
         mode="background"

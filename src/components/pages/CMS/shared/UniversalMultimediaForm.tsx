@@ -1,4 +1,5 @@
 import { useState } from "react"
+import { useDevMode } from "@/context/DevModeContext"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { ImageUploadField } from "@/components/shared/ImageUploadField"
@@ -373,6 +374,11 @@ export function UniversalMultimediaForm(props: UniversalMultimediaFormProps) {
     videoFieldName = "backgroundVideo",
   } = props
 
+  const { isDevMode, config } = useDevMode()
+  const showCodeBadge = !hideFieldNameBadge && Boolean(fieldName) && (config.showFieldBadges || isDevMode)
+  const showTypeTabs = (config.showMultimediaTypeSwitcher || isDevMode) && (allowImage && allowVideo && allowColor)
+  const showAdvancedDimensions = config.showStyleControls || isDevMode
+
   // Local collapse state
   const [internalIsOpen, setInternalIsOpen] = useState<boolean>(defaultOpen)
   const isExpanded = controlledIsOpen !== undefined ? controlledIsOpen : internalIsOpen
@@ -578,14 +584,14 @@ export function UniversalMultimediaForm(props: UniversalMultimediaFormProps) {
             {title}
           </Label>
 
-          {!hideFieldNameBadge && fieldName && (
+          {showCodeBadge && (
             <code className="rounded bg-muted/60 px-1.5 py-0.5 text-[10px] font-mono text-muted-foreground select-all">
               {fieldName}
             </code>
           )}
 
           {/* Active Mode Pill Tag */}
-          {(allowImage && allowVideo && allowColor) && (
+          {(allowImage && allowVideo && allowColor) && showTypeTabs && (
             <span className="flex items-center gap-1 rounded-full bg-primary/10 px-2 py-0.5 text-[10px] font-medium text-primary uppercase">
               {currentVal.show === "image" && <ImageIcon className="h-3 w-3" />}
               {currentVal.show === "video" && <VideoIcon className="h-3 w-3" />}
@@ -620,55 +626,57 @@ export function UniversalMultimediaForm(props: UniversalMultimediaFormProps) {
       {(!collapsible || isExpanded) && (
         <div className="flex flex-col gap-3.5 p-3.5 pt-3">
           {/* Media Type Switcher Tabs */}
-          <div className="flex items-center justify-around rounded-lg border border-border/80 bg-muted/50 p-0.5">
-            {allowImage && (
-              <button
-                type="button"
-                onClick={() => setShow("image")}
-                className={cn(
-                  "flex items-center gap-1.5 rounded-md px-2.5 py-1 text-xs font-medium transition-all cursor-pointer",
-                  currentVal.show === "image"
-                    ? "bg-background text-foreground font-semibold shadow-xs"
-                    : "text-muted-foreground hover:text-foreground"
-                )}
-              >
-                <ImageIcon className="h-3.5 w-3.5" />
-                Image
-              </button>
-            )}
+          {showTypeTabs && (
+            <div className="flex items-center justify-around rounded-lg border border-border/80 bg-muted/50 p-0.5">
+              {allowImage && (
+                <button
+                  type="button"
+                  onClick={() => setShow("image")}
+                  className={cn(
+                    "flex items-center gap-1.5 rounded-md px-2.5 py-1 text-xs font-medium transition-all cursor-pointer",
+                    currentVal.show === "image"
+                      ? "bg-background text-foreground font-semibold shadow-xs"
+                      : "text-muted-foreground hover:text-foreground"
+                  )}
+                >
+                  <ImageIcon className="h-3.5 w-3.5" />
+                  Image
+                </button>
+              )}
 
-            {allowVideo && (
-              <button
-                type="button"
-                onClick={() => setShow("video")}
-                className={cn(
-                  "flex items-center gap-1.5 rounded-md px-2.5 py-1 text-xs font-medium transition-all cursor-pointer",
-                  currentVal.show === "video"
-                    ? "bg-background text-foreground font-semibold shadow-xs"
-                    : "text-muted-foreground hover:text-foreground"
-                )}
-              >
-                <VideoIcon className="h-3.5 w-3.5" />
-                Video
-              </button>
-            )}
+              {allowVideo && (
+                <button
+                  type="button"
+                  onClick={() => setShow("video")}
+                  className={cn(
+                    "flex items-center gap-1.5 rounded-md px-2.5 py-1 text-xs font-medium transition-all cursor-pointer",
+                    currentVal.show === "video"
+                      ? "bg-background text-foreground font-semibold shadow-xs"
+                      : "text-muted-foreground hover:text-foreground"
+                  )}
+                >
+                  <VideoIcon className="h-3.5 w-3.5" />
+                  Video
+                </button>
+              )}
 
-            {allowColor && (
-              <button
-                type="button"
-                onClick={() => setShow("color")}
-                className={cn(
-                  "flex items-center gap-1.5 rounded-md px-2.5 py-1 text-xs font-medium transition-all cursor-pointer",
-                  currentVal.show === "color"
-                    ? "bg-background text-foreground font-semibold shadow-xs"
-                    : "text-muted-foreground hover:text-foreground"
-                )}
-              >
-                <Palette className="h-3.5 w-3.5" />
-                Color
-              </button>
-            )}
-          </div>
+              {allowColor && (
+                <button
+                  type="button"
+                  onClick={() => setShow("color")}
+                  className={cn(
+                    "flex items-center gap-1.5 rounded-md px-2.5 py-1 text-xs font-medium transition-all cursor-pointer",
+                    currentVal.show === "color"
+                      ? "bg-background text-foreground font-semibold shadow-xs"
+                      : "text-muted-foreground hover:text-foreground"
+                  )}
+                >
+                  <Palette className="h-3.5 w-3.5" />
+                  Color
+                </button>
+              )}
+            </div>
+          )}
 
           {/* Mode 1: IMAGE Form Panel */}
           {currentVal.show === "image" && (
@@ -679,35 +687,38 @@ export function UniversalMultimediaForm(props: UniversalMultimediaFormProps) {
                 value={currentVal.image?.url ?? ""}
                 onChange={(url) => updateImage({ url })}
                 opacity={currentVal.image?.opacity ?? 100}
-                onOpacityChange={(opacity) => updateImage({ opacity })}
+                onOpacityChange={showAdvancedDimensions ? (opacity) => updateImage({ opacity }) : undefined}
                 overlayColor={currentVal.image?.overlayColor ?? "#000000"}
-                onOverlayColorChange={(overlayColor) => updateImage({ overlayColor })}
+                onOverlayColorChange={showAdvancedDimensions ? (overlayColor) => updateImage({ overlayColor }) : undefined}
                 overlayOpacity={currentVal.image?.overlayOpacity ?? 0}
-                onOverlayOpacityChange={(overlayOpacity) => updateImage({ overlayOpacity })}
+                onOverlayOpacityChange={showAdvancedDimensions ? (overlayOpacity) => updateImage({ overlayOpacity }) : undefined}
               />
 
-              <div className="flex flex-col gap-1.5">
-                <Label className="text-xs font-medium text-muted-foreground">Alt Text (SEO)</Label>
-                <Input
-                  type="text"
-                  value={currentVal.image?.alt ?? ""}
-                  placeholder="Description of the image for SEO"
-                  onChange={(e) => updateImage({ alt: e.target.value })}
-                  className="h-8 text-xs"
-                />
-              </div>
+              {showAdvancedDimensions && (
+                <>
+                  <div className="flex flex-col gap-1.5">
+                    <Label className="text-xs font-medium text-muted-foreground">Alt Text (SEO)</Label>
+                    <Input
+                      type="text"
+                      value={currentVal.image?.alt ?? ""}
+                      placeholder="Description of the image for SEO"
+                      onChange={(e) => updateImage({ alt: e.target.value })}
+                      className="h-8 text-xs"
+                    />
+                  </div>
 
-              {/* Dimensions, Width, Height, Ratio & Fit Controls */}
-              <MediaDimensionsControl
-                width={currentVal.image?.width}
-                height={currentVal.image?.height}
-                aspectRatio={currentVal.image?.aspectRatio}
-                fit={currentVal.image?.fit}
-                isFullWidth={currentVal.image?.isFullWidth}
-                isFullHeight={currentVal.image?.isFullHeight}
-                allowFit={true}
-                onChange={(patch) => updateImage(patch)}
-              />
+                  <MediaDimensionsControl
+                    width={currentVal.image?.width}
+                    height={currentVal.image?.height}
+                    aspectRatio={currentVal.image?.aspectRatio}
+                    fit={currentVal.image?.fit}
+                    isFullWidth={currentVal.image?.isFullWidth}
+                    isFullHeight={currentVal.image?.isFullHeight}
+                    allowFit={true}
+                    onChange={(patch) => updateImage(patch)}
+                  />
+                </>
+              )}
             </div>
           )}
 
@@ -720,57 +731,59 @@ export function UniversalMultimediaForm(props: UniversalMultimediaFormProps) {
                 value={currentVal.video?.url ?? ""}
                 onChange={(url) => updateVideo({ url })}
                 opacity={currentVal.video?.opacity ?? 100}
-                onOpacityChange={(opacity) => updateVideo({ opacity })}
+                onOpacityChange={showAdvancedDimensions ? (opacity) => updateVideo({ opacity }) : undefined}
                 overlayColor={currentVal.video?.overlayColor ?? "#000000"}
-                onOverlayColorChange={(overlayColor) => updateVideo({ overlayColor })}
+                onOverlayColorChange={showAdvancedDimensions ? (overlayColor) => updateVideo({ overlayColor }) : undefined}
                 overlayOpacity={currentVal.video?.overlayOpacity ?? 0}
-                onOverlayOpacityChange={(overlayOpacity) => updateVideo({ overlayOpacity })}
+                onOverlayOpacityChange={showAdvancedDimensions ? (overlayOpacity) => updateVideo({ overlayOpacity }) : undefined}
               />
 
-              <div className="flex flex-col gap-1.5">
-                <Label className="text-xs font-medium text-muted-foreground">Alt Text (SEO)</Label>
-                <Input
-                  type="text"
-                  value={currentVal.video?.alt ?? ""}
-                  placeholder="Description of the video content"
-                  onChange={(e) => updateVideo({ alt: e.target.value })}
-                  className="h-8 text-xs"
-                />
-              </div>
+              {showAdvancedDimensions && (
+                <>
+                  <div className="flex flex-col gap-1.5">
+                    <Label className="text-xs font-medium text-muted-foreground">Alt Text (SEO)</Label>
+                    <Input
+                      type="text"
+                      value={currentVal.video?.alt ?? ""}
+                      placeholder="Description of the video content"
+                      onChange={(e) => updateVideo({ alt: e.target.value })}
+                      className="h-8 text-xs"
+                    />
+                  </div>
 
-              {/* Dimensions, Width, Height, Ratio & Fit Controls */}
-              <MediaDimensionsControl
-                width={currentVal.video?.width}
-                height={currentVal.video?.height}
-                aspectRatio={currentVal.video?.aspectRatio}
-                fit={currentVal.video?.fit}
-                isFullWidth={currentVal.video?.isFullWidth}
-                isFullHeight={currentVal.video?.isFullHeight}
-                allowFit={true}
-                onChange={(patch) => updateVideo(patch)}
-              />
+                  <MediaDimensionsControl
+                    width={currentVal.video?.width}
+                    height={currentVal.video?.height}
+                    aspectRatio={currentVal.video?.aspectRatio}
+                    fit={currentVal.video?.fit}
+                    isFullWidth={currentVal.video?.isFullWidth}
+                    isFullHeight={currentVal.video?.isFullHeight}
+                    allowFit={true}
+                    onChange={(patch) => updateVideo(patch)}
+                  />
 
-              {/* Video Playback Switches */}
-              <div className="grid grid-cols-3 gap-2 rounded-lg border border-border/60 bg-muted/20 p-2.5">
-                <DynamicStyledField
-                  type="switch"
-                  label="Autoplay"
-                  value={currentVal.video?.autoplay ?? true}
-                  onChange={(autoplay) => updateVideo({ autoplay })}
-                />
-                <DynamicStyledField
-                  type="switch"
-                  label="Loop"
-                  value={currentVal.video?.loop ?? true}
-                  onChange={(loop) => updateVideo({ loop })}
-                />
-                <DynamicStyledField
-                  type="switch"
-                  label="Muted"
-                  value={currentVal.video?.muted ?? true}
-                  onChange={(muted) => updateVideo({ muted })}
-                />
-              </div>
+                  <div className="grid grid-cols-3 gap-2 rounded-lg border border-border/60 bg-muted/20 p-2.5">
+                    <DynamicStyledField
+                      type="switch"
+                      label="Autoplay"
+                      value={currentVal.video?.autoplay ?? true}
+                      onChange={(autoplay) => updateVideo({ autoplay })}
+                    />
+                    <DynamicStyledField
+                      type="switch"
+                      label="Loop"
+                      value={currentVal.video?.loop ?? true}
+                      onChange={(loop) => updateVideo({ loop })}
+                    />
+                    <DynamicStyledField
+                      type="switch"
+                      label="Muted"
+                      value={currentVal.video?.muted ?? true}
+                      onChange={(muted) => updateVideo({ muted })}
+                    />
+                  </div>
+                </>
+              )}
             </div>
           )}
 
@@ -782,33 +795,36 @@ export function UniversalMultimediaForm(props: UniversalMultimediaFormProps) {
                 value={currentVal.color?.color ?? "#171717"}
                 onChange={(color) => updateColor({ color })}
               />
-              <div className="flex items-center gap-3">
-                <Label className="w-28 shrink-0 text-left text-xs font-semibold text-foreground">
-                  Background Opacity
-                </Label>
-                <input
-                  type="range"
-                  min="0"
-                  max="100"
-                  value={currentVal.color?.opacity ?? 100}
-                  onChange={(e) => updateColor({ opacity: Number(e.target.value) })}
-                  className="min-w-0 flex-1 accent-primary"
-                />
-                <span className="w-10 shrink-0 text-right font-mono text-xs text-muted-foreground">
-                  {currentVal.color?.opacity ?? 100}%
-                </span>
-              </div>
+              {showAdvancedDimensions && (
+                <>
+                  <div className="flex items-center gap-3">
+                    <Label className="w-28 shrink-0 text-left text-xs font-semibold text-foreground">
+                      Background Opacity
+                    </Label>
+                    <input
+                      type="range"
+                      min="0"
+                      max="100"
+                      value={currentVal.color?.opacity ?? 100}
+                      onChange={(e) => updateColor({ opacity: Number(e.target.value) })}
+                      className="min-w-0 flex-1 accent-primary"
+                    />
+                    <span className="w-10 shrink-0 text-right font-mono text-xs text-muted-foreground">
+                      {currentVal.color?.opacity ?? 100}%
+                    </span>
+                  </div>
 
-              {/* Dimensions, Width, Height, Ratio Controls for Color */}
-              <MediaDimensionsControl
-                width={currentVal.color?.width}
-                height={currentVal.color?.height}
-                aspectRatio={currentVal.color?.aspectRatio}
-                isFullWidth={currentVal.color?.isFullWidth}
-                isFullHeight={currentVal.color?.isFullHeight}
-                allowFit={false}
-                onChange={(patch) => updateColor(patch)}
-              />
+                  <MediaDimensionsControl
+                    width={currentVal.color?.width}
+                    height={currentVal.color?.height}
+                    aspectRatio={currentVal.color?.aspectRatio}
+                    isFullWidth={currentVal.color?.isFullWidth}
+                    isFullHeight={currentVal.color?.isFullHeight}
+                    allowFit={false}
+                    onChange={(patch) => updateColor(patch)}
+                  />
+                </>
+              )}
             </div>
           )}
         </div>

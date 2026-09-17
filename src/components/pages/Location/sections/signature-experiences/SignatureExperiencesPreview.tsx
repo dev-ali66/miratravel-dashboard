@@ -1,4 +1,4 @@
-import { DynamicStyledPreview } from "@/components/shared/DynamicStyledPreview"
+import { DynamicStyledTextPreview } from "@/components/pages/CMS/shared/DynamicStyledTextPreview"
 import { UniversalMultimediaPreview } from "@/components/pages/CMS/Home/shared/preview/UniversalMultimediaPreview"
 import type { LocationPreviewSectionProps } from "../../config/locationSections"
 import type { SignatureExperienceItem } from "../../locationTypes"
@@ -12,27 +12,9 @@ export function SignatureExperiencesPreview({
     (draft as any)?.data?.signatureExperiences ||
     (draft as any)?.signature_experiences ||
     (draft as any)?.data?.signature_experiences || {
-      label: {
-        value: "Signature Experiences",
-        textColor: "#af6348",
-        textOpacity: 1,
-        backgroundColor: null,
-        backgroundOpacity: 1,
-      },
-      title: {
-        value: "Five ways to fall in love with " + (draft?.name || "the destination"),
-        textColor: "#182d09",
-        textOpacity: 1,
-        backgroundColor: null,
-        backgroundOpacity: 1,
-      },
-      description: {
-        value: "",
-        textColor: "#565e69",
-        textOpacity: 1,
-        backgroundColor: null,
-        backgroundOpacity: 1,
-      },
+      label: null,
+      title: null,
+      description: null,
       backgroundMultimedia: null,
       experiences: [],
     }
@@ -67,19 +49,17 @@ export function SignatureExperiencesPreview({
           <div className="flex flex-col items-start justify-between gap-8 @md:gap-10 @mid:gap-[55px] @xl:gap-14 @lg:flex-row @lg:items-end w-full">
             <div className="flex flex-col items-start gap-4">
               {/* Eyebrow Label */}
-              <DynamicStyledPreview
+              <DynamicStyledTextPreview
                 as="div"
-                field={signatureExperiences.label}
-                fallback="Signature Experiences"
+                data={signatureExperiences.label}
                 fallbackColor="#af6348"
                 className="self-stretch justify-start font-normal text-accent text-base @md:text-lg @lgx:text-[20px] @mid:text-[22px] @xl:text-2xl leading-6 @md:leading-[26px] @lgx:leading-7 @mid:leading-[30px] @xl:leading-8"
               />
 
               {/* Section Main Title */}
-              <DynamicStyledPreview
+              <DynamicStyledTextPreview
                 as="h2"
-                field={signatureExperiences.title}
-                fallback="Five ways to fall in love with the destination"
+                data={signatureExperiences.title}
                 fallbackColor="#182d09"
                 className="self-stretch shrink-0 h-auto justify-start font-medium text-primary font-heading text-[28px] leading-[38px] @md:text-[38px] @md:leading-[47px] @lg:text-[42px] @lg:leading-[50px] @lgx:text-[43px] @lgx:leading-[51px] @xlg:text-[44px] @xlg:leading-[52px] @mid:text-[46px] @mid:leading-[54px] @xl:text-[48px] @xl:leading-[56px] @2xl:text-[50px] @2xl:leading-[58px]"
               />
@@ -87,9 +67,9 @@ export function SignatureExperiencesPreview({
 
             {/* Narrative Paragraph Description */}
             <div className="w-full max-w-full @md:max-w-[545.4px] @lg:max-w-[600px] @lgx:max-w-[620.5px] @xlg:max-w-[654.6px] @mid:max-w-[688.8px] @xl:max-w-[740px]">
-              <DynamicStyledPreview
+              <DynamicStyledTextPreview
                 as="p"
-                field={signatureExperiences.description}
+                data={signatureExperiences.description}
                 fallbackColor="#565e69"
                 className="text-[13px] @md:text-sm @lg:text-[14.7px] @lgx:text-[15px] @xlg:text-[15.3px] @mid:text-[15.6px] @xl:text-base font-normal leading-5 @md:leading-[22px] @lg:leading-[23.5px] @lgx:leading-6 @xlg:leading-[25px] @mid:leading-[26px] @xl:leading-7 tracking-normal @md:tracking-[0.3px] @lg:tracking-[0.5px] @lgx:tracking-[0.6px] @xlg:tracking-[0.7px] @mid:tracking-[0.85px] @xl:tracking-[1px] text-muted"
               />
@@ -140,18 +120,16 @@ export function SignatureExperiencesPreview({
 
                     {/* Right Content Column */}
                     <div className="flex flex-1 flex-col items-start justify-center pl-8 py-7 min-w-0">
-                      <DynamicStyledPreview
+                      <DynamicStyledTextPreview
                         as="h3"
-                        field={exp.title}
-                        fallback="Experience Title"
+                        data={exp.title}
                         fallbackColor="#182d09"
                         className="text-primary text-base @md:text-[17px] @lg:text-[19px] @lgx:text-[19.7px] @xlg:text-[21px] @mid:text-[22px] @xl:text-[24px] font-medium font-heading leading-6 @md:leading-[25px] @lg:leading-[27px] @lgx:leading-[27.7px] @xlg:leading-[29px] @mid:leading-[30px] @xl:leading-8 transition-colors duration-300 group-hover/item:text-accent-light"
                       />
 
-                      <DynamicStyledPreview
+                      <DynamicStyledTextPreview
                         as="p"
-                        field={exp.description}
-                        fallback="Experience description..."
+                        data={exp.description}
                         fallbackColor="#565e69"
                         className="mt-2 text-subtitle text-sm @md:text-[15px] @lg:text-[15.3px] @lgx:text-[15.4px] @xlg:text-[15.6px] @mid:text-[15.7px] @xl:text-base font-normal leading-4 @md:leading-[16.5px] @lg:leading-[17.5px] @lgx:leading-[17.9px] @xlg:leading-[18.5px] @mid:leading-[19.1px] @xl:leading-5"
                       />
@@ -188,3 +166,5 @@ export function SignatureExperiencesPreview({
     </section>
   )
 }
+
+export default SignatureExperiencesPreview

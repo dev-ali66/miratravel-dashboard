@@ -14,11 +14,13 @@ import {
   Eye,
   PanelLeftClose,
   PanelLeftOpen,
+  Code2,
 } from "lucide-react"
 import { cn } from "@/lib/utils"
 import { ThemeToggle } from "@/components/ThemeToggle"
 import { ScaledWorkspace } from "@/components/shared/AutoScale"
 import { useSyncScroll } from "@/hooks/useSyncScroll"
+import { useDevMode } from "@/context/DevModeContext"
 
 export interface DevicePreset {
   id: string
@@ -205,6 +207,7 @@ export function UniversalEditorLayout({
 }: UniversalEditorLayoutProps) {
   const navigate = useNavigate()
   const { formRef, previewRef } = useSyncScroll()
+  const { isDevMode, toggleDevMode } = useDevMode()
 
   // Viewport state (Default: 1440px Desktop / Laptop)
   const [selectedDeviceId, setSelectedDeviceId] = useState<string>("macbook-pro-14")
@@ -655,6 +658,34 @@ export function UniversalEditorLayout({
                 <option value={50}>50%</option>
               </select>
             </div>
+
+            <div className="h-4 w-px bg-border/60 mx-0.5" />
+
+            {/* Dev Mode Toggle Pill next to responsive controls */}
+            <button
+              type="button"
+              onClick={toggleDevMode}
+              className={cn(
+                "inline-flex items-center gap-1.5 rounded-md px-2 py-1 text-xs font-semibold transition-all cursor-pointer border select-none shrink-0",
+                isDevMode
+                  ? "bg-amber-500/15 text-amber-700 dark:text-amber-300 border-amber-500/40"
+                  : "bg-background text-muted-foreground border-border/60 hover:bg-muted hover:text-foreground"
+              )}
+              title={
+                isDevMode
+                  ? "Dev Mode ON: All styling & multimedia controls visible"
+                  : "Dev Mode OFF: Simple editor mode (Default styles applied)"
+              }
+            >
+              <Code2 className="h-3.5 w-3.5 shrink-0" />
+              <span className="hidden xl:inline">Dev Mode</span>
+              <span
+                className={cn(
+                  "h-2 w-2 rounded-full shrink-0 transition-colors",
+                  isDevMode ? "bg-amber-500 animate-pulse" : "bg-muted-foreground/40"
+                )}
+              />
+            </button>
           </div>
         )}
 
@@ -690,9 +721,35 @@ export function UniversalEditorLayout({
           </div>
         )}
 
-        {/* Right Section: Header Actions, Theme Toggle & Live Preview Badge */}
+        {/* Right Section: Header Actions, Dev Mode Toggle, Theme Toggle & Live Preview Badge */}
         <div className="flex shrink-0 items-center gap-2.5">
           {headerActions}
+
+          {/* Dev Mode Toggle Pill Button */}
+          <button
+            type="button"
+            onClick={toggleDevMode}
+            className={cn(
+              "inline-flex items-center gap-1.5 rounded-full px-2.5 py-1 text-xs font-semibold transition-all cursor-pointer shadow-2xs border select-none",
+              isDevMode
+                ? "bg-amber-500/15 text-amber-700 dark:text-amber-300 border-amber-500/40"
+                : "bg-muted/60 text-muted-foreground border-border/60 hover:bg-muted hover:text-foreground"
+            )}
+            title={
+              isDevMode
+                ? "Dev Mode ON: All styling & multimedia controls visible"
+                : "Dev Mode OFF: Simple editor mode (Default styles applied)"
+            }
+          >
+            <Code2 className="h-3.5 w-3.5 shrink-0" />
+            <span className="hidden sm:inline">Dev Mode</span>
+            <span
+              className={cn(
+                "h-2 w-2 rounded-full shrink-0 transition-colors",
+                isDevMode ? "bg-amber-500 animate-pulse" : "bg-muted-foreground/40"
+              )}
+            />
+          </button>
 
           <ThemeToggle />
 
@@ -803,6 +860,32 @@ export function UniversalEditorLayout({
                       <option value={50}>50%</option>
                     </select>
                   </div>
+
+                  {/* Dev Mode Toggle for Mini Screen Device Bar */}
+                  <button
+                    type="button"
+                    onClick={toggleDevMode}
+                    className={cn(
+                      "inline-flex items-center gap-1 rounded-md px-2 py-1 text-xs font-semibold transition-all cursor-pointer border select-none shrink-0",
+                      isDevMode
+                        ? "bg-amber-500/15 text-amber-700 dark:text-amber-300 border-amber-500/40"
+                        : "bg-background text-muted-foreground border-border/60 hover:bg-muted hover:text-foreground"
+                    )}
+                    title={
+                      isDevMode
+                        ? "Dev Mode ON: All styling & multimedia controls visible"
+                        : "Dev Mode OFF: Simple editor mode (Default styles applied)"
+                    }
+                  >
+                    <Code2 className="h-3.5 w-3.5 shrink-0" />
+                    <span className="hidden sm:inline">Dev Mode</span>
+                    <span
+                      className={cn(
+                        "h-2 w-2 rounded-full shrink-0 transition-colors",
+                        isDevMode ? "bg-amber-500 animate-pulse" : "bg-muted-foreground/40"
+                      )}
+                    />
+                  </button>
                 </div>
               </div>
 

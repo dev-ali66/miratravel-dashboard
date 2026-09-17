@@ -1,3 +1,4 @@
+import { useDevMode } from "@/context/DevModeContext"
 import { DynamicStyledField } from "@/components/pages/CMS/shared/FormControls"
 import { ButtonsField } from "@/components/pages/CMS/shared/ButtonsField"
 import { UniversalMultimediaForm } from "@/components/pages/CMS/shared/UniversalMultimediaForm"
@@ -12,6 +13,7 @@ export function HeroForm({
   toggleSection,
   sectionNumber,
 }: LocationFormSectionProps) {
+  const { isDevMode } = useDevMode()
   const hero = draft?.hero || (draft as any)?.data?.hero || {}
   const isOpen = Boolean(openSections["hero"])
 
@@ -67,18 +69,20 @@ export function HeroForm({
           onChange={(val) => updateHeroField("description", val)}
         />
 
-        {/* Content Alignment */}
-        <DynamicStyledField
-          type="radio"
-          label="Layout Alignment"
-          fieldName="hero.isCenter"
-          value={hero.isCenter ? "center" : "left"}
-          options={[
-            { label: "Bottom-Left Aligned", value: "left" },
-            { label: "Center Aligned", value: "center" },
-          ]}
-          onChange={(val) => updateHeroField("isCenter", val === "center")}
-        />
+        {/* Content Alignment (Only shown when Dev Mode is ON) */}
+        {isDevMode && (
+          <DynamicStyledField
+            type="radio"
+            label="Layout Alignment"
+            fieldName="hero.isCenter"
+            value={hero.isCenter ? "center" : "left"}
+            options={[
+              { label: "Bottom-Left Aligned", value: "left" },
+              { label: "Center Aligned", value: "center" },
+            ]}
+            onChange={(val) => updateHeroField("isCenter", val === "center")}
+          />
+        )}
 
         {/* CTA Buttons */}
         <div className="rounded-lg border border-border/70 bg-card p-3.5">

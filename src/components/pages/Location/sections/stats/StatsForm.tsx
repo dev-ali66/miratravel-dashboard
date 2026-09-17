@@ -93,9 +93,27 @@ export function StatsForm({
 
   const addFactItem = () => {
     const newItem: StatItem = {
-      label: "New Stat Label",
-      value: "100+",
-      description: "Description or sublabel",
+      label: {
+        value: "New Stat Label",
+        textColor: "#182d09",
+        textOpacity: 1,
+        backgroundColor: null,
+        backgroundOpacity: 1,
+      },
+      value: {
+        value: "100+",
+        textColor: "#af6348",
+        textOpacity: 1,
+        backgroundColor: null,
+        backgroundOpacity: 1,
+      },
+      description: {
+        value: "Description or sublabel",
+        textColor: "#565e69",
+        textOpacity: 1,
+        backgroundColor: null,
+        backgroundOpacity: 1,
+      },
     }
     const updated = [...facts, newItem]
     updateStatsField("items", updated)

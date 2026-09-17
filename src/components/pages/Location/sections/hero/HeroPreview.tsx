@@ -1,7 +1,6 @@
-import { DynamicStyledPreview } from "@/components/shared/DynamicStyledPreview"
 import { UniversalMultimediaPreview } from "@/components/pages/CMS/shared/UniversalMultimediaPreview"
-import { colorWithOpacity } from "@/components/pages/CMS/shared/ButtonsField"
-import { ArrowRight } from "lucide-react"
+import { DynamicStyledTextPreview } from "@/components/pages/CMS/shared/DynamicStyledTextPreview"
+import { DynamicCmsButtonPreview } from "@/components/pages/CMS/shared/DynamicCmsButtonPreview"
 import { cn } from "@/lib/utils"
 import type { LocationPreviewSectionProps } from "../../config/locationSections"
 
@@ -20,8 +19,6 @@ export function HeroPreview({ draft }: LocationPreviewSectionProps) {
       {/* Background Media (Image / Video / Color) */}
       <UniversalMultimediaPreview
         multimedia={hero.backgroundMultimedia || hero.multimedia}
-        fallbackImageSrc="/videos/des-thumb.png"
-        fallbackVideoSrc="/videos/des-hero.mp4"
         mode="background"
         overlayClassName="bg-gradient-to-t from-black/80 via-black/35 to-transparent"
       />
@@ -42,10 +39,9 @@ export function HeroPreview({ draft }: LocationPreviewSectionProps) {
           )}
         >
           {/* Breadcrumb / Category Tag */}
-          <DynamicStyledPreview
+          <DynamicStyledTextPreview
             as="span"
-            field={hero.breadcrumb}
-            fallbackColor="#d29393"
+            data={hero.breadcrumb}
             className={cn(
               "text-xs @xs:text-[13px] @md:text-[15px] @xl:text-base font-semibold uppercase leading-5 @md:leading-[22px] @xl:leading-6 tracking-[2px] text-accent mb-2 @md:mb-2.5 @xl:mb-3",
               isCenter && "text-center"
@@ -53,10 +49,9 @@ export function HeroPreview({ draft }: LocationPreviewSectionProps) {
           />
 
           {/* Hero Main Title */}
-          <DynamicStyledPreview
+          <DynamicStyledTextPreview
             as="h1"
-            field={hero.title}
-            fallbackColor="#FFFFFF"
+            data={hero.title}
             className={cn(
               "font-heading font-semibold text-[32px] @xs:text-[38px] @sm:text-[44px] @md:text-[52px] @lg:text-[56px] @xlg:text-[60px] @xl:text-[64px] leading-[40px] @xs:leading-[46px] @sm:leading-[52px] @md:leading-[60px] @lg:leading-[64px] @xlg:leading-[68px] @xl:leading-[72px] tracking-[0.905px] text-neutral-200 mb-3 @md:mb-3.5 @xl:mb-4",
               isCenter && "text-center"
@@ -64,10 +59,9 @@ export function HeroPreview({ draft }: LocationPreviewSectionProps) {
           />
 
           {/* Hero Subtitle */}
-          <DynamicStyledPreview
+          <DynamicStyledTextPreview
             as="h2"
-            field={hero.subtitle}
-            fallbackColor="#E5E7EB"
+            data={hero.subtitle}
             className={cn(
               "text-[14px] @xs:text-[15px] @sm:text-base @md:text-[17px] @xlg:text-[18px] @xl:text-[20px] leading-6 @md:leading-[28px] @xlg:leading-[34px] @xl:leading-[36px] font-medium text-neutral-200 mb-2 @md:mb-2.5 @xl:mb-3",
               isCenter && "text-center"
@@ -75,97 +69,24 @@ export function HeroPreview({ draft }: LocationPreviewSectionProps) {
           />
 
           {/* Editorial Description with RichText Support */}
-          <DynamicStyledPreview
+          <DynamicStyledTextPreview
             as="div"
-            type="richtext"
-            field={hero.description}
-            fallbackColor="#F3F4F6"
+            isRichText
+            data={hero.description}
             className={cn(
-              "max-w-[738px] text-[13px] @xs:text-[14px] @sm:text-base @md:text-[17px] @xlg:text-[18px] @xl:text-[20px] font-normal leading-5 @xs:leading-6 @md:leading-[28px] @xlg:leading-[34px] @xl:leading-[36px] text-neutral-100/90",
+              "max-w-[738px] text-[13px] @xs:text-[14px] @sm:text-base @md:text-[17px] @xlg:text-[18px] @xl:text-[20px] font-normal leading-5 @xs:leading-6 @md:leading-[28px] @xlg:leading-[34px] @xl:leading-[36px] text-neutral-100/90 mb-6",
               isCenter && "text-center mx-auto"
             )}
           />
 
-          {/* CTA Buttons List */}
-          {buttons.length > 0 && (
-            <div
-              className={cn(
-                "mt-5 @xs:mt-6 @md:mt-7 flex flex-wrap items-center gap-3 @xs:gap-3.5",
-                isCenter ? "justify-center" : "justify-start"
-              )}
-            >
-              {buttons.map((btn: any, idx: number) => {
-                const variant = (btn.variant || btn.style || "primary").toLowerCase()
-                const isPrimary = variant === "primary"
-                const isOutline = variant === "outline"
-                const isSecondary = variant === "secondary"
-                const isDark = variant === "dark"
-
-                const roundedClass =
-                  btn.rounded === "none"
-                    ? "rounded-none"
-                    : btn.rounded === "sm"
-                    ? "rounded-md"
-                    : btn.rounded === "md"
-                    ? "rounded-lg"
-                    : btn.rounded === "xl"
-                    ? "rounded-2xl"
-                    : "rounded-full"
-
-                // Dynamic background with opacity support
-                const bg =
-                  btn.backgroundColor !== undefined
-                    ? colorWithOpacity(btn.backgroundColor, btn.backgroundOpacity)
-                    : isPrimary
-                    ? "#ffffff"
-                    : isSecondary
-                    ? "#1a3d14"
-                    : isDark
-                    ? "#171717"
-                    : "transparent"
-
-                // Dynamic text color with opacity support
-                const textColor =
-                  btn.textColor !== undefined
-                    ? colorWithOpacity(btn.textColor, btn.textOpacity)
-                    : isPrimary
-                    ? "#000000"
-                    : "#ffffff"
-
-                const borderColor =
-                  btn.borderColor || (isOutline ? "rgba(255, 255, 255, 0.7)" : undefined)
-
-                const borderWidth =
-                  btn.borderWidth || (isOutline || btn.borderColor ? "1px" : undefined)
-
-                return (
-                  <a
-                    key={idx}
-                    href={btn.url || "#"}
-                    target={btn.target || "_self"}
-                    rel={btn.target === "_blank" ? "noopener noreferrer" : undefined}
-                    style={{
-                      backgroundColor: bg,
-                      color: textColor,
-                      borderColor: borderColor,
-                      borderWidth: borderWidth,
-                      borderStyle: borderColor ? "solid" : undefined,
-                    }}
-                    className={cn(
-                      "group inline-flex items-center gap-2 px-5 @xs:px-6 py-2.5 @xs:py-3 text-xs font-semibold uppercase tracking-wider transition-all duration-200 hover:scale-[1.02] active:scale-[0.98] shadow-sm",
-                      roundedClass,
-                      isOutline && "backdrop-blur bg-black/20"
-                    )}
-                  >
-                    <span>{btn.label || "Explore Journeys"}</span>
-                    {btn.showIcon !== false && (
-                      <ArrowRight className="h-3.5 w-3.5 transition-transform duration-200 group-hover:translate-x-0.5" />
-                    )}
-                  </a>
-                )
-              })}
-            </div>
-          )}
+          {/* Reusable CTA Buttons List */}
+          <DynamicCmsButtonPreview
+            data={buttons}
+            className={cn(
+              "mt-2",
+              isCenter ? "justify-center" : "justify-start"
+            )}
+          />
         </div>
       </div>
     </section>

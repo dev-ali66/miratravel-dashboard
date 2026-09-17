@@ -113,8 +113,6 @@ export function TravelInsightsPreview({
                 ? { ...backgroundImage, ...backgroundImageData, type: "image" }
                 : { color: backgroundMultimedia.color, type: "color" }
           }
-          fallbackImageSrc={PREVIEW_IMAGE_SOURCE}
-          fallbackVideoSrc={PREVIEW_VIDEO_SOURCE}
           fallbackAlt="Travel Insights background"
           fallbackColor={section.bgColor ?? "#ffffff"}
           mode="background"

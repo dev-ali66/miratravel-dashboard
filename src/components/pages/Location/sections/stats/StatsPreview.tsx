@@ -1,4 +1,4 @@
-import { DynamicStyledPreview } from "@/components/shared/DynamicStyledPreview"
+import { DynamicStyledTextPreview } from "@/components/pages/CMS/shared/DynamicStyledTextPreview"
 import { UniversalMultimediaPreview } from "@/components/pages/CMS/Home/shared/preview/UniversalMultimediaPreview"
 import type { LocationPreviewSectionProps } from "../../config/locationSections"
 
@@ -41,26 +41,23 @@ export function StatsPreview({ draft }: LocationPreviewSectionProps) {
               key={idx}
               className="w-full max-w-[252px] py-3 @md:py-[13px] @lg:py-[14.5px] @lgx:py-4 @xlg:py-[17px] @mid:py-[18.5px] @xl:py-5 flex flex-col items-start gap-1.5 @md:gap-[6.5px] @lg:gap-[7px] @xl:gap-2"
             >
-              <DynamicStyledPreview
+              <DynamicStyledTextPreview
                 as="span"
-                field={item.label}
-                fallback="COASTLINE"
+                data={item.label}
                 fallbackColor="#565e69"
                 className="text-muted text-[11px] @md:text-[11.3px] @lg:text-[11.7px] @lgx:text-[12px] @xlg:text-[12.4px] @mid:text-[12.7px] @xl:text-[13px] font-normal uppercase leading-[13.5px] @md:leading-[14px] @lg:leading-[14.5px] @lgx:leading-[15px] @xl:leading-4 tracking-[0.12px]"
               />
 
-              <DynamicStyledPreview
+              <DynamicStyledTextPreview
                 as="span"
-                field={item.value}
-                fallback="170 km"
+                data={item.value}
                 fallbackColor="#182d09"
                 className="text-primary text-base @md:text-[17.5px] @lg:text-[19px] @lgx:text-[20px] @xlg:text-[22px] @mid:text-[24px] @xl:text-[26px] font-semibold font-heading leading-[20px] @md:leading-[21px] @lg:leading-[22.2px] @lgx:leading-[23px] @xlg:leading-[24px] @mid:leading-[25px] @xl:leading-[26px]"
               />
 
-              <DynamicStyledPreview
+              <DynamicStyledTextPreview
                 as="span"
-                field={item.description}
-                fallback="Ionian & Adriatic coastline"
+                data={item.description}
                 fallbackColor="#565e69"
                 className="text-muted text-[11px] @md:text-[11.3px] @lg:text-[11.7px] @lgx:text-[12px] @xlg:text-[12.4px] @mid:text-[12.7px] @xl:text-[13px] font-normal leading-[15px] @md:leading-[15.5px] @lg:leading-[16px] @xl:leading-[17px] tracking-[0.12px]"
               />

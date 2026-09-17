@@ -1,4 +1,5 @@
 import { useState } from "react"
+import { useDevMode } from "@/context/DevModeContext"
 import { RepeaterList } from "./RepeaterList"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
@@ -12,7 +13,16 @@ import {
 import { ArrowRight, SlidersHorizontal } from "lucide-react"
 import { cn } from "@/lib/utils"
 
-export type ButtonVariant = "primary" | "outline" | "secondary" | "dark" | "ghost" | "custom"
+export type ButtonVariant =
+  | "primary"
+  | "outline"
+  | "secondary"
+  | "dark"
+  | "ghost"
+  | "link"
+  | "pill"
+  | "badge"
+  | "custom"
 export type ButtonRounded = "full" | "xl" | "lg" | "md" | "sm" | "none"
 
 export interface CmsButton {
@@ -42,11 +52,13 @@ interface ButtonsFieldProps {
 }
 
 const VARIANT_OPTIONS: Array<{ value: ButtonVariant; label: string; bg: string; text: string }> = [
-  { value: "primary", label: "Primary (Solid White)", bg: "#ffffff", text: "#000000" },
-  { value: "outline", label: "Outline (Translucent Glass)", bg: "transparent", text: "#ffffff" },
-  { value: "secondary", label: "Secondary (Forest Green)", bg: "#1a3d14", text: "#ffffff" },
+  { value: "primary", label: "Primary (Solid Accent Fill)", bg: "#B86B3A", text: "#ffffff" },
+  { value: "secondary", label: "Secondary (Forest Green Fill)", bg: "#1a3d14", text: "#ffffff" },
+  { value: "outline", label: "Outline (Translucent Glass)", bg: "transparent", text: "#182d09" },
   { value: "dark", label: "Dark (Solid Black)", bg: "#171717", text: "#ffffff" },
-  { value: "ghost", label: "Ghost (Minimalist)", bg: "transparent", text: "#ffffff" },
+  { value: "ghost", label: "Ghost (Minimalist Text)", bg: "transparent", text: "#af6348" },
+  { value: "link", label: "Text Link with Arrow (Read More →)", bg: "transparent", text: "#af6348" },
+  { value: "pill", label: "Pill Badge Tag (SIGNATURE JOURNEY)", bg: "#fef3c7", text: "#9a3412" },
   { value: "custom", label: "Custom (Manual Overrides)", bg: "#ffffff", text: "#000000" },
 ]
 
@@ -81,13 +93,17 @@ export function ButtonsField({
   onChange,
 }: ButtonsFieldProps) {
   const currentButtons = value ?? buttons ?? []
+  const { isDevMode, config } = useDevMode()
+  const showCodeBadge = Boolean(fieldName) && (config.showFieldBadges || isDevMode)
+  const showStylingTab = config.showAdvancedButtonStyling || isDevMode
+
   const [activeTab, setActiveTab] = useState<Record<number, "basic" | "styling">>({})
 
   return (
     <div className="flex flex-col gap-2">
       <div className="flex items-center justify-between gap-2">
         <p className="text-xs font-semibold text-foreground">{label}</p>
-        {fieldName && (
+        {showCodeBadge && (
           <code className="rounded bg-muted/60 px-1.5 py-0.5 font-mono text-[10px] text-muted-foreground">
             {fieldName}
           </code>
@@ -115,7 +131,7 @@ export function ButtonsField({
           showIcon: true,
         })}
         renderItem={(item, update, index) => {
-          const tab = activeTab[index] || "basic"
+          const tab = showStylingTab ? (activeTab[index] || "basic") : "basic"
           const setTab = (t: "basic" | "styling") =>
             setActiveTab((prev) => ({ ...prev, [index]: t }))
 
@@ -139,64 +155,66 @@ export function ButtonsField({
 
           return (
             <div className="flex flex-col gap-3.5">
-              {/* Tab Switcher */}
-              <div className="flex items-center justify-between border-b border-border/60 pb-2">
-                <div className="flex items-center gap-1">
-                  <button
-                    type="button"
-                    onClick={() => setTab("basic")}
-                    className={cn(
-                      "rounded-md px-2.5 py-1 text-xs font-medium transition cursor-pointer",
-                      tab === "basic"
-                        ? "bg-primary text-primary-foreground font-semibold"
-                        : "text-muted-foreground hover:bg-muted hover:text-foreground"
-                    )}
-                  >
-                    Content & Link
-                  </button>
-                  <button
-                    type="button"
-                    onClick={() => setTab("styling")}
-                    className={cn(
-                      "flex items-center gap-1 rounded-md px-2.5 py-1 text-xs font-medium transition cursor-pointer",
-                      tab === "styling"
-                        ? "bg-primary text-primary-foreground font-semibold"
-                        : "text-muted-foreground hover:bg-muted hover:text-foreground"
-                    )}
-                  >
-                    <SlidersHorizontal className="h-3 w-3" />
-                    Styling & Colors
-                  </button>
-                </div>
+              {/* Tab Switcher (Only shown when Dev Mode is ON) */}
+              {showStylingTab ? (
+                <div className="flex items-center justify-between border-b border-border/60 pb-2">
+                  <div className="flex items-center gap-1">
+                    <button
+                      type="button"
+                      onClick={() => setTab("basic")}
+                      className={cn(
+                        "rounded-md px-2.5 py-1 text-xs font-medium transition cursor-pointer",
+                        tab === "basic"
+                          ? "bg-primary text-primary-foreground font-semibold"
+                          : "text-muted-foreground hover:bg-muted hover:text-foreground"
+                      )}
+                    >
+                      Content & Link
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => setTab("styling")}
+                      className={cn(
+                        "flex items-center gap-1 rounded-md px-2.5 py-1 text-xs font-medium transition cursor-pointer",
+                        tab === "styling"
+                          ? "bg-primary text-primary-foreground font-semibold"
+                          : "text-muted-foreground hover:bg-muted hover:text-foreground"
+                      )}
+                    >
+                      <SlidersHorizontal className="h-3 w-3" />
+                      Styling & Colors
+                    </button>
+                  </div>
 
-                {/* Micro Preview Pill */}
-                <div
-                  style={{
-                    backgroundColor: colorWithOpacity(
-                      item.backgroundColor || "#ffffff",
-                      item.backgroundOpacity ?? 100
-                    ),
-                    color: colorWithOpacity(item.textColor || "#000000", item.textOpacity ?? 100),
-                    borderColor: item.borderColor || "transparent",
-                    borderWidth: item.borderWidth ? `${item.borderWidth}` : "1px",
-                  }}
-                  className={cn(
-                    "inline-flex items-center gap-1 px-3 py-1 text-[10px] font-semibold uppercase tracking-wider shadow-2xs transition",
-                    item.rounded === "none"
-                      ? "rounded-none"
-                      : item.rounded === "sm"
-                      ? "rounded-md"
-                      : item.rounded === "md"
-                      ? "rounded-lg"
-                      : item.rounded === "xl"
-                      ? "rounded-2xl"
-                      : "rounded-full"
-                  )}
-                >
-                  <span className="truncate max-w-[90px]">{item.label || "Button"}</span>
-                  {item.showIcon !== false && <ArrowRight className="h-2.5 w-2.5 shrink-0" />}
+                  {/* Micro Preview Pill */}
+                  <div
+                    style={{
+                      backgroundColor: colorWithOpacity(
+                        item.backgroundColor || "#ffffff",
+                        item.backgroundOpacity ?? 100
+                      ),
+                      color: colorWithOpacity(item.textColor || "#000000", item.textOpacity ?? 100),
+                      borderColor: item.borderColor || "transparent",
+                      borderWidth: item.borderWidth ? `${item.borderWidth}` : "1px",
+                    }}
+                    className={cn(
+                      "inline-flex items-center gap-1 px-3 py-1 text-[10px] font-semibold uppercase tracking-wider shadow-2xs transition",
+                      item.rounded === "none"
+                        ? "rounded-none"
+                        : item.rounded === "sm"
+                        ? "rounded-md"
+                        : item.rounded === "md"
+                        ? "rounded-lg"
+                        : item.rounded === "xl"
+                        ? "rounded-2xl"
+                        : "rounded-full"
+                    )}
+                  >
+                    <span className="truncate max-w-[90px]">{item.label || "Button"}</span>
+                    {item.showIcon !== false && <ArrowRight className="h-2.5 w-2.5 shrink-0" />}
+                  </div>
                 </div>
-              </div>
+              ) : null}
 
               {/* BASIC TAB */}
               {tab === "basic" && (
@@ -223,54 +241,58 @@ export function ButtonsField({
                     />
                   </div>
 
-                  <div className="flex flex-col gap-1.5">
-                    <Label className="text-xs font-medium">Button Style Variant</Label>
-                    <Select
-                      value={item.variant || item.style || "primary"}
-                      onValueChange={handleVariantChange}
-                    >
-                      <SelectTrigger className="h-8 text-xs">
-                        <SelectValue placeholder="Select Style" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        {VARIANT_OPTIONS.map((opt) => (
-                          <SelectItem key={opt.value} value={opt.value} className="text-xs">
-                            {opt.label}
-                          </SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
-                  </div>
+                  {showStylingTab && (
+                    <>
+                      <div className="flex flex-col gap-1.5">
+                        <Label className="text-xs font-medium">Button Style Variant</Label>
+                        <Select
+                          value={item.variant || item.style || "primary"}
+                          onValueChange={handleVariantChange}
+                        >
+                          <SelectTrigger className="h-8 text-xs">
+                            <SelectValue placeholder="Select Style" />
+                          </SelectTrigger>
+                          <SelectContent>
+                            {VARIANT_OPTIONS.map((opt) => (
+                              <SelectItem key={opt.value} value={opt.value} className="text-xs">
+                                {opt.label}
+                              </SelectItem>
+                            ))}
+                          </SelectContent>
+                        </Select>
+                      </div>
 
-                  <div className="flex flex-col gap-1.5">
-                    <Label className="text-xs font-medium">Open In</Label>
-                    <Select
-                      value={item.target || "_self"}
-                      onValueChange={(val) => update({ ...item, target: val })}
-                    >
-                      <SelectTrigger className="h-8 text-xs">
-                        <SelectValue placeholder="Target" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="_self" className="text-xs">
-                          Same Tab (_self)
-                        </SelectItem>
-                        <SelectItem value="_blank" className="text-xs">
-                          New Tab (_blank)
-                        </SelectItem>
-                      </SelectContent>
-                    </Select>
-                  </div>
+                      <div className="flex flex-col gap-1.5">
+                        <Label className="text-xs font-medium">Open In</Label>
+                        <Select
+                          value={item.target || "_self"}
+                          onValueChange={(val) => update({ ...item, target: val })}
+                        >
+                          <SelectTrigger className="h-8 text-xs">
+                            <SelectValue placeholder="Target" />
+                          </SelectTrigger>
+                          <SelectContent>
+                            <SelectItem value="_self" className="text-xs">
+                              Same Tab (_self)
+                            </SelectItem>
+                            <SelectItem value="_blank" className="text-xs">
+                              New Tab (_blank)
+                            </SelectItem>
+                          </SelectContent>
+                        </Select>
+                      </div>
 
-                  <div className="col-span-2 flex items-center justify-between rounded-md border border-border/60 p-2 text-xs">
-                    <span className="font-medium text-muted-foreground">Show Arrow Icon</span>
-                    <input
-                      type="checkbox"
-                      checked={item.showIcon !== false}
-                      onChange={(e) => update({ ...item, showIcon: e.target.checked })}
-                      className="h-4 w-4 rounded accent-primary cursor-pointer"
-                    />
-                  </div>
+                      <div className="col-span-2 flex items-center justify-between rounded-md border border-border/60 p-2 text-xs">
+                        <span className="font-medium text-muted-foreground">Show Arrow Icon</span>
+                        <input
+                          type="checkbox"
+                          checked={item.showIcon !== false}
+                          onChange={(e) => update({ ...item, showIcon: e.target.checked })}
+                          className="h-4 w-4 rounded accent-primary cursor-pointer"
+                        />
+                      </div>
+                    </>
+                  )}
                 </div>
               )}
 

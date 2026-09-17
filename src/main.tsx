@@ -7,6 +7,7 @@ import { Toaster } from "sonner"
 import "./index.css"
 import App from "./App.tsx"
 import { ThemeProvider } from "@/components/ThemeProvider.tsx"
+import { DevModeProvider } from "@/context/DevModeContext.tsx"
 import { ErrorBoundary } from "@/components/ErrorBoundary"
 
 const queryClient = new QueryClient()
@@ -15,12 +16,14 @@ createRoot(document.getElementById("root")!).render(
   <StrictMode>
     <ErrorBoundary>
       <ThemeProvider defaultTheme="light">
-        <QueryClientProvider client={queryClient}>
-          <BrowserRouter>
-            <App />
-            <Toaster richColors position="top-center" />
-          </BrowserRouter>
-        </QueryClientProvider>
+        <DevModeProvider>
+          <QueryClientProvider client={queryClient}>
+            <BrowserRouter>
+              <App />
+              <Toaster richColors position="top-center" />
+            </BrowserRouter>
+          </QueryClientProvider>
+        </DevModeProvider>
       </ThemeProvider>
     </ErrorBoundary>
   </StrictMode>

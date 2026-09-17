@@ -54,7 +54,7 @@ export const emptyLocation: LocationData = {
     backgroundMultimedia: {
       show: "video",
       image: {
-        url: "/videos/des-thumb.png",
+        url: "",
         alt: "Panoramic European Alpine Landscape",
         opacity: 100,
         overlayColor: "#000000",
@@ -65,7 +65,7 @@ export const emptyLocation: LocationData = {
         fit: "cover",
       },
       video: {
-        url: "/videos/des-hero.mp4",
+        url: "",
         alt: "Cinematic Aerial View of Europe",
         autoplay: true,
         loop: true,
@@ -85,6 +85,109 @@ export const emptyLocation: LocationData = {
         height: "100%",
         aspectRatio: "auto",
       },
+    },
+  },
+
+  infoCard: {
+    headline: {
+      value: "What kind of city survives 2,400 years without losing its character?",
+      textColor: "#E7E5E4",
+      textOpacity: 1,
+      backgroundColor: null,
+      backgroundOpacity: 1,
+    },
+    description: {
+      value: "Dhërmi is one of the oldest continuously inhabited villages on the Albanian Riviera, combining a historic hilltop settlement with one of the country's most beautiful coastlines.",
+      textColor: "#E5E5E5",
+      textOpacity: 1,
+      backgroundColor: null,
+      backgroundOpacity: 1,
+    },
+    backgroundMultimedia: {
+      show: "color",
+      color: {
+        color: "#182d09",
+        opacity: 100,
+        width: "100%",
+        height: "100%",
+        aspectRatio: "auto",
+      },
+      image: { url: "", alt: "", opacity: 100, overlayColor: "#000000", overlayOpacity: 0, width: "100%", height: "auto", aspectRatio: "auto", fit: "cover" },
+      video: { url: "", alt: "", autoplay: true, loop: true, muted: true, opacity: 100, overlayColor: "#000000", overlayOpacity: 0, width: "100%", height: "auto", aspectRatio: "auto", fit: "cover" },
+    },
+  },
+
+  why: {
+    subtitle: {
+      value: "WHY VISIT",
+      textColor: "#af6348",
+      textOpacity: 1,
+      backgroundColor: null,
+      backgroundOpacity: 1,
+    },
+    title: {
+      value: "A destination where mountains meet the sea",
+      textColor: "#182d09",
+      textOpacity: 1,
+      backgroundColor: null,
+      backgroundOpacity: 1,
+    },
+    description_paragraphs: [
+      "The Balkans present a rare harmony where untouched nature, ancient stone citadels, and rich cultural traditions meet. Explore winding cobblestone alleys, turquoise coastlines, and mountain sanctuaries curated with local knowledge and unhurried pacing.",
+    ],
+    tags: ["Beaches", "Hiking", "Restaurant", "Sunset", "Historic village"],
+    imageMultimedia: {
+      show: "color",
+      color: { color: "#EDE7D8", opacity: 100, width: "100%", height: "100%", aspectRatio: "auto" },
+      image: { url: "", alt: "Why Visit Destination", opacity: 100, overlayColor: "#000000", overlayOpacity: 0, width: "100%", height: "auto", aspectRatio: "auto", fit: "cover" },
+      video: { url: "", alt: "", autoplay: true, loop: true, muted: true, opacity: 100, overlayColor: "#000000", overlayOpacity: 0, width: "100%", height: "auto", aspectRatio: "auto", fit: "cover" },
+    },
+    backgroundMultimedia: {
+      show: "color",
+      color: { color: "#FFFFFF", opacity: 100, width: "100%", height: "100%", aspectRatio: "auto" },
+      image: { url: "", alt: "", opacity: 100, overlayColor: "#000000", overlayOpacity: 0, width: "100%", height: "auto", aspectRatio: "auto", fit: "cover" },
+      video: { url: "", alt: "", autoplay: true, loop: true, muted: true, opacity: 100, overlayColor: "#000000", overlayOpacity: 0, width: "100%", height: "auto", aspectRatio: "auto", fit: "cover" },
+    },
+  },
+
+  experiences: {
+    location: "DESTINATION",
+    title: {
+      value: "Experiences",
+      textColor: "#182d09",
+      textOpacity: 1,
+      backgroundColor: null,
+      backgroundOpacity: 1,
+    },
+    description: {
+      value: "Curated ways to discover the wild beauty and heritage — from sea caves to mountain sanctuaries.",
+      textColor: "#565e69",
+      textOpacity: 1,
+      backgroundColor: null,
+      backgroundOpacity: 1,
+    },
+    seasonInfo: "All information is available on site. The season runs from May to October — book private activities in advance during peak periods.",
+    seasonLocation: "Riviera",
+    load_more_button: "Load More",
+    featured_experience: {
+      title: { value: "Pirate Cave Coastal Kayaking Expedition", textColor: "#FFFFFF" },
+      category: "SEA EXPEDITIONS",
+      duration: "Half Day (4 Hours)",
+      subtitle: { value: "Paddle into hidden sea caves and turquoise bays along the coastline.", textColor: "#E5E5E5" },
+      action_text: "Discover Experience",
+      imageMultimedia: {
+        show: "color",
+        color: { color: "#1c2813", opacity: 100, width: "100%", height: "100%", aspectRatio: "auto" },
+        image: { url: "", alt: "Featured Experience", opacity: 100, overlayColor: "#000000", overlayOpacity: 30, width: "100%", height: "auto", aspectRatio: "auto", fit: "cover" },
+        video: { url: "", alt: "", autoplay: true, loop: true, muted: true, opacity: 100, overlayColor: "#000000", overlayOpacity: 30, width: "100%", height: "auto", aspectRatio: "auto", fit: "cover" },
+      },
+    },
+    cards: [],
+    backgroundMultimedia: {
+      show: "color",
+      color: { color: "#F1EEE5", opacity: 100, width: "100%", height: "100%", aspectRatio: "auto" },
+      image: { url: "", alt: "", opacity: 100, overlayColor: "#000000", overlayOpacity: 0, width: "100%", height: "auto", aspectRatio: "auto", fit: "cover" },
+      video: { url: "", alt: "", autoplay: true, loop: true, muted: true, opacity: 100, overlayColor: "#000000", overlayOpacity: 0, width: "100%", height: "auto", aspectRatio: "auto", fit: "cover" },
     },
   },
 
@@ -661,7 +764,7 @@ export const emptyLocation: LocationData = {
     imageMultimedia: {
       show: "image",
       image: {
-        url: "/images/faq.jpg",
+        url: "",
         alt: "Frequently Asked Questions",
         opacity: 100,
         overlayColor: "#000000",
@@ -728,104 +831,7 @@ export const emptyLocation: LocationData = {
         fit: "cover",
       },
     },
-    items: [
-      {
-        question: {
-          value: "What is the best time of year to visit Albania and the Balkans?",
-          textColor: "#182d09",
-          textOpacity: 1,
-          backgroundColor: null,
-          backgroundOpacity: 1,
-        },
-        answer: {
-          value: "Spring (April–June) and Autumn (September–October) offer ideal weather with pleasant temperatures, blooming scenery, and fewer crowds.",
-          textColor: "#565e69",
-          textOpacity: 1,
-          backgroundColor: null,
-          backgroundOpacity: 1,
-        },
-      },
-      {
-        question: {
-          value: "Do I need a visa to travel to Albania?",
-          textColor: "#182d09",
-          textOpacity: 1,
-          backgroundColor: null,
-          backgroundOpacity: 1,
-        },
-        answer: {
-          value: "Visa requirements depend on your nationality. Many travelers from EU, US, UK, and Commonwealth countries can enter visa-free for up to 90 days. Check diplomatic guidelines prior to travel.",
-          textColor: "#565e69",
-          textOpacity: 1,
-          backgroundColor: null,
-          backgroundOpacity: 1,
-        },
-      },
-      {
-        question: {
-          value: "How do we travel between mountains, UNESCO towns, and the coast?",
-          textColor: "#182d09",
-          textOpacity: 1,
-          backgroundColor: null,
-          backgroundOpacity: 1,
-        },
-        answer: {
-          value: "We arrange private luxury chauffeured vehicles, private coastal boat transfers, and scenic helicopter flights for comfortable, scenic transitions.",
-          textColor: "#565e69",
-          textOpacity: 1,
-          backgroundColor: null,
-          backgroundOpacity: 1,
-        },
-      },
-      {
-        question: {
-          value: "Is Albania safe for solo travelers, couples, and families?",
-          textColor: "#182d09",
-          textOpacity: 1,
-          backgroundColor: null,
-          backgroundOpacity: 1,
-        },
-        answer: {
-          value: "Albania is renowned for its hospitality (Besa) and has very low crime rates. Our 24/7 dedicated travel concierge is always on hand throughout your journey.",
-          textColor: "#565e69",
-          textOpacity: 1,
-          backgroundColor: null,
-          backgroundOpacity: 1,
-        },
-      },
-      {
-        question: {
-          value: "Can dietary preferences and boutique accommodations be tailored?",
-          textColor: "#182d09",
-          textOpacity: 1,
-          backgroundColor: null,
-          backgroundOpacity: 1,
-        },
-        answer: {
-          value: "Yes. Every itinerary is fully personalized with handpicked heritage boutique stays and dining customized for vegetarian, vegan, gluten-free, and halal preferences.",
-          textColor: "#565e69",
-          textOpacity: 1,
-          backgroundColor: null,
-          backgroundOpacity: 1,
-        },
-      },
-      {
-        question: {
-          value: "How does Mira design and support our personalized journey?",
-          textColor: "#182d09",
-          textOpacity: 1,
-          backgroundColor: null,
-          backgroundOpacity: 1,
-        },
-        answer: {
-          value: "From 1-on-1 itinerary planning to on-the-ground VIP assistance, expert storytelling guides, and luxury transit, we ensure every moment is extraordinary.",
-          textColor: "#565e69",
-          textOpacity: 1,
-          backgroundColor: null,
-          backgroundOpacity: 1,
-        },
-      },
-    ],
+    items: [],
   },
 
   cta: {
@@ -857,7 +863,7 @@ export const emptyLocation: LocationData = {
     imageMultimedia: {
       show: "image",
       image: {
-        url: "/images/cta.png",
+        url: "",
         alt: "CTA Motif",
         opacity: 100,
         overlayColor: "#000000",

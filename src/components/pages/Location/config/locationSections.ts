@@ -34,6 +34,12 @@ import { CharacterForm } from "../sections/character/CharacterForm"
 import { CharacterPreview } from "../sections/character/CharacterPreview"
 import { PracticalInfoForm } from "../sections/practical-info/PracticalInfoForm"
 import { PracticalInfoPreview } from "../sections/practical-info/PracticalInfoPreview"
+import { PlaceInfoForm } from "../sections/place-info/PlaceInfoForm"
+import { PlaceInfoPreview } from "../sections/place-info/PlaceInfoPreview"
+import { WhyVisitForm } from "../sections/why-visit/WhyVisitForm"
+import { WhyVisitPreview } from "../sections/why-visit/WhyVisitPreview"
+import { PlaceExperiencesForm } from "../sections/experiences/PlaceExperiencesForm"
+import { PlaceExperiencesPreview } from "../sections/experiences/PlaceExperiencesPreview"
 
 export type LocationFormSectionProps = {
   draft: LocationData
@@ -63,6 +69,9 @@ export type LocationSectionKey =
   | "faq"
   | "cta"
   | "seo"
+  | "place-info"
+  | "why-visit"
+  | "experiences"
 
 export type SectionRegistryEntry = {
   label: string
@@ -146,9 +155,29 @@ export const locationSectionRegistry: Record<LocationSectionKey, SectionRegistry
     form: SeoForm,
     preview: null,
   },
+  "place-info": {
+    label: "Place Information / Overview",
+    form: PlaceInfoForm,
+    preview: PlaceInfoPreview,
+  },
+  "why-visit": {
+    label: "Why Visit",
+    form: WhyVisitForm,
+    preview: WhyVisitPreview,
+  },
+  experiences: {
+    label: "Curated Experiences",
+    form: PlaceExperiencesForm,
+    preview: PlaceExperiencesPreview,
+  },
 }
 
 export const LOCATION_TYPE_SECTION_CONFIG: Record<string, LocationSectionKey[]> = {
+  CONTINENT: [
+    "basic-info",
+    "hero",
+    "seo",
+  ],
   COUNTRY: [
     "basic-info",
     "hero",
@@ -172,22 +201,34 @@ export const LOCATION_TYPE_SECTION_CONFIG: Record<string, LocationSectionKey[]> 
     "practical-info",
     "seo",
   ],
+  PLACE: [
+    "basic-info",
+    "hero",
+    "place-info",
+    "why-visit",
+    "experiences",
+    "geo-map",
+    "travel-insights",
+    "practical-info",
+    "seo",
+  ],
+
 }
 
 /**
  * Dynamically resolves ordered section keys for a given location type.
- * Returns only basic-info and seo if type is not set or not registered.
+ * Returns PLACE sections if type is not set or not registered.
  */
 export function getSectionsForLocationType(type?: string | null): LocationSectionKey[] {
   if (!type || typeof type !== "string" || !type.trim()) {
-    return ["basic-info", "seo"]
+    return LOCATION_TYPE_SECTION_CONFIG.PLACE
   }
 
   const normalizedType = type.trim().toUpperCase()
   const configured = LOCATION_TYPE_SECTION_CONFIG[normalizedType]
 
   if (!configured || configured.length === 0) {
-    return ["basic-info", "seo"]
+    return LOCATION_TYPE_SECTION_CONFIG.PLACE
   }
 
   const result = [...configured]
