@@ -1,0 +1,32 @@
+export const emptyWhyVisit = {
+  subtitle: {
+    value: "WHY VISIT",
+    textColor: "#af6348",
+    textOpacity: 1,
+    backgroundColor: null,
+    backgroundOpacity: 1,
+  },
+  title: {
+    value: "A destination where mountains meet the sea",
+    textColor: "#182d09",
+    textOpacity: 1,
+    backgroundColor: null,
+    backgroundOpacity: 1,
+  },
+  description_paragraphs: [
+    "The Balkans present a rare harmony where untouched nature, ancient stone citadels, and rich cultural traditions meet. Explore winding cobblestone alleys, turquoise coastlines, and mountain sanctuaries curated with local knowledge and unhurried pacing.",
+  ],
+  tags: ["Beaches", "Hiking", "Restaurant", "Sunset", "Historic village"],
+  imageMultimedia: {
+    show: "color",
+    color: { color: "#EDE7D8", opacity: 100, width: "100%", height: "100%", aspectRatio: "auto" },
+    image: { url: "", alt: "Why Visit Destination", opacity: 100, overlayColor: "#000000", overlayOpacity: 0, width: "100%", height: "auto", aspectRatio: "auto", fit: "cover" },
+    video: { url: "", alt: "", autoplay: true, loop: true, muted: true, opacity: 100, overlayColor: "#000000", overlayOpacity: 0, width: "100%", height: "auto", aspectRatio: "auto", fit: "cover" },
+  },
+  backgroundMultimedia: {
+    show: "color",
+    color: { color: "#FFFFFF", opacity: 100, width: "100%", height: "100%", aspectRatio: "auto" },
+    image: { url: "", alt: "", opacity: 100, overlayColor: "#000000", overlayOpacity: 0, width: "100%", height: "auto", aspectRatio: "auto", fit: "cover" },
+    video: { url: "", alt: "", autoplay: true, loop: true, muted: true, opacity: 100, overlayColor: "#000000", overlayOpacity: 0, width: "100%", height: "auto", aspectRatio: "auto", fit: "cover" },
+  },
+}

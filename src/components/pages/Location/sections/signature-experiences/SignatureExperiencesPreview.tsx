@@ -1,5 +1,6 @@
 import { DynamicStyledTextPreview } from "@/components/pages/CMS/shared/DynamicStyledTextPreview"
 import { UniversalMultimediaPreview } from "@/components/pages/CMS/Home/shared/preview/UniversalMultimediaPreview"
+import { DynamicCmsButtonPreview } from "@/components/pages/CMS/shared/DynamicCmsButtonPreview"
 import type { LocationPreviewSectionProps } from "../../config/locationSections"
 import type { SignatureExperienceItem } from "../../locationTypes"
 import { Sparkles } from "lucide-react"
@@ -94,17 +95,33 @@ export function SignatureExperiencesPreview({
               items.map((exp, idx) => {
                 const expNum = String(idx + 1).padStart(2, "0")
                 const itemKey = exp.id || `exp-${idx}`
-                const firstBtn = Array.isArray(exp.buttons) && exp.buttons.length > 0 ? exp.buttons[0] : (exp.button || null)
-                const linkHref =
-                  firstBtn?.url ||
-                  (typeof exp.linkText === "object" ? exp.linkText?.href : null) ||
-                  exp.href ||
-                  "#"
-                const actionText =
-                  firstBtn?.label ||
-                  (typeof exp.linkText === "object" ? exp.linkText?.value : null) ||
-                  (typeof exp.linkText === "string" ? exp.linkText : null) ||
-                  "Explore this experience"
+                const rawButtons =
+                  Array.isArray(exp.buttons) && exp.buttons.length > 0
+                    ? exp.buttons
+                    : exp.button
+                    ? [exp.button]
+                    : exp.href || exp.linkText
+                    ? [
+                        {
+                          label:
+                            (typeof exp.linkText === "object"
+                              ? exp.linkText?.value
+                              : null) ||
+                            (typeof exp.linkText === "string"
+                              ? exp.linkText
+                              : null) ||
+                            "Explore this experience",
+                          url:
+                            (typeof exp.linkText === "object"
+                              ? exp.linkText?.href
+                              : null) ||
+                            exp.href ||
+                            "#",
+                          variant: "link",
+                          textColor: "#af6348",
+                        },
+                      ]
+                    : []
 
                 return (
                   <li
@@ -134,27 +151,14 @@ export function SignatureExperiencesPreview({
                         className="mt-2 text-subtitle text-sm @md:text-[15px] @lg:text-[15.3px] @lgx:text-[15.4px] @xlg:text-[15.6px] @mid:text-[15.7px] @xl:text-base font-normal leading-4 @md:leading-[16.5px] @lg:leading-[17.5px] @lgx:leading-[17.9px] @xlg:leading-[18.5px] @mid:leading-[19.1px] @xl:leading-5"
                       />
 
-                      <a
-                        href={linkHref}
-                        className="mt-3.5 @md:mt-4 group/link inline-flex items-center gap-2 text-accent text-xs @md:text-[12.3px] @lg:text-[12.8px] @lgx:text-[13px] @xlg:text-[13.3px] @mid:text-[13.6px] @xl:text-sm font-medium transition-colors duration-200 hover:text-accent-hover group-hover/item:text-accent-hover outline-none focus-visible:underline"
-                        style={{ color: firstBtn?.textColor || "#af6348" }}
-                      >
-                        <span>{actionText}</span>
-                        <svg
-                          className="size-3 @md:size-[12.2px] @lg:size-[12.6px] @lgx:size-[12.7px] @xlg:size-[12.9px] @mid:size-[13.2px] @xl:size-[13.5px] transition-transform duration-300 group-hover/link:translate-x-1 group-hover/item:translate-x-1"
-                          fill="none"
-                          viewBox="0 0 24 24"
-                          strokeWidth="2"
-                          stroke="currentColor"
-                          aria-hidden="true"
-                        >
-                          <path
-                            strokeLinecap="round"
-                            strokeLinejoin="round"
-                            d="M13.5 4.5 21 12m0 0-7.5 7.5M21 12H3"
+                      {rawButtons.length > 0 && (
+                        <div className="mt-3.5 @md:mt-4">
+                          <DynamicCmsButtonPreview
+                            buttons={rawButtons}
+                            defaultVariant="link"
                           />
-                        </svg>
-                      </a>
+                        </div>
+                      )}
                     </div>
                   </li>
                 )

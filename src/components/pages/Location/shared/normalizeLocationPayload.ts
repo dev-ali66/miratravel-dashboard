@@ -76,12 +76,10 @@ export function normalizeLocationPayload(
     safeData.beforeTravel ??
     {}
   const statsData =
-    safeDraft.stats ??
     safeDraft.statistics ??
-    safeDraft.highlightsStatistics ??
-    safeData.stats ??
+    safeDraft.stats ??
     safeData.statistics ??
-    safeData.highlightsStatistics ??
+    safeData.stats ??
     {}
   const experiencesData =
     safeDraft.experience ??

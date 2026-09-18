@@ -11,6 +11,7 @@ import { UniversalMultimediaForm } from "@/components/pages/CMS/shared/Universal
 import { ButtonsField, type CmsButton } from "@/components/pages/CMS/shared/ButtonsField"
 import { FormSection } from "../../shared/fields"
 import type { LocationFormSectionProps } from "../../config/locationSections"
+import { getSafeStringValue } from "../../shared/normalizeHelpers"
 
 export type CharacterItem = {
   id?: string
@@ -319,8 +320,7 @@ export function CharacterForm({
         <div className="flex flex-col gap-3">
           {items.map((item, index) => {
             const isItemOpen = !!openItems[index]
-            const titleVal =
-              typeof item.title === "object" ? item.title?.value : item.title
+            const titleVal = getSafeStringValue(item.title)
 
             return (
               <div

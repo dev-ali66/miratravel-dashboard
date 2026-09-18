@@ -15,6 +15,11 @@ export function normalizeGeoMap(rawGeoData: any) {
     unit: rawGeoObj.area?.unit ?? safeGeoData.area?.unit ?? "km²",
   }
 
+  const showChildrenVal =
+    safeGeoData.showChildren !== undefined
+      ? Boolean(safeGeoData.showChildren)
+      : safeGeoData.children?.showChildren !== false
+
   const normalizedGeoData = {
     title: normalizeStyledField(
       safeGeoData.title,
@@ -39,11 +44,17 @@ export function normalizeGeoMap(rawGeoData: any) {
       timezone: geoTz,
       area: geoArea,
     },
-    showChildren:
-      safeGeoData.showChildren !== undefined
-        ? Boolean(safeGeoData.showChildren)
-        : safeGeoData.children?.showChildren !== false,
+    // Top-level aliases for universal compatibility across map components
+    latitude: geoLat,
+    longitude: geoLng,
+    mapZoom: geoZoom,
+    pitch: geoPitch,
+    bearing: geoBearing,
+    timezone: geoTz,
+    area: geoArea,
+    showChildren: showChildrenVal,
   }
 
   return normalizedGeoData
 }
+

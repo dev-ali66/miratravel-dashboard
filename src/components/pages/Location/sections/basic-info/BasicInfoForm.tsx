@@ -31,11 +31,13 @@ export function BasicInfoForm({
   }, [availableLocations, draft?.id])
 
   const locationTypeOptions = useMemo(
-    () =>
-      LOCATION_TYPES.map((t) => ({
+    () => [
+      { label: "Select Location Type...", value: "" },
+      ...LOCATION_TYPES.map((t) => ({
         label: t.replace(/_/g, " "),
         value: t,
       })),
+    ],
     []
   )
 
@@ -68,7 +70,7 @@ export function BasicInfoForm({
           fieldName="type"
           required={true}
           enableStyle={false}
-          value={draft.type || "PLACE"}
+          value={draft.type || ""}
           options={locationTypeOptions}
           onChange={(val) => updateField("type", val as LocationType)}
         />

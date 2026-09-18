@@ -176,6 +176,10 @@ export const LOCATION_TYPE_SECTION_CONFIG: Record<string, LocationSectionKey[]> 
   CONTINENT: [
     "basic-info",
     "hero",
+    "place-info",
+    "why-visit",
+    "geo-map",
+    "cta",
     "seo",
   ],
   COUNTRY: [
@@ -198,6 +202,7 @@ export const LOCATION_TYPE_SECTION_CONFIG: Record<string, LocationSectionKey[]> 
     "stats",
     "glance",
     "character",
+    "geo-map",
     "practical-info",
     "seo",
   ],
@@ -212,7 +217,24 @@ export const LOCATION_TYPE_SECTION_CONFIG: Record<string, LocationSectionKey[]> 
     "practical-info",
     "seo",
   ],
-
+  LANDMARK: [
+    "basic-info",
+    "hero",
+    "place-info",
+    "why-visit",
+    "geo-map",
+    "cta",
+    "seo",
+  ],
+  ACCOMMODATION: [
+    "basic-info",
+    "hero",
+    "place-info",
+    "why-visit",
+    "geo-map",
+    "cta",
+    "seo",
+  ],
 }
 
 /**

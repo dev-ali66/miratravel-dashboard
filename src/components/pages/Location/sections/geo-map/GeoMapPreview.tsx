@@ -109,14 +109,17 @@ export function GeoMapPreview({ draft }: LocationPreviewSectionProps) {
 
     const matchingChildLocations = availableLocations.filter(
       (loc) =>
-        (loc.parentId && loc.parentId === draft?.id) ||
-        draft?.children?.some((c) => c.id === loc.id || c.name === loc.name)
+        loc.id !== draft?.id &&
+        ((loc.parentId && loc.parentId === draft?.id) ||
+          ((loc as any).parent?.id && (loc as any).parent?.id === draft?.id) ||
+          draft?.children?.some((c) => c.id === loc.id || c.name === loc.name))
     )
 
     const resolvedChildren = matchingChildLocations
       .map((loc) => {
-        const cLat = Number(loc.geoData?.latitude ?? (loc as any).lat)
-        const cLng = Number(loc.geoData?.longitude ?? (loc as any).lng)
+        const rawGeoObj = (loc.geoData as any)?.geo ?? loc.geoData ?? {}
+        const cLat = Number(rawGeoObj.latitude ?? (loc as any).lat)
+        const cLng = Number(rawGeoObj.longitude ?? (loc as any).lng)
 
         // Only include if valid coordinates exist in child geoData
         if (!cLat || !cLng || isNaN(cLat) || isNaN(cLng)) return null

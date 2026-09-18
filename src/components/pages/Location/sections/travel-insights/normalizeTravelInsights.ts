@@ -7,40 +7,39 @@ export function normalizeTravelInsights(travelInsights: any) {
     ...safeInsights,
     label: normalizeStyledField(safeInsights.label, "TRAVEL INSIGHTS", "#af6348"),
     title: normalizeStyledField(safeInsights.title, "", "#182d09"),
-    subtitle: normalizeStyledField(safeInsights.subtitle, "", "#565e69"),
-    featuredArticle:
-      safeInsights.featuredArticle ||
-      (safeInsights.articles && safeInsights.articles[0]
-        ? {
-            category: normalizeStyledField(
-              safeInsights.articles[0].category,
-              "Guide",
-              "#af6348"
-            ),
-            title: normalizeStyledField(
-              safeInsights.articles[0].title,
-              "",
-              "#F3F4F6"
-            ),
-            description: normalizeStyledField(
-              safeInsights.articles[0].description,
-              "",
-              "#9CA3AF"
-            ),
-            buttons: normalizeButtonsArray(
-              safeInsights.articles[0].buttons || [{ label: "Read Article", url: safeInsights.articles[0].href || "#" }]
-            ),
-            thumbnailMultimedia: normalizeMultimedia(
-              safeInsights.articles[0].thumbnailMultimedia ??
-                safeInsights.articles[0].imageMultimedia,
-              "image"
-            ),
-          }
-        : null),
-    backgroundMultimedia: normalizeMultimedia(
-      safeInsights.backgroundMultimedia,
-      "color"
-    ),
+    // featuredArticle:
+    //   safeInsights.featuredArticle ||
+    //   (safeInsights.articles && safeInsights.articles[0]
+    //     ? {
+    //         category: normalizeStyledField(
+    //           safeInsights.articles[0].category,
+    //           "Guide",
+    //           "#af6348"
+    //         ),
+    //         title: normalizeStyledField(
+    //           safeInsights.articles[0].title,
+    //           "",
+    //           "#F3F4F6"
+    //         ),
+    //         description: normalizeStyledField(
+    //           safeInsights.articles[0].description,
+    //           "",
+    //           "#9CA3AF"
+    //         ),
+    //         buttons: normalizeButtonsArray(
+    //           safeInsights.articles[0].buttons || [{ label: "Read Article", url: safeInsights.articles[0].href || "#" }]
+    //         ),
+    //         thumbnailMultimedia: normalizeMultimedia(
+    //           safeInsights.articles[0].thumbnailMultimedia ??
+    //             safeInsights.articles[0].imageMultimedia,
+    //           "image"
+    //         ),
+    //       }
+    //     : null),
+    // backgroundMultimedia: normalizeMultimedia(
+    //   safeInsights.backgroundMultimedia,
+    //   "color"
+    // ),
     articles: Array.isArray(safeInsights.articles)
       ? safeInsights.articles.map((art: any) => {
           const resolvedThumb =
@@ -59,7 +58,7 @@ export function normalizeTravelInsights(travelInsights: any) {
           const normArt: any = {
             category: normalizeStyledField(art.category, "Guide", "#af6348"),
             title: normalizeStyledField(art.title, "", "#F3F4F6"),
-            description: normalizeStyledField(art.description, "", "#9CA3AF"),
+            // description: normalizeStyledField(art.description, "", "#9CA3AF"),
             buttons: normalizeButtonsArray(rawButtons),
             thumbnailMultimedia: normalizeMultimedia(
               art.thumbnailMultimedia ??
@@ -92,6 +91,8 @@ export function normalizeTravelInsights(travelInsights: any) {
       : [],
   }
 
+  delete (normalizedTravelInsights as any).subtitle
+  delete (normalizedTravelInsights as any).sub_heading
   delete (normalizedTravelInsights as any).featuredImage
   delete (normalizedTravelInsights as any).featuredImageAlt
   delete (normalizedTravelInsights as any).labelStyle

@@ -334,7 +334,7 @@ export type LocationData = {
   highlights?: HighlightsSectionData
   regionExperiences?: RegionExperiencesSectionData
   infoCard?: any
-  highlightsStatistics?: any
+  statistics?: any
   why?: any
   explore?: any
   glance?: any

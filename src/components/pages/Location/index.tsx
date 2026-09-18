@@ -13,6 +13,8 @@ import {
   Search,
   ChevronLeft,
   ChevronRight,
+  Globe,
+  Sparkles,
 } from "lucide-react"
 import {
   Dialog,
@@ -28,6 +30,7 @@ import { toast } from "sonner"
 import { LOCATION_TYPES } from "@/components/pages/Location/locationTypes"
 import { ParentLocationSelect } from "@/components/pages/Location/shared/ParentLocationSelect"
 import { UniversalMultimediaPreview } from "@/components/pages/CMS/Home/shared/preview/UniversalMultimediaPreview"
+import { getSafeStringValue } from "@/components/pages/Location/shared/normalizeHelpers"
 
 const PAGE_SIZE = 12
 
@@ -186,51 +189,63 @@ export default function LocationPages() {
           {/* Location Pages */}
           <div className="grid grid-cols-1 gap-5 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
             {pages.map((page, index) => {
-              const pageName = formatPageName(page.name)
+              const pageName = page.name ? formatPageName(page.name) : "Untitled Location"
 
-              // Safe access for location data
-              const locationData = page.data
-              const geoData = page.geoData
-              const seo = page.metadata?.seo
-              const parent = page.parent
+              // 1. Basic Info Data
+              const typeName = page.type || "PLACE"
+              const parentName = page.parent?.name
+              const slugPath = page.slug ? `/${page.slug.replace(/^\//, "")}` : ""
 
-              const experienceCount =
-                locationData?.experiences?.cards?.length ?? 0
-
-              const tags = locationData?.why?.tags ?? []
-
-              const heroMultimedia = locationData?.hero?.backgroundMultimedia
-              const heroBgImage = locationData?.hero?.background_image
-              const heroVideo = locationData?.hero?.video
+              // 2. Hero Section Data
+              const heroData = page.hero || (page as any).data?.hero || {}
+              const heroMultimedia = heroData.backgroundMultimedia
+              const heroBgImage = heroData.background_image
+              const heroVideo = heroData.video
               const hasHeroMedia = Boolean(
                 (heroMultimedia &&
-                  ((heroMultimedia.type === "video" &&
-                    (heroMultimedia.videoData?.url || heroMultimedia.url)) ||
-                    (heroMultimedia.type === "image" &&
-                      (heroMultimedia.imageData?.url || heroMultimedia.url)) ||
-                    (heroMultimedia.type === "color" && heroMultimedia.color) ||
+                  ((heroMultimedia.show === "video" && (heroMultimedia.video?.url || heroMultimedia.url)) ||
+                    (heroMultimedia.show === "image" && (heroMultimedia.image?.url || heroMultimedia.url)) ||
+                    (heroMultimedia.show === "color" && heroMultimedia.color?.color) ||
                     heroMultimedia.url)) ||
                 heroBgImage ||
                 heroVideo
               )
 
+              const heroLabel = getSafeStringValue(heroData.label, "")
+              const heroTitle = getSafeStringValue(heroData.title, "")
+              const heroDesc = getSafeStringValue(heroData.description, "")
+
+              // 3. SEO Metadata
+              const rawMeta = page.metadata || (page as any).data?.metadata
+              const seoData = rawMeta?.seo || rawMeta || {}
+              const seoTitle = getSafeStringValue(seoData.title || seoData.metaTitle || seoData.pageTitle, "")
+              const seoDesc = getSafeStringValue(seoData.description || seoData.metaDescription, "")
+              const seoKeywords: string[] = Array.isArray(seoData.keywords)
+                ? seoData.keywords
+                : typeof seoData.keywords === "string"
+                ? seoData.keywords.split(",").map((k: string) => k.trim()).filter(Boolean)
+                : []
+
+              const isSeoComplete = Boolean(seoTitle && seoDesc)
+              const isSeoPartial = Boolean(seoTitle || seoDesc)
+
               return (
                 <div
                   key={`${page.id ?? "loc"}-${page.slug ?? index}`}
-                  className="group relative flex min-h-[390px] flex-col overflow-hidden rounded-2xl border border-border/60 bg-card shadow-sm transition-all duration-300 hover:-translate-y-1 hover:shadow-xl"
+                  className="group relative flex min-h-[420px] flex-col overflow-hidden rounded-2xl border border-border/70 bg-card shadow-sm transition-all duration-300 hover:-translate-y-1 hover:shadow-xl hover:border-primary/40"
                 >
-                  {/* Delete */}
+                  {/* Delete Modal Trigger */}
                   <button
                     type="button"
                     onClick={() => openDeleteModal(page)}
-                    className="absolute top-4 right-4 z-20 rounded-full bg-background/90 p-2 text-muted-foreground opacity-0 shadow-sm backdrop-blur transition-all group-hover:opacity-100 hover:bg-destructive/10 hover:text-destructive focus:opacity-100"
+                    className="absolute top-3.5 right-3.5 z-20 rounded-full bg-background/90 p-2 text-muted-foreground opacity-0 shadow-sm backdrop-blur transition-all group-hover:opacity-100 hover:bg-destructive/10 hover:text-destructive focus:opacity-100 cursor-pointer"
                     title="Delete Location Page"
                   >
                     <Trash2 className="h-4 w-4" />
                   </button>
 
-                  {/* Image / Hero */}
-                  <div className="relative h-44 overflow-hidden bg-muted">
+                  {/* HERO MEDIA & BASIC INFO BANNER */}
+                  <div className="relative h-48 overflow-hidden bg-muted">
                     {hasHeroMedia ? (
                       <UniversalMultimediaPreview
                         multimedia={heroMultimedia ?? undefined}
@@ -247,130 +262,128 @@ export default function LocationPages() {
                       </div>
                     )}
 
-                    {/* Gradient */}
-                    <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-black/70 via-black/10 to-transparent" />
+                    {/* Gradient Overlay */}
+                    <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-black/85 via-black/35 to-black/10" />
 
-                    {/* Location Type */}
-                    <div className="absolute top-4 left-4 z-10">
-                      <span className="rounded-full bg-background/90 px-3 py-1 text-[10px] font-bold tracking-wider text-foreground uppercase shadow-sm backdrop-blur">
-                        {page.type || "PLACE"}
+                    {/* Top Badges: Location Type & Parent */}
+                    <div className="absolute top-3.5 left-3.5 z-10 flex items-center gap-2 flex-wrap">
+                      <span className="rounded-full bg-background/95 px-2.5 py-0.5 text-[10px] font-bold tracking-wider text-foreground uppercase shadow-sm backdrop-blur">
+                        {typeName}
                       </span>
+                      {parentName && (
+                        <span className="rounded-full bg-black/50 px-2.5 py-0.5 text-[10px] font-medium text-white/90 backdrop-blur flex items-center gap-1">
+                          <MapPin className="h-3 w-3 text-primary" />
+                          {parentName}
+                        </span>
+                      )}
                     </div>
 
-                    {/* Location Name */}
-                    <div className="absolute right-4 bottom-4 left-4 z-10">
-                      <h3 className="text-xl font-bold text-white">
+                    {/* Bottom Hero Overlay: Name & Slug */}
+                    <div className="absolute right-3.5 bottom-3.5 left-3.5 z-10 space-y-0.5">
+                      {heroLabel && (
+                        <span className="text-[10px] font-semibold tracking-widest text-primary-foreground/90 uppercase block truncate">
+                          {heroLabel}
+                        </span>
+                      )}
+                      <h3 className="text-xl font-serif font-bold text-white leading-tight truncate">
                         {pageName}
                       </h3>
-
-                      {parent?.name && (
-                        <p className="mt-1 flex items-center gap-1 text-xs text-white/80">
-                          <MapPin className="h-3 w-3" />
-                          {parent.name}
+                      {slugPath && (
+                        <p className="text-[11px] font-mono text-white/70 truncate">
+                          {slugPath}
                         </p>
                       )}
                     </div>
                   </div>
 
-                  {/* Content */}
-                  <div className="flex flex-1 flex-col p-5">
-                    {/* Description */}
-                    <p className="line-clamp-2 text-[13px] leading-relaxed text-muted-foreground">
-                      {locationData?.shortDescription ||
-                        locationData?.description ||
-                        `Manage content and information for the ${pageName} location page.`}
-                    </p>
-
-                    {/* Tags */}
-                    {tags.length > 0 && (
-                      <div className="mt-4 flex flex-wrap gap-1.5">
-                        {tags.slice(0, 3).map((tag: string) => (
-                          <span
-                            key={tag}
-                            className="rounded-md bg-primary/8 px-2 py-1 text-[10px] font-medium text-primary"
-                          >
-                            {tag}
-                          </span>
-                        ))}
-
-                        {tags.length > 3 && (
-                          <span className="rounded-md bg-muted px-2 py-1 text-[10px] font-medium text-muted-foreground">
-                            +{tags.length - 3}
-                          </span>
-                        )}
-                      </div>
-                    )}
-
-                    {/* Location Stats */}
-                    <div className="mt-5 grid grid-cols-3 divide-x rounded-xl border border-border/50 bg-muted/30 py-3">
-                      {/* Area */}
-                      <div className="flex flex-col items-center">
-                        <span className="text-sm font-bold text-foreground">
-                          {locationData?.statistics?.area?.value ??
-                            geoData?.area?.value ??
-                            "—"}
-                        </span>
-
-                        <span className="mt-0.5 text-[10px] tracking-wide text-muted-foreground uppercase">
-                          {locationData?.statistics?.area?.unit ||
-                            geoData?.area?.unit ||
-                            "Area"}
+                  {/* CARD BODY: HERO NARRATIVE & SEO GOVERNANCE */}
+                  <div className="flex flex-1 flex-col p-4 justify-between gap-4">
+                    {/* HERO NARRATIVE */}
+                    <div className="space-y-1.5">
+                      <div className="flex items-center justify-between text-[11px] font-semibold text-muted-foreground uppercase tracking-wider">
+                        <span className="flex items-center gap-1.5">
+                          <Sparkles className="h-3.5 w-3.5 text-primary" />
+                          Hero Summary
                         </span>
                       </div>
-
-                      {/* Elevation */}
-                      <div className="flex flex-col items-center">
-                        <span className="text-sm font-bold text-foreground">
-                          {locationData?.statistics?.elevation?.value ?? "—"}
-                        </span>
-
-                        <span className="mt-0.5 text-[10px] tracking-wide text-muted-foreground uppercase">
-                          Elevation
-                        </span>
-                      </div>
-
-                      {/* Experiences */}
-                      <div className="flex flex-col items-center">
-                        <span className="text-sm font-bold text-foreground">
-                          {experienceCount}
-                        </span>
-
-                        <span className="mt-0.5 text-[10px] tracking-wide text-muted-foreground uppercase">
-                          Experiences
-                        </span>
-                      </div>
+                      <p className="line-clamp-2 text-xs leading-relaxed text-muted-foreground">
+                        {heroDesc || (heroTitle ? heroTitle : `Manage content and experience details for ${pageName}.`)}
+                      </p>
                     </div>
 
-                    {/* SEO + Coordinates */}
-                    <div className="mt-4 flex items-center justify-between text-[11px] text-muted-foreground">
-                      <div className="flex items-center gap-1">
+                    {/* SEO METADATA & STATUS CARD */}
+                    <div className="rounded-xl border border-border/60 bg-muted/20 p-3 space-y-2">
+                      <div className="flex items-center justify-between">
+                        <span className="text-[11px] font-semibold uppercase tracking-wider text-foreground flex items-center gap-1.5">
+                          <Globe className="h-3.5 w-3.5 text-primary" />
+                          SEO Meta
+                        </span>
                         <span
-                          className={`h-1.5 w-1.5 rounded-full ${
-                            seo?.title ? "bg-emerald-500" : "bg-orange-400"
+                          className={`inline-flex items-center gap-1 rounded-full px-2 py-0.5 text-[10px] font-medium ${
+                            isSeoComplete
+                              ? "bg-emerald-500/10 text-emerald-600 dark:text-emerald-400"
+                              : isSeoPartial
+                              ? "bg-amber-500/10 text-amber-600 dark:text-amber-400"
+                              : "bg-destructive/10 text-destructive"
                           }`}
-                        />
-
-                        {seo?.title ? "SEO Ready" : "SEO Incomplete"}
+                        >
+                          <span
+                            className={`h-1.5 w-1.5 rounded-full ${
+                              isSeoComplete
+                                ? "bg-emerald-500"
+                                : isSeoPartial
+                                ? "bg-amber-500"
+                                : "bg-destructive"
+                            }`}
+                          />
+                          {isSeoComplete
+                            ? "SEO Ready"
+                            : isSeoPartial
+                            ? "SEO Partial"
+                            : "SEO Missing"}
+                        </span>
                       </div>
 
-                      {geoData?.latitude && geoData?.longitude && (
-                        <span>
-                          {geoData.latitude.toFixed(2)},{" "}
-                          {geoData.longitude.toFixed(2)}
-                        </span>
+                      <p className="text-[11px] font-medium text-foreground truncate" title={seoTitle}>
+                        {seoTitle ? `Meta: "${seoTitle}"` : "No Meta Title set"}
+                      </p>
+
+                      {seoDesc ? (
+                        <p className="line-clamp-1 text-[10px] text-muted-foreground" title={seoDesc}>
+                          {seoDesc}
+                        </p>
+                      ) : (
+                        <p className="text-[10px] text-amber-600/80 italic dark:text-amber-400/80">
+                          Missing meta description
+                        </p>
+                      )}
+
+                      {seoKeywords.length > 0 && (
+                        <div className="flex flex-wrap gap-1 pt-1 border-t border-border/40">
+                          {seoKeywords.slice(0, 3).map((kw: string, i: number) => (
+                            <span
+                              key={i}
+                              className="rounded bg-primary/8 px-1.5 py-0.5 text-[9px] font-medium text-primary"
+                            >
+                              #{kw}
+                            </span>
+                          ))}
+                          {seoKeywords.length > 3 && (
+                            <span className="rounded bg-muted px-1.5 py-0.5 text-[9px] font-medium text-muted-foreground">
+                              +{seoKeywords.length - 3}
+                            </span>
+                          )}
+                        </div>
                       )}
                     </div>
 
-                    {/* Edit */}
+                    {/* EDIT BUTTON */}
                     <Link
                       to={`/locations/${page.id}/${page.slug}`}
-                      className="mt-5 inline-flex items-center justify-between rounded-lg bg-primary/10 px-4 py-2.5 text-sm font-semibold text-primary transition-all hover:bg-primary hover:text-primary-foreground"
+                      className="inline-flex items-center justify-between rounded-xl bg-primary/10 px-4 py-2.5 text-xs font-semibold text-primary transition-all hover:bg-primary hover:text-primary-foreground cursor-pointer"
                     >
-                      <span>Edit {pageName} Page</span>
-
-                      <span className="transition-transform group-hover:translate-x-1">
-                        →
-                      </span>
+                      <span>Edit {pageName}</span>
+                      <span className="transition-transform group-hover:translate-x-1">→</span>
                     </Link>
                   </div>
                 </div>

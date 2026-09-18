@@ -11,6 +11,7 @@ import { DynamicStyledField } from "@/components/pages/CMS/shared/FormControls"
 import { UniversalMultimediaForm } from "@/components/pages/CMS/shared/UniversalMultimediaForm"
 import { FormSection } from "../../shared/fields"
 import type { LocationFormSectionProps } from "../../config/locationSections"
+import { getSafeStringValue } from "../../shared/normalizeHelpers"
 import type { FAQItem } from "../../locationTypes"
 import { emptyLocation } from "../../shared/emptyLocation"
 
@@ -215,10 +216,7 @@ export function FaqForm({
             <div className="space-y-3">
               {items.map((q, index) => {
                 const isItemOpen = expandedIndex === index
-                const qTitle =
-                  typeof q.question === "object"
-                    ? (q.question as any)?.value || ""
-                    : q.question || ""
+                const qTitle = getSafeStringValue(q.question)
 
                 return (
                   <div

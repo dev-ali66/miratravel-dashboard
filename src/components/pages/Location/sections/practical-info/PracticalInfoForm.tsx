@@ -16,6 +16,7 @@ import { DynamicStyledField } from "@/components/pages/CMS/shared/FormControls"
 import { UniversalMultimediaForm } from "@/components/pages/CMS/shared/UniversalMultimediaForm"
 import { FormSection } from "../../shared/fields"
 import type { LocationFormSectionProps } from "../../config/locationSections"
+import { getSafeStringValue } from "../../shared/normalizeHelpers"
 
 export type PracticalInfoItem = {
   id?: string
@@ -221,10 +222,7 @@ export function PracticalInfoForm({
             <div className="flex flex-col gap-2.5">
               {items.map((item, idx) => {
                 const isExpanded = expandedIndex === idx
-                const itemTitleStr =
-                  typeof item.title === "object"
-                    ? item.title?.value
-                    : item.title || `Accordion Item #${idx + 1}`
+                const itemTitleStr = getSafeStringValue(item.title) || `Accordion Item #${idx + 1}`
 
                 return (
                   <div

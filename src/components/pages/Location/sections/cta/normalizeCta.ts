@@ -13,7 +13,7 @@ export function normalizeCta(ctaSection: any) {
     ...safeCta,
     label: normalizeStyledField(safeCta.label, "", "#af6348"),
     title: normalizeStyledField(safeCta.title, "", "#182d09"),
-    subtitle: normalizeStyledField(safeCta.subtitle ?? safeCta.description, "", "#565e69"),
+    description: normalizeStyledField(safeCta.description, "", "#565e69"),
     buttons: normalizeButtonsArray(rawButtons),
     imageMultimedia: normalizeMultimedia(safeCta.imageMultimedia, "image"),
     backgroundMultimedia: normalizeMultimedia(safeCta.backgroundMultimedia, "color"),

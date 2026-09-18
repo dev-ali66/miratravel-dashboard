@@ -77,6 +77,20 @@ export function normalizeMultimedia(media: any, defaultShow?: "image" | "video" 
 }
 
 /**
+ * Safely extracts a primitive string value from raw inputs,
+ * handling nested { value: ... } objects gracefully.
+ */
+export function getSafeStringValue(val: any, defaultVal: string = ""): string {
+  if (val === null || val === undefined) return defaultVal
+  if (typeof val === "string") return val
+  if (typeof val === "number" || typeof val === "boolean") return String(val)
+  if (typeof val === "object" && !Array.isArray(val)) {
+    return getSafeStringValue(val.value, defaultVal)
+  }
+  return defaultVal
+}
+
+/**
  * Normalizes any styled text/value field into the standard structured object format:
  * { value: "...", textColor: "#...", textOpacity: 1, backgroundColor: null, backgroundOpacity: 1 }
  * Prevents plain string conversion and keeps schema unified across frontend and CMS.
@@ -89,7 +103,7 @@ export function normalizeStyledField(
 ) {
   if (raw && typeof raw === "object" && !Array.isArray(raw)) {
     return {
-      value: raw.value !== undefined && raw.value !== null ? raw.value : defaultVal,
+      value: getSafeStringValue(raw.value, defaultVal),
       textColor: raw.textColor !== undefined ? raw.textColor : defaultTextColor,
       textOpacity: raw.textOpacity !== undefined ? Number(raw.textOpacity) : 1,
       backgroundColor: raw.backgroundColor !== undefined ? raw.backgroundColor : defaultBgColor,
@@ -98,7 +112,7 @@ export function normalizeStyledField(
   }
 
   return {
-    value: typeof raw === "string" ? raw : defaultVal,
+    value: getSafeStringValue(raw, defaultVal),
     textColor: defaultTextColor,
     textOpacity: 1,
     backgroundColor: defaultBgColor,
