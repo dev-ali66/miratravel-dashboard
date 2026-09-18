@@ -5,7 +5,6 @@ import { DynamicCmsButtonPreview } from "@/components/pages/CMS/shared/DynamicCm
 import { UniversalMultimediaPreview } from "@/components/pages/CMS/Home/shared/preview/UniversalMultimediaPreview"
 import type { LocationPreviewSectionProps } from "../../config/locationSections"
 import type { RegionExperienceItemData } from "../../locationTypes"
-import { MapPin } from "lucide-react"
 
 export function RegionExperiencesPreview({ draft }: LocationPreviewSectionProps) {
   const regionExperiences =

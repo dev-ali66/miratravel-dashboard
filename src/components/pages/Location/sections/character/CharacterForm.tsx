@@ -5,7 +5,7 @@
 ===================================================== */
 
 import { useState } from "react"
-import { Plus, Trash2, ChevronDown, ChevronUp, Sparkles, Layers, Link as LinkIcon } from "lucide-react"
+import { Plus, Trash2, ChevronDown, ChevronUp, Sparkles, Layers } from "lucide-react"
 import { DynamicStyledField } from "@/components/pages/CMS/shared/FormControls"
 import { UniversalMultimediaForm } from "@/components/pages/CMS/shared/UniversalMultimediaForm"
 import { ButtonsField, type CmsButton } from "@/components/pages/CMS/shared/ButtonsField"
@@ -23,68 +23,6 @@ export type CharacterItem = {
   multimedia?: any
 }
 
-const defaultCharacterItems: CharacterItem[] = [
-  {
-    id: "alpine-wilderness",
-    title: {
-      value: "Untouched Alpine Wilderness",
-      textColor: "#182d09",
-      textOpacity: 1,
-      backgroundColor: null,
-      backgroundOpacity: 1,
-    },
-    description: {
-      value: "The Accursed Mountains remained almost entirely off-limits to outsiders until the early 2000s. Today they offer trekking with a frontier quality that the Alps lost generations ago — without the lifts or crowds.",
-      textColor: "#565e69",
-      textOpacity: 1,
-      backgroundColor: null,
-      backgroundOpacity: 1,
-    },
-    href: "/destinations/albania/north-albania/wilderness",
-    linkText: "Read More",
-    multimedia: null,
-  },
-  {
-    id: "highland-culture",
-    title: {
-      value: "Living Highland Culture",
-      textColor: "#182d09",
-      textOpacity: 1,
-      backgroundColor: null,
-      backgroundOpacity: 1,
-    },
-    description: {
-      value: "The Kanun — a 15th-century code of highland law governing hospitality, marriage, and property — is still informally observed in remote villages.",
-      textColor: "#565e69",
-      textOpacity: 1,
-      backgroundColor: null,
-      backgroundOpacity: 1,
-    },
-    href: "/destinations/albania/north-albania/culture",
-    linkText: "Read More",
-    multimedia: null,
-  },
-  {
-    id: "slow-journeys",
-    title: {
-      value: "The Great Slow Journeys",
-      textColor: "#182d09",
-      textOpacity: 1,
-      backgroundColor: null,
-      backgroundOpacity: 1,
-    },
-    description: {
-      value: "The Komani Lake ferry and the Valbona-to-Theth trail have become essential experiences of the northern Balkans. Both remain unhurried and impossible to replicate.",
-      textColor: "#565e69",
-      textOpacity: 1,
-      backgroundColor: null,
-      backgroundOpacity: 1,
-    },
-    href: "/destinations/albania/north-albania/slow-journeys",
-    linkText: "Read More",
-    multimedia: null,
-  },
-]
 
 export function CharacterForm({
   draft,

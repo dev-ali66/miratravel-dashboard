@@ -3,10 +3,6 @@ import type { ReactNode } from "react"
 import { fieldCssStyle } from "./fieldStyle"
 import { UniversalMultimediaPreview } from "./UniversalMultimediaPreview"
 
-const PREVIEW_IMAGE_SOURCE =
-  "https://images.unsplash.com/photo-1530789253388-582c481c54b0?auto=format&fit=crop&w=1200&q=85"
-const PREVIEW_VIDEO_SOURCE =
-  "https://cdn.coverr.co/videos/coverr-aerial-view-of-a-beach-1576/1080p.mp4"
 
 export type HeroPreviewProps = {
   section: HomeSection

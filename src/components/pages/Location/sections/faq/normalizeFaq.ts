@@ -9,7 +9,7 @@ export function normalizeFaq(faqSection: any) {
       ? safeFaq.questions
       : []
 
-  const normalizedItems = rawItems.map((q: any, idx: number) => {
+  const normalizedItems = rawItems.map((q: any) => {
     const normItem = {
       question: normalizeStyledField(q.question, "", "#182d09"),
       answer: normalizeStyledField(q.answer, "", "#565e69"),

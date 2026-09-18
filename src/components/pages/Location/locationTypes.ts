@@ -1,13 +1,13 @@
 import type { CmsButton } from "@/components/pages/CMS/shared/ButtonsField"
 
 export type ExperienceCard = {
-  id: number
+  id: number | string
   image: string
   imageMultimedia?: Record<string, any>
   price: string
-  title: string
+  title: any
   category: string
-  subtitle: string
+  subtitle: any
   action_text: string
   button?: {
     label?: string
@@ -17,7 +17,7 @@ export type ExperienceCard = {
     textColor?: string
   }
   buttons?: CmsButton[]
-  description: string
+  description: any
 }
 
 export type SignatureExperienceItem = {

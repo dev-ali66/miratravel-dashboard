@@ -80,7 +80,7 @@ export function PracticalInfoPreview({ draft }: LocationPreviewSectionProps) {
                 <UniversalMultimediaPreview
                   multimedia={featuredMedia}
                   fallbackColor="#182d09"
-                  mode="container"
+                  mode="inline"
                   className="w-full h-full object-cover transition-transform duration-700 hover:scale-105"
                 />
               </div>
@@ -137,7 +137,7 @@ export function PracticalInfoPreview({ draft }: LocationPreviewSectionProps) {
                         <div className="pb-6">
                           <DynamicStyledTextPreview
                             as="p"
-                            type="richtext"
+                            isRichText
                             data={item.content}
                             fallbackColor="#565e69"
                             className="w-full md:text-sm text-xs font-normal leading-[18px] md:leading-[22.5px] text-[#565e69]"

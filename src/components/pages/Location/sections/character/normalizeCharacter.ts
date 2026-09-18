@@ -9,7 +9,7 @@ export function normalizeCharacter(regionCharacter: any) {
       ? safeChar.pillars
       : []
 
-  const normalizedItems = rawItems.map((p: any, idx: number) => {
+  const normalizedItems = rawItems.map((p: any) => {
     const rawButtons = Array.isArray(p.buttons) && p.buttons.length > 0
       ? p.buttons
       : p.button

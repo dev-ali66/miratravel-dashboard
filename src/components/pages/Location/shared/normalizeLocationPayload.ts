@@ -44,12 +44,6 @@ export function normalizeLocationPayload(
   const activeSectionKeys = getSectionsForLocationType(safeDraft.type)
   const isSectionActive = (key: string) => activeSectionKeys.includes(key as any)
 
-  const hasSectionData = (rawDraftVal: any, rawDataVal: any) => {
-    return (
-      (rawDraftVal && typeof rawDraftVal === "object" && Object.keys(rawDraftVal).length > 0) ||
-      (rawDataVal && typeof rawDataVal === "object" && Object.keys(rawDataVal).length > 0)
-    )
-  }
 
   // Raw section data extraction
   const heroData = safeDraft.hero ?? safeData.hero ?? {}
