@@ -1,63 +1,58 @@
+import { DynamicStyledField } from "../../../shared/FormControls"
 import type { FooterFormSectionProps } from "./sectionTypes"
 
 export const ContactFormSection = ({ context }: FooterFormSectionProps) => {
-  const { content, updateContent, TextField, TextAreaField } = context
-
+  const { content, updateContent } = context
   const contact = content.contact ?? {}
 
   return (
-    <div className="rounded-lg border border-border/60 p-3">
-      <p className="mb-3 text-xs font-semibold text-foreground">Contact</p>
-
-      <div className="flex flex-col gap-3">
-        <TextField
-          label="Title"
+    <div className="space-y-6">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <DynamicStyledField
+          label="Contact Title"
+          type="text"
+          fieldName="footer.contact.title"
           value={contact.title ?? ""}
-          onChange={(value) =>
+          onChange={(val) =>
             updateContent({
-              contact: {
-                ...(content.contact ?? {}),
-                title: value,
-              },
+              contact: { ...contact, title: typeof val === "object" ? val.value : val },
             })
           }
         />
 
-        <TextField
-          label="Email"
+        <DynamicStyledField
+          label="Email Address"
+          type="text"
+          fieldName="footer.contact.email"
           value={contact.email ?? ""}
-          onChange={(value) =>
+          onChange={(val) =>
             updateContent({
-              contact: {
-                ...(content.contact ?? {}),
-                email: value,
-              },
+              contact: { ...contact, email: typeof val === "object" ? val.value : val },
             })
           }
         />
 
-        <TextField
-          label="Phone"
+        <DynamicStyledField
+          label="Phone Number"
+          type="text"
+          fieldName="footer.contact.phone"
           value={contact.phone ?? ""}
-          onChange={(value) =>
+          onChange={(val) =>
             updateContent({
-              contact: {
-                ...(content.contact ?? {}),
-                phone: value,
-              },
+              contact: { ...contact, phone: typeof val === "object" ? val.value : val },
             })
           }
         />
 
-        <TextAreaField
-          label="Address"
+        <DynamicStyledField
+          label="Physical Address"
+          type="textarea"
+          rows={2}
+          fieldName="footer.contact.address"
           value={contact.address ?? ""}
-          onChange={(value) =>
+          onChange={(val) =>
             updateContent({
-              contact: {
-                ...(content.contact ?? {}),
-                address: value,
-              },
+              contact: { ...contact, address: typeof val === "object" ? val.value : val },
             })
           }
         />
@@ -65,3 +60,4 @@ export const ContactFormSection = ({ context }: FooterFormSectionProps) => {
     </div>
   )
 }
+

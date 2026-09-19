@@ -1,114 +1,77 @@
-import { ColorField } from "../../../shared/FormControls"
-
+import { ColorField, DynamicStyledField } from "../../../shared/FormControls"
 import type { FooterFormSectionProps } from "./sectionTypes"
 
 export const SocialAppearanceFormSection = ({
   context,
 }: FooterFormSectionProps) => {
-  const { theme, updateTheme, TextField } = context
+  const { theme, updateTheme } = context
 
   return (
-    <div className="rounded-lg border border-border/60 p-3">
-      <p className="mb-1 text-xs font-semibold text-foreground">
-        Social Appearance
+    <div className="space-y-6">
+      <p className="text-xs text-muted-foreground">
+        Global social settings. Individual social items can override these values.
       </p>
 
-      <p className="mb-3 text-[11px] text-muted-foreground">
-        Global social settings. Individual social items can override these
-        values.
-      </p>
-
-      <div className="flex flex-col gap-3">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         <ColorField
-          label="Background color"
+          label="Background Color"
           value={theme.socialBackgroundColor ?? "rgba(255,255,255,0.10)"}
-          onChange={(value) =>
-            updateTheme({
-              socialBackgroundColor: value,
-            })
-          }
+          onChange={(value) => updateTheme({ socialBackgroundColor: value })}
         />
 
         <ColorField
-          label="Icon / text color"
+          label="Icon / Text Color"
           value={theme.socialTextColor ?? "#FFFFFF"}
-          onChange={(value) =>
-            updateTheme({
-              socialTextColor: value,
-            })
-          }
+          onChange={(value) => updateTheme({ socialTextColor: value })}
         />
 
         <ColorField
-          label="Border color"
+          label="Border Color"
           value={theme.socialBorderColor ?? "transparent"}
-          onChange={(value) =>
-            updateTheme({
-              socialBorderColor: value,
-            })
-          }
+          onChange={(value) => updateTheme({ socialBorderColor: value })}
         />
 
         <ColorField
-          label="Hover background color"
+          label="Hover Background Color"
           value={theme.socialHoverBackgroundColor ?? "rgba(255,255,255,0.18)"}
-          onChange={(value) =>
-            updateTheme({
-              socialHoverBackgroundColor: value,
-            })
-          }
+          onChange={(value) => updateTheme({ socialHoverBackgroundColor: value })}
         />
 
         <ColorField
-          label="Hover icon / text color"
+          label="Hover Icon / Text Color"
           value={theme.socialHoverTextColor ?? "#FFFFFF"}
-          onChange={(value) =>
-            updateTheme({
-              socialHoverTextColor: value,
-            })
-          }
+          onChange={(value) => updateTheme({ socialHoverTextColor: value })}
         />
 
-        <TextField
-          label="Icon size"
+        <DynamicStyledField
+          type="text"
+          label="Icon Size"
           value={theme.socialIconSize ?? "14px"}
-          onChange={(value) =>
-            updateTheme({
-              socialIconSize: value,
-            })
-          }
+          onChange={(value) => updateTheme({ socialIconSize: typeof value === "object" ? value.value : value })}
         />
 
-        <TextField
-          label="Item size"
+        <DynamicStyledField
+          type="text"
+          label="Item Size"
           value={theme.socialItemSize ?? "32px"}
-          onChange={(value) =>
-            updateTheme({
-              socialItemSize: value,
-            })
-          }
+          onChange={(value) => updateTheme({ socialItemSize: typeof value === "object" ? value.value : value })}
         />
 
-        <TextField
-          label="Border radius"
+        <DynamicStyledField
+          type="text"
+          label="Border Radius"
           value={theme.socialBorderRadius ?? "4px"}
-          onChange={(value) =>
-            updateTheme({
-              socialBorderRadius: value,
-            })
-          }
+          onChange={(value) => updateTheme({ socialBorderRadius: typeof value === "object" ? value.value : value })}
         />
 
-        <TextField
+        <DynamicStyledField
+          type="text"
           label="Gap"
           value={theme.socialGap ?? "8px"}
-          onChange={(value) =>
-            updateTheme({
-              socialGap: value,
-            })
-          }
+          onChange={(value) => updateTheme({ socialGap: typeof value === "object" ? value.value : value })}
         />
       </div>
     </div>
   )
 }
+

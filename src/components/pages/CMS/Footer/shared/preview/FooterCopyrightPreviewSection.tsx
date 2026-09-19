@@ -1,11 +1,12 @@
 import type { FooterPreviewSectionProps } from "./sectionTypes"
+import { getSafeString } from "../../../shared/FormControls"
 
 export const FooterCopyrightPreviewSection = ({
   context,
 }: FooterPreviewSectionProps) => {
   const { theme, content } = context
 
-  const copyrightText = content.copyright || "© 2026 Mira. All rights reserved."
+  const copyrightText = getSafeString(content.copyright) || "© 2026 Mira. All rights reserved."
 
   return (
     <div className="w-full py-4 md:py-5 xl:py-6">
@@ -22,3 +23,4 @@ export const FooterCopyrightPreviewSection = ({
     </div>
   )
 }
+

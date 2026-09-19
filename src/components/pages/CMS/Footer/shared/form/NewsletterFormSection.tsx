@@ -1,50 +1,45 @@
+import { DynamicStyledField } from "../../../shared/FormControls"
 import type { FooterFormSectionProps } from "./sectionTypes"
 
 export const NewsletterFormSection = ({ context }: FooterFormSectionProps) => {
-  const { content, updateContent, TextField } = context
-
+  const { content, updateContent } = context
   const newsletter = content.newsletter ?? {}
 
   return (
-    <div className="rounded-lg border border-border/60 p-3">
-      <p className="mb-3 text-xs font-semibold text-foreground">Newsletter</p>
-
-      <div className="flex flex-col gap-3">
-        <TextField
-          label="Text"
+    <div className="space-y-6">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <DynamicStyledField
+          label="Call to Action Text"
+          type="text"
+          fieldName="footer.newsletter.text"
           value={newsletter.text ?? ""}
-          onChange={(value) =>
+          onChange={(val) =>
             updateContent({
-              newsletter: {
-                ...(content.newsletter ?? {}),
-                text: value,
-              },
+              newsletter: { ...newsletter, text: typeof val === "object" ? val.value : val },
             })
           }
         />
 
-        <TextField
-          label="Link text"
+        <DynamicStyledField
+          label="Link Text"
+          type="text"
+          fieldName="footer.newsletter.linkText"
           value={newsletter.linkText ?? ""}
-          onChange={(value) =>
+          onChange={(val) =>
             updateContent({
-              newsletter: {
-                ...(content.newsletter ?? {}),
-                linkText: value,
-              },
+              newsletter: { ...newsletter, linkText: typeof val === "object" ? val.value : val },
             })
           }
         />
 
-        <TextField
-          label="URL"
+        <DynamicStyledField
+          label="Target URL"
+          type="text"
+          fieldName="footer.newsletter.url"
           value={newsletter.url ?? ""}
-          onChange={(value) =>
+          onChange={(val) =>
             updateContent({
-              newsletter: {
-                ...(content.newsletter ?? {}),
-                url: value,
-              },
+              newsletter: { ...newsletter, url: typeof val === "object" ? val.value : val },
             })
           }
         />
@@ -52,3 +47,4 @@ export const NewsletterFormSection = ({ context }: FooterFormSectionProps) => {
     </div>
   )
 }
+

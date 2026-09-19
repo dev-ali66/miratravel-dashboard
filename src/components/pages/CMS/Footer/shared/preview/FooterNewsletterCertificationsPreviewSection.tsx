@@ -1,5 +1,6 @@
 import { ArrowRight } from "lucide-react"
 import { UniversalMultimediaPreview } from "../../../Home/shared/preview/UniversalMultimediaPreview"
+import { getSafeString } from "../../../shared/FormControls"
 import type { FooterPreviewSectionProps } from "./sectionTypes"
 
 export const FooterNewsletterCertificationsPreviewSection = ({
@@ -7,16 +8,12 @@ export const FooterNewsletterCertificationsPreviewSection = ({
 }: FooterPreviewSectionProps) => {
   const { theme, content } = context
 
-  const newsletter = content.newsletter ?? {
-    text: "Stay up to date:",
-    linkText: "Subscribe to the Newsletter",
-    url: "/newsletter",
-  }
-
+  const newsletter = content.newsletter ?? {}
   const certifications = content.certifications ?? []
 
-  const text = newsletter.text || "Stay up to date:"
-  const linkText = newsletter.linkText || "Subscribe to the Newsletter"
+  const text = getSafeString(newsletter.text, "Stay up to date:")
+  const linkText = getSafeString(newsletter.linkText, "Subscribe to the Newsletter")
+  const url = getSafeString(newsletter.url, "/newsletter")
 
   return (
     <div className="w-full my-8 lg:my-0">
@@ -32,7 +29,7 @@ export const FooterNewsletterCertificationsPreviewSection = ({
             <span style={{ color: theme.mutedTextColor }}>{text}</span>
 
             <a
-              href={newsletter.url || "#"}
+              href={url || "#"}
               className="group relative inline-flex items-center gap-1.5 font-medium transition-opacity duration-300 hover:opacity-90 focus-visible:outline-none"
               style={{
                 color: theme.accentColor || "#C97B4A",
@@ -51,38 +48,47 @@ export const FooterNewsletterCertificationsPreviewSection = ({
           {/* Partner Certification Badges */}
           {certifications.length > 0 ? (
             <div className="flex flex-wrap items-center justify-center xl:gap-3 md:gap-2.5 gap-2">
-              {certifications.map((certification, index) => (
-                <a
-                  key={index}
-                  href={certification.url || "#"}
-                  target={certification.url ? "_blank" : undefined}
-                  rel={certification.url ? "noreferrer" : undefined}
-                  className="block transition-opacity duration-300 hover:opacity-100 opacity-90"
-                  title={certification.name ?? ""}
-                >
-                  {certification.image ? (
-                    <UniversalMultimediaPreview
-                      multimedia={{
-                        type: "image",
-                        url: certification.image,
-                        alt: certification.alt ?? certification.name ?? "",
-                      }}
-                      fallbackAlt={certification.alt ?? certification.name ?? ""}
-                      className="xl:h-8 md:h-7 h-6 w-auto object-contain"
-                      containerClassName="xl:h-8 md:h-7 h-6 w-auto"
-                    />
-                  ) : certification.name ? (
-                    <span
-                      className="text-xs"
-                      style={{
-                        color: theme.mutedTextColor,
-                      }}
-                    >
-                      {certification.name}
-                    </span>
-                  ) : null}
-                </a>
-              ))}
+              {certifications.map((certification, index) => {
+                const name = getSafeString(certification.name)
+                const alt = getSafeString(certification.alt) || name
+                const certUrl = getSafeString(certification.url)
+                const imgSrc = typeof certification.image === "object"
+                  ? (certification.image as any)?.url || (certification.image as any)?.value
+                  : certification.image
+
+                return (
+                  <a
+                    key={index}
+                    href={certUrl || "#"}
+                    target={certUrl ? "_blank" : undefined}
+                    rel={certUrl ? "noreferrer" : undefined}
+                    className="block transition-opacity duration-300 hover:opacity-100 opacity-90"
+                    title={name}
+                  >
+                    {imgSrc ? (
+                      <UniversalMultimediaPreview
+                        multimedia={{
+                          type: "image",
+                          url: imgSrc,
+                          alt,
+                        }}
+                        fallbackAlt={alt}
+                        className="xl:h-8 md:h-7 h-6 w-auto object-contain"
+                        containerClassName="xl:h-8 md:h-7 h-6 w-auto"
+                      />
+                    ) : name ? (
+                      <span
+                        className="text-xs"
+                        style={{
+                          color: theme.mutedTextColor,
+                        }}
+                      >
+                        {name}
+                      </span>
+                    ) : null}
+                  </a>
+                )
+              })}
             </div>
           ) : null}
         </div>
@@ -90,3 +96,4 @@ export const FooterNewsletterCertificationsPreviewSection = ({
     </div>
   )
 }
+

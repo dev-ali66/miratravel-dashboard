@@ -1,32 +1,22 @@
 import { DynamicStyledField } from "../../../shared/FormControls"
 import { RepeaterList } from "../../../shared/RepeaterList"
-
 import type { FooterCertification } from "../../footerTypes"
 import type { FooterFormSectionProps } from "./sectionTypes"
 
 export const CertificationsFormSection = ({
   context,
 }: FooterFormSectionProps) => {
-  const { content, updateContent, TextField } = context
-
+  const { content, updateContent } = context
   const certifications = content.certifications ?? []
 
   return (
-    <div className="rounded-lg border border-border/60 p-3">
-      <p className="mb-3 text-xs font-semibold text-foreground">
-        Certifications
-      </p>
-
+    <div className="space-y-6">
       <RepeaterList<FooterCertification>
         items={certifications}
-        onChange={(newCertifications) =>
-          updateContent({
-            certifications: newCertifications,
-          })
-        }
-        addLabel="Add certification"
-        emptyLabel="No certifications."
-        itemLabel={(item) => item.name || "Untitled certification"}
+        onChange={(newCertifications) => updateContent({ certifications: newCertifications })}
+        addLabel="Add Certification / Badge"
+        emptyLabel="No certifications added."
+        itemLabel={(item) => item.name || "Untitled Certification"}
         newItem={() => ({
           name: "",
           image: "",
@@ -34,49 +24,54 @@ export const CertificationsFormSection = ({
           alt: "",
         })}
         renderItem={(certification, updateCertification) => (
-          <div className="flex flex-col gap-3">
-            <TextField
-              label="Name"
-              value={certification.name ?? ""}
-              onChange={(value) =>
+          <div className="space-y-4 p-1">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <DynamicStyledField
+                label="Certification Name"
+                type="text"
+                value={certification.name ?? ""}
+                onChange={(val) =>
+                  updateCertification({
+                    ...certification,
+                    name: typeof val === "object" ? val.value : val,
+                  })
+                }
+              />
+
+              <DynamicStyledField
+                label="URL"
+                type="text"
+                value={certification.url ?? ""}
+                onChange={(val) =>
+                  updateCertification({
+                    ...certification,
+                    url: typeof val === "object" ? val.value : val,
+                  })
+                }
+              />
+            </div>
+
+            <DynamicStyledField
+              type="image"
+              label="Badge / Logo Image"
+              value={certification.image ?? ""}
+              fieldName="footerCertificationImage"
+              onChange={(val) =>
                 updateCertification({
                   ...certification,
-                  name: value,
+                  image: typeof val === "object" ? val.url || val.value || val : val,
                 })
               }
             />
 
             <DynamicStyledField
-              type="image"
-              label="Image"
-              value={certification.image ?? ""}
-              fieldName="footerCertificationImage"
-              onChange={(value) =>
-                updateCertification({
-                  ...certification,
-                  image: value,
-                })
-              }
-            />
-
-            <TextField
-              label="Alt text"
+              label="Alt Text"
+              type="text"
               value={certification.alt ?? ""}
-              onChange={(value) =>
+              onChange={(val) =>
                 updateCertification({
                   ...certification,
-                  alt: value,
-                })
-              }
-            />
-
-            <TextField
-              label="URL"
-              value={certification.url ?? ""}
-              onChange={(value) =>
-                updateCertification({
-                  ...certification,
-                  url: value,
+                  alt: typeof val === "object" ? val.value : val,
                 })
               }
             />
@@ -86,3 +81,4 @@ export const CertificationsFormSection = ({
     </div>
   )
 }
+

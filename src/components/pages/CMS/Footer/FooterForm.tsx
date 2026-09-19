@@ -1,16 +1,9 @@
 import { useState } from "react"
-import { ChevronDown, ChevronUp } from "lucide-react"
+import { Loader2, Save, Terminal } from "lucide-react"
 
 import { useCmsPage } from "../shared/useCmsPage"
-import { SaveBar } from "../shared/SaveBar"
+import { FormSection } from "../shared/FormControls"
 import { SeoForm } from "../shared/SeoForm"
-import { CollapsibleSectionCard } from "../shared/CollapsibleSectionCard"
-
-import {
-  DynamicStyledField,
-  type TextAreaFieldProps as SharedTextAreaFieldProps,
-  type TextFieldProps as SharedTextFieldProps,
-} from "../shared/FormControls"
 
 import {
   footerFormSectionOrder,
@@ -18,13 +11,6 @@ import {
 } from "./config/footerSections"
 import type { FooterPageData } from "./footerTypes"
 import type { FooterFormSectionContext } from "./shared/form/sectionTypes"
-const TextField = (props: SharedTextFieldProps) => (
-  <DynamicStyledField type="text" {...props} />
-)
-
-const TextAreaField = (props: SharedTextAreaFieldProps) => (
-  <DynamicStyledField type="textarea" {...props} />
-)
 
 export const FooterForm = () => {
   const [openSections, setOpenSections] = useState<Record<string, boolean>>({
@@ -32,22 +18,10 @@ export const FooterForm = () => {
   })
 
   const toggleSection = (key: string) => {
-    setOpenSections((current) => ({
-      ...current,
-      [key]: !current[key],
-    }))
-  }
-
-  const isOpen = (key: string) => {
-    return openSections[key] ?? false
-  }
-
-  const sectionIndexLabel = (index: number) => {
-    return String(index + 1).padStart(2, "0")
-  }
-
-  const sectionKeyLabel = (key: string) => {
-    return key.replaceAll("_", " ")
+    setOpenSections((current) => {
+      const isCurrentlyOpen = !!current[key]
+      return isCurrentlyOpen ? {} : { [key]: true }
+    })
   }
 
   const { page, setPage, isLoading, isSaving, save } =
@@ -95,105 +69,107 @@ export const FooterForm = () => {
     content,
     updateTheme,
     updateContent,
-    TextField,
-    TextAreaField,
+  }
+
+  if (isLoading) {
+    return (
+      <div className="flex min-h-[400px] flex-col items-center justify-center p-10">
+        <Loader2 className="h-6 w-6 animate-spin text-muted-foreground" />
+        <p className="mt-2 text-xs text-muted-foreground">
+          Loading Footer editor data...
+        </p>
+      </div>
+    )
   }
 
   return (
-    <div className="flex flex-col">
-      <SaveBar
-        title="Footer"
-        description="Manage footer content, colors, background, links, contact, newsletter, social icons and certifications."
-        onSave={save}
-        isSaving={isSaving}
-        isLoading={isLoading}
-      />
-
-      <div className="flex flex-col gap-6 p-4">
-        <div className="flex flex-col gap-3">
-          <div className="px-1">
-            <p className="text-xs font-semibold tracking-wide text-muted-foreground uppercase">
-              Footer Sections
+    <div className="flex min-h-full flex-col">
+      {/* Top Header Bar */}
+      <div className="sticky top-0 z-20 border-b border-border/60 bg-card/95 px-5 py-4 backdrop-blur">
+        <div className="flex items-center justify-between gap-4">
+          <div className="min-w-0">
+            <p className="text-[10px] font-medium tracking-[0.2em] text-muted-foreground uppercase">
+              CMS Page
             </p>
-
-            <p className="mt-1 text-[11px] text-muted-foreground">
-              Click a section to expand or collapse its settings.
-            </p>
+            <h2 className="mt-1 truncate text-base font-semibold">
+              Edit Footer Page
+            </h2>
           </div>
 
-          {footerFormSectionOrder.map((key, index) => {
-            const sectionEntry = footerFormSectionRegistry[key]
+          <div className="flex items-center gap-2">
+            <button
+              type="button"
+              onClick={() => {
+                console.log("📍 [FOOTER CMS DATA]:", page)
+              }}
+              className="flex shrink-0 items-center gap-1.5 rounded-lg border border-border/80 bg-background px-3 py-2 text-xs font-medium text-foreground transition hover:bg-muted cursor-pointer"
+              title="Inspect clean payload in console (F12)"
+            >
+              <Terminal className="h-3.5 w-3.5 text-primary" />
+              Console Data
+            </button>
 
-            const FormSection = sectionEntry.form
-
-            return (
-              <div
-                key={key}
-                className="overflow-hidden rounded-lg border border-border/60"
-              >
-                <button
-                  type="button"
-                  onClick={() => toggleSection(key)}
-                  className="flex w-full items-center justify-between gap-3 px-4 py-3 text-left transition-colors hover:bg-muted/40"
-                >
-                  <div className="flex min-w-0 items-center gap-3">
-                    <span className="flex h-7 min-w-7 items-center justify-center rounded-md bg-muted px-2 text-[10px] font-semibold text-muted-foreground">
-                      {sectionIndexLabel(index)}
-                    </span>
-
-                    <div className="min-w-0">
-                      <p className="text-sm font-semibold">
-                        {sectionEntry.label}
-                      </p>
-
-                      <p className="truncate text-[10px] text-muted-foreground">
-                        {sectionKeyLabel(key)}
-                      </p>
-                    </div>
-                  </div>
-
-                  {isOpen(key) ? (
-                    <ChevronUp className="h-4 w-4 shrink-0 text-muted-foreground" />
-                  ) : (
-                    <ChevronDown className="h-4 w-4 shrink-0 text-muted-foreground" />
-                  )}
-                </button>
-
-                {isOpen(key) && (
-                  <div className="border-t border-border/60 p-4">
-                    <FormSection context={sectionContext} />
-                  </div>
-                )}
-              </div>
-            )
-          })}
-
-          <CollapsibleSectionCard
-            title="SEO Metadata"
-            meta="seo"
-            indexLabel="SEO"
-            isOpen={isOpen("seo")}
-            onToggle={() => toggleSection("seo")}
-          >
-            <SeoForm
-              metadata={page?.metadata}
-              onChange={(metadata) =>
-                setPage({
-                  ...page,
-                  metadata: {
-                    ...metadata,
-                    title: metadata.title ?? "",
-                    description: metadata.description ?? "",
-                  },
-                  data: {
-                    ...(page?.data ?? {}),
-                  },
-                })
-              }
-            />
-          </CollapsibleSectionCard>
+            <button
+              type="button"
+              onClick={save}
+              disabled={isSaving}
+              className="flex shrink-0 items-center gap-2 rounded-lg bg-primary px-4 py-2 text-xs font-medium text-primary-foreground transition hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-50 cursor-pointer"
+            >
+              {isSaving ? (
+                <Loader2 className="h-4 w-4 animate-spin" />
+              ) : (
+                <Save className="h-4 w-4" />
+              )}
+              Save
+            </button>
+          </div>
         </div>
+      </div>
+
+      {/* Accordion Sections */}
+      <div className="flex-1 divide-y divide-border/60">
+        {footerFormSectionOrder.map((key, index) => {
+          const sectionEntry = footerFormSectionRegistry[key]
+          const FormSectionComp = sectionEntry.form
+
+          return (
+            <FormSection
+              key={key}
+              title={sectionEntry.label}
+              active={Boolean(openSections[key])}
+              onClick={() => toggleSection(key)}
+              sectionNumber={index + 1}
+            >
+              <FormSectionComp context={sectionContext} />
+            </FormSection>
+          )
+        })}
+
+        <FormSection
+          title="SEO Metadata"
+          active={Boolean(openSections["seo"])}
+          onClick={() => toggleSection("seo")}
+          sectionNumber={footerFormSectionOrder.length + 1}
+        >
+          <SeoForm
+            metadata={page?.metadata}
+            onChange={(metadata) =>
+              setPage({
+                ...page,
+                metadata: {
+                  ...metadata,
+                  title: metadata.title ?? "",
+                  description: metadata.description ?? "",
+                },
+                data: {
+                  ...(page?.data ?? {}),
+                },
+              })
+            }
+          />
+        </FormSection>
       </div>
     </div>
   )
 }
+

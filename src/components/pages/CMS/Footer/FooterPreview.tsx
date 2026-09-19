@@ -1,4 +1,5 @@
 import { useCmsDraft } from "../shared/CmsDraftContext"
+import { getSafeString } from "../shared/FormControls"
 
 import {
   footerPreviewSectionOrder,
@@ -22,7 +23,11 @@ export const FooterPreview = ({
   const content = data?.content ?? {}
 
   const rawBgColor =
-    theme.backgroundColor ?? theme.footerBackgroundMultimedia?.color
+    getSafeString(theme.backgroundColor) ||
+    (typeof theme.footerBackgroundMultimedia?.color === "object"
+      ? theme.footerBackgroundMultimedia?.color?.color
+      : getSafeString(theme.footerBackgroundMultimedia?.color)) ||
+    "#16330D"
 
   const resolvedTheme = {
     backgroundColor:
@@ -39,57 +44,62 @@ export const FooterPreview = ({
       theme.footerBrandMultimedia ??
       theme.navbarBrandMultimedia,
 
-    textColor: theme.textColor ?? "#FFFFFF",
+    textColor: getSafeString(theme.textColor, "#FFFFFF"),
 
-    headingColor: theme.headingColor ?? "#FFFFFF",
+    headingColor: getSafeString(theme.headingColor, "#FFFFFF"),
 
-    mutedTextColor: theme.mutedTextColor ?? "rgba(255,255,255,0.72)",
+    mutedTextColor: getSafeString(theme.mutedTextColor, "rgba(255,255,255,0.72)"),
 
-    accentColor: theme.accentColor ?? "#C97B4A",
+    accentColor: getSafeString(theme.accentColor, "#C97B4A"),
 
-    borderColor: theme.borderColor ?? "rgba(255,255,255,0.15)",
+    borderColor: getSafeString(theme.borderColor, "rgba(255,255,255,0.15)"),
 
-    bottomTextColor: theme.bottomTextColor ?? "rgba(255,255,255,0.60)",
+    bottomTextColor: getSafeString(theme.bottomTextColor, "rgba(255,255,255,0.60)"),
 
-    socialBackgroundColor:
-      theme.socialBackgroundColor ?? "rgba(255,255,255,0.10)",
+    socialBackgroundColor: getSafeString(
+      theme.socialBackgroundColor,
+      "rgba(255,255,255,0.10)"
+    ),
 
-    socialTextColor: theme.socialTextColor ?? "#FFFFFF",
+    socialTextColor: getSafeString(theme.socialTextColor, "#FFFFFF"),
 
-    socialBorderColor: theme.socialBorderColor ?? "transparent",
+    socialBorderColor: getSafeString(theme.socialBorderColor, "transparent"),
 
-    socialHoverBackgroundColor:
-      theme.socialHoverBackgroundColor ?? "rgba(255,255,255,0.18)",
+    socialHoverBackgroundColor: getSafeString(
+      theme.socialHoverBackgroundColor,
+      "rgba(255,255,255,0.18)"
+    ),
 
-    socialHoverTextColor: theme.socialHoverTextColor ?? "#FFFFFF",
+    socialHoverTextColor: getSafeString(theme.socialHoverTextColor, "#FFFFFF"),
 
-    socialIconSize: theme.socialIconSize ?? "14px",
+    socialIconSize: getSafeString(theme.socialIconSize, "14px"),
 
-    socialItemSize: theme.socialItemSize ?? "32px",
+    socialItemSize: getSafeString(theme.socialItemSize, "32px"),
 
-    socialBorderRadius: theme.socialBorderRadius ?? "4px",
+    socialBorderRadius: getSafeString(theme.socialBorderRadius, "4px"),
 
-    socialGap: theme.socialGap ?? "8px",
+    socialGap: getSafeString(theme.socialGap, "8px"),
   }
 
   const renderSocialIcon = (link: FooterSocialLink) => {
-    if (link.icon) {
+    const iconSrc = typeof link.icon === "object" ? (link.icon as any)?.url || (link.icon as any)?.value : link.icon
+    const iconSize = getSafeString(link.iconSize || resolvedTheme.socialIconSize)
+
+    if (iconSrc) {
       return (
         <img
-          src={link.icon}
-          alt={link.iconAlt ?? link.platform ?? "Social icon"}
+          src={iconSrc}
+          alt={getSafeString(link.iconAlt || link.platform || "Social icon")}
           className="object-contain"
           style={{
-            width: link.iconSize ?? resolvedTheme.socialIconSize,
-
-            height: link.iconSize ?? resolvedTheme.socialIconSize,
+            width: iconSize,
+            height: iconSize,
           }}
         />
       )
     }
 
-    const platform = link.platform?.trim() ?? ""
-
+    const platform = getSafeString(link.platform).trim()
     const fallback =
       platform.length > 0 ? platform.slice(0, 2).toUpperCase() : "•"
 
@@ -97,7 +107,7 @@ export const FooterPreview = ({
       <span
         className="leading-none font-semibold"
         style={{
-          fontSize: link.iconSize ?? resolvedTheme.socialIconSize,
+          fontSize: iconSize,
         }}
       >
         {fallback}
