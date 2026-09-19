@@ -46,9 +46,12 @@ import NewsletterPage from "@/components/pages/Newsletter"
 import NotificationsPage from "@/components/pages/Notifications"
 import SettingsPage from "@/components/pages/Settings"
 
+import PageLoader from "@/components/shared/PageLoader"
+
 export function App() {
   return (
     <TooltipProvider>
+      <PageLoader />
       <Routes>
         {/* Public */}
         <Route element={<PublicRoute />}>

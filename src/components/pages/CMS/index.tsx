@@ -1,3 +1,4 @@
+import MiraLoader from "@/components/shared/MiraLoader"
 import { useGetPages } from "@/hooks/cms/useGetPages"
 import { Link } from "react-router-dom"
 
@@ -60,9 +61,7 @@ export default function CMSPage() {
       </div>
 
       {isLoading ? (
-        <div className="flex justify-center py-10">
-          <div className="size-8 animate-spin rounded-full border-4 border-primary border-t-transparent" />
-        </div>
+        <MiraLoader text="Loading CMS pages..." className="py-12 min-h-[300px]" />
       ) : (
         <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
           {displayedPages.map((page) => (

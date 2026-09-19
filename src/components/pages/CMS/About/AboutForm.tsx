@@ -1,3 +1,4 @@
+import MiraLoader from "@/components/shared/MiraLoader"
 import { useState } from "react"
 import { Loader2, Save, Terminal } from "lucide-react"
 
@@ -52,12 +53,7 @@ export function AboutForm() {
 
   if (isLoading) {
     return (
-      <div className="flex min-h-[400px] flex-col items-center justify-center p-10">
-        <Loader2 className="h-6 w-6 animate-spin text-muted-foreground" />
-        <p className="mt-2 text-xs text-muted-foreground">
-          Loading About Us editor data...
-        </p>
-      </div>
+      <MiraLoader text="Loading About Us editor data..." className="min-h-[400px] py-16" />
     )
   }
 

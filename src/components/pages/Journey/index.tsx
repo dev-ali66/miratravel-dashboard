@@ -1,3 +1,4 @@
+import MiraLoader from "@/components/shared/MiraLoader"
 import { useEffect, useState } from "react"
 import { Link } from "react-router-dom"
 import {
@@ -188,9 +189,7 @@ export default function JourneyPages() {
 
       {/* Loading */}
       {isLoading ? (
-        <div className="flex justify-center py-12">
-          <div className="size-8 animate-spin rounded-full border-4 border-primary border-t-transparent" />
-        </div>
+        <MiraLoader text="Loading commercial journeys..." className="py-12 min-h-[300px]" />
       ) : isError ? (
         <div className="rounded-xl border border-destructive/30 bg-destructive/5 p-6 text-center">
           <p className="text-sm font-medium text-destructive">

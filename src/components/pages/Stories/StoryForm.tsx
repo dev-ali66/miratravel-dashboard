@@ -1,3 +1,4 @@
+import MiraLoader from "@/components/shared/MiraLoader"
 import { useEffect, useState, useMemo } from "react"
 import { useNavigate, useParams } from "react-router-dom"
 import { toast } from "sonner"
@@ -475,9 +476,7 @@ export function StoryForm() {
 
   if (isLoadingStory) {
     return (
-      <div className="flex h-screen items-center justify-center p-8">
-        <Loader2 className="h-6 w-6 animate-spin text-muted-foreground" />
-      </div>
+      <MiraLoader text="Loading story editor data..." className="min-h-[400px] py-16" />
     )
   }
 

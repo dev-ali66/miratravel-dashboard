@@ -1,3 +1,4 @@
+import MiraLoader from "@/components/shared/MiraLoader"
 import { useState, useEffect } from "react"
 import {
   Globe,
@@ -238,11 +239,7 @@ export default function SettingsPage() {
 
   if (isLoading) {
     return (
-      <div className="flex h-64 items-center justify-center">
-        <div className="text-sm font-medium text-muted-foreground animate-pulse">
-          Loading site settings...
-        </div>
-      </div>
+      <MiraLoader text="Loading site settings..." className="min-h-[300px] py-12" />
     )
   }
 

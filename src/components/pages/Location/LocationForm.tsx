@@ -1,3 +1,4 @@
+import MiraLoader from "@/components/shared/MiraLoader"
 import { useEffect, useState, useRef } from "react"
 import { Loader2, Save, Terminal } from "lucide-react"
 import { useParams, useSearchParams } from "react-router-dom"
@@ -76,9 +77,7 @@ export function LocationForm({ }: LocationFormProps) {
 
   if (isEditMode && isLoading) {
     return (
-      <div className="flex h-full min-h-[400px] items-center justify-center">
-        <Loader2 className="h-6 w-6 animate-spin text-muted-foreground" />
-      </div>
+      <MiraLoader text="Loading location editor data..." className="min-h-[400px] py-16" />
     )
   }
 

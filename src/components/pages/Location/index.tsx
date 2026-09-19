@@ -1,3 +1,4 @@
+import MiraLoader from "@/components/shared/MiraLoader"
 import {
   useGetLocationPages,
   type LocationPageData,
@@ -171,9 +172,7 @@ export default function LocationPages() {
 
       {/* Loading */}
       {isLoading ? (
-        <div className="flex justify-center py-10">
-          <div className="size-8 animate-spin rounded-full border-4 border-primary border-t-transparent" />
-        </div>
+        <MiraLoader text="Loading location pages..." className="py-12 min-h-[300px]" />
       ) : isError ? (
         /* Error State */
         <div className="rounded-xl border border-destructive/30 bg-destructive/5 p-6 text-center">
