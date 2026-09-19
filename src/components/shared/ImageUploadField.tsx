@@ -11,7 +11,8 @@ interface ImageUploadFieldProps extends Omit<
   React.HTMLAttributes<HTMLDivElement>,
   "onChange"
 > {
-  label: string
+  label?: string
+  previewClassName?: string
   value?: string
   fieldName?: string
   onChange: (value: string) => void
@@ -25,6 +26,7 @@ interface ImageUploadFieldProps extends Omit<
 
 export function ImageUploadField({
   label,
+  previewClassName,
   value,
   fieldName = "",
   onChange,
@@ -43,6 +45,64 @@ export function ImageUploadField({
 
   const [isRemoving, setIsRemoving] = useState(false)
 
+  const extractUploadedUrl = (res: any): string | null => {
+    if (!res) return null
+    if (typeof res === "string" && (res.startsWith("http://") || res.startsWith("https://") || res.startsWith("/"))) {
+      return res
+    }
+    if (typeof res.secure_url === "string") return res.secure_url
+    if (typeof res.url === "string") return res.url
+
+    const dataObj = res.data ?? res
+    if (typeof dataObj === "string" && (dataObj.startsWith("http://") || dataObj.startsWith("https://") || dataObj.startsWith("/"))) {
+      return dataObj
+    }
+
+    if (dataObj && typeof dataObj === "object") {
+      if (typeof dataObj.secure_url === "string") return dataObj.secure_url
+      if (typeof dataObj.url === "string") return dataObj.url
+
+      const fieldMatch = fieldName ? (dataObj[fieldName] ?? dataObj.data?.[fieldName]) : null
+      if (Array.isArray(fieldMatch) && fieldMatch.length > 0) {
+        const first = fieldMatch[0]
+        if (typeof first === "string") return first
+        if (first?.secure_url) return first.secure_url
+        if (first?.url) return first.url
+      } else if (typeof fieldMatch === "string") {
+        return fieldMatch
+      }
+
+      const innerData = dataObj.data ?? dataObj
+      const innerMatch = fieldName ? innerData[fieldName] : null
+      if (Array.isArray(innerMatch) && innerMatch.length > 0) {
+        const first = innerMatch[0]
+        if (typeof first === "string") return first
+        if (first?.secure_url) return first.secure_url
+        if (first?.url) return first.url
+      } else if (typeof innerMatch === "string") {
+        return innerMatch
+      }
+
+      const targetObj = typeof innerData === "object" && innerData !== null ? innerData : dataObj
+      const values = Object.values(targetObj)
+      for (const val of values) {
+        if (Array.isArray(val) && val.length > 0) {
+          const first = val[0]
+          if (typeof first === "string" && (first.startsWith("http://") || first.startsWith("https://") || first.startsWith("/"))) {
+            return first
+          }
+          if (first && typeof first === "object") {
+            if (typeof first.secure_url === "string") return first.secure_url
+            if (typeof first.url === "string") return first.url
+          }
+        } else if (typeof val === "string" && (val.startsWith("http://") || val.startsWith("https://") || val.startsWith("/"))) {
+          return val
+        }
+      }
+    }
+    return null
+  }
+
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0]
 
@@ -58,13 +118,7 @@ export function ImageUploadField({
       },
       {
         onSuccess: (res) => {
-          const uploadedImages =
-            res.data?.[fieldName] ||
-            (res.data && typeof res.data === "object"
-              ? Object.values(res.data)[0]
-              : null)
-
-          const newImage = uploadedImages?.[0]
+          const newImage = extractUploadedUrl(res)
 
           if (newImage) {
             onChange(newImage)
@@ -92,10 +146,12 @@ export function ImageUploadField({
 
   return (
     <div className={cn("flex flex-col gap-3", className)} {...props}>
-      <div className="flex items-center gap-2 text-foreground">
-        <ImageIcon className="h-4 w-4 text-muted-foreground" />
-        <Label className="text-sm font-bold text-inherit">{label}</Label>
-      </div>
+      {label && (
+        <div className="flex items-center gap-2 text-foreground">
+          <ImageIcon className="h-4 w-4 text-muted-foreground" />
+          <Label className="text-sm font-bold text-inherit">{label}</Label>
+        </div>
+      )}
 
       <div
         className={cn(
@@ -123,7 +179,10 @@ export function ImageUploadField({
               src={value}
               alt="Preview"
               style={{ opacity: opacity / 100 }}
-              className="h-full w-full object-cover transition-opacity duration-300"
+              className={cn(
+                "h-full w-full object-cover transition-opacity duration-300",
+                previewClassName
+              )}
             />
 
             {overlayOpacity > 0 && (

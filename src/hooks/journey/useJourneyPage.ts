@@ -1,87 +1,114 @@
-import { useEffect, useRef } from "react"
-import { useNavigate } from "react-router-dom"
-import { useJourneyDraft } from "@/components/pages/Journeys/shared/JourneyDraftContext"
-import { getJourneyItineraryDays, type Journey } from "@/components/pages/Journeys/journeyTypes"
+import { useCallback, useEffect } from "react"
+import { useAddJourney } from "./useAddJourney"
+import { useJourneyDraft } from "@/components/pages/Journey/shared/JourneyDraftContext"
 import { useGetJourneyById } from "./useGetJourneyById"
-import { useSaveJourney } from "./useSaveJourney"
+import type { JourneyData } from "@/components/pages/Journey/journeyTypes"
+import { emptyJourney } from "@/components/pages/Journey/shared/emptyJourney"
+import { normalizeJourneyPayload } from "@/components/pages/Journey/shared/normalizeJourneyPayload"
+import { toast } from "sonner"
 
-export function useJourneyPage(id?: string, slug?: string) {
-  const navigate = useNavigate()
-  const { draft, setDraft, updateField } = useJourneyDraft()
-  const lastLoadedJourneyIdRef = useRef<string | null>(null)
+export function useJourneyPage(journeyId?: string, _slug?: string) {
+  const isEditMode = Boolean(journeyId)
 
-  const isEditMode = Boolean(id && id !== "new")
+  const { draft, setDraft, resetDraft } = useJourneyDraft()
 
   const {
-    data: fetchedJourney,
+    data: journeyResponse,
     isLoading,
     isError,
-  } = useGetJourneyById(id, slug)
+    error,
+  } = useGetJourneyById(journeyId)
 
-  const { mutateAsync: saveJourneyMutation, isPending: isSaving } = useSaveJourney()
+  const { mutate: saveJourney, isPending: isSaving } = useAddJourney()
 
-  // Hydrate fetched journey into draft
+  // Load Edit Data
   useEffect(() => {
-    if (isEditMode && fetchedJourney) {
-      const journeyIdentifier = fetchedJourney.id || id || slug || "loaded"
-      if (lastLoadedJourneyIdRef.current !== journeyIdentifier || !draft?.id) {
-        lastLoadedJourneyIdRef.current = journeyIdentifier
-        const normalizedDays = getJourneyItineraryDays(fetchedJourney)
-        const hydratedDraft: Journey = {
-          ...fetchedJourney,
-          itineraryData: normalizedDays,
-          itineraryDays: normalizedDays,
-          itinerary: normalizedDays,
-          data: {
-            ...(fetchedJourney.data || {}),
-            itineraryData: normalizedDays,
-            itinerary: normalizedDays,
-          },
-        }
-        setDraft(hydratedDraft)
-      }
-    }
-  }, [isEditMode, fetchedJourney, id, slug, draft?.id, setDraft])
+    if (!isEditMode) return
+    if (isLoading) return
 
-  const save = async () => {
-    try {
-      const res = await saveJourneyMutation(draft)
-      if (res?.data) {
-        const saved = res.data
-        const normalizedDays = getJourneyItineraryDays(saved)
-        const finalDays =
-          normalizedDays.length > 0 ? normalizedDays : getJourneyItineraryDays(draft)
-        const updatedDraft: Journey = {
-          ...saved,
-          itineraryData: finalDays,
-          itineraryDays: finalDays,
-          itinerary: finalDays,
-          data: {
-            ...(saved.data || {}),
-            itineraryData: finalDays,
-            itinerary: finalDays,
-          },
-        }
-        setDraft(updatedDraft)
+    const rawData = journeyResponse?.data
+    const journey = Array.isArray(rawData) ? rawData[0] : rawData
 
-        if (!isEditMode && saved.id) {
-          navigate(`/journeys/${saved.id}/${saved.slug || "journey"}`)
-        }
+    if (journey) {
+      const merged: JourneyData = {
+        ...emptyJourney,
+        ...journey,
+        hero: { ...emptyJourney.hero, ...(journey.hero || {}) },
+        overview: { ...emptyJourney.overview, ...(journey.overview || {}) },
+        itinerary: { ...emptyJourney.itinerary, ...(journey.itinerary || {}) },
+        accommodations: { ...emptyJourney.accommodations, ...(journey.accommodations || {}) },
+        whatsIncluded: { ...emptyJourney.whatsIncluded, ...(journey.whatsIncluded || {}) },
+        addOns: { ...emptyJourney.addOns, ...(journey.addOns || {}) },
+        gallery: { ...emptyJourney.gallery, ...(journey.gallery || {}) },
+        metadata: { ...emptyJourney.metadata, ...(journey.metadata || {}) },
       }
-      return res
-    } catch (err) {
-      // toast is handled in useSaveJourney
-      return null
+      setDraft(normalizeJourneyPayload(merged))
     }
-  }
+  }, [isEditMode, isLoading, journeyResponse, setDraft])
+
+  // Update Field
+  const updateField = useCallback(
+    (path: string, value: unknown) => {
+      setDraft((current) => {
+        if (!current) return current
+        const next = structuredClone(current)
+        const keys = path.split(".")
+        let target: any = next
+
+        keys.slice(0, -1).forEach((key) => {
+          if (target[key] === undefined || target[key] === null) {
+            target[key] = {}
+          }
+          target = target[key]
+        })
+
+        target[keys[keys.length - 1]] = value === undefined ? null : value
+        return next
+      })
+    },
+    [setDraft]
+  )
+
+  // Save Payload
+  const save = useCallback(() => {
+    if (!draft) return
+
+    if (!draft.title || !draft.title.trim()) {
+      toast.error("Journey Title is required to save.")
+      return
+    }
+
+    const normalizedDraft = normalizeJourneyPayload(draft)
+
+    if (isEditMode) {
+      saveJourney({
+        ...normalizedDraft,
+        id: journeyId,
+      })
+      return
+    }
+
+    const { id: _id, ...createPayload } = normalizedDraft
+    saveJourney(createPayload)
+  }, [draft, isEditMode, journeyId, saveJourney])
+
+  const reset = useCallback(
+    (value?: JourneyData) => {
+      resetDraft(value)
+    },
+    [resetDraft]
+  )
 
   return {
     draft,
+    setDraft,
     updateField,
+    reset,
     save,
-    isSaving,
     isEditMode,
     isLoading,
     isError,
+    error,
+    isSaving,
   }
 }

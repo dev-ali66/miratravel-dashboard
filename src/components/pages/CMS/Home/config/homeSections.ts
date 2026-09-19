@@ -7,20 +7,13 @@ import type {
   HomeVideo,
 } from "../homeTypes"
 
-import { HeroForm } from "../shared/form/HeroForm"
-import { ExploreJourneysForm } from "../shared/form/ExploreJourneysForm"
-import { DestinationsForm } from "../shared/form/DestinationsForm"
-import { MiraStoriesForm } from "../shared/form/MiraStoriesForm"
-import { WhyMiraForm } from "../shared/form/WhyMiraForm"
-import { TravelInsightsForm } from "../shared/form/TravelInsightsForm"
-import { CustomJourneyCtaForm } from "../shared/form/CustomJourneyCtaForm"
-import { HeroPreview } from "../shared/preview/HeroPreview"
-import { ExploreJourneysPreview } from "../shared/preview/ExploreJourneysPreview"
-import { DestinationsPreview } from "../shared/preview/DestinationsPreview"
-import { MiraStoriesPreview } from "../shared/preview/MiraStoriesPreview"
-import { WhyMiraPreview } from "../shared/preview/WhyMiraPreview"
-import { TravelInsightsPreview } from "../shared/preview/TravelInsightsPreview"
-import { CustomJourneyCtaPreview } from "../shared/preview/CustomJourneyCtaPreview"
+import { HeroForm, HeroPreview } from "../sections/hero"
+import { ExploreJourneysForm, ExploreJourneysPreview } from "../sections/explore-journeys"
+import { DestinationsForm, DestinationsPreview } from "../sections/destinations"
+import { MiraStoriesForm, MiraStoriesPreview } from "../sections/mira-stories"
+import { WhyMiraForm, WhyMiraPreview } from "../sections/why-mira"
+import { TravelInsightsForm, TravelInsightsPreview } from "../sections/travel-insights"
+import { CustomJourneyCtaForm, CustomJourneyCtaPreview } from "../sections/custom-journey-cta"
 
 export type HomeSectionKey =
   | "hero"
@@ -39,6 +32,9 @@ export type HomeFormSectionProps = {
   updateSectionImages: (index: number, images: HomeImage[]) => void
   updateSectionVideos: (index: number, videos: HomeVideo[]) => void
   updateSectionButtons: (index: number, buttons: HomeButton[]) => void
+  openSections: Record<string, boolean>
+  toggleSection: (key: string) => void
+  sectionNumber: string
 }
 
 export type HomePreviewSectionProps = {

@@ -7,154 +7,8 @@ import type { FooterPageData } from "../Footer/footerTypes"
 import type { HomeButton, HomePageData, HomeSection } from "./homeTypes"
 import { cn } from "@/lib/utils"
 
+import { emptyHomePayload } from "./shared/emptyHomePayload"
 import { homeSectionOrder, homeSectionRegistry } from "./config/homeSections"
-
-const PREVIEW_IMAGE_SOURCE =
-  "https://images.unsplash.com/photo-1530789253388-582c481c54b0?auto=format&fit=crop&w=1200&q=85"
-const PREVIEW_VIDEO_SOURCE =
-  "https://cdn.coverr.co/videos/coverr-aerial-view-of-a-beach-1576/1080p.mp4"
-
-const DEFAULT_HOME_DATA: NonNullable<HomePageData["data"]> = {
-  page: "home",
-  theme: {
-    accentColor: "#C97B4A",
-    primaryColor: "#1F3A1B",
-    textColorDark: "#1A1A1A",
-    textColorLight: "#FFFFFF",
-  },
-  sections: [
-    {
-      key: "hero",
-      type: "hero",
-      order: 1,
-      backgroundType: "video",
-      showVideo: true,
-      bgImages: [
-        { url: PREVIEW_IMAGE_SOURCE, alt: "Aerial view of a coastal journey" },
-      ],
-      bgVideos: [
-        {
-          url: PREVIEW_VIDEO_SOURCE,
-          alt: "Aerial view of a coastal journey",
-          autoplay: true,
-          loop: true,
-          muted: true,
-        },
-      ],
-      content: {
-        titleLine1: "Travel deeper.",
-        titleHighlight: "Feel more.",
-        titleLine2: "Live fully.",
-        description:
-          "Thoughtfully designed journeys through the places that stay with you.",
-      },
-      buttons: [{ label: "Explore journeys", url: "#", style: "primary" }],
-    },
-    {
-      key: "explore_journeys",
-      type: "explore_journeys",
-      order: 2,
-      content: {
-        eyebrow: "Curated journeys",
-        title: "Go beyond the expected",
-        subtitle: "Discover the Balkans through a local lens.",
-        description:
-          "Handpicked routes, meaningful encounters, and the freedom to travel at your own pace.",
-      },
-      buttons: [{ label: "View all journeys", url: "#", style: "primary" }],
-    },
-    {
-      key: "destinations",
-      type: "destinations",
-      order: 3,
-      content: {
-        eyebrow: "Our destinations",
-        title: "The Balkans, beautifully uncovered",
-        subtitle:
-          "From Adriatic shores to mountain villages, find your next story.",
-      },
-      buttons: [{ label: "Explore destinations", url: "#", style: "primary" }],
-    },
-    {
-      key: "mira_stories",
-      type: "mira_stories",
-      order: 4,
-      bgImages: [{ url: PREVIEW_IMAGE_SOURCE, alt: "Mira travel story" }],
-      content: {
-        eyebrow: "Mira stories",
-        title: "Travel has a way of changing us",
-        description:
-          "Meet the people, places, and moments behind the journeys we create.",
-      },
-      items: [
-        {
-          index: "01",
-          title: "The rhythm of island life",
-          subtitle: "A story from the Adriatic",
-        },
-        {
-          index: "02",
-          title: "Along the mountain road",
-          subtitle: "Finding the quiet places",
-        },
-        {
-          index: "03",
-          title: "A table set for strangers",
-          subtitle: "The taste of home",
-        },
-      ],
-    },
-    {
-      key: "why_mira",
-      type: "why_mira",
-      order: 5,
-      sideImages: [
-        { url: PREVIEW_IMAGE_SOURCE, alt: "Mira curated Balkan journey" },
-      ],
-      content: {
-        eyebrow: "Why Mira",
-        title: "We believe the best journeys feel personal",
-        paragraphs: [
-          "We create journeys for curious travellers who want to see more than the highlights. Every itinerary is shaped around your interests, your rhythm, and the details that make a place feel real.",
-          "With local knowledge and thoughtful planning, we make exploring the Balkans feel effortless and deeply rewarding.",
-        ],
-        signature: "The Mira team",
-      },
-    },
-    {
-      key: "travel_insights",
-      type: "travel_insights",
-      order: 6,
-      bgImages: [{ url: PREVIEW_IMAGE_SOURCE, alt: "Balkan travel insights" }],
-      content: {
-        eyebrow: "Travel insights",
-        title: "Ideas for going further",
-        subtitle: "Stories and inspiration for your next Balkan adventure.",
-        description:
-          "A closer look at the places, traditions, and experiences worth making time for.",
-      },
-      buttons: [{ label: "Read all stories", url: "#", style: "primary" }],
-    },
-    {
-      key: "custom_journey_cta",
-      type: "custom_journey_cta",
-      order: 7,
-      bgImages: [
-        {
-          url: PREVIEW_IMAGE_SOURCE,
-          alt: "A custom journey through the Balkans",
-        },
-      ],
-      content: {
-        titleLine1: "Your journey should be",
-        titleHighlight: "uniquely yours.",
-        description:
-          "Tell us what inspires you and we will shape a journey around it.",
-      },
-      buttons: [{ label: "Start planning", url: "#", style: "primary" }],
-    },
-  ],
-}
 
 const getHomeSectionEntry = (key: string) => {
   return homeSectionRegistry[key as keyof typeof homeSectionRegistry]
@@ -171,12 +25,9 @@ export const HomePreview = () => {
       : getDefaultCmsPageData("footer", "Footer")
   ) as unknown as FooterPageData
 
-  const data = page?.data ?? DEFAULT_HOME_DATA
+  const data = (page?.data ?? emptyHomePayload.data) as Record<string, any>
 
-  const theme = data.theme ?? DEFAULT_HOME_DATA.theme ?? {}
-  const sections = data.sections?.length
-    ? data.sections
-    : (DEFAULT_HOME_DATA.sections ?? [])
+  const theme = data.theme ?? emptyHomePayload.data?.theme ?? {}
 
   /*
    * ============================================================
@@ -184,23 +35,23 @@ export const HomePreview = () => {
    * ============================================================
    */
 
-  const accentColor = theme.accentColor ?? "#C97B4A"
-
-  const primaryColor = theme.primaryColor ?? "#1F3A1B"
-
-  const darkText = theme.textColorDark ?? "#1A1A1A"
-
+  const accentColor = theme.accentColor ?? "#E5A84B"
+  const primaryColor = theme.primaryColor ?? "#182D09"
+  const darkText = theme.textColorDark ?? "#182D09"
   const lightText = theme.textColorLight ?? "#FFFFFF"
 
-  /*
-   * ============================================================
-   * SORT SECTIONS
-   * ============================================================
-   */
-
-  const sortedSections = homeSectionOrder
-    .map((key) => sections.find((section) => section.key === key))
-    .filter(Boolean) as HomeSection[]
+  const getSectionData = (key: string): HomeSection => {
+    const rawSec = data[key] ?? data[key.replace(/-/g, "_")]
+    if (rawSec && typeof rawSec === "object" && Object.keys(rawSec).length > 0) {
+      return { key, type: key, ...rawSec }
+    }
+    if (Array.isArray(data.sections)) {
+      const found = data.sections.find((s: any) => s.key === key || s.type === key)
+      if (found) return { key, type: key, ...found }
+    }
+    const defaultSec = (emptyHomePayload.data as any)?.[key] ?? {}
+    return { key, type: key, ...defaultSec }
+  }
 
   /*
    * ============================================================
@@ -292,11 +143,14 @@ export const HomePreview = () => {
 
   return (
     <div className="w-full overflow-hidden bg-background">
-      {sortedSections.map((section) => (
-        <div key={section.key} data-section={section.key} className="w-full">
-          {renderSection(section)}
-        </div>
-      ))}
+      {homeSectionOrder.map((key) => {
+        const section = getSectionData(key)
+        return (
+          <div key={key} data-section={key} className="w-full">
+            {renderSection(section)}
+          </div>
+        )
+      })}
 
       {/* FOOTER PREVIEW (Fetched via API) */}
       <FooterPreview footerData={footerData} />

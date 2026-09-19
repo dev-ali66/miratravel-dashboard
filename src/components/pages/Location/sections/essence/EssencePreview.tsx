@@ -86,7 +86,7 @@ export function EssencePreview({ draft }: LocationPreviewSectionProps) {
                     stat.badgeBg ??
                     (typeof statValue === "object" && statValue?.backgroundColor)) ||
                     essence.statBadgeBg ||
-                    "#B86B3A"
+                    "#E5A84B"
                   const rawBadgeOpacity =
                     (typeof statValue === "object" && statValue?.backgroundOpacity !== undefined
                       ? statValue.backgroundOpacity
@@ -98,7 +98,7 @@ export function EssencePreview({ draft }: LocationPreviewSectionProps) {
                     <div
                       className="absolute w-[145px] @xs:w-[165px] @sm:w-[180px] @md:w-[195px] @xl:w-[195.922px] -bottom-3 @xs:-bottom-4 @sm:-bottom-5 @md:-bottom-6 -left-2 @xs:-left-3 @sm:-left-4 @md:-left-5 @xl:-left-6 px-3.5 @xs:px-4 @sm:px-5 @md:px-6 @lg:px-[26px] @xl:px-7 py-2.5 @xs:py-3 @sm:py-3.5 @md:py-[18px] @lg:py-[19px] @xl:py-5 flex flex-col justify-start items-start z-10 shadow-md transition-colors"
                       style={{
-                        backgroundColor: rawBadgeBg || "#B86B3A",
+                        backgroundColor: rawBadgeBg || "#E5A84B",
                         opacity: rawBadgeOpacity,
                       }}
                     >

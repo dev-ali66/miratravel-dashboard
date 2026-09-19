@@ -72,6 +72,7 @@ export interface UniversalMultimediaFormProps {
   allowImage?: boolean
   allowVideo?: boolean
   allowColor?: boolean
+  defaultShow?: MultimediaShowType
   className?: string
   hideFieldNameBadge?: boolean
 
@@ -361,6 +362,7 @@ export function UniversalMultimediaForm(props: UniversalMultimediaFormProps) {
     allowImage = true,
     allowVideo = true,
     allowColor = true,
+    defaultShow,
     collapsible = true,
     defaultOpen = true,
     isOpen: controlledIsOpen,
@@ -395,7 +397,7 @@ export function UniversalMultimediaForm(props: UniversalMultimediaFormProps) {
   const currentVal: UniversalMultimediaValue = (() => {
     if (typeof explicitValue === "string" && explicitValue.trim() !== "") {
       return {
-        show: "image",
+        show: defaultShow || "image",
         image: { ...DEFAULT_IMAGE_CONFIG, url: explicitValue },
         video: DEFAULT_VIDEO_CONFIG,
         color: DEFAULT_COLOR_CONFIG,
@@ -426,8 +428,11 @@ export function UniversalMultimediaForm(props: UniversalMultimediaFormProps) {
           ? explicitValue.videoUrl
           : "")
 
+      const rawShow = explicitValue.show ?? explicitValue.type ?? defaultShow ?? "image"
+      const showVal = typeof rawShow === "object" ? (rawShow?.show ?? rawShow?.type ?? "image") : rawShow
+
       return {
-        show: explicitValue.show || explicitValue.type || "image",
+        show: showVal || "image",
         image: {
           ...DEFAULT_IMAGE_CONFIG,
           ...(explicitValue.image || explicitValue.imageData),
@@ -444,7 +449,7 @@ export function UniversalMultimediaForm(props: UniversalMultimediaFormProps) {
 
     if (content) {
       const media = contentMediaKey ? content[contentMediaKey] : content.multimedia || content
-      const showType = media?.show || media?.type || content.backgroundType || "image"
+      const showType = media?.show || media?.type || content.backgroundType || defaultShow || "image"
       return {
         show: showType,
         image: {
@@ -491,7 +496,7 @@ export function UniversalMultimediaForm(props: UniversalMultimediaFormProps) {
     }
 
     return {
-      show: "image",
+      show: defaultShow || "image",
       image: DEFAULT_IMAGE_CONFIG,
       video: DEFAULT_VIDEO_CONFIG,
       color: DEFAULT_COLOR_CONFIG,
@@ -596,7 +601,7 @@ export function UniversalMultimediaForm(props: UniversalMultimediaFormProps) {
               {currentVal.show === "image" && <ImageIcon className="h-3 w-3" />}
               {currentVal.show === "video" && <VideoIcon className="h-3 w-3" />}
               {currentVal.show === "color" && <Palette className="h-3 w-3" />}
-              {currentVal.show}
+              {typeof currentVal.show === "string" ? currentVal.show : String((currentVal.show as any)?.show || "color")}
             </span>
           )}
         </div>

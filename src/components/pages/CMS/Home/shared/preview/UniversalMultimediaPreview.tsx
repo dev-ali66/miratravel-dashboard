@@ -152,38 +152,36 @@ export function UniversalMultimediaPreview({
   const activeConfig =
     showMode === "video" ? videoConfig : showMode === "image" ? imageConfig : colorConfig
 
-  const hasRatio = Boolean(activeConfig.aspectRatio && activeConfig.aspectRatio !== "auto")
+  const hasRatio = Boolean(!isBg && activeConfig.aspectRatio && activeConfig.aspectRatio !== "auto")
   const resolvedAspectRatio = hasRatio && activeConfig.aspectRatio
     ? activeConfig.aspectRatio.replace(":", "/")
     : undefined
 
-  let resolvedWidth = activeConfig.isFullWidth
+  let resolvedWidth = isBg || !activeConfig.width || activeConfig.width === "auto" || activeConfig.isFullWidth
     ? "100%"
-    : activeConfig.width || (isBg ? "100%" : undefined)
+    : activeConfig.width
 
-  let resolvedHeight = activeConfig.isFullHeight
+  let resolvedHeight = isBg || !activeConfig.height || activeConfig.height === "auto" || activeConfig.isFullHeight
     ? "100%"
-    : activeConfig.height || (isBg && !hasRatio ? "100%" : "auto")
+    : activeConfig.height
 
-  if (hasRatio && !activeConfig.isFullHeight && (resolvedHeight === "100%" || !resolvedHeight)) {
-    resolvedHeight = "auto"
-  }
-
-  const mediaStyle: React.CSSProperties = {
-    width: resolvedWidth,
-    height: resolvedHeight,
-    aspectRatio: resolvedAspectRatio,
-  }
+  const mediaStyle: React.CSSProperties = isBg
+    ? { width: "100%", height: "100%" }
+    : {
+        width: resolvedWidth,
+        height: resolvedHeight,
+        aspectRatio: resolvedAspectRatio,
+      }
 
   return (
     <div
       className={cn(
         "relative w-full h-full",
-        isBg && !hasRatio && "absolute inset-0 h-full w-full",
-        isBg && hasRatio && "absolute inset-0 m-auto max-h-full max-w-full flex items-center justify-center",
+        isBg && "absolute inset-0 h-full w-full pointer-events-none",
+        !isBg && hasRatio && "flex items-center justify-center",
         containerClassName
       )}
-      style={isBg && hasRatio ? { aspectRatio: resolvedAspectRatio } : undefined}
+      style={!isBg && hasRatio ? { aspectRatio: resolvedAspectRatio } : undefined}
     >
       {showMode === "video" ? (
         <VideoShowPreview
@@ -199,7 +197,7 @@ export function UniversalMultimediaPreview({
           overlayColor={videoConfig.overlayColor || undefined}
           overlayOpacity={videoConfig.overlayOpacity}
           fit={videoConfig.fit}
-          aspectRatio={videoConfig.aspectRatio}
+          aspectRatio={isBg ? undefined : videoConfig.aspectRatio}
         />
       ) : showMode === "image" ? (
         <ImageShowPreview
@@ -212,11 +210,11 @@ export function UniversalMultimediaPreview({
           overlayColor={imageConfig.overlayColor || undefined}
           overlayOpacity={imageConfig.overlayOpacity}
           fit={imageConfig.fit}
-          aspectRatio={imageConfig.aspectRatio}
+          aspectRatio={isBg ? undefined : imageConfig.aspectRatio}
         />
       ) : (
         <div
-          className={cn(isBg && !hasRatio ? "h-full w-full" : undefined, className)}
+          className={cn(isBg ? "h-full w-full" : undefined, className)}
           style={{
             backgroundColor: colorConfig.color ?? fallbackColor,
             opacity:

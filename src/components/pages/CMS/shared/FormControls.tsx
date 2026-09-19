@@ -14,12 +14,60 @@ import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover
 import { RichTextEditor } from "@/components/shared/RichTextEditor"
 import { ImageUploadField } from "@/components/shared/ImageUploadField"
 import { VideoUploadField as VideoUploader } from "@/components/shared/VideoUploadField"
-import { Palette, RotateCcw } from "lucide-react"
+import { Palette, RotateCcw, ChevronDown } from "lucide-react"
 import { cn } from "@/lib/utils"
 
 /* ============================================================
    TYPES & UNIFIED VALUE INTERFACES
    ============================================================ */
+
+export function FormSection({
+  title,
+  sectionNumber,
+  active,
+  onClick,
+  children,
+}: {
+  title: string
+  sectionNumber?: string | number
+  active: boolean
+  onClick: () => void
+  children: React.ReactNode
+}) {
+  const rawTitle = title.replace(/^\d+[a-z]?\.\s*/i, "")
+  const displayTitle = sectionNumber ? `${sectionNumber}. ${rawTitle}` : title
+
+  return (
+    <div
+      className={cn(
+        "border-b border-border/60 bg-card transition-colors",
+        !active && "overflow-hidden"
+      )}
+    >
+      <button
+        type="button"
+        onClick={onClick}
+        className="flex w-full items-center justify-between px-4 py-3.5 text-left transition-colors hover:bg-muted/40 cursor-pointer"
+      >
+        <span className="text-sm font-semibold text-foreground">{displayTitle}</span>
+
+        <ChevronDown
+          className={cn(
+            "h-4 w-4 text-muted-foreground transition-transform",
+            active && "rotate-180"
+          )}
+        />
+      </button>
+
+      {active && (
+        <div className="border-t border-border/40 p-4">
+          {children}
+        </div>
+      )}
+    </div>
+  )
+}
+
 
 export interface FieldStyle {
   textColor?: string | null
@@ -314,7 +362,8 @@ export interface SelectOption {
 }
 
 export interface DynamicStyledFieldProps extends BaseProps {
-  type: DynamicFieldType
+  type?: DynamicFieldType
+  multiline?: boolean
   value?: any
   checked?: boolean
   onChange?: (value: any) => void
@@ -349,7 +398,8 @@ export interface DynamicStyledFieldProps extends BaseProps {
 
 export function DynamicStyledField(props: DynamicStyledFieldProps) {
   const {
-    type,
+    type: explicitType = "text",
+    multiline,
     label,
     fieldName,
     value,
@@ -371,6 +421,8 @@ export function DynamicStyledField(props: DynamicStyledFieldProps) {
     style: explicitStyle,
     onStyleChange: explicitOnStyleChange,
   } = props
+
+  const type = multiline ? "textarea" : explicitType
 
   const validation = useMemo(() => {
     if (explicitValidation) return explicitValidation
@@ -482,20 +534,33 @@ export function DynamicStyledField(props: DynamicStyledFieldProps) {
               />
             )
 
-          case "number":
+          case "number": {
+            const numVal =
+              rawValue === undefined || rawValue === null || rawValue === "" || Number.isNaN(Number(rawValue))
+                ? ""
+                : rawValue
             return (
               <Input
                 type="number"
-                value={rawValue ?? ""}
+                value={numVal}
                 placeholder={placeholder}
                 min={min ?? validation?.min}
                 max={max ?? validation?.max}
                 step={step}
                 disabled={disabled}
-                onChange={(e) => handleValueChange(e.target.value === "" ? "" : Number(e.target.value))}
+                onChange={(e) => {
+                  const strVal = e.target.value
+                  if (strVal === "") {
+                    handleValueChange("")
+                  } else {
+                    const parsed = Number(strVal)
+                    handleValueChange(Number.isNaN(parsed) ? "" : parsed)
+                  }
+                }}
                 onBlur={() => setTouched(true)}
               />
             )
+          }
 
           case "select":
             return (
@@ -694,5 +759,19 @@ export function FieldWrapper({
   )
 }
 
+export function getSafeString(val: any, fallback: string = ""): string {
+  if (val === null || val === undefined) return fallback
+  if (typeof val === "string") return val || fallback
+  if (typeof val === "number" || typeof val === "boolean") return String(val)
+  if (typeof val === "object") {
+    if (val.value !== undefined) return getSafeString(val.value, fallback)
+    if (val.text !== undefined) return getSafeString(val.text, fallback)
+    if (val.title !== undefined) return getSafeString(val.title, fallback)
+    if (val.label !== undefined) return getSafeString(val.label, fallback)
+  }
+  return fallback
+}
+
 export { DynamicStyledPreview, DynamicStyledText } from "@/components/shared/DynamicStyledPreview"
+
 

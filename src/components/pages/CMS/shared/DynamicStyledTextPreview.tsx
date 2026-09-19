@@ -12,6 +12,8 @@ export type DynamicStyledTextPreviewProps<T extends ElementType = "p"> = {
   as?: T
   /** The styled field data object { value, textColor, textOpacity, backgroundColor, backgroundOpacity } or plain string */
   data?: any
+  /** Alias for data prop */
+  value?: any
   /** Optional fallback text if field value is empty */
   fallbackText?: string
   /** Optional fallback text color if textColor is not set */
@@ -20,7 +22,7 @@ export type DynamicStyledTextPreviewProps<T extends ElementType = "p"> = {
   isRichText?: boolean
   /** Tailwind CSS classes */
   className?: string
-} & Omit<ComponentPropsWithoutRef<T>, "as" | "data">
+} & Omit<ComponentPropsWithoutRef<T>, "as" | "data" | "value">
 
 /**
  * Safely extract primitive text value from raw strings, numbers, booleans,
@@ -63,6 +65,7 @@ function findStyleProp(obj: any, key: string): any {
 export function DynamicStyledTextPreview<T extends ElementType = "p">({
   as,
   data,
+  value,
   fallbackText = "",
   fallbackColor,
   isRichText = false,
@@ -72,7 +75,8 @@ export function DynamicStyledTextPreview<T extends ElementType = "p">({
 }: DynamicStyledTextPreviewProps<T>) {
   const Component = (as || "p") as ElementType
 
-  const rawValue = unwrapTextValue(data)
+  const targetData = data ?? value
+  const rawValue = unwrapTextValue(targetData)
 
   // If value is empty string (""), null, or undefined, return null so empty fields disappear from live preview
   const textContent =
@@ -82,10 +86,10 @@ export function DynamicStyledTextPreview<T extends ElementType = "p">({
 
   if (!textContent) return null
 
-  const textColor = findStyleProp(data, "textColor")
+  const textColor = findStyleProp(targetData, "textColor")
   const effectiveTextColor = textColor || fallbackColor
-  const textOpacity = findStyleProp(data, "textOpacity")
-  const bgColor = findStyleProp(data, "backgroundColor")
+  const textOpacity = findStyleProp(targetData, "textOpacity")
+  const bgColor = findStyleProp(targetData, "backgroundColor")
 
   const computedStyle = {
     ...(effectiveTextColor ? { color: effectiveTextColor } : {}),
@@ -106,7 +110,7 @@ export function DynamicStyledTextPreview<T extends ElementType = "p">({
   }
 
   return (
-    <Component className={className} style={computedStyle} {...props}>
+    <Component className={cn("whitespace-pre-line", className)} style={computedStyle} {...props}>
       {textContent}
     </Component>
   )

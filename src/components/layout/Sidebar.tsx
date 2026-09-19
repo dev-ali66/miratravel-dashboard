@@ -18,10 +18,8 @@ import {
   ScrollText,
   ChevronDown,
   Home,
-  Menu,
   PanelBottom,
   Mail,
-  Megaphone,
   LocateIcon,
   Compass,
   CalendarDays,
@@ -35,6 +33,7 @@ import {
   Tag,
   Send,
   Bell,
+  Info,
 } from "lucide-react"
 
 /* =========================================================
@@ -80,19 +79,9 @@ const cmsItems = [
     icon: Home,
   },
   {
-    label: "Navbar",
-    href: "/cms/navbar",
-    icon: Menu,
-  },
-  {
-    label: "Footer",
-    href: "/cms/footer",
-    icon: PanelBottom,
-  },
-  {
-    label: "FAQ",
-    href: "/cms/faq",
-    icon: HelpCircle,
+    label: "About Us",
+    href: "/cms/about-us",
+    icon: Info,
   },
   {
     label: "Contact Us",
@@ -100,9 +89,9 @@ const cmsItems = [
     icon: Mail,
   },
   {
-    label: "CTA",
-    href: "/cms/cta",
-    icon: Megaphone,
+    label: "Footer",
+    href: "/cms/footer",
+    icon: PanelBottom,
   },
 ]
 

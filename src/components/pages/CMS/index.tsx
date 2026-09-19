@@ -8,15 +8,17 @@ export default function CMSPage() {
 
   const STANDARD_PAGES = [
     { name: "Home", slug: "home", description: "Manage homepage content, sections, theme and media." },
-    { name: "Navbar", slug: "navbar", description: "Manage site-wide navbar branding and theme." },
+    { name: "About Us", slug: "about-us", description: "Manage about us hero, philosophy, approach, regional knowledge, and people." },
+    { name: "Contact Us", slug: "contact-us", description: "Manage contact page hero, process steps, inquiry form, and contact details." },
     { name: "Footer", slug: "footer", description: "Manage site footer, links, social media, and copyright." },
-    { name: "Contact Us", slug: "contact-us", description: "Manage contact page information and details." },
-    { name: "Call To Action", slug: "cta", description: "Manage site-wide Call to Action banner." },
-    { name: "FAQ", slug: "faq", description: "Manage frequently asked questions and category lists." },
   ]
 
-  // Combine standard pages with any extra pages from API
-  const displayedPages = STANDARD_PAGES.map((stdPage) => {
+  const ALLOWED_SLUGS = ["home", "about-us", "contact-us", "footer"]
+
+  // Combine standard pages with any extra allowed pages from API
+  const displayedPages = STANDARD_PAGES.filter((p) =>
+    ALLOWED_SLUGS.includes(p.slug.toLowerCase())
+  ).map((stdPage) => {
     const matched = fetchedPages.find(
       (p) => p.slug.toLowerCase() === stdPage.slug.toLowerCase()
     )
@@ -30,7 +32,10 @@ export default function CMSPage() {
 
   // Add any custom pages created in backend that aren't in STANDARD_PAGES
   fetchedPages.forEach((fp) => {
-    if (!displayedPages.some((dp) => dp.slug.toLowerCase() === fp.slug.toLowerCase())) {
+    if (
+      ALLOWED_SLUGS.includes(fp.slug.toLowerCase()) &&
+      !displayedPages.some((dp) => dp.slug.toLowerCase() === fp.slug.toLowerCase())
+    ) {
       displayedPages.push({
         name: fp.name,
         slug: fp.slug,

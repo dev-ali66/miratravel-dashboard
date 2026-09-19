@@ -1,10 +1,8 @@
 import { useParams } from "react-router-dom"
 import { HomeForm } from "./Home/HomeForm"
-import { NavbarForm } from "./Navbar/NavbarForm"
-import { FooterForm } from "./Footer/FooterForm"
-import { FaqForm } from "./Faq/FaqForm"
+import { AboutForm } from "./About/AboutForm"
 import { ContactForm } from "./Contact/ContactForm"
-import { CtaForm } from "./Cta/CtaForm"
+import { FooterForm } from "./Footer/FooterForm"
 
 export default function PageSections() {
   const { slug: rawSlug } = useParams<{ slug: string }>()
@@ -14,20 +12,14 @@ export default function PageSections() {
   if (pageSlug === "home") {
     return <HomeForm />
   }
-  if (pageSlug === "navbar") {
-    return <NavbarForm />
+  if (pageSlug === "about-us" || pageSlug === "about") {
+    return <AboutForm />
+  }
+  if (pageSlug === "contact-us" || pageSlug === "contact") {
+    return <ContactForm />
   }
   if (pageSlug === "footer") {
     return <FooterForm />
-  }
-  if (pageSlug === "faq") {
-    return <FaqForm />
-  }
-  if (pageSlug === "contact-us") {
-    return <ContactForm />
-  }
-  if (pageSlug === "cta") {
-    return <CtaForm />
   }
 
   return (

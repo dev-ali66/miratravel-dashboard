@@ -34,20 +34,17 @@ export interface HomeMultimedia extends HomeImage {
   muted?: boolean
   imageData?: HomeMultimedia
   videoData?: HomeMultimedia
+  color?: string
 }
 
 export interface HomeHeroContent {
-  titleLine1?: string
-  titleLine2?: string
-  titleHighlight?: string
-  description?: string
+  titleLine1?: any
+  titleLine2?: any
+  titleHighlight?: any
+  description?: any
   backgroundMultimedia?: HomeMultimedia
-  textColors?: {
-    titleLine1?: string
-    titleLine2?: string
-    titleHighlight?: string
-    description?: string
-  }
+  textColors?: Record<string, string>
+  [key: string]: any
 }
 
 export interface HomeTrustBadge {
@@ -58,58 +55,67 @@ export interface HomeTrustBadge {
 }
 
 export interface HomeExploreJourneysContent {
-  title?: string
-  eyebrow?: string
-  subtitle?: string
-  description?: string
+  title?: any
+  eyebrow?: any
+  subtitle?: any
+  description?: any
   trustBadge?: HomeTrustBadge
   backgroundMultimedia?: HomeMultimedia
+  [key: string]: any
 }
 
 export interface HomeDestinationsContent {
-  title?: string
-  eyebrow?: string
-  subtitle?: string
+  title?: any
+  eyebrow?: any
+  subtitle?: any
   backgroundMultimedia?: HomeMultimedia
+  [key: string]: any
 }
 
 export interface HomeStoryItem {
   url?: string
-  index?: string
-  title?: string
-  subtitle?: string
+  index?: any
+  title?: any
+  subtitle?: any
+  [key: string]: any
 }
 
 export interface HomeMiraStoriesContent {
-  title?: string
-  eyebrow?: string
-  description?: string
+  title?: any
+  eyebrow?: any
+  description?: any
   backgroundMultimedia?: HomeMultimedia
   leftSideMultimedia?: HomeMultimedia
   rightSideMultimedia?: HomeMultimedia
+  [key: string]: any
 }
 
 export interface HomeWhyMiraContent {
-  title?: string
-  eyebrow?: string
-  signature?: string
-  paragraphs?: string[]
+  title?: any
+  eyebrow?: any
+  signature?: any
+  paragraphs?: any[]
   backgroundMultimedia?: HomeMultimedia
   rightSideMultimedia?: HomeMultimedia
+  [key: string]: any
 }
 
 export interface HomeTravelInsightsContent {
-  title?: string
-  eyebrow?: string
-  description?: string
+  title?: any
+  eyebrow?: any
+  subtitle?: any
+  description?: any
+  insightsList?: any[]
   backgroundMultimedia?: HomeMultimedia
+  [key: string]: any
 }
 
 export interface HomeCustomJourneyCtaContent {
-  titleLine1?: string
-  titleHighlight?: string
-  description?: string
+  titleLine1?: any
+  titleHighlight?: any
+  description?: any
   backgroundMultimedia?: HomeMultimedia
+  [key: string]: any
 }
 
 export interface HomeSection {
@@ -135,6 +141,7 @@ export interface HomeSection {
     | HomeWhyMiraContent
     | HomeTravelInsightsContent
     | HomeCustomJourneyCtaContent
+    | Record<string, any>
 
   bgImages?: HomeImage[]
 
@@ -143,6 +150,7 @@ export interface HomeSection {
   items?: HomeStoryItem[]
 
   sideImages?: HomeImage[]
+  [key: string]: any
 }
 
 export interface HomeTheme {
@@ -165,6 +173,7 @@ export interface HomePageData {
       index?: boolean
       follow?: boolean
     }
+    [key: string]: any
   }
 
   data?: {
@@ -173,5 +182,7 @@ export interface HomePageData {
     theme?: HomeTheme
 
     sections?: HomeSection[]
+    [key: string]: any
   }
+  [key: string]: any
 }

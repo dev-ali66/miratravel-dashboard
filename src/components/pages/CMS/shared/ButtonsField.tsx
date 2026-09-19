@@ -52,7 +52,7 @@ interface ButtonsFieldProps {
 }
 
 const VARIANT_OPTIONS: Array<{ value: ButtonVariant; label: string; bg: string; text: string }> = [
-  { value: "primary", label: "Primary (Solid Accent Fill)", bg: "#B86B3A", text: "#ffffff" },
+  { value: "primary", label: "Primary (Forest Green Fill)", bg: "#182D09", text: "#ffffff" },
   { value: "secondary", label: "Secondary (Forest Green Fill)", bg: "#1a3d14", text: "#ffffff" },
   { value: "outline", label: "Outline (Translucent Glass)", bg: "transparent", text: "#182d09" },
   { value: "dark", label: "Dark (Solid Black)", bg: "#171717", text: "#ffffff" },
@@ -477,3 +477,75 @@ export function ButtonsField({
     </div>
   )
 }
+
+export interface SingleButtonFieldProps {
+  label?: string
+  fieldName?: string
+  value?: CmsButton
+  button?: CmsButton
+  onChange: (value: CmsButton) => void
+}
+
+export function SingleButtonField({
+  label = "Action Button",
+  fieldName,
+  value,
+  button,
+  onChange,
+}: SingleButtonFieldProps) {
+  const currentButton: CmsButton = value || button || {
+    label: "",
+    url: "",
+    variant: "PRIMARY",
+    style: "primary",
+    rounded: "none",
+    backgroundColor: "#182D09",
+    backgroundOpacity: 100,
+    textColor: "#ffffff",
+    textOpacity: 100,
+    target: "_self",
+    showIcon: true,
+  }
+
+  const update = (updated: CmsButton) => {
+    onChange(updated)
+  }
+
+  return (
+    <div className="flex flex-col gap-2 rounded-lg border border-border/70 bg-card p-3">
+      <div className="flex items-center justify-between gap-2 mb-1">
+        <p className="text-xs font-semibold text-foreground">{label}</p>
+        {fieldName && (
+          <code className="rounded bg-muted/60 px-1.5 py-0.5 font-mono text-[10px] text-muted-foreground">
+            {fieldName}
+          </code>
+        )}
+      </div>
+
+      <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
+        <div className="flex flex-col gap-1.5">
+          <Label className="text-xs font-medium">Button Label</Label>
+          <Input
+            type="text"
+            placeholder="e.g. Email Us"
+            value={currentButton.label || ""}
+            onChange={(e) => update({ ...currentButton, label: e.target.value })}
+            className="h-8 text-xs"
+          />
+        </div>
+
+        <div className="flex flex-col gap-1.5">
+          <Label className="text-xs font-medium">Destination URL</Label>
+          <Input
+            type="text"
+            placeholder="e.g. mailto:hello@miratravel.com"
+            value={currentButton.url || ""}
+            onChange={(e) => update({ ...currentButton, url: e.target.value })}
+            className="h-8 text-xs font-mono"
+          />
+        </div>
+      </div>
+    </div>
+  )
+}
+

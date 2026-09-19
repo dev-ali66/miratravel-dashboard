@@ -53,7 +53,7 @@ export const emptyHero = {
     },
     video: {
       url: "",
-      alt: "Cinematic Aerial View of Europe",
+      alt: "Cinematic Aerial View",
       autoplay: true,
       loop: true,
       muted: true,

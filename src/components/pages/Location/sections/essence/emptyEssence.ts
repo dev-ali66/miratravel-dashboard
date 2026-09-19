@@ -44,7 +44,7 @@ export const emptyEssence = {
       backgroundColor: null,
       backgroundOpacity: 1,
     },
-    statBadgeBg: "#B86B3A",
+    statBadgeBg: "#E5A84B",
   },
   imageMultimedia: {
     show: "image",

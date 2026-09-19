@@ -89,7 +89,7 @@ export function EssenceForm({
             stat.badgeBg ??
             (typeof statValue === "object" ? statValue?.backgroundColor : null)) ||
             essence.statBadgeBg ||
-            "#B86B3A"
+            "#E5A84B"
 
           const updateStatField = (key: string, val: any) => {
             const currentStat = essence.stat || {}
@@ -105,7 +105,7 @@ export function EssenceForm({
                 <h4 className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
                   Absolute Image Stat Badge
                 </h4>
-                <span className="rounded bg-[#B86B3A]/20 px-2 py-0.5 text-[10px] font-medium text-[#B86B3A]">
+                <span className="rounded bg-[#E5A84B]/20 px-2 py-0.5 text-[10px] font-medium text-[#E5A84B]">
                   Overlaid on Media
                 </span>
               </div>
@@ -135,7 +135,7 @@ export function EssenceForm({
                   type="color"
                   label="Badge Background Color"
                   fieldName="essence.stat.statBadgeBg"
-                  placeholder="#B86B3A"
+                  placeholder="#E5A84B"
                   value={statBadgeBg}
                   onChange={(val) => {
                     updateStatField("statBadgeBg", val)

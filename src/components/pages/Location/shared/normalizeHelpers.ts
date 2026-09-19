@@ -6,11 +6,13 @@ export { LOCATION_THEME_COLORS }
  * If media is undefined or null, returns `null` so the field is
  * explicitly serialized as `"key": null` instead of being dropped.
  */
-export function normalizeMultimedia(media: any, defaultShow?: "image" | "video" | "color"): any {
+export function normalizeMultimedia(media: any, defaultShow?: "image" | "video" | "color" | string | any): any {
   const safeMedia = media && typeof media === "object" ? media : {}
 
   const hasVideoConfig = Boolean(safeMedia.video?.url || (safeMedia.video && Object.keys(safeMedia.video).length > 0))
-  const show = safeMedia.show ?? safeMedia.type ?? defaultShow ?? (hasVideoConfig ? "video" : "image")
+  const rawDefaultShow = typeof defaultShow === "object" ? (defaultShow as any)?.show : defaultShow
+  const rawShow = safeMedia.show ?? safeMedia.type ?? rawDefaultShow ?? (hasVideoConfig ? "video" : "image")
+  const show = typeof rawShow === "object" ? (rawShow?.show ?? rawShow?.type ?? "color") : (rawShow || "color")
 
   const imageObj = safeMedia.image ?? safeMedia.imageData ?? {}
   const videoObj = safeMedia.video ?? safeMedia.videoData ?? {}
@@ -132,7 +134,7 @@ export function normalizeButton(btn: any): any {
     variant: variant,
     style: btn.style || variant,
     rounded: btn.rounded || "full",
-    backgroundColor: btn.backgroundColor || (variant === "primary" ? "#B86B3A" : "#ffffff"),
+    backgroundColor: btn.backgroundColor || (variant === "primary" ? "#182D09" : "#ffffff"),
     backgroundOpacity: btn.backgroundOpacity ?? (variant === "outline" ? 0 : 100),
     textColor: btn.textColor || (variant === "primary" || variant === "secondary" || variant === "dark" ? "#ffffff" : "#000000"),
     textOpacity: btn.textOpacity ?? 100,

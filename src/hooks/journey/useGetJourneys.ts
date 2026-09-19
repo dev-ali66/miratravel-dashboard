@@ -1,14 +1,11 @@
 import { useQuery } from "@tanstack/react-query"
 import { apiPrivate } from "@/lib/api-client"
-import type { Journey, JourneyStatus, JourneyType } from "@/components/pages/Journeys/journeyTypes"
+import type { JourneyData } from "@/components/pages/Journey/journeyTypes"
 
-export type JourneyQueryParams = {
-  page?: number
-  limit?: number
-  search?: string
-  status?: JourneyStatus | ""
-  journeyType?: JourneyType | ""
-  featured?: boolean
+export type JourneyPageData = JourneyData & {
+  id: string
+  createdAt: string
+  updatedAt: string
 }
 
 type GetJourneysResponse = {
@@ -21,27 +18,67 @@ type GetJourneysResponse = {
     limit: number
     totalPages: number
   }
-  data: Journey[]
+  data: JourneyPageData[]
+}
+
+export type JourneyQueryParams = {
+  page?: number
+  limit?: number
+  search?: string
+  journeyType?: string
+  travelStyle?: string
+  pace?: string
+  comfortLevel?: string
+  status?: string
+  featured?: boolean
 }
 
 export function useGetJourneys(params: JourneyQueryParams = {}) {
-  const { page = 1, limit = 10, search, status, journeyType, featured } = params
+  const {
+    page = 1,
+    limit = 12,
+    search,
+    journeyType,
+    travelStyle,
+    pace,
+    comfortLevel,
+    status,
+    featured,
+  } = params
 
   return useQuery({
-    queryKey: ["journeys", page, limit, search, status, journeyType, featured],
+    queryKey: [
+      "journeys",
+      page,
+      limit,
+      search,
+      journeyType,
+      travelStyle,
+      pace,
+      comfortLevel,
+      status,
+      featured,
+    ],
     queryFn: async () => {
       const res = await apiPrivate.get<GetJourneysResponse>("/journeys", {
         params: {
           page,
           limit,
           ...(search ? { search } : {}),
-          ...(status ? { status } : {}),
           ...(journeyType ? { journeyType } : {}),
-          ...(featured !== undefined ? { featured } : {}),
+          ...(travelStyle ? { travelStyle } : {}),
+          ...(pace ? { pace } : {}),
+          ...(comfortLevel ? { comfortLevel } : {}),
+          ...(status ? { status } : {}),
+          ...(featured !== undefined ? { featured: String(featured) } : {}),
         },
       })
+
       return res.data
     },
     placeholderData: (previous) => previous,
+    staleTime: 0,
+    refetchOnMount: "always",
+    refetchOnWindowFocus: true,
   })
 }

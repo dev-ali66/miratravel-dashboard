@@ -1,24 +1,11 @@
 import { useState } from "react"
-import { ChevronDown, ChevronUp } from "lucide-react"
+import { Loader2, Save, Terminal } from "lucide-react"
 
 import { useCmsPage } from "../shared/useCmsPage"
-import { SaveBar } from "../shared/SaveBar"
-import { SeoForm } from "../shared/SeoForm"
-import { CollapsibleSectionCard } from "../shared/CollapsibleSectionCard"
+import { SeoMetadataForm } from "./sections/seo"
 
-import type {
-  HomeButton,
-  HomeImage,
-  HomePageData,
-  HomeSection,
-  HomeVideo,
-} from "./homeTypes"
-
-import { homeSectionOrder, homeSectionRegistry } from "./config/homeSections"
-
-const getHomeSectionEntry = (key: string) => {
-  return homeSectionRegistry[key as keyof typeof homeSectionRegistry]
-}
+import type { HomePageData } from "./homeTypes"
+import { homeSectionOrder, homeSectionRegistry, type HomeSectionKey } from "./config/homeSections"
 
 export const HomeForm = () => {
   const { page, setPage, isLoading, isSaving, save } = useCmsPage<HomePageData>(
@@ -26,24 +13,20 @@ export const HomeForm = () => {
     "Home"
   )
 
-  const data = page?.data
-  const sections = data?.sections ?? []
+  const data = page?.data ?? {}
 
   /*
    * ============================================================
-   * COLLAPSED SECTIONS
+   * COLLAPSED SECTIONS ACCORDION STATE
    * ============================================================
    */
-
-  const [openSections, setOpenSections] = useState<Record<string, boolean>>({
-    hero: true,
-  })
+  const [openSections, setOpenSections] = useState<Record<string, boolean>>({})
 
   const toggleSection = (key: string) => {
-    setOpenSections((current) => ({
-      ...current,
-      [key]: !current[key],
-    }))
+    setOpenSections((current) => {
+      const isCurrentlyOpen = !!current[key]
+      return isCurrentlyOpen ? {} : { [key]: true }
+    })
   }
 
   /*
@@ -51,254 +34,165 @@ export const HomeForm = () => {
    * HELPERS
    * ============================================================
    */
-
-  const updateData = (patch: Partial<NonNullable<HomePageData["data"]>>) => {
-    setPage({
-      ...page,
-      name: page?.name ?? "Home",
-
-      metadata: {
-        ...(page?.metadata ?? {}),
-      },
-
-      data: {
-        ...(page?.data ?? {}),
+  const updateSectionByKey = (key: HomeSectionKey, patch: Record<string, any>) => {
+    setPage((current: any) => {
+      const currentData = (current?.data ?? {}) as Record<string, any>
+      const currentSec = currentData[key] ?? {}
+      const updatedSec = {
+        ...currentSec,
         ...patch,
-      },
-    })
-  }
+      }
 
-  const updateSection = (index: number, patch: Partial<HomeSection>) => {
-    const currentSections = data?.sections ?? []
-
-    const updatedSections = currentSections.map((section, sectionIndex) =>
-      sectionIndex === index
-        ? {
-            ...section,
-            ...patch,
+      let updatedSections = currentData.sections
+      if (Array.isArray(updatedSections)) {
+        updatedSections = updatedSections.map((s: any) => {
+          if (s.key === key || s.key === key.replace(/_/g, "-") || s.type === key) {
+            return {
+              ...s,
+              ...patch,
+            }
           }
-        : section
-    )
+          return s
+        })
+      }
 
-    updateData({
-      sections: updatedSections,
-    })
-  }
-
-  const updateSectionContent = (index: number, patch: Record<string, any>) => {
-    const section = sections[index]
-
-    updateSection(index, {
-      content: {
-        ...(section?.content as Record<string, any>),
-        ...patch,
-      } as HomeSection["content"],
-    })
-  }
-
-  const updateSectionButtons = (index: number, buttons: HomeButton[]) => {
-    updateSection(index, {
-      buttons,
-    })
-  }
-
-  const updateSectionImages = (index: number, images: HomeImage[]) => {
-    updateSection(index, {
-      bgImages: images,
-    })
-  }
-
-  const updateSectionVideos = (index: number, videos: HomeVideo[]) => {
-    updateSection(index, {
-      bgVideos: videos,
+      return {
+        ...current,
+        name: current?.name ?? "Home",
+        metadata: {
+          ...(current?.metadata ?? {}),
+        },
+        data: {
+          ...currentData,
+          page: "home",
+          [key]: updatedSec,
+          ...(key === "custom_journey_cta" ? { cta: updatedSec } : {}),
+          ...(Array.isArray(currentData.sections) ? { sections: updatedSections } : {}),
+        },
+      }
     })
   }
 
   /*
    * ============================================================
-   * LOADING
+   * LOADING & ERROR STATES
    * ============================================================
    */
-
   if (isLoading) {
     return (
-      <div className="flex flex-col">
-        <SaveBar
-          title="Home"
-          description="Manage homepage content, sections, theme and media."
-          onSave={save}
-          isSaving={isSaving}
-          isLoading={isLoading}
-        />
-
-        <div className="flex items-center justify-center p-10">
-          <p className="text-sm text-muted-foreground">Loading Home data...</p>
-        </div>
+      <div className="flex min-h-[400px] flex-col items-center justify-center p-10">
+        <Loader2 className="h-6 w-6 animate-spin text-muted-foreground" />
+        <p className="mt-2 text-xs text-muted-foreground">Loading Home editor data...</p>
       </div>
     )
   }
 
-  /*
-   * ============================================================
-   * SECTION LABEL
-   * ============================================================
-   */
-
-  const getSectionTitle = (section: HomeSection) => {
-    const entry = getHomeSectionEntry(section.key)
-    return entry?.label ?? section.key
-  }
-
-  /*
-   * ============================================================
-   * SECTION RENDERER
-   * ============================================================
-   */
-
-  const renderSectionContent = (section: HomeSection, index: number) => {
-    const entry = getHomeSectionEntry(section.key)
-
-    if (!entry) {
-      return (
-        <div className="rounded-md border border-border/50 p-3">
-          <p className="text-sm text-muted-foreground">
-            No editor available for this section.
-          </p>
-        </div>
-      )
-    }
-
-    const SectionForm = entry.form
-
-    return (
-      <SectionForm
-        section={section}
-        index={index}
-        updateSection={updateSection}
-        updateSectionContent={updateSectionContent}
-        updateSectionImages={updateSectionImages}
-        updateSectionVideos={updateSectionVideos}
-        updateSectionButtons={updateSectionButtons}
-      />
-    )
-  }
-
-  /*
-   * ============================================================
-   * RENDER
-   * ============================================================
-   */
-
-  const orderedSections = homeSectionOrder
-    .map((key) => sections.find((section) => section.key === key))
-    .filter(Boolean) as HomeSection[]
-
   return (
-    <div className="flex flex-col">
-      {/* SAVE BAR */}
-
-      <SaveBar
-        title="Home"
-        description="Manage homepage content, sections, theme and media."
-        onSave={save}
-        isSaving={isSaving}
-        isLoading={isLoading}
-      />
-
-      <div className="flex flex-col gap-6 p-4">
-        {/* HOME SECTIONS */}
-
-        <div className="flex flex-col gap-3">
-          <div className="px-1">
-            <p className="text-xs font-semibold tracking-wide text-muted-foreground uppercase">
-              Home Sections
+    <div className="flex min-h-full flex-col">
+      {/* =================================================
+                HEADER (Sticky top bar matching Location)
+            ================================================= */}
+      <div className="sticky top-0 z-20 border-b border-border/60 bg-card/95 px-5 py-4 backdrop-blur">
+        <div className="flex items-center justify-between gap-4">
+          <div className="min-w-0">
+            <p className="text-[10px] font-medium tracking-[0.2em] text-muted-foreground uppercase">
+              CMS Page
             </p>
-
-            <p className="mt-1 text-[11px] text-muted-foreground">
-              Click a section to expand or collapse its settings.
-            </p>
+            <h2 className="mt-1 truncate text-base font-semibold">
+              Edit Home Page
+            </h2>
           </div>
 
-          {orderedSections.map((section, index) => {
-            const isOpen = openSections[section.key] ?? false
+          <div className="flex items-center gap-2">
+            <button
+              type="button"
+              onClick={() => {
+                console.log("📍 [CLEAN HOME API PAYLOAD SENT TO BACKEND]:", page)
+              }}
+              className="flex shrink-0 items-center gap-1.5 rounded-lg border border-border/80 bg-background px-3 py-2 text-xs font-medium text-foreground transition hover:bg-muted cursor-pointer"
+              title="Inspect clean Home payload sent to backend API in browser console (F12)"
+            >
+              <Terminal className="h-3.5 w-3.5 text-primary" />
+              Console Data
+            </button>
 
-            const actualIndex = sections.findIndex(
-              (item) => item.key === section.key
-            )
-
-            return (
-              <div
-                key={`${section.key}-${index}`}
-                data-section={section.key}
-                className="overflow-hidden rounded-lg border border-border/60 transition-all"
-              >
-                {/* HEADER */}
-
-                <button
-                  type="button"
-                  onClick={() => toggleSection(section.key)}
-                  className="flex w-full items-center justify-between gap-3 px-4 py-3 text-left transition-colors hover:bg-muted/40"
-                >
-                  <div className="flex min-w-0 items-center gap-3">
-                    <span className="flex h-7 min-w-7 items-center justify-center rounded-md bg-muted px-2 text-[10px] font-semibold text-muted-foreground">
-                      {String(section.order ?? index + 1).padStart(2, "0")}
-                    </span>
-
-                    <div className="min-w-0">
-                      <p className="text-sm font-semibold">
-                        {getSectionTitle(section)}
-                      </p>
-
-                      <p className="truncate text-[10px] text-muted-foreground">
-                        {section.type}
-                      </p>
-                    </div>
-                  </div>
-
-                  {isOpen ? (
-                    <ChevronUp className="h-4 w-4 shrink-0 text-muted-foreground" />
-                  ) : (
-                    <ChevronDown className="h-4 w-4 shrink-0 text-muted-foreground" />
-                  )}
-                </button>
-
-                {/* CONTENT */}
-
-                {isOpen && (
-                  <div className="border-t border-border/60 p-4">
-                    {renderSectionContent(section, actualIndex)}
-                  </div>
-                )}
-              </div>
-            )
-          })}
+            <button
+              type="button"
+              onClick={save}
+              disabled={isSaving}
+              className="flex shrink-0 items-center gap-2 rounded-lg bg-primary px-4 py-2 text-xs font-medium text-primary-foreground transition hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-50 cursor-pointer"
+            >
+              {isSaving ? (
+                <Loader2 className="h-4 w-4 animate-spin" />
+              ) : (
+                <Save className="h-4 w-4" />
+              )}
+              Save
+            </button>
+          </div>
         </div>
+      </div>
 
-        <CollapsibleSectionCard
-          title="SEO Metadata"
-          meta="seo"
-          indexLabel="SEO"
-          isOpen={openSections.seo ?? false}
-          onToggle={() => toggleSection("seo")}
-        >
-          <SeoForm
-            metadata={page?.metadata}
-            onChange={(metadata) =>
-              setPage({
-                ...page,
-                name: page?.name ?? "Home",
-                metadata: {
-                  ...metadata,
-                  title: metadata.title ?? "",
-                  description: metadata.description ?? "",
-                },
-                data: {
-                  ...(page?.data ?? {}),
-                },
-              })
-            }
+      {/* =================================================
+                FLUSH ACCORDION SECTIONS
+            ================================================= */}
+      <div className="flex-1 divide-y divide-border/60">
+        {homeSectionOrder.map((key, index) => {
+          const entry = homeSectionRegistry[key]
+          const SectionForm = entry?.form
+
+          if (!SectionForm) return null
+
+          const sectionObj =
+            (data as any)?.[key] ??
+            (data as any)?.[key.replace(/-/g, "_")] ??
+            {}
+
+          const sectionNumber = String(index + 1).padStart(2, "0")
+
+          return (
+            <div key={key} data-section={key} className="transition-all">
+              <SectionForm
+                section={sectionObj}
+                index={index}
+                updateSection={(idxOrPatch: any, maybePatch?: any) => {
+                  const patch = typeof idxOrPatch === "object" ? idxOrPatch : maybePatch
+                  if (patch) updateSectionByKey(key, patch)
+                }}
+                updateSectionContent={(idxOrPatch: any, maybePatch?: any) => {
+                  const patch = typeof idxOrPatch === "object" ? idxOrPatch : maybePatch
+                  if (patch) updateSectionByKey(key, patch)
+                }}
+                updateSectionImages={(idxOrImgs: any, maybeImgs?: any) => {
+                  const imgs = Array.isArray(idxOrImgs) ? idxOrImgs : maybeImgs
+                  if (imgs) updateSectionByKey(key, { bgImages: imgs })
+                }}
+                updateSectionVideos={(idxOrVids: any, maybeVids?: any) => {
+                  const vids = Array.isArray(idxOrVids) ? idxOrVids : maybeVids
+                  if (vids) updateSectionByKey(key, { bgVideos: vids })
+                }}
+                updateSectionButtons={(idxOrBtns: any, maybeBtns?: any) => {
+                  const btns = Array.isArray(idxOrBtns) ? idxOrBtns : maybeBtns
+                  if (btns) updateSectionByKey(key, { buttons: btns })
+                }}
+                openSections={openSections}
+                toggleSection={toggleSection}
+                sectionNumber={sectionNumber}
+              />
+            </div>
+          )
+        })}
+
+        {/* SEO SECTION */}
+        <div data-section="seo" className="transition-all">
+          <SeoMetadataForm
+            data={page ?? { name: "Home" }}
+            setData={setPage as any}
+            openSections={openSections}
+            toggleSection={toggleSection}
+            sectionNumber={String(homeSectionOrder.length + 1).padStart(2, "0")}
           />
-        </CollapsibleSectionCard>
+        </div>
       </div>
     </div>
   )

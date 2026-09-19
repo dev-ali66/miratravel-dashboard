@@ -2,11 +2,9 @@ import { Outlet, useParams } from "react-router-dom"
 import { FileText } from "lucide-react"
 
 import { HomePreview } from "./Home/HomePreview"
-import { NavbarPreview } from "./Navbar/NavbarPreview"
+import { AboutPreview } from "./About/AboutPreview"
+import { ContactPreview } from "./Contact/ContactPreview"
 import { FooterPreview } from "./Footer/FooterPreview"
-import { FaqPreviewShell } from "./Faq/FaqPreviewShell"
-import { ContactPreviewShell } from "./Contact/ContactPreviewShell"
-import { CtaPreview } from "./Cta/CtaPreview"
 
 import { CmsDraftProvider } from "./shared/CmsDraftContext"
 import { UniversalEditorLayout } from "@/components/layout/UniversalEditorLayout"
@@ -27,11 +25,9 @@ export function CmsEditorLayout() {
 
   const renderPreview = () => {
     if (pageSlug === "home") return <HomePreview />
-    if (pageSlug === "navbar") return <NavbarPreview />
+    if (pageSlug === "about-us" || pageSlug === "about") return <AboutPreview />
+    if (pageSlug === "contact-us" || pageSlug === "contact") return <ContactPreview />
     if (pageSlug === "footer") return <FooterPreview />
-    if (pageSlug === "faq") return <FaqPreviewShell />
-    if (pageSlug === "contact-us") return <ContactPreviewShell />
-    if (pageSlug === "cta") return <CtaPreview />
 
     return (
       <div className="flex h-full items-center justify-center p-8">

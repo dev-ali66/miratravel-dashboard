@@ -28,7 +28,7 @@ export function normalizeEssence(essence: any) {
     stat: {
       statValue: normalizeStyledField(rawStatValue, "", "#ffffff"),
       statLabel: normalizeStyledField(rawStatLabel, "", "#ffffff"),
-      statBadgeBg: typeof rawStatBadgeBg === "string" ? rawStatBadgeBg : "#B86B3A",
+      statBadgeBg: typeof rawStatBadgeBg === "string" ? rawStatBadgeBg : "#E5A84B",
     },
     imageMultimedia: normalizeMultimedia(
       safeEssence.imageMultimedia || safeEssence.multimedia,

@@ -1,58 +1,20 @@
-import type { ComponentType } from "react"
-import { PageHeroForm } from "../shared/form/PageHeroForm"
-import { ProcessStepsForm } from "../shared/form/ProcessStepsForm"
-import { InquiryForm } from "../shared/form/InquiryForm"
-import { PersonalApproachForm } from "../shared/form/PersonalApproachForm"
-import { ContactInformationForm } from "../shared/form/ContactInformationForm"
-import { FinalCtaForm } from "../shared/form/FinalCtaForm"
-import type { ContactFormSectionProps } from "../shared/form/sectionTypes"
+import type { ContactSection } from "../contactTypes"
 
-export type ContactSectionKey = string
-
-export type ContactSectionConfig = {
-  label: string
-  form: ComponentType<ContactFormSectionProps>
-  preview: null
+export interface ContactFormSectionProps {
+  section: ContactSection
+  index: number
+  updateSection: (index: number, updatedFields: Partial<ContactSection>) => void
+  openSections: Record<string, boolean>
+  toggleSection: (key: string) => void
+  sectionNumber: number
 }
 
-export const contactSectionRegistry: Record<string, ContactSectionConfig> = {
-  pageHero: { label: "Page Hero", form: PageHeroForm, preview: null },
-  stepList: { label: "Process Steps", form: ProcessStepsForm, preview: null },
-  contactForm: { label: "Inquiry Form", form: InquiryForm, preview: null },
-  textImageFeature: {
-    label: "Personal Approach",
-    form: PersonalApproachForm,
-    preview: null,
-  },
-  infoColumns: {
-    label: "Contact Information",
-    form: ContactInformationForm,
-    preview: null,
-  },
-  ctaBanner: { label: "Final CTA", form: FinalCtaForm, preview: null },
-
-  // Key Aliases
-  contact_hero: { label: "Page Hero", form: PageHeroForm, preview: null },
-  process_steps: { label: "Process Steps", form: ProcessStepsForm, preview: null },
-  inquiry_form: { label: "Inquiry Form", form: InquiryForm, preview: null },
-  personal_approach: {
-    label: "Personal Approach",
-    form: PersonalApproachForm,
-    preview: null,
-  },
-  contact_info: {
-    label: "Contact Information",
-    form: ContactInformationForm,
-    preview: null,
-  },
-  final_cta: { label: "Final CTA", form: FinalCtaForm, preview: null },
-}
-
-export const contactSectionOrder = [
-  "pageHero",
-  "stepList",
-  "contactForm",
-  "textImageFeature",
-  "infoColumns",
-  "ctaBanner",
+export const contactSections = [
+  { key: "hero", label: "Hero Banner", number: 1 },
+  { key: "process", label: "How The Process Works", number: 2 },
+  { key: "inquiry-form", label: "Inquiry Form / Escape Header", number: 3 },
+  { key: "plan-travel", label: "A Personal Approach / Plan Travel", number: 4 },
+  { key: "contact-info", label: "Contact Info Items", number: 5 },
+  { key: "cta", label: "Call To Action (CTA)", number: 6 },
+  { key: "seo", label: "SEO & Metadata", number: 7 },
 ]

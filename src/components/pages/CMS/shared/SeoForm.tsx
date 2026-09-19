@@ -1,3 +1,4 @@
+import { Globe } from "lucide-react"
 import { TextAreaField, TextField } from "./FormControls"
 
 export type SeoMetadata = {
@@ -14,9 +15,14 @@ export type SeoMetadata = {
 type SeoFormProps = {
   metadata?: SeoMetadata
   onChange: (metadata: SeoMetadata) => void
+  showBanner?: boolean
 }
 
-export const SeoForm = ({ metadata, onChange }: SeoFormProps) => {
+export const SeoForm = ({
+  metadata,
+  onChange,
+  showBanner = true,
+}: SeoFormProps) => {
   const normalizedMetadata: SeoMetadata = {
     ...(metadata ?? {}),
     robots: {
@@ -26,87 +32,107 @@ export const SeoForm = ({ metadata, onChange }: SeoFormProps) => {
   }
 
   return (
-    <div className="rounded-lg border border-border/60 p-3">
-      <p className="mb-3 text-xs font-semibold tracking-wide text-muted-foreground uppercase">
-        SEO Metadata
-      </p>
+    <div className="space-y-4">
+      {showBanner && (
+        <div className="flex items-start gap-3 rounded-lg border border-amber-500/20 bg-amber-500/5 p-3 text-xs text-muted-foreground">
+          <Globe className="h-4 w-4 shrink-0 text-amber-500 mt-0.5" />
+          <div>
+            <p className="font-medium text-foreground">
+              Search Engine Optimization (SEO)
+            </p>
+            <p className="mt-0.5 leading-relaxed">
+              Configure search engine metadata, OpenGraph canonical URL, search keywords, and robot crawling directives for this page.
+            </p>
+          </div>
+        </div>
+      )}
 
-      <div className="flex flex-col gap-3">
-        <TextField
-          label="Meta title"
-          value={normalizedMetadata.title ?? ""}
-          onChange={(value) =>
-            onChange({ ...normalizedMetadata, title: value })
-          }
-        />
+      <div className="rounded-lg border border-border/70 bg-card p-3.5">
+        <p className="mb-3 text-xs font-semibold tracking-wide text-muted-foreground uppercase">
+          SEO Metadata Settings
+        </p>
 
-        <TextAreaField
-          label="Meta description"
-          value={normalizedMetadata.description ?? ""}
-          onChange={(value) =>
-            onChange({ ...normalizedMetadata, description: value })
-          }
-        />
+        <div className="flex flex-col gap-3">
+          <TextField
+            label="Meta title"
+            value={normalizedMetadata.title ?? ""}
+            onChange={(value) =>
+              onChange({ ...normalizedMetadata, title: value })
+            }
+          />
 
-        <TextField
-          label="Keywords (comma separated)"
-          value={normalizedMetadata.keywords?.join(", ") ?? ""}
-          onChange={(value) =>
-            onChange({
-              ...normalizedMetadata,
-              keywords: String(value)
-                .split(",")
-                .map((item: string) => item.trim())
-                .filter(Boolean),
-            })
-          }
-        />
+          <TextAreaField
+            label="Meta description"
+            value={normalizedMetadata.description ?? ""}
+            onChange={(value) =>
+              onChange({ ...normalizedMetadata, description: value })
+            }
+          />
 
-        <TextField
-          label="Canonical URL"
-          value={normalizedMetadata.canonicalUrl ?? ""}
-          onChange={(value) =>
-            onChange({ ...normalizedMetadata, canonicalUrl: value })
-          }
-        />
+          <TextField
+            label="Keywords (comma separated)"
+            value={normalizedMetadata.keywords?.join(", ") ?? ""}
+            onChange={(value) =>
+              onChange({
+                ...normalizedMetadata,
+                keywords: String(value)
+                  .split(",")
+                  .map((item: string) => item.trim())
+                  .filter(Boolean),
+              })
+            }
+          />
 
-        <div className="flex flex-col gap-2">
-          <span className="text-sm font-medium">Robots</span>
+          <TextField
+            label="Canonical URL"
+            value={normalizedMetadata.canonicalUrl ?? ""}
+            onChange={(value) =>
+              onChange({ ...normalizedMetadata, canonicalUrl: value })
+            }
+          />
 
-          <div className="flex items-center gap-5">
-            <label className="flex items-center gap-2 text-sm">
-              <input
-                type="checkbox"
-                checked={normalizedMetadata.robots?.index ?? true}
-                onChange={(event) =>
-                  onChange({
-                    ...normalizedMetadata,
-                    robots: {
-                      ...(normalizedMetadata.robots ?? {}),
-                      index: event.target.checked,
-                    },
-                  })
-                }
-              />
-              Index
-            </label>
+          <div className="flex flex-col gap-2 pt-1">
+            <span className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
+              Robots Directives
+            </span>
 
-            <label className="flex items-center gap-2 text-sm">
-              <input
-                type="checkbox"
-                checked={normalizedMetadata.robots?.follow ?? true}
-                onChange={(event) =>
-                  onChange({
-                    ...normalizedMetadata,
-                    robots: {
-                      ...(normalizedMetadata.robots ?? {}),
-                      follow: event.target.checked,
-                    },
-                  })
-                }
-              />
-              Follow
-            </label>
+            <div className="flex items-center gap-6">
+              <label className="flex items-center gap-2 text-xs font-medium text-foreground cursor-pointer select-none">
+                <input
+                  type="checkbox"
+                  className="rounded border-border text-primary focus:ring-primary h-4 w-4"
+                  checked={normalizedMetadata.robots?.index ?? true}
+                  onChange={(event) =>
+                    onChange({
+                      ...normalizedMetadata,
+                      robots: {
+                        ...(normalizedMetadata.robots ?? {}),
+                        index: event.target.checked,
+                      },
+                    })
+                  }
+                />
+                Index Page
+              </label>
+
+              <label className="flex items-center gap-2 text-xs font-medium text-foreground cursor-pointer select-none">
+                <input
+                  type="checkbox"
+                  className="rounded border-border text-primary focus:ring-primary h-4 w-4"
+                  checked={normalizedMetadata.robots?.follow ?? true}
+                  onChange={(event) =>
+                    onChange({
+                      ...normalizedMetadata,
+                      robots: {
+                        ...(normalizedMetadata.robots ?? {}),
+                        follow: event.target.checked,
+                      },
+                    })
+                  }
+                />
+                Follow Links
+              </label>
+            </div>
           </div>
         </div>
       </div>
