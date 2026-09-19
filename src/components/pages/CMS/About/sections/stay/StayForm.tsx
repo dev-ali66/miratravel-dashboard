@@ -85,7 +85,6 @@ export function StayForm({
   return (
     <FormSection
       title="The Journeys That Stay (Poetic Editorial)"
-      description="Manage the middle quote box section with poetic sentence items and accent closing text."
       active={isOpen}
       onClick={() => toggleSection(sectionKey)}
       sectionNumber={String(sectionNumber)}
@@ -94,7 +93,8 @@ export function StayForm({
         {/* Title */}
         <DynamicStyledField
           label="Main Editorial Title"
-          fieldKey="title"
+          type="textarea"
+          fieldName="stay.title"
           value={section.title}
           onChange={(val) => updateField("title", val)}
         />
@@ -202,7 +202,7 @@ export function StayForm({
         {/* Closing Accent Text */}
         <DynamicStyledField
           label="Closing Accent Text"
-          fieldKey="closingText"
+          fieldName="stay.closingText"
           value={section.closingText}
           onChange={(val) => updateField("closingText", val)}
         />
@@ -212,7 +212,6 @@ export function StayForm({
           title="Section Background"
           value={section.backgroundMultimedia}
           onChange={(val) => updateField("backgroundMultimedia", val)}
-          allowTypes={["color", "image", "video"]}
         />
       </div>
     </FormSection>
