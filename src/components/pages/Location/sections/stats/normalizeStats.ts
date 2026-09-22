@@ -1,9 +1,10 @@
 import { normalizeMultimedia, normalizeStyledField } from "../../shared/normalizeHelpers"
+import { emptyStats } from "./emptyStats"
 
 export function normalizeStats(statistics: any) {
   const safeStats = statistics && typeof statistics === "object" ? statistics : {}
 
-  const rawFacts = Array.isArray(safeStats.facts) ? safeStats.facts : []
+  const rawFacts = Array.isArray(safeStats.facts) ? safeStats.facts : (Array.isArray(safeStats.items) ? safeStats.items : (emptyStats.items ?? []))
   const normalizedFacts = rawFacts.map((fact: any) => {
     const normFact = {
       label: normalizeStyledField(fact.label, "", "#182d09"),
@@ -22,6 +23,7 @@ export function normalizeStats(statistics: any) {
 
   const normalizedStatistics = {
     ...safeStats,
+    title: normalizeStyledField(safeStats.title ?? emptyStats.title, "", "#182d09"),
     facts: normalizedFacts,
     ...(safeStats.area ? {
       area: {
@@ -42,7 +44,7 @@ export function normalizeStats(statistics: any) {
       },
     } : {}),
     backgroundMultimedia: normalizeMultimedia(
-      safeStats.backgroundMultimedia,
+      safeStats.backgroundMultimedia || emptyStats.backgroundMultimedia,
       "color"
     ),
   }
@@ -51,3 +53,4 @@ export function normalizeStats(statistics: any) {
 
   return normalizedStatistics
 }
+

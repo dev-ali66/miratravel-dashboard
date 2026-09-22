@@ -185,7 +185,19 @@ export function TravelInsightsPreview({ draft }: LocationPreviewSectionProps) {
               </div>
 
               {/* Right Column: Featured Image / Media Card */}
-              <div className="relative flex w-full justify-center @lg:justify-end @lg:w-auto shrink-0">
+              <div className="relative flex w-full flex-col items-center @lg:items-end justify-center @lg:justify-end @lg:w-auto shrink-0">
+                {/* Section Description above Featured Image */}
+                {travelInsight.description && (
+                  <div className="w-full max-w-[300px] @md:max-w-[500px] @lg:max-w-[440px] @lgx:max-w-[474px] @xlg:max-w-[530px] @mid:max-w-[586px] @xl:max-w-[671px] mb-3">
+                    <DynamicStyledTextPreview
+                      as="p"
+                      data={travelInsight.description}
+                      fallbackColor="#d4d4d4"
+                      className="text-xs @md:text-sm @xl:text-base font-normal leading-relaxed text-neutral-300 text-left @lg:text-right"
+                    />
+                  </div>
+                )}
+
                 <div className="relative flex-shrink-0 overflow-hidden w-[300px] @md:w-[500px] @lg:w-[440px] @lgx:w-[474px] @xlg:w-[530px] @mid:w-[586px] @xl:w-[671px] h-[300px] @md:h-[500px] @lg:h-[440px] @lgx:h-[474px] @xlg:h-[530px] @mid:h-[586px] @xl:h-[671px] max-w-full aspect-square cursor-pointer rounded-xs overflow-hidden group border border-neutral-800/60 bg-neutral-900/40">
                   {featuredImgUrl ? (
                     <div className="absolute inset-0 overflow-hidden">

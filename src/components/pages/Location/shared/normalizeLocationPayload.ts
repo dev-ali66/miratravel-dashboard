@@ -31,6 +31,8 @@ import { normalizeFaq } from "../sections/faq/normalizeFaq"
 import { normalizeCta } from "../sections/cta/normalizeCta"
 import { normalizeGeoMap } from "../sections/geo-map/normalizeGeoMap"
 import { normalizeSeo } from "../sections/seo/normalizeSeo"
+import { normalizeSharedInfo } from "../sections/shared-info/normalizeSharedInfo"
+import { normalizeStories } from "../sections/stories/normalizeStories"
 
 // Re-export helpers for backward compatibility across the app
 export { normalizeMultimedia, normalizeStyledField, recursivelyReplaceUndefinedWithNull }
@@ -119,6 +121,18 @@ export function normalizeLocationPayload(
     safeData.geo_data ??
     safeData.geoData ??
     {}
+  const sharedInfoData =
+    safeDraft.sharedInfo ??
+    safeDraft.shared_info ??
+    safeData.shared_info ??
+    safeData.sharedInfo ??
+    {}
+  const storiesDataRaw =
+    safeDraft.stories ??
+    safeDraft.miraStories ??
+    safeData.miraStories ??
+    safeData.stories ??
+    {}
 
   // Normalized sections strictly scoped to active sections configured for the location type
   const finalHero = isSectionActive("hero") ? normalizeHero(heroData) : null
@@ -137,6 +151,8 @@ export function normalizeLocationPayload(
   const finalFaq = isSectionActive("faq") ? normalizeFaq(faqData) : null
   const finalCta = isSectionActive("cta") ? normalizeCta(ctaData) : null
   const finalGeoData = isSectionActive("geo-map") ? normalizeGeoMap(geoDataRaw) : null
+  const finalSharedInfo = isSectionActive("shared-info") ? normalizeSharedInfo(sharedInfoData) : null
+  const finalStories = isSectionActive("stories") ? normalizeStories(storiesDataRaw) : null
   const finalSeo = isSectionActive("seo") ? normalizeSeo(safeDraft.metadata?.seo) : null
 
   const normalized: LocationData = {
@@ -163,6 +179,8 @@ export function normalizeLocationPayload(
     ...(finalFaq ? { faq: finalFaq } : {}),
     ...(finalCta ? { cta: finalCta } : {}),
     ...(finalGeoData ? { geoData: finalGeoData as any } : {}),
+    ...(finalSharedInfo ? { sharedInfo: finalSharedInfo } : {}),
+    ...(finalStories ? { stories: finalStories } : {}),
 
     ...(finalSeo ? { metadata: { seo: finalSeo } } : {}),
   }

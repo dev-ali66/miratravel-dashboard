@@ -1,45 +1,16 @@
 import { normalizeMultimedia, normalizeStyledField, normalizeButtonsArray } from "../../shared/normalizeHelpers"
+import { emptyTravelInsights } from "./emptyTravelInsights"
 
 export function normalizeTravelInsights(travelInsights: any) {
   const safeInsights = travelInsights && typeof travelInsights === "object" ? travelInsights : {}
 
   const normalizedTravelInsights = {
     ...safeInsights,
-    label: normalizeStyledField(safeInsights.label, "TRAVEL INSIGHTS", "#af6348"),
-    title: normalizeStyledField(safeInsights.title, "", "#182d09"),
-    // featuredArticle:
-    //   safeInsights.featuredArticle ||
-    //   (safeInsights.articles && safeInsights.articles[0]
-    //     ? {
-    //         category: normalizeStyledField(
-    //           safeInsights.articles[0].category,
-    //           "Guide",
-    //           "#af6348"
-    //         ),
-    //         title: normalizeStyledField(
-    //           safeInsights.articles[0].title,
-    //           "",
-    //           "#F3F4F6"
-    //         ),
-    //         description: normalizeStyledField(
-    //           safeInsights.articles[0].description,
-    //           "",
-    //           "#9CA3AF"
-    //         ),
-    //         buttons: normalizeButtonsArray(
-    //           safeInsights.articles[0].buttons || [{ label: "Read Article", url: safeInsights.articles[0].href || "#" }]
-    //         ),
-    //         thumbnailMultimedia: normalizeMultimedia(
-    //           safeInsights.articles[0].thumbnailMultimedia ??
-    //             safeInsights.articles[0].imageMultimedia,
-    //           "image"
-    //         ),
-    //       }
-    //     : null),
-    // backgroundMultimedia: normalizeMultimedia(
-    //   safeInsights.backgroundMultimedia,
-    //   "color"
-    // ),
+    label: normalizeStyledField(safeInsights.label ?? emptyTravelInsights.label, "TRAVEL INSIGHTS", "#af6348"),
+    title: normalizeStyledField(safeInsights.title ?? emptyTravelInsights.title, "", "#182d09"),
+    description: normalizeStyledField(safeInsights.description ?? emptyTravelInsights.description, "", "#d4d4d4"),
+    featuredMultimedia: normalizeMultimedia(safeInsights.featuredMultimedia || emptyTravelInsights.featuredMultimedia, "image"),
+    backgroundMultimedia: normalizeMultimedia(safeInsights.backgroundMultimedia || emptyTravelInsights.backgroundMultimedia, "color"),
     articles: Array.isArray(safeInsights.articles)
       ? safeInsights.articles.map((art: any) => {
           const resolvedThumb =
@@ -58,7 +29,6 @@ export function normalizeTravelInsights(travelInsights: any) {
           const normArt: any = {
             category: normalizeStyledField(art.category, "Guide", "#af6348"),
             title: normalizeStyledField(art.title, "", "#F3F4F6"),
-            // description: normalizeStyledField(art.description, "", "#9CA3AF"),
             buttons: normalizeButtonsArray(rawButtons),
             thumbnailMultimedia: normalizeMultimedia(
               art.thumbnailMultimedia ??
@@ -88,7 +58,7 @@ export function normalizeTravelInsights(travelInsights: any) {
           delete normArt.style
           return normArt
         })
-      : [],
+      : (emptyTravelInsights.articles ?? []),
   }
 
   delete (normalizedTravelInsights as any).subtitle
@@ -97,7 +67,9 @@ export function normalizeTravelInsights(travelInsights: any) {
   delete (normalizedTravelInsights as any).featuredImageAlt
   delete (normalizedTravelInsights as any).labelStyle
   delete (normalizedTravelInsights as any).titleStyle
+  delete (normalizedTravelInsights as any).descriptionStyle
   delete (normalizedTravelInsights as any).style
 
   return normalizedTravelInsights
 }
+

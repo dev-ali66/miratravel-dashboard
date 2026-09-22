@@ -182,6 +182,16 @@ export function TravelInsightsForm({
             value={travelInsight.title}
             onChange={(val) => updateTravelInsightField("title", val)}
           />
+
+          {/* Section Description / Subhead (Above Image) */}
+          <DynamicStyledField
+            type="textarea"
+            label="Section Description / Overview (Above Image)"
+            fieldName="travelInsight.description"
+            placeholder="e.g. Explore curated guides, insider tips, and practical travel insights."
+            value={travelInsight.description}
+            onChange={(val) => updateTravelInsightField("description", val)}
+          />
         </div>
 
         {/* Featured Right Media Card */}

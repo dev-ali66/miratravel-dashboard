@@ -1,18 +1,19 @@
 import { normalizeMultimedia, normalizeStyledField, normalizeButtonsArray } from "@/components/pages/Location/shared/normalizeHelpers"
+import { emptyHero } from "./emptyHero"
 
 export function normalizeHero(hero: any) {
   const safeHero = hero && typeof hero === "object" ? hero : {}
 
   const normalizedHero = {
     ...safeHero,
-    title: normalizeStyledField(safeHero.title, "", "#FFFFFF"),
-    description: normalizeStyledField(safeHero.description, "", "#FFFFFF"),
-    breadcrumb: normalizeStyledField(safeHero.breadcrumb, "", null),
-    subtitle: normalizeStyledField(safeHero.subtitle, "", null),
-    isCenter: Boolean(safeHero.isCenter),
-    buttons: normalizeButtonsArray(safeHero.buttons),
+    title: normalizeStyledField(safeHero.title ?? emptyHero.title, "", "#FFFFFF"),
+    description: normalizeStyledField(safeHero.description ?? emptyHero.description, "", "#FFFFFF"),
+    breadcrumb: normalizeStyledField(safeHero.breadcrumb ?? emptyHero.breadcrumb, "", null),
+    subtitle: normalizeStyledField(safeHero.subtitle ?? emptyHero.subtitle, "", null),
+    isCenter: safeHero.isCenter !== undefined ? Boolean(safeHero.isCenter) : emptyHero.isCenter,
+    buttons: normalizeButtonsArray(safeHero.buttons ?? emptyHero.buttons),
     backgroundMultimedia: normalizeMultimedia(
-      safeHero.backgroundMultimedia ?? safeHero.multimedia
+      safeHero.backgroundMultimedia ?? safeHero.multimedia ?? emptyHero.backgroundMultimedia
     ),
   }
 

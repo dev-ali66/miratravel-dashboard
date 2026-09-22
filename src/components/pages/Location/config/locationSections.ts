@@ -5,7 +5,7 @@
 ===================================================== */
 
 import type { ComponentType } from "react"
-import type { LocationData } from "../locationTypes"
+import { isDevModeActive, type LocationData } from "../locationTypes"
 import { BasicInfoForm } from "../sections/basic-info/BasicInfoForm"
 import { HeroForm } from "../sections/hero/HeroForm"
 import { HeroPreview } from "../sections/hero/HeroPreview"
@@ -40,6 +40,10 @@ import { WhyVisitForm } from "../sections/why-visit/WhyVisitForm"
 import { WhyVisitPreview } from "../sections/why-visit/WhyVisitPreview"
 import { PlaceExperiencesForm } from "../sections/experiences/PlaceExperiencesForm"
 import { PlaceExperiencesPreview } from "../sections/experiences/PlaceExperiencesPreview"
+import { SharedInfoForm } from "../sections/shared-info/SharedInfoForm"
+import { SharedInfoPreview } from "../sections/shared-info/SharedInfoPreview"
+import { LocationStoriesForm } from "../sections/stories/LocationStoriesForm"
+import { LocationStoriesPreview } from "../sections/stories/LocationStoriesPreview"
 
 export type LocationFormSectionProps = {
   draft: LocationData
@@ -72,6 +76,8 @@ export type LocationSectionKey =
   | "place-info"
   | "why-visit"
   | "experiences"
+  | "shared-info"
+  | "stories"
 
 export type SectionRegistryEntry = {
   label: string
@@ -170,14 +176,24 @@ export const locationSectionRegistry: Record<LocationSectionKey, SectionRegistry
     form: PlaceExperiencesForm,
     preview: PlaceExperiencesPreview,
   },
+  "shared-info": {
+    label: "Shared Info / Highlight Statement",
+    form: SharedInfoForm,
+    preview: SharedInfoPreview,
+  },
+  stories: {
+    label: "Location Stories",
+    form: LocationStoriesForm,
+    preview: LocationStoriesPreview,
+  },
 }
 
 export const LOCATION_TYPE_SECTION_CONFIG: Record<string, LocationSectionKey[]> = {
   CONTINENT: [
     "basic-info",
     "hero",
-    "place-info",
-    "why-visit",
+    "shared-info",
+    "travel-insights",
     "geo-map",
     "cta",
     "seo",
@@ -188,6 +204,7 @@ export const LOCATION_TYPE_SECTION_CONFIG: Record<string, LocationSectionKey[]> 
     "essence",
     "highlights",
     "region-experiences",
+    "stories",
     "geo-map",
     "travel-insights",
     "signature-experiences",
@@ -202,6 +219,7 @@ export const LOCATION_TYPE_SECTION_CONFIG: Record<string, LocationSectionKey[]> 
     "stats",
     "glance",
     "character",
+    "stories",
     "geo-map",
     "practical-info",
     "seo",
@@ -213,7 +231,9 @@ export const LOCATION_TYPE_SECTION_CONFIG: Record<string, LocationSectionKey[]> 
     "why-visit",
     "experiences",
     "geo-map",
+    "shared-info",
     "travel-insights",
+    "stories",
     "practical-info",
     "seo",
   ],
@@ -235,6 +255,28 @@ export const LOCATION_TYPE_SECTION_CONFIG: Record<string, LocationSectionKey[]> 
     "cta",
     "seo",
   ],
+  TEST: [
+    "basic-info",
+    "hero",
+    "essence",
+    "stats",
+    "glance",
+    "character",
+    "practical-info",
+    "highlights",
+    "region-experiences",
+    "geo-map",
+    "travel-insights",
+    "signature-experiences",
+    "faq",
+    "cta",
+    "place-info",
+    "why-visit",
+    "experiences",
+    "shared-info",
+    "stories",
+    "seo",
+  ],
 }
 
 /**
@@ -243,14 +285,14 @@ export const LOCATION_TYPE_SECTION_CONFIG: Record<string, LocationSectionKey[]> 
  */
 export function getSectionsForLocationType(type?: string | null): LocationSectionKey[] {
   if (!type || typeof type !== "string" || !type.trim()) {
-    return LOCATION_TYPE_SECTION_CONFIG.PLACE
+    return isDevModeActive() ? LOCATION_TYPE_SECTION_CONFIG.TEST : LOCATION_TYPE_SECTION_CONFIG.PLACE
   }
 
   const normalizedType = type.trim().toUpperCase()
   const configured = LOCATION_TYPE_SECTION_CONFIG[normalizedType]
 
   if (!configured || configured.length === 0) {
-    return LOCATION_TYPE_SECTION_CONFIG.PLACE
+    return isDevModeActive() ? LOCATION_TYPE_SECTION_CONFIG.TEST : LOCATION_TYPE_SECTION_CONFIG.PLACE
   }
 
   const result = [...configured]

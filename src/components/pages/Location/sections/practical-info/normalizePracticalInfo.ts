@@ -1,4 +1,5 @@
 import { normalizeMultimedia, normalizeStyledField } from "../../shared/normalizeHelpers"
+import { emptyPracticalInfo } from "./emptyPracticalInfo"
 
 export function normalizePracticalInfo(practicalInfo: any) {
   const safePractical = practicalInfo && typeof practicalInfo === "object" ? practicalInfo : {}
@@ -9,7 +10,7 @@ export function normalizePracticalInfo(practicalInfo: any) {
       ? safePractical.accordion_items
       : Array.isArray(safePractical.accordions)
         ? safePractical.accordions
-        : []
+        : (emptyPracticalInfo.items ?? [])
 
   const normalizedItems = rawAccordionItems.map((item: any, idx: number) => {
     const normItem = {
@@ -27,13 +28,13 @@ export function normalizePracticalInfo(practicalInfo: any) {
 
   const normalizedPracticalInfo = {
     ...safePractical,
-    label: normalizeStyledField(safePractical.label, "BEFORE TRAVEL", "#af6348"),
-    title: normalizeStyledField(safePractical.title, "", "#182d09"),
+    label: normalizeStyledField(safePractical.label ?? emptyPracticalInfo.label, "BEFORE TRAVEL", "#af6348"),
+    title: normalizeStyledField(safePractical.title ?? emptyPracticalInfo.title, "", "#182d09"),
     items: normalizedItems,
     sideImageMultimedia: normalizeMultimedia(
-      safePractical.sideImageMultimedia || safePractical.imageMultimedia
+      safePractical.sideImageMultimedia || safePractical.imageMultimedia || emptyPracticalInfo.sideImageMultimedia
     ),
-    backgroundMultimedia: normalizeMultimedia(safePractical.backgroundMultimedia, "color"),
+    backgroundMultimedia: normalizeMultimedia(safePractical.backgroundMultimedia || emptyPracticalInfo.backgroundMultimedia, "color"),
   }
 
   delete (normalizedPracticalInfo as any).labelStyle
@@ -45,3 +46,4 @@ export function normalizePracticalInfo(practicalInfo: any) {
 
   return normalizedPracticalInfo
 }
+

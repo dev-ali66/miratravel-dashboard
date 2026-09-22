@@ -1,4 +1,5 @@
 import { normalizeMultimedia, normalizeStyledField, normalizeButtonsArray } from "../../shared/normalizeHelpers"
+import { emptyCta } from "./emptyCta"
 
 export function normalizeCta(ctaSection: any) {
   const safeCta = ctaSection && typeof ctaSection === "object" ? ctaSection : {}
@@ -7,16 +8,16 @@ export function normalizeCta(ctaSection: any) {
     ? safeCta.buttons
     : safeCta.button
       ? [safeCta.button]
-      : []
+      : (emptyCta.buttons ?? [])
 
   const normalizedCta = {
     ...safeCta,
     label: normalizeStyledField(safeCta.label, "", "#af6348"),
-    title: normalizeStyledField(safeCta.title, "", "#182d09"),
-    description: normalizeStyledField(safeCta.description, "", "#565e69"),
+    title: normalizeStyledField(safeCta.title ?? emptyCta.title, "", "#182d09"),
+    description: normalizeStyledField(safeCta.description ?? emptyCta.description, "", "#565e69"),
     buttons: normalizeButtonsArray(rawButtons),
-    imageMultimedia: normalizeMultimedia(safeCta.imageMultimedia, "image"),
-    backgroundMultimedia: normalizeMultimedia(safeCta.backgroundMultimedia, "color"),
+    imageMultimedia: normalizeMultimedia(safeCta.imageMultimedia || emptyCta.imageMultimedia, "image"),
+    backgroundMultimedia: normalizeMultimedia(safeCta.backgroundMultimedia || emptyCta.backgroundMultimedia, "color"),
     style: safeCta.style ?? null,
   }
 
@@ -28,3 +29,4 @@ export function normalizeCta(ctaSection: any) {
 
   return normalizedCta
 }
+

@@ -1,38 +1,39 @@
 import { normalizeMultimedia, normalizeStyledField } from "../../shared/normalizeHelpers"
+import { emptyGeoData } from "./emptyGeoMap"
 
 export function normalizeGeoMap(rawGeoData: any) {
   const safeGeoData = rawGeoData && typeof rawGeoData === "object" ? rawGeoData : {}
 
-  const rawGeoObj = safeGeoData.geo ?? safeGeoData.location ?? safeGeoData.map ?? {}
-  const geoLat = Number(rawGeoObj.latitude ?? safeGeoData.latitude ?? 41.1533)
-  const geoLng = Number(rawGeoObj.longitude ?? safeGeoData.longitude ?? 20.1683)
-  const geoZoom = Number(rawGeoObj.mapZoom ?? safeGeoData.mapZoom ?? 4)
-  const geoPitch = Number(rawGeoObj.pitch ?? safeGeoData.pitch ?? 0)
-  const geoBearing = Number(rawGeoObj.bearing ?? safeGeoData.bearing ?? 0)
-  const geoTz = rawGeoObj.timezone ?? safeGeoData.timezone ?? "UTC+1 (CET)"
+  const rawGeoObj = safeGeoData.geo ?? safeGeoData.location ?? safeGeoData.map ?? emptyGeoData.geo ?? {}
+  const geoLat = Number(rawGeoObj.latitude ?? safeGeoData.latitude ?? emptyGeoData.geo.latitude)
+  const geoLng = Number(rawGeoObj.longitude ?? safeGeoData.longitude ?? emptyGeoData.geo.longitude)
+  const geoZoom = Number(rawGeoObj.mapZoom ?? safeGeoData.mapZoom ?? emptyGeoData.geo.mapZoom)
+  const geoPitch = Number(rawGeoObj.pitch ?? safeGeoData.pitch ?? emptyGeoData.geo.pitch)
+  const geoBearing = Number(rawGeoObj.bearing ?? safeGeoData.bearing ?? emptyGeoData.geo.bearing)
+  const geoTz = rawGeoObj.timezone ?? safeGeoData.timezone ?? emptyGeoData.geo.timezone
   const geoArea = {
-    value: Number(rawGeoObj.area?.value ?? safeGeoData.area?.value ?? 28748),
-    unit: rawGeoObj.area?.unit ?? safeGeoData.area?.unit ?? "km²",
+    value: Number(rawGeoObj.area?.value ?? safeGeoData.area?.value ?? emptyGeoData.geo.area.value),
+    unit: rawGeoObj.area?.unit ?? safeGeoData.area?.unit ?? emptyGeoData.geo.area.unit,
   }
 
   const showChildrenVal =
     safeGeoData.showChildren !== undefined
       ? Boolean(safeGeoData.showChildren)
-      : safeGeoData.children?.showChildren !== false
+      : (emptyGeoData.showChildren ?? true)
 
   const normalizedGeoData = {
     title: normalizeStyledField(
-      safeGeoData.title,
+      safeGeoData.title ?? emptyGeoData.title,
       "Interactive Map",
       "#0a0a0a"
     ),
     description: normalizeStyledField(
-      safeGeoData.description,
+      safeGeoData.description ?? emptyGeoData.description,
       "Spin the globe, then zoom into the destination to explore our properties.",
       "#565e69"
     ),
     backgroundMultimedia: normalizeMultimedia(
-      safeGeoData.backgroundMultimedia,
+      safeGeoData.backgroundMultimedia || emptyGeoData.backgroundMultimedia,
       "color"
     ),
     geo: {
@@ -57,4 +58,5 @@ export function normalizeGeoMap(rawGeoData: any) {
 
   return normalizedGeoData
 }
+
 

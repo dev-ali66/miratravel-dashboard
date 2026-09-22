@@ -1,4 +1,5 @@
 import { normalizeMultimedia, normalizeStyledField } from "../../shared/normalizeHelpers"
+import { emptyFaq } from "./emptyFaq"
 
 export function normalizeFaq(faqSection: any) {
   const safeFaq = faqSection && typeof faqSection === "object" ? faqSection : {}
@@ -7,7 +8,7 @@ export function normalizeFaq(faqSection: any) {
     ? safeFaq.items
     : Array.isArray(safeFaq.questions)
       ? safeFaq.questions
-      : []
+      : (emptyFaq.items ?? [])
 
   const normalizedItems = rawItems.map((q: any) => {
     const normItem = {
@@ -23,11 +24,10 @@ export function normalizeFaq(faqSection: any) {
 
   const normalizedFaq = {
     ...safeFaq,
-    // label: normalizeStyledField(safeFaq.label, "FREQUENTLY ASKED QUESTIONS", "#af6348"),
-    title: normalizeStyledField(safeFaq.title, "", "#182d09"),
+    title: normalizeStyledField(safeFaq.title ?? emptyFaq.title, "", "#182d09"),
     items: normalizedItems,
-    imageMultimedia: normalizeMultimedia(safeFaq.imageMultimedia, "image"),
-    backgroundMultimedia: normalizeMultimedia(safeFaq.backgroundMultimedia, "color"),
+    imageMultimedia: normalizeMultimedia(safeFaq.imageMultimedia || emptyFaq.imageMultimedia, "image"),
+    backgroundMultimedia: normalizeMultimedia(safeFaq.backgroundMultimedia || emptyFaq.backgroundMultimedia, "color"),
     style: safeFaq.style ?? null,
   }
 
@@ -37,3 +37,4 @@ export function normalizeFaq(faqSection: any) {
 
   return normalizedFaq
 }
+

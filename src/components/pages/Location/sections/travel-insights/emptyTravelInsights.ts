@@ -13,6 +13,13 @@ export const emptyTravelInsights = {
     backgroundColor: null,
     backgroundOpacity: 1,
   },
+  description: {
+    value: "Explore curated guides, insider tips, and practical travel insights.",
+    textColor: "#d4d4d4",
+    textOpacity: 1,
+    backgroundColor: null,
+    backgroundOpacity: 1,
+  },
   featuredMultimedia: {
     show: "image",
     image: {

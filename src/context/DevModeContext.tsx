@@ -36,7 +36,7 @@ const DevModeContext = createContext<DevModeContextType>({
 export function DevModeProvider({ children }: { children: React.ReactNode }) {
   const [isDevMode, setIsDevModeState] = useState<boolean>(() => {
     try {
-      const stored = localStorage.getItem("poli_dev_mode")
+      const stored = localStorage.getItem("dashboard_dev_mode")
       return stored !== null ? JSON.parse(stored) : DEFAULT_DEV_MODE_CONFIG.isDevMode
     } catch {
       return DEFAULT_DEV_MODE_CONFIG.isDevMode
@@ -55,7 +55,7 @@ export function DevModeProvider({ children }: { children: React.ReactNode }) {
   // Auto-sync localStorage and config state whenever isDevMode changes
   React.useEffect(() => {
     try {
-      localStorage.setItem("poli_dev_mode", JSON.stringify(isDevMode))
+      localStorage.setItem("dashboard_dev_mode", JSON.stringify(isDevMode))
     } catch (e) {
       console.warn("Could not persist dev mode to localStorage", e)
     }

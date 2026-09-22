@@ -1,4 +1,5 @@
 import { normalizeMultimedia, normalizeStyledField, normalizeButtonsArray } from "../../shared/normalizeHelpers"
+import { emptyCharacter } from "./emptyCharacter"
 
 export function normalizeCharacter(regionCharacter: any) {
   const safeChar = regionCharacter && typeof regionCharacter === "object" ? regionCharacter : {}
@@ -7,7 +8,7 @@ export function normalizeCharacter(regionCharacter: any) {
     ? safeChar.items
     : Array.isArray(safeChar.pillars)
       ? safeChar.pillars
-      : []
+      : (emptyCharacter.items ?? [])
 
   const normalizedItems = rawItems.map((p: any) => {
     const rawButtons = Array.isArray(p.buttons) && p.buttons.length > 0
@@ -34,10 +35,10 @@ export function normalizeCharacter(regionCharacter: any) {
 
   const normalizedCharacter = {
     ...safeChar,
-    label: normalizeStyledField(safeChar.label, "CHARACTER", "#af6348"),
-    title: normalizeStyledField(safeChar.title, "", "#182d09"),
+    label: normalizeStyledField(safeChar.label ?? emptyCharacter.label, "CHARACTER", "#af6348"),
+    title: normalizeStyledField(safeChar.title ?? emptyCharacter.title, "", "#182d09"),
     items: normalizedItems,
-    backgroundMultimedia: normalizeMultimedia(safeChar.backgroundMultimedia),
+    backgroundMultimedia: normalizeMultimedia(safeChar.backgroundMultimedia || emptyCharacter.backgroundMultimedia),
     style: safeChar.style ?? null,
   }
 

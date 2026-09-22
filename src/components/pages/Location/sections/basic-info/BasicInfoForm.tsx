@@ -4,6 +4,7 @@ import { useGetLocationPages } from "@/hooks/location/useGetLocation"
 import { DynamicStyledField } from "@/components/pages/CMS/shared/FormControls"
 import { FormSection } from "../../shared/fields"
 import type { LocationFormSectionProps } from "../../config/locationSections"
+import { useDevMode } from "@/context/DevModeContext"
 
 export function BasicInfoForm({
   draft,
@@ -13,6 +14,7 @@ export function BasicInfoForm({
   sectionNumber,
 }: LocationFormSectionProps) {
   const isOpen = Boolean(openSections["basic-info"])
+  const { isDevMode } = useDevMode()
 
   // Query existing locations for the Parent Location selector
   const { data: locationsResponse } = useGetLocationPages({ limit: 100 })
@@ -30,15 +32,20 @@ export function BasicInfoForm({
     return [{ label: "None (Top-Level Destination)", value: "" }, ...list]
   }, [availableLocations, draft?.id])
 
+  const locationTypesList = useMemo(() => {
+    const base = ["CONTINENT", "COUNTRY", "REGION", "PLACE", "LANDMARK", "ACCOMMODATION"]
+    return isDevMode ? [...base, "TEST"] : base
+  }, [isDevMode])
+
   const locationTypeOptions = useMemo(
     () => [
       { label: "Select Location Type...", value: "" },
-      ...LOCATION_TYPES.map((t) => ({
-        label: t.replace(/_/g, " "),
+      ...locationTypesList.map((t) => ({
+        label: t === "TEST" ? "TEST (DEV ONLY — All 20 Sections)" : t.replace(/_/g, " "),
         value: t,
       })),
     ],
-    []
+    [locationTypesList]
   )
 
   const handleNameChange = (val: string) => {

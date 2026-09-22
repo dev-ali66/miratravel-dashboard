@@ -4,7 +4,7 @@
    Modularized by importing section-level defaults.
 ===================================================== */
 
-import type { LocationData } from "../locationTypes"
+import { isDevModeActive, type LocationData } from "../locationTypes"
 import { emptyHero } from "../sections/hero/emptyHero"
 import { emptyPlaceInfo } from "../sections/place-info/emptyPlaceInfo"
 import { emptyWhyVisit } from "../sections/why-visit/emptyWhyVisit"
@@ -22,10 +22,12 @@ import { emptySignatureExperiences } from "../sections/signature-experiences/emp
 import { emptyFaq } from "../sections/faq/emptyFaq"
 import { emptyCta } from "../sections/cta/emptyCta"
 import { emptySeo } from "../sections/seo/emptySeo"
+import { emptySharedInfo } from "../sections/shared-info/emptySharedInfo"
+import { emptyStories } from "../sections/stories/emptyStories"
 
 export const emptyLocation: LocationData = {
   name: "",
-  type: "" as any,
+  type: (isDevModeActive() ? "TEST" : "") as any,
   parentId: null,
 
   hero: emptyHero,
@@ -44,5 +46,7 @@ export const emptyLocation: LocationData = {
   signatureExperiences: emptySignatureExperiences,
   faq: emptyFaq,
   cta: emptyCta,
+  sharedInfo: emptySharedInfo,
+  stories: emptyStories,
   metadata: emptySeo,
 }

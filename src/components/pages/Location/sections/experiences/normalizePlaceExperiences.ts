@@ -1,17 +1,18 @@
 import { normalizeMultimedia, normalizeStyledField } from "../../shared/normalizeHelpers"
+import { emptyExperiences } from "./emptyExperiences"
 
 export function normalizePlaceExperiences(experiences: any) {
   const safeExp = experiences && typeof experiences === "object" ? experiences : {}
 
-  const featuredExperience = safeExp.featured_experience ?? {}
+  const featuredExperience = safeExp.featured_experience ?? emptyExperiences.featured_experience ?? {}
   const normalizedExperiences = {
     ...safeExp,
-    title: normalizeStyledField(safeExp.title, "", "#182d09"),
-    location: safeExp.location ?? "",
-    description: normalizeStyledField(safeExp.description, "", "#565e69"),
-    seasonInfo: safeExp.seasonInfo ?? "",
-    seasonLocation: safeExp.seasonLocation ?? "",
-    load_more_button: safeExp.load_more_button ?? "Load More",
+    title: normalizeStyledField(safeExp.title ?? emptyExperiences.title, "", "#182d09"),
+    location: safeExp.location ?? emptyExperiences.location ?? "",
+    description: normalizeStyledField(safeExp.description ?? emptyExperiences.description, "", "#565e69"),
+    seasonInfo: safeExp.seasonInfo ?? emptyExperiences.seasonInfo ?? "",
+    seasonLocation: safeExp.seasonLocation ?? emptyExperiences.seasonLocation ?? "",
+    load_more_button: safeExp.load_more_button ?? emptyExperiences.load_more_button ?? "Load More",
     featured_experience: {
       image: featuredExperience.image ?? "",
       title: normalizeStyledField(featuredExperience.title, "", "#182d09"),
@@ -24,7 +25,7 @@ export function normalizePlaceExperiences(experiences: any) {
         ? featuredExperience.buttons
         : [],
       imageMultimedia: normalizeMultimedia(
-        featuredExperience.imageMultimedia
+        featuredExperience.imageMultimedia || emptyExperiences.featured_experience?.imageMultimedia
       ),
     },
     cards: Array.isArray(safeExp.cards)
@@ -41,11 +42,15 @@ export function normalizePlaceExperiences(experiences: any) {
           buttons: Array.isArray(c.buttons) ? c.buttons : [],
           imageMultimedia: normalizeMultimedia(c.imageMultimedia),
         }))
-      : [],
+      : (emptyExperiences.cards ?? []),
     footer: {
       note: safeExp.footer?.note ?? "",
       region: safeExp.footer?.region ?? "",
     },
+    backgroundMultimedia: normalizeMultimedia(
+      safeExp.backgroundMultimedia || emptyExperiences.backgroundMultimedia,
+      "color"
+    ),
   }
 
   delete (normalizedExperiences as any).loadMoreButtonStyle
@@ -56,3 +61,4 @@ export function normalizePlaceExperiences(experiences: any) {
 
   return normalizedExperiences
 }
+

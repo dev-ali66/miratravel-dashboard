@@ -1,14 +1,15 @@
 import { normalizeMultimedia, normalizeStyledField, LOCATION_THEME_COLORS } from "../../shared/normalizeHelpers"
+import { emptyRegionExperiences } from "./emptyRegionExperiences"
 
 export function normalizeRegionExperiences(regionExperiences: any) {
   const safeRegExp = regionExperiences && typeof regionExperiences === "object" ? regionExperiences : {}
 
   const normalizedRegionExperiences = {
     ...safeRegExp,
-    label: normalizeStyledField(safeRegExp.label, "", LOCATION_THEME_COLORS.accent),
-    title: normalizeStyledField(safeRegExp.title, "", LOCATION_THEME_COLORS.primary),
+    label: normalizeStyledField(safeRegExp.label ?? emptyRegionExperiences.label, "", LOCATION_THEME_COLORS.accent),
+    title: normalizeStyledField(safeRegExp.title ?? emptyRegionExperiences.title, "", LOCATION_THEME_COLORS.primary),
     backgroundMultimedia: normalizeMultimedia(
-      safeRegExp.backgroundMultimedia,
+      safeRegExp.backgroundMultimedia || emptyRegionExperiences.backgroundMultimedia,
       "color"
     ),
     items: Array.isArray(safeRegExp.items)
@@ -51,7 +52,7 @@ export function normalizeRegionExperiences(regionExperiences: any) {
 
           return normItem
         })
-      : [],
+      : (emptyRegionExperiences.items ?? []),
   }
 
   delete (normalizedRegionExperiences as any).labelStyle
@@ -60,3 +61,4 @@ export function normalizeRegionExperiences(regionExperiences: any) {
 
   return normalizedRegionExperiences
 }
+

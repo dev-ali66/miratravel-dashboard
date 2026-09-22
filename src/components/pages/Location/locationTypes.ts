@@ -144,6 +144,16 @@ export type GuideArticle = {
   thumbnailMultimedia?: Record<string, any>
 }
 
+export function isDevModeActive(): boolean {
+  if (typeof window !== "undefined") {
+    try {
+      const stored = localStorage.getItem("dashboard_dev_mode")
+      if (stored !== null) return JSON.parse(stored) === true
+    } catch {}
+  }
+  return false
+}
+
 export const LOCATION_TYPES = [
   "CONTINENT",
   "COUNTRY",
@@ -151,9 +161,10 @@ export const LOCATION_TYPES = [
   "PLACE",
   "LANDMARK",
   "ACCOMMODATION",
+  ...(isDevModeActive() ? ["TEST"] : []),
 ] as const
 
-export type LocationType = (typeof LOCATION_TYPES)[number]
+export type LocationType = (typeof LOCATION_TYPES)[number] | "TEST"
 
 export type HighlightLocationItem = {
   id: string

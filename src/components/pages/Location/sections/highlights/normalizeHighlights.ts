@@ -1,4 +1,5 @@
 import { normalizeMultimedia, normalizeStyledField, LOCATION_THEME_COLORS } from "../../shared/normalizeHelpers"
+import { emptyHighlights } from "./emptyHighlights"
 
 export function normalizeHighlights(highlights: any) {
   const safeHighlights = highlights && typeof highlights === "object" ? highlights : {}
@@ -13,11 +14,11 @@ export function normalizeHighlights(highlights: any) {
 
   const normalizedHighlights = {
     ...safeHighlights,
-    label: normalizeStyledField(safeHighlights.label, "SEASONAL HIGHLIGHTS", LOCATION_THEME_COLORS.accent),
-    title: normalizeStyledField(safeHighlights.title, "", LOCATION_THEME_COLORS.primary),
-    description: normalizeStyledField(safeHighlights.description, "", LOCATION_THEME_COLORS.muted),
+    label: normalizeStyledField(safeHighlights.label ?? emptyHighlights.label, "SEASONAL HIGHLIGHTS", LOCATION_THEME_COLORS.accent),
+    title: normalizeStyledField(safeHighlights.title ?? emptyHighlights.title, "", LOCATION_THEME_COLORS.primary),
+    description: normalizeStyledField(safeHighlights.description ?? emptyHighlights.description, "", LOCATION_THEME_COLORS.muted),
     items: rawItemIds,
-    backgroundMultimedia: normalizeMultimedia(safeHighlights.backgroundMultimedia, "color"),
+    backgroundMultimedia: normalizeMultimedia(safeHighlights.backgroundMultimedia || emptyHighlights.backgroundMultimedia, "color"),
     style: safeHighlights.style ?? null,
   }
 
@@ -29,3 +30,4 @@ export function normalizeHighlights(highlights: any) {
 
   return normalizedHighlights
 }
+
