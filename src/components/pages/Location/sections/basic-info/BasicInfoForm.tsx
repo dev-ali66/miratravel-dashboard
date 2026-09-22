@@ -1,5 +1,5 @@
 import { useMemo } from "react"
-import { LOCATION_TYPES, type LocationType } from "../../locationTypes"
+import { type LocationType } from "../../locationTypes"
 import { useGetLocationPages } from "@/hooks/location/useGetLocation"
 import { DynamicStyledField } from "@/components/pages/CMS/shared/FormControls"
 import { FormSection } from "../../shared/fields"
