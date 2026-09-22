@@ -5,11 +5,11 @@ import { useParams, useSearchParams } from "react-router-dom"
 
 import { useJourneyPage } from "@/hooks/journey/useJourneyPage"
 import { useJourneyDraft } from "./shared/JourneyDraftContext"
-import { emptyJourney } from "./shared/emptyJourney"
+import { emptyJourneyPayload } from "./shared/emptyJourneyPayload"
 import { normalizeJourneyPayload } from "./shared/normalizeJourneyPayload"
 import {
-  getSectionsForJourney,
-  journeySectionRegistry,
+  JOURNEY_SECTION_KEYS,
+  JOURNEY_SECTION_CONFIGS,
 } from "./config/journeySections"
 
 export function JourneyForm() {
@@ -30,7 +30,7 @@ export function JourneyForm() {
   // When entering Add mode, initialize draft with clean empty state
   useEffect(() => {
     if (!isEditMode) {
-      resetDraft(structuredClone(emptyJourney))
+      resetDraft(structuredClone(emptyJourneyPayload))
     }
   }, [isEditMode, resetDraft])
 
@@ -78,8 +78,6 @@ export function JourneyForm() {
     })
   }
 
-  const activeSections = getSectionsForJourney()
-
   return (
     <div className="flex min-h-full flex-col">
       {/* Header */}
@@ -103,10 +101,10 @@ export function JourneyForm() {
                 if (!isEditMode) {
                   delete (cleanPayload as any).id
                 }
-                console.log("📍 [CLEAN JOURNEY API PAYLOAD]:", cleanPayload)
+                console.log("📍 [CLEAN JOURNEY API PAYLOAD SENT TO BACKEND]:", cleanPayload)
               }}
               className="flex shrink-0 items-center gap-1.5 rounded-lg border border-border/80 bg-background px-3 py-2 text-xs font-medium text-foreground transition hover:bg-muted cursor-pointer"
-              title="Inspect clean payload in console (F12)"
+              title="Inspect clean location payload sent to backend API in browser console (F12)"
             >
               <Terminal className="h-3.5 w-3.5 text-primary" />
               Console Data
@@ -132,9 +130,9 @@ export function JourneyForm() {
 
       {/* Sections Accordion */}
       <div className="flex-1 divide-y divide-border/60">
-        {activeSections.map((key, index) => {
-          const sectionEntry = journeySectionRegistry[key]
-          const SectionForm = sectionEntry?.form
+        {JOURNEY_SECTION_KEYS.map((key, index) => {
+          const sectionConfig = JOURNEY_SECTION_CONFIGS[key]
+          const SectionForm = sectionConfig?.formComponent
 
           if (!SectionForm) return null
 

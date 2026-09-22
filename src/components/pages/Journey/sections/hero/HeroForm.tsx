@@ -1,6 +1,8 @@
-import type { JourneyData } from "../../journeyTypes"
-import { FormSection, Field } from "../../shared/fields"
+import { DynamicStyledField } from "@/components/pages/CMS/shared/FormControls"
+import { ButtonsField } from "@/components/pages/CMS/shared/ButtonsField"
 import { UniversalMultimediaForm } from "@/components/pages/CMS/shared/UniversalMultimediaForm"
+import { FormSection } from "../../shared/fields"
+import type { JourneyData } from "../../journeyTypes"
 
 interface HeroFormProps {
   draft: JourneyData
@@ -20,6 +22,10 @@ export function HeroForm({
   const isOpen = Boolean(openSections["hero"])
   const heroData = draft.hero || {}
 
+  const updateHeroField = (fieldKey: string, value: any) => {
+    updateField(`hero.${fieldKey}`, value)
+  }
+
   return (
     <FormSection
       title="Hero Banner & Header Configuration"
@@ -27,46 +33,67 @@ export function HeroForm({
       active={isOpen}
       onClick={() => toggleSection("hero")}
     >
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-        <Field
-          label="Hero Label"
-          value={heroData.label || ""}
-          onChange={(val) => updateField("hero.label", val)}
+      <div className="flex flex-col gap-5">
+        {/* Hero Label */}
+        <DynamicStyledField
+          type="text"
+          label="Hero Category Label"
+          fieldName="hero.label"
           placeholder="e.g. MIRA EXCLUSIVE JOURNEY"
+          value={heroData.label}
+          onChange={(val) => updateHeroField("label", val)}
         />
 
-        <Field
+        {/* Hero Badge */}
+        <DynamicStyledField
+          type="text"
           label="Hero Badge Text"
-          value={heroData.badge || ""}
-          onChange={(val) => updateField("hero.badge", val)}
+          fieldName="hero.badge"
           placeholder="e.g. Bespoke Experience"
+          value={heroData.badge}
+          onChange={(val) => updateHeroField("badge", val)}
         />
-      </div>
 
-      <Field
-        label="Hero Main Title"
-        value={heroData.title || ""}
-        onChange={(val) => updateField("hero.title", val)}
-        placeholder="Defaults to Journey Title if empty"
-      />
+        {/* Hero Title */}
+        <DynamicStyledField
+          type="textarea"
+          rows={2}
+          label="Hero Main Title"
+          fieldName="hero.title"
+          placeholder="e.g. Classic Albania & The Ionian Coast"
+          value={heroData.title}
+          onChange={(val) => updateHeroField("title", val)}
+        />
 
-      <Field
-        label="Hero Subtitle / Narrative"
-        value={heroData.subtitle || ""}
-        onChange={(val) => updateField("hero.subtitle", val)}
-        multiline
-        rows={3}
-        placeholder="Captivating introductory narrative for hero section..."
-      />
+        {/* Hero Subtitle */}
+        <DynamicStyledField
+          type="textarea"
+          rows={3}
+          label="Hero Subtitle / Tagline"
+          fieldName="hero.subtitle"
+          placeholder="Captivating introductory narrative for hero section..."
+          value={heroData.subtitle}
+          onChange={(val) => updateHeroField("subtitle", val)}
+        />
 
-      {/* Mandatory Section Background Multimedia */}
-      <div className="pt-4 border-t border-border/40">
-        <label className="block text-xs font-bold uppercase tracking-wider text-foreground mb-3">
-          Hero Section Background Multimedia (Image / Video / Color Overlay)
-        </label>
+        {/* CTA Buttons */}
+        <div className="rounded-lg border border-border/70 bg-card p-3.5">
+          <ButtonsField
+            label="Call to Action (CTA) Buttons"
+            fieldName="hero.buttons"
+            buttons={Array.isArray(heroData.buttons) ? heroData.buttons : []}
+            onChange={(buttons) => updateHeroField("buttons", buttons)}
+          />
+        </div>
+
+        {/* Universal Multimedia Background */}
         <UniversalMultimediaForm
+          title="Hero Background Media (Image / Video / Color Overlay)"
+          fieldName="hero.backgroundMultimedia"
+          imageFieldName="journeyHeroBackgroundImage"
+          videoFieldName="journeyHeroBackgroundVideo"
           value={heroData.backgroundMultimedia || { show: "image" }}
-          onChange={(val) => updateField("hero.backgroundMultimedia", val)}
+          onChange={(val) => updateHeroField("backgroundMultimedia", val)}
         />
       </div>
     </FormSection>

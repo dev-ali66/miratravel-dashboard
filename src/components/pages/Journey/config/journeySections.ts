@@ -1,97 +1,104 @@
-import React from "react"
+import {
+  Compass,
+  LayoutTemplate,
+  FileText,
+  Calendar,
+  Bed,
+  CheckSquare,
+  Sparkles,
+  Image as ImageIcon,
+  Globe,
+} from "lucide-react"
+
 import { BasicInfoForm } from "../sections/basic-info/BasicInfoForm"
 import { HeroForm } from "../sections/hero/HeroForm"
+import { HeroPreview } from "../sections/hero/HeroPreview"
 import { OverviewForm } from "../sections/overview/OverviewForm"
+import { OverviewPreview } from "../sections/overview/OverviewPreview"
 import { ItineraryForm } from "../sections/itinerary/ItineraryForm"
+import { ItineraryPreview } from "../sections/itinerary/ItineraryPreview"
 import { AccommodationsForm } from "../sections/accommodations/AccommodationsForm"
+import { AccommodationsPreview } from "../sections/accommodations/AccommodationsPreview"
 import { WhatsIncludedForm } from "../sections/whats-included/WhatsIncludedForm"
+import { WhatsIncludedPreview } from "../sections/whats-included/WhatsIncludedPreview"
 import { AddOnsForm } from "../sections/add-ons/AddOnsForm"
+import { AddOnsPreview } from "../sections/add-ons/AddOnsPreview"
 import { GalleryForm } from "../sections/gallery/GalleryForm"
+import { GalleryPreview } from "../sections/gallery/GalleryPreview"
 import { SeoForm } from "../sections/seo/SeoForm"
 
-export type JourneySectionKey =
-  | "basic-info"
-  | "hero"
-  | "overview"
-  | "itinerary"
-  | "accommodations"
-  | "whats-included"
-  | "add-ons"
-  | "gallery"
-  | "seo"
-
 export interface JourneySectionConfig {
-  key: JourneySectionKey
+  key: string
   label: string
-  form: React.ComponentType<{
-    draft: any
-    updateField: (path: string, value: any) => void
-    openSections: Record<string, boolean>
-    toggleSection: (key: string) => void
-    sectionNumber: string
-  }>
+  icon: any
+  formComponent: any
+  previewComponent: any | null
 }
 
-export const journeySectionRegistry: Record<JourneySectionKey, JourneySectionConfig> = {
+export const JOURNEY_SECTION_CONFIGS: Record<string, JourneySectionConfig> = {
   "basic-info": {
     key: "basic-info",
-    label: "Basic Info & Schema",
-    form: BasicInfoForm,
+    label: "Basic Journey Information",
+    icon: Compass,
+    formComponent: BasicInfoForm,
+    previewComponent: null,
   },
   hero: {
     key: "hero",
-    label: "Hero Header",
-    form: HeroForm,
+    label: "Hero Section",
+    icon: LayoutTemplate,
+    formComponent: HeroForm,
+    previewComponent: HeroPreview,
   },
   overview: {
     key: "overview",
-    label: "Overview Narrative",
-    form: OverviewForm,
+    label: "Journey Overview & Highlights",
+    icon: FileText,
+    formComponent: OverviewForm,
+    previewComponent: OverviewPreview,
   },
   itinerary: {
     key: "itinerary",
     label: "Day-by-Day Itinerary",
-    form: ItineraryForm,
+    icon: Calendar,
+    formComponent: ItineraryForm,
+    previewComponent: ItineraryPreview,
   },
   accommodations: {
     key: "accommodations",
-    label: "Accommodations & Stays",
-    form: AccommodationsForm,
+    label: "Where You Stay (Accommodations)",
+    icon: Bed,
+    formComponent: AccommodationsForm,
+    previewComponent: AccommodationsPreview,
   },
   "whats-included": {
     key: "whats-included",
     label: "What's Included & Excluded",
-    form: WhatsIncludedForm,
+    icon: CheckSquare,
+    formComponent: WhatsIncludedForm,
+    previewComponent: WhatsIncludedPreview,
   },
   "add-ons": {
     key: "add-ons",
-    label: "Optional Upgrades & Add-ons",
-    form: AddOnsForm,
+    label: "Optional Experience Add-Ons",
+    icon: Sparkles,
+    formComponent: AddOnsForm,
+    previewComponent: AddOnsPreview,
   },
   gallery: {
     key: "gallery",
-    label: "Media Gallery",
-    form: GalleryForm,
+    label: "Visual Impressions & Gallery",
+    icon: ImageIcon,
+    formComponent: GalleryForm,
+    previewComponent: GalleryPreview,
   },
   seo: {
     key: "seo",
-    label: "SEO Metadata",
-    form: SeoForm,
+    label: "SEO & Social Metadata",
+    icon: Globe,
+    formComponent: SeoForm,
+    previewComponent: null,
   },
 }
 
-export const ALL_JOURNEY_SECTIONS: JourneySectionKey[] = [
-  "basic-info",
-  "hero",
-  "overview",
-  "itinerary",
-  "accommodations",
-  "whats-included",
-  "add-ons",
-  "gallery",
-  "seo",
-]
-
-export function getSectionsForJourney(): JourneySectionKey[] {
-  return ALL_JOURNEY_SECTIONS
-}
+export const JOURNEY_SECTION_KEYS = Object.keys(JOURNEY_SECTION_CONFIGS)

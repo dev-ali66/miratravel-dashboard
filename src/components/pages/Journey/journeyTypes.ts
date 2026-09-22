@@ -1,5 +1,4 @@
 import type { CmsButton } from "@/components/pages/CMS/shared/ButtonsField"
-import type { UniversalMultimediaValue } from "@/components/pages/CMS/shared/UniversalMultimediaForm"
 
 /* =====================================================
    ENUMS
@@ -95,154 +94,154 @@ export const JOURNEY_STATUS_LIST: JourneyStatusEnum[] = [
 ===================================================== */
 
 export interface HeroSectionData {
-  label?: string
-  title?: string
-  subtitle?: string
-  badge?: string
+  label?: any
+  title?: any
+  subtitle?: any
+  badge?: any
   buttons?: CmsButton[]
   background_image?: string
   video?: string
-  backgroundMultimedia?: UniversalMultimediaValue | null
+  backgroundMultimedia?: any
   style?: Record<string, any> | null
 }
 
 export interface OverviewHighlightItem {
   id: string
-  title: string
-  description?: string
+  title: any
+  description?: any
   icon?: string
 }
 
 export interface OverviewSectionData {
-  badge?: string
-  title?: string
-  subtitle?: string
-  overviewText?: string
+  badge?: any
+  title?: any
+  subtitle?: any
+  overviewText?: any
   highlightsList?: OverviewHighlightItem[]
-  routeSummary?: string
-  featuresList?: string[]
-  backgroundMultimedia?: UniversalMultimediaValue | null
+  routeSummary?: any
+  featuresList?: any[]
+  backgroundMultimedia?: any
   style?: Record<string, any> | null
 }
 
 export interface ItineraryDayItem {
   id: string
   dayNumber: number
-  title: string
-  subtitle?: string
-  duration?: string
-  location?: string
-  description?: string
+  title: any
+  subtitle?: any
+  duration?: any
+  location?: any
+  description?: any
   meals?: string[]
   activities?: string[]
   highlights?: string[]
-  stayName?: string
+  stayName?: any
   image?: string
-  imageMultimedia?: Record<string, any> | null
+  imageMultimedia?: any
   style?: Record<string, any> | null
 }
 
 export interface ItineraryChapter {
   id: string
-  chapterNumber: string // e.g. "Chapter I", "Chapter II"
-  title: string // e.g. "The Beginning", "Into the Mountains"
-  subtitle?: string // e.g. "Days 1–3 · Tirana & surroundings"
-  description?: string
+  chapterNumber: any // e.g. "Chapter I", "Chapter II"
+  title: any // e.g. "The Beginning", "Into the Mountains"
+  subtitle?: any // e.g. "Days 1–3 · Tirana & surroundings"
+  description?: any
   days: ItineraryDayItem[]
 }
 
 export interface ItinerarySectionData {
-  badge?: string
-  title?: string
-  description?: string
+  badge?: any
+  title?: any
+  description?: any
   daysList?: ItineraryDayItem[]
   chaptersList?: ItineraryChapter[]
-  backgroundMultimedia?: UniversalMultimediaValue | null
+  backgroundMultimedia?: any
   style?: Record<string, any> | null
 }
 
 export interface AccommodationStayItem {
   id: string
-  name: string
-  stayType?: string
-  city?: string
-  duration?: string
+  name: any
+  stayType?: any
+  city?: any
+  duration?: any
   nights?: number
-  description?: string
+  description?: any
   image?: string
-  imageMultimedia?: Record<string, any> | null
-  amenities?: string[]
+  imageMultimedia?: any
+  amenities?: any
   websiteUrl?: string
   style?: Record<string, any> | null
 }
 
 export interface AccommodationsSectionData {
-  badge?: string
-  title?: string
-  description?: string
+  badge?: any
+  title?: any
+  description?: any
   staysList?: AccommodationStayItem[]
-  backgroundMultimedia?: UniversalMultimediaValue | null
+  backgroundMultimedia?: any
   style?: Record<string, any> | null
 }
 
 export interface WhatsIncludedItem {
   id: string
-  category?: string
-  title: string
-  description?: string
+  category?: any
+  title: any
+  description?: any
   icon?: string
 }
 
 export interface WhatsIncludedSectionData {
-  badge?: string
-  title?: string
-  description?: string
+  badge?: any
+  title?: any
+  description?: any
   inclusions?: WhatsIncludedItem[]
   exclusions?: WhatsIncludedItem[]
-  notes?: string[]
-  backgroundMultimedia?: UniversalMultimediaValue | null
+  notes?: any[]
+  backgroundMultimedia?: any
   style?: Record<string, any> | null
 }
 
 export interface AddOnItem {
   id: string
-  title: string
-  category?: string
-  duration?: string
+  title: any
+  category?: any
+  duration?: any
   price?: number
   currency?: string
-  description?: string
+  description?: any
   image?: string
-  imageMultimedia?: Record<string, any> | null
-  features?: string[]
+  imageMultimedia?: any
+  features?: any
   style?: Record<string, any> | null
 }
 
 export interface AddOnsSectionData {
-  badge?: string
-  title?: string
-  description?: string
+  badge?: any
+  title?: any
+  description?: any
   itemsList?: AddOnItem[]
-  backgroundMultimedia?: UniversalMultimediaValue | null
+  backgroundMultimedia?: any
   style?: Record<string, any> | null
 }
 
 export interface GalleryMediaItem {
   id: string
-  title?: string
-  type: "image" | "video"
+  title?: any
+  type: string
   url?: string
-  multimedia?: Record<string, any> | null
+  multimedia?: any
   thumbnail?: string
-  caption?: string
+  caption?: any
 }
 
 export interface GallerySectionData {
-  badge?: string
-  title?: string
-  description?: string
+  badge?: any
+  title?: any
+  description?: any
   items?: GalleryMediaItem[]
-  backgroundMultimedia?: UniversalMultimediaValue | null
+  backgroundMultimedia?: any
   style?: Record<string, any> | null
 }
 

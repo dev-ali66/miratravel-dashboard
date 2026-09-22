@@ -1,0 +1,61 @@
+export const emptyOverview = {
+  badge: {
+    value: "Journey Overview",
+    textColor: "#af6348",
+    textOpacity: 1,
+    backgroundColor: null,
+    backgroundOpacity: 1,
+  },
+  title: {
+    value: "Experience Unrivaled Luxury",
+    textColor: "#313131",
+    textOpacity: 1,
+    backgroundColor: null,
+    backgroundOpacity: 1,
+  },
+  subtitle: {
+    value: "Curated experiences tailored to perfection",
+    textColor: "#565e69",
+    textOpacity: 1,
+    backgroundColor: null,
+    backgroundOpacity: 1,
+  },
+  overviewText: {
+    value: "Viverra blandit neque ac risus euismod tincidunt ut nec velit. Hendrerit potenti eleifend hendrerit lobortis enim duis duis rhoncus vulputate. Integer volutpat purus feugiat eros sed volutpat mauris faucibus.",
+    textColor: "#464136",
+    textOpacity: 1,
+    backgroundColor: null,
+    backgroundOpacity: 1,
+  },
+  highlightsList: [
+    { id: "hl-1", title: { value: "Exclusive wine tasting at family-owned Berat vineyards", textColor: "#464136", textOpacity: 1, backgroundColor: null, backgroundOpacity: 1 } },
+    { id: "hl-2", title: { value: "Private guided walk through UNESCO stone fortress of Gjirokastër", textColor: "#464136", textOpacity: 1, backgroundColor: null, backgroundOpacity: 1 } },
+    { id: "hl-3", title: { value: "Trekking to the turquoise natural Blue Eye spring in Theth", textColor: "#464136", textOpacity: 1, backgroundColor: null, backgroundOpacity: 1 } },
+    { id: "hl-4", title: { value: "Private boat navigation along the crystal waters of Kotor Bay", textColor: "#464136", textOpacity: 1, backgroundColor: null, backgroundOpacity: 1 } },
+    { id: "hl-5", title: { value: "Handpicked boutique stays with personal local hosts", textColor: "#464136", textOpacity: 1, backgroundColor: null, backgroundOpacity: 1 } },
+    { id: "hl-6", title: { value: "24/7 dedicated MIRA Concierge assistance throughout", textColor: "#464136", textOpacity: 1, backgroundColor: null, backgroundOpacity: 1 } },
+  ],
+  routeSummary: {
+    value: "Tirana · Berat · Gjirokastër · Theth · Shkodër",
+    textColor: "#af6348",
+    textOpacity: 1,
+    backgroundColor: null,
+    backgroundOpacity: 1,
+  },
+  featuresList: [
+    { value: "Seekers of authentic local heritage", textColor: "#464136", textOpacity: 1, backgroundColor: null, backgroundOpacity: 1 },
+    { value: "Lovers of boutique luxury stays", textColor: "#464136", textOpacity: 1, backgroundColor: null, backgroundOpacity: 1 },
+    { value: "Food & wine enthusiasts", textColor: "#464136", textOpacity: 1, backgroundColor: null, backgroundOpacity: 1 },
+    { value: "Relaxed pace with deep immersion", textColor: "#464136", textOpacity: 1, backgroundColor: null, backgroundOpacity: 1 },
+  ],
+  backgroundMultimedia: {
+    show: "color",
+    color: {
+      color: "#FFF7EF",
+      opacity: 100,
+      width: "100%",
+      height: "100%",
+      aspectRatio: "auto",
+    },
+  },
+}

@@ -2,7 +2,7 @@ import axios, { AxiosError, type InternalAxiosRequestConfig } from "axios"
 import { toast } from "sonner"
 
 const BASE_URL =
-  import.meta.env.VITE_API_URL || "https://api.get-surf.com/api/v1"
+  import.meta.env.VITE_API_URL || "http://localhost:5010/api/v1"
 
 export const apiPublic = axios.create({
   baseURL: BASE_URL,

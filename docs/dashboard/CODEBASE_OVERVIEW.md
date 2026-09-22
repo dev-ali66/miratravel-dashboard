@@ -194,7 +194,7 @@ API clients are in `src/lib/api-client.ts`:
 Base URL resolution:
 
 ```ts
-import.meta.env.VITE_API_URL || "https://api.get-surf.com/api/v1"
+import.meta.env.VITE_API_URL || "https://backend.get-surf.com/api/v1"
 ```
 
 The checked-in `.env` points to `https://backend.get-surf.com/api/v1`; `.env.example` points to a localhost API. This is configuration drift and should be resolved deliberately, not silently.

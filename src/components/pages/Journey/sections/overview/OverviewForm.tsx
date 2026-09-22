@@ -1,6 +1,7 @@
-import type { JourneyData, OverviewHighlightItem } from "../../journeyTypes"
-import { FormSection, Field } from "../../shared/fields"
+import { DynamicStyledField } from "@/components/pages/CMS/shared/FormControls"
 import { UniversalMultimediaForm } from "@/components/pages/CMS/shared/UniversalMultimediaForm"
+import { FormSection } from "../../shared/fields"
+import type { JourneyData } from "../../journeyTypes"
 import { Plus, Trash2 } from "lucide-react"
 
 interface OverviewFormProps {
@@ -20,169 +21,201 @@ export function OverviewForm({
 }: OverviewFormProps) {
   const isOpen = Boolean(openSections["overview"])
   const overviewData = draft.overview || {}
-  const highlightsList = overviewData.highlightsList || []
-  const featuresList = overviewData.featuresList || []
+
+  const updateOverviewField = (fieldKey: string, value: any) => {
+    updateField(`overview.${fieldKey}`, value)
+  }
+
+  const highlights = Array.isArray(overviewData.highlightsList) ? overviewData.highlightsList : []
+  const features = Array.isArray(overviewData.featuresList) ? overviewData.featuresList : []
 
   const addHighlight = () => {
-    const newItem: OverviewHighlightItem = {
+    const newHighlight = {
       id: `hl-${Date.now()}`,
-      title: "New Highlight",
-      description: "Highlight description...",
+      title: { value: "", textColor: "#464136", textOpacity: 1, backgroundColor: null, backgroundOpacity: 1 },
     }
-    updateField("overview.highlightsList", [...highlightsList, newItem])
+    updateOverviewField("highlightsList", [...highlights, newHighlight])
   }
 
   const removeHighlight = (index: number) => {
-    updateField(
-      "overview.highlightsList",
-      highlightsList.filter((_, i) => i !== index)
-    )
+    const updated = highlights.filter((_, idx) => idx !== index)
+    updateOverviewField("highlightsList", updated)
+  }
+
+  const updateHighlightTitle = (index: number, val: any) => {
+    const updated = highlights.map((item: any, idx: number) => {
+      if (idx !== index) return item
+      return { ...item, title: val }
+    })
+    updateOverviewField("highlightsList", updated)
   }
 
   const addFeature = () => {
-    updateField("overview.featuresList", [...featuresList, "New Feature Highlight"])
-  }
-
-  const updateFeature = (index: number, val: string) => {
-    const next = [...featuresList]
-    next[index] = val
-    updateField("overview.featuresList", next)
+    const newFeature = { value: "", textColor: "#464136", textOpacity: 1, backgroundColor: null, backgroundOpacity: 1 }
+    updateOverviewField("featuresList", [...features, newFeature])
   }
 
   const removeFeature = (index: number) => {
-    updateField(
-      "overview.featuresList",
-      featuresList.filter((_, i) => i !== index)
-    )
+    const updated = features.filter((_, idx) => idx !== index)
+    updateOverviewField("featuresList", updated)
+  }
+
+  const updateFeatureVal = (index: number, val: any) => {
+    const updated = features.map((f: any, idx: number) => {
+      if (idx !== index) return f
+      return val
+    })
+    updateOverviewField("featuresList", updated)
   }
 
   return (
     <FormSection
-      title="Overview Tab & Narrative Content"
+      title="Journey Overview & Highlights Configuration"
       sectionNumber={sectionNumber}
       active={isOpen}
       onClick={() => toggleSection("overview")}
     >
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-        <Field
-          label="Badge Text"
-          value={overviewData.badge || ""}
-          onChange={(val) => updateField("overview.badge", val)}
+      <div className="flex flex-col gap-5">
+        {/* Section Badge */}
+        <DynamicStyledField
+          type="text"
+          label="Section Badge"
+          fieldName="overview.badge"
           placeholder="e.g. Journey Overview"
+          value={overviewData.badge}
+          onChange={(val) => updateOverviewField("badge", val)}
         />
 
-        <Field
+        {/* Section Main Title */}
+        <DynamicStyledField
+          type="textarea"
+          rows={2}
           label="Overview Title"
-          value={overviewData.title || ""}
-          onChange={(val) => updateField("overview.title", val)}
+          fieldName="overview.title"
           placeholder="e.g. Experience Unrivaled Luxury"
+          value={overviewData.title}
+          onChange={(val) => updateOverviewField("title", val)}
         />
-      </div>
 
-      <Field
-        label="Overview Narrative (Detailed Story)"
-        value={overviewData.overviewText || ""}
-        onChange={(val) => updateField("overview.overviewText", val)}
-        multiline
-        rows={5}
-        placeholder="Enter comprehensive journey overview text..."
-      />
+        {/* Subtitle */}
+        <DynamicStyledField
+          type="text"
+          label="Overview Subtitle"
+          fieldName="overview.subtitle"
+          placeholder="e.g. Curated experiences tailored to perfection"
+          value={overviewData.subtitle}
+          onChange={(val) => updateOverviewField("subtitle", val)}
+        />
 
-      <Field
-        label="Route & Geography Summary"
-        value={overviewData.routeSummary || ""}
-        onChange={(val) => updateField("overview.routeSummary", val)}
-        multiline
-        rows={2}
-        placeholder="e.g. Jackson Hole → Yellowstone National Park → Grand Teton Peak"
-      />
+        {/* Why We Designed This Journey Narrative */}
+        <DynamicStyledField
+          type="textarea"
+          rows={5}
+          label="Why We Designed This Journey (Editorial Paragraphs)"
+          fieldName="overview.overviewText"
+          placeholder="Write the editorial narrative paragraphs..."
+          value={overviewData.overviewText}
+          onChange={(val) => updateOverviewField("overviewText", val)}
+        />
 
-      {/* Highlights List */}
-      <div className="space-y-3 pt-3 border-t border-border/40">
-        <div className="flex items-center justify-between">
-          <label className="text-xs font-bold uppercase tracking-wider text-foreground">
-            Key Highlights & Attributes
-          </label>
-          <button
-            type="button"
-            onClick={addHighlight}
-            className="flex items-center gap-1 rounded bg-primary/10 px-2.5 py-1 text-xs font-semibold text-primary hover:bg-primary hover:text-primary-foreground transition-all cursor-pointer"
-          >
-            <Plus className="h-3.5 w-3.5" /> Add Highlight
-          </button>
-        </div>
+        {/* Route Summary */}
+        <DynamicStyledField
+          type="text"
+          label="Route Summary Route Line"
+          fieldName="overview.routeSummary"
+          placeholder="e.g. Tirana · Berat · Gjirokastër · Theth · Shkodër"
+          value={overviewData.routeSummary}
+          onChange={(val) => updateOverviewField("routeSummary", val)}
+        />
 
-        {highlightsList.map((hl, idx) => (
-          <div
-            key={hl.id || idx}
-            className="rounded-lg border border-border/60 bg-muted/20 p-3 space-y-2 relative"
-          >
+        {/* Journey Highlights Repeater */}
+        <div className="space-y-3 rounded-lg border border-border/70 bg-card p-4">
+          <div className="flex items-center justify-between">
+            <label className="block text-xs font-bold uppercase tracking-wider text-foreground">
+              Journey Highlights List (Checkmarked Items)
+            </label>
             <button
               type="button"
-              onClick={() => removeHighlight(idx)}
-              className="absolute top-2 right-2 text-muted-foreground hover:text-destructive p-1 cursor-pointer"
+              onClick={addHighlight}
+              className="inline-flex items-center gap-1.5 rounded-md bg-primary px-3 py-1.5 text-xs font-medium text-primary-foreground hover:opacity-90 cursor-pointer"
             >
-              <Trash2 className="h-3.5 w-3.5" />
+              <Plus className="h-3.5 w-3.5" />
+              Add Highlight
             </button>
-
-            <Field
-              label="Highlight Title"
-              value={hl.title}
-              onChange={(val) => updateField(`overview.highlightsList.${idx}.title`, val)}
-            />
-            <Field
-              label="Description"
-              value={hl.description || ""}
-              onChange={(val) => updateField(`overview.highlightsList.${idx}.description`, val)}
-              multiline
-              rows={2}
-            />
           </div>
-        ))}
-      </div>
 
-      {/* Quick Features List */}
-      <div className="space-y-3 pt-3 border-t border-border/40">
-        <div className="flex items-center justify-between">
-          <label className="text-xs font-bold uppercase tracking-wider text-foreground">
-            Quick Bullet Features
-          </label>
-          <button
-            type="button"
-            onClick={addFeature}
-            className="flex items-center gap-1 rounded bg-primary/10 px-2.5 py-1 text-xs font-semibold text-primary hover:bg-primary hover:text-primary-foreground transition-all cursor-pointer"
-          >
-            <Plus className="h-3.5 w-3.5" /> Add Bullet Feature
-          </button>
+          <div className="space-y-3">
+            {highlights.map((item: any, idx: number) => (
+              <div key={item.id || idx} className="flex items-start gap-2 rounded-lg border border-border/50 bg-background p-3">
+                <div className="flex-1">
+                  <DynamicStyledField
+                    type="text"
+                    label={`Highlight #${idx + 1}`}
+                    fieldName={`overview.highlightsList.${idx}.title`}
+                    placeholder="e.g. Exclusive wine tasting at family-owned Berat vineyards"
+                    value={item.title}
+                    onChange={(val) => updateHighlightTitle(idx, val)}
+                  />
+                </div>
+                <button
+                  type="button"
+                  onClick={() => removeHighlight(idx)}
+                  className="mt-6 text-muted-foreground hover:text-destructive cursor-pointer p-1"
+                >
+                  <Trash2 className="h-4 w-4" />
+                </button>
+              </div>
+            ))}
+          </div>
         </div>
 
-        {featuresList.map((feat, idx) => (
-          <div key={idx} className="flex items-center gap-2">
-            <input
-              type="text"
-              value={feat}
-              onChange={(e) => updateFeature(idx, e.target.value)}
-              className="flex-1 rounded-lg border border-border/60 bg-background px-3 py-1.5 text-xs outline-none focus:border-primary"
-            />
+        {/* Is This Journey For You? Features Repeater */}
+        <div className="space-y-3 rounded-lg border border-border/70 bg-card p-4">
+          <div className="flex items-center justify-between">
+            <label className="block text-xs font-bold uppercase tracking-wider text-foreground">
+              "Is This Journey For You?" Items
+            </label>
             <button
               type="button"
-              onClick={() => removeFeature(idx)}
-              className="text-muted-foreground hover:text-destructive p-1 cursor-pointer"
+              onClick={addFeature}
+              className="inline-flex items-center gap-1.5 rounded-md bg-primary px-3 py-1.5 text-xs font-medium text-primary-foreground hover:opacity-90 cursor-pointer"
             >
-              <Trash2 className="h-3.5 w-3.5" />
+              <Plus className="h-3.5 w-3.5" />
+              Add Item
             </button>
           </div>
-        ))}
-      </div>
 
-      {/* Mandatory Section Background Multimedia */}
-      <div className="pt-4 border-t border-border/40">
-        <label className="block text-xs font-bold uppercase tracking-wider text-foreground mb-3">
-          Overview Section Background Multimedia
-        </label>
+          <div className="space-y-3">
+            {features.map((f: any, idx: number) => (
+              <div key={idx} className="flex items-start gap-2 rounded-lg border border-border/50 bg-background p-3">
+                <div className="flex-1">
+                  <DynamicStyledField
+                    type="text"
+                    label={`Item #${idx + 1}`}
+                    fieldName={`overview.featuresList.${idx}`}
+                    placeholder="e.g. Seekers of authentic local heritage"
+                    value={f}
+                    onChange={(val) => updateFeatureVal(idx, val)}
+                  />
+                </div>
+                <button
+                  type="button"
+                  onClick={() => removeFeature(idx)}
+                  className="mt-6 text-muted-foreground hover:text-destructive cursor-pointer p-1"
+                >
+                  <Trash2 className="h-4 w-4" />
+                </button>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        {/* Universal Multimedia Background */}
         <UniversalMultimediaForm
-          value={overviewData.backgroundMultimedia || { show: "color", color: { color: "#ffffff" } }}
-          onChange={(val) => updateField("overview.backgroundMultimedia", val)}
+          title="Overview Section Background Media"
+          fieldName="overview.backgroundMultimedia"
+          value={overviewData.backgroundMultimedia || { show: "color" }}
+          onChange={(val) => updateOverviewField("backgroundMultimedia", val)}
         />
       </div>
     </FormSection>

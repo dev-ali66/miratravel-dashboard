@@ -194,9 +194,10 @@ export default function AuditLogsPage() {
       ]
 
       const chosen = sampleEvents[Math.floor(Math.random() * sampleEvents.length)]
-      const apiUrl = import.meta.env.VITE_API_URL || "http://localhost:5010"
+      const baseUrl = (import.meta.env.VITE_API_URL || "http://localhost:5010/api/v1").replace(/\/+$/, '')
+      const auditSimulateUrl = baseUrl.endsWith('/api/v1') ? `${baseUrl}/audit/simulate` : `${baseUrl}/api/v1/audit/simulate`
       
-      await axios.post(`${apiUrl}/api/v1/audit/simulate`, chosen, {
+      await axios.post(auditSimulateUrl, chosen, {
         headers: {
           Authorization: `Bearer ${localStorage.getItem("accessToken") || ""}`,
         },
