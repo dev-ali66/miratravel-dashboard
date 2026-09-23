@@ -6,7 +6,6 @@ import {
   Bed,
   CheckSquare,
   Sparkles,
-  Image as ImageIcon,
   Globe,
 } from "lucide-react"
 
@@ -23,8 +22,6 @@ import { WhatsIncludedForm } from "../sections/whats-included/WhatsIncludedForm"
 import { WhatsIncludedPreview } from "../sections/whats-included/WhatsIncludedPreview"
 import { AddOnsForm } from "../sections/add-ons/AddOnsForm"
 import { AddOnsPreview } from "../sections/add-ons/AddOnsPreview"
-import { GalleryForm } from "../sections/gallery/GalleryForm"
-import { GalleryPreview } from "../sections/gallery/GalleryPreview"
 import { SeoForm } from "../sections/seo/SeoForm"
 
 export interface JourneySectionConfig {
@@ -52,14 +49,14 @@ export const JOURNEY_SECTION_CONFIGS: Record<string, JourneySectionConfig> = {
   },
   overview: {
     key: "overview",
-    label: "Journey Overview & Highlights",
+    label: "Journey Overview Section",
     icon: FileText,
     formComponent: OverviewForm,
     previewComponent: OverviewPreview,
   },
   itinerary: {
     key: "itinerary",
-    label: "Day-by-Day Itinerary",
+    label: "Day-by-Day Itinerary Section",
     icon: Calendar,
     formComponent: ItineraryForm,
     previewComponent: ItineraryPreview,
@@ -73,7 +70,7 @@ export const JOURNEY_SECTION_CONFIGS: Record<string, JourneySectionConfig> = {
   },
   "whats-included": {
     key: "whats-included",
-    label: "What's Included & Excluded",
+    label: "What's Included & Excluded Section",
     icon: CheckSquare,
     formComponent: WhatsIncludedForm,
     previewComponent: WhatsIncludedPreview,
@@ -84,13 +81,6 @@ export const JOURNEY_SECTION_CONFIGS: Record<string, JourneySectionConfig> = {
     icon: Sparkles,
     formComponent: AddOnsForm,
     previewComponent: AddOnsPreview,
-  },
-  gallery: {
-    key: "gallery",
-    label: "Visual Impressions & Gallery",
-    icon: ImageIcon,
-    formComponent: GalleryForm,
-    previewComponent: GalleryPreview,
   },
   seo: {
     key: "seo",

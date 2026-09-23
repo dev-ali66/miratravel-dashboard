@@ -106,19 +106,19 @@ export default function JourneyPages() {
       {/* Header */}
       <div className="mb-6 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
         <div>
-          <h1 className="text-3xl font-bold tracking-tight text-foreground flex items-center gap-2.5">
-            <Compass className="h-8 w-8 text-amber-500" />
+          <h1 className="text-3xl font-serif font-bold tracking-tight text-[#182d09] flex items-center gap-2.5">
+            <Compass className="h-8 w-8 text-[#af6348]" />
             Journeys Management
           </h1>
 
-          <p className="mt-1 text-sm text-muted-foreground">
+          <p className="mt-1 text-sm text-[#565e69]">
             Create, publish, and manage bespoke travel journeys and itineraries.
           </p>
         </div>
 
         <Link
           to="/journeys/new"
-          className="inline-flex shrink-0 items-center gap-2 rounded-lg bg-primary px-4 py-2.5 text-sm font-medium text-primary-foreground transition hover:opacity-90"
+          className="inline-flex shrink-0 items-center gap-2 rounded-xl bg-[#182d09] px-4 py-2.5 text-sm font-medium text-white shadow-sm transition hover:bg-[#af6348]"
         >
           <Plus className="h-4 w-4" />
           Create Journey
@@ -128,13 +128,13 @@ export default function JourneyPages() {
       {/* Filters */}
       <div className="mb-6 flex flex-col gap-3 md:flex-row md:items-center">
         <div className="relative flex-1">
-          <Search className="pointer-events-none absolute top-1/2 left-3 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+          <Search className="pointer-events-none absolute top-1/2 left-3 h-4 w-4 -translate-y-1/2 text-[#8A8070]" />
 
           <input
             value={searchInput}
             onChange={(e) => setSearchInput(e.target.value)}
             placeholder="Search journeys by title, slug or summary..."
-            className="w-full rounded-lg border border-border/60 bg-background py-2.5 pr-3 pl-9 text-sm outline-none focus:border-primary"
+            className="w-full rounded-xl border border-[#D8CBB8] bg-[#FFF8F2] py-2.5 pr-3 pl-9 text-sm text-[#182d09] placeholder:text-[#8A8070] outline-none focus:border-[#af6348] focus:ring-1 focus:ring-[#af6348]"
           />
         </div>
 
@@ -144,7 +144,7 @@ export default function JourneyPages() {
             setJourneyType(e.target.value)
             setPage(1)
           }}
-          className="rounded-lg border border-border/60 bg-background px-3 py-2.5 text-sm outline-none focus:border-primary md:w-44"
+          className="rounded-xl border border-[#D8CBB8] bg-[#FFF8F2] px-3 py-2.5 text-sm text-[#182d09] outline-none focus:border-[#af6348] md:w-44"
         >
           <option value="">All Journey Types</option>
           {JOURNEY_TYPES.map((t) => (
@@ -160,7 +160,7 @@ export default function JourneyPages() {
             setTravelStyle(e.target.value)
             setPage(1)
           }}
-          className="rounded-lg border border-border/60 bg-background px-3 py-2.5 text-sm outline-none focus:border-primary md:w-44"
+          className="rounded-xl border border-[#D8CBB8] bg-[#FFF8F2] px-3 py-2.5 text-sm text-[#182d09] outline-none focus:border-[#af6348] md:w-44"
         >
           <option value="">All Travel Styles</option>
           {TRAVEL_STYLES.map((s) => (
@@ -176,7 +176,7 @@ export default function JourneyPages() {
             setStatus(e.target.value)
             setPage(1)
           }}
-          className="rounded-lg border border-border/60 bg-background px-3 py-2.5 text-sm outline-none focus:border-primary md:w-36"
+          className="rounded-xl border border-[#D8CBB8] bg-[#FFF8F2] px-3 py-2.5 text-sm text-[#182d09] outline-none focus:border-[#af6348] md:w-36"
         >
           <option value="">All Statuses</option>
           {JOURNEY_STATUS_LIST.map((st) => (
@@ -202,7 +202,7 @@ export default function JourneyPages() {
       ) : journeys.length > 0 ? (
         <>
           {/* Journeys Grid */}
-          <div className="grid grid-cols-1 gap-5 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+          <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
             {journeys.map((j, index) => {
               const journeyTitle = j.title || "Untitled Journey"
               const slugPath = j.slug ? `/journeys/${j.slug}` : ""
@@ -222,54 +222,62 @@ export default function JourneyPages() {
               return (
                 <div
                   key={`${j.id ?? "j"}-${j.slug ?? index}`}
-                  className="group relative flex min-h-[420px] flex-col overflow-hidden rounded-2xl border border-border/70 bg-card shadow-sm transition-all duration-300 hover:-translate-y-1 hover:shadow-xl hover:border-amber-500/40"
+                  className="group relative flex min-h-[440px] flex-col overflow-hidden rounded-2xl border border-[#D8CBB8]/80 bg-white shadow-sm transition-all duration-500 hover:-translate-y-1.5 hover:shadow-2xl hover:border-[#af6348]/60"
                 >
                   {/* Delete Button */}
                   <button
                     type="button"
                     onClick={() => openDeleteModal(j)}
-                    className="absolute top-3.5 right-3.5 z-20 rounded-full bg-background/90 p-2 text-muted-foreground opacity-0 shadow-sm backdrop-blur transition-all group-hover:opacity-100 hover:bg-destructive/10 hover:text-destructive focus:opacity-100 cursor-pointer"
+                    className="absolute top-3.5 right-3.5 z-20 rounded-full bg-white/90 p-2 text-[#565e69] opacity-0 shadow-md backdrop-blur transition-all group-hover:opacity-100 hover:bg-red-50 hover:text-red-600 focus:opacity-100 cursor-pointer"
                     title="Delete Journey"
                   >
                     <Trash2 className="h-4 w-4" />
                   </button>
 
                   {/* HERO BANNER PREVIEW */}
-                  <div className="relative h-48 overflow-hidden bg-muted">
+                  <div className="relative h-56 overflow-hidden bg-[#182d09]">
                     <UniversalMultimediaPreview
                       multimedia={heroMultimedia ?? undefined}
                       fallbackImageSrc={heroBgImage}
                       fallbackVideoSrc={heroVideo}
                       fallbackAlt={journeyTitle}
                       mode="background"
-                      className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
+                      className="h-full w-full object-cover transition-transform duration-700 group-hover:scale-105"
                       containerClassName="h-full w-full"
                     />
 
-                    <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-black/85 via-black/35 to-black/10" />
+                    <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-black/85 via-black/40 to-black/10" />
 
                     {/* Top Badges */}
                     <div className="absolute top-3.5 left-3.5 z-10 flex flex-wrap gap-1.5 items-center">
-                      <span className="rounded-full bg-amber-500 px-2.5 py-0.5 text-[10px] font-bold text-slate-950 uppercase shadow-sm">
+                      <span
+                        className={`rounded-full px-2.5 py-0.5 text-[10px] font-bold uppercase tracking-wider shadow-sm ${
+                          j.status === "PUBLISHED"
+                            ? "bg-[#182d09] text-[#FEF3C7] border border-[#182d09]"
+                            : j.status === "ARCHIVED"
+                            ? "bg-slate-800 text-white"
+                            : "bg-[#FEF3C7] text-[#9A3412]"
+                        }`}
+                      >
                         {j.status || "DRAFT"}
                       </span>
                       {j.featured && (
-                        <span className="rounded-full bg-emerald-500/90 px-2.5 py-0.5 text-[10px] font-bold text-white shadow-sm">
+                        <span className="rounded-full bg-[#af6348] px-2.5 py-0.5 text-[10px] font-bold text-white shadow-sm tracking-wider uppercase">
                           ★ Featured
                         </span>
                       )}
                     </div>
 
                     {/* Bottom Info Overlay */}
-                    <div className="absolute right-3.5 bottom-3.5 left-3.5 z-10 space-y-0.5">
-                      <p className="text-[10px] font-semibold text-amber-300 uppercase tracking-widest truncate">
+                    <div className="absolute right-3.5 bottom-3.5 left-3.5 z-10 space-y-1">
+                      <p className="text-[11px] font-semibold text-[#E5A84B] uppercase tracking-widest truncate">
                         {j.currency === "EUR" ? "€" : j.currency} {j.price} • {j.minDays}-{j.maxDays} Days
                       </p>
-                      <h3 className="text-lg font-serif font-bold text-white leading-tight truncate">
+                      <h3 className="text-xl font-serif font-bold text-white leading-snug drop-shadow-sm truncate">
                         {journeyTitle}
                       </h3>
                       {slugPath && (
-                        <p className="text-[11px] font-mono text-white/70 truncate">
+                        <p className="text-[11px] font-mono text-white/75 truncate">
                           {slugPath}
                         </p>
                       )}
@@ -278,23 +286,23 @@ export default function JourneyPages() {
 
                   {/* CARD BODY */}
                   <div className="flex flex-1 flex-col p-4 justify-between gap-4">
-                    {/* Tags & Styles */}
+                    {/* Tags & Attributes */}
                     <div className="space-y-2">
-                      <div className="flex items-center justify-between text-[11px] font-semibold text-muted-foreground uppercase tracking-wider">
+                      <div className="flex items-center justify-between text-[11px] font-semibold text-[#af6348] uppercase tracking-wider">
                         <span className="flex items-center gap-1">
-                          <Tag className="h-3.5 w-3.5 text-amber-500" />
+                          <Tag className="h-3.5 w-3.5 text-[#af6348]" />
                           Attributes
                         </span>
-                        <span className="text-[10px] text-amber-500/90 font-mono">
+                        <span className="text-[10px] text-[#182d09] font-mono bg-[#FFF8F2] border border-[#D8CBB8] px-2 py-0.5 rounded-md">
                           {j.pace} PACE
                         </span>
                       </div>
 
-                      <div className="flex flex-wrap gap-1">
+                      <div className="flex flex-wrap gap-1.5">
                         {(j.journeyType || []).slice(0, 2).map((jt) => (
                           <span
                             key={jt}
-                            className="rounded bg-primary/10 px-2 py-0.5 text-[9px] font-medium text-primary"
+                            className="rounded-full bg-[#FFF8F2] border border-[#D8CBB8] px-2.5 py-0.5 text-[10px] font-medium text-[#182d09] tracking-wider uppercase"
                           >
                             {jt.replace(/_/g, " ")}
                           </span>
@@ -302,7 +310,7 @@ export default function JourneyPages() {
                         {(j.travelStyle || []).slice(0, 2).map((ts) => (
                           <span
                             key={ts}
-                            className="rounded bg-amber-500/10 px-2 py-0.5 text-[9px] font-medium text-amber-600 dark:text-amber-400"
+                            className="rounded-full bg-[#FFF8F2] border border-[#D8CBB8] px-2.5 py-0.5 text-[10px] font-medium text-[#af6348] tracking-wider uppercase"
                           >
                             {ts.replace(/_/g, " ")}
                           </span>
@@ -311,24 +319,24 @@ export default function JourneyPages() {
                     </div>
 
                     {/* SEO STATUS */}
-                    <div className="rounded-xl border border-border/60 bg-muted/20 p-3 space-y-1.5">
+                    <div className="rounded-xl border border-[#D8CBB8]/60 bg-[#FFF8F2]/60 p-3 space-y-1.5">
                       <div className="flex items-center justify-between">
-                        <span className="text-[11px] font-semibold uppercase tracking-wider text-foreground flex items-center gap-1">
-                          <Globe className="h-3.5 w-3.5 text-primary" />
+                        <span className="text-[11px] font-semibold uppercase tracking-wider text-[#182d09] flex items-center gap-1">
+                          <Globe className="h-3.5 w-3.5 text-[#af6348]" />
                           SEO Governance
                         </span>
                         <span
-                          className={`inline-flex items-center gap-1 rounded-full px-2 py-0.5 text-[10px] font-medium ${
+                          className={`inline-flex items-center gap-1 rounded-full px-2.5 py-0.5 text-[10px] font-medium tracking-wide ${
                             isSeoComplete
-                              ? "bg-emerald-500/10 text-emerald-600 dark:text-emerald-400"
-                              : "bg-amber-500/10 text-amber-600 dark:text-amber-400"
+                              ? "bg-emerald-100 text-emerald-800"
+                              : "bg-[#FEF3C7] text-[#9A3412]"
                           }`}
                         >
                           {isSeoComplete ? "Ready" : "Partial"}
                         </span>
                       </div>
 
-                      <p className="text-[11px] font-medium text-foreground truncate" title={seoTitle}>
+                      <p className="text-[11px] font-medium text-[#565e69] truncate" title={seoTitle}>
                         {seoTitle || "No Meta Title"}
                       </p>
                     </div>
@@ -336,7 +344,7 @@ export default function JourneyPages() {
                     {/* EDIT LINK */}
                     <Link
                       to={`/journeys/${j.id}/${j.slug}`}
-                      className="inline-flex items-center justify-between rounded-xl bg-amber-500/10 px-4 py-2.5 text-xs font-semibold text-amber-600 dark:text-amber-400 transition-all hover:bg-amber-500 hover:text-slate-950 cursor-pointer"
+                      className="inline-flex items-center justify-between rounded-xl bg-[#182d09] px-4 py-2.5 text-xs font-semibold text-white tracking-wide transition-all hover:bg-[#af6348] shadow-sm cursor-pointer"
                     >
                       <span>Edit Journey</span>
                       <span>→</span>
@@ -354,12 +362,12 @@ export default function JourneyPages() {
                 type="button"
                 onClick={() => setPage((p) => Math.max(1, p - 1))}
                 disabled={page <= 1}
-                className="flex items-center gap-1 rounded-lg border border-border/60 px-3 py-2 text-sm disabled:opacity-40"
+                className="flex items-center gap-1 rounded-xl border border-[#D8CBB8] bg-white px-3.5 py-2 text-sm text-[#182d09] hover:bg-[#FFF8F2] disabled:opacity-40"
               >
                 <ChevronLeft className="h-4 w-4" /> Prev
               </button>
 
-              <span className="text-sm text-muted-foreground">
+              <span className="text-sm font-medium text-[#565e69]">
                 Page {meta.page} of {meta.totalPages}
               </span>
 
@@ -367,7 +375,7 @@ export default function JourneyPages() {
                 type="button"
                 onClick={() => setPage((p) => Math.min(meta.totalPages, p + 1))}
                 disabled={page >= meta.totalPages}
-                className="flex items-center gap-1 rounded-lg border border-border/60 px-3 py-2 text-sm disabled:opacity-40"
+                className="flex items-center gap-1 rounded-xl border border-[#D8CBB8] bg-white px-3.5 py-2 text-sm text-[#182d09] hover:bg-[#FFF8F2] disabled:opacity-40"
               >
                 Next <ChevronRight className="h-4 w-4" />
               </button>
@@ -376,16 +384,16 @@ export default function JourneyPages() {
         </>
       ) : (
         /* Empty State */
-        <div className="flex flex-col items-center justify-center rounded-xl border border-dashed border-border/60 bg-card/50 py-24 text-center">
-          <div className="mb-4 rounded-full bg-amber-500/10 p-4">
-            <Compass className="h-8 w-8 text-amber-500" />
+        <div className="flex flex-col items-center justify-center rounded-2xl border border-dashed border-[#D8CBB8] bg-[#FFF8F2]/50 py-24 text-center">
+          <div className="mb-4 rounded-full bg-[#af6348]/10 p-4">
+            <Compass className="h-8 w-8 text-[#af6348]" />
           </div>
 
-          <h3 className="mb-2 text-xl font-semibold">
+          <h3 className="mb-2 text-xl font-serif font-bold text-[#182d09]">
             {hasFilters ? "No matching journeys found" : "No Journeys Created Yet"}
           </h3>
 
-          <p className="max-w-sm text-muted-foreground">
+          <p className="max-w-sm text-sm text-[#565e69]">
             {hasFilters
               ? "Try adjusting your search criteria or clearing filters."
               : "Click below to build your first bespoke journey."}
@@ -393,7 +401,7 @@ export default function JourneyPages() {
 
           <Link
             to="/journeys/new"
-            className="mt-4 inline-flex items-center gap-2 rounded-lg bg-primary px-4 py-2 text-sm font-medium text-primary-foreground"
+            className="mt-4 inline-flex items-center gap-2 rounded-xl bg-[#182d09] px-4 py-2.5 text-sm font-medium text-white shadow-sm transition hover:bg-[#af6348]"
           >
             <Plus className="h-4 w-4" /> Add Journey
           </Link>
@@ -404,10 +412,10 @@ export default function JourneyPages() {
       <Dialog open={deleteModalOpen} onOpenChange={setDeleteModalOpen}>
         <DialogContent>
           <DialogHeader>
-            <DialogTitle>Delete Journey?</DialogTitle>
-            <DialogDescription>
+            <DialogTitle className="font-serif text-xl text-[#182d09]">Delete Journey?</DialogTitle>
+            <DialogDescription className="text-[#565e69]">
               Are you sure you want to delete{" "}
-              <span className="font-medium text-foreground">
+              <span className="font-semibold text-[#182d09]">
                 "{selectedJourney?.title}"
               </span>
               ? This action cannot be undone.
@@ -419,6 +427,7 @@ export default function JourneyPages() {
               variant="outline"
               onClick={() => setDeleteModalOpen(false)}
               disabled={isDeleting}
+              className="rounded-xl border-[#D8CBB8]"
             >
               Cancel
             </Button>
@@ -427,7 +436,7 @@ export default function JourneyPages() {
               variant="destructive"
               onClick={confirmDelete}
               disabled={isDeleting}
-              className="gap-1.5"
+              className="gap-1.5 rounded-xl bg-red-600 hover:bg-red-700"
             >
               {isDeleting && <Loader2 className="h-3.5 w-3.5 animate-spin" />}
               Delete

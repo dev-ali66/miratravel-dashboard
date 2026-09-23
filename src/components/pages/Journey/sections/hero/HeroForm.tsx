@@ -1,5 +1,4 @@
 import { DynamicStyledField } from "@/components/pages/CMS/shared/FormControls"
-import { ButtonsField } from "@/components/pages/CMS/shared/ButtonsField"
 import { UniversalMultimediaForm } from "@/components/pages/CMS/shared/UniversalMultimediaForm"
 import { FormSection } from "../../shared/fields"
 import type { JourneyData } from "../../journeyTypes"
@@ -28,30 +27,20 @@ export function HeroForm({
 
   return (
     <FormSection
-      title="Hero Banner & Header Configuration"
+      title="Hero Banner Configuration"
       sectionNumber={sectionNumber}
       active={isOpen}
       onClick={() => toggleSection("hero")}
     >
       <div className="flex flex-col gap-5">
-        {/* Hero Label */}
+        {/* Eyebrow / Label */}
         <DynamicStyledField
           type="text"
-          label="Hero Category Label"
+          label="Eyebrow Text"
           fieldName="hero.label"
           placeholder="e.g. MIRA EXCLUSIVE JOURNEY"
           value={heroData.label}
           onChange={(val) => updateHeroField("label", val)}
-        />
-
-        {/* Hero Badge */}
-        <DynamicStyledField
-          type="text"
-          label="Hero Badge Text"
-          fieldName="hero.badge"
-          placeholder="e.g. Bespoke Experience"
-          value={heroData.badge}
-          onChange={(val) => updateHeroField("badge", val)}
         />
 
         {/* Hero Title */}
@@ -64,27 +53,6 @@ export function HeroForm({
           value={heroData.title}
           onChange={(val) => updateHeroField("title", val)}
         />
-
-        {/* Hero Subtitle */}
-        <DynamicStyledField
-          type="textarea"
-          rows={3}
-          label="Hero Subtitle / Tagline"
-          fieldName="hero.subtitle"
-          placeholder="Captivating introductory narrative for hero section..."
-          value={heroData.subtitle}
-          onChange={(val) => updateHeroField("subtitle", val)}
-        />
-
-        {/* CTA Buttons */}
-        <div className="rounded-lg border border-border/70 bg-card p-3.5">
-          <ButtonsField
-            label="Call to Action (CTA) Buttons"
-            fieldName="hero.buttons"
-            buttons={Array.isArray(heroData.buttons) ? heroData.buttons : []}
-            onChange={(buttons) => updateHeroField("buttons", buttons)}
-          />
-        </div>
 
         {/* Universal Multimedia Background */}
         <UniversalMultimediaForm
@@ -99,3 +67,4 @@ export function HeroForm({
     </FormSection>
   )
 }
+

@@ -6,37 +6,13 @@ export const emptyHero = {
     backgroundColor: null,
     backgroundOpacity: 1,
   },
-  badge: {
-    value: "Bespoke Experience",
-    textColor: "#af6348",
-    textOpacity: 1,
-    backgroundColor: null,
-    backgroundOpacity: 1,
-  },
   title: {
-    value: "Classic Albania & The Ionian Coast",
+    value: "",
     textColor: "#FFFFFF",
     textOpacity: 1,
     backgroundColor: null,
     backgroundOpacity: 1,
   },
-  subtitle: {
-    value: "Curated experiences tailored to perfection",
-    textColor: "#E5E7EB",
-    textOpacity: 1,
-    backgroundColor: null,
-    backgroundOpacity: 1,
-  },
-  buttons: [
-    {
-      label: "REQUEST BOOKING",
-      url: "#booking",
-      style: "primary",
-      variant: "PRIMARY",
-      textColor: "#ffffff",
-      backgroundColor: "#182d09",
-    },
-  ],
   backgroundMultimedia: {
     show: "image",
     image: {
@@ -45,7 +21,33 @@ export const emptyHero = {
       opacity: 100,
       overlayColor: "#000000",
       overlayOpacity: 30,
+      width: "100%",
+      height: "auto",
+      aspectRatio: "auto",
       fit: "cover",
+    },
+    video: {
+      url: "",
+      alt: "Cinematic Journey Video",
+      autoplay: true,
+      loop: true,
+      muted: true,
+      opacity: 100,
+      overlayColor: "#000000",
+      overlayOpacity: 30,
+      width: "100%",
+      height: "auto",
+      aspectRatio: "auto",
+      fit: "cover",
+    },
+    color: {
+      color: "#182d09",
+      opacity: 100,
+      width: "100%",
+      height: "100%",
+      aspectRatio: "auto",
     },
   },
 }
+
+

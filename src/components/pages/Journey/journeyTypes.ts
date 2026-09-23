@@ -105,6 +105,15 @@ export interface HeroSectionData {
   style?: Record<string, any> | null
 }
 
+export interface WhyDesignedSectionData {
+  badge?: any
+  title?: any
+  description?: any
+  overviewText?: any
+  signature?: any
+  style?: Record<string, any> | null
+}
+
 export interface OverviewHighlightItem {
   id: string
   title: any
@@ -116,12 +125,29 @@ export interface OverviewSectionData {
   badge?: any
   title?: any
   subtitle?: any
+  description?: any
   overviewText?: any
-  highlightsList?: OverviewHighlightItem[]
-  routeSummary?: any
-  featuresList?: any[]
-  backgroundMultimedia?: any
+  why?: any
+  overview?: any
+  heighlights?: any
+  highlights?: any
+  visualStory?: any
   style?: Record<string, any> | null
+  [key: string]: any
+}
+
+export interface HighlightItem {
+  id?: string
+  title: any
+  description?: any
+}
+
+export interface HighlightsSectionData {
+  title?: any
+  subtitle?: any
+  items?: HighlightItem[]
+  style?: Record<string, any> | null
+  [key: string]: any
 }
 
 export interface ItineraryDayItem {
@@ -139,6 +165,7 @@ export interface ItineraryDayItem {
   image?: string
   imageMultimedia?: any
   style?: Record<string, any> | null
+  [key: string]: any
 }
 
 export interface ItineraryChapter {
@@ -148,16 +175,24 @@ export interface ItineraryChapter {
   subtitle?: any // e.g. "Days 1–3 · Tirana & surroundings"
   description?: any
   days: ItineraryDayItem[]
+  [key: string]: any
 }
 
 export interface ItinerarySectionData {
   badge?: any
   title?: any
   description?: any
-  daysList?: ItineraryDayItem[]
+  subtitle?: any
+  mapTitle?: any
+  mapSubtitle?: any
+  items?: ItineraryChapter[]
+  chapters?: ItineraryChapter[]
   chaptersList?: ItineraryChapter[]
+  days?: ItineraryDayItem[]
+  daysList?: ItineraryDayItem[]
   backgroundMultimedia?: any
   style?: Record<string, any> | null
+  [key: string]: any
 }
 
 export interface AccommodationStayItem {
@@ -173,15 +208,24 @@ export interface AccommodationStayItem {
   amenities?: any
   websiteUrl?: string
   style?: Record<string, any> | null
+  [key: string]: any
 }
 
 export interface AccommodationsSectionData {
   badge?: any
   title?: any
   description?: any
+  handpickedTitle?: any
+  standardsTitle?: any
+  principles?: any
+  standards?: any
+  philosophy?: any
+  destinationStays?: any
+  items?: AccommodationStayItem[]
   staysList?: AccommodationStayItem[]
   backgroundMultimedia?: any
   style?: Record<string, any> | null
+  [key: string]: any
 }
 
 export interface WhatsIncludedItem {
@@ -190,17 +234,22 @@ export interface WhatsIncludedItem {
   title: any
   description?: any
   icon?: string
+  [key: string]: any
 }
 
 export interface WhatsIncludedSectionData {
   badge?: any
   title?: any
   description?: any
+  exclusionsTitle?: any
+  notesTitle?: any
+  items?: WhatsIncludedItem[]
   inclusions?: WhatsIncludedItem[]
   exclusions?: WhatsIncludedItem[]
   notes?: any[]
   backgroundMultimedia?: any
   style?: Record<string, any> | null
+  [key: string]: any
 }
 
 export interface AddOnItem {
@@ -219,11 +268,15 @@ export interface AddOnItem {
 
 export interface AddOnsSectionData {
   badge?: any
+  eyebrow?: any
   title?: any
+  subtitle?: any
   description?: any
+  items?: AddOnItem[]
   itemsList?: AddOnItem[]
   backgroundMultimedia?: any
   style?: Record<string, any> | null
+  [key: string]: any
 }
 
 export interface GalleryMediaItem {
@@ -262,7 +315,7 @@ export interface SeoMetadata {
 
 export interface JourneyData {
   id?: string
-  slug: string
+  slug?: string
   title: string
   subtitle?: string | null
   price: number
@@ -279,7 +332,9 @@ export interface JourneyData {
   perfectFor: PerfectForEnum[]
 
   hero?: HeroSectionData | null
+  whyDesigned?: WhyDesignedSectionData | null
   overview?: OverviewSectionData | null
+  highlights?: HighlightsSectionData | null
   itinerary?: ItinerarySectionData | null
   accommodations?: AccommodationsSectionData | null
   addOns?: AddOnsSectionData | null

@@ -1,5 +1,5 @@
 import MiraLoader from "@/components/shared/MiraLoader"
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import { Loader2, Save, Terminal } from "lucide-react"
 
 import { useCmsPage } from "../shared/useCmsPage"
@@ -29,6 +29,21 @@ export const HomeForm = () => {
       return isCurrentlyOpen ? {} : { [key]: true }
     })
   }
+
+  useEffect(() => {
+    const handleActiveSectionChange = (e: Event) => {
+      const customEvent = e as CustomEvent<{ sectionKey: string }>
+      if (customEvent.detail?.sectionKey) {
+        const key = customEvent.detail.sectionKey
+        setOpenSections({ [key]: true })
+      }
+    }
+
+    window.addEventListener("editor-active-section-change", handleActiveSectionChange)
+    return () => {
+      window.removeEventListener("editor-active-section-change", handleActiveSectionChange)
+    }
+  }, [])
 
   /*
    * ============================================================

@@ -41,6 +41,21 @@ export function LocationForm({ }: LocationFormProps) {
   const autoAddTriggered = useRef(false)
   const prevTypeRef = useRef(draft?.type)
 
+  useEffect(() => {
+    const handleActiveSectionChange = (e: Event) => {
+      const customEvent = e as CustomEvent<{ sectionKey: string }>
+      if (customEvent.detail?.sectionKey) {
+        const key = customEvent.detail.sectionKey
+        setOpenSections({ [key]: true })
+      }
+    }
+
+    window.addEventListener("editor-active-section-change", handleActiveSectionChange)
+    return () => {
+      window.removeEventListener("editor-active-section-change", handleActiveSectionChange)
+    }
+  }, [])
+
   // Auto-clean draft in memory whenever location type changes (removes inactive sections)
   useEffect(() => {
     if (draft?.type && prevTypeRef.current && prevTypeRef.current !== draft.type) {

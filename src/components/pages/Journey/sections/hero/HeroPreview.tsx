@@ -2,32 +2,66 @@ import { UniversalMultimediaPreview } from "@/components/pages/CMS/Home/shared/p
 import { DynamicStyledTextPreview } from "@/components/pages/CMS/shared/DynamicStyledTextPreview"
 
 const SIGNATURE_LABEL_IMG = "/images/singnature-label.png"
-const DEFAULT_HERO_BG = "https://images.unsplash.com/photo-1506744038136-46273834b3fb?auto=format&fit=crop&w=1200&q=80"
 
 export function HeroPreview({ hero, draft }: { hero?: any; draft?: any }) {
   const heroData = hero || draft?.hero || {}
-  const rawLabel = heroData.label || draft?.label
-  const rawTitle = heroData.title || draft?.title
-  const heroMultimedia = heroData.backgroundMultimedia
+  const rawLabel = heroData.label
+  const rawTitle = heroData.title
 
   const titleVal = typeof rawTitle === "object" ? rawTitle?.value : rawTitle
+  const displayTitle = titleVal || "Classic Albania & The Ionian Coast"
+
   const isSignature = Boolean(
     (typeof rawLabel === "string" && /signature/i.test(rawLabel)) ||
-      (titleVal && /classic albania/i.test(titleVal))
+    (displayTitle && /classic albania/i.test(displayTitle))
   )
 
+  const heroMultimedia = heroData.backgroundMultimedia
+
+  // Duration Tag
+  const minDays = draft?.minDays ?? heroData?.minDays
+  const maxDays = draft?.maxDays ?? heroData?.maxDays
+  const daysText = minDays
+    ? maxDays && maxDays !== minDays
+      ? `${minDays}–${maxDays} DAYS`
+      : `${minDays} DAYS`
+    : null
+
+  // Price Tag
+  const priceVal = draft?.price ?? heroData?.price
+  const priceText = priceVal
+    ? `${draft?.currency || heroData?.currency || "EUR"} ${priceVal}`
+    : null
+
+  const getArray = (val: any): string[] => {
+    if (!val) return []
+    if (Array.isArray(val)) return val
+    if (typeof val === "string") return [val]
+    return []
+  }
+
+  const journeyTypes = getArray(draft?.journeyType || heroData?.journeyType)
+  const travelStyles = getArray(draft?.travelStyle || heroData?.travelStyle)
+  const perfectFors = getArray(draft?.perfectFor || heroData?.perfectFor)
+
+  const paceVal = draft?.pace || heroData?.pace
+  const comfortVal = draft?.comfortLevel || heroData?.comfortLevel
+
+  // Combined Tags Bar Sync with Basic Info
   const tags = [
-    `${draft?.minDays || 9} DAYS`,
-    draft?.pace || "BALANCED",
-    draft?.comfortLevel?.replace(/_/g, " ") || "BOUTIQUE",
-    ...(draft?.journeyType || []).slice(0, 1).map((t: string) => t.replace(/_/g, " ")),
+    daysText,
+    priceText,
+    paceVal ? `${paceVal} PACE` : null,
+    comfortVal ? comfortVal.replace(/_/g, " ") : null,
+    ...journeyTypes.map((t: string) => t.replace(/_/g, " ")),
+    ...travelStyles.map((s: string) => s.replace(/_/g, " ")),
+    ...perfectFors.map((p: string) => `FOR ${p.replace(/_/g, " ")}`),
   ].filter(Boolean)
 
   return (
     <section className="relative flex min-h-[600px] md:h-[680px] lg:h-[700px] xl:h-[725px] w-full items-end overflow-hidden">
       <UniversalMultimediaPreview
         multimedia={heroMultimedia ?? undefined}
-        fallbackImageSrc={DEFAULT_HERO_BG}
         mode="background"
         className="h-full w-full object-cover object-center"
         containerClassName="absolute inset-0 z-0 h-full w-full"
@@ -39,7 +73,7 @@ export function HeroPreview({ hero, draft }: { hero?: any; draft?: any }) {
       />
 
       <div className="relative z-20 w-full xl:pb-[80px] lg:pb-[70px] md:pb-[60px] sm:pb-[48px] pb-[36px] xl:pl-[136px] lg:pl-[96px] md:pl-[56px] sm:pl-[36px] pl-[20px] xl:pr-[136px] lg:pr-[96px] md:pr-[56px] sm:pr-[36px] pr-[20px]">
-        <div className="flex w-full max-w-[680px] flex-col items-start gap-4 sm:gap-5">
+        <div className="flex w-full max-w-[780px] flex-col items-start gap-4 sm:gap-5">
           {isSignature ? (
             <div>
               <img
@@ -54,7 +88,7 @@ export function HeroPreview({ hero, draft }: { hero?: any; draft?: any }) {
               data={rawLabel}
               fallbackText="MIRA EXCLUSIVE JOURNEY"
               fallbackColor="#af6348"
-              className="inline-flex items-center justify-center bg-neutral-100/90 px-3 py-1 text-xs font-semibold uppercase tracking-wider rounded-sm"
+              className="inline-flex items-center justify-center bg-neutral-100/90 px-3 py-1 text-xs font-semibold uppercase tracking-wider rounded-xs"
             />
           ) : null}
 
@@ -63,15 +97,15 @@ export function HeroPreview({ hero, draft }: { hero?: any; draft?: any }) {
             data={rawTitle}
             fallbackText="Classic Albania & The Ionian Coast"
             fallbackColor="#FFFFFF"
-            className="font-serif xl:text-[72px] mid:text-[68px] lgx:text-[64px] lg:text-[60px] md:text-[52px] text-[32px] font-[600] capitalize xl:leading-[92px] mid:leading-[88px] lgx:leading-[84px] lg:leading-[80px] md:leading-[66px] leading-[42px] drop-shadow-sm"
+            className="font-serif xl:text-[72px] mid:text-[68px] lgx:text-[64px] lg:text-[60px] md:text-[52px] text-[32px] font-[600] capitalize xl:leading-[92px] mid:leading-[88px] lgx:leading-[84px] lg:leading-[80px] md:leading-[66px] leading-[42px] drop-shadow-xs"
           />
 
           {tags && tags.length > 0 && (
-            <div className="inline-flex flex-wrap justify-start items-center gap-2 md:gap-2.5">
-              {tags.slice(0, 3).map((tag, idx) => (
+            <div className="inline-flex flex-wrap justify-start items-center gap-2 md:gap-2.5 pt-1">
+              {tags.map((tag, idx) => (
                 <span
                   key={idx}
-                  className="border border-white/40 bg-black/40 text-white backdrop-blur-md px-3.5 py-1 text-xs font-medium uppercase tracking-wider rounded-full"
+                  className="border border-white/40 bg-black/40 text-white backdrop-blur-md px-3.5 py-1 text-xs font-medium uppercase tracking-wider rounded-full shadow-2xs"
                 >
                   {tag}
                 </span>

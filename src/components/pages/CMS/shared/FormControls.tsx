@@ -218,9 +218,9 @@ export function FieldHeader({
   )
 
   return (
-    <div className="flex items-center justify-between gap-1.5 min-w-0">
+    <div className="flex flex-wrap items-center justify-between gap-x-1.5 gap-y-1 min-w-0">
       {label && (
-        <Label className="text-xs font-semibold text-foreground truncate min-w-0 flex-1 flex items-center gap-1">
+        <Label className="text-xs font-semibold text-foreground min-w-0 flex-1 flex items-center gap-1 break-words">
           <span>{label}</span>
           {required && <span className="text-destructive font-bold text-sm leading-none">*</span>}
         </Label>

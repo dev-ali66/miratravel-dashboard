@@ -1,3 +1,6 @@
+import { getStr } from "../../shared/previewHelpers"
+import { DynamicStyledTextPreview } from "@/components/pages/CMS/shared/DynamicStyledTextPreview"
+
 const CONFIRM_MARK_IMG = "/images/confirm-mark.png"
 
 const TITLE_CSS =
@@ -13,9 +16,15 @@ const TITLE_CSS =
 export function WhatsIncludedPreview({ whatsIncluded, draft }: { whatsIncluded?: any; draft?: any }) {
   const safeInc = whatsIncluded || draft?.whatsIncluded || {}
 
+  const incTitleText = getStr(safeInc.title, "What's Included")
+  const excTitleText = getStr(safeInc.exclusionsTitle ?? safeInc.notIncludedTitle, "What's Not Included")
+  const notesTitleText = getStr(safeInc.notesTitle ?? safeInc.importantTitle, "Important Information")
+
   const inclusions =
     safeInc.inclusions && safeInc.inclusions.length > 0
-      ? safeInc.inclusions.map((i: any) => i.title || i)
+      ? safeInc.inclusions
+      : safeInc.items && safeInc.items.length > 0
+      ? safeInc.items
       : [
           "All boutique hotel accommodations (8 nights)",
           "Daily gourmet breakfast and selected local dinners",
@@ -27,7 +36,7 @@ export function WhatsIncludedPreview({ whatsIncluded, draft }: { whatsIncluded?:
 
   const exclusions =
     safeInc.exclusions && safeInc.exclusions.length > 0
-      ? safeInc.exclusions.map((e: any) => e.title || e)
+      ? safeInc.exclusions
       : [
           "International flight tickets to/from Tirana",
           "Personal travel & medical insurance",
@@ -49,31 +58,33 @@ export function WhatsIncludedPreview({ whatsIncluded, draft }: { whatsIncluded?:
       <div className="flex flex-col lg:flex-row gap-8 lg:gap-12 w-full">
         {/* Included Column */}
         <div className="flex-1 flex flex-col gap-5 lg:pr-8 lg:border-r lg:border-[#D8CBB8]">
-          <h2 className={TITLE_CSS}>
-            What's Included
-          </h2>
+          <h2 className={TITLE_CSS}>{incTitleText}</h2>
           <div className="flex flex-col gap-3">
-            {inclusions.map((item: string, idx: number) => (
-              <div key={idx} className="flex items-start gap-3 text-sm md:text-base leading-6 text-[#464136]">
-                <span className="text-[#af6348] font-bold">✓</span>
-                <span>{item}</span>
-              </div>
-            ))}
+            {inclusions.map((item: any, idx: number) => {
+              const itemData = typeof item === "string" ? item : item?.title ?? item
+              return (
+                <div key={idx} className="flex items-start gap-3 text-sm md:text-base leading-6 text-[#464136]">
+                  <span className="text-[#af6348] font-bold">✓</span>
+                  <DynamicStyledTextPreview data={itemData} fallbackText="Included amenity" />
+                </div>
+              )
+            })}
           </div>
         </div>
 
         {/* Not Included Column */}
         <div className="flex-1 flex flex-col gap-5">
-          <h2 className={TITLE_CSS}>
-            What's Not Included
-          </h2>
+          <h2 className={TITLE_CSS}>{excTitleText}</h2>
           <div className="flex flex-col gap-3">
-            {exclusions.map((item: string, idx: number) => (
-              <div key={idx} className="flex items-start gap-3 text-sm md:text-base leading-6 text-[#464136]">
-                <span className="text-neutral-400 font-bold">✗</span>
-                <span>{item}</span>
-              </div>
-            ))}
+            {exclusions.map((item: any, idx: number) => {
+              const itemData = typeof item === "string" ? item : item?.title ?? item
+              return (
+                <div key={idx} className="flex items-start gap-3 text-sm md:text-base leading-6 text-[#464136]">
+                  <span className="text-neutral-400 font-bold">✗</span>
+                  <DynamicStyledTextPreview data={itemData} fallbackText="Excluded service" />
+                </div>
+              )
+            })}
           </div>
         </div>
       </div>
@@ -81,13 +92,13 @@ export function WhatsIncludedPreview({ whatsIncluded, draft }: { whatsIncluded?:
       {/* Important Information Box */}
       <div className="w-full rounded-[10px] bg-[#F6F1ED] p-6 md:p-8 flex flex-col gap-4 relative border border-[#D8CBB8]/50 shadow-xs">
         <h3 className="text-[#080c1d] font-serif text-lg md:text-xl font-semibold">
-          Important Information
+          {notesTitleText}
         </h3>
         <ul className="flex flex-col gap-2.5 z-10">
-          {notes.map((info: string, idx: number) => (
+          {notes.map((info: any, idx: number) => (
             <li key={idx} className="flex items-start gap-2.5 text-sm md:text-base text-[#464136]">
               <span className="select-none font-bold text-[#af6348]">•</span>
-              <span>{info}</span>
+              <DynamicStyledTextPreview data={info} fallbackText="Important travel note" />
             </li>
           ))}
         </ul>
@@ -100,3 +111,5 @@ export function WhatsIncludedPreview({ whatsIncluded, draft }: { whatsIncluded?:
     </div>
   )
 }
+
+export default WhatsIncludedPreview

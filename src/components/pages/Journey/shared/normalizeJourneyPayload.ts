@@ -8,7 +8,6 @@ import { normalizeItinerary } from "../sections/itinerary/normalizeItinerary"
 import { normalizeAccommodations } from "../sections/accommodations/normalizeAccommodations"
 import { normalizeWhatsIncluded } from "../sections/whats-included/normalizeWhatsIncluded"
 import { normalizeAddOns } from "../sections/add-ons/normalizeAddOns"
-import { normalizeGallery } from "../sections/gallery/normalizeGallery"
 import { normalizeSeo } from "../sections/seo/normalizeSeoMetadata"
 
 export function normalizeJourneyPayload(draft: Partial<JourneyData>): JourneyData {
@@ -23,7 +22,6 @@ export function normalizeJourneyPayload(draft: Partial<JourneyData>): JourneyDat
   const accommodationsData = safeDraft.accommodations ?? safeData.accommodations ?? {}
   const whatsIncludedData = safeDraft.whatsIncluded ?? safeData.whatsIncluded ?? {}
   const addOnsData = safeDraft.addOns ?? safeData.addOns ?? {}
-  const galleryData = safeDraft.gallery ?? safeData.gallery ?? {}
   const seoData = safeDraft.metadata?.seo ?? safeData.metadata?.seo ?? {}
 
   const finalHero = normalizeHero(heroData)
@@ -32,7 +30,6 @@ export function normalizeJourneyPayload(draft: Partial<JourneyData>): JourneyDat
   const finalAccommodations = normalizeAccommodations(accommodationsData)
   const finalWhatsIncluded = normalizeWhatsIncluded(whatsIncludedData)
   const finalAddOns = normalizeAddOns(addOnsData)
-  const finalGallery = normalizeGallery(galleryData)
   const finalSeo = normalizeSeo(seoData)
 
   const normalized: JourneyData = {
@@ -45,23 +42,9 @@ export function normalizeJourneyPayload(draft: Partial<JourneyData>): JourneyDat
     accommodations: finalAccommodations,
     whatsIncluded: finalWhatsIncluded,
     addOns: finalAddOns,
-    gallery: finalGallery,
 
     metadata: {
       seo: finalSeo,
-    },
-
-    data: {
-      hero: finalHero,
-      overview: finalOverview,
-      itinerary: finalItinerary,
-      accommodations: finalAccommodations,
-      whatsIncluded: finalWhatsIncluded,
-      addOns: finalAddOns,
-      gallery: finalGallery,
-      metadata: {
-        seo: finalSeo,
-      },
     },
   }
 

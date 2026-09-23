@@ -1,37 +1,42 @@
-import { normalizeMultimedia } from "@/components/pages/Journey/shared/normalizeHelpers"
+import { normalizeMultimedia, normalizeStyledField } from "@/components/pages/Journey/shared/normalizeHelpers"
 import { emptyWhatsIncluded } from "./emptyWhatsIncluded"
 
 export function normalizeWhatsIncluded(whatsIncluded: any) {
   const safe = whatsIncluded && typeof whatsIncluded === "object" ? whatsIncluded : {}
 
-  const normalizedInclusions = Array.isArray(safe.inclusions) && safe.inclusions.length > 0
-    ? safe.inclusions.map((item: any, idx: number) => ({
-        id: item.id || `inc-${idx + 1}`,
-        category: item.category || "General",
-        title: typeof item === "string" ? item : item.title || "",
-        description: item.description || "",
-      }))
-    : emptyWhatsIncluded.inclusions
+  const rawInclusions = Array.isArray(safe.items) && safe.items.length > 0
+    ? safe.items
+    : Array.isArray(safe.inclusions) && safe.inclusions.length > 0
+    ? safe.inclusions
+    : emptyWhatsIncluded.items
 
-  const normalizedExclusions = Array.isArray(safe.exclusions) && safe.exclusions.length > 0
-    ? safe.exclusions.map((item: any, idx: number) => ({
-        id: item.id || `exc-${idx + 1}`,
-        category: item.category || "General",
-        title: typeof item === "string" ? item : item.title || "",
-        description: item.description || "",
-      }))
+  const normalizedInclusions = rawInclusions.map((item: any) => ({
+    category: normalizeStyledField(item.category, "General", "#af6348"),
+    title: normalizeStyledField(item.title ?? item, "", "#464136"),
+    description: normalizeStyledField(item.description, "", "#565e69"),
+  }))
+
+  const rawExclusions = Array.isArray(safe.exclusions) && safe.exclusions.length > 0
+    ? safe.exclusions
     : emptyWhatsIncluded.exclusions
 
-  const normalizedNotes = Array.isArray(safe.notes) && safe.notes.length > 0
-    ? safe.notes.map((n: any) => (typeof n === "string" ? n : n.title || ""))
+  const normalizedExclusions = rawExclusions.map((item: any) => ({
+    category: normalizeStyledField(item.category, "General", "#9A3412"),
+    title: normalizeStyledField(item.title ?? item, "", "#464136"),
+    description: normalizeStyledField(item.description, "", "#565e69"),
+  }))
+
+  const rawNotes = Array.isArray(safe.notes) && safe.notes.length > 0
+    ? safe.notes
     : emptyWhatsIncluded.notes
 
+  const normalizedNotes = rawNotes.map((n: any) => normalizeStyledField(n, "", "#464136"))
+
   return {
-    ...safe,
-    badge: safe.badge ?? emptyWhatsIncluded.badge,
-    title: safe.title ?? emptyWhatsIncluded.title,
-    description: safe.description ?? emptyWhatsIncluded.description,
-    inclusions: normalizedInclusions,
+    badge: normalizeStyledField(safe.badge ?? emptyWhatsIncluded.badge, "", "#af6348"),
+    title: normalizeStyledField(safe.title ?? emptyWhatsIncluded.title, "", "#313131"),
+    description: normalizeStyledField(safe.description ?? emptyWhatsIncluded.description, "", "#565e69"),
+    items: normalizedInclusions,
     exclusions: normalizedExclusions,
     notes: normalizedNotes,
     backgroundMultimedia: normalizeMultimedia(

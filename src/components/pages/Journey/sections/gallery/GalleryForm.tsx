@@ -1,4 +1,4 @@
-import type { JourneyData, GalleryMediaItem } from "../../journeyTypes"
+import type { JourneyData } from "../../journeyTypes"
 import { FormSection } from "../../shared/fields"
 import { DynamicStyledField } from "@/components/pages/CMS/shared/FormControls"
 import { UniversalMultimediaForm } from "@/components/pages/CMS/shared/UniversalMultimediaForm"
@@ -24,12 +24,16 @@ export function GalleryForm({
   const items = galleryData.items || []
 
   const addMediaItem = (type: "image" | "video") => {
-    const newItem: GalleryMediaItem = {
-      id: `gal-${Date.now()}`,
-      title: type === "image" ? "Photo Shot" : "Video Experience",
+    const newItem = {
+      title: { value: type === "image" ? "Photo Shot" : "Video Experience", textColor: "#080c1d", textOpacity: 1, backgroundColor: null, backgroundOpacity: 1 },
       type,
-      url: "",
-      caption: "",
+      caption: { value: "", textColor: "#565e69", textOpacity: 1, backgroundColor: null, backgroundOpacity: 1 },
+      multimedia: {
+        show: type,
+        image: { url: "", alt: "", opacity: 100, overlayColor: "#000000", overlayOpacity: 0, width: "100%", height: "auto", aspectRatio: "auto", fit: "cover" },
+        video: { url: "", alt: "", autoplay: true, loop: true, muted: true, opacity: 100, overlayColor: "#000000", overlayOpacity: 0, width: "100%", height: "auto", aspectRatio: "auto", fit: "cover" },
+        color: { color: "#ffffff", opacity: 100, width: "100%", height: "100%", aspectRatio: "auto" },
+      },
     }
     updateField("gallery.items", [...items, newItem])
   }
@@ -104,14 +108,14 @@ export function GalleryForm({
             </div>
           </div>
 
-          {items.map((item, idx) => (
+          {items.map((item: any, idx: number) => (
             <div
-              key={item.id || idx}
+              key={idx}
               className="rounded-xl border border-border/70 bg-card p-4 space-y-4 relative shadow-xs"
             >
               <div className="flex items-center justify-between pb-2 border-b border-border/40">
                 <span className="text-xs font-bold text-primary uppercase tracking-wider">
-                  #{idx + 1} [{item.type.toUpperCase()}] {typeof item.title === "object" ? (item.title as any)?.value : item.title || "Untitled"}
+                  #{idx + 1} [{item.type ? item.type.toUpperCase() : "MEDIA"}] {typeof item.title === "object" ? item.title?.value : item.title || "Untitled"}
                 </span>
 
                 <button
@@ -148,8 +152,8 @@ export function GalleryForm({
                 <UniversalMultimediaForm
                   value={item.multimedia || {
                     show: item.type === "video" ? "video" : "image",
-                    image: { url: item.url || "" },
-                    video: { videoUrl: item.url || "" }
+                    image: { url: typeof item.url === "string" ? item.url : "" },
+                    video: { url: typeof item.url === "string" ? item.url : "" }
                   }}
                   onChange={(val) => updateField(`gallery.items.${idx}.multimedia`, val)}
                 />
@@ -164,7 +168,7 @@ export function GalleryForm({
             Gallery Section Background Multimedia
           </label>
           <UniversalMultimediaForm
-            value={galleryData.backgroundMultimedia || { show: "color", color: { color: "#0f172a" } }}
+            value={galleryData.backgroundMultimedia || { show: "color", color: { color: "#ffffff" } }}
             onChange={(val) => updateField("gallery.backgroundMultimedia", val)}
           />
         </div>
@@ -172,4 +176,5 @@ export function GalleryForm({
     </FormSection>
   )
 }
+
 

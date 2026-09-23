@@ -1,33 +1,82 @@
-import { normalizeMultimedia, normalizeStyledField } from "@/components/pages/Journey/shared/normalizeHelpers"
+import { normalizeStyledField, normalizeMultimedia } from "@/components/pages/Journey/shared/normalizeHelpers"
 import { emptyOverview } from "./emptyOverview"
 
-export function normalizeOverview(overview: any) {
-  const safe = overview && typeof overview === "object" ? overview : {}
+export function normalizeOverview(data?: any) {
+  const safe = data && typeof data === "object" ? data : {}
 
-  const normalizedHighlights = Array.isArray(safe.highlightsList) && safe.highlightsList.length > 0
-    ? safe.highlightsList.map((item: any, idx: number) => ({
-        id: item.id || `hl-${idx + 1}`,
-        title: normalizeStyledField(item.title ?? item, "", "#464136"),
-        description: item.description || "",
-        icon: item.icon || "",
-      }))
-    : emptyOverview.highlightsList
+  // 1. Why We Designed This Journey
+  const whyRaw = safe.why || {}
+  const why = {
+    badge: normalizeStyledField(whyRaw.badge, emptyOverview.why.badge.value, "#af6348"),
+    title: normalizeStyledField(whyRaw.title, emptyOverview.why.title.value, "#313131"),
+    description: normalizeStyledField(whyRaw.description, emptyOverview.why.description.value, "#464136"),
+    signature: normalizeStyledField(whyRaw.signature, emptyOverview.why.signature.value, "#af6348"),
+  }
 
-  const normalizedFeatures = Array.isArray(safe.featuresList) && safe.featuresList.length > 0
-    ? safe.featuresList.map((f: any) => normalizeStyledField(f, "", "#464136"))
-    : emptyOverview.featuresList
+  // 2. Journey Overview
+  const ovRaw = safe.overview || (safe.title || safe.description ? safe : {})
+  const overview = {
+    title: normalizeStyledField(ovRaw.title ?? safe.title, emptyOverview.overview.title.value, "#313131"),
+    description: normalizeStyledField(
+      ovRaw.description ?? safe.description ?? safe.overviewText,
+      emptyOverview.overview.description.value,
+      "#464136"
+    ),
+  }
+
+  // 3. Highlights
+  const hlRaw = safe.heighlights || safe.highlights || {}
+  const rawHlItems = Array.isArray(hlRaw.items)
+    ? hlRaw.items
+    : Array.isArray(safe.highlights)
+    ? safe.highlights
+    : emptyOverview.heighlights.items
+
+  const heighlights = {
+    title: normalizeStyledField(hlRaw.title, emptyOverview.heighlights.title.value, "#313131"),
+    items: rawHlItems.map((it: any) => {
+      if (typeof it === "string") {
+        return { title: normalizeStyledField({ value: it }, it, "#464136") }
+      }
+      return {
+        title: normalizeStyledField(it?.title ?? it, typeof it === "string" ? it : "", "#464136"),
+      }
+    }),
+  }
+
+  // 4. Visual Reference / Visual Story
+  const vsRaw = safe.visualStory || safe.visualReference || {}
+  const rawVsItems = Array.isArray(vsRaw.items) ? vsRaw.items : emptyOverview.visualStory.items
+
+  const visualStory = {
+    eyebrow: normalizeStyledField(vsRaw.eyebrow, emptyOverview.visualStory.eyebrow.value, "#af6348"),
+    title: normalizeStyledField(vsRaw.title, emptyOverview.visualStory.title.value, "#080c1d"),
+    description: normalizeStyledField(vsRaw.description, emptyOverview.visualStory.description.value, "#565e69"),
+    items: rawVsItems.map((item: any) => normalizeMultimedia(item)),
+  }
+
+  // 5. Is This Journey For You? (forYou)
+  const fyRaw = safe.forYou || safe.convince || {}
+  const rawFyItems = Array.isArray(fyRaw.items) ? fyRaw.items : emptyOverview.forYou.items
+
+  const forYou = {
+    eyebrow: normalizeStyledField(fyRaw.eyebrow, emptyOverview.forYou.eyebrow.value, "#313131"),
+    title: normalizeStyledField(fyRaw.title, emptyOverview.forYou.title.value, "#313131"),
+    items: rawFyItems.map((it: any) => {
+      if (typeof it === "string") {
+        return { title: normalizeStyledField({ value: it }, it, "#464136") }
+      }
+      return {
+        title: normalizeStyledField(it?.title ?? it, typeof it === "string" ? it : "", "#464136"),
+      }
+    }),
+  }
 
   return {
-    ...safe,
-    badge: normalizeStyledField(safe.badge ?? emptyOverview.badge, "", "#af6348"),
-    title: normalizeStyledField(safe.title ?? emptyOverview.title, "", "#313131"),
-    subtitle: normalizeStyledField(safe.subtitle ?? emptyOverview.subtitle, "", "#565e69"),
-    overviewText: normalizeStyledField(safe.overviewText ?? emptyOverview.overviewText, "", "#464136"),
-    highlightsList: normalizedHighlights,
-    routeSummary: normalizeStyledField(safe.routeSummary ?? emptyOverview.routeSummary, "", "#af6348"),
-    featuresList: normalizedFeatures,
-    backgroundMultimedia: normalizeMultimedia(
-      safe.backgroundMultimedia ?? safe.multimedia ?? emptyOverview.backgroundMultimedia
-    ),
+    why,
+    overview,
+    heighlights,
+    visualStory,
+    forYou,
   }
 }

@@ -1,10 +1,23 @@
 import { emptyBasicInfo } from "./emptyBasicInfo"
 
+export function slugify(text: string): string {
+  return (text || "")
+    .toString()
+    .trim()
+    .toLowerCase()
+    .replace(/\s+/g, "-")
+    .replace(/[^a-z0-9-]/g, "")
+    .replace(/-+/g, "-")
+    .replace(/^-|-$/g, "")
+}
+
 export function normalizeBasicInfo(draft: any) {
   const safe = draft && typeof draft === "object" ? draft : {}
+  const title = safe.title ?? emptyBasicInfo.title
+  const slug = safe.slug ? safe.slug : slugify(title)
   return {
-    title: safe.title ?? emptyBasicInfo.title,
-    slug: safe.slug ?? emptyBasicInfo.slug,
+    title,
+    slug,
     subtitle: safe.subtitle ?? emptyBasicInfo.subtitle,
     price: Number(safe.price ?? emptyBasicInfo.price),
     currency: safe.currency ?? emptyBasicInfo.currency,

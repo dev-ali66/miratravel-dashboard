@@ -73,8 +73,6 @@ export function DynamicStyledTextPreview<T extends ElementType = "p">({
   style: userStyle,
   ...props
 }: DynamicStyledTextPreviewProps<T>) {
-  const Component = (as || "p") as ElementType
-
   const targetData = data ?? value
   const rawValue = unwrapTextValue(targetData)
 
@@ -98,10 +96,19 @@ export function DynamicStyledTextPreview<T extends ElementType = "p">({
     ...userStyle,
   }
 
-  if (isRichText && typeof textContent === "string") {
+  // Auto-detect HTML content (or explicitly set via isRichText)
+  const shouldRenderHtml = isRichText || (typeof textContent === "string" && /<[a-z][\s\S]*>/i.test(textContent))
+
+  if (shouldRenderHtml && typeof textContent === "string") {
+    // Default to "div" for HTML blocks to prevent invalid <p><p>...</p></p> HTML nesting
+    const Component = (as && as !== "p" ? as : "div") as ElementType
+
     return (
       <Component
-        className={cn("prose max-w-none dark:prose-invert", className)}
+        className={cn(
+          "prose prose-sm max-w-none text-current [&_p]:m-0 [&_p]:leading-relaxed [&_mark]:px-1 [&_mark]:rounded [&_mark]:bg-amber-200/60",
+          className
+        )}
         style={computedStyle}
         dangerouslySetInnerHTML={{ __html: textContent }}
         {...props}
@@ -109,9 +116,20 @@ export function DynamicStyledTextPreview<T extends ElementType = "p">({
     )
   }
 
+  const Component = (as || "p") as ElementType
+
   return (
     <Component className={cn("whitespace-pre-line", className)} style={computedStyle} {...props}>
       {textContent}
     </Component>
   )
 }
+
+/**
+ * UniversalRichTextPreview
+ * Direct shortcut for rendering rich text HTML content with auto HTML detection and style bindings.
+ */
+export function UniversalRichTextPreview(props: DynamicStyledTextPreviewProps) {
+  return <DynamicStyledTextPreview isRichText={true} {...props} />
+}
+

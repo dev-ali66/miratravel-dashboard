@@ -5,14 +5,27 @@ import { useParams, useSearchParams } from "react-router-dom"
 
 import { useJourneyPage } from "@/hooks/journey/useJourneyPage"
 import { useJourneyDraft } from "./shared/JourneyDraftContext"
-import { emptyJourneyPayload } from "./shared/emptyJourneyPayload"
+import { emptyJourney } from "./shared/emptyJourney"
 import { normalizeJourneyPayload } from "./shared/normalizeJourneyPayload"
 import {
   JOURNEY_SECTION_KEYS,
   JOURNEY_SECTION_CONFIGS,
 } from "./config/journeySections"
 
-export function JourneyForm() {
+/* =====================================================
+   PROPS
+===================================================== */
+
+type JourneyFormProps = {}
+
+/* =====================================================
+   COMPONENT
+   Thin shell only: all section-specific fields live in
+   sections/<key>/<Name>Form.tsx, ordered and looked up via
+   config/journeySections.ts. 1:1 match with LocationForm.
+===================================================== */
+
+export function JourneyForm({ }: JourneyFormProps) {
   const { id, slug } = useParams()
   const [searchParams] = useSearchParams()
 
@@ -21,20 +34,40 @@ export function JourneyForm() {
   const { updateField, save, isEditMode, isLoading, isError, isSaving } =
     useJourneyPage(id, slug)
 
-  const [openSections, setOpenSections] = useState<Record<string, boolean>>({
-    "basic-info": true,
-  })
+  const [openSections, setOpenSections] = useState<Record<string, boolean>>({})
 
   const autoAddTriggered = useRef(false)
 
-  // When entering Add mode, initialize draft with clean empty state
+  /* ================================================
+       ADD MODE: start from completely empty skeleton.
+       EDIT MODE: merge the fetched record over the default
+       skeleton so a partial/incomplete API record never
+       crashes the form.
+    ================================================= */
+
+  // When entering Add mode, initialize draft with empty clean state
   useEffect(() => {
     if (!isEditMode) {
-      resetDraft(structuredClone(emptyJourneyPayload))
+      resetDraft(structuredClone(emptyJourney))
     }
   }, [isEditMode, resetDraft])
 
-  // Auto add if query param ?autoAdd=true
+  useEffect(() => {
+    const handleActiveSectionChange = (e: Event) => {
+      const customEvent = e as CustomEvent<{ sectionKey: string }>
+      if (customEvent.detail?.sectionKey) {
+        const key = customEvent.detail.sectionKey
+        setOpenSections({ [key]: true })
+      }
+    }
+
+    window.addEventListener("editor-active-section-change", handleActiveSectionChange)
+    return () => {
+      window.removeEventListener("editor-active-section-change", handleActiveSectionChange)
+    }
+  }, [])
+
+  // Optional: Auto-add if query param ?autoAdd=true is passed
   useEffect(() => {
     if (!isEditMode && searchParams.get("autoAdd") === "true" && draft && !isSaving && !autoAddTriggered.current) {
       autoAddTriggered.current = true
@@ -55,8 +88,9 @@ export function JourneyForm() {
           <p className="text-sm font-medium text-destructive">
             Failed to load journey details.
           </p>
+
           <p className="mt-1 text-xs text-muted-foreground">
-            Please check connection and try again.
+            Please try again.
           </p>
         </div>
       </div>
@@ -80,16 +114,19 @@ export function JourneyForm() {
 
   return (
     <div className="flex min-h-full flex-col">
-      {/* Header */}
+      {/* =================================================
+                HEADER
+            ================================================= */}
+
       <div className="sticky top-0 z-20 border-b border-border/60 bg-card/95 px-5 py-4 backdrop-blur">
         <div className="flex items-center justify-between gap-4">
           <div className="min-w-0">
             <p className="text-[10px] font-medium tracking-[0.2em] text-muted-foreground uppercase">
-              Journey Editor
+              Journey
             </p>
 
             <h2 className="mt-1 truncate text-base font-semibold">
-              {isEditMode ? draft.title || "Edit Journey" : "Create New Journey"}
+              {isEditMode ? draft.title || "Edit Journey" : "Add Journey"}
             </h2>
           </div>
 
@@ -100,11 +137,12 @@ export function JourneyForm() {
                 const cleanPayload = normalizeJourneyPayload(draft)
                 if (!isEditMode) {
                   delete (cleanPayload as any).id
+                  if (!cleanPayload.slug) delete (cleanPayload as any).slug
                 }
                 console.log("📍 [CLEAN JOURNEY API PAYLOAD SENT TO BACKEND]:", cleanPayload)
               }}
               className="flex shrink-0 items-center gap-1.5 rounded-lg border border-border/80 bg-background px-3 py-2 text-xs font-medium text-foreground transition hover:bg-muted cursor-pointer"
-              title="Inspect clean location payload sent to backend API in browser console (F12)"
+              title="Inspect clean journey payload sent to backend API in browser console (F12)"
             >
               <Terminal className="h-3.5 w-3.5 text-primary" />
               Console Data
@@ -122,13 +160,17 @@ export function JourneyForm() {
                 <Save className="h-4 w-4" />
               )}
 
-              {isEditMode ? "Update Journey" : "Create Journey"}
+              {isEditMode ? "Update" : "Create"}
             </button>
           </div>
         </div>
       </div>
 
-      {/* Sections Accordion */}
+      {/* =================================================
+                SECTIONS — order + components come dynamically
+                from JOURNEY_SECTION_KEYS.
+            ================================================= */}
+
       <div className="flex-1 divide-y divide-border/60">
         {JOURNEY_SECTION_KEYS.map((key, index) => {
           const sectionConfig = JOURNEY_SECTION_CONFIGS[key]
@@ -154,3 +196,5 @@ export function JourneyForm() {
     </div>
   )
 }
+
+export default JourneyForm
