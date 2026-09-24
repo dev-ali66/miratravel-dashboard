@@ -49,13 +49,16 @@ export function RegionExperiencesForm({
   const [isSearchOpen, setIsSearchOpen] = useState<boolean>(false)
   const searchContainerRef = useRef<HTMLDivElement>(null)
 
-  // Fetch search matches from backend GET /api/v1/locations/search
+  // Fetch search matches from backend GET /api/v1/locations/search (filtered to type REGION)
   const { data: searchResponse, isLoading: isSearching } = useSearchLocations(
     searchQuery,
-    undefined,
+    "REGION",
     50
   )
-  const searchResults: LocationSearchItem[] = searchResponse?.data || []
+  const rawSearchResults: LocationSearchItem[] = searchResponse?.data || []
+  const searchResults = rawSearchResults.filter(
+    (loc) => !loc.type || loc.type.toUpperCase() === "REGION"
+  )
 
   // Close search popover on outside click
   useEffect(() => {
@@ -153,11 +156,16 @@ export function RegionExperiencesForm({
     setIsSearchOpen(false)
   }
 
-  // Import all child locations automatically
+  // Import all child region locations automatically
   const handleImportChildren = () => {
     if (!draft?.children || draft.children.length === 0) return
 
-    const childItems: RegionExperienceItemData[] = draft.children.map((child) => {
+    const regionChildren = draft.children.filter(
+      (child: any) => !child.type || child.type.toUpperCase() === "REGION"
+    )
+    if (regionChildren.length === 0) return
+
+    const childItems: RegionExperienceItemData[] = regionChildren.map((child: any) => {
       return {
         id: child.id,
         title: {

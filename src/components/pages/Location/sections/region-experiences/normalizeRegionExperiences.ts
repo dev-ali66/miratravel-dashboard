@@ -31,9 +31,11 @@ export function normalizeRegionExperiences(regionExperiences: any) {
 
           const normItem = {
             id: it.id ?? "",
-            category: normalizeStyledField(it.category, "", LOCATION_THEME_COLORS.accent),
+            category: normalizeStyledField(it.category ?? it.tag, "", LOCATION_THEME_COLORS.accent),
+            tag: normalizeStyledField(it.tag ?? it.category, "", LOCATION_THEME_COLORS.accent),
             title: normalizeStyledField(it.title, "", LOCATION_THEME_COLORS.primary),
             subtitle: normalizeStyledField(it.subtitle, "", LOCATION_THEME_COLORS.muted),
+            description: normalizeStyledField(it.description, "", LOCATION_THEME_COLORS.muted),
             quote: normalizeStyledField(it.quote, "", LOCATION_THEME_COLORS.muted),
             locationName: normalizeStyledField(it.locationName ?? it.location, "", LOCATION_THEME_COLORS.primary),
             badgeText: normalizeStyledField(it.badgeText ?? it.badge, "", LOCATION_THEME_COLORS.accent),
