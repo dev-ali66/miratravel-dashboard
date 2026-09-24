@@ -1,0 +1,728 @@
+export const emptyFaqHero = {
+  eyebrow: {
+    value: "Support & Information",
+    textColor: null,
+    textOpacity: 1,
+    backgroundColor: null,
+    backgroundOpacity: 1,
+  },
+  title: {
+    value: "Frequently Asked Questions",
+    textColor: null,
+    textOpacity: 1,
+    backgroundColor: null,
+    backgroundOpacity: 1,
+  },
+  description: {
+    value:
+      "Practical answers for every stage of your journey — from the first idea to the moment you return home.",
+    textColor: null,
+    textOpacity: 1,
+    backgroundColor: null,
+    backgroundOpacity: 1,
+  },
+  helpTitle: {
+    value: "Can't find your answer?",
+    textColor: null,
+    textOpacity: 1,
+    backgroundColor: null,
+    backgroundOpacity: 1,
+  },
+  helpSubtitle: {
+    value: "Our Mira Travel Specialist are always happy to help.",
+    textColor: null,
+    textOpacity: 1,
+    backgroundColor: null,
+    backgroundOpacity: 1,
+  },
+  imageMultimedia: {
+    show: "image",
+    color: {
+      color: "#FFFFFF",
+      opacity: 100,
+      width: "100%",
+      height: "100%",
+      aspectRatio: "auto",
+    },
+    image: {
+      url: null,
+      alt: "Travel guidance and frequently asked questions",
+      opacity: 100,
+      overlayColor: "#000000",
+      overlayOpacity: 0,
+      width: "100%",
+      height: "auto",
+      aspectRatio: "auto",
+      fit: "cover",
+    },
+    video: {
+      url: null,
+      alt: "Travel guidance and frequently asked questions",
+      opacity: 100,
+      overlayColor: "#000000",
+      overlayOpacity: 0,
+      autoplay: true,
+      loop: true,
+      muted: true,
+      width: "100%",
+      height: "auto",
+      aspectRatio: "auto",
+      fit: "cover",
+    },
+  },
+}
+
+export const emptyFaqList = {
+  title: {
+    value: "Browse by topic",
+    textColor: null,
+    textOpacity: 1,
+    backgroundColor: null,
+    backgroundOpacity: 1,
+  },
+  items: [
+    {
+      id: "planning",
+      title: {
+        value: "Planning Your Journey",
+        textColor: null,
+        textOpacity: 1,
+        backgroundColor: null,
+        backgroundOpacity: 1,
+      },
+      description: {
+        value: "Booking process, tailor-made journeys and timing.",
+        textColor: null,
+        textOpacity: 1,
+        backgroundColor: null,
+        backgroundOpacity: 1,
+      },
+      icon: "planning",
+      questions: [
+        {
+          id: "pj-1",
+          question: {
+            value: "How do I book a journey with Mira?",
+            textColor: null,
+            textOpacity: 1,
+            backgroundColor: null,
+            backgroundOpacity: 1,
+          },
+          answer: {
+            value:
+              "You can book directly through our website by submitting a travel request, or get in touch with one of our Mira Travel Specialists. We'll get to know your preferences and create the perfect journey for you.",
+            textColor: null,
+            textOpacity: 1,
+            backgroundColor: null,
+            backgroundOpacity: 1,
+          },
+        },
+        {
+          id: "pj-2",
+          question: {
+            value: "How does a tailor-made journey work?",
+            textColor: null,
+            textOpacity: 1,
+            backgroundColor: null,
+            backgroundOpacity: 1,
+          },
+          answer: {
+            value:
+              "Our travel specialists work closely with you to understand your travel style, interests, and budget, designing a fully personalized itinerary with hand-picked accommodations, private transport, and local experiences.",
+            textColor: null,
+            textOpacity: 1,
+            backgroundColor: null,
+            backgroundOpacity: 1,
+          },
+        },
+        {
+          id: "pj-3",
+          question: {
+            value: "How far in advance should I book?",
+            textColor: null,
+            textOpacity: 1,
+            backgroundColor: null,
+            backgroundOpacity: 1,
+          },
+          answer: {
+            value:
+              "We recommend booking at least 3 to 6 months in advance, especially for travel during peak seasons (May to September), to ensure availability at premier boutique stays and for preferred guides.",
+            textColor: null,
+            textOpacity: 1,
+            backgroundColor: null,
+            backgroundOpacity: 1,
+          },
+        },
+        {
+          id: "pj-4",
+          question: {
+            value: "Can I customize an existing journey?",
+            textColor: null,
+            textOpacity: 1,
+            backgroundColor: null,
+            backgroundOpacity: 1,
+          },
+          answer: {
+            value:
+              "Yes, every journey featured on our website can be customized. You can adjust the duration, add or remove destinations, upgrade accommodations, or swap activities to suit your wishes.",
+            textColor: null,
+            textOpacity: 1,
+            backgroundColor: null,
+            backgroundOpacity: 1,
+          },
+        },
+        {
+          id: "pj-5",
+          question: {
+            value: "Can I travel to more than one country?",
+            textColor: null,
+            textOpacity: 1,
+            backgroundColor: null,
+            backgroundOpacity: 1,
+          },
+          answer: {
+            value:
+              "Absolutely. We specialize in seamless multi-country journeys across the Western Balkans, handling all border crossings, inter-country logistics, and regional expert guides effortlessly.",
+            textColor: null,
+            textOpacity: 1,
+            backgroundColor: null,
+            backgroundOpacity: 1,
+          },
+        },
+      ],
+    },
+    {
+      id: "accommodation",
+      title: {
+        value: "Accommodation",
+        textColor: null,
+        textOpacity: 1,
+        backgroundColor: null,
+        backgroundOpacity: 1,
+      },
+      description: {
+        value: "Hotels, room upgrades and special requests.",
+        textColor: null,
+        textOpacity: 1,
+        backgroundColor: null,
+        backgroundOpacity: 1,
+      },
+      icon: "accommodation",
+      questions: [
+        {
+          id: "ac-1",
+          question: {
+            value: "What style of accommodations do you offer?",
+            textColor: null,
+            textOpacity: 1,
+            backgroundColor: null,
+            backgroundOpacity: 1,
+          },
+          answer: {
+            value:
+              "We handpick boutique heritage villas, intimate stone guesthouses, and luxury coastal retreats that showcase authentic regional architecture with modern comfort and personalized service.",
+            textColor: null,
+            textOpacity: 1,
+            backgroundColor: null,
+            backgroundOpacity: 1,
+          },
+        },
+        {
+          id: "ac-2",
+          question: {
+            value: "Can I request specific room categories or upgrades?",
+            textColor: null,
+            textOpacity: 1,
+            backgroundColor: null,
+            backgroundOpacity: 1,
+          },
+          answer: {
+            value:
+              "Yes, we can arrange room upgrades, panoramic sea or mountain views, adjoining family rooms, and private villa suites depending on your requirements and availability.",
+            textColor: null,
+            textOpacity: 1,
+            backgroundColor: null,
+            backgroundOpacity: 1,
+          },
+        },
+        {
+          id: "ac-3",
+          question: {
+            value: "Are dietary preferences and special requests accommodated?",
+            textColor: null,
+            textOpacity: 1,
+            backgroundColor: null,
+            backgroundOpacity: 1,
+          },
+          answer: {
+            value:
+              "Yes. All partner accommodations and curated dining spots are notified in advance about your dietary preferences, including vegetarian, vegan, halal, and gluten-free diets.",
+            textColor: null,
+            textOpacity: 1,
+            backgroundColor: null,
+            backgroundOpacity: 1,
+          },
+        },
+      ],
+    },
+    {
+      id: "payments",
+      title: {
+        value: "Payments",
+        textColor: null,
+        textOpacity: 1,
+        backgroundColor: null,
+        backgroundOpacity: 1,
+      },
+      description: {
+        value: "Deposits, payments and cancellations.",
+        textColor: null,
+        textOpacity: 1,
+        backgroundColor: null,
+        backgroundOpacity: 1,
+      },
+      icon: "payments",
+      questions: [
+        {
+          id: "py-1",
+          question: {
+            value: "What deposit is required to confirm a booking?",
+            textColor: null,
+            textOpacity: 1,
+            backgroundColor: null,
+            backgroundOpacity: 1,
+          },
+          answer: {
+            value:
+              "A 25% deposit confirms your journey, enabling us to secure premier boutique accommodations and private guides. The remaining balance is due 60 days before departure.",
+            textColor: null,
+            textOpacity: 1,
+            backgroundColor: null,
+            backgroundOpacity: 1,
+          },
+        },
+        {
+          id: "py-2",
+          question: {
+            value: "What payment methods do you accept?",
+            textColor: null,
+            textOpacity: 1,
+            backgroundColor: null,
+            backgroundOpacity: 1,
+          },
+          answer: {
+            value:
+              "We accept all major credit cards (Visa, Mastercard, American Express) via secure encrypted payment gateway, as well as direct bank wire transfers in EUR, GBP, and USD.",
+            textColor: null,
+            textOpacity: 1,
+            backgroundColor: null,
+            backgroundOpacity: 1,
+          },
+        },
+        {
+          id: "py-3",
+          question: {
+            value: "What is your cancellation and refund policy?",
+            textColor: null,
+            textOpacity: 1,
+            backgroundColor: null,
+            backgroundOpacity: 1,
+          },
+          answer: {
+            value:
+              "Cancellations made 60+ days prior to departure receive a full refund minus a modest administrative fee. We also offer flexible date rescheduling options.",
+            textColor: null,
+            textOpacity: 1,
+            backgroundColor: null,
+            backgroundOpacity: 1,
+          },
+        },
+      ],
+    },
+    {
+      id: "before-travel",
+      title: {
+        value: "Before You Travel",
+        textColor: null,
+        textOpacity: 1,
+        backgroundColor: null,
+        backgroundOpacity: 1,
+      },
+      description: {
+        value: "Flights, visas, insurance and practical info.",
+        textColor: null,
+        textOpacity: 1,
+        backgroundColor: null,
+        backgroundOpacity: 1,
+      },
+      icon: "before-travel",
+      questions: [
+        {
+          id: "bt-1",
+          question: {
+            value: "Do I need a visa to travel to Albania and the Balkans?",
+            textColor: null,
+            textOpacity: 1,
+            backgroundColor: null,
+            backgroundOpacity: 1,
+          },
+          answer: {
+            value:
+              "Citizens of the EU, US, UK, Canada, Australia, and many others can enter visa-free for up to 90 days. Passports must be valid for at least 3 months beyond your planned stay.",
+            textColor: null,
+            textOpacity: 1,
+            backgroundColor: null,
+            backgroundOpacity: 1,
+          },
+        },
+        {
+          id: "bt-2",
+          question: {
+            value: "Do you book international flights?",
+            textColor: null,
+            textOpacity: 1,
+            backgroundColor: null,
+            backgroundOpacity: 1,
+          },
+          answer: {
+            value:
+              "Our team focuses on in-country ground logistics, private guiding, and bespoke stays. We advise on the best flight routes and coordinate all airport chauffeured transfers upon arrival.",
+            textColor: null,
+            textOpacity: 1,
+            backgroundColor: null,
+            backgroundOpacity: 1,
+          },
+        },
+        {
+          id: "bt-3",
+          question: {
+            value: "Is comprehensive travel insurance recommended?",
+            textColor: null,
+            textOpacity: 1,
+            backgroundColor: null,
+            backgroundOpacity: 1,
+          },
+          answer: {
+            value:
+              "Yes, we strongly recommend comprehensive travel insurance covering trip cancellation, medical emergencies, and luggage for peace of mind throughout your voyage.",
+            textColor: null,
+            textOpacity: 1,
+            backgroundColor: null,
+            backgroundOpacity: 1,
+          },
+        },
+      ],
+    },
+    {
+      id: "during-journey",
+      title: {
+        value: "During Your Journey",
+        textColor: null,
+        textOpacity: 1,
+        backgroundColor: null,
+        backgroundOpacity: 1,
+      },
+      description: {
+        value: "On-the-road support, guides and emergencies.",
+        textColor: null,
+        textOpacity: 1,
+        backgroundColor: null,
+        backgroundOpacity: 1,
+      },
+      icon: "during-journey",
+      questions: [
+        {
+          id: "dj-1",
+          question: {
+            value: "Who is our point of contact during the trip?",
+            textColor: null,
+            textOpacity: 1,
+            backgroundColor: null,
+            backgroundOpacity: 1,
+          },
+          answer: {
+            value:
+              "You will have a dedicated local concierge available 24/7 via WhatsApp and phone, along with your private professional guide throughout your journey.",
+            textColor: null,
+            textOpacity: 1,
+            backgroundColor: null,
+            backgroundOpacity: 1,
+          },
+        },
+        {
+          id: "dj-2",
+          question: {
+            value: "What happens in case of unexpected delays or weather changes?",
+            textColor: null,
+            textOpacity: 1,
+            backgroundColor: null,
+            backgroundOpacity: 1,
+          },
+          answer: {
+            value:
+              "Your local concierge and driver immediately adapt the schedule, rerouting or rescheduling activities to ensure a seamless, stress-free experience.",
+            textColor: null,
+            textOpacity: 1,
+            backgroundColor: null,
+            backgroundOpacity: 1,
+          },
+        },
+        {
+          id: "dj-3",
+          question: {
+            value: "Are your guides English-speaking?",
+            textColor: null,
+            textOpacity: 1,
+            backgroundColor: null,
+            backgroundOpacity: 1,
+          },
+          answer: {
+            value:
+              "Yes, all our local specialist guides are fluent in English, deeply knowledgeable about regional history, culture, and nature, and vetted for exceptional hospitality.",
+            textColor: null,
+            textOpacity: 1,
+            backgroundColor: null,
+            backgroundOpacity: 1,
+          },
+        },
+      ],
+    },
+  ],
+  personalAdvice: {
+    title: {
+      value: "Need personal advice?",
+      textColor: null,
+      textOpacity: 1,
+      backgroundColor: null,
+      backgroundOpacity: 1,
+    },
+    description: {
+      value:
+        "One conversation is often more valuable than reading twenty answers. Our Mira Travel Specialists are here for you.",
+      textColor: null,
+      textOpacity: 1,
+      backgroundColor: null,
+      backgroundOpacity: 1,
+    },
+    phoneTitle: "Call Us",
+    phoneValue: "+44 123 456 7890",
+    phoneHref: "tel:+441234567890",
+    emailTitle: "Email Us",
+    emailValue: "info@mira.travel",
+    emailHref: "mailto:info@mira.travel",
+    planTitle: "Plan Your Journey",
+    planDescription:
+      "Tell us what you have in mind and a Mira Travel Specialist will help shape your journey.",
+    planHref: "/contact-us",
+    planImageMultimedia: {
+      show: "image",
+      color: {
+        color: "#FFFFFF",
+        opacity: 100,
+        width: "100%",
+        height: "100%",
+        aspectRatio: "auto",
+      },
+      image: {
+        url: null,
+        alt: "Travel designer",
+        opacity: 100,
+        overlayColor: "#000000",
+        overlayOpacity: 0,
+        width: "100%",
+        height: "auto",
+        aspectRatio: "auto",
+        fit: "cover",
+      },
+      video: {
+        url: null,
+        alt: "Travel designer",
+        opacity: 100,
+        overlayColor: "#000000",
+        overlayOpacity: 0,
+        autoplay: true,
+        loop: true,
+        muted: true,
+        width: "100%",
+        height: "auto",
+        aspectRatio: "auto",
+        fit: "cover",
+      },
+    },
+  },
+}
+
+export const emptyFaqCta = {
+  eyebrow: {
+    value: "A NOTE FROM MIRA",
+    textColor: null,
+    textOpacity: 1,
+    backgroundColor: null,
+    backgroundOpacity: 1,
+  },
+  title: {
+    value: "Not every question has a standard answer.",
+    textColor: null,
+    textOpacity: 1,
+    backgroundColor: null,
+    backgroundOpacity: 1,
+  },
+  description: {
+    value:
+      "Not every question has a standard answer. Travel rarely fits neatly into a FAQ. If you're unsure about something, ask us. We'd rather give you an answer that fits your journey than point you towards a generic policy.",
+    textColor: null,
+    textOpacity: 1,
+    backgroundColor: null,
+    backgroundOpacity: 1,
+  },
+  backgroundMultimedia: {
+    show: "color",
+    color: {
+      color: "#101912",
+      opacity: 100,
+      width: "100%",
+      height: "100%",
+      aspectRatio: "auto",
+    },
+    image: {
+      url: null,
+      alt: "A personal note from Mira travel specialists",
+      opacity: 100,
+      overlayColor: "#000000",
+      overlayOpacity: 0,
+      width: "100%",
+      height: "auto",
+      aspectRatio: "auto",
+      fit: "cover",
+    },
+    video: {
+      url: null,
+      alt: "color",
+      opacity: 100,
+      overlayColor: "#000000",
+      overlayOpacity: 0,
+      autoplay: true,
+      loop: true,
+      muted: true,
+      width: "100%",
+      height: "auto",
+      aspectRatio: "auto",
+      fit: "cover",
+    },
+  },
+  rightSideMultimedia: {
+    show: "image",
+    color: {
+      color: "#101912",
+      opacity: 100,
+      width: "100%",
+      height: "100%",
+      aspectRatio: "auto",
+    },
+    image: {
+      url: null,
+      alt: "A personal note from Mira travel specialists",
+      opacity: 100,
+      overlayColor: "#000000",
+      overlayOpacity: 0,
+      width: "100%",
+      height: "auto",
+      aspectRatio: "auto",
+      fit: "cover",
+    },
+    video: {
+      url: null,
+      alt: "image",
+      opacity: 100,
+      overlayColor: "#000000",
+      overlayOpacity: 0,
+      autoplay: true,
+      loop: true,
+      muted: true,
+      width: "100%",
+      height: "auto",
+      aspectRatio: "auto",
+      fit: "cover",
+    },
+  },
+  buttons: [
+    {
+      label: "Contact Our Team",
+      url: "/contact-us",
+      variant: "PRIMARY",
+      style: "primary",
+      rounded: "full",
+      backgroundColor: "#ffffff",
+      backgroundOpacity: 100,
+      textColor: "#000000",
+      textOpacity: 100,
+      hoverBackgroundColor: "#f3f4f6",
+      hoverTextColor: "#000000",
+      target: "_self",
+      showIcon: true,
+    },
+  ],
+  imageMultimedia: {
+    show: "image",
+    color: {
+      color: "#101912",
+      opacity: 100,
+      width: "100%",
+      height: "100%",
+      aspectRatio: "auto",
+    },
+    image: {
+      url: null,
+      alt: "A personal note from Mira travel specialists",
+      opacity: 100,
+      overlayColor: "#000000",
+      overlayOpacity: 0,
+      width: "100%",
+      height: "auto",
+      aspectRatio: "auto",
+      fit: "cover",
+    },
+    video: {
+      url: null,
+      alt: "image",
+      opacity: 100,
+      overlayColor: "#000000",
+      overlayOpacity: 0,
+      autoplay: true,
+      loop: true,
+      muted: true,
+      width: "100%",
+      height: "auto",
+      aspectRatio: "auto",
+      fit: "cover",
+    },
+  },
+}
+
+export const emptySeoMetadata = {
+  title: "FAQ | Frequently Asked Questions | Mira",
+  description:
+    "Practical answers for every stage of your journey — from the first idea to the moment you return home.",
+  keywords: "faq, mira travel, balkans travel faq, booking info",
+  canonicalUrl: "https://miratravel.nl/faq",
+  ogTitle: "FAQ | Frequently Asked Questions | Mira",
+  ogDescription: "Practical answers for every stage of your journey.",
+  ogImage: "",
+  robots: {
+    index: true,
+    follow: true,
+  },
+}
+
+export const emptyFaqPayload = {
+  name: "FAQ",
+  slug: "faq",
+  metadata: emptySeoMetadata,
+  data: {
+    page: "faq",
+    hero: emptyFaqHero,
+    faq_list: emptyFaqList,
+    cta: emptyFaqCta,
+    seo: emptySeoMetadata,
+  },
+}

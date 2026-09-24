@@ -84,6 +84,11 @@ const cmsItems = [
     icon: Info,
   },
   {
+    label: "FAQ",
+    href: "/cms/faq",
+    icon: HelpCircle,
+  },
+  {
     label: "Contact Us",
     href: "/cms/contact-us",
     icon: Mail,

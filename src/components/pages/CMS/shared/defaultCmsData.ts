@@ -1,10 +1,15 @@
 import { emptyHomePayload } from "../Home/shared/emptyHomePayload"
+import { emptyFaqPayload } from "../Faq/config/emptyFaqPayload"
 
 export function getDefaultCmsPageData(slug: string, name: string) {
   const normalizedSlug = slug.toLowerCase()
 
   if (normalizedSlug === "home") {
     return emptyHomePayload
+  }
+
+  if (normalizedSlug === "faq") {
+    return emptyFaqPayload
   }
 
   if (normalizedSlug === "footer") {

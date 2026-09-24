@@ -1,6 +1,7 @@
 import { useParams } from "react-router-dom"
 import { HomeForm } from "./Home/HomeForm"
 import { AboutForm } from "./About/AboutForm"
+import { FaqForm } from "./Faq/FaqForm"
 import { ContactForm } from "./Contact/ContactForm"
 import { FooterForm } from "./Footer/FooterForm"
 
@@ -14,6 +15,9 @@ export default function PageSections() {
   }
   if (pageSlug === "about-us" || pageSlug === "about") {
     return <AboutForm />
+  }
+  if (pageSlug === "faq") {
+    return <FaqForm />
   }
   if (pageSlug === "contact-us" || pageSlug === "contact") {
     return <ContactForm />

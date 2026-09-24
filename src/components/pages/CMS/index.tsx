@@ -10,11 +10,12 @@ export default function CMSPage() {
   const STANDARD_PAGES = [
     { name: "Home", slug: "home", description: "Manage homepage content, sections, theme and media." },
     { name: "About Us", slug: "about-us", description: "Manage about us hero, philosophy, approach, regional knowledge, and people." },
+    { name: "FAQ", slug: "faq", description: "Manage FAQ page intro, topics, questions & answers, advice card, note CTA, and SEO." },
     { name: "Contact Us", slug: "contact-us", description: "Manage contact page hero, process steps, inquiry form, and contact details." },
     { name: "Footer", slug: "footer", description: "Manage site footer, links, social media, and copyright." },
   ]
 
-  const ALLOWED_SLUGS = ["home", "about-us", "contact-us", "footer"]
+  const ALLOWED_SLUGS = ["home", "about-us", "faq", "contact-us", "footer"]
 
   // Combine standard pages with any extra allowed pages from API
   const displayedPages = STANDARD_PAGES.filter((p) =>
