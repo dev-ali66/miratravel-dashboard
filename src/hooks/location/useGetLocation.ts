@@ -27,6 +27,7 @@ export type LocationQueryParams = {
   search?: string
   type?: string
   parentId?: string
+  featured?: boolean
 }
 
 /**
@@ -36,10 +37,10 @@ export type LocationQueryParams = {
  * client-side filtering on top of this.
  */
 export function useGetLocationPages(params: LocationQueryParams = {}) {
-  const { page = 1, limit = 10, search, type, parentId } = params
+  const { page = 1, limit = 10, search, type, parentId, featured } = params
 
   return useQuery({
-    queryKey: ["location-pages", page, limit, search, type, parentId],
+    queryKey: ["location-pages", page, limit, search, type, parentId, featured],
     queryFn: async () => {
       const res = await apiPrivate.get<GetLocationPagesResponse>("/locations", {
         params: {
@@ -48,6 +49,7 @@ export function useGetLocationPages(params: LocationQueryParams = {}) {
           ...(search ? { search } : {}),
           ...(type ? { type } : {}),
           ...(parentId ? { parentId } : {}),
+          ...(featured !== undefined ? { featured } : {}),
         },
       })
 
@@ -66,6 +68,7 @@ export type LocationSearchItem = {
   name: string
   slug: string
   type: string
+  featured?: boolean
   hero?: any
   card?: any
   why?: any
@@ -84,14 +87,15 @@ type LocationSearchResponse = {
   data: LocationSearchItem[]
 }
 
-export function useSearchLocations(search = "", type?: string, limit = 50) {
+export function useSearchLocations(search = "", type?: string, limit = 50, featured?: boolean) {
   return useQuery({
-    queryKey: ["locations-search", search, type, limit],
+    queryKey: ["locations-search", search, type, limit, featured],
     queryFn: async () => {
       const res = await apiPrivate.get<LocationSearchResponse>("/locations/search", {
         params: {
           search: search.trim() || undefined,
           type: type || undefined,
+          ...(featured !== undefined ? { featured } : {}),
           limit,
         },
       })

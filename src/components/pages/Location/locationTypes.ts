@@ -306,6 +306,7 @@ export type LocationData = {
   name: string
   slug?: string
   type: string
+  featured?: boolean
   parentId?: string | null
 
   parent?: {

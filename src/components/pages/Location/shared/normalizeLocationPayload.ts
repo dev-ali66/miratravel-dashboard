@@ -160,6 +160,7 @@ export function normalizeLocationPayload(
     name: safeDraft.name ?? "",
     ...(safeDraft.slug ? { slug: safeDraft.slug } : {}),
     type: safeDraft.type ?? "PLACE",
+    featured: Boolean(safeDraft.featured),
     parentId: safeDraft.parentId || null,
 
     // Dedicated root section JSON fields (strictly included only if section is configured for location type)

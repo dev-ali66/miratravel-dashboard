@@ -28,6 +28,7 @@ import { emptyStories } from "../sections/stories/emptyStories"
 export const emptyLocation: LocationData = {
   name: "",
   type: (isDevModeActive() ? "TEST" : "") as any,
+  featured: false,
   parentId: null,
 
   hero: emptyHero,

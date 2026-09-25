@@ -1,34 +1,23 @@
 /* =====================================================
    LOCATION — PARENT LOCATION SELECT
-   Searchable, API-driven parent picker. Displays `name`,
-   stores `id` in the draft. Uses GET /locations?search=...
-   (backend-driven, debounced) — never a hardcoded list.
-
-   Edit mode: the current parent's name is resolved from
-   `draft.parent` (the backend always includes it via
-   Prisma `include: { parent: true }` on GET /locations),
-   so no extra request is needed just to show the label.
-
-   Uses Radix Popover (portaled) so suggestions are NEVER
-   clipped by parent overflow-hidden or covered by sibling
-   form sections.
+   Searchable, Glance-style live location picker.
+   Displays `name`, `type`, parent context & thumbnail,
+   stores `id` in the draft. Uses GET /locations/search
+   via useSearchLocations hook.
 ===================================================== */
 
 import { useEffect, useState } from "react"
-import { Loader2, MapPin, X, ChevronDown, Search } from "lucide-react"
-import { apiPrivate } from "@/lib/api-client"
+import { Loader2, MapPin, X, ChevronDown, Search, Check } from "lucide-react"
 import { cn } from "@/lib/utils"
 import {
   Popover,
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover"
-
-type ParentOption = {
-  id: string
-  name: string
-  type: string
-}
+import {
+  useSearchLocations,
+  type LocationSearchItem,
+} from "@/hooks/location/useGetLocation"
 
 type ParentLocationSelectProps = {
   value: string | null | undefined
@@ -41,6 +30,7 @@ type ParentLocationSelectProps = {
   label?: string
   /** Label shown for the "clear" option. Defaults to "No parent (top-level)". */
   noneLabel?: string
+  placeholder?: string
 }
 
 export function ParentLocationSelect({
@@ -50,77 +40,51 @@ export function ParentLocationSelect({
   onChange,
   label = "Parent Location",
   noneLabel = "No parent (top-level)",
+  placeholder = "Search location by name, slug or type...",
 }: ParentLocationSelectProps) {
   const [open, setOpen] = useState(false)
   const [query, setQuery] = useState("")
   const [debouncedQuery, setDebouncedQuery] = useState("")
-  const [options, setOptions] = useState<ParentOption[]>([])
-  const [isLoading, setIsLoading] = useState(false)
   const [selectedName, setSelectedName] = useState<string | null>(
     currentName ?? null
   )
 
-  // keep the displayed name in sync if the draft's resolved
-  // parent name changes from outside (e.g. edit mode load)
+  // keep the displayed name in sync if currentName changes from outside
   useEffect(() => {
     if (currentName !== undefined) {
       setSelectedName(currentName)
     }
   }, [currentName])
 
-  // debounce the search query
+  // debounce search query
   useEffect(() => {
     const timeout = setTimeout(() => {
       setDebouncedQuery(query)
     }, 250)
-
     return () => clearTimeout(timeout)
   }, [query])
 
-  // fetch matching locations whenever the debounced query changes
-  // (or the dropdown opens with an empty query, to show recent options)
+  // fetch matching locations using live search hook
+  const { data: searchResponse, isLoading } = useSearchLocations(
+    open ? debouncedQuery : "",
+    undefined,
+    50
+  )
+
+  const rawResults: LocationSearchItem[] = searchResponse?.data || []
+  const options = rawResults.filter((item) => !excludeId || item.id !== excludeId)
+
+  // if value is set but selectedName is null, try finding name in options
   useEffect(() => {
-    if (!open) return
-
-    let cancelled = false
-    setIsLoading(true)
-
-    apiPrivate
-      .get<any>("/locations", {
-        params: {
-          limit: 20,
-          ...(debouncedQuery ? { search: debouncedQuery } : {}),
-        },
-      })
-      .then((res) => {
-        if (cancelled) return
-
-        const raw = res.data
-        const list: ParentOption[] = Array.isArray(raw)
-          ? raw
-          : Array.isArray(raw?.data)
-            ? raw.data
-            : []
-
-        const results = list.filter(
-          (item) => !excludeId || item.id !== excludeId
-        )
-
-        setOptions(results)
-      })
-      .catch(() => {
-        if (!cancelled) setOptions([])
-      })
-      .finally(() => {
-        if (!cancelled) setIsLoading(false)
-      })
-
-    return () => {
-      cancelled = true
+    if (value && !selectedName && options.length > 0) {
+      const match = options.find((o) => o.id === value || o.slug === value)
+      if (match) {
+        setSelectedName(match.name)
+      }
     }
-  }, [open, debouncedQuery, excludeId])
+  }, [value, selectedName, options])
 
-  const handleSelect = (option: ParentOption) => {
+  const handleSelect = (option: LocationSearchItem) => {
     setSelectedName(option.name)
     onChange(option.id, option.name)
     setOpen(false)
@@ -137,7 +101,7 @@ export function ParentLocationSelect({
   return (
     <div className="space-y-1.5">
       {label && (
-        <label className="text-[11px] font-medium text-muted-foreground">
+        <label className="text-xs font-semibold text-foreground mb-1 block">
           {label}
         </label>
       )}
@@ -146,19 +110,19 @@ export function ParentLocationSelect({
         <PopoverTrigger asChild>
           <button
             type="button"
-            className="flex w-full items-center justify-between rounded-lg border border-border/60 bg-background px-3 py-2 text-left text-sm transition-colors outline-none hover:border-border focus:border-primary"
+            className="flex w-full items-center justify-between rounded-lg border border-border/60 bg-background px-3 py-2 text-left text-xs transition-all outline-none hover:border-border focus:border-primary shadow-2xs cursor-pointer"
           >
             <span
               className={cn(
-                "flex items-center gap-2 truncate",
-                !value && "text-muted-foreground"
+                "flex items-center gap-2 truncate font-medium",
+                !value && "text-muted-foreground font-normal"
               )}
             >
               <MapPin className="h-3.5 w-3.5 shrink-0 text-muted-foreground" />
               {value ? (selectedName ?? "Selected location") : noneLabel}
             </span>
 
-            <div className="flex shrink-0 items-center gap-1">
+            <div className="flex shrink-0 items-center gap-1.5">
               {value && (
                 <span
                   role="button"
@@ -166,7 +130,7 @@ export function ParentLocationSelect({
                     e.stopPropagation()
                     handleClear()
                   }}
-                  className="rounded p-0.5 text-muted-foreground hover:bg-muted hover:text-foreground"
+                  className="rounded p-0.5 text-muted-foreground hover:bg-muted hover:text-foreground cursor-pointer"
                   title="Clear selection"
                 >
                   <X className="h-3.5 w-3.5" />
@@ -174,7 +138,7 @@ export function ParentLocationSelect({
               )}
               <ChevronDown
                 className={cn(
-                  "h-3.5 w-3.5 text-muted-foreground transition-transform",
+                  "h-3.5 w-3.5 text-muted-foreground transition-transform duration-200",
                   open && "rotate-180"
                 )}
               />
@@ -185,73 +149,124 @@ export function ParentLocationSelect({
         <PopoverContent
           align="start"
           sideOffset={4}
-          className="z-50 w-[var(--radix-popover-trigger-width)] max-w-[95vw] min-w-[240px] rounded-lg border border-border/80 bg-popover p-0 shadow-xl"
+          className="z-50 w-[var(--radix-popover-trigger-width)] max-w-[95vw] min-w-[280px] rounded-lg border border-border bg-popover p-0 shadow-xl"
         >
-          {/* Search Header */}
-          <div className="flex items-center border-b border-border/60 px-3 py-2">
-            <Search className="mr-2 h-3.5 w-3.5 shrink-0 text-muted-foreground" />
+          {/* Live Search Input Header */}
+          <div className="flex items-center border-b border-border/60 px-3 py-2.5">
+            <Search className="mr-2 h-4 w-4 shrink-0 text-muted-foreground pointer-events-none" />
             <input
               autoFocus
               value={query}
               onChange={(e) => setQuery(e.target.value)}
-              placeholder="Search locations..."
-              className="w-full bg-transparent text-xs outline-none placeholder:text-muted-foreground"
+              placeholder={placeholder}
+              className="w-full bg-transparent text-xs text-foreground outline-none placeholder:text-muted-foreground/60"
             />
             {query && (
               <button
                 type="button"
                 onClick={() => setQuery("")}
-                className="rounded p-0.5 text-muted-foreground hover:bg-muted hover:text-foreground"
+                className="rounded p-0.5 text-muted-foreground hover:bg-muted hover:text-foreground cursor-pointer"
               >
-                <X className="h-3 w-3" />
+                <X className="h-3.5 w-3.5" />
               </button>
             )}
           </div>
 
           {/* Options List */}
-          <div className="custom-scrollbar max-h-60 overflow-y-auto p-1">
+          <div className="custom-scrollbar max-h-64 overflow-y-auto divide-y divide-border/30 p-1">
+            {/* Clear option */}
             <button
               type="button"
               onClick={handleClear}
-              className="flex w-full items-center rounded-md px-2.5 py-1.5 text-left text-xs text-muted-foreground transition-colors hover:bg-muted hover:text-foreground"
+              className={cn(
+                "flex w-full items-center justify-between rounded-md px-2.5 py-2 text-left text-xs transition-colors hover:bg-muted/70 cursor-pointer",
+                !value && "bg-primary/10 font-semibold text-primary"
+              )}
             >
-              {noneLabel}
+              <span className="truncate">{noneLabel}</span>
+              {!value && <Check className="h-3.5 w-3.5 shrink-0 text-primary" />}
             </button>
 
             {isLoading && (
-              <div className="flex items-center gap-2 px-2.5 py-2.5 text-xs text-muted-foreground">
-                <Loader2 className="h-3.5 w-3.5 animate-spin text-primary" />
+              <div className="flex items-center justify-center gap-2 py-6 text-xs text-muted-foreground">
+                <Loader2 className="h-4 w-4 animate-spin text-primary" />
                 Searching locations...
               </div>
             )}
 
             {!isLoading && options.length === 0 && (
-              <div className="px-2.5 py-3 text-center text-xs text-muted-foreground">
-                No matching locations found.
+              <div className="py-6 text-center text-xs text-muted-foreground">
+                {query ? `No locations found matching "${query}"` : "No locations available."}
               </div>
             )}
 
             {!isLoading &&
-              options.map((option, idx) => (
-                <button
-                  key={`${option.id}-${idx}`}
-                  type="button"
-                  onClick={() => handleSelect(option)}
-                  className={cn(
-                    "flex w-full items-center justify-between rounded-md px-2.5 py-2 text-left text-xs transition-colors hover:bg-muted",
-                    option.id === value &&
-                      "bg-primary/10 font-medium text-primary"
-                  )}
-                >
-                  <span className="truncate pr-2">{option.name}</span>
-                  <span className="shrink-0 rounded bg-muted/80 px-1.5 py-0.5 text-[9px] font-semibold tracking-wider text-muted-foreground uppercase">
-                    {option.type}
-                  </span>
-                </button>
-              ))}
+              options.map((option) => {
+                const isSelected = option.id === value || option.slug === value
+                const heroMedia = option.hero?.backgroundMultimedia
+                const thumbUrl =
+                  heroMedia?.image?.url ||
+                  option.hero?.image?.url ||
+                  option.card?.background_image ||
+                  ""
+
+                return (
+                  <button
+                    key={option.id}
+                    type="button"
+                    onClick={() => handleSelect(option)}
+                    className={cn(
+                      "flex w-full items-center justify-between gap-2.5 rounded-md p-2 text-left text-xs transition-colors hover:bg-muted/70 cursor-pointer",
+                      isSelected && "bg-primary/10 font-semibold text-primary"
+                    )}
+                  >
+                    <div className="flex items-center gap-2.5 min-w-0 flex-1">
+                      {/* Mini Thumbnail */}
+                      <div className="relative h-8 w-11 shrink-0 overflow-hidden rounded border border-border/70 bg-muted flex items-center justify-center">
+                        {thumbUrl ? (
+                          <img
+                            src={thumbUrl}
+                            alt={option.name}
+                            className="h-full w-full object-cover"
+                          />
+                        ) : (
+                          <MapPin className="h-3.5 w-3.5 text-muted-foreground/50" />
+                        )}
+                      </div>
+
+                      <div className="flex flex-col min-w-0 flex-1">
+                        <div className="flex items-center gap-1.5">
+                          <span className="truncate text-xs font-semibold text-foreground">
+                            {option.name}
+                          </span>
+                          <span className="shrink-0 rounded bg-primary/10 px-1.5 py-0.5 text-[9px] font-semibold uppercase text-primary">
+                            {option.type}
+                          </span>
+                        </div>
+
+                        <div className="flex items-center gap-2 text-[10px] text-muted-foreground mt-0.5">
+                          {option.parent?.name && (
+                            <span>In {option.parent.name}</span>
+                          )}
+                          <span className="font-mono text-[9px] opacity-70">
+                            /{option.slug}
+                          </span>
+                        </div>
+                      </div>
+                    </div>
+
+                    {isSelected && (
+                      <Check className="h-4 w-4 shrink-0 text-primary" />
+                    )}
+                  </button>
+                )
+              })}
           </div>
         </PopoverContent>
       </Popover>
     </div>
   )
 }
+
+export default ParentLocationSelect
+

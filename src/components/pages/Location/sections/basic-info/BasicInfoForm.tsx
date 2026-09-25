@@ -1,6 +1,6 @@
 import { useMemo } from "react"
 import { type LocationType } from "../../locationTypes"
-import { useGetLocationPages } from "@/hooks/location/useGetLocation"
+import { ParentLocationSelect } from "@/components/pages/Location/shared/ParentLocationSelect"
 import { DynamicStyledField } from "@/components/pages/CMS/shared/FormControls"
 import { FormSection } from "../../shared/fields"
 import type { LocationFormSectionProps } from "../../config/locationSections"
@@ -15,22 +15,6 @@ export function BasicInfoForm({
 }: LocationFormSectionProps) {
   const isOpen = Boolean(openSections["basic-info"])
   const { isDevMode } = useDevMode()
-
-  // Query existing locations for the Parent Location selector
-  const { data: locationsResponse } = useGetLocationPages({ limit: 100 })
-  const availableLocations = locationsResponse?.data ?? []
-
-  // Filter out current location if editing so it cannot be its own parent
-  const parentOptions = useMemo(() => {
-    const list = availableLocations
-      .filter((loc) => !draft?.id || loc.id !== draft.id)
-      .map((loc) => ({
-        label: `${loc.name} (${loc.type})`,
-        value: loc.id,
-      }))
-
-    return [{ label: "None (Top-Level Destination)", value: "" }, ...list]
-  }, [availableLocations, draft?.id])
 
   const locationTypesList = useMemo(() => {
     const base = ["CONTINENT", "COUNTRY", "REGION", "PLACE", "LANDMARK", "ACCOMMODATION"]
@@ -82,18 +66,42 @@ export function BasicInfoForm({
           onChange={(val) => updateField("type", val as LocationType)}
         />
 
-        <DynamicStyledField
-          type="select"
+        <ParentLocationSelect
+          value={draft.parentId || null}
+          currentName={draft.parent?.name || (draft as any)?.parentName}
+          excludeId={draft.id}
           label="Parent Location"
-          fieldName="parentId"
-          enableStyle={false}
-          value={draft.parentId || ""}
-          options={parentOptions}
-          onChange={(val) => updateField("parentId", val || null)}
+          noneLabel="None (Top-Level Destination)"
+          onChange={(id, name) => {
+            const nextId = id || null
+            updateField("parentId", nextId)
+            updateField("parent", nextId && name ? { id: nextId, name } : null)
+          }}
         />
+
+        {/* Featured Checkbox */}
+        <div className="flex items-center gap-2.5 rounded-lg border border-border/60 bg-muted/20 px-3 py-2.5 mt-1">
+          <input
+            type="checkbox"
+            id="featured-location-checkbox"
+            checked={Boolean(draft.featured)}
+            onChange={(e) => updateField("featured", e.target.checked)}
+            className="h-4 w-4 rounded border-border text-primary focus:ring-primary cursor-pointer"
+          />
+          <label
+            htmlFor="featured-location-checkbox"
+            className="text-xs font-semibold text-foreground cursor-pointer select-none"
+          >
+            Featured Location
+            <span className="block text-[11px] font-normal text-muted-foreground">
+              Mark this location as featured across destination cards and home showcases.
+            </span>
+          </label>
+        </div>
       </div>
     </FormSection>
   )
 }
 
 export default BasicInfoForm
+
