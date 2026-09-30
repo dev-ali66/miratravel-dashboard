@@ -37,7 +37,7 @@ export function HeroForm({
           type="text"
           label="Breadcrumb / Category Tag"
           fieldName="hero.breadcrumb"
-          placeholder="e.g. POLI TRAVEL / LUXURY BALKAN JOURNEYS"
+          placeholder="e.g. miratravel / LUXURY BALKAN JOURNEYS"
           value={hero.breadcrumb}
           onChange={(val) => updateHeroField("breadcrumb", val)}
         />
