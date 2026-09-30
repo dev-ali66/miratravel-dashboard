@@ -63,12 +63,22 @@ jobs:
           echo "=== Dashboard build successful ==="
           ls -lah dist
 
-      # Only dist will be uploaded
-      - name: Upload dist artifact
+      # ========================================
+      # PACKAGE ONLY DIST
+      # ========================================
+      - name: Package dist
+        run: |
+          cd dist
+          zip -r ../dashboard-dist.zip .
+
+      # ========================================
+      # UPLOAD ARTIFACT
+      # ========================================
+      - name: Upload dashboard artifact
         uses: actions/upload-artifact@v4
         with:
           name: dashboard-dist
-          path: dist/
+          path: dashboard-dist.zip
 
 
   # ==========================================
@@ -81,12 +91,17 @@ jobs:
 
     steps:
 
-      - name: Download dist artifact
+      # ========================================
+      # DOWNLOAD BUILD
+      # ========================================
+      - name: Download dashboard artifact
         uses: actions/download-artifact@v4
         with:
           name: dashboard-dist
-          path: dist
 
+      # ========================================
+      # PREPARE VPS DIRECTORY
+      # ========================================
       - name: Prepare dashboard directory
         uses: appleboy/ssh-action@v1.2.2
         with:
@@ -103,16 +118,22 @@ jobs:
 
             mkdir -p "${VPS_DASHBOARD_PATH}"
 
-      - name: Upload dist to VPS
+      # ========================================
+      # UPLOAD ONLY BUILD ZIP
+      # ========================================
+      - name: Upload dashboard build
         uses: appleboy/scp-action@v0.1.7
         with:
           host: ${{ env.VPS_HOST }}
           username: ${{ env.VPS_USER }}
           key: ${{ env.VPS_SSH_KEY }}
-          source: "dist/*"
+          source: "dashboard-dist.zip"
           target: ${{ env.VPS_DASHBOARD_PATH }}
 
-      - name: Finalize Dashboard Deployment
+      # ========================================
+      # EXTRACT BUILD
+      # ========================================
+      - name: Deploy Dashboard
         uses: appleboy/ssh-action@v1.2.2
         with:
           host: ${{ env.VPS_HOST }}
@@ -130,6 +151,20 @@ jobs:
 
             cd "$PROJECT_PATH"
 
+            echo "=== Cleaning old dashboard files ==="
+
+            find "$PROJECT_PATH" \
+              -mindepth 1 \
+              -maxdepth 1 \
+              ! -name "dashboard-dist.zip" \
+              -exec rm -rf {} +
+
+            echo "=== Extracting new dashboard build ==="
+
+            unzip -o dashboard-dist.zip
+
+            rm -f dashboard-dist.zip
+
             echo "=== Verifying deployed files ==="
 
             if [ ! -f "index.html" ]; then
@@ -137,10 +172,9 @@ jobs:
               exit 1
             fi
 
-            echo "=== Dashboard deployment successful ==="
-
+            echo "=== Dashboard files ==="
             ls -lah "$PROJECT_PATH"
 
             echo "======================================"
-            echo "✓ Dashboard deployed successfully"
+            echo "✓ Dashboard deployment successful"
             echo "======================================"
