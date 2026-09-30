@@ -20,10 +20,11 @@ env:
   VITE_API_URL: ${{ secrets.VITE_API_URL }}
   VITE_SOCKET_URL: ${{ secrets.VITE_SOCKET_URL }}
 
+
 jobs:
 
   # ==========================================
-  # BUILD
+  # BUILD DASHBOARD
   # ==========================================
   build:
     name: Build Dashboard
@@ -31,15 +32,24 @@ jobs:
 
     steps:
 
+      # ========================================
+      # CHECKOUT
+      # ========================================
       - name: Checkout repository
         uses: actions/checkout@v4
 
+      # ========================================
+      # SETUP NODE
+      # ========================================
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
           node-version: 22
           cache: npm
 
+      # ========================================
+      # CREATE PRODUCTION ENVIRONMENT
+      # ========================================
       - name: Create production environment
         run: |
           printf '%s\n' \
@@ -47,12 +57,23 @@ jobs:
             "VITE_SOCKET_URL=${VITE_SOCKET_URL}" \
             > .env.production
 
+          echo "=== Production environment created ==="
+
+      # ========================================
+      # INSTALL DEPENDENCIES
+      # ========================================
       - name: Install dependencies
         run: npm ci
 
+      # ========================================
+      # BUILD DASHBOARD
+      # ========================================
       - name: Build Dashboard
         run: npm run build
 
+      # ========================================
+      # VERIFY BUILD
+      # ========================================
       - name: Verify build
         run: |
           if [ ! -f "dist/index.html" ]; then
@@ -60,7 +81,10 @@ jobs:
             exit 1
           fi
 
-          echo "=== Dashboard build successful ==="
+          echo "======================================"
+          echo "   Dashboard build successful"
+          echo "======================================"
+
           ls -lah dist
 
       # ========================================
@@ -70,6 +94,9 @@ jobs:
         run: |
           cd dist
           zip -r ../dashboard-dist.zip .
+
+          echo "=== Dashboard package created ==="
+          ls -lh ../dashboard-dist.zip
 
       # ========================================
       # UPLOAD ARTIFACT
@@ -82,7 +109,7 @@ jobs:
 
 
   # ==========================================
-  # DEPLOY
+  # DEPLOY DASHBOARD
   # ==========================================
   deploy:
     name: Deploy Dashboard to Hostinger
@@ -92,12 +119,24 @@ jobs:
     steps:
 
       # ========================================
-      # DOWNLOAD BUILD
+      # DOWNLOAD BUILD ARTIFACT
       # ========================================
       - name: Download dashboard artifact
         uses: actions/download-artifact@v4
         with:
           name: dashboard-dist
+
+      # ========================================
+      # VERIFY DASHBOARD PATH SECRET
+      # ========================================
+      - name: Verify dashboard path
+        run: |
+          if [ -z "${VPS_DASHBOARD_PATH}" ]; then
+            echo "ERROR: VPS_DASHBOARD_PATH secret is empty or missing!"
+            exit 1
+          fi
+
+          echo "Dashboard deployment path is configured."
 
       # ========================================
       # PREPARE VPS DIRECTORY
@@ -112,14 +151,26 @@ jobs:
           script: |
             set -e
 
+            DASHBOARD_PATH="${{ secrets.VPS_DASHBOARD_PATH }}"
+
             echo "======================================"
             echo "   Preparing Dashboard Directory"
             echo "======================================"
 
-            mkdir -p "${VPS_DASHBOARD_PATH}"
+            if [ -z "$DASHBOARD_PATH" ]; then
+              echo "ERROR: VPS_DASHBOARD_PATH is empty!"
+              exit 1
+            fi
+
+            echo "Creating dashboard directory..."
+
+            mkdir -p "$DASHBOARD_PATH"
+
+            echo "Dashboard directory ready:"
+            echo "$DASHBOARD_PATH"
 
       # ========================================
-      # UPLOAD ONLY BUILD ZIP
+      # UPLOAD BUILD ZIP TO VPS
       # ========================================
       - name: Upload dashboard build
         uses: appleboy/scp-action@v0.1.7
@@ -128,10 +179,10 @@ jobs:
           username: ${{ env.VPS_USER }}
           key: ${{ env.VPS_SSH_KEY }}
           source: "dashboard-dist.zip"
-          target: ${{ env.VPS_DASHBOARD_PATH }}
+          target: ${{ secrets.VPS_DASHBOARD_PATH }}
 
       # ========================================
-      # EXTRACT BUILD
+      # DEPLOY DASHBOARD
       # ========================================
       - name: Deploy Dashboard
         uses: appleboy/ssh-action@v1.2.2
@@ -143,37 +194,80 @@ jobs:
           script: |
             set -e
 
-            PROJECT_PATH="${VPS_DASHBOARD_PATH}"
+            DASHBOARD_PATH="${{ secrets.VPS_DASHBOARD_PATH }}"
 
             echo "======================================"
             echo "       Dashboard Deployment"
             echo "======================================"
 
-            cd "$PROJECT_PATH"
+            # ------------------------------------
+            # VERIFY PATH
+            # ------------------------------------
+            if [ -z "$DASHBOARD_PATH" ]; then
+              echo "ERROR: VPS_DASHBOARD_PATH is empty!"
+              exit 1
+            fi
 
+            echo "Dashboard path:"
+            echo "$DASHBOARD_PATH"
+
+            # ------------------------------------
+            # ENTER DASHBOARD DIRECTORY
+            # ------------------------------------
+            cd "$DASHBOARD_PATH"
+
+            # ------------------------------------
+            # VERIFY ZIP
+            # ------------------------------------
+            if [ ! -f "dashboard-dist.zip" ]; then
+              echo "ERROR: dashboard-dist.zip not found!"
+              exit 1
+            fi
+
+            echo "=== Build ZIP found ==="
+            ls -lh dashboard-dist.zip
+
+            # ------------------------------------
+            # CLEAN OLD DASHBOARD FILES
+            # ------------------------------------
             echo "=== Cleaning old dashboard files ==="
 
-            find "$PROJECT_PATH" \
+            find "$DASHBOARD_PATH" \
               -mindepth 1 \
               -maxdepth 1 \
               ! -name "dashboard-dist.zip" \
               -exec rm -rf {} +
 
+            # ------------------------------------
+            # EXTRACT NEW BUILD
+            # ------------------------------------
             echo "=== Extracting new dashboard build ==="
 
             unzip -o dashboard-dist.zip
 
+            # ------------------------------------
+            # REMOVE ZIP
+            # ------------------------------------
+            echo "=== Removing deployment ZIP ==="
+
             rm -f dashboard-dist.zip
 
+            # ------------------------------------
+            # VERIFY DEPLOYMENT
+            # ------------------------------------
             echo "=== Verifying deployed files ==="
 
-            if [ ! -f "index.html" ]; then
-              echo "ERROR: index.html not found!"
+            if [ ! -f "$DASHBOARD_PATH/index.html" ]; then
+              echo "ERROR: index.html not found after deployment!"
               exit 1
             fi
 
+            # ------------------------------------
+            # SHOW DEPLOYED FILES
+            # ------------------------------------
             echo "=== Dashboard files ==="
-            ls -lah "$PROJECT_PATH"
+
+            ls -lah "$DASHBOARD_PATH"
 
             echo "======================================"
             echo "✓ Dashboard deployment successful"
