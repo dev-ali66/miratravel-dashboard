@@ -21,13 +21,13 @@ import { fieldCssStyle } from "../CMS/shared/fieldStyle"
 
 interface StoryPreviewProps {
   formData: {
-    title: string
+    title: any
     titleStyle?: Record<string, any>
     slug: string
     category: string
-    description: string
+    description: any
     descriptionStyle?: Record<string, any>
-    readTime: string
+    readTime: any
     readTimeStyle?: Record<string, any>
     templateType: string
     image: string
@@ -37,14 +37,24 @@ interface StoryPreviewProps {
     tagTheme: string
     tagLens: string
     destinationPlace: string
-    author: string
+    author: any
     authorStyle?: Record<string, any>
-    authorTitle: string
+    authorTitle: any
     authorTitleStyle?: Record<string, any>
     journeyIds: string[]
     manualRelatedStoryIds: string[]
     blocks: Array<ArticleBlock>
   }
+}
+
+const getRenderableText = (val: any, fallback: string = ""): string => {
+  if (val === null || val === undefined) return fallback
+  if (typeof val === "string") return val || fallback
+  if (typeof val === "number") return String(val)
+  if (typeof val === "object" && "value" in val) {
+    return (val as any).value ?? fallback
+  }
+  return fallback
 }
 
 export function StoryPreview({ formData }: StoryPreviewProps) {
@@ -121,7 +131,7 @@ export function StoryPreview({ formData }: StoryPreviewProps) {
         <UniversalMultimediaPreview
           multimedia={formData.heroMultimedia}
           fallbackImageSrc={defaultCover}
-          fallbackAlt={formData.title || "Story Cover Media"}
+          fallbackAlt={getRenderableText(formData.title, "Story Cover Media")}
           fallbackColor="#0F2A2E"
           mode="background"
           className="h-full w-full object-cover"
@@ -141,9 +151,9 @@ export function StoryPreview({ formData }: StoryPreviewProps) {
         <div className="relative z-20 flex min-h-[460px] flex-col items-center justify-center px-6 py-16 text-center text-white md:min-h-[540px] md:px-12 md:py-24">
           {/* Breadcrumb Label */}
           <div className="mb-4 flex flex-wrap items-center justify-center gap-2 text-xs font-bold tracking-[0.2em] text-amber-200/90 uppercase">
-            <span>{formData.templateType || "Long Story"}</span>
+            <span>{getRenderableText(formData.templateType, "Long Story")}</span>
             <span className="opacity-40">•</span>
-            <span>{formData.category || "Culture & Heritage"}</span>
+            <span>{getRenderableText(formData.category, "Culture & Heritage")}</span>
             {displayPlace && (
               <>
                 <span className="opacity-40">•</span>
@@ -157,7 +167,7 @@ export function StoryPreview({ formData }: StoryPreviewProps) {
             className="max-w-4xl font-serif text-2xl font-bold leading-tight tracking-tight text-white sm:text-4xl md:text-5xl lg:text-6xl drop-shadow-md break-words"
             style={fieldCssStyle(formData.titleStyle)}
           >
-            {formData.title || "Stories from the Balkans"}
+            {getRenderableText(formData.title, "Stories from the Balkans")}
           </h1>
 
           {/* Hero Description */}
@@ -165,8 +175,7 @@ export function StoryPreview({ formData }: StoryPreviewProps) {
             className="mt-6 max-w-2xl text-sm font-normal leading-relaxed text-amber-50/90 sm:text-base md:text-xl drop-shadow-xs break-words"
             style={fieldCssStyle(formData.descriptionStyle)}
           >
-            {formData.description ||
-              "Discover rich cultures, breathtaking landscapes, and timeless stories — one journey at a time."}
+            {getRenderableText(formData.description, "Discover rich cultures, breathtaking landscapes, and timeless stories — one journey at a time.")}
           </p>
 
           {/* Three-Tag Taxonomy Badges */}
@@ -205,7 +214,7 @@ export function StoryPreview({ formData }: StoryPreviewProps) {
                     border: btn.style === "outline" ? "1px solid rgba(255, 255, 255, 0.4)" : "none",
                   }}
                 >
-                  {btn.label || "Explore Story"}
+                  {getRenderableText(btn.label, "Explore Story")}
                   <ArrowRight className="h-4 w-4" />
                 </a>
               ))}
@@ -216,14 +225,14 @@ export function StoryPreview({ formData }: StoryPreviewProps) {
           <div className="mt-10 flex w-full max-w-2xl flex-wrap items-center justify-between border-t border-white/20 pt-4 text-xs text-white/80">
             <div className="flex items-center gap-3">
               <div className="flex h-8 w-8 items-center justify-center rounded-full bg-amber-400/20 text-amber-200 font-bold text-xs border border-amber-300/30">
-                {(formData.author || "M")[0]}
+                {(getRenderableText(formData.author, "M"))[0]}
               </div>
               <div className="text-left">
                 <p className="font-semibold text-white" style={fieldCssStyle(formData.authorStyle)}>
-                  {formData.author || "MIRA Editorial"}
+                  {getRenderableText(formData.author, "MIRA Editorial")}
                 </p>
                 <p className="text-[10px] text-white/70" style={fieldCssStyle(formData.authorTitleStyle)}>
-                  {formData.authorTitle || "Curator & Travel Writer"}
+                  {getRenderableText(formData.authorTitle, "Curator & Travel Writer")}
                 </p>
               </div>
             </div>
@@ -231,11 +240,11 @@ export function StoryPreview({ formData }: StoryPreviewProps) {
             <div className="flex items-center gap-5">
               <span className="flex items-center gap-1.5 font-medium" style={fieldCssStyle(formData.readTimeStyle)}>
                 <Clock className="h-3.5 w-3.5 text-amber-300" />
-                {formData.readTime || "5 min read"}
+                {getRenderableText(formData.readTime, "5 min read")}
               </span>
               <span className="flex items-center gap-1.5 font-medium capitalize">
                 <BookOpen className="h-3.5 w-3.5 text-emerald-300" />
-                {formData.templateType || "long-story"}
+                {getRenderableText(formData.templateType, "long-story")}
               </span>
             </div>
           </div>
@@ -257,7 +266,7 @@ export function StoryPreview({ formData }: StoryPreviewProps) {
                     className="mt-4 font-serif text-2xl font-bold tracking-tight text-foreground md:text-3xl lg:text-4xl border-b border-border/40 pb-3"
                     style={fieldCssStyle(block.textStyle)}
                   >
-                    {block.text || block.title || "Section Heading"}
+                    {getRenderableText(block.text || block.title, "Section Heading")}
                   </h2>
                 )
               }
@@ -270,7 +279,7 @@ export function StoryPreview({ formData }: StoryPreviewProps) {
                       className="font-serif text-2xl font-medium leading-relaxed text-[#af6348] md:text-3xl italic"
                       style={fieldCssStyle(block.textStyle)}
                     >
-                      "{block.text || "The Balkans are not discovered quickly. They unfold slowly, revealing themselves to those who take the time to listen."}"
+                      "{getRenderableText(block.text, "The Balkans are not discovered quickly. They unfold slowly, revealing themselves to those who take the time to listen.")}"
                     </p>
                     <div className="mx-auto mt-4 h-0.5 w-16 bg-[#af6348]/40" />
                   </div>
@@ -292,7 +301,7 @@ export function StoryPreview({ formData }: StoryPreviewProps) {
                         <UniversalMultimediaPreview
                           multimedia={block.multimedia}
                           fallbackImageSrc={block.url || defaultCover}
-                          fallbackAlt={block.title || "Spotlight Image"}
+                          fallbackAlt={getRenderableText(block.title, "Spotlight Image")}
                           mode="inline"
                           className="h-full w-full object-cover"
                         />
@@ -301,12 +310,12 @@ export function StoryPreview({ formData }: StoryPreviewProps) {
                     <div className="flex w-full flex-col gap-3 md:w-1/2">
                       {block.title && (
                         <h3 className="font-serif text-xl font-bold text-foreground md:text-2xl" style={fieldCssStyle(block.textStyle)}>
-                          {block.title}
+                          {getRenderableText(block.title)}
                         </h3>
                       )}
                       {block.text && (
                         <p className="text-sm font-normal leading-relaxed text-muted-foreground md:text-base">
-                          {block.text}
+                          {getRenderableText(block.text)}
                         </p>
                       )}
                       {block.highlights && block.highlights.length > 0 && (
@@ -314,7 +323,7 @@ export function StoryPreview({ formData }: StoryPreviewProps) {
                           {block.highlights.map((hl, hIdx) => (
                             <li key={hIdx} className="flex items-center gap-2">
                               <CheckCircle2 className="h-3.5 w-3.5 text-[#af6348]" />
-                              <span>{hl}</span>
+                              <span>{getRenderableText(hl)}</span>
                             </li>
                           ))}
                         </ul>
@@ -361,16 +370,16 @@ export function StoryPreview({ formData }: StoryPreviewProps) {
                 return (
                   <div key={block.id} className="my-8 rounded-2xl border border-[#af6348]/30 bg-[#FDFAF7] p-6 shadow-sm dark:bg-card/70 md:p-8">
                     <h3 className="mb-6 font-serif text-xl font-bold text-[#af6348] text-center">
-                      {block.title || "Practical Notes"}
+                      {getRenderableText(block.title, "Practical Notes")}
                     </h3>
                     <div className="grid grid-cols-1 gap-6 sm:grid-cols-2">
                       {items.map((item, iIdx) => (
                         <div key={iIdx} className="flex flex-col gap-1">
                           <span className="text-xs font-bold tracking-wider text-[#af6348] uppercase">
-                            {item.title}
+                            {getRenderableText(item.title)}
                           </span>
                           <p className="text-xs leading-relaxed text-muted-foreground">
-                            {item.content}
+                            {getRenderableText(item.content)}
                           </p>
                         </div>
                       ))}
@@ -387,7 +396,7 @@ export function StoryPreview({ formData }: StoryPreviewProps) {
                       <UniversalMultimediaPreview
                         multimedia={block.multimedia}
                         fallbackImageSrc={block.url}
-                        fallbackAlt={block.caption || "Article media"}
+                        fallbackAlt={getRenderableText(block.caption, "Article media")}
                         mode="inline"
                         className="h-full w-full object-cover"
                       />
@@ -397,7 +406,7 @@ export function StoryPreview({ formData }: StoryPreviewProps) {
                         className="text-center text-xs italic text-muted-foreground"
                         style={fieldCssStyle(block.captionStyle)}
                       >
-                        {block.caption}
+                        {getRenderableText(block.caption)}
                       </figcaption>
                     )}
                   </figure>
@@ -411,7 +420,7 @@ export function StoryPreview({ formData }: StoryPreviewProps) {
                   className="text-base font-normal leading-loose tracking-wide text-foreground/90 md:text-lg"
                   style={fieldCssStyle(block.textStyle)}
                 >
-                  {block.text}
+                  {getRenderableText(block.text)}
                 </p>
               )
             })
