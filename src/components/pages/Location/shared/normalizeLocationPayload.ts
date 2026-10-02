@@ -78,16 +78,13 @@ export function normalizeLocationPayload(
     safeData.stats ??
     {}
   const experiencesData =
-    safeDraft.experience ??
-    safeDraft.experiences ??
-    safeData.experiences ??
-    safeData.experience ??
-    {}
+    (safeDraft.experiences && Array.isArray(safeDraft.experiences.items) && safeDraft.experiences.items.length > 0)
+      ? safeDraft.experiences
+      : safeDraft.experiences ?? safeDraft.experience ?? safeData.experiences ?? safeData.experience ?? {}
+
   const regionExperiencesData =
     safeDraft.regionExperiences ??
     safeData.regionExperiences ??
-    safeDraft.experience ??
-    safeData.experience ??
     {}
   const signatureExperiencesData =
     safeDraft.signatureExperiences ??
@@ -173,7 +170,7 @@ export function normalizeLocationPayload(
     ...(finalCharacter ? { character: finalCharacter } : {}),
     ...(finalPracticalInfo ? { practicalInfo: finalPracticalInfo } : {}),
     ...(finalStats ? { statistics: finalStats } : {}),
-    ...(finalExperiences ? { experience: finalExperiences } : {}),
+    ...(finalExperiences ? { experiences: finalExperiences } : {}),
     ...(finalRegionExperiences ? { regionExperiences: finalRegionExperiences } : {}),
     ...(finalSignatureExperiences ? { signatureExperiences: finalSignatureExperiences } : {}),
     ...(finalTravelInsights ? { travelInsight: finalTravelInsights } : {}),

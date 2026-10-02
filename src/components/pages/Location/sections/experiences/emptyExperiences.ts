@@ -17,20 +17,7 @@ export const emptyExperiences = {
   seasonInfo: "All information is available on site. The season runs from May to October — book private activities in advance during peak periods.",
   seasonLocation: "Riviera",
   load_more_button: "Load More",
-  featured_experience: {
-    title: { value: "Pirate Cave Coastal Kayaking Expedition", textColor: "#FFFFFF" },
-    category: "SEA EXPEDITIONS",
-    duration: "Half Day (4 Hours)",
-    subtitle: { value: "Paddle into hidden sea caves and turquoise bays along the coastline.", textColor: "#E5E5E5" },
-    action_text: "Discover Experience",
-    imageMultimedia: {
-      show: "color",
-      color: { color: "#1c2813", opacity: 100, width: "100%", height: "100%", aspectRatio: "auto" },
-      image: { url: "", alt: "Featured Experience", opacity: 100, overlayColor: "#000000", overlayOpacity: 30, width: "100%", height: "auto", aspectRatio: "auto", fit: "cover" },
-      video: { url: "", alt: "", autoplay: true, loop: true, muted: true, opacity: 100, overlayColor: "#000000", overlayOpacity: 30, width: "100%", height: "auto", aspectRatio: "auto", fit: "cover" },
-    },
-  },
-  cards: [],
+  items: [],
   backgroundMultimedia: {
     show: "color",
     color: { color: "#F1EEE5", opacity: 100, width: "100%", height: "100%", aspectRatio: "auto" },

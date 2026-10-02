@@ -101,6 +101,22 @@ export function RegionExperiencesForm({
       (loc as any).essence?.paragraphs?.value ||
       `Explore the unique character, heritage, and landscapes of ${loc.name}.`
 
+    const heroMedia = (loc as any).hero?.backgroundMultimedia || (loc as any).backgroundMultimedia
+    const imgUrl =
+      heroMedia?.image?.url ||
+      (loc as any).hero?.image?.url ||
+      (loc as any).card?.background_image ||
+      ""
+
+    const mediaToUse = heroMedia
+      ? structuredClone(heroMedia)
+      : {
+          show: imgUrl ? "image" : "color",
+          color: { color: "#FFFFFF", opacity: 100, width: "100%", height: "100%", aspectRatio: "auto" },
+          image: { url: imgUrl, alt: loc.name, opacity: 100, overlayColor: "#000000", overlayOpacity: 0, width: "100%", height: "100%", aspectRatio: "auto", fit: "cover" },
+          video: { url: "", alt: loc.name, opacity: 100, overlayColor: "#000000", overlayOpacity: 0, autoplay: true, loop: true, muted: true, width: "100%", height: "auto", aspectRatio: "auto", fit: "cover" },
+        }
+
     const newItem: RegionExperienceItemData = {
       id: loc.id || loc.slug,
       title: {
@@ -118,20 +134,7 @@ export function RegionExperiencesForm({
         textColor: "#565e69",
         textOpacity: 1,
       },
-      imageMultimedia: {
-        show: "image",
-        image: {
-          url: "",
-          alt: loc.name,
-          opacity: 100,
-          overlayColor: "#000000",
-          overlayOpacity: 0,
-          width: "100%",
-          height: "100%",
-          aspectRatio: "auto",
-          fit: "cover",
-        },
-      },
+      imageMultimedia: mediaToUse,
       tag: {
         value: loc.type || "REGION",
         textColor: "#9c705d",
@@ -166,6 +169,17 @@ export function RegionExperiencesForm({
     if (regionChildren.length === 0) return
 
     const childItems: RegionExperienceItemData[] = regionChildren.map((child: any) => {
+      const heroMedia = (child as any).hero?.backgroundMultimedia || (child as any).backgroundMultimedia
+      const imgUrl = heroMedia?.image?.url || (child as any).hero?.image?.url || ""
+      const mediaToUse = heroMedia
+        ? structuredClone(heroMedia)
+        : {
+            show: imgUrl ? "image" : "color",
+            color: { color: "#FFFFFF", opacity: 100, width: "100%", height: "100%", aspectRatio: "auto" },
+            image: { url: imgUrl, alt: child.name, opacity: 100, overlayColor: "#000000", overlayOpacity: 0, width: "100%", height: "100%", aspectRatio: "auto", fit: "cover" },
+            video: { url: "", alt: child.name, opacity: 100, overlayColor: "#000000", overlayOpacity: 0, autoplay: true, loop: true, muted: true, width: "100%", height: "auto", aspectRatio: "auto", fit: "cover" },
+          }
+
       return {
         id: child.id,
         title: {
@@ -183,20 +197,7 @@ export function RegionExperiencesForm({
           textColor: "#565e69",
           textOpacity: 1,
         },
-        imageMultimedia: {
-          show: "image",
-          image: {
-            url: "",
-            alt: child.name,
-            opacity: 100,
-            overlayColor: "#000000",
-            overlayOpacity: 0,
-            width: "100%",
-            height: "100%",
-            aspectRatio: "auto",
-            fit: "cover",
-          },
-        },
+        imageMultimedia: mediaToUse,
         tag: {
           value: child.type || "REGION",
           textColor: "#9c705d",
@@ -630,20 +631,7 @@ export function RegionExperiencesForm({
                         }
                       />
 
-                      {/* Region Showcase Media */}
-                      <UniversalMultimediaForm
-                        title="Region Featured Media"
-                        fieldName={`regionExperiences.items.${idx}.imageMultimedia`}
-                        imageFieldName={`regionImg_${idx}`}
-                        videoFieldName={`regionVid_${idx}`}
-                        value={item.imageMultimedia}
-                        onChange={(multimedia) =>
-                          handleUpdateItem(idx, {
-                            ...item,
-                            imageMultimedia: multimedia,
-                          })
-                        }
-                      />
+
 
                       {/* Dynamic CTA Button / Action Link (Hero Button Style) */}
                       <div className="rounded-lg border border-border/70 bg-card p-3.5">

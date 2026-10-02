@@ -3,9 +3,18 @@ export type StoryTemplateType = 'long-story' | 'short-story' | 'guide-story' | '
 export interface CmsButton {
   label: string
   url: string
+  variant?: string
   style?: "primary" | "outline" | "secondary" | "link" | string
+  rounded?: string
   backgroundColor?: string
+  backgroundOpacity?: number
   textColor?: string
+  textOpacity?: number
+  hoverBackgroundColor?: string
+  hoverTextColor?: string
+  target?: string
+  showIcon?: boolean
+  [key: string]: any
 }
 
 export interface PracticalNoteItem {
@@ -31,6 +40,11 @@ export interface ArticleBlock {
 }
 
 export interface StoryDetail {
+  breadcrumb?: Record<string, any>
+  title?: Record<string, any>
+  subtitle?: Record<string, any>
+  description?: Record<string, any>
+  isCenter?: boolean
   tagPlace?: string
   tagTheme?: string
   tagLens?: string
@@ -41,6 +55,7 @@ export interface StoryDetail {
   authorStyle?: Record<string, any>
   authorTitle?: string
   authorTitleStyle?: Record<string, any>
+  backgroundMultimedia?: Record<string, any>
   heroMultimedia?: Record<string, any>
   heroBackgroundStyle?: Record<string, any>
   titleStyle?: Record<string, any>

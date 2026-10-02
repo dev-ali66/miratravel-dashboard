@@ -156,7 +156,6 @@ export function LocationForm({ }: LocationFormProps) {
                   delete (cleanPayload as any).id
                   if (!cleanPayload.slug) delete (cleanPayload as any).slug
                 }
-                // console.log("📍 [RAW MEMORY DRAFT]:", draft)
                 console.log("📍 [CLEAN API PAYLOAD SENT TO BACKEND]:", cleanPayload)
               }}
               className="flex shrink-0 items-center gap-1.5 rounded-lg border border-border/80 bg-background px-3 py-2 text-xs font-medium text-foreground transition hover:bg-muted cursor-pointer"
