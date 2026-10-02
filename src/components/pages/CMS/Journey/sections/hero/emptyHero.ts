@@ -1,0 +1,56 @@
+export const emptyHero = {
+  breadcrumb: {
+    value: "EXPLORE JOURNEYS",
+    textColor: "#E5E7EB",
+    textOpacity: 1,
+    backgroundColor: null,
+    backgroundOpacity: 1,
+  },
+  title: {
+    value: "Tailored Balkan Journeys Crafted for Discerning Travelers",
+    textColor: "#ffffff",
+    textOpacity: 1,
+    backgroundColor: null,
+    backgroundOpacity: 1,
+  },
+  subtitle: {
+    value: "",
+    textColor: "#E5E7EB",
+    textOpacity: 1,
+    backgroundColor: null,
+    backgroundOpacity: 1,
+  },
+  description: {
+    value: "Discover handcrafted itineraries that combine cultural depth, boutique luxury, and unforgettable landscapes across the Balkans.",
+    textColor: "#E5E7EB",
+    textOpacity: 1,
+    backgroundColor: null,
+    backgroundOpacity: 1,
+  },
+  isCenter: false,
+  buttons: [],
+  backgroundMultimedia: {
+    show: "color",
+    color: {
+      color: "#182D09",
+      opacity: 100,
+      width: "100%",
+      height: "100%",
+      aspectRatio: "auto",
+    },
+    image: {
+      url: "",
+      alt: "Tailored Balkan Journeys",
+      opacity: 100,
+      overlayColor: "#000000",
+      overlayOpacity: 30,
+    },
+    video: {
+      url: "",
+      alt: "",
+      autoplay: true,
+      loop: true,
+      muted: true,
+    },
+  },
+}

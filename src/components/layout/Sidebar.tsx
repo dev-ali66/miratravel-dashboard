@@ -84,6 +84,11 @@ const cmsItems = [
     icon: Info,
   },
   {
+    label: "Journey CMS",
+    href: "/cms/journey",
+    icon: Compass,
+  },
+  {
     label: "FAQ",
     href: "/cms/faq",
     icon: HelpCircle,

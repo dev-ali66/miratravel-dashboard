@@ -3,6 +3,7 @@ import { FileText } from "lucide-react"
 
 import { HomePreview } from "./Home/HomePreview"
 import { AboutPreview } from "./About/AboutPreview"
+import { JourneyCMSPreview } from "./Journey/JourneyCMSPreview"
 import { FaqPreview } from "./Faq/FaqPreview"
 import { ContactPreview } from "./Contact/ContactPreview"
 import { FooterPreview } from "./Footer/FooterPreview"
@@ -27,6 +28,7 @@ export function CmsEditorLayout() {
   const renderPreview = () => {
     if (pageSlug === "home") return <HomePreview />
     if (pageSlug === "about-us" || pageSlug === "about") return <AboutPreview />
+    if (pageSlug === "journey" || pageSlug === "journeys") return <JourneyCMSPreview />
     if (pageSlug === "faq") return <FaqPreview />
     if (pageSlug === "contact-us" || pageSlug === "contact") return <ContactPreview />
     if (pageSlug === "footer") return <FooterPreview />
