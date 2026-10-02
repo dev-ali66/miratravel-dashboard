@@ -8,8 +8,8 @@ export const createEmptyMultimediaItem = () => ({
     aspectRatio: "auto",
   },
   image: {
-    url: null,
-    alt: null,
+    url: "",
+    alt: "",
     opacity: 100,
     overlayColor: "#000000",
     overlayOpacity: 0,
@@ -19,7 +19,7 @@ export const createEmptyMultimediaItem = () => ({
     fit: "cover" as const,
   },
   video: {
-    url: null,
+    url: "",
     alt: null,
     opacity: 100,
     overlayColor: "#000000",
@@ -69,7 +69,7 @@ export const emptyPhilosophy = {
       show: "image",
       color: { color: "#FFFFFF", opacity: 100, width: "100%", height: "100%", aspectRatio: "auto" },
       image: {
-        url: "https://res.cloudinary.com/dscqp4wwt/image/upload/v1789789105/P/philosophyImage1/mwlarjdjn6k8sg7uiecq.png",
+        url: "",
         alt: "Balkan authentic travel",
         opacity: 100,
         overlayColor: "#000000",
@@ -80,7 +80,7 @@ export const emptyPhilosophy = {
         fit: "cover",
       },
       video: {
-        url: null,
+        url: "",
         alt: null,
         opacity: 100,
         overlayColor: "#000000",
@@ -98,7 +98,7 @@ export const emptyPhilosophy = {
       show: "image",
       color: { color: "#FFFFFF", opacity: 100, width: "100%", height: "100%", aspectRatio: "auto" },
       image: {
-        url: "https://res.cloudinary.com/dscqp4wwt/image/upload/v1789789106/P/philosophyImage2/oxbjerskvgzibnudp0iw.jpg",
+        url: "",
         alt: "Balkan destination",
         opacity: 100,
         overlayColor: "#000000",
@@ -109,7 +109,7 @@ export const emptyPhilosophy = {
         fit: "cover",
       },
       video: {
-        url: null,
+        url: "",
         alt: null,
         opacity: 100,
         overlayColor: "#000000",
@@ -127,7 +127,7 @@ export const emptyPhilosophy = {
       show: "image",
       color: { color: "#FFFFFF", opacity: 100, width: "100%", height: "100%", aspectRatio: "auto" },
       image: {
-        url: "https://res.cloudinary.com/dscqp4wwt/image/upload/v1789789107/P/philosophyImage3/prkazquiqzr3uv4oln9i.jpg",
+        url: "",
         alt: "Balkan scenery",
         opacity: 100,
         overlayColor: "#000000",
@@ -138,7 +138,7 @@ export const emptyPhilosophy = {
         fit: "cover",
       },
       video: {
-        url: null,
+        url: "",
         alt: null,
         opacity: 100,
         overlayColor: "#000000",
@@ -157,8 +157,8 @@ export const emptyPhilosophy = {
     show: "color",
     color: { color: "#FAF7F2", opacity: 100, width: "100%", height: "100%", aspectRatio: "auto" },
     image: {
-      url: null,
-      alt: null,
+      url: "",
+      alt: "",
       opacity: 100,
       overlayColor: "#000000",
       overlayOpacity: 0,
@@ -168,7 +168,7 @@ export const emptyPhilosophy = {
       fit: "cover",
     },
     video: {
-      url: null,
+      url: "",
       alt: null,
       opacity: 100,
       overlayColor: "#000000",

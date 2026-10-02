@@ -3,7 +3,7 @@ import type { Story, ArticleBlock } from "../storyTypes"
 export const DEFAULT_STORY_STYLES = {
   heroColor: "#171717",
   terracotta: "#af6348",
-  heroImage: "https://images.unsplash.com/photo-1548625361-18da857bbf08?auto=format&fit=crop&w=1400&q=80",
+  heroImage: "",
 }
 
 export const emptyStory: Story = {
@@ -15,7 +15,7 @@ export const emptyStory: Story = {
   description: "There is something about the Balkans that resists quick travel. It unfolds slowly through mountain passes and weathered villages.",
   readTime: "5 min read",
   templateType: "long-story",
-  image: DEFAULT_STORY_STYLES.heroImage,
+  image: "",
   detail: {
     breadcrumb: {
       value: "Stories",
@@ -64,7 +64,7 @@ export const emptyStory: Story = {
       },
     ],
     backgroundMultimedia: {
-      show: "video",
+      show: "image",
       color: {
         color: "#171717",
         opacity: 100,
@@ -73,7 +73,7 @@ export const emptyStory: Story = {
         aspectRatio: "auto",
       },
       image: {
-        url: DEFAULT_STORY_STYLES.heroImage,
+        url: "",
         alt: "Stories from the Balkans",
         opacity: 100,
         overlayColor: "#000000",
@@ -84,7 +84,7 @@ export const emptyStory: Story = {
         fit: "cover",
       },
       video: {
-        url: null,
+        url: "",
         alt: "Cinematic Aerial View",
         opacity: 100,
         overlayColor: "#000000",
@@ -120,11 +120,11 @@ export const emptyStory: Story = {
       {
         id: "b2",
         type: "image",
-        url: "https://images.unsplash.com/photo-1623536167776-922ccb1ff749?auto=format&fit=crop&w=1200&q=85",
+        url: "",
         caption: "Panoramic view of authentic stone architecture in Mostar",
         multimedia: {
           type: "image",
-          url: "https://images.unsplash.com/photo-1623536167776-922ccb1ff749?auto=format&fit=crop&w=1200&q=85",
+          url: "",
           alt: "Mostar stone architecture",
         },
       },
@@ -133,12 +133,12 @@ export const emptyStory: Story = {
         type: "spotlight",
         title: "The Albanian Riviera",
         text: "The Albanian Riviera offers dramatic coastal views where steep mountains plunge directly into crystal-clear turquoise waters. This is a landscape born of contrasting elements, raw, wild and unbothered.",
-        url: "https://images.unsplash.com/photo-1548013146-72479768bada?auto=format&fit=crop&w=800&q=80",
+        url: "",
         layout: "image-left",
         textStyle: { textColor: DEFAULT_STORY_STYLES.terracotta },
         multimedia: {
           type: "image",
-          url: "https://images.unsplash.com/photo-1548013146-72479768bada?auto=format&fit=crop&w=800&q=80",
+          url: "",
           alt: "The Albanian Riviera",
         },
       },
@@ -148,6 +148,6 @@ export const emptyStory: Story = {
         text: "The Balkans are not discovered quickly. They unfold slowly, revealing themselves to those who take the time to listen.",
         textStyle: { textColor: DEFAULT_STORY_STYLES.terracotta },
       },
-    ] as ArticleBlock[],
+    ],
   },
 }

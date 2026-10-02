@@ -195,6 +195,7 @@ export function WhyVisitForm({
           title="Featured Right Media (Image / Video)"
           value={whyData.imageMultimedia}
           onChange={(val: any) => updateField("why.imageMultimedia", val)}
+          defaultShow="image"
           defaultColor="#EDE7D8"
         />
 

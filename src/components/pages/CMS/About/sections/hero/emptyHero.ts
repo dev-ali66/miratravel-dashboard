@@ -40,7 +40,7 @@ export const emptyHero = {
       aspectRatio: "auto",
     },
     image: {
-      url: "https://res.cloudinary.com/dscqp4wwt/image/upload/v1789789105/P/heroImage/xl2cnevoerl8tym8evka.png",
+      url: "",
       alt: "Thoughtfully curated journeys through the Balkans",
       opacity: 100,
       overlayColor: "#000000",

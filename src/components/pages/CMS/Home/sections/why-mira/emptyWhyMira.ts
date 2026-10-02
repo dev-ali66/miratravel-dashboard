@@ -38,7 +38,7 @@ export const emptyWhyMira = {
       aspectRatio: "auto",
     },
     image: {
-      url: null,
+      url: "",
       alt: null,
       opacity: 100,
       overlayColor: "#000000",
@@ -49,7 +49,7 @@ export const emptyWhyMira = {
       fit: "cover",
     },
     video: {
-      url: null,
+      url: "",
       alt: null,
       opacity: 100,
       overlayColor: "#000000",
@@ -73,7 +73,7 @@ export const emptyWhyMira = {
       aspectRatio: "auto",
     },
     image: {
-      url: null,
+      url: "",
       alt: "Why MIRA curated Balkan journey",
       opacity: 100,
       overlayColor: "#000000",
@@ -84,7 +84,7 @@ export const emptyWhyMira = {
       fit: "cover",
     },
     video: {
-      url: null,
+      url: "",
       alt: null,
       opacity: 100,
       overlayColor: "#000000",

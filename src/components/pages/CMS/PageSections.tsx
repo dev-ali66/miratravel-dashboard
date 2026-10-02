@@ -3,6 +3,7 @@ import { HomeForm } from "./Home/HomeForm"
 import { AboutForm } from "./About/AboutForm"
 import { JourneyCMSForm } from "./Journey/JourneyCMSForm"
 import { StoriesCMSForm } from "./Stories/StoriesCMSForm"
+import { NewsletterCMSForm } from "./Newsletter/NewsletterCMSForm"
 import { FaqForm } from "./Faq/FaqForm"
 import { ContactForm } from "./Contact/ContactForm"
 import { FooterForm } from "./Footer/FooterForm"
@@ -23,6 +24,9 @@ export default function PageSections() {
   }
   if (pageSlug === "stories") {
     return <StoriesCMSForm />
+  }
+  if (pageSlug === "newsletter") {
+    return <NewsletterCMSForm />
   }
   if (pageSlug === "faq") {
     return <FaqForm />

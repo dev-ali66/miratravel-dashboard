@@ -24,7 +24,7 @@ export const emptyCustomJourneyCta = {
       aspectRatio: "auto",
     },
     image: {
-      url: null,
+      url: "",
       alt: null,
       opacity: 100,
       overlayColor: "#000000",
@@ -35,7 +35,7 @@ export const emptyCustomJourneyCta = {
       fit: "cover",
     },
     video: {
-      url: null,
+      url: "",
       alt: null,
       opacity: 100,
       overlayColor: "#000000",
@@ -59,7 +59,7 @@ export const emptyCustomJourneyCta = {
       aspectRatio: "auto",
     },
     image: {
-      url: null,
+      url: "",
       alt: "Let us design your journey",
       opacity: 100,
       overlayColor: "#000000",
@@ -70,7 +70,7 @@ export const emptyCustomJourneyCta = {
       fit: "cover",
     },
     video: {
-      url: null,
+      url: "",
       alt: null,
       opacity: 100,
       overlayColor: "#000000",

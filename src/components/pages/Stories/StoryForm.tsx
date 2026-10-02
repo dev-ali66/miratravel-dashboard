@@ -179,11 +179,11 @@ export function StoryForm() {
       {
         id: "b2",
         type: "image" as const,
-        url: "https://images.unsplash.com/photo-1623536167776-922ccb1ff749?auto=format&fit=crop&w=1200&q=85",
+        url: "",
         caption: "Panoramic view of authentic stone architecture in Mostar",
         multimedia: {
           type: "image",
-          url: "https://images.unsplash.com/photo-1623536167776-922ccb1ff749?auto=format&fit=crop&w=1200&q=85",
+          url: "",
           alt: "Mostar stone architecture",
         },
       },
@@ -192,12 +192,12 @@ export function StoryForm() {
         type: "spotlight" as const,
         title: "The Albanian Riviera",
         text: "The Albanian Riviera offers dramatic coastal views where steep mountains plunge directly into crystal-clear turquoise waters. This is a landscape born of contrasting elements, raw, wild and unbothered.",
-        url: "https://images.unsplash.com/photo-1548013146-72479768bada?auto=format&fit=crop&w=800&q=80",
+        url: "",
         layout: "image-left" as const,
         textStyle: { textColor: DEFAULT_PREVIEW_STYLES.terracotta },
         multimedia: {
           type: "image",
-          url: "https://images.unsplash.com/photo-1548013146-72479768bada?auto=format&fit=crop&w=800&q=80",
+          url: "",
           alt: "The Albanian Riviera",
         },
       },

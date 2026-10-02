@@ -24,8 +24,8 @@ export const emptyCta = {
       aspectRatio: "auto",
     },
     image: {
-      url: null,
-      alt: null,
+      url: "",
+      alt: "",
       opacity: 100,
       overlayColor: "#000000",
       overlayOpacity: 0,
@@ -35,7 +35,7 @@ export const emptyCta = {
       fit: "cover",
     },
     video: {
-      url: null,
+      url: "",
       alt: null,
       opacity: 100,
       overlayColor: "#000000",
@@ -59,7 +59,7 @@ export const emptyCta = {
       aspectRatio: "auto",
     },
     image: {
-      url: "https://res.cloudinary.com/dscqp4wwt/image/upload/v1789789108/P/approachLeftImage/abhzltoegbyzen3yyqhu.jpg",
+      url: "",
       alt: "Let us design your journey",
       opacity: 100,
       overlayColor: "#000000",
@@ -70,7 +70,7 @@ export const emptyCta = {
       fit: "cover",
     },
     video: {
-      url: null,
+      url: "",
       alt: null,
       opacity: 100,
       overlayColor: "#000000",

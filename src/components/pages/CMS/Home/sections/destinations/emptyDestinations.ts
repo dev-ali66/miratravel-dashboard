@@ -31,7 +31,7 @@ export const emptyDestinations = {
       aspectRatio: "auto",
     },
     image: {
-      url: null,
+      url: "",
       alt: null,
       opacity: 100,
       overlayColor: "#000000",
@@ -42,7 +42,7 @@ export const emptyDestinations = {
       fit: "cover",
     },
     video: {
-      url: null,
+      url: "",
       alt: null,
       opacity: 100,
       overlayColor: "#000000",

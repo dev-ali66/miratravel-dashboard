@@ -12,12 +12,13 @@ export default function CMSPage() {
     { name: "About Us", slug: "about-us", description: "Manage about us hero, philosophy, approach, regional knowledge, and people." },
     { name: "Journey CMS", slug: "journey", description: "Manage Journey CMS hero banner, editorial highlight, signature journeys, all journeys header, and SEO." },
     { name: "Stories CMS", slug: "stories", description: "Manage Stories CMS hero banner, mira stories, and SEO." },
+    { name: "Newsletter CMS", slug: "newsletter", description: "Manage Newsletter subscription title, introductory text, email input label, placeholders, and SEO." },
     { name: "FAQ", slug: "faq", description: "Manage FAQ page intro, topics, questions & answers, advice card, note CTA, and SEO." },
     { name: "Contact Us", slug: "contact-us", description: "Manage contact page hero, process steps, inquiry form, and contact details." },
     { name: "Footer", slug: "footer", description: "Manage site footer, links, social media, and copyright." },
   ]
 
-  const ALLOWED_SLUGS = ["home", "about-us", "journey", "journeys", "stories", "faq", "contact-us", "footer"]
+  const ALLOWED_SLUGS = ["home", "about-us", "journey", "journeys", "stories", "newsletter", "faq", "contact-us", "footer"]
 
   // Combine standard pages with any extra allowed pages from API
   const displayedPages = STANDARD_PAGES.filter((p) =>

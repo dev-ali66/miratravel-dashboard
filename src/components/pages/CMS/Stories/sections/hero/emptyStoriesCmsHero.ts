@@ -39,7 +39,7 @@ export const emptyStoriesCmsHero = {
       aspectRatio: "auto",
     },
     image: {
-      url: "https://res.cloudinary.com/dscqp4wwt/image/upload/v1790018470/P/mira_stories.leftSideMultimedia.image.url/bv0ei4gpbq82lbnrrxzg.jpg",
+      url: "",
       alt: "MIRA Stories Editorial",
       fit: "cover",
       width: "100%",

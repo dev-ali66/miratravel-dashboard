@@ -39,7 +39,7 @@ export const emptyTravelInsights = {
       aspectRatio: "auto",
     },
     image: {
-      url: null,
+      url: "",
       alt: null,
       opacity: 100,
       overlayColor: "#000000",
@@ -50,7 +50,7 @@ export const emptyTravelInsights = {
       fit: "cover",
     },
     video: {
-      url: null,
+      url: "",
       alt: null,
       opacity: 100,
       overlayColor: "#000000",
@@ -74,7 +74,7 @@ export const emptyTravelInsights = {
       aspectRatio: "auto",
     },
     image: {
-      url: null,
+      url: "",
       alt: "Balkan Travel Insights",
       opacity: 100,
       overlayColor: "#000000",
@@ -85,7 +85,7 @@ export const emptyTravelInsights = {
       fit: "cover",
     },
     video: {
-      url: null,
+      url: "",
       alt: null,
       opacity: 100,
       overlayColor: "#000000",

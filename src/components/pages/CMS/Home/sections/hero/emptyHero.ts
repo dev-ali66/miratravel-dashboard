@@ -56,7 +56,7 @@ export const emptyHero = {
       aspectRatio: "auto",
     },
     image: {
-      url: null,
+      url: "",
       alt: "mira hero",
       opacity: 100,
       overlayColor: "#000000",
@@ -67,7 +67,7 @@ export const emptyHero = {
       fit: "cover",
     },
     video: {
-      url: null,
+      url: "",
       alt: "Cinematic Aerial View",
       opacity: 100,
       overlayColor: "#000000",

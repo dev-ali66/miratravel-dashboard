@@ -31,7 +31,7 @@ export const emptyMiraStories = {
       aspectRatio: "auto",
     },
     image: {
-      url: null,
+      url: "",
       alt: null,
       opacity: 100,
       overlayColor: "#000000",
@@ -42,7 +42,7 @@ export const emptyMiraStories = {
       fit: "cover",
     },
     video: {
-      url: null,
+      url: "",
       alt: null,
       opacity: 100,
       overlayColor: "#000000",
@@ -66,7 +66,7 @@ export const emptyMiraStories = {
       aspectRatio: "auto",
     },
     image: {
-      url: null,
+      url: "",
       alt: "Mira Stories editorial image",
       opacity: 100,
       overlayColor: "#000000",
@@ -77,7 +77,7 @@ export const emptyMiraStories = {
       fit: "cover",
     },
     video: {
-      url: null,
+      url: "",
       alt: null,
       opacity: 100,
       overlayColor: "#000000",

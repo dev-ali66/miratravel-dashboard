@@ -113,7 +113,7 @@ export const emptyStoriesCmsMiraStories = {
       aspectRatio: "auto",
     },
     image: {
-      url: null,
+      url: "",
       alt: null,
       fit: "cover",
       width: "100%",
@@ -124,7 +124,7 @@ export const emptyStoriesCmsMiraStories = {
       overlayOpacity: 0,
     },
     video: {
-      url: null,
+      url: "",
       alt: null,
       fit: "cover",
       width: "100%",
@@ -152,7 +152,7 @@ export const emptyStoriesCmsMiraStories = {
     image: {
       alt: "Mira Stories editorial image",
       fit: "cover",
-      url: "https://res.cloudinary.com/dscqp4wwt/image/upload/v1790018470/P/mira_stories.leftSideMultimedia.image.url/bv0ei4gpbq82lbnrrxzg.jpg",
+      url: "",
       width: "100%",
       height: "auto",
       opacity: 100,

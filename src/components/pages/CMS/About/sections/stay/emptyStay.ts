@@ -68,8 +68,8 @@ export const emptyStay = {
       aspectRatio: "auto",
     },
     image: {
-      url: null,
-      alt: null,
+      url: "",
+      alt: "",
       opacity: 100,
       overlayColor: "#000000",
       overlayOpacity: 45,

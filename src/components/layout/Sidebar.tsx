@@ -94,6 +94,11 @@ const cmsItems = [
     icon: ScrollText,
   },
   {
+    label: "Newsletter CMS",
+    href: "/cms/newsletter",
+    icon: Send,
+  },
+  {
     label: "FAQ",
     href: "/cms/faq",
     icon: HelpCircle,

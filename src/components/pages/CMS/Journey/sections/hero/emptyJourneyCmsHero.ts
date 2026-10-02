@@ -39,7 +39,7 @@ export const emptyJourneyCmsHero = {
       aspectRatio: "auto",
     },
     image: {
-      url: "https://images.unsplash.com/photo-1516483638261-f4dbaf036963?auto=format&fit=crop&w=1920&q=80",
+      url: "",
       alt: "Tailored Balkan Journeys",
       fit: "cover",
       width: "100%",
