@@ -52,7 +52,12 @@ export function normalizeLocationPayload(
   const essenceData = safeDraft.essence ?? safeData.essence ?? {}
   const highlightsData = safeDraft.highlights ?? safeData.highlights ?? {}
   const whyData = safeDraft.why ?? safeData.why ?? {}
-  const infoData = safeDraft.info ?? safeData.info ?? {}
+  const infoData =
+    safeDraft.infoCard ??
+    safeDraft.info ??
+    safeData.infoCard ??
+    safeData.info ??
+    {}
   const glanceData =
     safeDraft.glance ??
     safeDraft.regionGlance ??

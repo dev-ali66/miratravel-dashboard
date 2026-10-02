@@ -1,9 +1,9 @@
-import RequestListTable from "./RequestListTable"
+import JourneyWizardTable from "./JourneyWizardTable"
 
 export default function RequestsPage() {
   return (
-    <div>
-      <RequestListTable />
+    <div className="p-6">
+      <JourneyWizardTable />
     </div>
   )
 }
