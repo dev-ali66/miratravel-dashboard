@@ -16,7 +16,6 @@ export const emptyExperiences = {
   },
   seasonInfo: "All information is available on site. The season runs from May to October — book private activities in advance during peak periods.",
   seasonLocation: "Riviera",
-  load_more_button: "Load More",
   items: [],
   backgroundMultimedia: {
     show: "color",

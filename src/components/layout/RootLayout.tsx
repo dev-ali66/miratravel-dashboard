@@ -12,6 +12,7 @@ export function RootLayout() {
       items: [
         { href: "/", label: "Dashboard", icon: "dashboard" },
         { href: "/bookings", label: "Bookings", icon: "bookings" as any },
+        { href: "/requests", label: "Journey Requests", icon: "requests" as any },
         { href: "/concierge", label: "Concierge Inquiries", icon: "concierge" as any },
         { href: "/user", label: "Travelers & Users", icon: "user" },
         { href: "/reviews", label: "Reviews & Ratings", icon: "reviews" as any },
