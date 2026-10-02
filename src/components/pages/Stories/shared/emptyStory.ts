@@ -1,4 +1,4 @@
-import type { Story, ArticleBlock } from "../storyTypes"
+import type { Story } from "../storyTypes"
 
 export const DEFAULT_STORY_STYLES = {
   heroColor: "#171717",

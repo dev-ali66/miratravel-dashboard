@@ -37,7 +37,7 @@ export interface NewsletterCmsSeoData {
 }
 
 export interface NewsletterCmsPayloadData {
-  page: "newsletter"
+  page: string
   hero: NewsletterCmsHeroData
 }
 
@@ -45,7 +45,7 @@ export interface NewsletterCmsPayload {
   id?: string
   name: string
   slug: string
-  page: "newsletter"
+  page: string
   metadata: {
     title?: string
     description?: string
@@ -58,6 +58,7 @@ export interface NewsletterCmsPayload {
     seo?: NewsletterCmsSeoData
   }
   data: NewsletterCmsPayloadData
+  hero?: NewsletterCmsHeroData
 }
 
 export interface NewsletterCmsPreviewSectionProps {

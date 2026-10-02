@@ -30,7 +30,7 @@ export interface StoriesCmsSeoData {
 }
 
 export interface StoriesCmsPayloadData {
-  page: "stories"
+  page: string
   hero: StoriesCmsHeroData
   mira_stories: StoriesCmsMiraStoriesData
 }
@@ -39,7 +39,7 @@ export interface StoriesCmsPayload {
   id?: string
   name: string
   slug: string
-  page: "stories"
+  page: string
   metadata: {
     title?: string
     description?: string
@@ -52,6 +52,8 @@ export interface StoriesCmsPayload {
     seo?: StoriesCmsSeoData
   }
   data: StoriesCmsPayloadData
+  hero?: StoriesCmsHeroData
+  mira_stories?: StoriesCmsMiraStoriesData
 }
 
 export interface StoriesCmsPreviewSectionProps {

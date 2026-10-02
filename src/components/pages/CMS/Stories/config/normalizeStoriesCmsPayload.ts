@@ -2,8 +2,9 @@ import { normalizeStoriesCmsHero } from "../sections/hero/normalizeStoriesCmsHer
 import { normalizeStoriesCmsMiraStories } from "../sections/mira-stories/normalizeStoriesCmsMiraStories"
 import { normalizeStoriesCmsSeoMetadata } from "../sections/seo/normalizeStoriesCmsSeoMetadata"
 import { emptyStoriesCmsPayload } from "./emptyStoriesCmsPayload"
+import type { StoriesCmsPayload } from "../storiesCmsTypes"
 
-export function normalizeStoriesCmsPayload(raw: any) {
+export function normalizeStoriesCmsPayload(raw: any): StoriesCmsPayload {
   if (!raw || typeof raw !== "object") {
     return emptyStoriesCmsPayload
   }

@@ -1,8 +1,9 @@
 import { normalizeNewsletterCmsHero } from "../sections/hero/normalizeNewsletterCmsHero"
 import { normalizeNewsletterCmsSeoMetadata } from "../sections/seo/normalizeNewsletterCmsSeoMetadata"
 import { emptyNewsletterCmsPayload } from "./emptyNewsletterCmsPayload"
+import type { NewsletterCmsPayload } from "../newsletterCmsTypes"
 
-export function normalizeNewsletterCmsPayload(raw: any) {
+export function normalizeNewsletterCmsPayload(raw: any): NewsletterCmsPayload {
   if (!raw || typeof raw !== "object") {
     return emptyNewsletterCmsPayload
   }
