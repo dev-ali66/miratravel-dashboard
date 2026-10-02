@@ -34,7 +34,7 @@ export const emptyLocation: LocationData = {
   hero: emptyHero,
   infoCard: emptyPlaceInfo,
   why: emptyWhyVisit,
-  experiences: emptyExperiences,
+  experience: emptyExperiences,
   essence: emptyEssence,
   stats: emptyStats,
   glance: emptyGlance,

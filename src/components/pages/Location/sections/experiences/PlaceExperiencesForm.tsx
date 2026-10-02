@@ -71,7 +71,7 @@ export function PlaceExperiencesForm({
   }, [])
 
   const updateExpField = (path: string, val: any) => {
-    updateField(`experiences.${path}`, val)
+    updateField(`experience.${path}`, val)
   }
 
   const updateExpItems = (newItems: any[]) => {

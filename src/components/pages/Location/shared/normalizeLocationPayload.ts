@@ -170,7 +170,7 @@ export function normalizeLocationPayload(
     ...(finalCharacter ? { character: finalCharacter } : {}),
     ...(finalPracticalInfo ? { practicalInfo: finalPracticalInfo } : {}),
     ...(finalStats ? { statistics: finalStats } : {}),
-    ...(finalExperiences ? { experiences: finalExperiences } : {}),
+    ...(finalExperiences ? { experience: finalExperiences } : {}),
     ...(finalRegionExperiences ? { regionExperiences: finalRegionExperiences } : {}),
     ...(finalSignatureExperiences ? { signatureExperiences: finalSignatureExperiences } : {}),
     ...(finalTravelInsights ? { travelInsight: finalTravelInsights } : {}),
