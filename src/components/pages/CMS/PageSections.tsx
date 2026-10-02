@@ -2,6 +2,7 @@ import { useParams } from "react-router-dom"
 import { HomeForm } from "./Home/HomeForm"
 import { AboutForm } from "./About/AboutForm"
 import { JourneyCMSForm } from "./Journey/JourneyCMSForm"
+import { StoriesCMSForm } from "./Stories/StoriesCMSForm"
 import { FaqForm } from "./Faq/FaqForm"
 import { ContactForm } from "./Contact/ContactForm"
 import { FooterForm } from "./Footer/FooterForm"
@@ -19,6 +20,9 @@ export default function PageSections() {
   }
   if (pageSlug === "journey" || pageSlug === "journeys") {
     return <JourneyCMSForm />
+  }
+  if (pageSlug === "stories") {
+    return <StoriesCMSForm />
   }
   if (pageSlug === "faq") {
     return <FaqForm />

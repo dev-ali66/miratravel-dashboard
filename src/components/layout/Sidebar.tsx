@@ -89,6 +89,11 @@ const cmsItems = [
     icon: Compass,
   },
   {
+    label: "Stories CMS",
+    href: "/cms/stories",
+    icon: ScrollText,
+  },
+  {
     label: "FAQ",
     href: "/cms/faq",
     icon: HelpCircle,
