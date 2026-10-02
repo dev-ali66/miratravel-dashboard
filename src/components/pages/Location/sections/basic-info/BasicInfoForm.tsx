@@ -17,7 +17,7 @@ export function BasicInfoForm({
   const { isDevMode } = useDevMode()
 
   const locationTypesList = useMemo(() => {
-    const base = ["CONTINENT", "COUNTRY", "REGION", "PLACE", "LANDMARK", "ACCOMMODATION"]
+    const base = ["CONTINENT", "COUNTRY", "REGION", "PLACE", "LANDMARK", "ACCOMMODATION", "OTHER"]
     return isDevMode ? [...base, "TEST"] : base
   }, [isDevMode])
 

@@ -161,6 +161,7 @@ export const LOCATION_TYPES = [
   "PLACE",
   "LANDMARK",
   "ACCOMMODATION",
+  "OTHER",
   ...(isDevModeActive() ? ["TEST"] : []),
 ] as const
 

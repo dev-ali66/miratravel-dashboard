@@ -255,6 +255,11 @@ export const LOCATION_TYPE_SECTION_CONFIG: Record<string, LocationSectionKey[]> 
     "cta",
     "seo",
   ],
+  OTHER: [
+    "basic-info",
+    "hero",
+    "seo",
+  ],
   TEST: [
     "basic-info",
     "hero",
