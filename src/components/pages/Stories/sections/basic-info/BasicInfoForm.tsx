@@ -1,8 +1,19 @@
-import { DynamicStyledField } from "@/components/pages/CMS/shared/FormControls";
-import { FormSection } from "../../shared/fields";
-import type { StoryFormSectionProps } from "../../config/storySections";
-import { UniversalMultimediaForm } from "@/components/pages/CMS/shared/UniversalMultimediaForm";
-import { useMemo } from "react";
+import { useMemo } from "react"
+import { DynamicStyledField } from "@/components/pages/CMS/shared/FormControls"
+import { FormSection } from "../../shared/fields"
+import type { StoryFormSectionProps } from "../../config/storySections"
+import type { StoryType } from "../../config/storyTypes"
+import { StoryCategoriesField } from "./StoryCategoriesField"
+
+export function slugify(text: string): string {
+  return text
+    .toString()
+    .toLowerCase()
+    .trim()
+    .replace(/\s+/g, "-")
+    .replace(/[^\w\-]+/g, "")
+    .replace(/\-\-+/g, "-")
+}
 
 export function BasicInfoForm({
   draft,
@@ -11,16 +22,16 @@ export function BasicInfoForm({
   toggleSection,
   sectionNumber,
 }: StoryFormSectionProps) {
-  const isOpen = Boolean(openSections["basicInfo"]);
+  const isOpen = Boolean(openSections["basic-info"] || openSections["basicInfo"])
 
-  const typeOptions = useMemo(
+  const storyTypeOptions = useMemo(
     () => [
       { label: "Short Story", value: "short_story" },
       { label: "Long Story", value: "long_story" },
       { label: "Guidance", value: "guidance" },
     ],
     []
-  );
+  )
 
   const statusOptions = useMemo(
     () => [
@@ -28,94 +39,152 @@ export function BasicInfoForm({
       { label: "Published", value: "PUBLISHED" },
     ],
     []
-  );
+  )
+
+  const handleTitleChange = (val: string) => {
+    updateField("title", val)
+    if (!draft.slug || draft.slug === slugify(draft.title || "")) {
+      updateField("slug", slugify(val))
+    }
+  }
 
   return (
     <FormSection
       title="Basic Information"
       sectionNumber={sectionNumber}
       active={isOpen}
-      onClick={() => toggleSection("basicInfo")}
+      onClick={() => toggleSection("basic-info")}
     >
-      <div className="flex flex-col gap-6 p-4">
+      <div className="flex flex-col gap-4">
+        {/* Story Title */}
         <DynamicStyledField
           type="text"
-          label="Title"
+          label="Story Title"
           fieldName="title"
-          placeholder="Story title..."
+          placeholder="e.g. Exploring the Northern Peaks"
           required={true}
           enableStyle={false}
           value={draft.title || ""}
-          onChange={(val) => updateField("title", val)}
+          onChange={handleTitleChange}
         />
-        
+
+        {/* URL Slug */}
         <DynamicStyledField
           type="text"
-          label="Slug"
+          label="URL Slug"
           fieldName="slug"
-          placeholder="url-slug"
+          placeholder="e.g. exploring-the-northern-peaks"
           required={true}
           enableStyle={false}
           value={draft.slug || ""}
           onChange={(val) => updateField("slug", val)}
         />
 
+        {/* Story Type */}
         <DynamicStyledField
           type="select"
           label="Story Type"
           fieldName="type"
+          required={true}
+          enableStyle={false}
           value={draft.type || "short_story"}
-          onChange={(val) => updateField("type", val)}
-          options={typeOptions}
+          options={storyTypeOptions}
+          onChange={(val) => updateField("type", val as StoryType)}
         />
 
+        {/* Publish Status */}
         <DynamicStyledField
           type="select"
-          label="Status"
+          label="Publish Status"
           fieldName="status"
+          required={true}
+          enableStyle={false}
           value={draft.status || "DRAFT"}
-          onChange={(val) => updateField("status", val)}
           options={statusOptions}
+          onChange={(val) => updateField("status", val)}
         />
 
+        {/* Author Name */}
         <DynamicStyledField
           type="text"
           label="Author Name"
           fieldName="authorName"
-          placeholder="e.g. John Doe"
+          placeholder="e.g. Elena Rostova"
           enableStyle={false}
           value={draft.authorName || ""}
           onChange={(val) => updateField("authorName", val)}
         />
-        
+
+        {/* Author Role */}
         <DynamicStyledField
           type="text"
           label="Author Role"
           fieldName="authorRole"
-          placeholder="e.g. Travel Writer"
+          placeholder="e.g. Travel Writer & Explorer"
           enableStyle={false}
           value={draft.authorRole || ""}
           onChange={(val) => updateField("authorRole", val)}
         />
 
+        {/* Read Time */}
         <DynamicStyledField
           type="text"
           label="Read Time"
           fieldName="readTime"
-          placeholder="e.g. 5 min read (Auto calculated if empty)"
+          placeholder="e.g. 5 min read"
           enableStyle={false}
           value={draft.readTime || ""}
           onChange={(val) => updateField("readTime", val)}
         />
 
-        <div className="space-y-4 pt-4 border-t border-border">
-          <h3 className="text-sm font-medium text-foreground">Author Avatar</h3>
-          <UniversalMultimediaForm
-            value={draft.authorAvatar || { show: "image" }}
-            onChange={(val) => updateField("authorAvatar", val)}
+        {/* Story Categories Management (Search, Create, Select, Delete) */}
+        <StoryCategoriesField
+          value={draft.categories || []}
+          onChange={(cats) => updateField("categories", cats)}
+        />
+
+        {/* Featured Story Checkbox */}
+        <div className="flex items-center gap-2.5 rounded-lg border border-border/60 bg-muted/20 px-3 py-2.5 mt-1">
+          <input
+            type="checkbox"
+            id="featured-story-checkbox"
+            checked={Boolean(draft.featured)}
+            onChange={(e) => updateField("featured", e.target.checked)}
+            className="h-4 w-4 rounded border-border text-primary focus:ring-primary cursor-pointer"
           />
+          <label
+            htmlFor="featured-story-checkbox"
+            className="text-xs font-semibold text-foreground cursor-pointer select-none"
+          >
+            Featured Story
+            <span className="block text-[11px] font-normal text-muted-foreground">
+              Mark this story as featured across story cards and home showcases.
+            </span>
+          </label>
+        </div>
+
+        {/* Recommended Story Checkbox */}
+        <div className="flex items-center gap-2.5 rounded-lg border border-border/60 bg-muted/20 px-3 py-2.5 mt-1">
+          <input
+            type="checkbox"
+            id="recommended-story-checkbox"
+            checked={Boolean(draft.recommended)}
+            onChange={(e) => updateField("recommended", e.target.checked)}
+            className="h-4 w-4 rounded border-border text-primary focus:ring-primary cursor-pointer"
+          />
+          <label
+            htmlFor="recommended-story-checkbox"
+            className="text-xs font-semibold text-foreground cursor-pointer select-none"
+          >
+            Recommended Story
+            <span className="block text-[11px] font-normal text-muted-foreground">
+              Mark this story as recommended for curated reading lists.
+            </span>
+          </label>
         </div>
       </div>
     </FormSection>
-  );
+  )
 }
+
+export default BasicInfoForm

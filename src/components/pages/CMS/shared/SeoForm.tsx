@@ -1,5 +1,6 @@
+import { useState, useEffect } from "react"
 import { Globe } from "lucide-react"
-import { TextAreaField, TextField } from "./FormControls"
+import { TextAreaField, TextField, getSafeString } from "./FormControls"
 
 export type SeoMetadata = {
   title?: string
@@ -18,6 +19,50 @@ type SeoFormProps = {
   showBanner?: boolean
 }
 
+export function parseKeywords(raw: any): string {
+  if (raw === null || raw === undefined) return ""
+
+  // Case 1: If raw is an object with a .value or .keywords property
+  if (typeof raw === "object" && !Array.isArray(raw)) {
+    if (raw.value !== undefined) return parseKeywords(raw.value)
+    if (raw.keywords !== undefined) return parseKeywords(raw.keywords)
+    return ""
+  }
+
+  // Case 2: If raw is an array
+  if (Array.isArray(raw)) {
+    return raw
+      .map((item) => {
+        if (typeof item === "string") {
+          return item.trim() === "[object Object]" ? "" : item.trim()
+        }
+        if (typeof item === "number" || typeof item === "boolean") return String(item)
+        if (item && typeof item === "object") {
+          if (item.value !== undefined) return parseKeywords(item.value)
+          if (item.label !== undefined) return parseKeywords(item.label)
+          if (item.name !== undefined) return parseKeywords(item.name)
+          if (item.text !== undefined) return parseKeywords(item.text)
+        }
+        return ""
+      })
+      .filter(Boolean)
+      .join(", ")
+  }
+
+  // Case 3: If raw is a string
+  if (typeof raw === "string") {
+    if (raw.trim() === "[object Object]") return ""
+    return raw
+  }
+
+  // Case 4: If raw is a number or boolean
+  if (typeof raw === "number" || typeof raw === "boolean") {
+    return String(raw)
+  }
+
+  return ""
+}
+
 export const SeoForm = ({
   metadata,
   onChange,
@@ -25,10 +70,45 @@ export const SeoForm = ({
 }: SeoFormProps) => {
   const normalizedMetadata: SeoMetadata = {
     ...(metadata ?? {}),
+    title: getSafeString(metadata?.title),
+    description: getSafeString(metadata?.description),
+    canonicalUrl: getSafeString(metadata?.canonicalUrl),
     robots: {
       index: metadata?.robots?.index ?? true,
       follow: metadata?.robots?.follow ?? true,
     },
+  }
+
+  // Local state to allow natural typing of spaces, commas, and trailing characters
+  const [keywordsText, setKeywordsText] = useState<string>(() => {
+    return parseKeywords(metadata?.keywords)
+  })
+
+  // Sync keywordsText when metadata.keywords prop changes externally (e.g. on initial data load)
+  useEffect(() => {
+    const externalStr = parseKeywords(metadata?.keywords)
+    const currentParsedStr = parseKeywords(
+      keywordsText
+        .split(",")
+        .map((k) => k.trim())
+        .filter(Boolean)
+    )
+
+    if (externalStr !== currentParsedStr && externalStr !== keywordsText) {
+      setKeywordsText(externalStr)
+    }
+  }, [metadata?.keywords])
+
+  const handleKeywordsChange = (val: string) => {
+    setKeywordsText(val)
+    const array = val
+      .split(",")
+      .map((item) => item.trim())
+      .filter((item) => item !== "" && item !== "[object Object]")
+    onChange({
+      ...normalizedMetadata,
+      keywords: array,
+    })
   }
 
   return (
@@ -57,7 +137,7 @@ export const SeoForm = ({
             label="Meta title"
             value={normalizedMetadata.title ?? ""}
             onChange={(value) =>
-              onChange({ ...normalizedMetadata, title: value })
+              onChange({ ...normalizedMetadata, title: getSafeString(value) })
             }
           />
 
@@ -65,29 +145,21 @@ export const SeoForm = ({
             label="Meta description"
             value={normalizedMetadata.description ?? ""}
             onChange={(value) =>
-              onChange({ ...normalizedMetadata, description: value })
+              onChange({ ...normalizedMetadata, description: getSafeString(value) })
             }
           />
 
           <TextField
             label="Keywords (comma separated)"
-            value={normalizedMetadata.keywords?.join(", ") ?? ""}
-            onChange={(value) =>
-              onChange({
-                ...normalizedMetadata,
-                keywords: String(value)
-                  .split(",")
-                  .map((item: string) => item.trim())
-                  .filter(Boolean),
-              })
-            }
+            value={keywordsText}
+            onChange={(value) => handleKeywordsChange(String(value))}
           />
 
           <TextField
             label="Canonical URL"
             value={normalizedMetadata.canonicalUrl ?? ""}
             onChange={(value) =>
-              onChange({ ...normalizedMetadata, canonicalUrl: value })
+              onChange({ ...normalizedMetadata, canonicalUrl: getSafeString(value) })
             }
           />
 

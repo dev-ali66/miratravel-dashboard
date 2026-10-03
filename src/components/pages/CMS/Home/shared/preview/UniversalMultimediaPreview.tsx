@@ -98,10 +98,18 @@ export function UniversalMultimediaPreview({
     multimedia?.type ||
     (multimedia?.video?.url || fallbackVideoSrc ? "video" : multimedia?.image?.url || fallbackImageSrc ? "image" : "color")
 
+  const parseOpacity = (val: any) => {
+    if (val === undefined || val === null || val === "") return 100
+    const n = Number(val)
+    if (isNaN(n)) return 100
+    if (n > 0 && n <= 1) return n * 100
+    return n
+  }
+
   const imageConfig: MultimediaImageConfig = {
     url: multimedia?.image?.url || (multimedia as any)?.url || fallbackImageSrc || "",
     alt: multimedia?.image?.alt || multimedia?.alt || fallbackAlt,
-    opacity: multimedia?.image?.opacity ?? multimedia?.opacity ?? 100,
+    opacity: parseOpacity(multimedia?.image?.opacity ?? multimedia?.opacity),
     overlayColor: multimedia?.image?.overlayColor ?? multimedia?.overlayColor,
     overlayOpacity: multimedia?.image?.overlayOpacity ?? multimedia?.overlayOpacity,
     width: multimedia?.image?.width ?? (multimedia as any)?.width,
@@ -118,7 +126,7 @@ export function UniversalMultimediaPreview({
     autoplay: multimedia?.video?.autoplay ?? multimedia?.autoplay ?? true,
     loop: multimedia?.video?.loop ?? multimedia?.loop ?? true,
     muted: multimedia?.video?.muted ?? multimedia?.muted ?? true,
-    opacity: multimedia?.video?.opacity ?? multimedia?.opacity ?? 100,
+    opacity: parseOpacity(multimedia?.video?.opacity ?? multimedia?.opacity),
     overlayColor: multimedia?.video?.overlayColor ?? multimedia?.overlayColor,
     overlayOpacity: multimedia?.video?.overlayOpacity ?? multimedia?.overlayOpacity,
     width: multimedia?.video?.width ?? (multimedia as any)?.width,
@@ -134,10 +142,11 @@ export function UniversalMultimediaPreview({
       typeof multimedia?.color === "string"
         ? multimedia.color
         : multimedia?.color?.color || (multimedia as any)?.color || fallbackColor,
-    opacity:
+    opacity: parseOpacity(
       typeof multimedia?.color === "object"
-        ? multimedia?.color?.opacity ?? 100
-        : multimedia?.opacity ?? 100,
+        ? multimedia?.color?.opacity
+        : multimedia?.opacity
+    ),
     width: typeof multimedia?.color === "object" ? multimedia?.color?.width : (multimedia as any)?.width,
     height: typeof multimedia?.color === "object" ? multimedia?.color?.height : (multimedia as any)?.height,
     aspectRatio: typeof multimedia?.color === "object" ? multimedia?.color?.aspectRatio : (multimedia as any)?.aspectRatio,

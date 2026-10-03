@@ -1,9 +1,11 @@
 import { UniversalMultimediaPreview } from "@/components/pages/CMS/shared/UniversalMultimediaPreview";
 import { DynamicStyledTextPreview } from "@/components/pages/CMS/shared/DynamicStyledTextPreview";
+import { DynamicCmsButtonPreview } from "@/components/pages/CMS/shared/DynamicCmsButtonPreview";
 import type { StoryPreviewProps } from "../../config/storySections";
 
 export function HeroPreview({ story }: StoryPreviewProps) {
   const hero = story?.hero || {};
+  const isCenter = hero.isCenter !== false;
 
   return (
     <section className="relative flex min-h-[500px] h-[560px] @xl:h-[725px] w-full items-center overflow-hidden bg-[#171717] text-white justify-center">
@@ -15,9 +17,23 @@ export function HeroPreview({ story }: StoryPreviewProps) {
       />
 
       {/* Hero Content Container */}
-      <div className="relative z-10 mx-auto flex h-full w-full flex-col justify-center items-center text-center px-4 @md:px-12 @xl:px-[344px] py-12">
-        <div className="flex w-full max-w-[880px] flex-col items-center text-center">
-          
+      <div
+        className={`relative z-10 mx-auto flex h-full w-full flex-col justify-center px-4 @md:px-12 @xl:px-[344px] py-12 ${
+          isCenter ? "items-center text-center" : "items-start text-left"
+        }`}
+      >
+        <div
+          className={`flex w-full max-w-[880px] flex-col ${
+            isCenter ? "items-center text-center" : "items-start text-left"
+          }`}
+        >
+          {/* Breadcrumb / Navigation Tag */}
+          <DynamicStyledTextPreview
+            as="span"
+            data={hero.breadcrumb}
+            className="text-xs @md:text-[13px] font-semibold uppercase tracking-[2.5px] text-[#E5A84B] mb-2"
+          />
+
           {/* Subtitle / Tagline */}
           <DynamicStyledTextPreview
             as="span"
@@ -34,10 +50,17 @@ export function HeroPreview({ story }: StoryPreviewProps) {
 
           {/* Hero Description */}
           <DynamicStyledTextPreview
-            as="p"
+            as="div"
             data={hero.description}
             className="text-[15px] @sm:text-base @xl:text-[20px] font-medium leading-[26px] @xl:leading-[32px] max-w-[640px]"
           />
+
+          {/* CTA Buttons */}
+          {Array.isArray(hero.buttons) && hero.buttons.length > 0 && (
+            <div className="mt-6 flex flex-wrap items-center justify-center gap-3">
+              <DynamicCmsButtonPreview buttons={hero.buttons} />
+            </div>
+          )}
         </div>
       </div>
     </section>

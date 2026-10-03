@@ -16,14 +16,16 @@ export function useSyncScroll() {
     return (childRect.top - containerRect.top) / safeScale + container.scrollTop
   }
 
-  // 1. Preview Scroll Handler: ONLY detects active preview section & expands form accordion
+  // 1. Preview Scroll Handler: ONLY detects active preview section & expands form accordion when user scrolls preview
   const handlePreviewScroll = useCallback(() => {
-    // If user clicked/focused a form accordion recently, skip preview scroll handler to avoid feedback loops
-    if (isFormInteractingRef.current) return
-
     const previewEl = previewRef.current
     const formEl = formRef.current
     if (!previewEl || !formEl) return
+
+    // If user is currently interacting with the form sidebar or has focus inside it, DO NOT auto-switch form section
+    if (isFormInteractingRef.current || (document.activeElement && formEl.contains(document.activeElement))) {
+      return
+    }
 
     const previewSections = Array.from(previewEl.querySelectorAll<HTMLElement>("[data-section]"))
     if (previewSections.length === 0) return
@@ -42,18 +44,11 @@ export function useSyncScroll() {
     }
 
     if (!activeKey && previewSections.length > 0) {
-      // Fallback for top/bottom scroll boundaries
-      if (previewEl.scrollTop <= 20) {
-        activeKey = previewSections[0].getAttribute("data-section")
-      } else if (previewEl.scrollHeight - previewEl.scrollTop - previewEl.clientHeight <= 20) {
-        activeKey = previewSections[previewSections.length - 1].getAttribute("data-section")
-      } else {
-        for (const sec of previewSections) {
-          const rect = sec.getBoundingClientRect()
-          if (rect.bottom >= containerRect.top + 50) {
-            activeKey = sec.getAttribute("data-section")
-            break
-          }
+      for (const sec of previewSections) {
+        const rect = sec.getBoundingClientRect()
+        if (rect.bottom >= containerRect.top + 50) {
+          activeKey = sec.getAttribute("data-section")
+          break
         }
       }
     }
@@ -97,6 +92,12 @@ export function useSyncScroll() {
 
   // 2. Form Interaction Handler: When user clicks/focuses a form section, scroll preview to that section
   const handleFormInteraction = useCallback((e: Event) => {
+    isFormInteractingRef.current = true
+    if (interactionTimerRef.current) clearTimeout(interactionTimerRef.current)
+    interactionTimerRef.current = setTimeout(() => {
+      isFormInteractingRef.current = false
+    }, 3000)
+
     const target = e.target as HTMLElement | null
     if (!target) return
 
@@ -106,13 +107,7 @@ export function useSyncScroll() {
     const sectionKey = sectionEl.getAttribute("data-section")
     if (!sectionKey) return
 
-    isFormInteractingRef.current = true
     lastActiveKeyRef.current = sectionKey
-
-    if (interactionTimerRef.current) clearTimeout(interactionTimerRef.current)
-    interactionTimerRef.current = setTimeout(() => {
-      isFormInteractingRef.current = false
-    }, 800)
 
     // Highlight section in form
     const formEl = formRef.current
@@ -161,9 +156,15 @@ export function useSyncScroll() {
         if (attachedFormEl) {
           attachedFormEl.removeEventListener("click", handleFormInteraction)
           attachedFormEl.removeEventListener("focusin", handleFormInteraction)
+          attachedFormEl.removeEventListener("input", handleFormInteraction)
+          attachedFormEl.removeEventListener("change", handleFormInteraction)
+          attachedFormEl.removeEventListener("mousedown", handleFormInteraction)
         }
         formEl.addEventListener("click", handleFormInteraction)
         formEl.addEventListener("focusin", handleFormInteraction)
+        formEl.addEventListener("input", handleFormInteraction)
+        formEl.addEventListener("change", handleFormInteraction)
+        formEl.addEventListener("mousedown", handleFormInteraction)
         attachedFormEl = formEl
       }
 
@@ -184,6 +185,9 @@ export function useSyncScroll() {
       if (attachedFormEl) {
         attachedFormEl.removeEventListener("click", handleFormInteraction)
         attachedFormEl.removeEventListener("focusin", handleFormInteraction)
+        attachedFormEl.removeEventListener("input", handleFormInteraction)
+        attachedFormEl.removeEventListener("change", handleFormInteraction)
+        attachedFormEl.removeEventListener("mousedown", handleFormInteraction)
       }
       if (attachedPreviewEl) {
         attachedPreviewEl.removeEventListener("scroll", handlePreviewScroll)

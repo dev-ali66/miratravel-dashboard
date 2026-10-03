@@ -106,7 +106,18 @@ export function DynamicStyledTextPreview<T extends ElementType = "p">({
     return (
       <Component
         className={cn(
-          "prose prose-sm max-w-none text-current [&_p]:m-0 [&_p]:leading-relaxed [&_mark]:px-1 [&_mark]:rounded [&_mark]:bg-amber-200/60",
+          "prose prose-sm md:prose-base max-w-none text-current",
+          "[&_p]:my-2 [&_p:first-child]:mt-0 [&_p:last-child]:mb-0 [&_p]:leading-relaxed",
+          "[&_ul]:list-disc [&_ul]:pl-6 [&_ul]:my-3 [&_ul]:space-y-1.5",
+          "[&_ol]:list-decimal [&_ol]:pl-6 [&_ol]:my-3 [&_ol]:space-y-1.5",
+          "[&_li]:leading-relaxed [&_li_p]:my-0",
+          "[&_h1]:text-2xl [&_h1]:md:text-3xl [&_h1]:font-serif [&_h1]:font-bold [&_h1]:my-4 [&_h1]:text-current",
+          "[&_h2]:text-xl [&_h2]:md:text-2xl [&_h2]:font-serif [&_h2]:font-semibold [&_h2]:my-3 [&_h2]:text-current",
+          "[&_h3]:text-lg [&_h3]:md:text-xl [&_h3]:font-serif [&_h3]:font-medium [&_h3]:my-2.5 [&_h3]:text-current",
+          "[&_blockquote]:border-l-4 [&_blockquote]:border-[#B3884D] [&_blockquote]:pl-4 [&_blockquote]:py-1 [&_blockquote]:italic [&_blockquote]:my-4 [&_blockquote]:text-current/90",
+          "[&_a]:text-primary [&_a]:underline [&_a]:underline-offset-2 [&_a]:transition-opacity [&_a]:hover:opacity-80",
+          "[&_mark]:px-1.5 [&_mark]:py-0.5 [&_mark]:rounded [&_mark]:bg-amber-200/70 dark:[&_mark]:bg-amber-500/30",
+          "[&_strong]:font-semibold [&_b]:font-semibold",
           className
         )}
         style={computedStyle}
@@ -132,4 +143,3 @@ export function DynamicStyledTextPreview<T extends ElementType = "p">({
 export function UniversalRichTextPreview(props: DynamicStyledTextPreviewProps) {
   return <DynamicStyledTextPreview isRichText={true} {...props} />
 }
-

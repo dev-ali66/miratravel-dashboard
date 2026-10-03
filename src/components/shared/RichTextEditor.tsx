@@ -21,6 +21,7 @@ import {
   AlignLeft,
   AlignCenter,
   AlignRight,
+  AlignJustify,
   Quote,
   Undo,
   Redo,
@@ -336,6 +337,17 @@ const MenuBar = ({ editor }: { editor: any }) => {
           title="Align Right"
         >
           <AlignRight className="h-3.5 w-3.5" />
+        </Button>
+        <Button
+          type="button"
+          variant="ghost"
+          size="icon"
+          onMouseDown={(e) => e.preventDefault()}
+          onClick={() => editor.chain().focus().setTextAlign("justify").run()}
+          className={cn("h-7 w-7", editor.isActive({ textAlign: "justify" }) && "bg-background text-foreground shadow-xs")}
+          title="Align Justify"
+        >
+          <AlignJustify className="h-3.5 w-3.5" />
         </Button>
       </div>
 

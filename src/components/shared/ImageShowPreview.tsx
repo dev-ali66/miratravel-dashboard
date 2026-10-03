@@ -40,6 +40,8 @@ export function ImageShowPreview({
   const hasRatio = Boolean(mode !== "background" && aspectRatio && aspectRatio !== "auto")
   const ratioVal = hasRatio && aspectRatio ? aspectRatio.replace(":", "/") : undefined
 
+  const safeOpacity = opacity > 0 && opacity <= 1 ? opacity * 100 : opacity
+
   return (
     <div
       className={cn(
@@ -59,35 +61,33 @@ export function ImageShowPreview({
           className={cn("h-full w-full", fitClass)}
           style={{
             ...(mode !== "background" && hasRatio ? { aspectRatio: ratioVal } : {}),
-            opacity: opacity / 100,
+            opacity: safeOpacity / 100,
           }}
         />
       ) : (
         <div
           className={cn(
-            "group relative flex h-full w-full min-h-[120px] flex-1 flex-col items-center justify-center gap-2 rounded-xl border-2 border-dashed border-primary/25 bg-gradient-to-br from-card/80 via-muted/40 to-background/90 p-4 text-center select-none backdrop-blur-xs transition-all duration-300 hover:border-primary/50 hover:bg-muted/50 shadow-2xs overflow-hidden",
-            mode === "background" && "rounded-none border-0 bg-gradient-to-br from-neutral-900/60 via-neutral-900/40 to-neutral-900/80"
+            "group relative flex h-full w-full min-h-[140px] flex-1 flex-col items-center justify-center gap-2.5 rounded-xl border-2 border-dashed border-emerald-500/30 bg-stone-100/90 dark:bg-stone-800/90 p-5 text-center select-none shadow-2xs overflow-hidden",
+            mode === "background" && "rounded-none border-0 bg-neutral-900/80"
           )}
         >
           {/* Subtle Ambient Glow Background */}
-          <div className="pointer-events-none absolute -top-12 -left-12 h-32 w-32 rounded-full bg-primary/10 blur-2xl transition-all group-hover:bg-primary/20" />
-          <div className="pointer-events-none absolute -bottom-12 -right-12 h-32 w-32 rounded-full bg-amber-500/10 blur-2xl transition-all group-hover:bg-amber-500/20" />
+          <div className="pointer-events-none absolute -top-12 -left-12 h-32 w-32 rounded-full bg-emerald-500/10 blur-2xl" />
+          <div className="pointer-events-none absolute -bottom-12 -right-12 h-32 w-32 rounded-full bg-stone-500/10 blur-2xl" />
 
           {/* Icon Badge */}
-          <div className="relative flex h-10 w-10 items-center justify-center rounded-xl bg-card shadow-md border border-border/70 text-primary transition-all duration-300 group-hover:scale-110 group-hover:shadow-lg shrink-0">
-            <ImageIcon className="h-5 w-5 text-primary" />
+          <div className="relative flex h-11 w-11 items-center justify-center rounded-xl bg-white dark:bg-stone-900 shadow-sm border border-emerald-500/20 text-emerald-600 shrink-0">
+            <ImageIcon className="h-5 w-5" />
           </div>
 
           {/* Text & Dimension Specs */}
-          <div className="relative flex flex-col items-center gap-1 z-10 max-w-[85%]">
-            <span className="text-xs font-semibold uppercase tracking-wider text-foreground/90 font-heading">
-              {alt && alt !== "Preview" ? alt : "Image Slot"}
+          <div className="relative flex flex-col items-center gap-1 z-10 max-w-[90%]">
+            <span className="text-xs font-semibold uppercase tracking-wider text-stone-800 dark:text-stone-200">
+              {alt && alt !== "Preview" ? alt : "Featured Image Slot"}
             </span>
-            <div className="flex items-center gap-1.5">
-              <span className="inline-flex items-center gap-1 text-[10px] font-mono font-medium text-primary bg-primary/10 px-2.5 py-0.5 rounded-full border border-primary/20 shadow-2xs">
-                {aspectRatio && aspectRatio !== "auto" ? `${aspectRatio} Aspect Ratio` : "Auto Sizing"}
-              </span>
-            </div>
+            <span className="text-[11px] text-stone-500 dark:text-stone-400 font-medium">
+              No image uploaded yet (Upload an image in the editor form)
+            </span>
           </div>
         </div>
       )}

@@ -1,41 +1,46 @@
+import type { StoryData } from "../config/storyTypes"
+import { normalizeBlocks } from "../sections/blocks/normalizeBlocks"
+import { emptyStory } from "./emptyStory"
 
-
-export function normalizeStoryPayload(draft: any): any {
-  // Deep clone to avoid mutating the original draft
-  const payload = JSON.parse(JSON.stringify(draft));
-
-  // 1. Clean url: "" defaults from multimedia objects
-  const normalizeMultimedia = (media: any) => {
-    if (!media) return media;
-    if (media.image?.url === "") media.image.url = null;
-    if (media.video?.url === "") media.video.url = null;
-    return media;
-  };
-
-  if (payload.hero?.backgroundMultimedia) {
-    payload.hero.backgroundMultimedia = normalizeMultimedia(payload.hero.backgroundMultimedia);
-  }
-  if (payload.authorAvatar) {
-    payload.authorAvatar = normalizeMultimedia(payload.authorAvatar);
+export function normalizeStoryPayload(raw: Partial<StoryData> | null | undefined): StoryData {
+  if (!raw || typeof raw !== "object") {
+    return { ...emptyStory }
   }
 
-  // 2. Format journeyIds and locationIds strictly as arrays of strings
-  if (!Array.isArray(payload.journeyIds)) {
-    payload.journeyIds = [];
-  }
-  if (!Array.isArray(payload.locationIds)) {
-    payload.locationIds = [];
-  }
-  if (!Array.isArray(payload.manualRelatedStoryIds)) {
-    payload.manualRelatedStoryIds = [];
-  }
-  if (!Array.isArray(payload.categories)) {
-    payload.categories = [];
+  const payload: StoryData = {
+    ...emptyStory,
+    ...raw,
   }
 
-  // 3. Strip out unnecessary nested preview-only data
-  // Delete fields that are only for preview or not needed in DB
-  delete payload.isLocalDraft;
+  // Ensure boolean flags
+  payload.featured = Boolean(raw.featured)
+  payload.recommended = Boolean(raw.recommended)
 
-  return payload;
+  // Ensure categories array
+  if (Array.isArray(raw.categories)) {
+    payload.categories = raw.categories
+  } else if (raw.category) {
+    payload.categories = [raw.category]
+  } else {
+    payload.categories = []
+  }
+
+  payload.category = raw.category || (payload.categories.length > 0 ? payload.categories[0] : "")
+
+  // Ensure blocks normalization
+  if (Array.isArray(raw.blocks)) {
+    payload.blocks = normalizeBlocks(raw.blocks)
+  } else {
+    payload.blocks = []
+  }
+
+  // Ensure arrays
+  payload.locationIds = Array.isArray(raw.locationIds) ? raw.locationIds : []
+  payload.journeyIds = Array.isArray(raw.journeyIds) ? raw.journeyIds : []
+  payload.manualRelatedStoryIds = Array.isArray(raw.manualRelatedStoryIds) ? raw.manualRelatedStoryIds : []
+  payload.practicalNotes = Array.isArray(raw.practicalNotes) ? raw.practicalNotes : []
+
+  return payload
 }
+
+export default normalizeStoryPayload

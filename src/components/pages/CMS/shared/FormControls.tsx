@@ -761,7 +761,10 @@ export function FieldWrapper({
 
 export function getSafeString(val: any, fallback: string = ""): string {
   if (val === null || val === undefined) return fallback
-  if (typeof val === "string") return val || fallback
+  if (typeof val === "string") {
+    if (val.trim() === "[object Object]") return fallback
+    return val || fallback
+  }
   if (typeof val === "number" || typeof val === "boolean") return String(val)
   if (typeof val === "object") {
     if (val.value !== undefined) return getSafeString(val.value, fallback)

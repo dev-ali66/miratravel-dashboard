@@ -13,7 +13,11 @@ export function StoryPreview({ draft }: StoryPreviewProps) {
       {sections.map((section) => {
         if (!section.previewComponent) return null;
         const PreviewComponent = section.previewComponent;
-        return <PreviewComponent key={section.id} story={draft} />;
+        return (
+          <div key={section.id} data-section={section.id} className="w-full">
+            <PreviewComponent story={draft} />
+          </div>
+        );
       })}
     </div>
   );

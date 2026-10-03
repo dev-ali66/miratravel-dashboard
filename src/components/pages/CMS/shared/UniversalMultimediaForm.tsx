@@ -81,6 +81,7 @@ export interface UniversalMultimediaFormProps {
   defaultOpen?: boolean
   isOpen?: boolean
   onToggle?: (open: boolean) => void
+  headerActions?: React.ReactNode
 
   // Backward compatibility with legacy CMS, Story, Journey callers
   section?: any
@@ -606,25 +607,28 @@ export function UniversalMultimediaForm(props: UniversalMultimediaFormProps) {
           )}
         </div>
 
-        {/* Right Action: Collapse Toggle Chevron */}
-        {collapsible && (
-          <button
-            type="button"
-            onClick={(e) => {
-              e.stopPropagation()
-              toggleOpen()
-            }}
-            className="flex h-6 w-6 shrink-0 items-center justify-center rounded text-muted-foreground hover:bg-muted hover:text-foreground cursor-pointer transition-transform duration-200"
-            title={isExpanded ? "Collapse multimedia section" : "Expand multimedia section"}
-          >
-            <ChevronDown
-              className={cn(
-                "h-4 w-4 transition-transform duration-200",
-                isExpanded ? "rotate-180 text-foreground" : "rotate-0 text-muted-foreground"
-              )}
-            />
-          </button>
-        )}
+        {/* Right Action: Header Actions & Collapse Toggle Chevron */}
+        <div className="flex items-center gap-1 shrink-0" onClick={(e) => e.stopPropagation()}>
+          {props.headerActions}
+          {collapsible && (
+            <button
+              type="button"
+              onClick={(e) => {
+                e.stopPropagation()
+                toggleOpen()
+              }}
+              className="flex h-6 w-6 shrink-0 items-center justify-center rounded text-muted-foreground hover:bg-muted hover:text-foreground cursor-pointer transition-transform duration-200"
+              title={isExpanded ? "Collapse multimedia section" : "Expand multimedia section"}
+            >
+              <ChevronDown
+                className={cn(
+                  "h-4 w-4 transition-transform duration-200",
+                  isExpanded ? "rotate-180 text-foreground" : "rotate-0 text-muted-foreground"
+                )}
+              />
+            </button>
+          )}
+        </div>
       </div>
 
       {/* Collapsible Content Body */}

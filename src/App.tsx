@@ -30,6 +30,9 @@ import JourneyPages from "./components/pages/Journey"
 import { JourneyEditorLayout } from "./components/pages/Journey/JourneyEditorLayout"
 import { JourneyForm } from "./components/pages/Journey/JourneyForm"
 
+import StoriesPages from "./components/pages/Stories"
+import { StoryEditorLayout } from "./components/pages/Stories/StoryEditorLayout"
+
 import IAMPage from "@/components/pages/IAM"
 import BookingsPage from "@/components/pages/Bookings"
 import AuditLogsPage from "@/components/pages/AuditLogs"
@@ -62,6 +65,8 @@ export function App() {
 
             <Route path="user" element={<UserListPage />} />
             <Route path="concierge" element={<ConciergePage />} />
+            <Route path="inquiries" element={<ConciergePage />} />
+            <Route path="inquiry" element={<ConciergePage />} />
             <Route path="reviews" element={<ReviewsPage />} />
             <Route path="promotions" element={<PromotionsPage />} />
             <Route path="newsletter" element={<NewsletterPage />} />
@@ -73,6 +78,7 @@ export function App() {
             <Route path="cms" element={<CMSPage />} />
             <Route path="journeys" element={<JourneyPages />} />
             <Route path="location" element={<LocationPages />} />
+            <Route path="stories" element={<StoriesPages />} />
             
             <Route path="iam" element={<IAMPage />} />
             <Route path="bookings" element={<BookingsPage />} />
@@ -95,6 +101,8 @@ export function App() {
             <Route path="new" element={<JourneyForm />} />
             <Route path=":id/:slug" element={<JourneyForm />} />
           </Route>
+
+          <Route path="/stories/:slug" element={<StoryEditorLayout />} />
   {/* <Route
             path="location/add"
             element={

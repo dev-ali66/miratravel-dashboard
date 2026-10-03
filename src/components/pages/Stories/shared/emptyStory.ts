@@ -1,6 +1,9 @@
 import type { StoryData } from "../config/storyTypes";
 import { emptyHero } from "../sections/hero/emptyHero";
 import { emptyBasicInfo } from "../sections/basic-info/emptyBasicInfo";
+import { emptyIntro } from "../sections/intro/emptyIntro";
+import { emptyBlocks, emptyBlocksBackgroundMultimedia } from "../sections/blocks/emptyBlocks";
+import { emptyPracticalNotes } from "../sections/practical-notes/emptyPracticalNotes";
 
 export const emptyMultimedia = {
   show: "image", // "image" | "video" | "color"
@@ -32,4 +35,9 @@ export const emptyStory: StoryData = {
   locationIds: [],
   manualRelatedStoryIds: [],
   hero: emptyHero,
+  intro: emptyIntro,
+  blocks: emptyBlocks,
+  blocksBackgroundMultimedia: emptyBlocksBackgroundMultimedia,
+  practicalNotes: emptyPracticalNotes,
 };
+

@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Terminal, Save, Loader2 } from "lucide-react";
 import { getSectionsForType } from "./config/storySections";
 import { normalizeStoryPayload } from "./shared/normalizeStoryPayload";
@@ -15,21 +15,45 @@ export function StoryForm({
   onSave: (payload: any) => void;
   isSaving: boolean;
 }) {
-  const [openSections, setOpenSections] = useState<Record<string, boolean>>({
-    basicInfo: true,
-    hero: true,
-  });
+  // Start with ALL sections fully collapsed by default (matching LocationForm)
+  const [openSections, setOpenSections] = useState<Record<string, boolean>>({});
 
-  const toggleSection = (key: string) => {
-    setOpenSections((prev) => ({ ...prev, [key]: !prev[key] }));
+  // Single-active accordion collapse handler matching LocationForm
+  const toggleSection = (section: string) => {
+    setOpenSections((current) => {
+      const isCurrentlyOpen = !!current[section];
+      return isCurrentlyOpen ? {} : { [section]: true };
+    });
   };
+
+  // Sync scroll listener: Automatically expand active section accordion when preview scrolls
+  useEffect(() => {
+    const handleActiveSectionChange = (e: Event) => {
+      // Do not collapse/switch form section if the user is focused inside the form sidebar
+      const activeEl = document.activeElement;
+      if (activeEl && activeEl.tagName !== "BODY" && activeEl.closest("form, [data-section], div")) {
+        const isInsideForm = Boolean(activeEl.closest("input, select, textarea, button, [data-section]"));
+        if (isInsideForm) return;
+      }
+
+      const customEvent = e as CustomEvent<{ sectionKey: string }>;
+      if (customEvent.detail?.sectionKey) {
+        const key = customEvent.detail.sectionKey;
+        setOpenSections({ [key]: true });
+      }
+    };
+
+    window.addEventListener("editor-active-section-change", handleActiveSectionChange);
+    return () => {
+      window.removeEventListener("editor-active-section-change", handleActiveSectionChange);
+    };
+  }, []);
 
   const sections = getSectionsForType(draft.type || "short_story");
 
   const handleConsoleLog = () => {
     const payload = normalizeStoryPayload(draft);
     console.log("Normalized Story Payload:", payload);
-    alert("Payload logged to console! Check DevTools.");
   };
 
   const handleSave = () => {
@@ -76,24 +100,23 @@ export function StoryForm({
         </div>
       </div>
 
-      <div className="flex-1 overflow-y-auto">
-        <div className="mx-auto w-full max-w-4xl p-4">
-          <div className="space-y-4">
-            {sections.map((section, idx) => {
-              const FormComponent = section.formComponent;
-              return (
-                <FormComponent
-                  key={section.id}
-                  draft={draft}
-                  updateField={updateField}
-                  openSections={openSections}
-                  toggleSection={toggleSection}
-                  sectionNumber={idx + 1}
-                />
-              );
-            })}
-          </div>
-        </div>
+      <div className="flex-1 overflow-y-auto divide-y divide-border/60">
+        {sections.map((section, idx) => {
+          const FormComponent = section.formComponent;
+          const sectionNumber = String(idx + 1).padStart(2, "0");
+
+          return (
+            <div key={section.id} data-section={section.id} className="transition-all">
+              <FormComponent
+                draft={draft}
+                updateField={updateField}
+                openSections={openSections}
+                toggleSection={toggleSection}
+                sectionNumber={sectionNumber}
+              />
+            </div>
+          );
+        })}
       </div>
     </div>
   );

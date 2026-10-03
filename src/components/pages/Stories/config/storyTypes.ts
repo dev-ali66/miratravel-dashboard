@@ -1,31 +1,32 @@
-export type StoryType = "short_story" | "long_story" | "guidance";
+import type { SeoMetadata } from "@/components/pages/CMS/shared/SeoForm"
+
+export type SeoPayload = SeoMetadata
+export type StoryType = "short_story" | "long_story" | "guidance"
 
 export interface StoryData {
-  id?: string;
-  slug: string;
-  title: string;
-  type: StoryType;
-  readTime?: string;
-  authorName?: string;
-  authorRole?: string;
-  authorAvatar?: Record<string, any>;
-  status: "DRAFT" | "PUBLISHED";
-
-  // Section fields
-  hero?: Record<string, any>;
-  intro?: Record<string, any>;
-  blocks?: any[];
-  practicalNotes?: any[];
-  seo?: Record<string, any>;
-
-  // Relation fields
-  categories?: string[]; // Note: in real DB this maps to StoryCategory, but in form it can just be an array of IDs or names
-  journeyIds?: string[];
-  locationIds?: string[];
-  manualRelatedStoryIds?: string[];
-
-  createdAt?: string;
-  updatedAt?: string;
+  id?: string
+  title?: string
+  slug?: string
+  type?: StoryType
+  status?: "DRAFT" | "PUBLISHED"
+  featured?: boolean
+  recommended?: boolean
+  authorName?: string
+  authorRole?: string
+  readTime?: string
+  categories?: string[]
+  category?: string
+  description?: string
+  image?: string
+  templateType?: string
+  detail?: Record<string, any>
+  hero?: Record<string, any>
+  intro?: Record<string, any>
+  blocks?: any[]
+  practicalNotes?: any
+  seo?: SeoPayload
+  locationIds?: string[]
+  journeyIds?: string[]
+  manualRelatedStoryIds?: string[]
+  [key: string]: any
 }
-
-export const isDevModeActive = false; // Toggle to true to see normalized payload
