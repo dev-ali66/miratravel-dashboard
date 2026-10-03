@@ -1,4 +1,4 @@
-export const emptyNewsletterCmsHero = {
+export const emptySubscribe = {
   title: {
     value: "A Curated Travel Perspective",
     textColor: "#182D09",
@@ -13,7 +13,7 @@ export const emptyNewsletterCmsHero = {
     backgroundColor: null,
     backgroundOpacity: 1,
   },
-  backgroundMultimedia: {
+  leftSideMultimedia: {
     show: "image",
     color: {
       color: "#FFFFFF",
@@ -25,6 +25,41 @@ export const emptyNewsletterCmsHero = {
     image: {
       url: "",
       alt: "Travelers gathered at a scenic coastal viewpoint",
+      fit: "cover",
+      width: "100%",
+      height: "auto",
+      opacity: 100,
+      aspectRatio: "auto",
+      overlayColor: "#000000",
+      overlayOpacity: 0,
+    },
+    video: {
+      url: "",
+      alt: "",
+      fit: "cover",
+      width: "100%",
+      height: "auto",
+      opacity: 100,
+      autoplay: true,
+      loop: true,
+      muted: true,
+      aspectRatio: "auto",
+      overlayColor: "#000000",
+      overlayOpacity: 0,
+    },
+  },
+  backgroundMultimedia: {
+    show: "color",
+    color: {
+      color: "#FFFFFF",
+      opacity: 100,
+      width: "100%",
+      height: "100%",
+      aspectRatio: "auto",
+    },
+    image: {
+      url: "",
+      alt: "Background",
       fit: "cover",
       width: "100%",
       height: "auto",

@@ -1,6 +1,6 @@
-import { emptyNewsletterCmsHero } from "./emptyNewsletterCmsHero"
+import { emptySubscribe } from "./emptySubscribe"
 
-export function normalizeNewsletterCmsHero(raw: any) {
+export function normalizeSubscribe(raw: any) {
   const src = raw && typeof raw === "object" ? raw : {}
 
   const normalizeStyledText = (val: any, fallback: any) => {
@@ -32,11 +32,15 @@ export function normalizeNewsletterCmsHero(raw: any) {
   }
 
   return {
-    title: normalizeStyledText(src.title, emptyNewsletterCmsHero.title),
-    subtitle: normalizeStyledText(src.subtitle, emptyNewsletterCmsHero.subtitle),
+    title: normalizeStyledText(src.title, emptySubscribe.title),
+    subtitle: normalizeStyledText(src.subtitle, emptySubscribe.subtitle),
+    leftSideMultimedia: normalizeMultimedia(
+      src.leftSideMultimedia || src.backgroundMultimedia || src.image,
+      emptySubscribe.leftSideMultimedia
+    ),
     backgroundMultimedia: normalizeMultimedia(
-      src.backgroundMultimedia || src.image,
-      emptyNewsletterCmsHero.backgroundMultimedia
+      src.backgroundMultimedia,
+      emptySubscribe.backgroundMultimedia
     ),
   }
 }

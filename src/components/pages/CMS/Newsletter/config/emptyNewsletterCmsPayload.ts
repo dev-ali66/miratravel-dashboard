@@ -1,4 +1,5 @@
-import { emptyNewsletterCmsHero } from "../sections/hero/emptyNewsletterCmsHero"
+import { emptySubscribe } from "../sections/subscribe/emptySubscribe"
+import { emptyNewsletterCmsUnsubscribe } from "../sections/unsubscribe/emptyUnsubscribe"
 import { emptyNewsletterCmsSeoMetadata } from "../sections/seo/emptyNewsletterCmsSeoMetadata"
 
 export const emptyNewsletterCmsPayload = {
@@ -11,6 +12,7 @@ export const emptyNewsletterCmsPayload = {
   },
   data: {
     page: "newsletter",
-    hero: emptyNewsletterCmsHero,
+    subscribe: emptySubscribe,
+    unsubscribe: emptyNewsletterCmsUnsubscribe,
   },
 }

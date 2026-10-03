@@ -1,28 +1,25 @@
-import { normalizeNewsletterCmsHero } from "./normalizeNewsletterCmsHero"
+import { normalizeSubscribe } from "./normalizeSubscribe"
 import type { NewsletterCmsPayload } from "../../newsletterCmsTypes"
 import { Image as ImageIcon } from "lucide-react"
 
-export function NewsletterCmsHeroPreview({ draft }: { draft: NewsletterCmsPayload }) {
-  const hero = normalizeNewsletterCmsHero(draft?.data?.hero || (draft as any)?.hero)
+export function SubscribePreview({ draft }: { draft: NewsletterCmsPayload }) {
+  const subscribe = normalizeSubscribe(
+    draft?.data?.subscribe || draft?.subscribe || draft?.data?.hero || (draft as any)?.hero
+  )
 
-  const titleText = hero.title?.value || "A Curated Travel Perspective"
-  const titleColor = hero.title?.textColor || "#182D09"
+  const titleText = subscribe.title?.value || "A Curated Travel Perspective"
+  const titleColor = subscribe.title?.textColor || "#182D09"
 
   const subtitleText =
-    hero.subtitle?.value ||
+    subscribe.subtitle?.value ||
     "Thoughtful dispatches featuring curated Balkan travel inspiration, MIRA Stories, regional travel insights, and selected journeys."
-  const subtitleColor = hero.subtitle?.textColor || "#565E69"
+  const subtitleColor = subscribe.subtitle?.textColor || "#565E69"
 
-  const emailLabelText = (hero as any).emailLabel?.value || "Enter your email address"
-  const emailLabelColor = (hero as any).emailLabel?.textColor || "#182D09"
-
-  const buttonText = (hero as any).buttonText || "Subscribe"
-  const inputPlaceholder = (hero as any).inputPlaceholder || "Insert your email here"
-
-  const exploreJourneysLabel = (hero as any).links?.exploreJourneys?.label || "Explore journeys"
-  const returnHomeLabel = (hero as any).links?.returnHome?.label || "Return Home"
-
-  const imageUrl = hero.backgroundMultimedia?.image?.url || (hero as any).image?.url || ""
+  const imageUrl =
+    subscribe.leftSideMultimedia?.image?.url ||
+    subscribe.leftSideMultimedia?.url ||
+    subscribe.backgroundMultimedia?.image?.url ||
+    ""
 
   return (
     <section className="relative w-full overflow-hidden bg-background text-foreground py-16 px-4 md:px-8">
@@ -85,20 +82,17 @@ export function NewsletterCmsHeroPreview({ draft }: { draft: NewsletterCmsPayloa
             {/* Divider */}
             <div className="w-full border-t border-border/40 my-4" />
 
-            {/* Form Area */}
+            {/* Form Area Placeholder */}
             <div className="w-full flex flex-col gap-4">
               <div className="flex flex-col gap-2">
-                <label
-                  className="text-xs md:text-sm font-normal tracking-wide"
-                  style={{ color: emailLabelColor }}
-                >
-                  {emailLabelText}
+                <label className="text-xs md:text-sm font-normal tracking-wide text-primary">
+                  Enter your email address
                 </label>
                 <div className="h-12 w-full px-4 bg-[#FFF2EF] rounded-sm border border-border/60 flex items-center">
                   <input
                     type="email"
                     disabled
-                    placeholder={inputPlaceholder}
+                    placeholder="Insert your email here"
                     className="w-full bg-transparent text-xs md:text-sm text-foreground/80 outline-none"
                   />
                 </div>
@@ -108,12 +102,12 @@ export function NewsletterCmsHeroPreview({ draft }: { draft: NewsletterCmsPayloa
                 type="button"
                 className="h-12 w-full bg-primary text-primary-foreground font-medium text-xs md:text-sm rounded-sm transition hover:opacity-90 cursor-default"
               >
-                {buttonText}
+                Subscribe
               </button>
 
               <div className="flex items-center justify-between pt-1 text-xs text-foreground/70 underline">
-                <span>{exploreJourneysLabel}</span>
-                <span>{returnHomeLabel}</span>
+                <span>Explore journeys</span>
+                <span>Return Home</span>
               </div>
             </div>
           </div>
@@ -123,4 +117,4 @@ export function NewsletterCmsHeroPreview({ draft }: { draft: NewsletterCmsPayloa
   )
 }
 
-export default NewsletterCmsHeroPreview
+export default SubscribePreview

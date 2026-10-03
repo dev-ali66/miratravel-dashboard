@@ -1,28 +1,19 @@
-export interface NewsletterCmsHeroData {
+export interface NewsletterCmsSubscribeData {
   title?: any
   subtitle?: any
-  buttonText?: any
-  inputPlaceholder?: any
-  emailLabel?: any
-  image?: {
-    url?: string
-    alt?: string
-    fit?: string
-    width?: string
-    height?: string
-    opacity?: number
-  }
+  leftSideMultimedia?: any
   backgroundMultimedia?: any
-  links?: {
-    exploreJourneys?: {
-      label?: string
-      url?: string
-    }
-    returnHome?: {
-      label?: string
-      url?: string
-    }
-  }
+}
+
+export interface NewsletterCmsUnsubscribeData {
+  title?: any
+  unsubscribedTitle?: any
+  subtitle?: any
+  unsubscribedSubtitle?: any
+  reasonsTitle?: any
+  reasonsList?: string[]
+  leftSideMultimedia?: any
+  backgroundMultimedia?: any
 }
 
 export interface NewsletterCmsSeoData {
@@ -38,7 +29,9 @@ export interface NewsletterCmsSeoData {
 
 export interface NewsletterCmsPayloadData {
   page: string
-  hero: NewsletterCmsHeroData
+  subscribe: NewsletterCmsSubscribeData
+  unsubscribe: NewsletterCmsUnsubscribeData
+  hero?: NewsletterCmsSubscribeData
 }
 
 export interface NewsletterCmsPayload {
@@ -58,7 +51,9 @@ export interface NewsletterCmsPayload {
     seo?: NewsletterCmsSeoData
   }
   data: NewsletterCmsPayloadData
-  hero?: NewsletterCmsHeroData
+  subscribe?: NewsletterCmsSubscribeData
+  unsubscribe?: NewsletterCmsUnsubscribeData
+  hero?: NewsletterCmsSubscribeData
 }
 
 export interface NewsletterCmsPreviewSectionProps {

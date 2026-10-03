@@ -1,4 +1,5 @@
-import { normalizeNewsletterCmsHero } from "../sections/hero/normalizeNewsletterCmsHero"
+import { normalizeSubscribe } from "../sections/subscribe/normalizeSubscribe"
+import { normalizeNewsletterCmsUnsubscribe } from "../sections/unsubscribe/normalizeUnsubscribe"
 import { normalizeNewsletterCmsSeoMetadata } from "../sections/seo/normalizeNewsletterCmsSeoMetadata"
 import { emptyNewsletterCmsPayload } from "./emptyNewsletterCmsPayload"
 import type { NewsletterCmsPayload } from "../newsletterCmsTypes"
@@ -12,7 +13,8 @@ export function normalizeNewsletterCmsPayload(raw: any): NewsletterCmsPayload {
   const rawMeta = raw.metadata && typeof raw.metadata === "object" ? raw.metadata : raw
 
   const seoMeta = normalizeNewsletterCmsSeoMetadata(rawMeta.seo || rawMeta)
-  const hero = normalizeNewsletterCmsHero(rawData.hero)
+  const subscribeData = normalizeSubscribe(rawData.subscribe || rawData.hero)
+  const unsubscribeData = normalizeNewsletterCmsUnsubscribe(rawData.unsubscribe)
 
   return {
     id: raw.id,
@@ -25,7 +27,10 @@ export function normalizeNewsletterCmsPayload(raw: any): NewsletterCmsPayload {
     },
     data: {
       page: "newsletter",
-      hero,
+      subscribe: subscribeData,
+      unsubscribe: unsubscribeData,
     },
+    subscribe: subscribeData,
+    unsubscribe: unsubscribeData,
   }
 }

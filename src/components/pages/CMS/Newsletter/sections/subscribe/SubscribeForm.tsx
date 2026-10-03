@@ -5,7 +5,7 @@ import {
 import { UniversalMultimediaForm } from "@/components/pages/CMS/shared/UniversalMultimediaForm"
 import type { NewsletterCmsFormSectionProps } from "../../newsletterCmsTypes"
 
-export function NewsletterCmsHeroForm({
+export function SubscribeForm({
   draft,
   updateField,
   openSections,
@@ -18,7 +18,6 @@ export function NewsletterCmsHeroForm({
 
   const updateSubscribeField = (fieldKey: string, value: any) => {
     updateField(`subscribe.${fieldKey}`, value)
-    updateField(`hero.${fieldKey}`, value)
   }
 
   return (
@@ -26,10 +25,7 @@ export function NewsletterCmsHeroForm({
       title="Newsletter Subscribe Section"
       sectionNumber={sectionNumber}
       active={isOpen}
-      onClick={() => {
-        toggleSection("subscribe")
-        toggleSection("hero")
-      }}
+      onClick={() => toggleSection("subscribe")}
     >
       <div className="flex flex-col gap-5">
         {/* Title */}
@@ -59,13 +55,29 @@ export function NewsletterCmsHeroForm({
         {/* Side Image / Media */}
         <UniversalMultimediaForm
           title="Left Column Showcase Image"
-          fieldName="subscribe.backgroundMultimedia"
+          fieldName="subscribe.leftSideMultimedia"
           allowImage={true}
           allowVideo={true}
           allowColor={true}
           defaultShow="image"
           imageTitle="Showcase Image"
           imageLabel="Expedition Showcase Image"
+          value={subscribe.leftSideMultimedia}
+          onChange={(val) => {
+            updateSubscribeField("leftSideMultimedia", val)
+          }}
+        />
+
+        {/* Background Multimedia */}
+        <UniversalMultimediaForm
+          title="Background Multimedia"
+          fieldName="subscribe.backgroundMultimedia"
+          allowImage={true}
+          allowVideo={true}
+          allowColor={true}
+          defaultShow="color"
+          imageTitle="Background Image"
+          imageLabel="Page Background Image"
           value={subscribe.backgroundMultimedia}
           onChange={(val) => {
             updateSubscribeField("backgroundMultimedia", val)
@@ -76,4 +88,4 @@ export function NewsletterCmsHeroForm({
   )
 }
 
-export default NewsletterCmsHeroForm
+export default SubscribeForm

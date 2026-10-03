@@ -3,7 +3,8 @@ import { useState, useEffect } from "react"
 import { Loader2, Save, Terminal } from "lucide-react"
 
 import { useCmsPage } from "../shared/useCmsPage"
-import { NewsletterCmsHeroForm } from "./sections/hero/NewsletterCmsHeroForm"
+import { SubscribeForm } from "./sections/subscribe/SubscribeForm"
+import { UnsubscribeForm } from "./sections/unsubscribe/UnsubscribeForm"
 import { NewsletterCmsSeoMetadataForm } from "./sections/seo/NewsletterCmsSeoMetadataForm"
 
 import { normalizeNewsletterCmsPayload } from "./config/normalizeNewsletterCmsPayload"
@@ -135,7 +136,7 @@ export function NewsletterCMSForm() {
 
       {/* Accordion Sections Form */}
       <div className="flex-1 space-y-4 p-5">
-        <NewsletterCmsHeroForm
+        <SubscribeForm
           draft={normalizedPage}
           updateField={updateField}
           openSections={openSections}
@@ -143,12 +144,20 @@ export function NewsletterCMSForm() {
           sectionNumber="01"
         />
 
-        <NewsletterCmsSeoMetadataForm
+        <UnsubscribeForm
           draft={normalizedPage}
           updateField={updateField}
           openSections={openSections}
           toggleSection={toggleSection}
           sectionNumber="02"
+        />
+
+        <NewsletterCmsSeoMetadataForm
+          draft={normalizedPage}
+          updateField={updateField}
+          openSections={openSections}
+          toggleSection={toggleSection}
+          sectionNumber="03"
         />
       </div>
     </div>

@@ -1,16 +1,21 @@
-import { NewsletterCmsHeroForm } from "../sections/hero/NewsletterCmsHeroForm"
+import { SubscribeForm } from "../sections/subscribe/SubscribeForm"
+import { UnsubscribeForm } from "../sections/unsubscribe/UnsubscribeForm"
 import { NewsletterCmsSeoMetadataForm } from "../sections/seo/NewsletterCmsSeoMetadataForm"
 
-export const newsletterCmsSectionOrder = ["hero", "seo"] as const
+export const newsletterCmsSectionOrder = ["subscribe", "unsubscribe", "seo"] as const
 export type NewsletterCmsSectionKey = (typeof newsletterCmsSectionOrder)[number]
 
 export const newsletterCmsSectionRegistry: Record<
-  NewsletterCmsSectionKey,
+  string,
   { label: string; form: any }
 > = {
-  hero: {
+  subscribe: {
     label: "Newsletter Subscribe Section",
-    form: NewsletterCmsHeroForm,
+    form: SubscribeForm,
+  },
+  unsubscribe: {
+    label: "Newsletter Unsubscribe Section",
+    form: UnsubscribeForm,
   },
   seo: {
     label: "SEO & Metadata",

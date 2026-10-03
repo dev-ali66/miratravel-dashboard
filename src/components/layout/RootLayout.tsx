@@ -14,6 +14,7 @@ export function RootLayout() {
         { href: "/bookings", label: "Bookings", icon: "bookings" as any },
         { href: "/requests", label: "Journey Requests", icon: "requests" as any },
         { href: "/concierge", label: "Concierge Inquiries", icon: "concierge" as any },
+        { href: "/newsletter", label: "Newsletter Subscribers", icon: "newsletter" as any },
         { href: "/user", label: "Travelers & Users", icon: "user" },
         { href: "/reviews", label: "Reviews & Ratings", icon: "reviews" as any },
       ],
