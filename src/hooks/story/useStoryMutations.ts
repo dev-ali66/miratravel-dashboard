@@ -1,6 +1,6 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { apiPrivate as api } from "@/lib/api-client";
-import type { Story } from "@/components/pages/Stories/storyTypes";
+import type { Story } from "./storyTypes";
 
 export function useCreateStory() {
   const queryClient = useQueryClient();
