@@ -191,6 +191,7 @@ export function DynamicStyledPreview({
           "[&_h1]:text-2xl [&_h1]:font-bold [&_h1]:my-3",
           "[&_h2]:text-xl [&_h2]:font-bold [&_h2]:my-2.5",
           "[&_h3]:text-lg [&_h3]:font-semibold [&_h3]:my-2",
+          "[&_mark:not([style*='background'])]:bg-amber-200/70 dark:[&_mark:not([style*='background'])]:bg-amber-500/30 [&_mark]:px-1.5 [&_mark]:py-0.5 [&_mark]:rounded",
           className
         )}
         style={mergedStyle}
