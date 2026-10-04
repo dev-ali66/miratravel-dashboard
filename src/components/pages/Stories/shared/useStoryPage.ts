@@ -23,9 +23,38 @@ export function useStoryPage(storySlug?: string) {
     const storyToEdit = stories?.find((s: any) => s.slug === storySlug);
 
     if (storyToEdit) {
+      const locations = Array.isArray(storyToEdit.locations)
+        ? storyToEdit.locations.map((l: any) => (typeof l === "string" ? l : l.id)).filter(Boolean)
+        : Array.isArray(storyToEdit.locationIds)
+        ? storyToEdit.locationIds
+        : [];
+
+      const journeys = Array.isArray(storyToEdit.journeys)
+        ? storyToEdit.journeys.map((j: any) => (typeof j === "string" ? j : j.id)).filter(Boolean)
+        : Array.isArray(storyToEdit.journeyIds)
+        ? storyToEdit.journeyIds
+        : [];
+
+      const manualRelatedStories = Array.isArray(storyToEdit.manualRelatedStories)
+        ? storyToEdit.manualRelatedStories.map((s: any) => (typeof s === "string" ? s : s.id)).filter(Boolean)
+        : Array.isArray(storyToEdit.manualRelatedStoryIds)
+        ? storyToEdit.manualRelatedStoryIds
+        : [];
+
+      const categories = Array.isArray(storyToEdit.categories)
+        ? storyToEdit.categories.map((c: any) => (typeof c === "string" ? c : c.name || c.id)).filter(Boolean)
+        : [];
+
       setDraft({
         ...emptyStory,
         ...storyToEdit,
+        locations,
+        journeys,
+        manualRelatedStories,
+        locationIds: locations,
+        journeyIds: journeys,
+        manualRelatedStoryIds: manualRelatedStories,
+        categories,
         type: storyToEdit.type || storyToEdit.templateType || "short_story",
         hero: storyToEdit.hero || emptyStory.hero,
       });

@@ -25,6 +25,9 @@ export interface StoryData {
   blocks?: any[]
   practicalNotes?: any
   seo?: SeoPayload
+  locations?: any[]
+  journeys?: any[]
+  manualRelatedStories?: any[]
   locationIds?: string[]
   journeyIds?: string[]
   manualRelatedStoryIds?: string[]

@@ -240,9 +240,21 @@ export function RelationshipsForm({
   const isOpen = Boolean(openSections["relationships"] || openSections["linked-resources"])
 
   // Safe arrays
-  const locationIds: string[] = Array.isArray(draft.locationIds) ? draft.locationIds : []
-  const journeyIds: string[] = Array.isArray(draft.journeyIds) ? draft.journeyIds : []
-  const manualRelatedStoryIds: string[] = Array.isArray(draft.manualRelatedStoryIds)
+  const locationIds: string[] = Array.isArray(draft.locations) && draft.locations.length > 0
+    ? draft.locations.map((l: any) => (typeof l === "string" ? l : l?.id)).filter(Boolean)
+    : Array.isArray(draft.locationIds)
+    ? draft.locationIds
+    : []
+
+  const journeyIds: string[] = Array.isArray(draft.journeys) && draft.journeys.length > 0
+    ? draft.journeys.map((j: any) => (typeof j === "string" ? j : j?.id)).filter(Boolean)
+    : Array.isArray(draft.journeyIds)
+    ? draft.journeyIds
+    : []
+
+  const manualRelatedStoryIds: string[] = Array.isArray(draft.manualRelatedStories) && draft.manualRelatedStories.length > 0
+    ? draft.manualRelatedStories.map((s: any) => (typeof s === "string" ? s : s?.id)).filter(Boolean)
+    : Array.isArray(draft.manualRelatedStoryIds)
     ? draft.manualRelatedStoryIds
     : []
 
@@ -304,12 +316,16 @@ export function RelationshipsForm({
   // --- LOCATION HANDLERS ---
   const handleAddLocation = (id: string) => {
     if (!id || locationIds.includes(id)) return
-    updateField("locationIds", [...locationIds, id])
+    const next = [...locationIds, id]
+    updateField("locations", next)
+    updateField("locationIds", next)
     setLocSearchQuery("")
     setIsLocSearchOpen(false)
   }
   const handleRemoveLocation = (index: number) => {
-    updateField("locationIds", locationIds.filter((_, i) => i !== index))
+    const next = locationIds.filter((_, i) => i !== index)
+    updateField("locations", next)
+    updateField("locationIds", next)
   }
   const handleMoveLocation = (index: number, direction: "up" | "down") => {
     const target = direction === "up" ? index - 1 : index + 1
@@ -318,18 +334,23 @@ export function RelationshipsForm({
     const temp = updated[index]
     updated[index] = updated[target]
     updated[target] = temp
+    updateField("locations", updated)
     updateField("locationIds", updated)
   }
 
   // --- JOURNEY HANDLERS ---
   const handleAddJourney = (id: string) => {
     if (!id || journeyIds.includes(id)) return
-    updateField("journeyIds", [...journeyIds, id])
+    const next = [...journeyIds, id]
+    updateField("journeys", next)
+    updateField("journeyIds", next)
     setJourneySearchQuery("")
     setIsJourneySearchOpen(false)
   }
   const handleRemoveJourney = (index: number) => {
-    updateField("journeyIds", journeyIds.filter((_, i) => i !== index))
+    const next = journeyIds.filter((_, i) => i !== index)
+    updateField("journeys", next)
+    updateField("journeyIds", next)
   }
   const handleMoveJourney = (index: number, direction: "up" | "down") => {
     const target = direction === "up" ? index - 1 : index + 1
@@ -338,18 +359,23 @@ export function RelationshipsForm({
     const temp = updated[index]
     updated[index] = updated[target]
     updated[target] = temp
+    updateField("journeys", updated)
     updateField("journeyIds", updated)
   }
 
   // --- STORY HANDLERS ---
   const handleAddStory = (id: string) => {
     if (!id || manualRelatedStoryIds.includes(id)) return
-    updateField("manualRelatedStoryIds", [...manualRelatedStoryIds, id])
+    const next = [...manualRelatedStoryIds, id]
+    updateField("manualRelatedStories", next)
+    updateField("manualRelatedStoryIds", next)
     setStorySearchQuery("")
     setIsStorySearchOpen(false)
   }
   const handleRemoveStory = (index: number) => {
-    updateField("manualRelatedStoryIds", manualRelatedStoryIds.filter((_, i) => i !== index))
+    const next = manualRelatedStoryIds.filter((_, i) => i !== index)
+    updateField("manualRelatedStories", next)
+    updateField("manualRelatedStoryIds", next)
   }
   const handleMoveStory = (index: number, direction: "up" | "down") => {
     const target = direction === "up" ? index - 1 : index + 1
@@ -358,6 +384,7 @@ export function RelationshipsForm({
     const temp = updated[index]
     updated[index] = updated[target]
     updated[target] = temp
+    updateField("manualRelatedStories", updated)
     updateField("manualRelatedStoryIds", updated)
   }
 

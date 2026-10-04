@@ -1,6 +1,5 @@
 export const emptyBasicInfo = {
   title: "",
-  slug: "",
   type: "short_story" as const,
   status: "DRAFT" as const,
   featured: false,
@@ -9,5 +8,4 @@ export const emptyBasicInfo = {
   authorRole: "",
   readTime: "",
   categories: [],
-  category: "",
 }

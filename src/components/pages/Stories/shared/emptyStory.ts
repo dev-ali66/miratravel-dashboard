@@ -31,9 +31,9 @@ export const emptyText = {
 export const emptyStory: StoryData = {
   ...emptyBasicInfo,
   status: "DRAFT",
-  journeyIds: [],
-  locationIds: [],
-  manualRelatedStoryIds: [],
+  journeys: [],
+  locations: [],
+  manualRelatedStories: [],
   hero: emptyHero,
   intro: emptyIntro,
   blocks: emptyBlocks,

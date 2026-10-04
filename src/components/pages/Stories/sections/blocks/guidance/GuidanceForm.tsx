@@ -44,11 +44,10 @@ export function GuidanceForm({
           <button
             type="button"
             onClick={() => onChange({ mediaPosition: "left" })}
-            className={`inline-flex items-center gap-1 px-2.5 py-1 text-xs font-medium rounded-md transition cursor-pointer ${
-              mediaPosition === "left"
+            className={`inline-flex items-center gap-1 px-2.5 py-1 text-xs font-medium rounded-md transition cursor-pointer ${mediaPosition === "left"
                 ? "bg-background text-foreground shadow-xs font-semibold"
                 : "text-muted-foreground hover:text-foreground"
-            }`}
+              }`}
           >
             <AlignLeft className="w-3.5 h-3.5" />
             Media Left
@@ -56,11 +55,10 @@ export function GuidanceForm({
           <button
             type="button"
             onClick={() => onChange({ mediaPosition: "right" })}
-            className={`inline-flex items-center gap-1 px-2.5 py-1 text-xs font-medium rounded-md transition cursor-pointer ${
-              mediaPosition === "right"
+            className={`inline-flex items-center gap-1 px-2.5 py-1 text-xs font-medium rounded-md transition cursor-pointer ${mediaPosition === "right"
                 ? "bg-background text-foreground shadow-xs font-semibold"
                 : "text-muted-foreground hover:text-foreground"
-            }`}
+              }`}
           >
             <AlignRight className="w-3.5 h-3.5" />
             Media Right

@@ -104,7 +104,7 @@ const GUIDANCE_SECTIONS = [
   "seo",
 ];
 
-export function getSectionsForType(type?: string): StorySectionConfig[] {
+export function getSectionsForType(type: string): StorySectionConfig[] {
   let activeIds: string[] = [];
   if (type === "short_story") activeIds = SHORT_STORY_SECTIONS;
   else if (type === "long_story") activeIds = LONG_STORY_SECTIONS;

@@ -43,9 +43,7 @@ export function BasicInfoForm({
 
   const handleTitleChange = (val: string) => {
     updateField("title", val)
-    if (!draft.slug || draft.slug === slugify(draft.title || "")) {
-      updateField("slug", slugify(val))
-    }
+    updateField("slug", slugify(val))
   }
 
   return (
@@ -68,16 +66,16 @@ export function BasicInfoForm({
           onChange={handleTitleChange}
         />
 
-        {/* URL Slug */}
+        {/* URL Slug (Disabled / Edit Blocked) */}
         <DynamicStyledField
           type="text"
-          label="URL Slug"
+          label="URL Slug (Auto-generated)"
           fieldName="slug"
           placeholder="e.g. exploring-the-northern-peaks"
-          required={true}
+          disabled={true}
           enableStyle={false}
-          value={draft.slug || ""}
-          onChange={(val) => updateField("slug", val)}
+          value={draft.slug || (draft.title ? slugify(draft.title) : "")}
+          onChange={() => {}}
         />
 
         {/* Story Type */}
