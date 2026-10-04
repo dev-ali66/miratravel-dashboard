@@ -31,6 +31,24 @@ export function normalizeStoryPayload(raw: Partial<StoryData> | null | undefined
     ? rawType
     : "short_story"
 
+  const locations = Array.isArray(raw.locations) && raw.locations.length > 0
+    ? raw.locations.map((l: any) => (typeof l === "string" ? l : l?.id)).filter(Boolean)
+    : Array.isArray(raw.locationIds)
+    ? raw.locationIds
+    : []
+
+  const journeys = Array.isArray(raw.journeys) && raw.journeys.length > 0
+    ? raw.journeys.map((j: any) => (typeof j === "string" ? j : j?.id)).filter(Boolean)
+    : Array.isArray(raw.journeyIds)
+    ? raw.journeyIds
+    : []
+
+  const manualRelatedStories = Array.isArray(raw.manualRelatedStories) && raw.manualRelatedStories.length > 0
+    ? raw.manualRelatedStories.map((s: any) => (typeof s === "string" ? s : s?.id)).filter(Boolean)
+    : Array.isArray(raw.manualRelatedStoryIds)
+    ? raw.manualRelatedStoryIds
+    : []
+
   const payload: StoryData = {
     id: raw.id || undefined,
     title,
@@ -47,21 +65,9 @@ export function normalizeStoryPayload(raw: Partial<StoryData> | null | undefined
     blocks: Array.isArray(raw.blocks) ? normalizeBlocks(raw.blocks) : [],
     practicalNotes: raw.practicalNotes !== undefined ? raw.practicalNotes : emptyStory.practicalNotes,
     seo: raw.seo || {},
-    locations: Array.isArray(raw.locations) && raw.locations.length > 0
-      ? raw.locations.map((l: any) => (typeof l === "string" ? l : l?.id)).filter(Boolean)
-      : Array.isArray(raw.locationIds)
-      ? raw.locationIds
-      : [],
-    journeys: Array.isArray(raw.journeys) && raw.journeys.length > 0
-      ? raw.journeys.map((j: any) => (typeof j === "string" ? j : j?.id)).filter(Boolean)
-      : Array.isArray(raw.journeyIds)
-      ? raw.journeyIds
-      : [],
-    manualRelatedStories: Array.isArray(raw.manualRelatedStories) && raw.manualRelatedStories.length > 0
-      ? raw.manualRelatedStories.map((s: any) => (typeof s === "string" ? s : s?.id)).filter(Boolean)
-      : Array.isArray(raw.manualRelatedStoryIds)
-      ? raw.manualRelatedStoryIds
-      : [],
+    locations,
+    journeys,
+    manualRelatedStories,
   }
 
   return payload

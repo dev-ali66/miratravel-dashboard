@@ -11,6 +11,7 @@ export type JourneyTypeEnum =
   | "LUXURY_ESCAPE"
   | "FAMILY_JOURNEY"
   | "SIGNATURE_JOURNEY"
+  | "MIRA_COLLECTION"
 
 export type TravelStyleEnum =
   | "CULTURE_HERITAGE"
@@ -49,6 +50,7 @@ export const JOURNEY_TYPES: JourneyTypeEnum[] = [
   "LUXURY_ESCAPE",
   "FAMILY_JOURNEY",
   "SIGNATURE_JOURNEY",
+  "MIRA_COLLECTION",
 ]
 
 export const TRAVEL_STYLES: TravelStyleEnum[] = [

@@ -318,14 +318,12 @@ export function RelationshipsForm({
     if (!id || locationIds.includes(id)) return
     const next = [...locationIds, id]
     updateField("locations", next)
-    updateField("locationIds", next)
     setLocSearchQuery("")
     setIsLocSearchOpen(false)
   }
   const handleRemoveLocation = (index: number) => {
     const next = locationIds.filter((_, i) => i !== index)
     updateField("locations", next)
-    updateField("locationIds", next)
   }
   const handleMoveLocation = (index: number, direction: "up" | "down") => {
     const target = direction === "up" ? index - 1 : index + 1
@@ -335,7 +333,6 @@ export function RelationshipsForm({
     updated[index] = updated[target]
     updated[target] = temp
     updateField("locations", updated)
-    updateField("locationIds", updated)
   }
 
   // --- JOURNEY HANDLERS ---
@@ -343,14 +340,12 @@ export function RelationshipsForm({
     if (!id || journeyIds.includes(id)) return
     const next = [...journeyIds, id]
     updateField("journeys", next)
-    updateField("journeyIds", next)
     setJourneySearchQuery("")
     setIsJourneySearchOpen(false)
   }
   const handleRemoveJourney = (index: number) => {
     const next = journeyIds.filter((_, i) => i !== index)
     updateField("journeys", next)
-    updateField("journeyIds", next)
   }
   const handleMoveJourney = (index: number, direction: "up" | "down") => {
     const target = direction === "up" ? index - 1 : index + 1
@@ -360,7 +355,6 @@ export function RelationshipsForm({
     updated[index] = updated[target]
     updated[target] = temp
     updateField("journeys", updated)
-    updateField("journeyIds", updated)
   }
 
   // --- STORY HANDLERS ---
@@ -368,14 +362,12 @@ export function RelationshipsForm({
     if (!id || manualRelatedStoryIds.includes(id)) return
     const next = [...manualRelatedStoryIds, id]
     updateField("manualRelatedStories", next)
-    updateField("manualRelatedStoryIds", next)
     setStorySearchQuery("")
     setIsStorySearchOpen(false)
   }
   const handleRemoveStory = (index: number) => {
     const next = manualRelatedStoryIds.filter((_, i) => i !== index)
     updateField("manualRelatedStories", next)
-    updateField("manualRelatedStoryIds", next)
   }
   const handleMoveStory = (index: number, direction: "up" | "down") => {
     const target = direction === "up" ? index - 1 : index + 1
@@ -385,7 +377,6 @@ export function RelationshipsForm({
     updated[index] = updated[target]
     updated[target] = temp
     updateField("manualRelatedStories", updated)
-    updateField("manualRelatedStoryIds", updated)
   }
 
   return (
