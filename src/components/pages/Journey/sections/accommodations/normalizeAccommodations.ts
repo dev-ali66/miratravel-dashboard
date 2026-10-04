@@ -42,15 +42,15 @@ export function normalizeAccommodations(accommodations: any) {
   const destDesc = normalizeStyledField(destRaw.description ?? safe.destinationsDescription ?? emptyAccommodations.destinationStays.description, "", "#565e69")
   const handpickedTitle = normalizeStyledField(destRaw.handpickedTitle ?? safe.handpickedTitle ?? destTitle, "Your Accommodation Journey", "#080c1d")
 
-  const rawStays = Array.isArray(destRaw.items) && destRaw.items.length > 0
+  const rawStays = Array.isArray(destRaw.items)
     ? destRaw.items
-    : Array.isArray(destRaw.staysList) && destRaw.staysList.length > 0
+    : Array.isArray(destRaw.staysList)
     ? destRaw.staysList
-    : Array.isArray(safe.items) && safe.items.length > 0
+    : Array.isArray(safe.items)
     ? safe.items
-    : Array.isArray(safe.staysList) && safe.staysList.length > 0
+    : Array.isArray(safe.staysList)
     ? safe.staysList
-    : emptyAccommodations.destinationStays.items
+    : []
 
   const normalizedStays = rawStays.map((stay: any, index: number) => ({
     locationId: stay.locationId || "",
@@ -122,5 +122,6 @@ export function normalizeAccommodations(accommodations: any) {
     destinationStays,
     standards,
     visualReference,
+    items: normalizedStays,
   }
 }

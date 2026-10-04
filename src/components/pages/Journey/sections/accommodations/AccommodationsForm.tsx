@@ -100,12 +100,14 @@ export function AccommodationsForm({
     }
     const nextStays = [...staysList, newStay]
     updateField("accommodations.destinationStays.items", nextStays)
+    updateField("accommodations.items", nextStays)
     setOpenStay(nextStays.length - 1)
   }
 
   const removeStay = (index: number) => {
     const nextStays = staysList.filter((_: any, i: number) => i !== index)
     updateField("accommodations.destinationStays.items", nextStays)
+    updateField("accommodations.items", nextStays)
     if (openStay === index) {
       setOpenStay(null)
     } else if (openStay !== null && openStay > index) {
@@ -115,6 +117,7 @@ export function AccommodationsForm({
 
   const updateStayField = (index: number, subPath: string, val: any) => {
     updateField(`accommodations.destinationStays.items.${index}.${subPath}`, val)
+    updateField(`accommodations.items.${index}.${subPath}`, val)
   }
 
   // --- Part 3 Handlers ---

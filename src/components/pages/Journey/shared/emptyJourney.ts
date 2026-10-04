@@ -23,7 +23,7 @@ export const emptyJourney: JourneyData = {
   accommodations: emptyAccommodations,
   whatsIncluded: emptyWhatsIncluded,
   addOns: emptyAddOns,
-
+  locations: [],
   metadata: {
     seo: emptySeoMetadata,
   },

@@ -109,4 +109,5 @@ export const emptyAccommodations = {
     },
     items: [],
   },
+  items: [],
 }

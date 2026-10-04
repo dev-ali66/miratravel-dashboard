@@ -46,28 +46,151 @@ function PrincipleIcon({ type }: { type: string }) {
 function StayCard({ stay, idx }: { stay: any; idx: number }) {
   const locationId = stay.locationId
   const { data: locationResponse } = useGetLocationById(locationId || undefined)
-  const locData = locationResponse?.data || locationResponse
+  
+  const rawLocData = locationResponse?.data
+  const locData = Array.isArray(rawLocData)
+    ? rawLocData[0]
+    : Array.isArray(rawLocData?.data)
+    ? rawLocData.data[0]
+    : rawLocData && typeof rawLocData === "object" && "name" in rawLocData
+    ? rawLocData
+    : locationResponse && typeof locationResponse === "object" && "name" in locationResponse
+    ? locationResponse
+    : null
+
   const locHero = locData?.hero || locData?.data?.hero || {}
+  const locCard = locData?.card || locData?.data?.card || {}
+  const locEssence = locData?.essence || locData?.data?.essence || {}
 
   const stepLabel = stay.step || `0${idx + 1}`
   const durationLabel = getStr(stay.duration, "2 nights")
 
   const locationTitle =
+    getStr(locData?.name) ||
     getStr(locHero.title) ||
-    getStr(locData?.name || locData?.city) ||
-    getStr(stay.location || stay.name || stay.city, "Tirana")
+    getStr(locCard.title) ||
+    getStr(locData?.city) ||
+    getStr(stay.locationName) ||
+    getStr(stay.location || stay.name || stay.city, `Destination Stay ${idx + 1}`)
 
   const staySubtitle =
     getStr(stay.stayType || stay.subtitle) ||
-    getStr(locHero.label, "URBAN BOUTIQUE STAY")
+    getStr(locHero.label || locCard.subtitle, "URBAN BOUTIQUE STAY")
 
   const confirmedText = getStr(stay.confirmationBadge || stay.confirmedBy, "Personally confirmed by Mira")
 
-  const media =
-    stay.multimedia ||
-    locHero.backgroundMultimedia ||
-    locData?.multimedia ||
-    { show: "image", image: { url: typeof stay.image === "string" ? stay.image : stay.image?.url || "" } }
+  const getValidMultimedia = (media: any) => {
+    if (!media) return null
+
+    // If passed a raw string URL
+    if (typeof media === "string" && media.trim()) {
+      return {
+        show: "image",
+        color: { color: "#ffffff", opacity: 100, width: "100%", height: "100%", aspectRatio: "auto" },
+        image: {
+          url: media.trim(),
+          alt: "Stay Preview",
+          fit: "cover",
+          opacity: 100,
+          overlayColor: "#000000",
+          overlayOpacity: 0,
+          width: "100%",
+          height: "auto",
+          aspectRatio: "auto",
+        },
+        video: { url: "", alt: "", opacity: 100, overlayColor: "#000000", overlayOpacity: 0, autoplay: true, loop: true, muted: true, width: "100%", height: "auto", aspectRatio: "auto", fit: "cover" },
+      }
+    }
+
+    if (typeof media === "object") {
+      const imageUrl =
+        typeof media.image === "string"
+          ? media.image
+          : media.image?.url || media.url || media.imageUrl || media.background_image || media.src
+
+      const videoUrl =
+        typeof media.video === "string"
+          ? media.video
+          : media.video?.url || media.videoUrl
+
+      if ((imageUrl && typeof imageUrl === "string" && imageUrl.trim()) ||
+          (videoUrl && typeof videoUrl === "string" && videoUrl.trim())) {
+        return {
+          show: media.show || (videoUrl ? "video" : "image"),
+          color: { color: "#ffffff", opacity: 100, width: "100%", height: "100%", aspectRatio: "auto" },
+          image: {
+            url: imageUrl?.trim() || "",
+            alt: media.image?.alt || media.alt || "Stay Preview",
+            fit: media.image?.fit || media.fit || "cover",
+            opacity: media.image?.opacity ?? media.opacity ?? 100,
+            overlayColor: media.image?.overlayColor ?? media.overlayColor,
+            overlayOpacity: media.image?.overlayOpacity ?? media.overlayOpacity,
+            width: "100%",
+            height: "auto",
+            aspectRatio: "auto",
+          },
+          video: {
+            url: videoUrl?.trim() || "",
+            alt: media.video?.alt || media.alt || "",
+            autoplay: media.video?.autoplay ?? media.autoplay ?? true,
+            loop: media.video?.loop ?? media.loop ?? true,
+            muted: media.video?.muted ?? media.muted ?? true,
+            fit: media.video?.fit || media.fit || "cover",
+            opacity: media.video?.opacity ?? media.opacity ?? 100,
+            overlayColor: media.video?.overlayColor ?? media.overlayColor,
+            overlayOpacity: media.video?.overlayOpacity ?? media.overlayOpacity,
+            width: "100%",
+            height: "auto",
+            aspectRatio: "auto",
+          },
+        }
+      }
+    }
+    return null
+  }
+
+  const validStayMedia =
+    getValidMultimedia(stay.multimedia) ||
+    getValidMultimedia(stay.image) ||
+    getValidMultimedia(stay.hero)
+
+  const validHeroMedia =
+    getValidMultimedia(locHero.backgroundMultimedia) ||
+    getValidMultimedia(locHero.multimedia) ||
+    getValidMultimedia(locHero.heroMultimedia) ||
+    getValidMultimedia(locHero.imageMultimedia) ||
+    getValidMultimedia(locHero.image) ||
+    getValidMultimedia(locHero.background_image) ||
+    getValidMultimedia(locHero)
+
+  const validCardMedia =
+    getValidMultimedia(locCard.backgroundMultimedia) ||
+    getValidMultimedia(locCard.multimedia) ||
+    getValidMultimedia(locCard.image) ||
+    getValidMultimedia(locCard) ||
+    getValidMultimedia(locEssence.multimedia) ||
+    getValidMultimedia(locEssence.image) ||
+    getValidMultimedia(locData?.multimedia)
+
+  // Premium fallback stay image URL
+  const defaultFallbackMedia = {
+    show: "image",
+    color: { color: "#ffffff", opacity: 100, width: "100%", height: "100%", aspectRatio: "auto" },
+    image: {
+      url: "https://images.unsplash.com/photo-1566073771259-6a8506099945?auto=format&fit=crop&w=1000&q=80",
+      alt: "Curated Luxury Stay Preview",
+      opacity: 100,
+      overlayColor: "#000000",
+      overlayOpacity: 0,
+      width: "100%",
+      height: "auto",
+      aspectRatio: "auto",
+      fit: "cover",
+    },
+    video: { url: "", alt: "", opacity: 100, overlayColor: "#000000", overlayOpacity: 0, autoplay: true, loop: true, muted: true, width: "100%", height: "auto", aspectRatio: "auto", fit: "cover" },
+  }
+
+  const media = validStayMedia || validHeroMedia || validCardMedia || defaultFallbackMedia
 
   return (
     <div className="w-full overflow-hidden bg-neutral-100 rounded-[10px] border border-black/10 grid grid-cols-1 md:grid-cols-12 group transition-all duration-300">
@@ -126,6 +249,7 @@ function StayCard({ stay, idx }: { stay: any; idx: number }) {
   )
 }
 
+
 export function AccommodationsPreview({ accommodations, draft }: { accommodations?: any; draft?: any }) {
   const safeAcc = accommodations || draft?.accommodations || {}
 
@@ -134,77 +258,52 @@ export function AccommodationsPreview({ accommodations, draft }: { accommodation
   const stdData = safeAcc.standards || {}
   const visData = safeAcc.visualReference || {}
 
-  const principles =
-    (philData.items && philData.items.length > 0)
+  const rawPrinciples =
+    (philData.items && Array.isArray(philData.items) && philData.items.length > 0)
       ? philData.items
-      : [
-          {
-            iconType: "character",
-            title: "Character",
-            description: "Properties with local identity, atmosphere and a genuine sense of place — never interchangeable, always memorable.",
-            multimedia: { show: "image", image: { url: "" } },
-          },
-          {
-            iconType: "location",
-            title: "Location",
-            description: "Carefully positioned so guests experience each destination from its most meaningful vantage point.",
-            multimedia: { show: "image", image: { url: "" } },
-          },
-          {
-            iconType: "comfort",
-            title: "Comfort",
-            description: "Selected for quality of service, cleanliness and the warmth of the guest experience above all else.",
-            multimedia: { show: "image", image: { url: "" } },
-          },
-          {
-            iconType: "connection",
-            title: "Connection",
-            description: "Places that draw travelers closer to local culture, architecture and the authentic rhythms of daily life.",
-            multimedia: { show: "image", image: { url: "" } },
-          },
-        ]
+      : (safeAcc.principles && Array.isArray(safeAcc.principles) && safeAcc.principles.length > 0)
+      ? safeAcc.principles
+      : null
 
-  const stays =
-    (destData.items && destData.items.length > 0)
+  const principles = rawPrinciples || [
+    {
+      iconType: "character",
+      title: "Character",
+      description: "Properties with local identity, atmosphere and a genuine sense of place — never interchangeable, always memorable.",
+      multimedia: { show: "image", image: { url: "" } },
+    },
+    {
+      iconType: "location",
+      title: "Location",
+      description: "Carefully positioned so guests experience each destination from its most meaningful vantage point.",
+      multimedia: { show: "image", image: { url: "" } },
+    },
+    {
+      iconType: "comfort",
+      title: "Comfort",
+      description: "Selected for quality of service, cleanliness and the warmth of the guest experience above all else.",
+      multimedia: { show: "image", image: { url: "" } },
+    },
+    {
+      iconType: "connection",
+      title: "Connection",
+      description: "Places that draw travelers closer to local culture, architecture and the authentic rhythms of daily life.",
+      multimedia: { show: "image", image: { url: "" } },
+    },
+  ]
+
+  const rawStays =
+    (destData.items && Array.isArray(destData.items) && destData.items.length > 0)
       ? destData.items
-      : [
-          {
-            step: "01",
-            duration: "2 nights",
-            location: "Tirana",
-            stayType: "Urban Boutique Stay",
-            description: "Begin your journey in a stylish boutique property in or near the heart of Albania's vibrant, rapidly transforming capital.",
-            confirmationBadge: "Personally confirmed by Mira",
-            multimedia: { show: "image", image: { url: "" } },
-          },
-          {
-            step: "02",
-            duration: "2 nights",
-            location: "Berat",
-            stayType: "Historic Heritage Stay",
-            description: "Experience the rare charm of a UNESCO World Heritage town from a carefully selected traditional property overlooking the white city.",
-            confirmationBadge: "Personally confirmed by Mira",
-            multimedia: { show: "image", image: { url: "" } },
-          },
-          {
-            step: "03",
-            duration: "2 nights",
-            location: "Gjirokastër",
-            stayType: "Stone City Retreat",
-            description: "Stay within walking distance of the historic bazaar and castle district — a property steeped in the atmosphere of the Ottoman era.",
-            confirmationBadge: "Personally confirmed by Mira",
-            multimedia: { show: "image", image: { url: "" } },
-          },
-          {
-            step: "04",
-            duration: "2–3 nights",
-            location: "Albanian Riviera",
-            stayType: "Seaside Boutique Escape",
-            description: "Close out your journey surrounded by relaxed Mediterranean light, turquoise waters and unhurried coastal hospitality.",
-            confirmationBadge: "Personally confirmed by Mira",
-            multimedia: { show: "image", image: { url: "" } },
-          },
-        ]
+      : (safeAcc.items && Array.isArray(safeAcc.items) && safeAcc.items.length > 0)
+      ? safeAcc.items
+      : (safeAcc.destinationStays?.items && Array.isArray(safeAcc.destinationStays.items) && safeAcc.destinationStays.items.length > 0)
+      ? safeAcc.destinationStays.items
+      : (safeAcc.destinations?.items && Array.isArray(safeAcc.destinations.items) && safeAcc.destinations.items.length > 0)
+      ? safeAcc.destinations.items
+      : null
+
+  const stays = rawStays || []
 
   const standards =
     (stdData.items && stdData.items.length > 0)
@@ -326,9 +425,16 @@ export function AccommodationsPreview({ accommodations, draft }: { accommodation
           </div>
 
           <div className="flex flex-col gap-6 md:gap-8">
-            {stays.map((stay: any, idx: number) => (
-              <StayCard key={idx} stay={stay} idx={idx} />
-            ))}
+            {stays.length > 0 ? (
+              stays.map((stay: any, idx: number) => (
+                <StayCard key={idx} stay={stay} idx={idx} />
+              ))
+            ) : (
+              <div className="w-full py-12 px-6 rounded-[10px] border border-dashed border-black/15 text-center flex flex-col items-center justify-center gap-2 bg-neutral-50/50">
+                <p className="text-sm font-medium text-neutral-500">No destination stays added</p>
+                <p className="text-xs text-neutral-400">Add destination stays in the editor to preview them here.</p>
+              </div>
+            )}
           </div>
         </div>
       </section>
