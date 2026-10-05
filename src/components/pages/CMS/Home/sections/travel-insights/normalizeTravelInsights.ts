@@ -2,7 +2,6 @@ import {
   normalizeMultimedia,
   normalizeStyledField,
   normalizeButtonsArray,
-  normalizeButton,
 } from "@/components/pages/Location/shared/normalizeHelpers"
 
 export function normalizeTravelInsights(section: any) {
@@ -11,16 +10,6 @@ export function normalizeTravelInsights(section: any) {
     safeSection.content && typeof safeSection.content === "object"
       ? safeSection.content
       : {}
-
-  const rawItems = Array.isArray(safeSection.items)
-    ? safeSection.items
-    : Array.isArray(safeSection.insightsList)
-    ? safeSection.insightsList
-    : Array.isArray(content.items)
-    ? content.items
-    : Array.isArray(content.insightsList)
-    ? content.insightsList
-    : []
 
   const normalized = {
     ...safeSection,
@@ -48,38 +37,6 @@ export function normalizeTravelInsights(section: any) {
       safeSection.backgroundMultimedia ?? content.backgroundMultimedia,
       "color"
     ),
-    leftSideMultimedia: normalizeMultimedia(
-      safeSection.leftSideMultimedia ?? content.leftSideMultimedia,
-      "image"
-    ),
-    items: rawItems.map((item: any, idx: number) => {
-      const rawButton = item?.button || (item?.url ? { label: "Read Article", url: item.url } : null)
-      const buttonObj = normalizeButton(rawButton) || {
-        label: "Read Article",
-        url: typeof item?.url === "string" ? item.url : "",
-        variant: "PRIMARY",
-        style: "primary",
-        rounded: "full",
-        backgroundColor: "#182D09",
-        backgroundOpacity: 100,
-        textColor: "#ffffff",
-        textOpacity: 100,
-        hoverBackgroundColor: "#f3f4f6",
-        hoverTextColor: "#000000",
-        target: "_self",
-        showIcon: true,
-      }
-
-      return {
-        ...item,
-        tag: normalizeStyledField(item?.tag, "INSIGHT", "#C5A880"),
-        title: normalizeStyledField(item?.title, "Insight title", "#182D09"),
-        description: normalizeStyledField(item?.description, "Insight summary", "#4B5563"),
-        button: buttonObj,
-        url: buttonObj.url,
-        isFeatured: item?.isFeatured ?? idx === 0,
-      }
-    }),
     buttons: normalizeButtonsArray(safeSection.buttons ?? content.buttons),
   }
 
@@ -87,6 +44,10 @@ export function normalizeTravelInsights(section: any) {
   delete (normalized as any).type
   delete (normalized as any).bgColor
   delete (normalized as any).content
+  delete (normalized as any).items
+  delete (normalized as any).insightsList
+  delete (normalized as any).leftSideMultimedia
+  delete (normalized as any).leftSideMedia
   return normalized
 }
 

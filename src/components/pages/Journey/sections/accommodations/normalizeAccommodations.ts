@@ -52,13 +52,13 @@ export function normalizeAccommodations(accommodations: any) {
     ? safe.staysList
     : []
 
-  const normalizedStays = rawStays.map((stay: any, index: number) => ({
+  const normalizedStays = rawStays.map((stay: any) => ({
     locationId: stay.locationId || "",
     stayType: normalizeStyledField(stay.stayType ?? stay.subtitle, "Boutique Hotel", "#af6348"),
     duration: normalizeStyledField(stay.duration ?? stay.stayDuration, "2 nights", "#af6348"),
     description: normalizeStyledField(stay.description, "", "#565e69"),
     confirmationBadge: normalizeStyledField(stay.confirmationBadge ?? stay.confirmedBy, "Personally confirmed by Mira", "#af6348"),
-    showMiraSeal: Boolean(stay.showMiraSeal ?? (index % 2 === 0)),
+    showMiraSeal: stay.showMiraSeal !== undefined ? Boolean(stay.showMiraSeal) : true,
     multimedia: normalizeMultimedia(stay.multimedia ?? stay.image),
     amenities: Array.isArray(stay.amenities)
       ? stay.amenities.map((a: any) => typeof a === "string" ? a : getSafeStringValue(a))

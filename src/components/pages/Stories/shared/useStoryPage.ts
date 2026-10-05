@@ -9,7 +9,9 @@ import { useCreateStory, useUpdateStory } from "@/hooks/story/useStoryMutations"
 export function useStoryPage(storySlug?: string) {
   const isEditMode = Boolean(storySlug && storySlug !== "new");
   const { draft, setDraft, resetDraft } = useStoryDraft();
-  const { data: response, isLoading, isError } = useGetStories();
+  const { data: response, isLoading, isError } = useGetStories(
+    isEditMode && storySlug ? { slug: storySlug } : {}
+  );
   const { mutateAsync: createStoryAsync } = useCreateStory();
   const { mutateAsync: updateStoryAsync } = useUpdateStory();
   const [isSaving, setIsSaving] = useState(false);
@@ -17,12 +19,15 @@ export function useStoryPage(storySlug?: string) {
   // Load Edit Data
   useEffect(() => {
     if (!isEditMode) return;
-    if (isLoading) return;
+    if (isLoading || !response) return;
 
-    const stories = Array.isArray(response?.data) ? response.data : Array.isArray(response) ? response : [];
-    const storyToEdit = stories?.find((s: any) => s.slug === storySlug);
+    const rawData = (response as any)?.data ?? response;
+    const stories = Array.isArray(rawData) ? rawData : rawData ? [rawData] : [];
+    const storyToEdit =
+      stories.find((s: any) => s.slug?.toLowerCase() === storySlug?.toLowerCase()) ||
+      (stories.length === 1 && stories[0]?.id ? stories[0] : null);
 
-    if (storyToEdit) {
+    if (storyToEdit && storyToEdit.id) {
       const locations = Array.isArray(storyToEdit.locations)
         ? storyToEdit.locations.map((l: any) => (typeof l === "string" ? l : l.id)).filter(Boolean)
         : Array.isArray(storyToEdit.locationIds)
@@ -59,6 +64,12 @@ export function useStoryPage(storySlug?: string) {
       toast.error("Story not found");
     }
   }, [isEditMode, isLoading, response, storySlug, setDraft]);
+
+  useEffect(() => {
+    if (isError && isEditMode) {
+      toast.error("Failed to load story");
+    }
+  }, [isError, isEditMode]);
 
   // Load New Data
   useEffect(() => {

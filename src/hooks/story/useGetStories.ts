@@ -69,7 +69,7 @@ export function useGetStories(params: StoryQueryParams = {}) {
       });
       return res.data;
     },
-    placeholderData: (previous) => previous,
+    placeholderData: slug ? undefined : (previous) => previous,
     staleTime: 0,
     refetchOnMount: "always",
     refetchOnWindowFocus: true,
@@ -81,10 +81,16 @@ export function useGetStoryById(id?: string) {
     queryKey: ["stories", id],
     queryFn: async () => {
       if (!id) return null;
-      const res = await api.get<{ data: Story }>(`/stories`, { params: { id } });
-      return res.data;
+      const res = await api.get<{ data: Story | Story[] }>(`/stories`, { params: { id } });
+      const rawData = res.data?.data;
+      const singleStory = Array.isArray(rawData) ? rawData[0] || null : rawData;
+      return {
+        ...res.data,
+        data: singleStory,
+      };
     },
     enabled: !!id,
   });
 }
+
 

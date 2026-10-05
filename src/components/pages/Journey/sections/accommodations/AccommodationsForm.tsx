@@ -6,6 +6,7 @@ import { ParentLocationSelect } from "@/components/pages/Location/shared/ParentL
 import { Plus, Trash2, Hotel, Sparkles, CheckCircle2, ChevronDown, Camera } from "lucide-react"
 import { useState } from "react"
 import { cn } from "@/lib/utils"
+import { Switch } from "@/components/ui/switch"
 
 interface AccommodationsFormProps {
   draft: JourneyData
@@ -480,6 +481,22 @@ export function AccommodationsForm({
                             onChange={(val) => updateStayField(idx, "confirmationBadge", val)}
                             placeholder="e.g. Personally confirmed by Mira"
                           />
+
+                          <div className="flex items-center justify-between rounded-lg border border-border/60 bg-card p-3 shadow-2xs">
+                            <div className="space-y-0.5">
+                              <label htmlFor={`showMiraSeal-${idx}`} className="text-xs font-semibold text-foreground cursor-pointer">
+                                Show MIRA Verified Seal Badge (`showMiraSeal`)
+                              </label>
+                              <p className="text-[11px] text-muted-foreground">
+                                Toggle to display or hide the official MIRA seal badge on this destination stay card.
+                              </p>
+                            </div>
+                            <Switch
+                              id={`showMiraSeal-${idx}`}
+                              checked={Boolean(stay.showMiraSeal ?? true)}
+                              onCheckedChange={(checked) => updateStayField(idx, "showMiraSeal", checked)}
+                            />
+                          </div>
                         </div>
                       )}
                     </div>
