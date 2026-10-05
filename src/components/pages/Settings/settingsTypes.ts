@@ -45,6 +45,7 @@ export interface SocialLinkItem {
   url: string
   icon?: string
   iconImage?: string
+  iconMultimedia?: any
 }
 
 export interface SiteSettingsState {

@@ -3,11 +3,12 @@ import { Card, CardContent } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
-import { ImageUploadField } from "@/components/shared/ImageUploadField"
+import { UniversalMultimediaForm } from "@/components/pages/CMS/shared/UniversalMultimediaForm"
 import {
   type SiteSettingsState,
   type SocialLinkItem,
   POPULAR_PLATFORMS,
+  normalizeMultimediaField,
 } from "../settingsTypes"
 
 interface SocialLinksFormProps {
@@ -135,12 +136,16 @@ export function SocialLinksForm({
                     />
                   </div>
 
-                  <div className="sm:col-span-2 lg:col-span-3 pt-1">
-                    <ImageUploadField
-                      label="Custom Icon / Badge Image (Optional)"
-                      value={item.iconImage || ""}
-                      fieldName={`socialIcon_${index}`}
-                      onChange={(url) => handleUpdateSocialLink(index, "iconImage", url)}
+                  <div className="sm:col-span-2 lg:col-span-3 pt-1 space-y-2">
+                    <Label className="text-xs font-semibold text-foreground">
+                      Custom Icon / Badge Image (Optional)
+                    </Label>
+                    <UniversalMultimediaForm
+                      value={normalizeMultimediaField(item.iconMultimedia || item.iconImage, "image")}
+                      onChange={(val) => {
+                        handleUpdateSocialLink(index, "iconMultimedia", val)
+                        handleUpdateSocialLink(index, "iconImage", val?.image?.url || "")
+                      }}
                     />
                   </div>
                 </div>
@@ -152,3 +157,4 @@ export function SocialLinksForm({
     </Card>
   )
 }
+
