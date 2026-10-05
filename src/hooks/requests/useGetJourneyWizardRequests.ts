@@ -30,16 +30,24 @@ export type GetJourneyWizardRequestsResponse = {
       total: number
       totalPages: number
     }
+  } | JourneyWizardRequestItem[]
+  meta?: {
+    total: number
+    page: number
+    limit: number
+    totalPages: number
   }
 }
 
+
 export function useGetJourneyWizardRequests(
   page: number = 1,
-  limit: number = 20,
-  status?: string
+  limit: number = 10,
+  status?: string,
+  search?: string
 ) {
   return useQuery({
-    queryKey: ["journey-wizard-requests", page, limit, status],
+    queryKey: ["journey-wizard-requests", page, limit, status, search],
     queryFn: async () => {
       const res = await apiPrivate.get<GetJourneyWizardRequestsResponse>(
         "/journey-wizard",
@@ -48,6 +56,7 @@ export function useGetJourneyWizardRequests(
             page,
             limit,
             ...(status ? { status } : {}),
+            ...(search ? { search } : {}),
           },
         }
       )
@@ -55,6 +64,7 @@ export function useGetJourneyWizardRequests(
     },
   })
 }
+
 
 export function useUpdateJourneyWizardRequestStatus() {
   const queryClient = useQueryClient()

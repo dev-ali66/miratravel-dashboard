@@ -72,8 +72,6 @@ export function App() {
             <Route path="newsletter" element={<NewsletterPage />} />
             <Route path="notifications" element={<NotificationsPage />} />
             <Route path="requests" element={<RequestsPage />} />
-            <Route path="privacy-policy" element={<PrivacyPolicyPage />} />
-            <Route path="terms-of-service" element={<TermsOfServicePage />} />
 
             <Route path="cms" element={<CMSPage />} />
             <Route path="journeys" element={<JourneyPages />} />
@@ -88,9 +86,14 @@ export function App() {
             <Route path="settings" element={<SettingsPage />} />
           </Route>
 
+          {/* Full Screen Editors (outside RootLayout) */}
+          <Route path="/privacy-policy" element={<PrivacyPolicyPage />} />
+          <Route path="/terms-of-service" element={<TermsOfServicePage />} />
+
           <Route path="/cms" element={<CmsEditorLayout />}>
             <Route path=":slug" element={<PageSections />} />
           </Route>
+
 
           <Route path="/locations" element={<LocationEditorLayout />}>
             <Route path="new" element={<LocationForm />} />

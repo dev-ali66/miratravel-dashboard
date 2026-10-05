@@ -12,12 +12,19 @@ import {
   Clock,
   Trash2,
   Loader2,
+  Mail,
+  Phone,
+  User,
+  Copy,
+  Check,
+  MessageSquare,
 } from "lucide-react"
 import type { JourneyWizardRequestItem } from "@/hooks/requests/useGetJourneyWizardRequests"
 import {
   useUpdateJourneyWizardRequestStatus,
   useDeleteJourneyWizardRequest,
 } from "@/hooks/requests/useGetJourneyWizardRequests"
+import { toast } from "sonner"
 
 interface JourneyWizardDetailsModalProps {
   request: JourneyWizardRequestItem | null
@@ -34,8 +41,16 @@ export default function JourneyWizardDetailsModal({
     useDeleteJourneyWizardRequest()
 
   const [notes, setNotes] = useState(request?.notes || "")
+  const [copiedField, setCopiedField] = useState<string | null>(null)
 
   if (!request) return null
+
+  const handleCopy = (text: string, label: string) => {
+    navigator.clipboard.writeText(text)
+    setCopiedField(label)
+    toast.success(`${label} copied to clipboard`)
+    setTimeout(() => setCopiedField(null), 2000)
+  }
 
   const formattedDate = new Date(request.createdAt).toLocaleString("en-US", {
     month: "short",
@@ -116,7 +131,90 @@ export default function JourneyWizardDetailsModal({
 
           {/* Modal Content Grid */}
           <div className="mt-5 flex flex-col gap-5 text-xs">
+            {/* Explorer / Requester Contact Details Card */}
+            <div className="rounded-xl border border-primary/20 bg-primary/5 p-4 space-y-3">
+              <span className="font-bold text-foreground uppercase tracking-wider text-[11px] block flex items-center gap-1.5">
+                <User className="h-3.5 w-3.5 text-primary" /> Requester Explorer Contact Details
+              </span>
+
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                {/* Requester Name */}
+                <div className="flex flex-col gap-0.5 rounded-lg border border-border/50 bg-background p-2.5">
+                  <span className="text-[10px] text-muted-foreground font-semibold uppercase">Explorer Name</span>
+                  <span className="text-xs font-bold text-foreground truncate">
+                    {request.name || "Explorer / Explorer Group"}
+                  </span>
+                </div>
+
+                {/* Requester Email */}
+                <div className="flex flex-col gap-0.5 rounded-lg border border-border/50 bg-background p-2.5">
+                  <span className="text-[10px] text-muted-foreground font-semibold uppercase">Email Address</span>
+                  {request.email ? (
+                    <div className="flex items-center justify-between gap-1">
+                      <a
+                        href={`mailto:${request.email}`}
+                        className="text-xs font-bold text-primary underline underline-offset-2 truncate flex items-center gap-1"
+                        title="Send Email"
+                      >
+                        <Mail className="h-3 w-3 shrink-0" />
+                        <span className="truncate">{request.email}</span>
+                      </a>
+                      <button
+                        type="button"
+                        onClick={() => handleCopy(request.email!, "Email")}
+                        className="p-1 rounded text-muted-foreground hover:bg-muted hover:text-foreground cursor-pointer transition-colors"
+                        title="Copy Email"
+                      >
+                        {copiedField === "Email" ? <Check className="h-3 w-3 text-emerald-500" /> : <Copy className="h-3 w-3" />}
+                      </button>
+                    </div>
+                  ) : (
+                    <span className="text-xs italic text-muted-foreground">Not provided</span>
+                  )}
+                </div>
+
+                {/* Requester Phone */}
+                <div className="flex flex-col gap-0.5 rounded-lg border border-border/50 bg-background p-2.5">
+                  <span className="text-[10px] text-muted-foreground font-semibold uppercase">Phone Number</span>
+                  {request.phone ? (
+                    <div className="flex items-center justify-between gap-1">
+                      <a
+                        href={`tel:${request.phone}`}
+                        className="text-xs font-bold text-foreground hover:text-primary truncate flex items-center gap-1"
+                        title="Call Phone"
+                      >
+                        <Phone className="h-3 w-3 shrink-0 text-emerald-600" />
+                        <span className="truncate">{request.phone}</span>
+                      </a>
+                      <button
+                        type="button"
+                        onClick={() => handleCopy(request.phone!, "Phone")}
+                        className="p-1 rounded text-muted-foreground hover:bg-muted hover:text-foreground cursor-pointer transition-colors"
+                        title="Copy Phone"
+                      >
+                        {copiedField === "Phone" ? <Check className="h-3 w-3 text-emerald-500" /> : <Copy className="h-3 w-3" />}
+                      </button>
+                    </div>
+                  ) : (
+                    <span className="text-xs italic text-muted-foreground">Not provided</span>
+                  )}
+                </div>
+              </div>
+
+              {request.notes && (
+                <div className="pt-2 border-t border-primary/10">
+                  <span className="text-[10px] font-semibold text-muted-foreground uppercase flex items-center gap-1">
+                    <MessageSquare className="h-3 w-3 text-amber-500" /> Explorer Custom Requests / Initial Message:
+                  </span>
+                  <p className="text-xs text-foreground leading-relaxed mt-1 font-medium bg-background/80 p-2.5 rounded-md border border-border/40 whitespace-pre-wrap">
+                    {request.notes}
+                  </p>
+                </div>
+              )}
+            </div>
+
             {/* Quick Metrics */}
+
             <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
               <div className="rounded-xl border border-border/60 bg-muted/20 p-3 flex flex-col gap-1">
                 <span className="text-[11px] text-muted-foreground flex items-center gap-1">
