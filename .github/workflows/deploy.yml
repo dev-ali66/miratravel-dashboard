@@ -266,7 +266,7 @@ jobs:
             # ------------------------------------
             # SHOW DEPLOYED FILES
             # ------------------------------------
-            echo "=== Dashboard files ==="
+            echo "==== Dashboard files ===="
 
             ls -lah "$DASHBOARD_PATH"
 
