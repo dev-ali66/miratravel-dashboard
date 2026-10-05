@@ -14,6 +14,7 @@ export interface VideoUploadFieldProps extends Omit<
   label?: string
   value?: string
   fieldName?: string
+  fit?: "cover" | "contain" | "fill" | "none" | "scale-down"
   onChange: (value: string) => void
   opacity?: number
   onOpacityChange?: (value: number) => void
@@ -27,6 +28,7 @@ export function VideoUploadField({
   label,
   value,
   fieldName = "",
+  fit = "contain",
   onChange,
   opacity = 100,
   onOpacityChange,
@@ -37,6 +39,16 @@ export function VideoUploadField({
   className,
   ...props
 }: VideoUploadFieldProps) {
+  const objectFitClass =
+    fit === "cover"
+      ? "object-cover"
+      : fit === "fill"
+      ? "object-fill"
+      : fit === "none"
+      ? "object-none"
+      : fit === "scale-down"
+      ? "object-scale-down"
+      : "object-contain"
   const { mutate: uploadVideo, isPending: isUploading } = useVideoUpload()
 
   const fileInputRef = useRef<HTMLInputElement>(null)
@@ -175,7 +187,10 @@ export function VideoUploadField({
             <video
               src={value}
               style={{ opacity: opacity / 100 }}
-              className="h-full w-full object-cover transition-opacity duration-300"
+              className={cn(
+                "h-full w-full transition-opacity duration-300 p-1",
+                objectFitClass
+              )}
               controls
               muted
               playsInline

@@ -694,6 +694,7 @@ export function UniversalMultimediaForm(props: UniversalMultimediaFormProps) {
                 label="Upload / Select Image"
                 fieldName={`${fieldName}.image.url`}
                 value={currentVal.image?.url ?? ""}
+                fit={currentVal.image?.fit ?? "contain"}
                 onChange={(url) => updateImage({ url })}
                 opacity={currentVal.image?.opacity ?? 100}
                 onOpacityChange={showAdvancedDimensions ? (opacity) => updateImage({ opacity }) : undefined}
@@ -738,6 +739,7 @@ export function UniversalMultimediaForm(props: UniversalMultimediaFormProps) {
                 label="Upload Video / Video URL"
                 fieldName={`${fieldName}.video.url`}
                 value={currentVal.video?.url ?? ""}
+                fit={currentVal.video?.fit ?? "contain"}
                 onChange={(url) => updateVideo({ url })}
                 opacity={currentVal.video?.opacity ?? 100}
                 onOpacityChange={showAdvancedDimensions ? (opacity) => updateVideo({ opacity }) : undefined}

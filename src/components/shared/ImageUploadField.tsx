@@ -15,6 +15,7 @@ interface ImageUploadFieldProps extends Omit<
   previewClassName?: string
   value?: string
   fieldName?: string
+  fit?: "cover" | "contain" | "fill" | "none" | "scale-down"
   onChange: (value: string) => void
   opacity?: number
   onOpacityChange?: (value: number) => void
@@ -29,6 +30,7 @@ export function ImageUploadField({
   previewClassName,
   value,
   fieldName = "",
+  fit = "contain",
   onChange,
   opacity = 100,
   onOpacityChange,
@@ -39,6 +41,16 @@ export function ImageUploadField({
   className,
   ...props
 }: ImageUploadFieldProps) {
+  const objectFitClass =
+    fit === "cover"
+      ? "object-cover"
+      : fit === "fill"
+      ? "object-fill"
+      : fit === "none"
+      ? "object-none"
+      : fit === "scale-down"
+      ? "object-scale-down"
+      : "object-contain"
   const { mutate: uploadImage, isPending: isUploading } = useImageUpload()
 
   const fileInputRef = useRef<HTMLInputElement>(null)
@@ -180,7 +192,8 @@ export function ImageUploadField({
               alt="Preview"
               style={{ opacity: opacity / 100 }}
               className={cn(
-                "h-full w-full object-cover transition-opacity duration-300",
+                "h-full w-full transition-opacity duration-300 p-1",
+                objectFitClass,
                 previewClassName
               )}
             />
