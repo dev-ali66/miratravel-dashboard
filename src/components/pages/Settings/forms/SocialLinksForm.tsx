@@ -97,46 +97,52 @@ export function SocialLinksForm({
                   </Button>
                 </div>
 
-                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-                  <div className="space-y-1.5">
-                    <Label className="text-xs font-semibold">Platform</Label>
-                    <select
-                      value={item.platform || "Instagram"}
-                      onChange={(e) => {
-                        handleUpdateSocialLink(index, "platform", e.target.value)
-                        if (!item.title || POPULAR_PLATFORMS.includes(item.title)) {
-                          handleUpdateSocialLink(index, "title", e.target.value)
-                        }
-                      }}
-                      className="w-full h-9 rounded-md border border-input bg-transparent px-3 py-1 text-xs font-medium shadow-2xs transition-colors focus:outline-none focus:ring-1 focus:ring-ring cursor-pointer"
-                    >
-                      {POPULAR_PLATFORMS.map((p) => (
-                        <option key={p} value={p}>
-                          {p}
-                        </option>
-                      ))}
-                    </select>
+                <div className="grid grid-cols-1 lg:grid-cols-12 gap-5 items-start">
+                  {/* Left Column: Social Link Info Inputs */}
+                  <div className="lg:col-span-6 space-y-4">
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                      <div className="space-y-1.5">
+                        <Label className="text-xs font-semibold">Platform</Label>
+                        <select
+                          value={item.platform || "Instagram"}
+                          onChange={(e) => {
+                            handleUpdateSocialLink(index, "platform", e.target.value)
+                            if (!item.title || POPULAR_PLATFORMS.includes(item.title)) {
+                              handleUpdateSocialLink(index, "title", e.target.value)
+                            }
+                          }}
+                          className="w-full h-9 rounded-md border border-input bg-transparent px-3 py-1 text-xs font-medium shadow-2xs transition-colors focus:outline-none focus:ring-1 focus:ring-ring cursor-pointer"
+                        >
+                          {POPULAR_PLATFORMS.map((p) => (
+                            <option key={p} value={p}>
+                              {p}
+                            </option>
+                          ))}
+                        </select>
+                      </div>
+
+                      <div className="space-y-1.5">
+                        <Label className="text-xs font-semibold">Display Title</Label>
+                        <Input
+                          value={item.title || ""}
+                          onChange={(e) => handleUpdateSocialLink(index, "title", e.target.value)}
+                          placeholder="e.g. Follow on Instagram"
+                        />
+                      </div>
+                    </div>
+
+                    <div className="space-y-1.5">
+                      <Label className="text-xs font-semibold">Channel URL / Handle</Label>
+                      <Input
+                        value={item.url || ""}
+                        onChange={(e) => handleUpdateSocialLink(index, "url", e.target.value)}
+                        placeholder="https://instagram.com/miratravel"
+                      />
+                    </div>
                   </div>
 
-                  <div className="space-y-1.5">
-                    <Label className="text-xs font-semibold">Display Title</Label>
-                    <Input
-                      value={item.title || ""}
-                      onChange={(e) => handleUpdateSocialLink(index, "title", e.target.value)}
-                      placeholder="e.g. Follow on Instagram"
-                    />
-                  </div>
-
-                  <div className="space-y-1.5 sm:col-span-2 lg:col-span-1">
-                    <Label className="text-xs font-semibold">Channel URL / Handle</Label>
-                    <Input
-                      value={item.url || ""}
-                      onChange={(e) => handleUpdateSocialLink(index, "url", e.target.value)}
-                      placeholder="https://instagram.com/miratravel"
-                    />
-                  </div>
-
-                  <div className="sm:col-span-2 lg:col-span-3 pt-1 space-y-2">
+                  {/* Right Column: Custom Icon / Badge Image */}
+                  <div className="lg:col-span-6 space-y-2">
                     <Label className="text-xs font-semibold text-foreground">
                       Custom Icon / Badge Image (Optional)
                     </Label>
