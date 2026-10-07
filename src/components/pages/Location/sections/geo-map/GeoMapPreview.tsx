@@ -247,28 +247,38 @@ export function GeoMapPreview({ draft }: LocationPreviewSectionProps) {
           // ignore
         }
 
-        // Apply light map theme recoloring
+        // Apply light map theme recoloring without wiping out vector basemap details
         const style = map.getStyle()
         if (style?.layers) {
           for (const layer of style.layers) {
             try {
               if (layer.type === "background") {
-                map.setPaintProperty(layer.id, "background-color", "#f6f5f2")
+                map.setPaintProperty(layer.id, "background-color", "#F6F3EB")
               } else if (layer.type === "fill") {
                 if (layer.id.includes("water") || layer.id.includes("ocean")) {
-                  map.setPaintProperty(layer.id, "fill-color", "#dde4e3")
+                  map.setPaintProperty(layer.id, "fill-color", "#D5E1E3")
                 } else if (layer.id.includes("building")) {
-                  map.setPaintProperty(layer.id, "fill-color", "#eceae5")
-                } else if (layer.id.includes("park") || layer.id.includes("landcover")) {
-                  map.setPaintProperty(layer.id, "fill-color", "#ecece7")
-                } else {
-                  map.setPaintProperty(layer.id, "fill-color", "#f6f5f2")
+                  map.setPaintProperty(layer.id, "fill-color", "#EFEBE2")
+                } else if (
+                  layer.id.includes("park") ||
+                  layer.id.includes("landuse") ||
+                  layer.id.includes("wood")
+                ) {
+                  map.setPaintProperty(layer.id, "fill-color", "#E7ECE0")
+                } else if (layer.id.includes("land")) {
+                  map.setPaintProperty(layer.id, "fill-color", "#F6F3EB")
                 }
               } else if (layer.type === "line") {
-                if (layer.id.includes("road") || layer.id.includes("street")) {
-                  map.setPaintProperty(layer.id, "line-color", "#e6e3dc")
-                } else if (layer.id.includes("border") || layer.id.includes("boundary")) {
-                  map.setPaintProperty(layer.id, "line-color", "rgba(35, 35, 33, 0.16)")
+                if (layer.id.includes("water")) {
+                  map.setPaintProperty(layer.id, "line-color", "#D5E1E3")
+                } else if (layer.id.includes("admin") || layer.id.includes("border") || layer.id.includes("boundary")) {
+                  map.setPaintProperty(layer.id, "line-color", "#D2C5B2")
+                } else if (
+                  layer.id.includes("road") ||
+                  layer.id.includes("street") ||
+                  layer.id.includes("highway")
+                ) {
+                  map.setPaintProperty(layer.id, "line-color", "#E9E3D8")
                 }
               }
             } catch (e) {
