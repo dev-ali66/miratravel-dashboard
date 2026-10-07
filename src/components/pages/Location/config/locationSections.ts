@@ -216,6 +216,7 @@ export const LOCATION_TYPE_SECTION_CONFIG: Record<string, LocationSectionKey[]> 
     "hero",
     "essence",
     "stats",
+    "geo-map",
     "glance",
     "character",
     "stories",
