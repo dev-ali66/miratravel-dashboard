@@ -11,6 +11,17 @@ import { ArrowUpRight, Compass, MapPin, X } from "lucide-react"
 
 const BASE_STYLE = "https://basemaps.cartocdn.com/gl/positron-gl-style/style.json"
 
+if (typeof window !== "undefined" && !(maplibregl as any).getWorkerUrl?.()) {
+  try {
+    const version = (maplibregl as any).getVersion?.() || "6.8.0"
+    ;(maplibregl as any).setWorkerUrl(
+      `https://unpkg.com/maplibre-gl@${version}/dist/maplibre-gl-worker.mjs`
+    )
+  } catch (e) {
+    // ignore
+  }
+}
+
 export type MapPinData = {
   id: string | number
   name: string
@@ -190,14 +201,15 @@ export function GeoMapPreview({ draft }: LocationPreviewSectionProps) {
   useEffect(() => {
     if (typeof window === "undefined" || !mapContainerRef.current) return
 
-    // Set canonical worker JS URL to avoid application/octet-stream MIME errors on production static servers
-    try {
-      const version = (maplibregl as any).getVersion?.() || "6.8.0"
-      ;(maplibregl as any).setWorkerUrl(
-        `https://unpkg.com/maplibre-gl@${version}/dist/maplibre-gl-worker.js`
-      )
-    } catch (e) {
-      // ignore
+    if (!(maplibregl as any).getWorkerUrl?.()) {
+      try {
+        const version = (maplibregl as any).getVersion?.() || "6.8.0"
+        ;(maplibregl as any).setWorkerUrl(
+          `https://unpkg.com/maplibre-gl@${version}/dist/maplibre-gl-worker.mjs`
+        )
+      } catch (e) {
+        // ignore
+      }
     }
 
     if (!mapRef.current) {

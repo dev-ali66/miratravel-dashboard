@@ -16,6 +16,17 @@ type Props = {
   onChange?: (lat: number, lng: number, zoom: number) => void
 }
 
+if (typeof window !== "undefined" && !(maplibregl as any).getWorkerUrl?.()) {
+  try {
+    const version = (maplibregl as any).getVersion?.() || "6.8.0"
+    ;(maplibregl as any).setWorkerUrl(
+      `https://unpkg.com/maplibre-gl@${version}/dist/maplibre-gl-worker.mjs`
+    )
+  } catch (e) {
+    // ignore
+  }
+}
+
 export default function MapLibrePreview({
   latitude,
   longitude,
@@ -137,14 +148,15 @@ export default function MapLibrePreview({
     if (!mapContainer.current) return
 
     if (!mapRef.current) {
-      // set canonical worker JS URL to avoid application/octet-stream MIME errors on production static servers
-      try {
-        const version = (maplibregl as any).getVersion?.() || "6.8.0"
-        ;(maplibregl as any).setWorkerUrl(
-          `https://unpkg.com/maplibre-gl@${version}/dist/maplibre-gl-worker.js`
-        )
-      } catch (e) {
-        // ignore failures to set worker URL
+      if (!(maplibregl as any).getWorkerUrl?.()) {
+        try {
+          const version = (maplibregl as any).getVersion?.() || "6.8.0"
+          ;(maplibregl as any).setWorkerUrl(
+            `https://unpkg.com/maplibre-gl@${version}/dist/maplibre-gl-worker.mjs`
+          )
+        } catch (e) {
+          // ignore
+        }
       }
 
       mapRef.current = new maplibregl.Map({
