@@ -137,33 +137,12 @@ export default function MapLibrePreview({
     if (!mapContainer.current) return
 
     if (!mapRef.current) {
-      // set worker url (prefer local Vite asset URL, fall back to CDN with a safe version)
+      // set canonical worker JS URL to avoid application/octet-stream MIME errors on production static servers
       try {
-        const hasGetWorkerUrl =
-          typeof (maplibregl as any).getWorkerUrl === "function"
-        const currentWorker = hasGetWorkerUrl
-          ? (maplibregl as any).getWorkerUrl()
-          : null
-        if (hasGetWorkerUrl && !currentWorker) {
-          if (
-            typeof maplibreWorkerUrl === "string" &&
-            maplibreWorkerUrl.length
-          ) {
-            try {
-              ;(maplibregl as any).setWorkerUrl(maplibreWorkerUrl)
-            } catch (err) {
-              // fall through to CDN fallback
-            }
-          }
-
-          // fallback to CDN if Vite asset not available
-          if (!(maplibregl as any).getWorkerUrl()) {
-            const version = "6.6.0"
-            ;(maplibregl as any).setWorkerUrl(
-              `https://unpkg.com/maplibre-gl@${version}/dist/maplibre-gl-worker.mjs`
-            )
-          }
-        }
+        const version = (maplibregl as any).getVersion?.() || "6.8.0"
+        ;(maplibregl as any).setWorkerUrl(
+          `https://unpkg.com/maplibre-gl@${version}/dist/maplibre-gl-worker.js`
+        )
       } catch (e) {
         // ignore failures to set worker URL
       }

@@ -190,27 +190,12 @@ export function GeoMapPreview({ draft }: LocationPreviewSectionProps) {
   useEffect(() => {
     if (typeof window === "undefined" || !mapContainerRef.current) return
 
+    // Set canonical worker JS URL to avoid application/octet-stream MIME errors on production static servers
     try {
-      const hasGetWorkerUrl =
-        typeof (maplibregl as any).getWorkerUrl === "function"
-      const currentWorker = hasGetWorkerUrl
-        ? (maplibregl as any).getWorkerUrl()
-        : null
-      if (hasGetWorkerUrl && !currentWorker) {
-        if (typeof maplibreWorkerUrl === "string" && maplibreWorkerUrl.length) {
-          try {
-            ;(maplibregl as any).setWorkerUrl(maplibreWorkerUrl)
-          } catch (err) {
-            // ignore
-          }
-        }
-        if (!(maplibregl as any).getWorkerUrl()) {
-          const version = "6.8.0"
-          ;(maplibregl as any).setWorkerUrl(
-            `https://unpkg.com/maplibre-gl@${version}/dist/maplibre-gl-worker.mjs`
-          )
-        }
-      }
+      const version = (maplibregl as any).getVersion?.() || "6.8.0"
+      ;(maplibregl as any).setWorkerUrl(
+        `https://unpkg.com/maplibre-gl@${version}/dist/maplibre-gl-worker.js`
+      )
     } catch (e) {
       // ignore
     }
