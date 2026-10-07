@@ -1,3 +1,4 @@
+import MapLibrePreview from "@/components/ui/MapLibrePreview"
 import { DynamicStyledField } from "@/components/pages/CMS/shared/FormControls"
 import { UniversalMultimediaForm } from "@/components/pages/CMS/shared/UniversalMultimediaForm"
 import { FormSection } from "../../shared/fields"
@@ -98,6 +99,31 @@ export function GeoMapForm({
           </h4>
 
           <div className="flex flex-col gap-3">
+            {/* Interactive Map Picker */}
+            <div className="flex flex-col gap-1.5 mb-2">
+              <div className="flex items-center justify-between">
+                <label className="text-xs font-medium text-foreground">
+                  Interactive Location Picker Map
+                </label>
+                <span className="text-[11px] text-muted-foreground">
+                  Click or drag marker to set coordinates automatically
+                </span>
+              </div>
+              <div className="h-64 w-full rounded-lg overflow-hidden border border-border/80 shadow-2xs relative">
+                <MapLibrePreview
+                  latitude={Number(geoData.geo?.latitude ?? geoData.latitude) || 41.1533}
+                  longitude={Number(geoData.geo?.longitude ?? geoData.longitude) || 20.1683}
+                  zoom={Number(geoData.geo?.mapZoom ?? geoData.mapZoom) || 4}
+                  draggable={true}
+                  onChange={(lat, lng, zoom) => {
+                    updateGeoField("latitude", Number(lat.toFixed(6)))
+                    updateGeoField("longitude", Number(lng.toFixed(6)))
+                    updateGeoField("mapZoom", Math.round(zoom))
+                  }}
+                />
+              </div>
+            </div>
+
             {/* Latitude */}
             <div className="flex flex-col gap-1.5">
               <label className="text-xs font-medium text-foreground">
