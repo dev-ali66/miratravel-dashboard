@@ -9,7 +9,7 @@ import type { LocationPreviewSectionProps } from "../../config/locationSections"
 import { useGetLocationPages } from "@/hooks/location/useGetLocation"
 import { ArrowUpRight, Compass, MapPin, X } from "lucide-react"
 
-const BASE_STYLE = "https://basemaps.cartocdn.com/gl/dark-matter-gl-style/style.json"
+const BASE_STYLE = "https://basemaps.cartocdn.com/gl/positron-gl-style/style.json"
 
 export type MapPinData = {
   id: string | number

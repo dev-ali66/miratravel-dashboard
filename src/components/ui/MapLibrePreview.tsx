@@ -109,7 +109,7 @@ export default function MapLibrePreview({
       mapRef.current = new maplibregl.Map({
         container: mapContainer.current,
         style:
-          "https://basemaps.cartocdn.com/gl/dark-matter-gl-style/style.json",
+          "https://basemaps.cartocdn.com/gl/positron-gl-style/style.json",
         center: [longitude || 0, latitude || 0],
         zoom: zoom ?? 6,
       })
