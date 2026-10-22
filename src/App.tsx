@@ -21,9 +21,11 @@ import { CmsEditorLayout } from "@/components/pages/CMS/CmsEditorLayout"
 import { TooltipProvider } from "@/components/ui/tooltip"
 import LocationPages from "./components/pages/Location"
 import { LocationEditorLayout } from "./components/pages/Location/LocationEditorLayout"
-// import { LocationPreview } from "./components/pages/Location/LocationPreview";
 import { LocationForm } from "./components/pages/Location/LocationForm"
-// import { LocationEditPage } from "./components/pages/Location/LocationEditPage";
+
+import ExperiencePages from "./components/pages/Experience"
+import { ExperienceEditorLayout } from "./components/pages/Experience/ExperienceEditorLayout"
+import { ExperienceForm } from "./components/pages/Experience/ExperienceForm"
 
 
 import JourneyPages from "./components/pages/Journey"
@@ -76,6 +78,8 @@ export function App() {
             <Route path="cms" element={<CMSPage />} />
             <Route path="journeys" element={<JourneyPages />} />
             <Route path="location" element={<LocationPages />} />
+            <Route path="experiences" element={<ExperiencePages />} />
+            <Route path="experience" element={<ExperiencePages />} />
             <Route path="stories" element={<StoriesPages />} />
             
             <Route path="iam" element={<IAMPage />} />
@@ -98,6 +102,11 @@ export function App() {
           <Route path="/locations" element={<LocationEditorLayout />}>
             <Route path="new" element={<LocationForm />} />
             <Route path=":id/:slug" element={<LocationForm />} />
+          </Route>
+
+          <Route path="/experiences" element={<ExperienceEditorLayout />}>
+            <Route path="new" element={<ExperienceForm />} />
+            <Route path=":id/:slug" element={<ExperienceForm />} />
           </Route>
 
           <Route path="/journeys" element={<JourneyEditorLayout />}>

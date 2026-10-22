@@ -50,6 +50,7 @@ const iconMap = {
   user: User,
   cms: FileText,
   locations: LocateIcon,
+  experiences: Sparkles,
   journeys: Compass,
   faq: HelpCircle,
   requests: Inbox,

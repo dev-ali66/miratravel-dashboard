@@ -25,6 +25,7 @@ export function RootLayout() {
         { href: "/cms", label: "CMS Pages", icon: "cms" },
         { href: "/journeys", label: "Journeys", icon: "journeys" as any },
         { href: "/location", label: "Locations", icon: "locations" },
+        { href: "/experiences", label: "Experiences", icon: "experiences" as any },
         { href: "/stories", label: "Stories", icon: "cms" as any },
       ],
     },

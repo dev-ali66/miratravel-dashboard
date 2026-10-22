@@ -13,7 +13,8 @@ export function normalizeHero(hero: any) {
     isCenter: safeHero.isCenter !== undefined ? Boolean(safeHero.isCenter) : emptyHero.isCenter,
     buttons: normalizeButtonsArray(safeHero.buttons ?? emptyHero.buttons),
     backgroundMultimedia: normalizeMultimedia(
-      safeHero.backgroundMultimedia ?? safeHero.multimedia ?? emptyHero.backgroundMultimedia
+      safeHero.backgroundMultimedia ?? safeHero.multimedia ?? emptyHero.backgroundMultimedia,
+      "video"
     ),
   }
 

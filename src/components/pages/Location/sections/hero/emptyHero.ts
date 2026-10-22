@@ -30,7 +30,7 @@ export const emptyHero = {
   isCenter: false,
   buttons: [],
   backgroundMultimedia: {
-    show: "color",
+    show: "video",
     image: {
       url: "",
       alt: "",
