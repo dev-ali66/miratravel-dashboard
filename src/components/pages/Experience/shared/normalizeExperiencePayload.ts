@@ -148,6 +148,11 @@ export function normalizeExperiencePayload(draft: Partial<ExperienceData>) {
     payload.price = null
   }
 
+  payload.currency =
+    safeDraft.currency && typeof safeDraft.currency === "string" && safeDraft.currency.trim()
+      ? safeDraft.currency.trim().toUpperCase()
+      : "EUR"
+
   if (safeDraft.priceType && safeDraft.priceType.trim()) {
     payload.priceType = safeDraft.priceType.trim()
   } else {

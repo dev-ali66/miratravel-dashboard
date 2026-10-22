@@ -7,6 +7,7 @@ export interface ExperienceData {
   slug?: string
   featured?: boolean
   price?: number | null
+  currency?: string | null
   priceType?: string | null
   parentId?: string | null
   parent?: {
@@ -78,3 +79,12 @@ export type ExperienceSectionKey =
   | "essence"
   | "faq"
   | "seo"
+
+export const EXPERIENCE_CURRENCY_OPTIONS = [
+  { label: "EUR (€ - Euro)", value: "EUR" },
+  { label: "USD ($ - US Dollar)", value: "USD" },
+  { label: "GBP (£ - British Pound)", value: "GBP" },
+  { label: "CHF (CHF - Swiss Franc)", value: "CHF" },
+  { label: "ALL (Lek - Albanian Lek)", value: "ALL" },
+]
+

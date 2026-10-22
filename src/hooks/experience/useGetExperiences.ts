@@ -28,15 +28,16 @@ export type ExperienceQueryParams = {
   parentId?: string
   featured?: boolean
   priceType?: string
+  currency?: string
   minPrice?: number
   maxPrice?: number
 }
 
 export function useGetExperiencePages(params: ExperienceQueryParams = {}) {
-  const { page = 1, limit = 12, search, parentId, featured, priceType, minPrice, maxPrice } = params
+  const { page = 1, limit = 12, search, parentId, featured, priceType, currency, minPrice, maxPrice } = params
 
   return useQuery({
-    queryKey: ["experience-pages", page, limit, search, parentId, featured, priceType, minPrice, maxPrice],
+    queryKey: ["experience-pages", page, limit, search, parentId, featured, priceType, currency, minPrice, maxPrice],
     queryFn: async () => {
       const res = await apiPrivate.get<GetExperiencesResponse>("/experiences", {
         params: {
@@ -46,6 +47,7 @@ export function useGetExperiencePages(params: ExperienceQueryParams = {}) {
           ...(parentId ? { parentId } : {}),
           ...(featured !== undefined ? { featured } : {}),
           ...(priceType ? { priceType } : {}),
+          ...(currency ? { currency } : {}),
           ...(minPrice !== undefined ? { minPrice } : {}),
           ...(maxPrice !== undefined ? { maxPrice } : {}),
         },

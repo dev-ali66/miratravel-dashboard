@@ -195,6 +195,7 @@ export const emptyExperience: ExperienceData = {
   slug: "",
   featured: false,
   price: null,
+  currency: "EUR",
   priceType: "PER_PERSON",
   parentId: null,
   parent: null,

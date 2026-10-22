@@ -3,9 +3,10 @@ import { ParentLocationSelect } from "@/components/pages/Location/shared/ParentL
 import { DynamicStyledField } from "@/components/pages/CMS/shared/FormControls"
 import { FormSection } from "@/components/pages/Location/shared/fields"
 import type { ExperienceFormSectionProps } from "../../config/experienceSections"
+import { EXPERIENCE_CURRENCY_OPTIONS } from "../../experienceTypes"
 
 const PRICE_TYPE_OPTIONS = [
-  { label: "Per Person (EUR / Person)", value: "PER_PERSON" },
+  { label: "Per Person", value: "PER_PERSON" },
   { label: "Per Group (Fixed Group Rate)", value: "PER_GROUP" },
   { label: "Fixed Experience Price", value: "FIXED" },
   { label: "Starting From (Base Rate)", value: "STARTING_FROM" },
@@ -26,6 +27,10 @@ export function BasicInfoForm({
       { label: "Select Price Type...", value: "" },
       ...PRICE_TYPE_OPTIONS,
     ]
+  }, [])
+
+  const currencyOptions = useMemo(() => {
+    return EXPERIENCE_CURRENCY_OPTIONS
   }, [])
 
   return (
@@ -59,11 +64,11 @@ export function BasicInfoForm({
           onChange={(val) => updateField("slug", val)}
         />
 
-        {/* Price & Price Type Row */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+        {/* Price, Currency & Price Type Row */}
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
           <DynamicStyledField
             type="number"
-            label="Price (€ EUR)"
+            label="Price"
             fieldName="price"
             placeholder="e.g. 250"
             enableStyle={false}
@@ -72,6 +77,16 @@ export function BasicInfoForm({
               const num = val === "" ? null : Number(val)
               updateField("price", num)
             }}
+          />
+
+          <DynamicStyledField
+            type="select"
+            label="Currency"
+            fieldName="currency"
+            enableStyle={false}
+            value={draft.currency || "EUR"}
+            options={currencyOptions}
+            onChange={(val) => updateField("currency", val || "EUR")}
           />
 
           <DynamicStyledField

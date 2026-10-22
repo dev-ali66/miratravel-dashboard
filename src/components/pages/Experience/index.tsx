@@ -29,6 +29,7 @@ import { Button } from "@/components/ui/button"
 import { toast } from "sonner"
 import { ParentLocationSelect } from "@/components/pages/Location/shared/ParentLocationSelect"
 import { UniversalMultimediaPreview } from "@/components/pages/CMS/Home/shared/preview/UniversalMultimediaPreview"
+import { EXPERIENCE_CURRENCY_OPTIONS } from "./experienceTypes"
 
 const PAGE_SIZE = 12
 
@@ -37,6 +38,7 @@ export default function ExperiencePages() {
   const [searchInput, setSearchInput] = useState("")
   const [search, setSearch] = useState("")
   const [parentId, setParentId] = useState<string | null>(null)
+  const [currency, setCurrency] = useState<string>("")
   const [featured, setFeatured] = useState<boolean | undefined>(undefined)
 
   // Debounce search box
@@ -54,6 +56,7 @@ export default function ExperiencePages() {
     limit: PAGE_SIZE,
     search: search || undefined,
     parentId: parentId || undefined,
+    currency: currency || undefined,
     featured,
   })
 
@@ -89,6 +92,22 @@ export default function ExperiencePages() {
   const formatPriceType = (type?: string | null) => {
     if (!type) return ""
     return type.replace(/_/g, " ").toLowerCase().replace(/\b\w/g, (c) => c.toUpperCase())
+  }
+
+  const formatCurrencySymbol = (cur?: string | null) => {
+    switch (cur?.toUpperCase()) {
+      case "USD":
+        return "$"
+      case "GBP":
+        return "£"
+      case "CHF":
+        return "CHF "
+      case "ALL":
+        return "Lek "
+      case "EUR":
+      default:
+        return "€"
+    }
   }
 
   return (
@@ -146,6 +165,23 @@ export default function ExperiencePages() {
             }}
           />
         </div>
+
+        {/* Currency Filter */}
+        <select
+          value={currency}
+          onChange={(e) => {
+            setCurrency(e.target.value)
+            setPage(1)
+          }}
+          className="rounded-xl border border-border/70 bg-card px-3 py-2 text-xs md:text-sm text-foreground outline-none focus:border-primary focus:ring-1 focus:ring-primary md:w-40 cursor-pointer"
+        >
+          <option value="">All Currencies</option>
+          {EXPERIENCE_CURRENCY_OPTIONS.map((c) => (
+            <option key={c.value} value={c.value}>
+              {c.label}
+            </option>
+          ))}
+        </select>
 
         {/* Featured Filter Toggle */}
         <button
@@ -249,7 +285,8 @@ export default function ExperiencePages() {
                       <DollarSign className="h-3.5 w-3.5 text-emerald-600 dark:text-emerald-400" />
                       {exp.price !== null && exp.price !== undefined ? (
                         <span>
-                          €{Number(exp.price).toLocaleString()}
+                          {formatCurrencySymbol(exp.currency)}
+                          {Number(exp.price).toLocaleString()}
                           {exp.priceType && (
                             <span className="text-[10px] font-normal text-muted-foreground ml-1">
                               ({formatPriceType(exp.priceType)})
@@ -280,18 +317,19 @@ export default function ExperiencePages() {
           <Sparkles className="h-10 w-10 text-muted-foreground/60 mb-3" />
           <h3 className="text-base font-semibold text-foreground">No experiences found</h3>
           <p className="text-xs text-muted-foreground max-w-sm mt-1 mb-4">
-            {search || parentId || featured
+            {search || parentId || currency || featured
               ? "No experiences match your active filters. Try adjusting your search query or clear filters."
               : "Start by creating your first luxury experience, private excursion, or tasting session."}
           </p>
 
-          {search || parentId || featured ? (
+          {search || parentId || currency || featured ? (
             <button
               type="button"
               onClick={() => {
                 setSearchInput("")
                 setSearch("")
                 setParentId(null)
+                setCurrency("")
                 setFeatured(undefined)
                 setPage(1)
               }}
