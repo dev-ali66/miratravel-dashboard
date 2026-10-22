@@ -21,9 +21,7 @@ export function ExperienceForm() {
   const { updateField, save, isEditMode, isLoading, isError, isSaving } =
     useExperiencePage(id, slug)
 
-  const [openSections, setOpenSections] = useState<Record<string, boolean>>({
-    "basic-info": true,
-  })
+  const [openSections, setOpenSections] = useState<Record<string, boolean>>({})
 
   useEffect(() => {
     const handleActiveSectionChange = (e: Event) => {
@@ -47,21 +45,6 @@ export function ExperienceForm() {
     }
   }, [isEditMode, resetDraft])
 
-  const toggleSection = (sectionKey: string) => {
-    setOpenSections((prev) => ({
-      ...prev,
-      [sectionKey]: !prev[sectionKey],
-    }))
-  }
-
-  const handleConsoleData = () => {
-    console.group("🧭 [Experience Form] Current Draft & Output Payload")
-    console.log("Raw Draft:", draft)
-    console.log("Normalized Output Payload (Without Slug):", normalizeExperiencePayload(draft || {}))
-    console.groupEnd()
-    toast.info("Experience output payload printed to browser console (F12).")
-  }
-
   if (isEditMode && isLoading) {
     return (
       <MiraLoader text="Loading experience editor data..." className="min-h-[400px] py-16" />
@@ -70,79 +53,112 @@ export function ExperienceForm() {
 
   if (isEditMode && isError) {
     return (
-      <div className="rounded-xl border border-destructive/20 bg-destructive/5 p-6 text-center">
-        <p className="text-sm font-semibold text-destructive">
-          Failed to load experience details.
-        </p>
-        <p className="text-xs text-muted-foreground mt-1">
-          Please check your network connection or verify that the experience ID exists.
-        </p>
+      <div className="p-6">
+        <div className="rounded-xl border border-destructive/30 bg-destructive/5 p-4 text-center">
+          <p className="text-sm font-semibold text-destructive">
+            Failed to load experience details.
+          </p>
+          <p className="mt-1 text-xs text-muted-foreground">
+            Please check your network connection or verify that the experience ID exists.
+          </p>
+        </div>
       </div>
     )
+  }
+
+  if (!draft) {
+    return (
+      <div className="flex min-h-[400px] items-center justify-center">
+        <Loader2 className="h-5 w-5 animate-spin text-muted-foreground" />
+      </div>
+    )
+  }
+
+  const toggleSection = (section: string) => {
+    setOpenSections((current) => {
+      const isCurrentlyOpen = !!current[section]
+      return isCurrentlyOpen ? {} : { [section]: true }
+    })
   }
 
   const sectionsToRender = getExperienceSections()
 
   return (
-    <div className="flex flex-col gap-6">
-      {/* Top Action Header Bar */}
-      <div className="flex items-center justify-between gap-3 border-b border-border/70 pb-4">
-        <div>
-          <h2 className="text-base font-bold text-foreground">
-            {isEditMode ? "Edit Experience" : "Create New Experience"}
-          </h2>
-          <p className="text-xs text-muted-foreground">
-            Configure editorial narrative, pricing, and visual media.
-          </p>
-        </div>
+    <div className="flex min-h-full flex-col">
+      {/* =================================================
+                HEADER (Sticky matching LocationForm)
+            ================================================= */}
+      <div className="sticky top-0 z-20 border-b border-border/60 bg-card/95 px-5 py-4 backdrop-blur">
+        <div className="flex items-center justify-between gap-4">
+          <div className="min-w-0">
+            <p className="text-[10px] font-medium tracking-[0.2em] text-muted-foreground uppercase">
+              Experience
+            </p>
 
-        <div className="flex items-center gap-2">
-          {/* Console Data Log Button */}
-          <button
-            type="button"
-            onClick={handleConsoleData}
-            title="Inspect current draft in browser console"
-            className="inline-flex items-center gap-1.5 rounded-lg border border-border/70 bg-card px-2.5 py-1.5 text-xs font-medium text-muted-foreground hover:bg-muted/50 hover:text-foreground transition-colors cursor-pointer"
-          >
-            <Terminal className="h-3.5 w-3.5" />
-            <span className="hidden sm:inline">Console Data</span>
-          </button>
+            <h2 className="mt-1 truncate text-base font-semibold">
+              {isEditMode ? draft.name || "Edit Experience" : "Add Experience"}
+            </h2>
+          </div>
 
-          {/* Save Button */}
-          <button
-            type="button"
-            onClick={save}
-            disabled={isSaving}
-            className="inline-flex items-center gap-1.5 rounded-lg bg-primary px-3.5 py-1.5 text-xs font-semibold text-primary-foreground shadow-xs hover:bg-primary/90 disabled:opacity-50 transition-colors cursor-pointer"
-          >
-            {isSaving ? (
-              <Loader2 className="h-3.5 w-3.5 animate-spin" />
-            ) : (
-              <Save className="h-3.5 w-3.5" />
-            )}
-            <span>{isSaving ? "Saving..." : isEditMode ? "Save Changes" : "Create Experience"}</span>
-          </button>
+          <div className="flex items-center gap-2">
+            <button
+              type="button"
+              onClick={() => {
+                const cleanPayload = normalizeExperiencePayload(draft)
+                if (!isEditMode) {
+                  delete (cleanPayload as any).id
+                  if (!cleanPayload.slug) delete (cleanPayload as any).slug
+                }
+                console.log("🧭 [CLEAN API PAYLOAD SENT TO BACKEND]:", cleanPayload)
+                toast.info("Clean experience payload logged to browser console (F12)")
+              }}
+              className="flex shrink-0 items-center gap-1.5 rounded-lg border border-border/80 bg-background px-3 py-2 text-xs font-medium text-foreground transition hover:bg-muted cursor-pointer"
+              title="Inspect clean experience payload sent to backend API in browser console (F12)"
+            >
+              <Terminal className="h-3.5 w-3.5 text-primary" />
+              Console Data
+            </button>
+
+            <button
+              type="button"
+              onClick={save}
+              disabled={isSaving}
+              className="flex shrink-0 items-center gap-2 rounded-lg bg-primary px-4 py-2 text-xs font-medium text-primary-foreground transition hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-50 cursor-pointer"
+            >
+              {isSaving ? (
+                <Loader2 className="h-4 w-4 animate-spin" />
+              ) : (
+                <Save className="h-4 w-4" />
+              )}
+
+              {isEditMode ? "Update" : "Create"}
+            </button>
+          </div>
         </div>
       </div>
 
-      {/* Render Dynamic Section Accordions */}
-      <div className="flex flex-col gap-4">
-        {sectionsToRender.map((sectionKey, index) => {
-          const entry = experienceSectionRegistry[sectionKey]
-          if (!entry || !entry.form) return null
+      {/* =================================================
+                SECTIONS — Continuous divide-y accordion layout
+            ================================================= */}
+      <div className="flex-1 divide-y divide-border/60">
+        {sectionsToRender.map((key, index) => {
+          const sectionEntry = experienceSectionRegistry[key]
+          const SectionForm = sectionEntry?.form
 
-          const SectionForm = entry.form
-          const sectionNum = String(index + 1).padStart(2, "0")
+          if (!SectionForm) return null
+
+          const sectionNumber = String(index + 1).padStart(2, "0")
 
           return (
-            <SectionForm
-              key={sectionKey}
-              draft={draft || emptyExperience}
-              updateField={updateField}
-              openSections={openSections}
-              toggleSection={toggleSection}
-              sectionNumber={sectionNum}
-            />
+            <div key={key} data-section={key} className="transition-all">
+              <SectionForm
+                draft={draft}
+                updateField={updateField}
+                openSections={openSections}
+                toggleSection={toggleSection}
+                sectionNumber={sectionNumber}
+              />
+            </div>
           )
         })}
       </div>
@@ -151,3 +167,4 @@ export function ExperienceForm() {
 }
 
 export default ExperienceForm
+
