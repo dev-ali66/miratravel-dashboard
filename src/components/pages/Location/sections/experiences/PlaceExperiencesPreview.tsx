@@ -1,10 +1,14 @@
 import { useState } from "react"
-import { MapPin, ChevronDown, Compass, ArrowRight } from "lucide-react"
+import { MapPin, ChevronDown, Compass, ArrowRight, Loader2, Sparkles } from "lucide-react"
 
 import type { LocationPreviewSectionProps } from "../../config/locationSections"
 import { DynamicStyledTextPreview } from "@/components/pages/CMS/shared/DynamicStyledTextPreview"
 import { UniversalMultimediaPreview } from "@/components/pages/CMS/Home/shared/preview/UniversalMultimediaPreview"
-import { useGetLocationById } from "@/hooks/location/useGetLocationById"
+import { useGetExperienceById } from "@/hooks/experience/useGetExperienceById"
+import {
+  EXPERIENCE_TYPE_CONFIG,
+  type ExperienceType,
+} from "@/components/pages/Experience/experienceTypes"
 
 const stripHtml = (html: string): string => {
   if (!html) return ""
@@ -18,7 +22,7 @@ const getStr = (val: any): string => {
   return String(val)
 }
 
-function unwrapLocationData(raw: any) {
+function unwrapExperienceData(raw: any) {
   if (!raw) return null
   let data = raw
   if (data?.data !== undefined) {
@@ -33,60 +37,71 @@ function unwrapLocationData(raw: any) {
   return data
 }
 
-function resolveUniversalMultimedia(locData: any) {
-  if (!locData) {
+function resolveExperienceMultimedia(expData: any) {
+  if (!expData) {
     return {
       show: "color",
       color: { color: "#FAF7F2", opacity: 100 },
     }
   }
 
-  // 1. Direct backgroundMultimedia / imageMultimedia object from locData hero, essence, or root
-  const locMedia =
-    locData?.hero?.backgroundMultimedia ||
-    locData?.backgroundMultimedia ||
-    locData?.essence?.imageMultimedia ||
-    locData?.essence?.backgroundMultimedia
-
+  // 1. Hero backgroundMultimedia
+  const heroMedia = expData?.hero?.backgroundMultimedia
   if (
-    locMedia &&
-    typeof locMedia === "object" &&
-    (locMedia.show || locMedia.image?.url || locMedia.video?.url || locMedia.color?.color)
+    heroMedia &&
+    typeof heroMedia === "object" &&
+    (heroMedia.show || heroMedia.image?.url || heroMedia.video?.url)
   ) {
-    return locMedia
+    return heroMedia
   }
 
-  // 2. Video fallback
-  const videoUrl =
-    locData?.hero?.video?.url ||
-    (typeof locData?.hero?.video === "string" ? locData?.hero?.video : null) ||
-    locData?.video?.url ||
-    (typeof locData?.video === "string" ? locData?.video : null) ||
-    ""
+  // 2. The Experience section media
+  const theExpMedia = expData?.theExperience?.imageMultimedia
+  if (
+    theExpMedia &&
+    typeof theExpMedia === "object" &&
+    (theExpMedia.show || theExpMedia.image?.url || theExpMedia.video?.url)
+  ) {
+    return theExpMedia
+  }
 
+  // 3. Video URL fallback
+  const videoUrl =
+    expData?.hero?.video?.url ||
+    (typeof expData?.hero?.video === "string" ? expData?.hero?.video : null) ||
+    ""
   if (videoUrl) {
     return {
       show: "video",
       color: { color: "#FAF7F2", opacity: 100 },
-      video: { url: videoUrl, alt: locData?.name || "Experience Video", fit: "cover", autoplay: true, loop: true, muted: true },
+      video: {
+        url: videoUrl,
+        alt: expData?.name || "Experience Video",
+        fit: "cover",
+        autoplay: true,
+        loop: true,
+        muted: true,
+      },
       image: { url: "", alt: "" },
     }
   }
 
-  // 3. String image URL resolution fallback
+  // 4. Image URL fallback
   const imageUrl =
-    locData?.hero?.image?.url ||
-    (typeof locData?.hero?.image === "string" ? locData?.hero?.image : null) ||
-    locData?.card?.background_image?.url ||
-    (typeof locData?.card?.background_image === "string" ? locData?.card?.background_image : null) ||
-    locData?.image ||
+    expData?.hero?.image?.url ||
+    (typeof expData?.hero?.image === "string" ? expData?.hero?.image : null) ||
+    expData?.image ||
     ""
-
   if (imageUrl) {
     return {
       show: "image",
       color: { color: "#FAF7F2", opacity: 100 },
-      image: { url: imageUrl, alt: locData?.name || "Experience Media", opacity: 100, fit: "cover" },
+      image: {
+        url: imageUrl,
+        alt: expData?.name || "Experience Media",
+        opacity: 100,
+        fit: "cover",
+      },
       video: { url: "", alt: "" },
     }
   }
@@ -99,14 +114,36 @@ function resolveUniversalMultimedia(locData: any) {
   }
 }
 
-function FeaturedExperienceBanner({ locationId }: { locationId: string }) {
-  const { data: rawLocData } = useGetLocationById(locationId)
-  const locData = unwrapLocationData(rawLocData)
+function FeaturedExperienceBanner({ experienceId }: { experienceId: string }) {
+  const { data: rawExpData, isLoading } = useGetExperienceById(experienceId)
+  const expData = unwrapExperienceData(rawExpData)
 
-  const title = getStr(locData?.hero?.title) || locData?.name || "Featured Experience"
-  const subtitle = getStr(locData?.hero?.subtitle) || getStr(locData?.essence?.title) || "Curated ways to discover the wild beauty and heritage."
-  const category = getStr(locData?.type) || getStr(locData?.locationType) || getStr(locData?.category) || "FEATURED"
-  const multimedia = resolveUniversalMultimedia(locData)
+  if (isLoading) {
+    return (
+      <div className="w-full pt-6 md:pt-8">
+        <div className="h-[340px] md:h-[380px] lg:h-[420px] w-full rounded-[8px] bg-neutral-200 dark:bg-neutral-800 animate-pulse flex items-center justify-center">
+          <Loader2 className="h-6 w-6 animate-spin text-neutral-400" />
+        </div>
+      </div>
+    )
+  }
+
+  if (!expData) return null
+
+  const title = expData?.name || getStr(expData?.hero?.title) || "Featured Experience"
+  const subtitle =
+    expData?.subtitle ||
+    expData?.summary ||
+    getStr(expData?.hero?.subtitle) ||
+    "Curated ways to discover the wild beauty and heritage."
+
+  const typeConfig = expData?.primaryType
+    ? EXPERIENCE_TYPE_CONFIG[expData.primaryType as ExperienceType]
+    : null
+  const category = typeConfig?.label || expData?.primaryType || "FEATURED"
+  const multimedia = resolveExperienceMultimedia(expData)
+  const destinationName =
+    expData?.place?.name || expData?.region?.name || expData?.country?.name
 
   return (
     <div className="w-full pt-6 md:pt-8">
@@ -122,10 +159,23 @@ function FeaturedExperienceBanner({ locationId }: { locationId: string }) {
 
         {/* Content */}
         <div className="relative z-20 flex flex-col items-start gap-3 max-w-2xl">
-          <div className="flex flex-wrap items-center gap-3">
+          <div className="flex flex-wrap items-center gap-2">
             {category && (
               <div className="inline-flex items-center rounded-full bg-[#182d09] px-3 py-1 text-[11px] font-semibold uppercase text-neutral-200 tracking-wider">
                 {category}
+              </div>
+            )}
+
+            {destinationName && (
+              <div className="inline-flex items-center gap-1 rounded-full bg-white/20 backdrop-blur-xs px-2.5 py-0.5 text-[11px] font-medium text-white">
+                <MapPin className="h-3 w-3" />
+                <span>{destinationName}</span>
+              </div>
+            )}
+
+            {expData?.price !== undefined && expData?.price !== null && (
+              <div className="inline-flex items-center rounded-full bg-amber-500/20 text-amber-300 border border-amber-500/30 px-2.5 py-0.5 text-[11px] font-semibold">
+                €{Number(expData.price).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
               </div>
             )}
           </div>
@@ -146,7 +196,7 @@ function FeaturedExperienceBanner({ locationId }: { locationId: string }) {
 
           <div className="mt-2 inline-flex items-center gap-2 group/btn cursor-pointer transition-opacity hover:opacity-90">
             <span className="text-sm font-semibold text-neutral-100">
-              Meer info
+              Explore Experience
             </span>
             <ArrowRight className="h-4 w-4 text-neutral-200 transition-transform group-hover/btn:translate-x-1.5" />
           </div>
@@ -156,29 +206,43 @@ function FeaturedExperienceBanner({ locationId }: { locationId: string }) {
   )
 }
 
-function PreviewExperienceCard({ locationId }: { locationId: string }) {
+function PreviewExperienceCard({ experienceId }: { experienceId: string }) {
   const [isExpanded, setIsExpanded] = useState(false)
-  const { data: rawLocData } = useGetLocationById(locationId)
-  const locData = unwrapLocationData(rawLocData)
+  const { data: rawExpData, isLoading } = useGetExperienceById(experienceId)
+  const expData = unwrapExperienceData(rawExpData)
 
-  const title = locData?.name || getStr(locData?.hero?.title) || "Curated Experience"
-  const subtitle = getStr(locData?.hero?.subtitle) || getStr(locData?.essence?.title) || "Coastal & Heritage Exploration"
-  
-  const rawParagraphs = locData?.essence?.paragraphs
-  const paragraphsText = Array.isArray(rawParagraphs)
-    ? rawParagraphs.map(getStr).filter(Boolean).join(" ")
-    : getStr(rawParagraphs)
+  if (isLoading) {
+    return (
+      <div className="w-full rounded-[14px] bg-white border border-neutral-200 p-6 animate-pulse">
+        <div className="aspect-[4/3] w-full rounded-lg bg-neutral-200 mb-4" />
+        <div className="h-4 bg-neutral-200 rounded w-3/4 mb-2" />
+        <div className="h-3 bg-neutral-200 rounded w-1/2" />
+      </div>
+    )
+  }
+
+  if (!expData) return null
+
+  const title = expData?.name || getStr(expData?.hero?.title) || "Curated Experience"
+  const subtitle =
+    expData?.subtitle ||
+    expData?.summary ||
+    getStr(expData?.hero?.subtitle) ||
+    "Authentic local encounter"
 
   const description =
-    getStr(locData?.hero?.description) ||
-    paragraphsText ||
-    getStr(locData?.overview) ||
-    getStr(locData?.description) ||
-    "Discover the unique beauty, rich history, and authentic experiences of this location."
+    expData?.summary ||
+    getStr(expData?.theExperience?.narrative) ||
+    getStr(expData?.hero?.description) ||
+    "Discover the unique beauty, rich history, and authentic experiences curated by MIRA."
 
-  const category = getStr(locData?.type) || getStr(locData?.locationType) || getStr(locData?.category) || "DISCOVERY"
-  const locationName = locData?.name || "Experience"
-  const multimedia = resolveUniversalMultimedia(locData)
+  const typeConfig = expData?.primaryType
+    ? EXPERIENCE_TYPE_CONFIG[expData.primaryType as ExperienceType]
+    : null
+  const category = typeConfig?.label || expData?.primaryType || "EXPERIENCE"
+  const locationName =
+    expData?.place?.name || expData?.region?.name || expData?.country?.name || "Experience"
+  const multimedia = resolveExperienceMultimedia(expData)
 
   const toggleExpand = (e?: React.MouseEvent) => {
     e?.stopPropagation()
@@ -201,12 +265,18 @@ function PreviewExperienceCard({ locationId }: { locationId: string }) {
         {/* Ambient Overlay */}
         <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-transparent pointer-events-none z-10" />
 
-        {/* Category Pill Badge (Top Left Corner Tag - Location Type) */}
+        {/* Category Pill Badge */}
         {category && (
-          <div className="absolute left-3 top-3 z-20 inline-flex items-center rounded-full bg-[#2C5F8A] px-2.5 py-1 shadow-2xs transition-transform duration-300 group-hover:scale-105">
+          <div className="absolute left-3 top-3 z-20 inline-flex items-center rounded-full bg-[#182d09] px-2.5 py-1 shadow-2xs transition-transform duration-300 group-hover:scale-105">
             <span className="text-[10px] md:text-xs font-semibold uppercase leading-4 tracking-wider text-neutral-100">
               {category}
             </span>
+          </div>
+        )}
+
+        {expData?.price !== undefined && expData?.price !== null && (
+          <div className="absolute right-3 top-3 z-20 inline-flex items-center rounded-md bg-black/60 backdrop-blur-xs px-2 py-0.5 text-[10px] font-semibold text-white">
+            €{Number(expData.price).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
           </div>
         )}
       </div>
@@ -274,22 +344,22 @@ function PreviewExperienceCard({ locationId }: { locationId: string }) {
 export function PlaceExperiencesPreview({ draft }: LocationPreviewSectionProps) {
   if (!draft) return null
 
-  const expData = draft.experiences || draft.experience || {}
-  const defaultLocation = draft.name ? `${draft.name}, ALBANIA` : "DESTINATION"
-  const locationTag = getStr(expData.location) || defaultLocation
-  const seasonInfoStr = getStr(expData.seasonInfo)
-  const seasonLocationStr = getStr(expData.seasonLocation)
-
-  // Pure array of string IDs: string[]
-  const rawItems: any[] = Array.isArray(expData.items)
-    ? expData.items
-    : Array.isArray(expData.cards)
-    ? expData.cards
+  // Support both pure string[] array and legacy object { items: string[] }
+  const rawData: any = draft.experience ?? (draft as any).experiences ?? []
+  const rawItems: any[] = Array.isArray(rawData)
+    ? rawData
+    : Array.isArray(rawData?.items)
+    ? rawData.items
+    : Array.isArray(rawData?.cards)
+    ? rawData.cards
     : []
 
   const itemIds: string[] = rawItems
-    .map((it: any) => (typeof it === "string" ? it : it?.locationId || it?.id))
+    .map((it: any) => (typeof it === "string" ? it : it?.id || it?.experienceId))
     .filter((id): id is string => Boolean(id) && typeof id === "string")
+
+  const defaultLocation = draft.name ? `${draft.name}, ALBANIA` : "DESTINATION"
+  const locationTag = defaultLocation
 
   const featuredId = itemIds[0] ?? null
   const gridIds = itemIds.length > 1 ? itemIds.slice(1) : []
@@ -299,13 +369,6 @@ export function PlaceExperiencesPreview({ draft }: LocationPreviewSectionProps) 
 
   return (
     <section className="relative w-full py-8 md:py-12 lg:py-14 overflow-hidden">
-      {/* Background Media */}
-      <UniversalMultimediaPreview
-        multimedia={expData.backgroundMultimedia}
-        fallbackColor="#F1EEE5"
-        mode="background"
-      />
-
       <div className="container mx-auto px-4 lg:px-6 relative z-10">
         <div className="mx-auto flex w-full flex-col items-center">
           {/* Header */}
@@ -319,19 +382,13 @@ export function PlaceExperiencesPreview({ draft }: LocationPreviewSectionProps) 
 
             {/* Title & Subtitle Row */}
             <div className="flex w-full flex-col lg:flex-row items-start lg:items-end justify-between gap-4">
-              <DynamicStyledTextPreview
-                data={expData.title}
-                fallbackColor="#182d09"
-                as="h2"
-                className="text-2xl md:text-3xl lg:text-4xl font-semibold font-heading text-[#182d09]"
-              />
+              <h2 className="text-2xl md:text-3xl lg:text-4xl font-semibold font-heading text-[#182d09]">
+                Curated Experiences
+              </h2>
 
-              <DynamicStyledTextPreview
-                data={expData.description}
-                fallbackColor="#565e69"
-                as="p"
-                className="w-full lg:w-[392px] text-xs md:text-sm font-normal text-neutral-600 leading-relaxed"
-              />
+              <p className="w-full lg:w-[392px] text-xs md:text-sm font-normal text-neutral-600 leading-relaxed">
+                Curated ways to discover the wild beauty and heritage — handpicked experiences across culture, nature, and active adventures.
+              </p>
             </div>
 
             {/* Divider Line */}
@@ -341,20 +398,22 @@ export function PlaceExperiencesPreview({ draft }: LocationPreviewSectionProps) 
           </div>
 
           {/* Featured Experience Banner (Item 0 ID) */}
-          {featuredId && <FeaturedExperienceBanner locationId={featuredId} />}
+          {featuredId && <FeaturedExperienceBanner experienceId={featuredId} />}
 
           {/* Experience Cards Grid (Items 1+ IDs) */}
           <div className="w-full pt-6 md:pt-8 lg:pt-10">
             {gridIds.length === 0 && !featuredId ? (
               <div className="p-8 text-center rounded-xl border border-dashed border-neutral-300/80 bg-white/50">
-                <p className="text-xs text-neutral-500 italic">
-                  No experience location IDs added yet. Pick location IDs in the form section.
+                <Sparkles className="h-8 w-8 text-neutral-400 mx-auto mb-2" />
+                <p className="text-sm font-medium text-neutral-700">No experiences linked yet</p>
+                <p className="text-xs text-neutral-500 mt-1">
+                  Search and connect experiences from the Experience catalogue in the form editor.
                 </p>
               </div>
             ) : (
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 items-start">
                 {visibleGridIds.map((id) => (
-                  <PreviewExperienceCard key={id} locationId={id} />
+                  <PreviewExperienceCard key={id} experienceId={id} />
                 ))}
               </div>
             )}
@@ -367,25 +426,8 @@ export function PlaceExperiencesPreview({ draft }: LocationPreviewSectionProps) 
                   onClick={() => setShowAll(!showAll)}
                   className="rounded bg-[#af6348] px-6 py-2.5 text-xs md:text-sm font-semibold text-white transition hover:bg-[#9c553d] cursor-pointer shadow-2xs"
                 >
-                  {showAll ? "Show Less" : "Load More"}
+                  {showAll ? "Show Less" : `Load More (${gridIds.length - 3})`}
                 </button>
-              </div>
-            )}
-
-            {/* Bottom Season Info Bar */}
-            {(Boolean(seasonInfoStr) || Boolean(seasonLocationStr)) && (
-              <div className="mt-10 pt-6 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 border-t border-neutral-300/60 text-xs text-neutral-600">
-                {Boolean(seasonInfoStr) && (
-                  <p className="max-w-md text-xs md:text-sm leading-relaxed text-neutral-600">
-                    {seasonInfoStr}
-                  </p>
-                )}
-                {Boolean(seasonLocationStr) && (
-                  <div className="inline-flex items-center gap-1.5 font-semibold text-[#af6348]">
-                    <MapPin className="h-3.5 w-3.5" />
-                    <span>{seasonLocationStr}</span>
-                  </div>
-                )}
               </div>
             )}
           </div>
@@ -394,4 +436,7 @@ export function PlaceExperiencesPreview({ draft }: LocationPreviewSectionProps) 
     </section>
   )
 }
+
+export default PlaceExperiencesPreview
+
 

@@ -3,73 +3,136 @@ import {
   Trash2,
   ChevronDown,
   ChevronUp,
-  Layers,
+  Sparkles,
   Search,
   Check,
   X,
   Loader2,
   MapPin,
   Star,
+  Plus,
+  Compass,
 } from "lucide-react"
 
 import type { LocationFormSectionProps } from "../../config/locationSections"
-import { DynamicStyledField } from "@/components/pages/CMS/shared/FormControls"
-import { UniversalMultimediaForm } from "@/components/pages/CMS/shared/UniversalMultimediaForm"
 import { FormSection } from "../../shared/fields"
-import { useSearchLocations, type LocationSearchItem } from "@/hooks/location/useGetLocation"
-import { useGetLocationById } from "@/hooks/location/useGetLocationById"
+import { useSearchExperiences, type ExperienceSearchItem } from "@/hooks/experience/useGetExperiences"
+import { useGetExperienceById } from "@/hooks/experience/useGetExperienceById"
+import {
+  EXPERIENCE_TYPE_CONFIG,
+  type ExperienceType,
+} from "@/components/pages/Experience/experienceTypes"
+import { cn } from "@/lib/utils"
 
-function LocationItemRow({
-  locationId,
+function unwrapExperienceData(raw: any) {
+  if (!raw) return null
+  let data = raw
+  if (data?.data !== undefined) {
+    data = data.data
+  }
+  if (data?.data !== undefined && !Array.isArray(data)) {
+    data = data.data
+  }
+  if (Array.isArray(data)) {
+    return data[0] || null
+  }
+  return data
+}
+
+function ExperienceItemRow({
+  experienceId,
   index,
   total,
   onMove,
   onRemove,
 }: {
-  locationId: string
+  experienceId: string
   index: number
   total: number
   onMove: (idx: number, dir: "up" | "down") => void
   onRemove: (idx: number) => void
 }) {
-  const { data: rawLocData } = useGetLocationById(locationId)
-  const locData = rawLocData?.data || rawLocData
+  const { data: rawExpData, isLoading } = useGetExperienceById(experienceId)
+  const expData = unwrapExperienceData(rawExpData)
+
   const isFeatured = index === 0
-  const name = locData?.name || `Location (${locationId.slice(-8)})`
+  const name = expData?.name || `Experience (${experienceId.slice(-8)})`
+  const typeConfig = expData?.primaryType
+    ? EXPERIENCE_TYPE_CONFIG[expData.primaryType as ExperienceType]
+    : null
+  const locationTag = expData?.place?.name || expData?.region?.name || expData?.country?.name
 
   return (
     <div
-      className={`flex items-center justify-between gap-3 rounded-lg border p-3 shadow-2xs transition-colors ${
+      className={cn(
+        "flex items-center justify-between gap-3 rounded-lg border p-3 shadow-2xs transition-all",
         isFeatured
           ? "border-amber-500/50 bg-amber-500/5 dark:bg-amber-500/10"
           : "border-border bg-card"
-      }`}
+      )}
     >
-      <div className="flex items-center gap-2.5 min-w-0">
+      <div className="flex items-center gap-3 min-w-0">
         <div
-          className={`flex h-6 w-6 items-center justify-center rounded-full text-xs font-bold shrink-0 ${
+          className={cn(
+            "flex h-6 w-6 items-center justify-center rounded-full text-xs font-bold shrink-0",
             isFeatured
               ? "bg-amber-500 text-white"
               : "bg-primary/10 text-primary"
-          }`}
+          )}
         >
           {index + 1}
         </div>
-        <div className="flex flex-col min-w-0">
-          <div className="flex items-center gap-2">
+
+        <div className="flex flex-col min-w-0 gap-0.5">
+          <div className="flex items-center gap-2 flex-wrap">
             <span className="text-xs font-semibold text-foreground truncate">
-              {name}
+              {isLoading ? (
+                <span className="inline-flex items-center gap-1.5 text-muted-foreground">
+                  <Loader2 className="h-3 w-3 animate-spin" />
+                  Loading...
+                </span>
+              ) : (
+                name
+              )}
             </span>
+
             {isFeatured && (
               <span className="inline-flex items-center gap-1 rounded bg-amber-500/20 px-1.5 py-0.5 text-[9px] font-bold uppercase tracking-wider text-amber-600 dark:text-amber-400 shrink-0">
                 <Star className="h-2.5 w-2.5 fill-current" />
                 Featured Banner
               </span>
             )}
+
+            {typeConfig && (
+              <span
+                className={cn(
+                  "inline-flex items-center rounded-md px-1.5 py-0.2 text-[9px] font-medium border shrink-0",
+                  typeConfig.badgeColor
+                )}
+              >
+                {typeConfig.label}
+              </span>
+            )}
           </div>
-          <span className="text-[10px] text-muted-foreground font-mono truncate">
-            ID: {locationId}
-          </span>
+
+          <div className="flex items-center gap-2 text-[10px] text-muted-foreground">
+            {locationTag && (
+              <span className="inline-flex items-center gap-1">
+                <MapPin className="h-2.5 w-2.5 text-muted-foreground" />
+                {locationTag}
+              </span>
+            )}
+
+            {expData?.price !== undefined && expData?.price !== null && (
+              <span className="font-semibold text-emerald-600 dark:text-emerald-400">
+                €{Number(expData.price).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+              </span>
+            )}
+
+            <span className="font-mono text-muted-foreground/70 truncate">
+              ID: {experienceId}
+            </span>
+          </div>
         </div>
       </div>
 
@@ -78,7 +141,7 @@ function LocationItemRow({
           type="button"
           disabled={index === 0}
           onClick={() => onMove(index, "up")}
-          className="p-1 text-muted-foreground hover:text-foreground disabled:opacity-30"
+          className="p-1 text-muted-foreground hover:text-foreground disabled:opacity-30 cursor-pointer disabled:cursor-not-allowed"
           title="Move Up"
         >
           <ChevronUp className="h-3.5 w-3.5" />
@@ -87,7 +150,7 @@ function LocationItemRow({
           type="button"
           disabled={index === total - 1}
           onClick={() => onMove(index, "down")}
-          className="p-1 text-muted-foreground hover:text-foreground disabled:opacity-30"
+          className="p-1 text-muted-foreground hover:text-foreground disabled:opacity-30 cursor-pointer disabled:cursor-not-allowed"
           title="Move Down"
         >
           <ChevronDown className="h-3.5 w-3.5" />
@@ -95,8 +158,8 @@ function LocationItemRow({
         <button
           type="button"
           onClick={() => onRemove(index)}
-          className="p-1 text-muted-foreground hover:text-destructive transition-colors"
-          title="Remove Location ID"
+          className="p-1 text-muted-foreground hover:text-destructive transition-colors cursor-pointer"
+          title="Remove Experience"
         >
           <Trash2 className="h-3.5 w-3.5" />
         </button>
@@ -115,31 +178,31 @@ export function PlaceExperiencesForm({
   const sectionKey = "experiences"
   const isOpen = Boolean(openSections[sectionKey])
 
-  const expData = draft.experiences || draft.experience || {}
-
-  // Pure array of string IDs: string[]
-  const rawItems: any[] = Array.isArray(expData.items)
-    ? expData.items
-    : Array.isArray(expData.cards)
-    ? expData.cards
+  // Support both pure string[] array and legacy object { items: string[] }
+  const rawData: any = draft.experience ?? (draft as any).experiences ?? []
+  const rawItems: any[] = Array.isArray(rawData)
+    ? rawData
+    : Array.isArray(rawData?.items)
+    ? rawData.items
+    : Array.isArray(rawData?.cards)
+    ? rawData.cards
     : []
 
   const items: string[] = rawItems
-    .map((it: any) => (typeof it === "string" ? it : it?.locationId || it?.id))
+    .map((it: any) => (typeof it === "string" ? it : it?.id || it?.experienceId))
     .filter((id): id is string => Boolean(id) && typeof id === "string")
 
-  // Live Location Search State
+  // Live Experience Search State
   const [searchQuery, setSearchQuery] = useState<string>("")
   const [isSearchOpen, setIsSearchOpen] = useState<boolean>(false)
   const searchContainerRef = useRef<HTMLDivElement>(null)
 
-  // Fetch search matches from backend GET /api/v1/locations/search
-  const { data: searchResponse, isLoading: isSearching } = useSearchLocations(
+  // Fetch search matches from backend GET /api/v1/experiences/search
+  const { data: searchResponse, isLoading: isSearching } = useSearchExperiences(
     searchQuery,
-    undefined,
-    50
+    30
   )
-  const searchResults: LocationSearchItem[] = searchResponse?.data || []
+  const searchResults: ExperienceSearchItem[] = searchResponse?.data || []
 
   // Close search popover on outside click
   useEffect(() => {
@@ -155,30 +218,19 @@ export function PlaceExperiencesForm({
     return () => document.removeEventListener("mousedown", handleClickOutside)
   }, [])
 
-  const updateExpField = (path: string, val: any) => {
-    updateField(`experience.${path}`, val)
-  }
-
+  // User requirement: "That's mean tumi bujhte parcho, je amar ekhon experience er output hobe just array."
   const updateExpItems = (newItems: string[]) => {
-    updateExpField("items", newItems)
+    updateField("experience", newItems)
   }
 
-  // Add experience location ID directly from live DB Location Search
-  const handleSelectLocation = (loc: LocationSearchItem) => {
-    if (!loc || !loc.id) return
-    // Prevent duplicate IDs
-    if (!items.includes(loc.id)) {
-      updateExpItems([...items, loc.id])
+  // Add experience ID directly from Experience Search
+  const handleSelectExperience = (exp: ExperienceSearchItem) => {
+    if (!exp || !exp.id) return
+    if (!items.includes(exp.id)) {
+      updateExpItems([...items, exp.id])
     }
     setSearchQuery("")
     setIsSearchOpen(false)
-  }
-
-  // Import all child locations automatically as experience location IDs
-  const handleImportChildren = () => {
-    if (!draft?.children || draft.children.length === 0) return
-    const childIds: string[] = draft.children.map((child: any) => child.id).filter(Boolean)
-    updateExpItems(childIds)
   }
 
   const handleRemoveItem = (index: number) => {
@@ -203,150 +255,157 @@ export function PlaceExperiencesForm({
       active={isOpen}
       onClick={() => toggleSection(sectionKey)}
     >
-      <div className="flex flex-col gap-6">
-        {/* Section Header Controls */}
-        <div className="flex flex-col gap-4">
-          <div className="flex flex-col gap-1.5">
-            <label className="text-xs font-semibold text-foreground">
-              Eyebrow Location Label
-            </label>
+      <div className="flex flex-col gap-5">
+        <p className="text-xs text-muted-foreground leading-relaxed">
+          Link curated Experiences from the Experience table to this Place.
+          Item 1 is featured as the top full-width banner, and subsequent items render in the curated experiences grid.
+        </p>
+
+        {/* Search & Add Picker */}
+        <div ref={searchContainerRef} className="relative w-full">
+          <label className="block text-xs font-semibold text-foreground mb-1.5">
+            Search & Add Experiences
+          </label>
+          <div className="relative">
+            <Search className="absolute left-3 top-2.5 h-3.5 w-3.5 text-muted-foreground" />
             <input
               type="text"
-              value={expData.location || ""}
-              onChange={(e) => updateExpField("location", e.target.value)}
-              placeholder="e.g. Dhërmi, Albania"
-              className="w-full rounded-md border border-input bg-background px-3 py-2 text-xs text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-1 focus:ring-primary"
+              value={searchQuery}
+              onFocus={() => setIsSearchOpen(true)}
+              onChange={(e) => {
+                setSearchQuery(e.target.value)
+                setIsSearchOpen(true)
+              }}
+              placeholder="Search experiences by title or type to link..."
+              className="w-full rounded-md border border-input bg-background pl-9 pr-8 py-2 text-xs text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-1 focus:ring-primary"
             />
-          </div>
-
-          <DynamicStyledField
-            type="text"
-            label="Section Main Title"
-            fieldName="title"
-            value={expData.title}
-            onChange={(val: any) => updateExpField("title", val)}
-            placeholder="e.g. Experiences"
-          />
-
-          <DynamicStyledField
-            type="textarea"
-            label="Section Description"
-            fieldName="description"
-            value={expData.description}
-            onChange={(val: any) => updateExpField("description", val)}
-            placeholder="e.g. Curated ways to discover the wild beauty and heritage..."
-          />
-        </div>
-
-        {/* Curated Experience Location IDs & Search Controls */}
-        <div className="flex flex-col gap-4 rounded-xl border border-border/60 p-4 bg-muted/20">
-          <div className="flex flex-wrap items-center justify-between gap-2 border-b border-border/60 pb-2.5">
-            <div>
-              <div className="flex items-center gap-2">
-                <Layers className="h-4 w-4 text-primary" />
-                <h4 className="text-xs font-semibold uppercase tracking-wider text-foreground">
-                  Curated Experience Locations ({items.length})
-                </h4>
-              </div>
-              <p className="text-[11px] text-muted-foreground">
-                Item 1 (ID) is featured as top banner. Items 2+ render in the 3-column grid.
-              </p>
-            </div>
-
-            {Array.isArray(draft?.children) && draft.children.length > 0 && (
+            {searchQuery && (
               <button
                 type="button"
-                onClick={handleImportChildren}
-                className="inline-flex items-center gap-1.5 rounded-md bg-primary/10 px-2.5 py-1 text-xs font-medium text-primary hover:bg-primary/20 transition-colors"
+                onClick={() => {
+                  setSearchQuery("")
+                  setIsSearchOpen(false)
+                }}
+                className="absolute right-2.5 top-2.5 text-muted-foreground hover:text-foreground cursor-pointer"
               >
-                Import Children ({draft.children.length})
+                <X className="h-3.5 w-3.5" />
               </button>
             )}
           </div>
 
-          {/* Location ID Search Picker */}
-          <div ref={searchContainerRef} className="relative w-full">
-            <div className="relative">
-              <Search className="absolute left-3 top-2.5 h-3.5 w-3.5 text-muted-foreground" />
-              <input
-                type="text"
-                value={searchQuery}
-                onFocus={() => setIsSearchOpen(true)}
-                onChange={(e) => {
-                  setSearchQuery(e.target.value)
-                  setIsSearchOpen(true)
-                }}
-                placeholder="Search locations by name to add ID..."
-                className="w-full rounded-md border border-input bg-background pl-9 pr-8 py-2 text-xs text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-1 focus:ring-primary"
-              />
-              {searchQuery && (
-                <button
-                  type="button"
-                  onClick={() => {
-                    setSearchQuery("")
-                    setIsSearchOpen(false)
-                  }}
-                  className="absolute right-2.5 top-2.5 text-muted-foreground hover:text-foreground"
-                >
-                  <X className="h-3.5 w-3.5" />
-                </button>
+          {/* Dropdown Results */}
+          {isSearchOpen && (
+            <div className="absolute left-0 right-0 top-full z-50 mt-1 max-h-72 overflow-y-auto rounded-md border border-border bg-popover py-1 shadow-lg">
+              {isSearching ? (
+                <div className="flex items-center justify-center p-4 text-xs text-muted-foreground">
+                  <Loader2 className="mr-2 h-3.5 w-3.5 animate-spin" />
+                  Searching experiences...
+                </div>
+              ) : searchResults.length === 0 ? (
+                <div className="p-4 text-center text-xs text-muted-foreground">
+                  {searchQuery ? "No matching experiences found." : "Type above to search experiences."}
+                </div>
+              ) : (
+                searchResults.map((exp) => {
+                  const isSelected = items.includes(exp.id)
+                  const typeConfig = exp.primaryType
+                    ? EXPERIENCE_TYPE_CONFIG[exp.primaryType as ExperienceType]
+                    : null
+                  const locLabel = exp.place?.name || exp.region?.name || exp.country?.name
+
+                  return (
+                    <button
+                      key={exp.id}
+                      type="button"
+                      disabled={isSelected}
+                      onClick={() => handleSelectExperience(exp)}
+                      className="flex w-full items-center justify-between px-3 py-2.5 text-left text-xs hover:bg-accent disabled:opacity-50 disabled:cursor-not-allowed border-b border-border/40 last:border-b-0 cursor-pointer transition-colors"
+                    >
+                      <div className="flex flex-col gap-0.5 min-w-0 pr-2">
+                        <div className="flex items-center gap-2">
+                          <Sparkles className="h-3.5 w-3.5 text-primary shrink-0" />
+                          <span className="font-medium text-foreground truncate">{exp.name}</span>
+                        </div>
+
+                        <div className="flex items-center gap-2 text-[10px] text-muted-foreground">
+                          {typeConfig && (
+                            <span
+                              className={cn(
+                                "inline-flex items-center rounded px-1.5 py-0.2 font-medium border",
+                                typeConfig.badgeColor
+                              )}
+                            >
+                              {typeConfig.label}
+                            </span>
+                          )}
+
+                          {locLabel && (
+                            <span className="inline-flex items-center gap-1">
+                              <MapPin className="h-2.5 w-2.5" />
+                              {locLabel}
+                            </span>
+                          )}
+
+                          {exp.price !== undefined && exp.price !== null && (
+                            <span className="font-semibold text-emerald-600 dark:text-emerald-400">
+                              €{Number(exp.price).toFixed(2)}
+                            </span>
+                          )}
+                        </div>
+                      </div>
+
+                      <div className="shrink-0">
+                        {isSelected ? (
+                          <span className="inline-flex items-center gap-1 text-[11px] font-medium text-muted-foreground bg-muted px-2 py-0.5 rounded">
+                            <Check className="h-3 w-3 text-emerald-600" />
+                            Added
+                          </span>
+                        ) : (
+                          <span className="inline-flex items-center gap-1 text-[11px] font-semibold text-primary bg-primary/10 hover:bg-primary/20 px-2 py-0.5 rounded transition-colors">
+                            <Plus className="h-3 w-3" />
+                            Add
+                          </span>
+                        )}
+                      </div>
+                    </button>
+                  )
+                })
               )}
             </div>
+          )}
+        </div>
 
-            {/* Dropdown Results */}
-            {isSearchOpen && (
-              <div className="absolute left-0 right-0 top-full z-50 mt-1 max-h-60 overflow-y-auto rounded-md border border-border bg-popover py-1 shadow-md">
-                {isSearching ? (
-                  <div className="flex items-center justify-center p-3 text-xs text-muted-foreground">
-                    <Loader2 className="mr-2 h-3.5 w-3.5 animate-spin" />
-                    Searching locations...
-                  </div>
-                ) : searchResults.length === 0 ? (
-                  <div className="p-3 text-center text-xs text-muted-foreground">
-                    No matching locations found.
-                  </div>
-                ) : (
-                  searchResults.map((loc) => {
-                    const isSelected = items.includes(loc.id)
-                    return (
-                      <button
-                        key={loc.id}
-                        type="button"
-                        disabled={isSelected}
-                        onClick={() => handleSelectLocation(loc)}
-                        className="flex w-full items-center justify-between px-3 py-2 text-left text-xs hover:bg-accent disabled:opacity-50 disabled:cursor-not-allowed"
-                      >
-                        <div className="flex flex-col gap-0.5">
-                          <div className="flex items-center gap-1.5 font-medium text-foreground">
-                            <MapPin className="h-3 w-3 text-primary shrink-0" />
-                            <span>{loc.name}</span>
-                          </div>
-                          <span className="text-[10px] text-muted-foreground">
-                            ID: {loc.id} • Type: {loc.type}
-                          </span>
-                        </div>
-                        {isSelected && <Check className="h-3.5 w-3.5 text-primary" />}
-                      </button>
-                    )
-                  })
-                )}
-              </div>
+        {/* Connected Experience Items List */}
+        <div className="flex flex-col gap-3 rounded-xl border border-border/70 p-4 bg-muted/20">
+          <div className="flex items-center justify-between gap-2 border-b border-border/60 pb-2">
+            <div className="flex items-center gap-2">
+              <Sparkles className="h-4 w-4 text-primary" />
+              <h4 className="text-xs font-semibold uppercase tracking-wider text-foreground">
+                Connected Experiences ({items.length})
+              </h4>
+            </div>
+
+            {items.length > 0 && (
+              <span className="text-[10px] text-muted-foreground font-mono">
+                Output: string[{items.length}]
+              </span>
             )}
           </div>
 
-          {/* Selected Location ID List */}
           {items.length === 0 ? (
-            <div className="p-4 text-center rounded-lg border border-dashed border-border bg-background/50">
-              <p className="text-xs text-muted-foreground">
-                No location IDs added yet. Use the search bar above to pick locations.
+            <div className="flex flex-col items-center justify-center p-6 text-center rounded-lg border border-dashed border-border/80 bg-background/50">
+              <Compass className="h-6 w-6 text-muted-foreground/60 mb-2" />
+              <p className="text-xs font-medium text-foreground">No experiences linked yet</p>
+              <p className="text-[11px] text-muted-foreground mt-0.5">
+                Use the search bar above to link curated experiences to this place.
               </p>
             </div>
           ) : (
             <div className="flex flex-col gap-2">
-              {items.map((locationId, idx) => (
-                <LocationItemRow
-                  key={locationId || idx}
-                  locationId={locationId}
+              {items.map((experienceId, idx) => (
+                <ExperienceItemRow
+                  key={experienceId || idx}
+                  experienceId={experienceId}
                   index={idx}
                   total={items.length}
                   onMove={handleMoveItem}
@@ -356,44 +415,8 @@ export function PlaceExperiencesForm({
             </div>
           )}
         </div>
-
-        {/* Season Info Footer */}
-        <div className="flex flex-col gap-4 border-t border-border/60 pt-4">
-          <div className="flex flex-col gap-1.5">
-            <label className="text-xs font-semibold text-foreground">
-              Season Information Text
-            </label>
-            <textarea
-              value={expData.seasonInfo || ""}
-              onChange={(e) => updateExpField("seasonInfo", e.target.value)}
-              placeholder="e.g. All information is available on site. The season runs from May to October..."
-              className="w-full rounded-md border border-input bg-background px-3 py-2 text-xs text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-1 focus:ring-primary min-h-[60px]"
-            />
-          </div>
-
-          <div className="flex flex-col gap-1.5">
-            <label className="text-xs font-semibold text-foreground">
-              Season Location Tag
-            </label>
-            <input
-              type="text"
-              value={expData.seasonLocation || ""}
-              onChange={(e) => updateExpField("seasonLocation", e.target.value)}
-              placeholder="e.g. Riviera"
-              className="w-full rounded-md border border-input bg-background px-3 py-2 text-xs text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-1 focus:ring-primary"
-            />
-          </div>
-
-          <UniversalMultimediaForm
-            title="Section Background Media"
-            value={expData.backgroundMultimedia}
-            onChange={(val: any) => updateExpField("backgroundMultimedia", val)}
-            allowImage
-            allowVideo
-            allowColor
-          />
-        </div>
       </div>
     </FormSection>
   )
 }
+

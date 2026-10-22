@@ -83,9 +83,7 @@ export function normalizeLocationPayload(
     safeData.stats ??
     {}
   const experiencesData =
-    (safeDraft.experiences && Array.isArray(safeDraft.experiences.items) && safeDraft.experiences.items.length > 0)
-      ? safeDraft.experiences
-      : safeDraft.experiences ?? safeDraft.experience ?? safeData.experiences ?? safeData.experience ?? {}
+    safeDraft.experience ?? safeDraft.experiences ?? safeData.experience ?? safeData.experiences ?? []
 
   const regionExperiencesData =
     safeDraft.regionExperiences ??
