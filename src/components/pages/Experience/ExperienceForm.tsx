@@ -6,6 +6,7 @@ import { useParams } from "react-router-dom"
 import { useExperiencePage } from "@/hooks/experience/useExperiencePage"
 import { useExperienceDraft } from "./shared/ExperienceDraftContext"
 import { emptyExperience } from "./shared/emptyExperience"
+import { normalizeExperiencePayload } from "./shared/normalizeExperiencePayload"
 import {
   getExperienceSections,
   experienceSectionRegistry,
@@ -54,10 +55,11 @@ export function ExperienceForm() {
   }
 
   const handleConsoleData = () => {
-    console.group("🧭 [Experience Form] Current Draft State")
+    console.group("🧭 [Experience Form] Current Draft & Output Payload")
     console.log("Raw Draft:", draft)
+    console.log("Normalized Output Payload (Without Slug):", normalizeExperiencePayload(draft || {}))
     console.groupEnd()
-    toast.info("Experience payload printed to browser console (F12).")
+    toast.info("Experience output payload printed to browser console (F12).")
   }
 
   if (isEditMode && isLoading) {

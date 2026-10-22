@@ -239,10 +239,6 @@ export function normalizeExperiencePayload(draft: Partial<ExperienceData>) {
     payload.id = safeDraft.id
   }
 
-  if (safeDraft.slug && safeDraft.slug.trim()) {
-    payload.slug = safeDraft.slug.trim()
-  }
-
   const rawPrice = safeDraft.price
   if (rawPrice !== undefined && rawPrice !== null && String(rawPrice).trim() !== "") {
     const num = Number(rawPrice)
