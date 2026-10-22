@@ -15,6 +15,8 @@ import {
   ChevronRight,
   Sparkles,
   DollarSign,
+  Compass,
+  Layers,
 } from "lucide-react"
 import {
   Dialog,
@@ -28,7 +30,13 @@ import { Button } from "@/components/ui/button"
 import { toast } from "sonner"
 import { ParentLocationSelect } from "@/components/pages/Location/shared/ParentLocationSelect"
 import { UniversalMultimediaPreview } from "@/components/pages/CMS/Home/shared/preview/UniversalMultimediaPreview"
-import { EXPERIENCE_CURRENCY_OPTIONS } from "./experienceTypes"
+import {
+  EXPERIENCE_CURRENCY_OPTIONS,
+  EXPERIENCE_TYPES,
+  EXPERIENCE_TYPE_CONFIG,
+  EXPERIENCE_STATUS_OPTIONS,
+  type ExperienceType,
+} from "./experienceTypes"
 
 const PAGE_SIZE = 12
 
@@ -36,7 +44,9 @@ export default function ExperiencePages() {
   const [page, setPage] = useState(1)
   const [searchInput, setSearchInput] = useState("")
   const [search, setSearch] = useState("")
-  const [parentId, setParentId] = useState<string | null>(null)
+  const [countryId, setCountryId] = useState<string | null>(null)
+  const [primaryType, setPrimaryType] = useState<string>("")
+  const [status, setStatus] = useState<string>("")
   const [currency, setCurrency] = useState<string>("")
   const [featured, setFeatured] = useState<boolean | undefined>(undefined)
 
@@ -54,7 +64,9 @@ export default function ExperiencePages() {
     page,
     limit: PAGE_SIZE,
     search: search || undefined,
-    parentId: parentId || undefined,
+    countryId: countryId || undefined,
+    primaryType: primaryType || undefined,
+    status: status || undefined,
     currency: currency || undefined,
     featured,
   })
@@ -123,7 +135,7 @@ export default function ExperiencePages() {
                 Experiences Management
               </h1>
               <p className="text-xs text-muted-foreground mt-0.5">
-                Curate signature activities, helicopter safaris, private tastings, and bespoke adventures.
+                Curate independent content entities with classification, geography links, and bespoke itineraries.
               </p>
             </div>
           </div>
@@ -139,65 +151,103 @@ export default function ExperiencePages() {
       </div>
 
       {/* Filter and Search Bar */}
-      <div className="flex flex-col md:flex-row items-stretch md:items-center gap-3">
-        {/* Search Input */}
-        <div className="relative flex-1">
-          <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-          <input
-            type="text"
-            value={searchInput}
-            onChange={(e) => setSearchInput(e.target.value)}
-            placeholder="Search experiences by name or slug..."
-            className="w-full rounded-xl border border-border/70 bg-card pl-9 pr-4 py-2 text-xs md:text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-1 focus:ring-primary"
-          />
-        </div>
+      <div className="flex flex-col gap-3">
+        <div className="flex flex-col md:flex-row items-stretch md:items-center gap-3">
+          {/* Search Input */}
+          <div className="relative flex-1">
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+            <input
+              type="text"
+              value={searchInput}
+              onChange={(e) => setSearchInput(e.target.value)}
+              placeholder="Search experiences by name or slug..."
+              className="w-full rounded-xl border border-border/70 bg-card pl-9 pr-4 py-2 text-xs md:text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-1 focus:ring-primary"
+            />
+          </div>
 
-        {/* Parent Location Filter */}
-        <div className="w-full md:w-64">
-          <ParentLocationSelect
-            value={parentId}
-            label=""
-            noneLabel="All Destinations"
-            onChange={(id) => {
-              setParentId(id || null)
+          {/* Primary Type Filter */}
+          <select
+            value={primaryType}
+            onChange={(e) => {
+              setPrimaryType(e.target.value)
               setPage(1)
             }}
-          />
+            className="rounded-xl border border-border/70 bg-card px-3 py-2 text-xs md:text-sm text-foreground outline-none focus:border-primary focus:ring-1 focus:ring-primary md:w-52 cursor-pointer"
+          >
+            <option value="">All 8 Experience Types</option>
+            {EXPERIENCE_TYPES.map((t) => (
+              <option key={t.value} value={t.value}>
+                {t.label}
+              </option>
+            ))}
+          </select>
+
+          {/* Status Filter */}
+          <select
+            value={status}
+            onChange={(e) => {
+              setStatus(e.target.value)
+              setPage(1)
+            }}
+            className="rounded-xl border border-border/70 bg-card px-3 py-2 text-xs md:text-sm text-foreground outline-none focus:border-primary focus:ring-1 focus:ring-primary md:w-36 cursor-pointer"
+          >
+            <option value="">All Statuses</option>
+            {EXPERIENCE_STATUS_OPTIONS.map((st) => (
+              <option key={st.value} value={st.value}>
+                {st.label}
+              </option>
+            ))}
+          </select>
+
+          {/* Currency Filter */}
+          <select
+            value={currency}
+            onChange={(e) => {
+              setCurrency(e.target.value)
+              setPage(1)
+            }}
+            className="rounded-xl border border-border/70 bg-card px-3 py-2 text-xs md:text-sm text-foreground outline-none focus:border-primary focus:ring-1 focus:ring-primary md:w-36 cursor-pointer"
+          >
+            <option value="">All Currencies</option>
+            {EXPERIENCE_CURRENCY_OPTIONS.map((c) => (
+              <option key={c.value} value={c.value}>
+                {c.label}
+              </option>
+            ))}
+          </select>
+
+          {/* Country Location Filter */}
+          <div className="w-full md:w-56">
+            <ParentLocationSelect
+              value={countryId}
+              filterType="COUNTRY"
+              label=""
+              noneLabel="All Countries"
+              placeholder="Filter by country..."
+              onChange={(id) => {
+                setCountryId(id || null)
+                setPage(1)
+              }}
+            />
+          </div>
+
+          {/* Featured Filter Toggle */}
+          <button
+            type="button"
+            onClick={() => {
+              setFeatured((prev) => (prev === true ? undefined : true))
+              setPage(1)
+            }}
+            className={`inline-flex items-center gap-1.5 rounded-xl border px-3.5 py-2 text-xs font-medium transition-colors cursor-pointer shrink-0 ${
+              featured === true
+                ? "border-primary bg-primary/10 text-primary font-semibold"
+                : "border-border/70 bg-card text-muted-foreground hover:bg-muted/50"
+            }`}
+          >
+            <Sparkles className="h-3.5 w-3.5" />
+            <span>Featured</span>
+          </button>
         </div>
-
-        {/* Currency Filter */}
-        <select
-          value={currency}
-          onChange={(e) => {
-            setCurrency(e.target.value)
-            setPage(1)
-          }}
-          className="rounded-xl border border-border/70 bg-card px-3 py-2 text-xs md:text-sm text-foreground outline-none focus:border-primary focus:ring-1 focus:ring-primary md:w-40 cursor-pointer"
-        >
-          <option value="">All Currencies</option>
-          {EXPERIENCE_CURRENCY_OPTIONS.map((c) => (
-            <option key={c.value} value={c.value}>
-              {c.label}
-            </option>
-          ))}
-        </select>
-
-        {/* Featured Filter Toggle */}
-        <button
-          type="button"
-          onClick={() => {
-            setFeatured((prev) => (prev === true ? undefined : true))
-            setPage(1)
-          }}
-          className={`inline-flex items-center gap-1.5 rounded-xl border px-3.5 py-2 text-xs font-medium transition-colors cursor-pointer shrink-0 ${
-            featured === true
-              ? "border-primary bg-primary/10 text-primary font-semibold"
-              : "border-border/70 bg-card text-muted-foreground hover:bg-muted/50"
-          }`}
-        >
-          <Sparkles className="h-3.5 w-3.5" />
-          <span>Featured Only</span>
-        </button>
       </div>
 
       {/* Experience List Cards */}
@@ -214,8 +264,23 @@ export default function ExperiencePages() {
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-5">
           {data.data.map((exp) => {
             const heroMedia = exp.hero?.backgroundMultimedia || exp.hero?.multimedia
+            const theExpMedia = (exp as any).theExperience?.imageMultimedia
             const essenceMedia = exp.essence?.imageMultimedia || exp.essence?.multimedia
-            const previewMedia = heroMedia || essenceMedia
+            const previewMedia = heroMedia || theExpMedia || essenceMedia
+
+            const typeConfig = exp.primaryType
+              ? EXPERIENCE_TYPE_CONFIG[exp.primaryType as ExperienceType]
+              : null
+
+            const locationBadge =
+              exp.country?.name ||
+              exp.region?.name ||
+              exp.place?.name ||
+              exp.parent?.name
+
+            const statusConfig = EXPERIENCE_STATUS_OPTIONS.find(
+              (s) => s.value === (exp.status || "DRAFT")
+            )
 
             return (
               <div
@@ -234,20 +299,34 @@ export default function ExperiencePages() {
                   />
 
                   {/* Top Badges */}
-                  <div className="absolute top-2.5 left-2.5 flex items-center gap-1.5 z-10">
+                  <div className="absolute top-2.5 left-2.5 flex flex-wrap items-center gap-1.5 z-10">
+                    {/* Status Badge */}
+                    <span
+                      className={`inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-semibold uppercase tracking-wider backdrop-blur-xs shadow-xs ${
+                        statusConfig?.color || "bg-muted text-muted-foreground"
+                      }`}
+                    >
+                      {statusConfig?.label || exp.status || "DRAFT"}
+                    </span>
+
+                    {/* Featured Badge */}
                     {exp.featured && (
                       <span className="inline-flex items-center gap-1 rounded-full bg-amber-500/90 backdrop-blur-xs px-2 py-0.5 text-[10px] font-semibold text-white shadow-xs">
                         <Sparkles className="h-2.5 w-2.5" />
                         Featured
                       </span>
                     )}
-                    {exp.parent?.name && (
-                      <span className="inline-flex items-center gap-1 rounded-full bg-black/60 backdrop-blur-xs px-2 py-0.5 text-[10px] font-medium text-white shadow-xs">
-                        <MapPin className="h-2.5 w-2.5 text-accent" />
-                        {exp.parent.name}
-                      </span>
-                    )}
                   </div>
+
+                  {/* Geography Location Tag */}
+                  {locationBadge && (
+                    <div className="absolute bottom-2.5 left-2.5 z-10">
+                      <span className="inline-flex items-center gap-1 rounded-full bg-black/65 backdrop-blur-xs px-2.5 py-0.5 text-[10px] font-medium text-white shadow-xs">
+                        <MapPin className="h-2.5 w-2.5 text-[#E5A84B]" />
+                        {locationBadge}
+                      </span>
+                    </div>
+                  )}
 
                   {/* Delete Button (Absolute Hover) */}
                   <button
@@ -265,21 +344,38 @@ export default function ExperiencePages() {
                 </Link>
 
                 {/* Card Content */}
-                <div className="p-4 flex flex-col gap-2.5 flex-1">
+                <div className="p-4 flex flex-col gap-2.5 flex-1 justify-between">
                   <div>
+                    {/* Primary Type Badge */}
+                    {typeConfig && (
+                      <span
+                        className={`inline-flex items-center gap-1 rounded-md px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wider border mb-1.5 ${typeConfig.badgeColor}`}
+                      >
+                        <Layers className="h-2.5 w-2.5" />
+                        {typeConfig.label}
+                      </span>
+                    )}
+
                     <Link
                       to={`/experiences/${exp.id}/${exp.slug || "details"}`}
-                      className="text-sm font-bold text-foreground hover:text-primary transition-colors line-clamp-1"
+                      className="text-sm font-bold text-foreground hover:text-primary transition-colors line-clamp-1 block"
                     >
                       {exp.name}
                     </Link>
-                    <p className="text-[11px] font-mono text-muted-foreground truncate mt-0.5">
-                      /{exp.slug || "no-slug"}
-                    </p>
+
+                    {exp.subtitle ? (
+                      <p className="text-xs text-muted-foreground line-clamp-2 mt-0.5">
+                        {exp.subtitle}
+                      </p>
+                    ) : (
+                      <p className="text-[11px] font-mono text-muted-foreground truncate mt-0.5">
+                        /{exp.slug || "no-slug"}
+                      </p>
+                    )}
                   </div>
 
                   {/* Price & PriceType Badge */}
-                  <div className="mt-auto pt-2.5 border-t border-border/50 flex items-center justify-between">
+                  <div className="mt-2 pt-2.5 border-t border-border/50 flex items-center justify-between">
                     <div className="flex items-center gap-1.5 text-xs text-foreground font-semibold">
                       <DollarSign className="h-3.5 w-3.5 text-emerald-600 dark:text-emerald-400" />
                       {exp.price !== null && exp.price !== undefined ? (
@@ -304,9 +400,9 @@ export default function ExperiencePages() {
 
                     <Link
                       to={`/experiences/${exp.id}/${exp.slug || "details"}`}
-                      className="text-[11px] font-medium text-primary hover:underline"
+                      className="text-xs font-semibold text-primary hover:underline cursor-pointer"
                     >
-                      Edit ➔
+                      Edit
                     </Link>
                   </div>
                 </div>
@@ -315,100 +411,94 @@ export default function ExperiencePages() {
           })}
         </div>
       ) : (
-        <div className="rounded-2xl border border-dashed border-border/80 bg-muted/20 p-12 text-center flex flex-col items-center justify-center">
-          <Sparkles className="h-10 w-10 text-muted-foreground/60 mb-3" />
-          <h3 className="text-base font-semibold text-foreground">No experiences found</h3>
-          <p className="text-xs text-muted-foreground max-w-sm mt-1 mb-4">
-            {search || parentId || currency || featured
-              ? "No experiences match your active filters. Try adjusting your search query or clear filters."
-              : "Start by creating your first luxury experience, private excursion, or tasting session."}
+        <div className="flex flex-col items-center justify-center rounded-2xl border border-dashed border-border/80 bg-card p-12 text-center">
+          <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-muted text-muted-foreground mb-3">
+            <Compass className="h-6 w-6" />
+          </div>
+          <h3 className="text-sm font-semibold text-foreground">No experiences found</h3>
+          <p className="text-xs text-muted-foreground mt-1 max-w-sm">
+            {search || countryId || primaryType || status
+              ? "Try adjusting your search criteria or clear active filters."
+              : "Get started by creating your first MIRA curated experience."}
           </p>
-
-          {search || parentId || currency || featured ? (
-            <button
-              type="button"
-              onClick={() => {
-                setSearchInput("")
-                setSearch("")
-                setParentId(null)
-                setCurrency("")
-                setFeatured(undefined)
-                setPage(1)
-              }}
-              className="inline-flex items-center gap-1.5 rounded-xl border border-border bg-card px-4 py-2 text-xs font-semibold text-foreground hover:bg-muted/50 transition-colors cursor-pointer"
-            >
-              Clear All Filters
-            </button>
-          ) : (
-            <Link
-              to="/experiences/new"
-              className="inline-flex items-center gap-2 rounded-xl bg-primary px-4 py-2 text-xs font-semibold text-primary-foreground hover:bg-primary/90 transition-colors"
-            >
-              <Plus className="h-4 w-4" />
-              Create First Experience
-            </Link>
-          )}
+          <Link
+            to="/experiences/new"
+            className="mt-4 inline-flex items-center gap-2 rounded-xl bg-primary px-3.5 py-2 text-xs font-semibold text-primary-foreground hover:bg-primary/90 transition-colors"
+          >
+            <Plus className="h-3.5 w-3.5" />
+            Create First Experience
+          </Link>
         </div>
       )}
 
-      {/* Pagination Bar */}
+      {/* Pagination Footer */}
       {data?.meta && data.meta.totalPages > 1 && (
-        <div className="flex items-center justify-between border-t border-border/70 pt-4 mt-2">
-          <p className="text-xs text-muted-foreground">
-            Showing Page <span className="font-semibold text-foreground">{data.meta.page}</span> of{" "}
-            <span className="font-semibold text-foreground">{data.meta.totalPages}</span> (
-            {data.meta.total} total)
-          </p>
+        <div className="flex items-center justify-between border-t border-border/70 pt-4">
+          <span className="text-xs text-muted-foreground">
+            Showing {(page - 1) * PAGE_SIZE + 1} to{" "}
+            {Math.min(page * PAGE_SIZE, data.meta.total)} of {data.meta.total} experiences
+          </span>
 
-          <div className="flex items-center gap-2">
-            <button
-              type="button"
-              disabled={data.meta.page <= 1}
-              onClick={() => setPage((p) => Math.max(1, p - 1))}
-              className="inline-flex items-center gap-1 rounded-lg border border-border/70 bg-card px-3 py-1.5 text-xs font-medium text-foreground hover:bg-muted/50 disabled:opacity-40 transition-colors cursor-pointer"
+          <div className="flex items-center gap-1.5">
+            <Button
+              variant="outline"
+              size="sm"
+              disabled={page <= 1}
+              onClick={() => setPage((prev) => Math.max(prev - 1, 1))}
+              className="h-8 gap-1 text-xs cursor-pointer"
             >
               <ChevronLeft className="h-3.5 w-3.5" />
-              Previous
-            </button>
+              <span>Previous</span>
+            </Button>
 
-            <button
-              type="button"
-              disabled={data.meta.page >= data.meta.totalPages}
-              onClick={() => setPage((p) => p + 1)}
-              className="inline-flex items-center gap-1 rounded-lg border border-border/70 bg-card px-3 py-1.5 text-xs font-medium text-foreground hover:bg-muted/50 disabled:opacity-40 transition-colors cursor-pointer"
+            <span className="text-xs px-2 font-medium text-foreground">
+              {page} / {data.meta.totalPages}
+            </span>
+
+            <Button
+              variant="outline"
+              size="sm"
+              disabled={page >= data.meta.totalPages}
+              onClick={() => setPage((prev) => prev + 1)}
+              className="h-8 gap-1 text-xs cursor-pointer"
             >
-              Next
+              <span>Next</span>
               <ChevronRight className="h-3.5 w-3.5" />
-            </button>
+            </Button>
           </div>
         </div>
       )}
 
-      {/* Delete Confirmation Dialog */}
+      {/* Delete Confirmation Modal */}
       <Dialog open={deleteModalOpen} onOpenChange={setDeleteModalOpen}>
         <DialogContent className="sm:max-w-md">
           <DialogHeader>
-            <DialogTitle>Delete Experience</DialogTitle>
-            <DialogDescription>
+            <DialogTitle className="text-base font-bold text-destructive">
+              Delete Experience
+            </DialogTitle>
+            <DialogDescription className="text-xs text-muted-foreground">
               Are you sure you want to permanently delete{" "}
-              <span className="font-semibold text-foreground">
-                "{selectedExperience?.name}"
-              </span>
-              ? This action cannot be undone.
+              <strong className="text-foreground">{selectedExperience?.name}</strong>? This action
+              cannot be undone.
             </DialogDescription>
           </DialogHeader>
-          <DialogFooter className="gap-2 sm:gap-0">
+
+          <DialogFooter className="gap-2 sm:gap-0 mt-3">
             <Button
               variant="outline"
-              onClick={() => setDeleteModalOpen(false)}
+              size="sm"
               disabled={isDeleting}
+              onClick={() => setDeleteModalOpen(false)}
+              className="text-xs cursor-pointer"
             >
               Cancel
             </Button>
             <Button
               variant="destructive"
-              onClick={confirmDelete}
+              size="sm"
               disabled={isDeleting}
+              onClick={confirmDelete}
+              className="text-xs cursor-pointer"
             >
               {isDeleting ? "Deleting..." : "Delete Permanently"}
             </Button>

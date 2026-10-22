@@ -25,6 +25,8 @@ type ParentLocationSelectProps = {
   currentName?: string | null
   /** Excludes a location from its own parent options (edit mode). */
   excludeId?: string
+  /** Optional location type filter (e.g. COUNTRY, REGION, PLACE). */
+  filterType?: string
   onChange: (id: string | null, name: string | null) => void
   /** Field label. Defaults to "Parent Location". */
   label?: string
@@ -37,6 +39,7 @@ export function ParentLocationSelect({
   value,
   currentName,
   excludeId,
+  filterType,
   onChange,
   label = "Parent Location",
   noneLabel = "No parent (top-level)",
@@ -67,7 +70,7 @@ export function ParentLocationSelect({
   // fetch matching locations using live search hook
   const { data: searchResponse, isLoading } = useSearchLocations(
     open ? debouncedQuery : "",
-    undefined,
+    filterType,
     50
   )
 

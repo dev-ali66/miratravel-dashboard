@@ -26,6 +26,10 @@ export type ExperienceQueryParams = {
   limit?: number
   search?: string
   parentId?: string
+  countryId?: string
+  regionId?: string
+  primaryType?: string
+  status?: string
   featured?: boolean
   priceType?: string
   currency?: string
@@ -34,10 +38,39 @@ export type ExperienceQueryParams = {
 }
 
 export function useGetExperiencePages(params: ExperienceQueryParams = {}) {
-  const { page = 1, limit = 12, search, parentId, featured, priceType, currency, minPrice, maxPrice } = params
+  const {
+    page = 1,
+    limit = 12,
+    search,
+    parentId,
+    countryId,
+    regionId,
+    primaryType,
+    status,
+    featured,
+    priceType,
+    currency,
+    minPrice,
+    maxPrice,
+  } = params
 
   return useQuery({
-    queryKey: ["experience-pages", page, limit, search, parentId, featured, priceType, currency, minPrice, maxPrice],
+    queryKey: [
+      "experience-pages",
+      page,
+      limit,
+      search,
+      parentId,
+      countryId,
+      regionId,
+      primaryType,
+      status,
+      featured,
+      priceType,
+      currency,
+      minPrice,
+      maxPrice,
+    ],
     queryFn: async () => {
       const res = await apiPrivate.get<GetExperiencesResponse>("/experiences", {
         params: {
@@ -45,6 +78,10 @@ export function useGetExperiencePages(params: ExperienceQueryParams = {}) {
           limit,
           ...(search ? { search } : {}),
           ...(parentId ? { parentId } : {}),
+          ...(countryId ? { countryId } : {}),
+          ...(regionId ? { regionId } : {}),
+          ...(primaryType ? { primaryType } : {}),
+          ...(status ? { status } : {}),
           ...(featured !== undefined ? { featured } : {}),
           ...(priceType ? { priceType } : {}),
           ...(currency ? { currency } : {}),
@@ -66,11 +103,31 @@ export type ExperienceSearchItem = {
   id: string
   name: string
   slug: string
+  status?: string
+  primaryType?: string
   featured?: boolean
   price?: number | null
   priceType?: string | null
   hero?: any
   essence?: any
+  country?: {
+    id: string
+    name: string
+    slug: string
+    type?: string
+  } | null
+  region?: {
+    id: string
+    name: string
+    slug: string
+    type?: string
+  } | null
+  place?: {
+    id: string
+    name: string
+    slug: string
+    type?: string
+  } | null
   parent?: {
     id: string
     name: string
