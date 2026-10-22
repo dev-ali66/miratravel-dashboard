@@ -341,7 +341,7 @@ export interface JourneyData {
   highlights?: HighlightsSectionData | null
   itinerary?: ItinerarySectionData | null
   accommodations?: AccommodationsSectionData | null
-  addOns?: AddOnsSectionData | null
+  addOns?: string[] | AddOnsSectionData | null
   gallery?: GallerySectionData | null
   highlightsInclusions?: Record<string, any> | null
   whatsIncluded?: WhatsIncludedSectionData | null

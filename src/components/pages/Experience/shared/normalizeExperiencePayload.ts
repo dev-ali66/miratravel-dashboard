@@ -219,9 +219,15 @@ export function normalizeExperiencePayload(draft: Partial<ExperienceData>) {
     primaryType: safeDraft.primaryType || "CULTURE_HERITAGE",
     secondaryTypes: Array.isArray(safeDraft.secondaryTypes) ? safeDraft.secondaryTypes : [],
     attributes: Array.isArray(safeDraft.attributes) ? safeDraft.attributes : [],
-    countryId: safeDraft.countryId ? String(safeDraft.countryId).trim() : null,
-    regionId: safeDraft.regionId ? String(safeDraft.regionId).trim() : null,
-    placeId: safeDraft.placeId ? String(safeDraft.placeId).trim() : null,
+    countries: Array.isArray(safeDraft.countries)
+      ? safeDraft.countries.map((c: any) => (typeof c === "string" ? c : c?.id)).filter(Boolean)
+      : [],
+    regions: Array.isArray(safeDraft.regions)
+      ? safeDraft.regions.map((r: any) => (typeof r === "string" ? r : r?.id)).filter(Boolean)
+      : [],
+    places: Array.isArray(safeDraft.places)
+      ? safeDraft.places.map((p: any) => (typeof p === "string" ? p : p?.id)).filter(Boolean)
+      : [],
     subtitle: safeDraft.subtitle || null,
     summary: safeDraft.summary || null,
     hero: normalizeHero(safeDraft.hero),

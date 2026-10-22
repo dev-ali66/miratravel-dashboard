@@ -352,6 +352,9 @@ export type LocationData = {
   explore?: any
   glance?: any
   experience?: any
+  countryExperiences?: string[] | any[]
+  regionExperienceList?: string[] | any[]
+  placeExperiences?: string[] | any[]
   character?: any
   travelInsight?: TravelInsightsSectionData
   journeyList?: any

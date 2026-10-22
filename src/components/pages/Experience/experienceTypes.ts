@@ -151,28 +151,10 @@ export interface ExperienceData {
   currency: string
   priceType?: string | null
 
-  // Geography Linking
-  countryId?: string | null
-  country?: {
-    id: string
-    name: string
-    slug?: string
-    type?: string
-  } | null
-  regionId?: string | null
-  region?: {
-    id: string
-    name: string
-    slug?: string
-    type?: string
-  } | null
-  placeId?: string | null
-  place?: {
-    id: string
-    name: string
-    slug?: string
-    type?: string
-  } | null
+  // Geography Linking (Multi-location arrays)
+  countries?: string[] | any[]
+  regions?: string[] | any[]
+  places?: string[] | any[]
 
   // Editorial Sections
   subtitle?: string | null

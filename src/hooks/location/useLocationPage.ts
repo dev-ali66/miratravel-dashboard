@@ -41,6 +41,21 @@ export function useLocationPage(locationId?: string, _slug?: string) {
     if (location) {
       const resolvedLocation: LocationData = {
         ...location,
+        countryExperiences: Array.isArray(location.countryExperiences)
+          ? location.countryExperiences
+              .map((e: any) => (typeof e === "string" ? e : e?.id))
+              .filter((id: any): id is string => Boolean(id) && typeof id === "string")
+          : [],
+        regionExperienceList: Array.isArray(location.regionExperienceList)
+          ? location.regionExperienceList
+              .map((e: any) => (typeof e === "string" ? e : e?.id))
+              .filter((id: any): id is string => Boolean(id) && typeof id === "string")
+          : [],
+        placeExperiences: Array.isArray(location.placeExperiences)
+          ? location.placeExperiences
+              .map((e: any) => (typeof e === "string" ? e : e?.id))
+              .filter((id: any): id is string => Boolean(id) && typeof id === "string")
+          : [],
         hero: location.hero ?? location.data?.hero ?? emptyLocation.hero,
         essence: location.essence ?? location.data?.essence ?? emptyLocation.essence,
         highlights:

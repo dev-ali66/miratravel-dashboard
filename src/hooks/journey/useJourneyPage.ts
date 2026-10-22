@@ -38,7 +38,11 @@ export function useJourneyPage(journeyId?: string, _slug?: string) {
         itinerary: { ...emptyJourney.itinerary, ...(journey.itinerary || {}) },
         accommodations: { ...emptyJourney.accommodations, ...(journey.accommodations || {}) },
         whatsIncluded: { ...emptyJourney.whatsIncluded, ...(journey.whatsIncluded || {}) },
-        addOns: { ...emptyJourney.addOns, ...(journey.addOns || {}) },
+        addOns: Array.isArray(journey.addOns)
+          ? journey.addOns.map((e: any) => (typeof e === "string" ? e : e?.id)).filter(Boolean)
+          : Array.isArray(journey.addOns?.items)
+          ? journey.addOns.items.map((e: any) => (typeof e === "string" ? e : e?.id)).filter(Boolean)
+          : [],
         gallery: { ...emptyJourney.gallery, ...(journey.gallery || {}) },
         metadata: { ...emptyJourney.metadata, ...(journey.metadata || {}) },
       }

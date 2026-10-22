@@ -273,9 +273,12 @@ export default function ExperiencePages() {
               : null
 
             const locationBadge =
-              exp.place?.name ||
-              exp.region?.name ||
-              exp.country?.name
+              (exp.places as any)?.[0]?.name ||
+              (exp as any).place?.name ||
+              (exp.regions as any)?.[0]?.name ||
+              (exp as any).region?.name ||
+              (exp.countries as any)?.[0]?.name ||
+              (exp as any).country?.name
 
             const statusConfig = EXPERIENCE_STATUS_OPTIONS.find(
               (s) => s.value === (exp.status || "DRAFT")

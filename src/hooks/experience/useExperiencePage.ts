@@ -40,9 +40,15 @@ export function useExperiencePage(experienceId?: string, _slug?: string) {
         price: experience.price !== null && experience.price !== undefined ? Number(experience.price) : 0,
         currency: experience.currency || "EUR",
         priceType: experience.priceType || "",
-        countryId: experience.countryId || null,
-        regionId: experience.regionId || null,
-        placeId: experience.placeId || null,
+        countries: Array.isArray(experience.countries)
+          ? experience.countries
+          : (experience.countryId ? [experience.countryId] : []),
+        regions: Array.isArray(experience.regions)
+          ? experience.regions
+          : (experience.regionId ? [experience.regionId] : []),
+        places: Array.isArray(experience.places)
+          ? experience.places
+          : (experience.placeId ? [experience.placeId] : []),
         hero: experience.hero ?? emptyExperience.hero,
         essence: experience.essence ?? emptyExperience.essence,
         faq: experience.faq ?? emptyExperience.faq,

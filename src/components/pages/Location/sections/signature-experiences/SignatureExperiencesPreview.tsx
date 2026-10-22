@@ -2,31 +2,166 @@ import { DynamicStyledTextPreview } from "@/components/pages/CMS/shared/DynamicS
 import { UniversalMultimediaPreview } from "@/components/pages/CMS/Home/shared/preview/UniversalMultimediaPreview"
 import { DynamicCmsButtonPreview } from "@/components/pages/CMS/shared/DynamicCmsButtonPreview"
 import type { LocationPreviewSectionProps } from "../../config/locationSections"
-import type { SignatureExperienceItem } from "../../locationTypes"
 import { Sparkles } from "lucide-react"
+import { useGetExperienceById } from "@/hooks/experience/useGetExperienceById"
+import { getExperienceFieldName } from "../../shared/getExperienceFieldName"
+
+function unwrapExperienceData(raw: any) {
+  if (!raw) return null
+  let data = raw
+  if (data?.data !== undefined) {
+    data = data.data
+  }
+  if (data?.data !== undefined && !Array.isArray(data)) {
+    data = data.data
+  }
+  if (Array.isArray(data)) {
+    return data[0] || null
+  }
+  return data
+}
+
+function SignatureExperienceRow({
+  item,
+  index,
+  draftName,
+}: {
+  item: any
+  index: number
+  draftName?: string
+}) {
+  const isStringId = typeof item === "string"
+  const experienceId = isStringId ? item : item?.id || item?.experienceId || ""
+
+  const { data: rawExpData, isLoading } = useGetExperienceById(experienceId)
+  const expData = unwrapExperienceData(rawExpData)
+
+  const expNum = String(index + 1).padStart(2, "0")
+
+  // Resolve Title
+  const rawTitle = !isStringId && item?.title ? item.title : null
+  const itemTitle =
+    rawTitle ||
+    expData?.name ||
+    expData?.hero?.title ||
+    (isLoading ? "Loading experience..." : `Experience ${expNum}`)
+
+  // Resolve Description
+  const rawDesc = !isStringId && item?.description ? item.description : null
+  const itemDesc =
+    rawDesc ||
+    expData?.summary ||
+    expData?.subtitle ||
+    expData?.hero?.description?.value ||
+    expData?.hero?.description ||
+    `Experience the unique character, heritage, and landscapes of ${draftName || "this destination"}.`
+
+  // Resolve Buttons / Link
+  const targetSlug = expData?.slug
+  const targetUrl = targetSlug
+    ? (targetSlug.startsWith("/") ? targetSlug : `/experiences/${targetSlug}`)
+    : (!isStringId && (item?.href || item?.buttons?.[0]?.url)) || "#"
+
+  const rawButtons =
+    !isStringId && Array.isArray(item?.buttons) && item.buttons.length > 0
+      ? item.buttons
+      : !isStringId && item?.button
+      ? [item.button]
+      : [
+          {
+            label: "Explore this experience",
+            url: targetUrl,
+            variant: "link",
+            textColor: "#af6348",
+          },
+        ]
+
+  return (
+    <li
+      key={experienceId || index}
+      className="group/item flex w-full flex-col @lg:flex-row transition-colors duration-300 ease-out cursor-pointer"
+    >
+      {/* Left Number Column */}
+      <div className="w-16 shrink-0 flex items-start justify-start pr-8 py-7 border-r border-neutral-300/60 dark:border-neutral-700/60 transition-colors duration-300">
+        <span className="text-primary text-[24px] @md:text-[25.5px] @lg:text-[28.5px] @lgx:text-[29.5px] @xlg:text-[31.5px] @mid:text-[33px] @xl:text-[36px] font-normal leading-7 @lg:leading-8 @lgx:leading-[33px] @xlg:leading-[35px] @mid:leading-[37px] @xl:leading-10 transition-colors duration-300 font-mono text-[#182d09]">
+          {expNum}
+        </span>
+      </div>
+
+      {/* Right Content Column */}
+      <div className="flex flex-1 flex-col items-start justify-center pl-8 py-7 min-w-0">
+        <DynamicStyledTextPreview
+          as="h3"
+          data={itemTitle}
+          fallbackColor="#182d09"
+          className="text-primary text-base @md:text-[17px] @lg:text-[19px] @lgx:text-[19.7px] @xlg:text-[21px] @mid:text-[22px] @xl:text-[24px] font-medium font-heading leading-6 @md:leading-[25px] @lg:leading-[27px] @lgx:leading-[27.7px] @xlg:leading-[29px] @mid:leading-[30px] @xl:leading-8 transition-colors duration-300 group-hover/item:text-accent-light"
+        />
+
+        <DynamicStyledTextPreview
+          as="p"
+          data={itemDesc}
+          fallbackColor="#565e69"
+          className="mt-2 text-subtitle text-sm @md:text-[15px] @lg:text-[15.3px] @lgx:text-[15.4px] @xlg:text-[15.6px] @mid:text-[15.7px] @xl:text-base font-normal leading-4 @md:leading-[16.5px] @lg:leading-[17.5px] @lgx:leading-[17.9px] @xlg:leading-[18.5px] @mid:leading-[19.1px] @xl:leading-5"
+        />
+
+        {rawButtons.length > 0 && (
+          <div className="mt-3.5 @md:mt-4">
+            <DynamicCmsButtonPreview
+              buttons={rawButtons}
+              defaultVariant="link"
+            />
+          </div>
+        )}
+      </div>
+    </li>
+  )
+}
 
 export function SignatureExperiencesPreview({
   draft,
 }: LocationPreviewSectionProps) {
+  const expFieldName = getExperienceFieldName(draft?.type)
+
   const signatureExperiences =
     draft?.signatureExperiences ||
     (draft as any)?.data?.signatureExperiences ||
     (draft as any)?.signature_experiences ||
-    (draft as any)?.data?.signature_experiences || {
-      label: null,
-      title: null,
-      description: null,
-      backgroundMultimedia: null,
-      experiences: [],
-    }
+    (draft as any)?.data?.signature_experiences
 
-  const items: SignatureExperienceItem[] = Array.isArray(
-    signatureExperiences.items
-  )
-    ? signatureExperiences.items
-    : Array.isArray(signatureExperiences.experiences)
-      ? signatureExperiences.experiences
-      : []
+  // Primary list: check countryExperiences (or expFieldName), then signatureExperiences.items
+  const rawList: any =
+    (draft as any)?.[expFieldName] ??
+    draft?.experience ??
+    (draft as any)?.experiences ??
+    signatureExperiences?.items ??
+    signatureExperiences?.experiences ??
+    []
+
+  const items = Array.isArray(rawList)
+    ? rawList
+    : Array.isArray(rawList?.items)
+    ? rawList.items
+    : []
+
+  const headerLabel = signatureExperiences?.label || {
+    value: "Signature Experiences",
+    textColor: "#af6348",
+    textOpacity: 1,
+  }
+
+  const headerTitle = signatureExperiences?.title || {
+    value: "Five ways to fall in love with " + (draft?.name || "the destination"),
+    textColor: "#182d09",
+    textOpacity: 1,
+  }
+
+  const headerDesc = signatureExperiences?.description || {
+    value: "Discover the most iconic, unhurried encounters across the country.",
+    textColor: "#565e69",
+    textOpacity: 1,
+  }
+
+  const backgroundMultimedia = signatureExperiences?.backgroundMultimedia || null
 
   return (
     <section
@@ -35,7 +170,7 @@ export function SignatureExperiencesPreview({
     >
       {/* Background Media (Color / Image / Video) */}
       <UniversalMultimediaPreview
-        multimedia={signatureExperiences.backgroundMultimedia}
+        multimedia={backgroundMultimedia}
         fallbackColor="#FFFFFF"
         mode="background"
       />
@@ -52,7 +187,7 @@ export function SignatureExperiencesPreview({
               {/* Eyebrow Label */}
               <DynamicStyledTextPreview
                 as="div"
-                data={signatureExperiences.label}
+                data={headerLabel}
                 fallbackColor="#af6348"
                 className="self-stretch justify-start font-normal text-accent text-base @md:text-lg @lgx:text-[20px] @mid:text-[22px] @xl:text-2xl leading-6 @md:leading-[26px] @lgx:leading-7 @mid:leading-[30px] @xl:leading-8"
               />
@@ -60,7 +195,7 @@ export function SignatureExperiencesPreview({
               {/* Section Main Title */}
               <DynamicStyledTextPreview
                 as="h2"
-                data={signatureExperiences.title}
+                data={headerTitle}
                 fallbackColor="#182d09"
                 className="self-stretch shrink-0 h-auto justify-start font-medium text-primary font-heading text-[28px] leading-[38px] @md:text-[38px] @md:leading-[47px] @lg:text-[42px] @lg:leading-[50px] @lgx:text-[43px] @lgx:leading-[51px] @xlg:text-[44px] @xlg:leading-[52px] @mid:text-[46px] @mid:leading-[54px] @xl:text-[48px] @xl:leading-[56px] @2xl:text-[50px] @2xl:leading-[58px]"
               />
@@ -70,7 +205,7 @@ export function SignatureExperiencesPreview({
             <div className="w-full max-w-full @md:max-w-[545.4px] @lg:max-w-[600px] @lgx:max-w-[620.5px] @xlg:max-w-[654.6px] @mid:max-w-[688.8px] @xl:max-w-[740px]">
               <DynamicStyledTextPreview
                 as="p"
-                data={signatureExperiences.description}
+                data={headerDesc}
                 fallbackColor="#565e69"
                 className="text-[13px] @md:text-sm @lg:text-[14.7px] @lgx:text-[15px] @xlg:text-[15.3px] @mid:text-[15.6px] @xl:text-base font-normal leading-5 @md:leading-[22px] @lg:leading-[23.5px] @lgx:leading-6 @xlg:leading-[25px] @mid:leading-[26px] @xl:leading-7 tracking-normal @md:tracking-[0.3px] @lg:tracking-[0.5px] @lgx:tracking-[0.6px] @xlg:tracking-[0.7px] @mid:tracking-[0.85px] @xl:tracking-[1px] text-muted"
               />
@@ -85,84 +220,21 @@ export function SignatureExperiencesPreview({
                   <Sparkles className="h-5 w-5 opacity-80" />
                 </div>
                 <p className="text-xs font-medium text-foreground">
-                  No signature experiences added yet
+                  No signature experiences linked yet
                 </p>
                 <p className="text-[11px] text-muted-foreground mt-0.5">
-                  Add signature experiences in the form section.
+                  Link experiences from the catalog in the form section.
                 </p>
               </div>
             ) : (
-              items.map((exp, idx) => {
-                const expNum = String(idx + 1).padStart(2, "0")
-                const itemKey = exp.id || `exp-${idx}`
-                const rawButtons =
-                  Array.isArray(exp.buttons) && exp.buttons.length > 0
-                    ? exp.buttons
-                    : exp.button
-                    ? [exp.button]
-                    : exp.href || exp.linkText
-                    ? [
-                        {
-                          label:
-                            (typeof exp.linkText === "object"
-                              ? exp.linkText?.value
-                              : null) ||
-                            (typeof exp.linkText === "string"
-                              ? exp.linkText
-                              : null) ||
-                            "Explore this experience",
-                          url:
-                            (typeof exp.linkText === "object"
-                              ? exp.linkText?.href
-                              : null) ||
-                            exp.href ||
-                            "#",
-                          variant: "link",
-                          textColor: "#af6348",
-                        },
-                      ]
-                    : []
-
-                return (
-                  <li
-                    key={itemKey}
-                    className="group/item flex w-full flex-col @lg:flex-row transition-colors duration-300 ease-out cursor-pointer"
-                  >
-                    {/* Left Number Column */}
-                    <div className="w-16 shrink-0 flex items-start justify-start pr-8 py-7 border-r border-neutral-300/60 dark:border-neutral-700/60 transition-colors duration-300">
-                      <span className="text-primary text-[24px] @md:text-[25.5px] @lg:text-[28.5px] @lgx:text-[29.5px] @xlg:text-[31.5px] @mid:text-[33px] @xl:text-[36px] font-normal leading-7 @lg:leading-8 @lgx:leading-[33px] @xlg:leading-[35px] @mid:leading-[37px] @xl:leading-10 transition-colors duration-300 font-mono text-[#182d09]">
-                        {expNum}
-                      </span>
-                    </div>
-
-                    {/* Right Content Column */}
-                    <div className="flex flex-1 flex-col items-start justify-center pl-8 py-7 min-w-0">
-                      <DynamicStyledTextPreview
-                        as="h3"
-                        data={exp.title}
-                        fallbackColor="#182d09"
-                        className="text-primary text-base @md:text-[17px] @lg:text-[19px] @lgx:text-[19.7px] @xlg:text-[21px] @mid:text-[22px] @xl:text-[24px] font-medium font-heading leading-6 @md:leading-[25px] @lg:leading-[27px] @lgx:leading-[27.7px] @xlg:leading-[29px] @mid:leading-[30px] @xl:leading-8 transition-colors duration-300 group-hover/item:text-accent-light"
-                      />
-
-                      <DynamicStyledTextPreview
-                        as="p"
-                        data={exp.description}
-                        fallbackColor="#565e69"
-                        className="mt-2 text-subtitle text-sm @md:text-[15px] @lg:text-[15.3px] @lgx:text-[15.4px] @xlg:text-[15.6px] @mid:text-[15.7px] @xl:text-base font-normal leading-4 @md:leading-[16.5px] @lg:leading-[17.5px] @lgx:leading-[17.9px] @xlg:leading-[18.5px] @mid:leading-[19.1px] @xl:leading-5"
-                      />
-
-                      {rawButtons.length > 0 && (
-                        <div className="mt-3.5 @md:mt-4">
-                          <DynamicCmsButtonPreview
-                            buttons={rawButtons}
-                            defaultVariant="link"
-                          />
-                        </div>
-                      )}
-                    </div>
-                  </li>
-                )
-              })
+              items.map((exp: any, idx: number) => (
+                <SignatureExperienceRow
+                  key={typeof exp === "string" ? exp : exp?.id || idx}
+                  item={exp}
+                  index={idx}
+                  draftName={draft?.name}
+                />
+              ))
             )}
           </ol>
         </div>

@@ -16,6 +16,7 @@ import {
 
 import type { LocationFormSectionProps } from "../../config/locationSections"
 import { FormSection } from "../../shared/fields"
+import { getExperienceFieldName } from "../../shared/getExperienceFieldName"
 import { useSearchExperiences, type ExperienceSearchItem } from "@/hooks/experience/useGetExperiences"
 import { useGetExperienceById } from "@/hooks/experience/useGetExperienceById"
 import {
@@ -178,8 +179,17 @@ export function PlaceExperiencesForm({
   const sectionKey = "experiences"
   const isOpen = Boolean(openSections[sectionKey])
 
+  const expFieldName = getExperienceFieldName(draft?.type)
+
   // Support both pure string[] array and legacy object { items: string[] }
-  const rawData: any = draft.experience ?? (draft as any).experiences ?? []
+  const rawData: any =
+    (draft as any)?.[expFieldName] ??
+    draft?.experience ??
+    (draft as any)?.experiences ??
+    (draft as any)?.placeExperiences ??
+    (draft as any)?.regionExperienceList ??
+    (draft as any)?.countryExperiences ??
+    []
   const rawItems: any[] = Array.isArray(rawData)
     ? rawData
     : Array.isArray(rawData?.items)
@@ -218,9 +228,8 @@ export function PlaceExperiencesForm({
     return () => document.removeEventListener("mousedown", handleClickOutside)
   }, [])
 
-  // User requirement: "That's mean tumi bujhte parcho, je amar ekhon experience er output hobe just array."
   const updateExpItems = (newItems: string[]) => {
-    updateField("experience", newItems)
+    updateField(expFieldName, newItems)
   }
 
   // Add experience ID directly from Experience Search
@@ -248,17 +257,24 @@ export function PlaceExperiencesForm({
     updateExpItems(updated)
   }
 
+  const isCountry = draft.type?.toUpperCase() === "COUNTRY"
+  const sectionTitle = isCountry ? "Signature Experiences" : "Curated Experiences"
+  const locationTypeLabel = draft.type
+    ? draft.type.charAt(0).toUpperCase() + draft.type.slice(1).toLowerCase()
+    : "Location"
+
   return (
     <FormSection
-      title="Curated Experiences"
+      title={sectionTitle}
       sectionNumber={sectionNumber}
       active={isOpen}
       onClick={() => toggleSection(sectionKey)}
     >
       <div className="flex flex-col gap-5">
         <p className="text-xs text-muted-foreground leading-relaxed">
-          Link curated Experiences from the Experience table to this Place.
-          Item 1 is featured as the top full-width banner, and subsequent items render in the curated experiences grid.
+          {isCountry
+            ? `Link signature experiences from the Experience table to this ${locationTypeLabel}. They render as an iconic editorial numbered list (01, 02, 03...).`
+            : `Link curated Experiences from the Experience table to this ${locationTypeLabel}. Item 1 is featured as the top full-width banner, and subsequent items render in the curated experiences grid.`}
         </p>
 
         {/* Search & Add Picker */}

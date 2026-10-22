@@ -2,6 +2,8 @@ import { useState } from "react"
 import { MapPin, ChevronDown, Compass, ArrowRight, Loader2, Sparkles } from "lucide-react"
 
 import type { LocationPreviewSectionProps } from "../../config/locationSections"
+import { getExperienceFieldName } from "../../shared/getExperienceFieldName"
+import { SignatureExperiencesPreview } from "../signature-experiences/SignatureExperiencesPreview"
 import { DynamicStyledTextPreview } from "@/components/pages/CMS/shared/DynamicStyledTextPreview"
 import { UniversalMultimediaPreview } from "@/components/pages/CMS/Home/shared/preview/UniversalMultimediaPreview"
 import { useGetExperienceById } from "@/hooks/experience/useGetExperienceById"
@@ -330,9 +332,8 @@ function PreviewExperienceCard({ experienceId }: { experienceId: string }) {
           >
             <span>{isExpanded ? "Collapse" : "Expand"}</span>
             <ChevronDown
-              className={`h-3.5 w-3.5 transition-transform duration-300 ${
-                isExpanded ? "rotate-180" : ""
-              }`}
+              className={`h-3.5 w-3.5 transition-transform duration-300 ${isExpanded ? "rotate-180" : ""
+                }`}
             />
           </button>
         </div>
@@ -344,15 +345,31 @@ function PreviewExperienceCard({ experienceId }: { experienceId: string }) {
 export function PlaceExperiencesPreview({ draft }: LocationPreviewSectionProps) {
   if (!draft) return null
 
+  if (draft.type?.toUpperCase() === "COUNTRY") {
+    return <SignatureExperiencesPreview draft={draft} />
+  }
+  if (draft.type?.toUpperCase() === "REGION") {
+    return
+  }
+
+  const expFieldName = getExperienceFieldName(draft?.type)
+
   // Support both pure string[] array and legacy object { items: string[] }
-  const rawData: any = draft.experience ?? (draft as any).experiences ?? []
+  const rawData: any =
+    (draft as any)?.[expFieldName] ??
+    draft.experience ??
+    (draft as any).experiences ??
+    (draft as any)?.placeExperiences ??
+    (draft as any)?.regionExperienceList ??
+    (draft as any)?.countryExperiences ??
+    []
   const rawItems: any[] = Array.isArray(rawData)
     ? rawData
     : Array.isArray(rawData?.items)
-    ? rawData.items
-    : Array.isArray(rawData?.cards)
-    ? rawData.cards
-    : []
+      ? rawData.items
+      : Array.isArray(rawData?.cards)
+        ? rawData.cards
+        : []
 
   const itemIds: string[] = rawItems
     .map((it: any) => (typeof it === "string" ? it : it?.id || it?.experienceId))

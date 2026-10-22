@@ -1,5 +1,5 @@
 import { useMemo } from "react"
-import { ParentLocationSelect } from "@/components/pages/Location/shared/ParentLocationSelect"
+import { MultiLocationSelect } from "../../shared/MultiLocationSelect"
 import { DynamicStyledField } from "@/components/pages/CMS/shared/FormControls"
 import { FormSection } from "@/components/pages/Location/shared/fields"
 import type { ExperienceFormSectionProps } from "../../config/experienceSections"
@@ -229,42 +229,36 @@ export function BasicInfoForm({
           </div>
 
           <div className="flex flex-col gap-4">
-            {/* Country (Required) */}
-            <ParentLocationSelect
-              value={draft.countryId || null}
-              currentName={draft.country?.name}
+            {/* Countries (Multi-select) */}
+            <MultiLocationSelect
+              values={draft.countries}
               filterType="COUNTRY"
-              label="Country (Required Location Link)"
-              noneLabel="Select Country..."
-              placeholder="Search countries..."
-              onChange={(id) => {
-                updateField("countryId", id || null)
+              label="Countries (Multi-Select)"
+              placeholder="Search and link countries..."
+              onChange={(ids) => {
+                updateField("countries", ids)
               }}
             />
 
-            {/* Region (Optional) */}
-            <ParentLocationSelect
-              value={draft.regionId || null}
-              currentName={draft.region?.name}
+            {/* Regions (Optional Multi-select) */}
+            <MultiLocationSelect
+              values={draft.regions}
               filterType="REGION"
-              label="Region (Optional)"
-              noneLabel="No Region Assigned"
-              placeholder="Search regions..."
-              onChange={(id) => {
-                updateField("regionId", id || null)
+              label="Regions (Optional Multi-Select)"
+              placeholder="Search and link regions..."
+              onChange={(ids) => {
+                updateField("regions", ids)
               }}
             />
 
-            {/* Place (Optional) */}
-            <ParentLocationSelect
-              value={draft.placeId || null}
-              currentName={draft.place?.name}
+            {/* Places (Optional Multi-select) */}
+            <MultiLocationSelect
+              values={draft.places}
               filterType="PLACE"
-              label="Place / City / Landmark (Optional)"
-              noneLabel="No Specific Place Assigned"
-              placeholder="Search places..."
-              onChange={(id) => {
-                updateField("placeId", id || null)
+              label="Places / Cities / Destinations (Optional Multi-Select)"
+              placeholder="Search and link places..."
+              onChange={(ids) => {
+                updateField("places", ids)
               }}
             />
           </div>

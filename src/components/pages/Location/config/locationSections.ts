@@ -207,7 +207,8 @@ export const LOCATION_TYPE_SECTION_CONFIG: Record<string, LocationSectionKey[]> 
     "highlights",
     "region-experiences",
     "travel-insights",
-    "signature-experiences",
+    "experiences",
+    // "signature-experiences",
     "faq",
     "cta",
     "seo",
@@ -222,6 +223,7 @@ export const LOCATION_TYPE_SECTION_CONFIG: Record<string, LocationSectionKey[]> 
     "character",
     "stories",
     "practical-info",
+    "experiences",
     "seo",
   ],
   PLACE: [

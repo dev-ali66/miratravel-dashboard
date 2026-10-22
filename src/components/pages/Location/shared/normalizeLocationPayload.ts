@@ -8,6 +8,7 @@
 
 import type { LocationData } from "../locationTypes"
 import { getSectionsForLocationType } from "../config/locationSections"
+import { getExperienceFieldName } from "./getExperienceFieldName"
 import {
   normalizeMultimedia,
   normalizeStyledField,
@@ -82,8 +83,15 @@ export function normalizeLocationPayload(
     safeData.statistics ??
     safeData.stats ??
     {}
+  const expFieldName = getExperienceFieldName(safeDraft.type)
   const experiencesData =
-    safeDraft.experience ?? safeDraft.experiences ?? safeData.experience ?? safeData.experiences ?? []
+    (safeDraft as any)?.[expFieldName] ??
+    safeDraft.experience ??
+    safeDraft.experiences ??
+    (safeData as any)?.[expFieldName] ??
+    safeData.experience ??
+    safeData.experiences ??
+    []
 
   const regionExperiencesData =
     safeDraft.regionExperiences ??
@@ -173,7 +181,7 @@ export function normalizeLocationPayload(
     ...(finalCharacter ? { character: finalCharacter } : {}),
     ...(finalPracticalInfo ? { practicalInfo: finalPracticalInfo } : {}),
     ...(finalStats ? { statistics: finalStats } : {}),
-    ...(finalExperiences ? { experience: finalExperiences } : {}),
+    ...(finalExperiences ? { [expFieldName]: finalExperiences } : {}),
     ...(finalRegionExperiences ? { regionExperiences: finalRegionExperiences } : {}),
     ...(finalSignatureExperiences ? { signatureExperiences: finalSignatureExperiences } : {}),
     ...(finalTravelInsights ? { travelInsight: finalTravelInsights } : {}),
