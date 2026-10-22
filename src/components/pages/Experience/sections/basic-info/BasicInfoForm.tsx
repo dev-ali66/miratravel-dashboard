@@ -237,15 +237,8 @@ export function BasicInfoForm({
               label="Country (Required Location Link)"
               noneLabel="Select Country..."
               placeholder="Search countries..."
-              onChange={(id, name) => {
-                const nextId = id || null
-                updateField("countryId", nextId)
-                updateField("country", nextId && name ? { id: nextId, name } : null)
-                // Also default parentId to country if not set
-                if (!draft.parentId && nextId) {
-                  updateField("parentId", nextId)
-                  updateField("parent", { id: nextId, name: name || "" })
-                }
+              onChange={(id) => {
+                updateField("countryId", id || null)
               }}
             />
 
@@ -257,14 +250,8 @@ export function BasicInfoForm({
               label="Region (Optional)"
               noneLabel="No Region Assigned"
               placeholder="Search regions..."
-              onChange={(id, name) => {
-                const nextId = id || null
-                updateField("regionId", nextId)
-                updateField("region", nextId && name ? { id: nextId, name } : null)
-                if (nextId) {
-                  updateField("parentId", nextId)
-                  updateField("parent", { id: nextId, name: name || "" })
-                }
+              onChange={(id) => {
+                updateField("regionId", id || null)
               }}
             />
 
@@ -276,14 +263,8 @@ export function BasicInfoForm({
               label="Place / City / Landmark (Optional)"
               noneLabel="No Specific Place Assigned"
               placeholder="Search places..."
-              onChange={(id, name) => {
-                const nextId = id || null
-                updateField("placeId", nextId)
-                updateField("place", nextId && name ? { id: nextId, name } : null)
-                if (nextId) {
-                  updateField("parentId", nextId)
-                  updateField("parent", { id: nextId, name: name || "" })
-                }
+              onChange={(id) => {
+                updateField("placeId", id || null)
               }}
             />
           </div>

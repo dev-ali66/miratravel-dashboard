@@ -173,14 +173,6 @@ export interface ExperienceData {
     slug?: string
     type?: string
   } | null
-  parentId?: string | null
-  parent?: {
-    id: string
-    name: string
-    slug?: string
-    type?: string
-    hero?: any
-  } | null
 
   // Editorial Sections
   subtitle?: string | null

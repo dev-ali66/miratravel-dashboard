@@ -222,7 +222,6 @@ export function normalizeExperiencePayload(draft: Partial<ExperienceData>) {
     countryId: safeDraft.countryId ? String(safeDraft.countryId).trim() : null,
     regionId: safeDraft.regionId ? String(safeDraft.regionId).trim() : null,
     placeId: safeDraft.placeId ? String(safeDraft.placeId).trim() : null,
-    parentId: safeDraft.parentId ? String(safeDraft.parentId).trim() : null,
     subtitle: safeDraft.subtitle || null,
     summary: safeDraft.summary || null,
     hero: normalizeHero(safeDraft.hero),

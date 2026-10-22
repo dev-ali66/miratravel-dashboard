@@ -40,7 +40,7 @@ export function HeroPreview({ draft }: ExperiencePreviewSectionProps) {
   const priceTypeStr = formatPriceType(draft?.priceType)
   const priceBadgeText = priceTypeStr ? `${formattedPrice} • ${priceTypeStr}` : formattedPrice
 
-  const parentName = draft?.parent?.name
+  const parentName = draft?.place?.name || draft?.country?.name || (draft as any)?.parent?.name
   const isFeatured = Boolean(draft?.featured)
 
   return (
