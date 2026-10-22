@@ -215,7 +215,7 @@ export function normalizeExperiencePayload(draft: Partial<ExperienceData>) {
   const payload: any = {
     name: (safeDraft.name ?? "").trim(),
     featured: Boolean(safeDraft.featured),
-    status: safeDraft.status || "DRAFT",
+    status: safeDraft.status || "PUBLISHED",
     primaryType: safeDraft.primaryType || "CULTURE_HERITAGE",
     secondaryTypes: Array.isArray(safeDraft.secondaryTypes) ? safeDraft.secondaryTypes : [],
     attributes: Array.isArray(safeDraft.attributes) ? safeDraft.attributes : [],

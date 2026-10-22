@@ -461,7 +461,7 @@ export const emptySeo = {
 export const emptyExperience: ExperienceData = {
   name: "",
   slug: "",
-  status: "DRAFT",
+  status: "PUBLISHED",
   featured: false,
   primaryType: "CULTURE_HERITAGE",
   secondaryTypes: [],

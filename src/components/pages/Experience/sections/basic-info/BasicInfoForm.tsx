@@ -5,11 +5,10 @@ import { FormSection } from "@/components/pages/Location/shared/fields"
 import type { ExperienceFormSectionProps } from "../../config/experienceSections"
 import {
   EXPERIENCE_TYPES,
+  EXPERIENCE_TYPE_CONFIG,
   EXPERIENCE_ATTRIBUTES,
-  EXPERIENCE_STATUS_OPTIONS,
   EXPERIENCE_CURRENCY_OPTIONS,
   type ExperienceType,
-  type JourneyStatus,
 } from "../../experienceTypes"
 import { cn } from "@/lib/utils"
 import { Globe, Layers, Tag, Check, Sparkles } from "lucide-react"
@@ -80,60 +79,21 @@ export function BasicInfoForm({
       onClick={() => toggleSection("basic-info")}
     >
       <div className="flex flex-col gap-6">
-        {/* Name and Slug */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-          <div className="md:col-span-2">
-            <DynamicStyledField
-              type="text"
-              label="Experience Name"
-              fieldName="name"
-              placeholder="e.g. Exclusive Helicopter Safari over Theth & Blue Eye"
-              required={true}
-              enableStyle={false}
-              value={draft.name || ""}
-              onChange={(val) => updateField("name", val)}
-            />
-          </div>
-
-          <div>
-            <label className="text-xs font-semibold text-foreground mb-1 block">
-              Publication Status
-            </label>
-            <div className="flex items-center gap-1.5 p-1 rounded-lg border border-border/70 bg-card">
-              {EXPERIENCE_STATUS_OPTIONS.map((st) => {
-                const isSelected = (draft.status || "DRAFT") === st.value
-                return (
-                  <button
-                    key={st.value}
-                    type="button"
-                    onClick={() => updateField("status", st.value as JourneyStatus)}
-                    className={cn(
-                      "flex-1 rounded-md px-2 py-1.5 text-xs font-medium transition-all text-center cursor-pointer",
-                      isSelected
-                        ? "bg-primary text-primary-foreground shadow-xs font-semibold"
-                        : "text-muted-foreground hover:bg-muted/70 hover:text-foreground"
-                    )}
-                  >
-                    {st.label}
-                  </button>
-                )
-              })}
-            </div>
-          </div>
+        {/* Experience Name (Full Width) */}
+        <div>
+          <DynamicStyledField
+            type="text"
+            label="Experience Name"
+            fieldName="name"
+            placeholder="e.g. Exclusive Helicopter Safari over Theth & Blue Eye"
+            required={true}
+            enableStyle={false}
+            value={draft.name || ""}
+            onChange={(val) => updateField("name", val)}
+          />
         </div>
 
-        {/* Custom Slug */}
-        <DynamicStyledField
-          type="text"
-          label="URL Slug (Optional — generated automatically if empty)"
-          fieldName="slug"
-          placeholder="e.g. exclusive-helicopter-safari-theth"
-          enableStyle={false}
-          value={draft.slug || ""}
-          onChange={(val) => updateField("slug", val)}
-        />
-
-        {/* Editorial Subtitle / Teaser */}
+        {/* Editorial Subtitle & Short Summary */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <DynamicStyledField
             type="text"
@@ -156,7 +116,7 @@ export function BasicInfoForm({
           />
         </div>
 
-        {/* CLASSIFICATION: Primary & Secondary Types */}
+        {/* CLASSIFICATION: Primary (Dropdown) & Secondary Types (Pills) */}
         <div className="rounded-xl border border-border/80 bg-muted/15 p-4.5 flex flex-col gap-4">
           <div className="flex items-center gap-2 pb-2 border-b border-border/50">
             <Layers className="h-4 w-4 text-primary" />
@@ -165,49 +125,35 @@ export function BasicInfoForm({
             </span>
           </div>
 
-          {/* Primary Type Selection */}
-          <div>
-            <label className="text-xs font-semibold text-foreground mb-1.5 block">
+          {/* Primary Type Selection as Dropdown */}
+          <div className="flex flex-col gap-1.5">
+            <label className="text-xs font-semibold text-foreground block">
               Primary Experience Type <span className="text-destructive">*</span>
-              <span className="text-[11px] font-normal text-muted-foreground ml-2">
-                (Defines the core character and primary catalogue filtering)
-              </span>
             </label>
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-2">
-              {EXPERIENCE_TYPES.map((t) => {
-                const isSelected = currentPrimaryType === t.value
-                return (
-                  <button
-                    key={t.value}
-                    type="button"
-                    onClick={() => {
-                      updateField("primaryType", t.value)
-                      // Remove from secondary if it was there
-                      if (currentSecondaryTypes.includes(t.value)) {
-                        updateField(
-                          "secondaryTypes",
-                          currentSecondaryTypes.filter((st) => st !== t.value)
-                        )
-                      }
-                    }}
-                    className={cn(
-                      "flex flex-col text-left p-2.5 rounded-lg border text-xs transition-all cursor-pointer",
-                      isSelected
-                        ? "border-primary bg-primary/10 shadow-2xs font-semibold text-primary ring-1 ring-primary"
-                        : "border-border/60 bg-card hover:border-border hover:bg-muted/40 text-foreground"
-                    )}
-                  >
-                    <div className="flex items-center justify-between w-full">
-                      <span className="font-semibold">{t.label}</span>
-                      {isSelected && <Check className="h-3.5 w-3.5 text-primary shrink-0" />}
-                    </div>
-                    <span className="text-[10px] font-normal text-muted-foreground mt-1 line-clamp-2">
-                      {t.scope}
-                    </span>
-                  </button>
-                )
-              })}
-            </div>
+            <select
+              value={currentPrimaryType}
+              onChange={(e) => {
+                const nextVal = e.target.value as ExperienceType
+                updateField("primaryType", nextVal)
+                // Remove from secondary if it was there
+                if (currentSecondaryTypes.includes(nextVal)) {
+                  updateField(
+                    "secondaryTypes",
+                    currentSecondaryTypes.filter((st) => st !== nextVal)
+                  )
+                }
+              }}
+              className="w-full rounded-lg border border-border/70 bg-card px-3 py-2 text-xs font-medium text-foreground outline-none focus:border-primary focus:ring-1 focus:ring-primary shadow-2xs cursor-pointer"
+            >
+              {EXPERIENCE_TYPES.map((t) => (
+                <option key={t.value} value={t.value}>
+                  {t.label} — ({t.scope})
+                </option>
+              ))}
+            </select>
+            <p className="text-[11px] text-muted-foreground mt-0.5">
+              {EXPERIENCE_TYPE_CONFIG[currentPrimaryType]?.scope}
+            </p>
           </div>
 
           {/* Secondary Types Multi-select */}
@@ -273,16 +219,16 @@ export function BasicInfoForm({
           </div>
         </div>
 
-        {/* GEOGRAPHY LINKING: Country, Region, Place */}
+        {/* GEOGRAPHY LINKING: Country, Region, Place (Flex Column) */}
         <div className="rounded-xl border border-border/80 bg-muted/15 p-4.5 flex flex-col gap-4">
           <div className="flex items-center gap-2 pb-2 border-b border-border/50">
             <Globe className="h-4 w-4 text-primary" />
             <span className="text-xs font-bold uppercase tracking-wider text-foreground">
-              Geography & Destination Linking
+              Geographical Destination Linking
             </span>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+          <div className="flex flex-col gap-4">
             {/* Country (Required) */}
             <ParentLocationSelect
               value={draft.countryId || null}
