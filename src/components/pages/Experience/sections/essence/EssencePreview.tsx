@@ -78,7 +78,7 @@ export function EssencePreview({ draft }: ExperiencePreviewSectionProps) {
 
                 {/* Absolute Stat Badge Overlaid on the Media */}
                 {(() => {
-                  const stat = essence.stat || {}
+                  const stat = (essence.stat || {}) as Record<string, any>
                   const statValue = stat.statValue ?? stat.value ?? essence.statValue
                   const statLabel = stat.statLabel ?? stat.label ?? essence.statLabel
                   const rawBadgeBg =

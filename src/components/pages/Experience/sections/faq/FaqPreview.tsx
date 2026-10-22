@@ -47,7 +47,7 @@ export function FaqPreview({ draft }: ExperiencePreviewSectionProps) {
     >
       {/* Background Media */}
       <UniversalMultimediaPreview
-        multimedia={faqData.backgroundMultimedia}
+        multimedia={faqData.backgroundMultimedia ?? undefined}
         fallbackColor="transparent"
         mode="background"
       />
@@ -71,7 +71,7 @@ export function FaqPreview({ draft }: ExperiencePreviewSectionProps) {
             <div className="relative flex w-full justify-center lg:justify-start lg:w-auto shrink-0">
               <div className="relative flex-shrink-0 overflow-hidden w-[340px] md:w-[500px] lg:w-[460px] xlg:w-[520px] xl:w-[580px] h-[340px] md:h-[500px] lg:h-[460px] xlg:h-[520px] xl:h-[580px] max-w-full aspect-square shadow-[0_25px_50px_-12px_rgba(0,0,0,0.25)] rounded-[2px] cursor-pointer bg-muted/30">
                 <UniversalMultimediaPreview
-                  multimedia={featuredMedia}
+                  multimedia={featuredMedia ?? undefined}
                   mode="inline"
                   className="w-full h-full object-cover transition-transform duration-700 hover:scale-105"
                 />

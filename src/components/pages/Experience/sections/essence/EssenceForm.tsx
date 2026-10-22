@@ -78,7 +78,7 @@ export function EssenceForm({
 
         {/* Overlay Stat Badge */}
         {(() => {
-          const stat = essence.stat || {}
+          const stat = (essence.stat || {}) as Record<string, any>
           const statValue = stat.statValue ?? stat.value ?? essence.statValue
           const statLabel = stat.statLabel ?? stat.label ?? essence.statLabel
           const statBadgeBg =
@@ -89,7 +89,7 @@ export function EssenceForm({
             "#E5A84B"
 
           const updateStatField = (key: string, val: any) => {
-            const currentStat = essence.stat || {}
+            const currentStat = (essence.stat || {}) as Record<string, any>
             updateEssenceField("stat", {
               ...currentStat,
               [key]: val,

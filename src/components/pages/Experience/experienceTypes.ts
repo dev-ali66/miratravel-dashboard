@@ -1,5 +1,5 @@
-import type { StyledField } from "../CMS/shared/FormControls"
-import type { MultimediaObject } from "../CMS/shared/UniversalMultimediaForm"
+export type StyledField = any
+export type MultimediaObject = Record<string, any>
 
 export interface ExperienceData {
   id?: string

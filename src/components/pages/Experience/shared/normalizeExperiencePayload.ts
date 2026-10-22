@@ -143,7 +143,7 @@ export function normalizeExperiencePayload(draft: Partial<ExperienceData>) {
   }
 
   const rawPrice = safeDraft.price
-  if (rawPrice !== undefined && rawPrice !== null && rawPrice !== "") {
+  if (rawPrice !== undefined && rawPrice !== null && String(rawPrice).trim() !== "") {
     const num = Number(rawPrice)
     payload.price = isNaN(num) ? 0 : Number(num.toFixed(2))
   } else {

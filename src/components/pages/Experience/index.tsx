@@ -14,7 +14,6 @@ import {
   ChevronLeft,
   ChevronRight,
   Sparkles,
-  Tag,
   DollarSign,
 } from "lucide-react"
 import {
