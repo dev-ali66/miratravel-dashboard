@@ -37,7 +37,7 @@ export function useExperiencePage(experienceId?: string, _slug?: string) {
         name: experience.name || "",
         slug: experience.slug || "",
         featured: Boolean(experience.featured),
-        price: experience.price !== null && experience.price !== undefined ? Number(experience.price) : null,
+        price: experience.price !== null && experience.price !== undefined ? Number(experience.price) : 0,
         currency: experience.currency || "EUR",
         priceType: experience.priceType || "",
         parentId: experience.parentId || null,

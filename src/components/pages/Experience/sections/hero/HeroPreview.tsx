@@ -2,12 +2,46 @@ import { UniversalMultimediaPreview } from "@/components/pages/CMS/shared/Univer
 import { DynamicStyledTextPreview } from "@/components/pages/CMS/shared/DynamicStyledTextPreview"
 import { DynamicCmsButtonPreview } from "@/components/pages/CMS/shared/DynamicCmsButtonPreview"
 import { cn } from "@/lib/utils"
+import { MapPin, Sparkles } from "lucide-react"
 import type { ExperiencePreviewSectionProps } from "../../config/experienceSections"
+
+const formatCurrencySymbol = (cur?: string | null) => {
+  switch (cur?.toUpperCase()) {
+    case "USD":
+      return "$"
+    case "GBP":
+      return "£"
+    case "CHF":
+      return "CHF "
+    case "ALL":
+      return "Lek "
+    case "EUR":
+    default:
+      return "€"
+  }
+}
+
+const formatPriceType = (type?: string | null) => {
+  if (!type) return ""
+  return type.replace(/_/g, " ").toUpperCase()
+}
 
 export function HeroPreview({ draft }: ExperiencePreviewSectionProps) {
   const hero = draft?.hero || {}
   const isCenter = Boolean(hero.isCenter)
   const buttons = Array.isArray(hero.buttons) ? hero.buttons : []
+
+  // Dynamic price calculation with 2 decimal places
+  const priceNum = Number(draft?.price ?? 0)
+  const formattedPrice = `${formatCurrencySymbol(draft?.currency || "EUR")}${priceNum.toLocaleString(undefined, {
+    minimumFractionDigits: 2,
+    maximumFractionDigits: 2,
+  })}`
+  const priceTypeStr = formatPriceType(draft?.priceType)
+  const priceBadgeText = priceTypeStr ? `${formattedPrice} • ${priceTypeStr}` : formattedPrice
+
+  const parentName = draft?.parent?.name
+  const isFeatured = Boolean(draft?.featured)
 
   return (
     <section
@@ -21,7 +55,7 @@ export function HeroPreview({ draft }: ExperiencePreviewSectionProps) {
       <UniversalMultimediaPreview
         multimedia={hero.backgroundMultimedia || hero.multimedia}
         mode="background"
-        overlayClassName="bg-gradient-to-t from-black/80 via-black/35 to-transparent"
+        overlayClassName="bg-gradient-to-t from-black/85 via-black/40 to-transparent"
       />
 
       {/* Hero Content Container */}
@@ -31,6 +65,30 @@ export function HeroPreview({ draft }: ExperiencePreviewSectionProps) {
         )}
       >
         <div className="flex w-full max-w-[880px] flex-col items-start text-left">
+          {/* Top Badges / Tags Bar */}
+          <div className="flex flex-wrap items-center gap-2 mb-3">
+            {/* Price Badge */}
+            <span className="inline-flex items-center gap-1.5 rounded-full border border-[#E5A84B]/60 bg-black/60 px-3.5 py-1 text-xs font-semibold uppercase tracking-wider text-[#E5A84B] shadow-sm backdrop-blur-md">
+              {priceBadgeText}
+            </span>
+
+            {/* Parent Location Badge */}
+            {parentName && (
+              <span className="inline-flex items-center gap-1 rounded-full border border-white/30 bg-black/50 px-3 py-1 text-xs font-medium text-white shadow-sm backdrop-blur-md">
+                <MapPin className="h-3 w-3 text-accent" />
+                {parentName}
+              </span>
+            )}
+
+            {/* Featured Badge */}
+            {isFeatured && (
+              <span className="inline-flex items-center gap-1 rounded-full bg-[#af6348] px-3 py-1 text-xs font-semibold text-white shadow-sm tracking-wider uppercase">
+                <Sparkles className="h-3 w-3" />
+                Featured
+              </span>
+            )}
+          </div>
+
           {/* Breadcrumb / Category Tag */}
           <DynamicStyledTextPreview
             as="span"

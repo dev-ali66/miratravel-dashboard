@@ -286,7 +286,10 @@ export default function ExperiencePages() {
                       {exp.price !== null && exp.price !== undefined ? (
                         <span>
                           {formatCurrencySymbol(exp.currency)}
-                          {Number(exp.price).toLocaleString()}
+                          {Number(exp.price).toLocaleString(undefined, {
+                            minimumFractionDigits: 2,
+                            maximumFractionDigits: 2,
+                          })}
                           {exp.priceType && (
                             <span className="text-[10px] font-normal text-muted-foreground ml-1">
                               ({formatPriceType(exp.priceType)})

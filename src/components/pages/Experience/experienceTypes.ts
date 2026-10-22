@@ -6,8 +6,8 @@ export interface ExperienceData {
   name: string
   slug?: string
   featured?: boolean
-  price?: number | null
-  currency?: string | null
+  price: number
+  currency: string
   priceType?: string | null
   parentId?: string | null
   parent?: {

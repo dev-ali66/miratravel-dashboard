@@ -142,10 +142,12 @@ export function normalizeExperiencePayload(draft: Partial<ExperienceData>) {
     payload.slug = safeDraft.slug.trim()
   }
 
-  if (safeDraft.price !== undefined && safeDraft.price !== null && safeDraft.price !== "") {
-    payload.price = Number(safeDraft.price)
+  const rawPrice = safeDraft.price
+  if (rawPrice !== undefined && rawPrice !== null && rawPrice !== "") {
+    const num = Number(rawPrice)
+    payload.price = isNaN(num) ? 0 : Number(num.toFixed(2))
   } else {
-    payload.price = null
+    payload.price = 0
   }
 
   payload.currency =

@@ -70,11 +70,13 @@ export function BasicInfoForm({
             type="number"
             label="Price"
             fieldName="price"
-            placeholder="e.g. 250"
+            placeholder="0.00"
+            min={0}
+            step={0.01}
             enableStyle={false}
-            value={draft.price !== null && draft.price !== undefined ? String(draft.price) : ""}
+            value={draft.price !== null && draft.price !== undefined ? String(draft.price) : "0"}
             onChange={(val) => {
-              const num = val === "" ? null : Number(val)
+              const num = val === "" ? 0 : Number(val)
               updateField("price", num)
             }}
           />
