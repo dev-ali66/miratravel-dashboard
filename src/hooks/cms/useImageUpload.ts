@@ -1,5 +1,5 @@
 import { useMutation } from "@tanstack/react-query"
-import { apiPrivate } from "@/lib/api-client"
+import { apiUpload } from "@/lib/api-client"
 import { getApiErrorMessage } from "@/lib/api-error"
 import { toast } from "sonner"
 
@@ -34,7 +34,7 @@ export function useImageUpload() {
         formData.append("fileRemove", path)
       })
 
-      const res = await apiPrivate.post<ImageUploadResponse>(
+      const res = await apiUpload.post<ImageUploadResponse>(
         "/file-upload",
         formData,
         {

@@ -4,6 +4,9 @@ import { toast } from "sonner"
 const BASE_URL =
   import.meta.env.VITE_API_URL || "http://localhost:5010/api/v1"
 
+const UPLOAD_BASE_URL =
+  import.meta.env.VITE_UPLOAD_API_URL || "https://api.miratravel.nl/api/v1"
+
 export const apiPublic = axios.create({
   baseURL: BASE_URL,
   headers: {
@@ -22,8 +25,28 @@ export const apiPrivate = axios.create({
   withCredentials: true,
 })
 
+// Dedicated client for file and multimedia uploads (can target Live VPS directly while API points to localhost)
+export const apiUpload = axios.create({
+  baseURL: UPLOAD_BASE_URL,
+  headers: {
+    Accept: "application/json",
+  },
+  withCredentials: true,
+})
+
 // Intercept requests to attach the access token
 apiPrivate.interceptors.request.use(
+  (config: InternalAxiosRequestConfig) => {
+    const token = localStorage.getItem("accessToken")
+    if (token) {
+      config.headers.Authorization = `Bearer ${token}`
+    }
+    return config
+  },
+  (error) => Promise.reject(error)
+)
+
+apiUpload.interceptors.request.use(
   (config: InternalAxiosRequestConfig) => {
     const token = localStorage.getItem("accessToken")
     if (token) {

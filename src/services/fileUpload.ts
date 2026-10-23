@@ -9,7 +9,7 @@
    import hardcoded to localhost.
 ===================================================== */
 
-import { apiPrivate } from "@/lib/api-client"
+import { apiUpload } from "@/lib/api-client"
 
 export interface FileUploadResponse {
   success: boolean
@@ -26,7 +26,7 @@ export async function uploadFile(
 
   formData.append(fieldName, file)
 
-  const { data } = await apiPrivate.post<FileUploadResponse>(
+  const { data } = await apiUpload.post<FileUploadResponse>(
     "/file-upload",
     formData,
     {
@@ -52,7 +52,7 @@ export async function removeFiles(urls: string[]) {
 
   formData.append("fileRemove", JSON.stringify(urls))
 
-  return apiPrivate.post("/file-upload", formData, {
+  return apiUpload.post("/file-upload", formData, {
     headers: {
       "Content-Type": "multipart/form-data",
     },
