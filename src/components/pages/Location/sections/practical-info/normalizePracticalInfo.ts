@@ -1,3 +1,4 @@
+import { THEME_COLORS } from "@/config/theme"
 import { normalizeMultimedia, normalizeStyledField } from "../../shared/normalizeHelpers"
 import { emptyPracticalInfo } from "./emptyPracticalInfo"
 
@@ -15,8 +16,8 @@ export function normalizePracticalInfo(practicalInfo: any) {
   const normalizedItems = rawAccordionItems.map((item: any, idx: number) => {
     const normItem = {
       id: item.id || `practical-${idx}-${Date.now()}`,
-      title: normalizeStyledField(item.title, "", "#182d09"),
-      content: normalizeStyledField(item.content, "", "#565e69"),
+      title: normalizeStyledField(item.title, "", THEME_COLORS.primary),
+      content: normalizeStyledField(item.content, "", THEME_COLORS.muted),
       multimedia: normalizeMultimedia(item.multimedia ?? item.imageMultimedia, "image"),
       is_expanded: item.is_expanded !== undefined ? Boolean(item.is_expanded) : true,
     }
@@ -28,8 +29,8 @@ export function normalizePracticalInfo(practicalInfo: any) {
 
   const normalizedPracticalInfo = {
     ...safePractical,
-    label: normalizeStyledField(safePractical.label ?? emptyPracticalInfo.label, "BEFORE TRAVEL", "#af6348"),
-    title: normalizeStyledField(safePractical.title ?? emptyPracticalInfo.title, "", "#182d09"),
+    label: normalizeStyledField(safePractical.label ?? emptyPracticalInfo.label, "BEFORE TRAVEL", THEME_COLORS.accent),
+    title: normalizeStyledField(safePractical.title ?? emptyPracticalInfo.title, "", THEME_COLORS.primary),
     items: normalizedItems,
     sideImageMultimedia: normalizeMultimedia(
       safePractical.sideImageMultimedia || safePractical.imageMultimedia || emptyPracticalInfo.sideImageMultimedia

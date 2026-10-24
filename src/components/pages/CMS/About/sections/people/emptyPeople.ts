@@ -1,14 +1,15 @@
+import { THEME_COLORS } from "@/config/theme"
 export const emptyPeopleItem = {
   name: {
     value: "Elena Rostova",
-    textColor: "#182D09",
+    textColor: THEME_COLORS.primary,
     textOpacity: 1,
     backgroundColor: null,
     backgroundOpacity: 1,
   },
   designation: {
     value: "Founder & Lead Travel Designer",
-    textColor: "#B86B3A",
+    textColor: THEME_COLORS.accentWarm,
     textOpacity: 1,
     backgroundColor: null,
     backgroundOpacity: 1,
@@ -16,7 +17,7 @@ export const emptyPeopleItem = {
   multimedia: {
     show: "image",
     color: {
-      color: "#E5E7EB",
+      color: THEME_COLORS.mediaPlaceholder,
       opacity: 100,
       width: "100%",
       height: "100%",
@@ -26,7 +27,7 @@ export const emptyPeopleItem = {
       url: "",
       alt: "Elena Rostova",
       opacity: 100,
-      overlayColor: "#000000",
+      overlayColor: THEME_COLORS.overlayBlack,
       overlayOpacity: 0,
       width: "100%",
       height: "auto",
@@ -37,7 +38,7 @@ export const emptyPeopleItem = {
       url: "",
       alt: null,
       opacity: 100,
-      overlayColor: "#000000",
+      overlayColor: THEME_COLORS.overlayBlack,
       overlayOpacity: 0,
       autoplay: true,
       loop: true,
@@ -57,14 +58,14 @@ export const emptyPeopleItem = {
 export const emptyPeople = {
   eyebrow: {
     value: "THE PEOPLE BEHIND MIRA",
-    textColor: "#B86B3A",
+    textColor: THEME_COLORS.accentWarm,
     textOpacity: 1,
     backgroundColor: null,
     backgroundOpacity: 1,
   },
   title: {
     value: "Curated by people who know the region intimately.",
-    textColor: "#182D09",
+    textColor: THEME_COLORS.primary,
     textOpacity: 1,
     backgroundColor: null,
     backgroundOpacity: 1,
@@ -72,7 +73,7 @@ export const emptyPeople = {
   description: {
     value:
       "Behind every MIRA journey is a team that spends significant time exploring, refining, and understanding the destinations we offer. We believe expertise comes from presence — from returning to the same places repeatedly and building trusted local relationships.",
-    textColor: "#4B5563",
+    textColor: THEME_COLORS.sub,
     textOpacity: 1,
     backgroundColor: null,
     backgroundOpacity: 1,
@@ -81,14 +82,14 @@ export const emptyPeople = {
     {
       name: {
         value: "Elena Rostova",
-        textColor: "#182D09",
+        textColor: THEME_COLORS.primary,
         textOpacity: 1,
         backgroundColor: null,
         backgroundOpacity: 1,
       },
       designation: {
         value: "Founder & Lead Travel Designer",
-        textColor: "#B86B3A",
+        textColor: THEME_COLORS.accentWarm,
         textOpacity: 1,
         backgroundColor: null,
         backgroundOpacity: 1,
@@ -96,7 +97,7 @@ export const emptyPeople = {
       multimedia: {
         show: "image",
         color: {
-          color: "#E5E7EB",
+          color: THEME_COLORS.mediaPlaceholder,
           opacity: 100,
           width: "100%",
           height: "100%",
@@ -106,7 +107,7 @@ export const emptyPeople = {
           url: "",
           alt: "Elena Rostova",
           opacity: 100,
-          overlayColor: "#000000",
+          overlayColor: THEME_COLORS.overlayBlack,
           overlayOpacity: 0,
           width: "100%",
           height: "auto",
@@ -117,7 +118,7 @@ export const emptyPeople = {
           url: "",
           alt: null,
           opacity: 100,
-          overlayColor: "#000000",
+          overlayColor: THEME_COLORS.overlayBlack,
           overlayOpacity: 0,
           autoplay: true,
           loop: true,
@@ -136,14 +137,14 @@ export const emptyPeople = {
     {
       name: {
         value: "Marko Petrovic",
-        textColor: "#182D09",
+        textColor: THEME_COLORS.primary,
         textOpacity: 1,
         backgroundColor: null,
         backgroundOpacity: 1,
       },
       designation: {
         value: "Regional Experience Director",
-        textColor: "#B86B3A",
+        textColor: THEME_COLORS.accentWarm,
         textOpacity: 1,
         backgroundColor: null,
         backgroundOpacity: 1,
@@ -151,7 +152,7 @@ export const emptyPeople = {
       multimedia: {
         show: "image",
         color: {
-          color: "#E5E7EB",
+          color: THEME_COLORS.mediaPlaceholder,
           opacity: 100,
           width: "100%",
           height: "100%",
@@ -161,7 +162,7 @@ export const emptyPeople = {
           url: "",
           alt: "Marko Petrovic",
           opacity: 100,
-          overlayColor: "#000000",
+          overlayColor: THEME_COLORS.overlayBlack,
           overlayOpacity: 0,
           width: "100%",
           height: "auto",
@@ -172,7 +173,7 @@ export const emptyPeople = {
           url: "",
           alt: null,
           opacity: 100,
-          overlayColor: "#000000",
+          overlayColor: THEME_COLORS.overlayBlack,
           overlayOpacity: 0,
           autoplay: true,
           loop: true,
@@ -191,7 +192,7 @@ export const emptyPeople = {
   backgroundMultimedia: {
     show: "color",
     color: {
-      color: "#FAF7F2",
+      color: THEME_COLORS.bgSand,
       opacity: 100,
       width: "100%",
       height: "100%",
@@ -201,7 +202,7 @@ export const emptyPeople = {
       url: "",
       alt: "",
       opacity: 100,
-      overlayColor: "#000000",
+      overlayColor: THEME_COLORS.overlayBlack,
       overlayOpacity: 0,
       width: "100%",
       height: "auto",
@@ -212,7 +213,7 @@ export const emptyPeople = {
       url: "",
       alt: null,
       opacity: 100,
-      overlayColor: "#000000",
+      overlayColor: THEME_COLORS.overlayBlack,
       overlayOpacity: 0,
       autoplay: true,
       loop: true,

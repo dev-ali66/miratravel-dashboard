@@ -1,3 +1,4 @@
+import { THEME_COLORS } from "@/config/theme"
 import type { LocationPreviewSectionProps } from "../../config/locationSections"
 import { DynamicStyledTextPreview } from "@/components/pages/CMS/shared/DynamicStyledTextPreview"
 import { UniversalMultimediaPreview } from "@/components/pages/CMS/shared/UniversalMultimediaPreview"
@@ -21,7 +22,7 @@ export function WhyVisitPreview({ draft }: LocationPreviewSectionProps) {
     <div className="relative w-full py-10 md:py-14 lg:py-16 overflow-hidden">
       <UniversalMultimediaPreview
         multimedia={whyData.backgroundMultimedia}
-        fallbackColor="#FFFFFF"
+        fallbackColor={THEME_COLORS.white}
         mode="background"
       />
 
@@ -65,7 +66,7 @@ export function WhyVisitPreview({ draft }: LocationPreviewSectionProps) {
                 {tags.map((tag) => (
                   <div
                     key={tag}
-                    className="inline-flex h-[24px] items-center justify-center rounded-full border border-neutral-300 px-3 py-1 bg-white/80 backdrop-blur-sm text-[#182d09]"
+                    className="inline-flex h-[24px] items-center justify-center rounded-full border border-border/70 px-3 py-1 bg-card/80 backdrop-blur-sm text-foreground"
                   >
                     <span className="text-[12px] font-medium leading-4">{tag}</span>
                   </div>
@@ -77,7 +78,7 @@ export function WhyVisitPreview({ draft }: LocationPreviewSectionProps) {
             <div className="relative w-full overflow-hidden rounded-lg h-[360px] md:h-[440px] lg:h-[480px] xl:h-[520px]">
               <UniversalMultimediaPreview
                 multimedia={whyData.imageMultimedia}
-                fallbackColor="#EDE7D8"
+                fallbackColor={THEME_COLORS.bgSubdued}
                 mode="background"
               />
             </div>

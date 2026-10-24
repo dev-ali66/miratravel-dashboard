@@ -9,15 +9,15 @@ export function RelatedJourneysPreview({ draft }: ExperiencePreviewSectionProps)
   return (
     <section
       data-section="related-journeys"
-      className="relative w-full py-16 px-6 md:px-12 lg:px-20 bg-[#FAF9F5] border-t border-border/60 text-foreground"
+      className="relative w-full py-16 px-6 md:px-12 lg:px-20 bg-background border-t border-border/60 text-foreground"
     >
       <div className="max-w-6xl mx-auto flex flex-col gap-8">
         <div className="flex flex-col md:flex-row md:items-end justify-between gap-4">
           <div>
-            <span className="text-xs font-semibold uppercase tracking-[2.5px] text-[#af6348] mb-2 block">
+            <span className="text-xs font-semibold uppercase tracking-[2.5px] text-accent mb-2 block">
               FEATURED IN BESPOKE ITINERARIES
             </span>
-            <h3 className="font-serif text-3xl font-light text-[#182d09]">
+            <h3 className="font-serif text-3xl font-light text-foreground">
               Journeys Featuring This Experience
             </h3>
           </div>
@@ -34,7 +34,7 @@ export function RelatedJourneysPreview({ draft }: ExperiencePreviewSectionProps)
             return (
               <div
                 key={j.id}
-                className="group flex flex-col rounded-xl overflow-hidden bg-white border border-border/60 shadow-xs hover:shadow-md transition-all"
+                className="group flex flex-col rounded-xl overflow-hidden bg-card text-card-foreground border border-border/60 shadow-xs hover:shadow-md transition-all"
               >
                 <div className="relative h-44 w-full overflow-hidden bg-muted">
                   {thumb ? (
@@ -52,10 +52,10 @@ export function RelatedJourneysPreview({ draft }: ExperiencePreviewSectionProps)
 
                 <div className="flex flex-col p-5 flex-1 justify-between gap-4">
                   <div>
-                    <span className="text-[10px] font-bold uppercase tracking-wider text-[#af6348] block mb-1">
+                    <span className="text-[10px] font-bold uppercase tracking-wider text-accent block mb-1">
                       JOURNEY ITINERARY
                     </span>
-                    <h4 className="font-serif text-lg font-medium text-[#182d09] group-hover:text-[#af6348] transition-colors leading-snug">
+                    <h4 className="font-serif text-lg font-medium text-brand-primary group-hover:text-accent transition-colors leading-snug">
                       {title}
                     </h4>
                   </div>

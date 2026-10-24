@@ -1,3 +1,4 @@
+import { THEME_COLORS } from "@/config/theme"
 import { useState } from "react"
 import { Plus, Trash2, ChevronDown, ChevronUp, BookOpen, Layers } from "lucide-react"
 import { DynamicStyledField } from "@/components/pages/CMS/shared/FormControls"
@@ -52,14 +53,14 @@ export function LocationStoriesForm({
     const newItem: LocationStoryItem = {
       title: {
         value: "New Story Title",
-        textColor: "#182D09",
+        textColor: THEME_COLORS.primary,
         textOpacity: 1,
         backgroundColor: null,
         backgroundOpacity: 1,
       },
       subtitle: {
         value: "Brief story summary or takeaway",
-        textColor: "#4B5563",
+        textColor: THEME_COLORS.sub,
         textOpacity: 1,
         backgroundColor: null,
         backgroundOpacity: 1,
@@ -246,7 +247,7 @@ export function LocationStoriesForm({
                         })
                       }
                       enableStyle
-                      style={typeof item.title === "object" ? item.title : { textColor: "#182D09" }}
+                      style={typeof item.title === "object" ? item.title : { textColor: THEME_COLORS.primary }}
                       onStyleChange={(st: any) =>
                         updateItem(index, "title", {
                           ...(typeof item.title === "object" ? item.title : {}),
@@ -268,7 +269,7 @@ export function LocationStoriesForm({
                         })
                       }
                       enableStyle
-                      style={typeof item.subtitle === "object" ? item.subtitle : { textColor: "#4B5563" }}
+                      style={typeof item.subtitle === "object" ? item.subtitle : { textColor: THEME_COLORS.sub }}
                       onStyleChange={(st: any) =>
                         updateItem(index, "subtitle", {
                           ...(typeof item.subtitle === "object" ? item.subtitle : {}),

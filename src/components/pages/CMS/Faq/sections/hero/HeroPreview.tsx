@@ -1,3 +1,4 @@
+import { THEME_COLORS } from "@/config/theme"
 import { DynamicStyledTextPreview } from "@/components/pages/CMS/shared/DynamicStyledTextPreview"
 import { UniversalMultimediaPreview } from "@/components/pages/CMS/shared/UniversalMultimediaPreview"
 import { emptyFaqHero } from "../../config/emptyFaqPayload"
@@ -81,14 +82,14 @@ export function HeroPreview({ section }: HeroPreviewProps) {
                   >
                     <path
                       d="M2.5 15V10C2.5 8.01088 3.29018 6.10322 4.6967 4.6967C6.10322 3.29018 8.01088 2.5 10 2.5C11.9891 2.5 13.8968 3.29018 15.3033 4.6967C16.7098 6.10322 17.5 8.01088 17.5 10V15"
-                      stroke="#7A8475"
+                      stroke={THEME_COLORS.mutedSlate}
                       strokeWidth="1.41667"
                       strokeLinecap="round"
                       strokeLinejoin="round"
                     />
                     <path
                       d="M17.5 15.8337C17.5 16.2757 17.3244 16.6996 17.0118 17.0122C16.6993 17.3247 16.2754 17.5003 15.8333 17.5003H15C14.558 17.5003 14.134 17.3247 13.8215 17.0122C13.5089 16.6996 13.3333 16.2757 13.3333 15.8337V13.3337C13.3333 12.8916 13.5089 12.4677 13.8215 12.1551C14.134 11.8426 14.558 11.667 15 11.667H17.5V15.8337ZM2.5 15.8337C2.5 16.2757 2.67559 16.6996 2.98816 17.0122C3.30072 17.3247 3.72464 17.5003 4.16667 17.5003H5C5.44203 17.5003 5.86595 17.3247 6.17851 17.0122C6.49107 16.6996 6.66667 16.2757 6.66667 15.8337V13.3337C6.66667 12.8916 6.49107 12.4677 6.17851 12.1551C5.86595 11.8426 5.44203 11.667 5 11.667H2.5V15.8337Z"
-                      stroke="#7A8475"
+                      stroke={THEME_COLORS.mutedSlate}
                       strokeWidth="1.41667"
                       strokeLinecap="round"
                       strokeLinejoin="round"

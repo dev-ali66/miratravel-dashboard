@@ -16,14 +16,14 @@ type StatItemProps = {
 
 export function StatItem({ icon: Icon, label, value }: StatItemProps) {
   return (
-    <div className="border-r border-b border-neutral-200 p-6 last:border-r-0 md:p-10">
-      <Icon className="h-5 w-5 text-neutral-400" />
+    <div className="border-r border-b border-border/60 p-6 last:border-r-0 md:p-10">
+      <Icon className="h-5 w-5 text-muted-foreground" />
 
-      <p className="mt-8 text-[9px] font-semibold tracking-[0.2em] text-neutral-400">
+      <p className="mt-8 text-[9px] font-semibold tracking-[0.2em] text-muted-foreground">
         {label}
       </p>
 
-      <p className="mt-2 text-xl font-light">{value}</p>
+      <p className="mt-2 text-xl font-light text-foreground">{value}</p>
     </div>
   )
 }
@@ -46,17 +46,17 @@ export function InfoItem({
   description,
 }: InfoItemProps) {
   return (
-    <div className="bg-white p-7 md:p-10">
-      <Icon className="h-5 w-5 text-neutral-400" />
+    <div className="bg-card text-card-foreground border border-border/60 p-7 md:p-10">
+      <Icon className="h-5 w-5 text-muted-foreground" />
 
-      <p className="mt-8 text-[9px] font-semibold tracking-[0.2em] text-neutral-400">
+      <p className="mt-8 text-[9px] font-semibold tracking-[0.2em] text-muted-foreground">
         {label}
       </p>
 
-      <p className="mt-3 text-lg font-light text-neutral-800">{value}</p>
+      <p className="mt-3 text-lg font-light text-foreground">{value}</p>
 
       {description && (
-        <p className="mt-3 text-xs leading-6 text-neutral-400">{description}</p>
+        <p className="mt-3 text-xs leading-6 text-muted-foreground">{description}</p>
       )}
     </div>
   )

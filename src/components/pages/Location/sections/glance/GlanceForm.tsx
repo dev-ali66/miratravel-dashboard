@@ -1,3 +1,4 @@
+import { THEME_COLORS } from "@/config/theme"
 import { useState, useRef, useEffect } from "react"
 import { Search, Plus, Trash2, ChevronUp, ChevronDown, Sparkles, Check, X, Loader2, Image as ImageIcon, MapPin, Star } from "lucide-react"
 import { DynamicStyledField } from "@/components/pages/CMS/shared/FormControls"
@@ -171,7 +172,7 @@ export function GlanceForm({
             emptyLocation.glance?.backgroundMultimedia || {
               show: "color",
               color: {
-                color: "#FFFFFF",
+                color: THEME_COLORS.white,
                 opacity: 100,
                 width: "100%",
                 height: "100%",
@@ -181,7 +182,7 @@ export function GlanceForm({
                 url: "",
                 alt: "Glance section background",
                 opacity: 100,
-                overlayColor: "#000000",
+                overlayColor: THEME_COLORS.overlayBlack,
                 overlayOpacity: 0,
                 width: "100%",
                 height: "auto",
@@ -195,7 +196,7 @@ export function GlanceForm({
                 loop: true,
                 muted: true,
                 opacity: 100,
-                overlayColor: "#000000",
+                overlayColor: THEME_COLORS.overlayBlack,
                 overlayOpacity: 0,
                 width: "100%",
                 height: "auto",

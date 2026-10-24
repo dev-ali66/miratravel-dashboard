@@ -1,3 +1,4 @@
+import { THEME_COLORS } from "@/config/theme"
 import {
   normalizeMultimedia,
   normalizeStyledField,
@@ -16,22 +17,22 @@ export function normalizeTravelInsights(section: any) {
     eyebrow: normalizeStyledField(
       safeSection.eyebrow ?? content.eyebrow,
       "THE EDITORIAL",
-      "#C5A880"
+      THEME_COLORS.goldMuted
     ),
     title: normalizeStyledField(
       safeSection.title ?? content.title,
       "Travel Insights",
-      "#182D09"
+      THEME_COLORS.primary
     ),
     subtitle: normalizeStyledField(
       safeSection.subtitle ?? content.subtitle,
       "A collection of personal, cultural and inspiring stories. Each piece offers a deeper view of the Balkans and its people beyond the expected.",
-      "#4B5563"
+      THEME_COLORS.sub
     ),
     description: normalizeStyledField(
       safeSection.description ?? content.description,
       "Prepare for your journey with our comprehensive insider guides.",
-      "#4B5563"
+      THEME_COLORS.sub
     ),
     backgroundMultimedia: normalizeMultimedia(
       safeSection.backgroundMultimedia ?? content.backgroundMultimedia,

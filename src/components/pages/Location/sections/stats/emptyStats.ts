@@ -1,7 +1,8 @@
+import { THEME_COLORS } from "@/config/theme"
 export const emptyStats = {
   title: {
     value: "Key Regional Statistics",
-    textColor: "#182d09",
+    textColor: THEME_COLORS.primary,
     textOpacity: 1,
     backgroundColor: null,
     backgroundOpacity: 1,
@@ -17,7 +18,7 @@ export const emptyStats = {
   backgroundMultimedia: {
     show: "color",
     color: {
-      color: "#FFFFFF",
+      color: THEME_COLORS.white,
       opacity: 100,
       width: "100%",
       height: "100%",
@@ -27,7 +28,7 @@ export const emptyStats = {
       url: "",
       alt: "Stats background",
       opacity: 100,
-      overlayColor: "#000000",
+      overlayColor: THEME_COLORS.overlayBlack,
       overlayOpacity: 0,
       width: "100%",
       height: "auto",
@@ -41,7 +42,7 @@ export const emptyStats = {
       loop: true,
       muted: true,
       opacity: 100,
-      overlayColor: "#000000",
+      overlayColor: THEME_COLORS.overlayBlack,
       overlayOpacity: 0,
       width: "100%",
       height: "auto",

@@ -1,3 +1,4 @@
+import { THEME_COLORS } from "@/config/theme"
 import type { StoriesCmsPreviewSectionProps } from "../../storiesCmsTypes"
 import { UniversalMultimediaPreview } from "@/components/pages/CMS/shared/UniversalMultimediaPreview"
 import { DynamicStyledTextPreview } from "@/components/pages/CMS/shared/DynamicStyledTextPreview"
@@ -25,9 +26,9 @@ export function StoriesCmsMiraStoriesPreview({ draft }: StoriesCmsPreviewSection
       <UniversalMultimediaPreview
         multimedia={backgroundMultimedia}
         fallbackAlt="Mira Stories background"
-        fallbackColor="#FCFBF9"
+        fallbackColor={THEME_COLORS.bgWarm}
         mode="background"
-        overlayClassName="bg-white/70"
+        overlayClassName="bg-white/70 dark:bg-background/80"
       />
 
       <div className="relative z-10 container mx-auto px-4 sm:px-6 lg:px-8 flex flex-col lg:flex-row items-center justify-between gap-10 lg:gap-16 max-w-7xl">
@@ -36,7 +37,7 @@ export function StoriesCmsMiraStoriesPreview({ draft }: StoriesCmsPreviewSection
           <UniversalMultimediaPreview
             multimedia={leftSideMultimedia}
             fallbackAlt="Mira Stories editorial"
-            fallbackColor="#E5E7EB"
+            fallbackColor={THEME_COLORS.mediaPlaceholder}
             className="h-full w-full object-cover"
           />
         </div>
@@ -48,8 +49,8 @@ export function StoriesCmsMiraStoriesPreview({ draft }: StoriesCmsPreviewSection
               <DynamicStyledTextPreview
                 as="p"
                 data={eyebrow}
-                fallbackColor="#C5A880"
-                className="text-xs md:text-sm font-semibold uppercase tracking-widest text-[#C5A880]"
+                fallbackColor={THEME_COLORS.goldMuted}
+                className="text-xs md:text-sm font-semibold uppercase tracking-widest text-gold-muted"
               />
             )}
 
@@ -57,8 +58,8 @@ export function StoriesCmsMiraStoriesPreview({ draft }: StoriesCmsPreviewSection
               <DynamicStyledTextPreview
                 as="h2"
                 data={title}
-                fallbackColor="#182D09"
-                className="font-heading font-semibold text-3xl md:text-4xl lg:text-5xl leading-tight text-[#182D09]"
+                fallbackColor={THEME_COLORS.primary}
+                className="font-heading font-semibold text-3xl md:text-4xl lg:text-5xl leading-tight text-brand-primary"
               />
             )}
 
@@ -66,8 +67,8 @@ export function StoriesCmsMiraStoriesPreview({ draft }: StoriesCmsPreviewSection
               <DynamicStyledTextPreview
                 as="p"
                 data={description}
-                fallbackColor="#4B5563"
-                className="text-sm md:text-base leading-relaxed text-[#4B5563] max-w-xl"
+                fallbackColor={THEME_COLORS.sub}
+                className="text-sm md:text-base leading-relaxed text-sub max-w-xl"
               />
             )}
           </div>
@@ -81,7 +82,7 @@ export function StoriesCmsMiraStoriesPreview({ draft }: StoriesCmsPreviewSection
                     href={item.button?.url || item.url || "#"}
                     className="group flex items-start gap-4 transition-opacity hover:opacity-80"
                   >
-                    <span className="mt-0.5 text-sm font-semibold tracking-wider text-[#C5A880]">
+                    <span className="mt-0.5 text-sm font-semibold tracking-wider text-gold-muted">
                       {String(index + 1).padStart(2, "0")}
                     </span>
 
@@ -89,29 +90,29 @@ export function StoriesCmsMiraStoriesPreview({ draft }: StoriesCmsPreviewSection
                       <DynamicStyledTextPreview
                         as="h3"
                         data={item.title}
-                        fallbackColor="#182D09"
-                        className="font-heading text-lg md:text-xl font-medium text-[#182D09] group-hover:text-[#AF6348] transition-colors"
+                        fallbackColor={THEME_COLORS.primary}
+                        className="font-heading text-lg md:text-xl font-medium text-brand-primary group-hover:text-accent transition-colors"
                       />
 
                       <DynamicStyledTextPreview
                         as="p"
                         data={item.subtitle}
-                        fallbackColor="#4B5563"
-                        className="text-xs md:text-sm font-normal text-[#4B5563]"
+                        fallbackColor={THEME_COLORS.sub}
+                        className="text-xs md:text-sm font-normal text-sub"
                       />
                     </div>
                   </a>
                 ))
               : [1, 2].map((item) => (
                   <div key={item} className="flex items-start gap-4">
-                    <span className="mt-0.5 text-sm font-semibold tracking-wider text-[#C5A880]">
+                    <span className="mt-0.5 text-sm font-semibold tracking-wider text-gold-muted">
                       {String(item).padStart(2, "0")}
                     </span>
                     <div className="flex flex-col gap-1">
-                      <h3 className="font-heading text-lg font-medium text-[#182D09]">
+                      <h3 className="font-heading text-lg font-medium text-brand-primary">
                         Sample Story Title
                       </h3>
-                      <p className="text-xs text-[#4B5563]">
+                      <p className="text-xs text-sub">
                         Sample story subtitle description...
                       </p>
                     </div>

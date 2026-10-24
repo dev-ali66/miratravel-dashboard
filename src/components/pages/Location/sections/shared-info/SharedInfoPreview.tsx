@@ -1,3 +1,4 @@
+import { THEME_COLORS } from "@/config/theme"
 import type { LocationPreviewSectionProps } from "../../config/locationSections"
 import { DynamicStyledTextPreview } from "@/components/pages/CMS/shared/DynamicStyledTextPreview"
 import { UniversalMultimediaPreview } from "@/components/pages/CMS/shared/UniversalMultimediaPreview"
@@ -15,7 +16,7 @@ export function SharedInfoPreview({ draft }: LocationPreviewSectionProps) {
       {/* Background Media (Color / Image / Video) */}
       <UniversalMultimediaPreview
         multimedia={sharedData.backgroundMultimedia}
-        fallbackColor="#FAF6F0"
+        fallbackColor={THEME_COLORS.bgBeige}
         mode="background"
       />
 
@@ -24,7 +25,7 @@ export function SharedInfoPreview({ draft }: LocationPreviewSectionProps) {
           <DynamicStyledTextPreview
             as="p"
             data={sharedData.text}
-            fallbackColor="#AF6348"
+            fallbackColor={THEME_COLORS.accent}
             className="w-full max-w-[1326px] text-center font-heading text-[22px] leading-[36px] md:text-[30px] md:leading-[46px] xl:text-[36px] xl:leading-[52px] font-semibold tracking-[2px]"
           />
         </div>

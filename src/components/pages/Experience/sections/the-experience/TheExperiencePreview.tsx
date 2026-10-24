@@ -11,7 +11,7 @@ export function TheExperiencePreview({ draft }: ExperiencePreviewSectionProps) {
   return (
     <section
       data-section="the-experience"
-      className="relative w-full py-16 md:py-24 px-6 md:px-12 lg:px-20 overflow-hidden bg-white text-foreground"
+      className="relative w-full py-16 md:py-24 px-6 md:px-12 lg:px-20 overflow-hidden bg-card text-foreground"
     >
       {/* Background Media */}
       {theExp.backgroundMultimedia && (
@@ -27,17 +27,17 @@ export function TheExperiencePreview({ draft }: ExperiencePreviewSectionProps) {
           <DynamicStyledTextPreview
             as="span"
             data={theExp.label}
-            className="text-xs md:text-sm font-semibold uppercase tracking-[2.5px] text-[#af6348] mb-2 block"
+            className="text-xs md:text-sm font-semibold uppercase tracking-[2.5px] text-accent mb-2 block"
           />
           <DynamicStyledTextPreview
             as="h2"
             data={theExp.title}
-            className="font-serif text-3xl md:text-4xl lg:text-5xl font-light text-[#182d09] leading-tight mb-4"
+            className="font-serif text-3xl md:text-4xl lg:text-5xl font-light text-brand-primary leading-tight mb-4"
           />
           <DynamicStyledTextPreview
             as="p"
             data={theExp.summary}
-            className="text-base md:text-lg text-[#565e69] leading-relaxed font-light"
+            className="text-base md:text-lg text-subtitle leading-relaxed font-light"
           />
         </div>
 
@@ -48,12 +48,12 @@ export function TheExperiencePreview({ draft }: ExperiencePreviewSectionProps) {
               as="div"
               isRichText
               data={theExp.narrative}
-              className="prose prose-neutral max-w-none text-[15px] md:text-base leading-relaxed text-[#333333]"
+              className="prose prose-neutral max-w-none text-[15px] md:text-base leading-relaxed text-body"
             />
 
             {theExp.quote?.value && (
-              <div className="relative pl-6 border-l-2 border-[#af6348] my-4 italic text-[#182d09] text-lg font-serif">
-                <Quote className="h-5 w-5 text-[#af6348]/40 absolute -top-2 left-0 -translate-x-1/2 bg-white" />
+              <div className="relative pl-6 border-l-2 border-accent my-4 italic text-brand-primary text-lg font-serif">
+                <Quote className="h-5 w-5 text-accent/40 absolute -top-2 left-0 -translate-x-1/2 bg-card" />
                 <DynamicStyledTextPreview as="p" data={theExp.quote} />
               </div>
             )}

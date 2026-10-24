@@ -1,3 +1,4 @@
+import { THEME_COLORS } from "@/config/theme"
 import { useState } from "react"
 import {
   Plus,
@@ -64,21 +65,21 @@ export function BlocksForm({
         type,
         title: {
           value: "",
-          textColor: "#171717",
+          textColor: THEME_COLORS.bgHeroDark,
           textOpacity: 1,
           backgroundColor: null,
           backgroundOpacity: 1,
         },
         content: {
           value: "",
-          textColor: type === "paragraph" ? "#4A4A4A" : type === "quote" ? "#B3884D" : "#374151",
+          textColor: type === "paragraph" ? THEME_COLORS.body : type === "quote" ? THEME_COLORS.gold : THEME_COLORS.sub,
           textOpacity: 1,
           backgroundColor: null,
           backgroundOpacity: 1,
         },
         author: {
           value: "",
-          textColor: "#78716C",
+          textColor: THEME_COLORS.muted,
           textOpacity: 1,
           backgroundColor: null,
           backgroundOpacity: 1,

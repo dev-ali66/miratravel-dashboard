@@ -1,3 +1,4 @@
+import { THEME_COLORS } from "@/config/theme"
 import { emptyInquiryForm } from "./emptyInquiryForm"
 import {
   normalizeStyledField,
@@ -12,12 +13,12 @@ export function normalizeInquiryForm(input: any) {
     eyebrow: normalizeStyledField(
       raw.eyebrow,
       emptyInquiryForm.eyebrow.value,
-      "#F06543"
+      THEME_COLORS.accentHover
     ),
     title: normalizeStyledField(
       raw.title,
       emptyInquiryForm.title.value,
-      "#182D09"
+      THEME_COLORS.primary
     ),
     rightSideMultimedia: normalizeMultimedia(
       raw.rightSideMultimedia ?? raw.multimedia,

@@ -1,3 +1,4 @@
+import { THEME_COLORS } from "@/config/theme"
 import { useCmsDraft } from "../shared/CmsDraftContext"
 import { getSafeString } from "../shared/FormControls"
 
@@ -26,14 +27,13 @@ export const FooterPreview = ({
     getSafeString(theme.backgroundColor) ||
     (typeof theme.footerBackgroundMultimedia?.color === "object"
       ? theme.footerBackgroundMultimedia?.color?.color
-      : getSafeString(theme.footerBackgroundMultimedia?.color)) ||
-    "#16330D"
+      : getSafeString(theme.footerBackgroundMultimedia?.color)) || THEME_COLORS.forestDeep
 
   const resolvedTheme = {
     backgroundColor:
-      rawBgColor && rawBgColor !== "#09090b" && rawBgColor !== "#000000"
+      rawBgColor && rawBgColor !== THEME_COLORS.dark && rawBgColor !== THEME_COLORS.overlayBlack
         ? rawBgColor
-        : "#16330D",
+        : THEME_COLORS.forestDeep,
 
     backgroundImage: theme.backgroundImage,
 
@@ -44,13 +44,13 @@ export const FooterPreview = ({
       theme.footerBrandMultimedia ??
       theme.navbarBrandMultimedia,
 
-    textColor: getSafeString(theme.textColor, "#FFFFFF"),
+    textColor: getSafeString(theme.textColor, THEME_COLORS.white),
 
-    headingColor: getSafeString(theme.headingColor, "#FFFFFF"),
+    headingColor: getSafeString(theme.headingColor, THEME_COLORS.white),
 
     mutedTextColor: getSafeString(theme.mutedTextColor, "rgba(255,255,255,0.72)"),
 
-    accentColor: getSafeString(theme.accentColor, "#C97B4A"),
+    accentColor: getSafeString(theme.accentColor, THEME_COLORS.accentWarm),
 
     borderColor: getSafeString(theme.borderColor, "rgba(255,255,255,0.15)"),
 
@@ -61,7 +61,7 @@ export const FooterPreview = ({
       "rgba(255,255,255,0.10)"
     ),
 
-    socialTextColor: getSafeString(theme.socialTextColor, "#FFFFFF"),
+    socialTextColor: getSafeString(theme.socialTextColor, THEME_COLORS.white),
 
     socialBorderColor: getSafeString(theme.socialBorderColor, "transparent"),
 
@@ -70,7 +70,7 @@ export const FooterPreview = ({
       "rgba(255,255,255,0.18)"
     ),
 
-    socialHoverTextColor: getSafeString(theme.socialHoverTextColor, "#FFFFFF"),
+    socialHoverTextColor: getSafeString(theme.socialHoverTextColor, THEME_COLORS.white),
 
     socialIconSize: getSafeString(theme.socialIconSize, "14px"),
 

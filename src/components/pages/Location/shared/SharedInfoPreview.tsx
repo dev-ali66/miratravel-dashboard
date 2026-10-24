@@ -2,6 +2,8 @@
    SHARED INFO — PREVIEW COMPONENT
    Reusable preview matching frontend `Info` layout.
 ===================================================== */
+import { THEME_COLORS } from "@/config/theme"
+
 
 import type { LocationData } from "../locationTypes"
 import { getLocationBasics } from "./previewBasics"
@@ -34,7 +36,7 @@ export function SharedInfoPreview({
     >
       <UniversalMultimediaPreview
         multimedia={background}
-        fallbackColor={style?.backgroundColor || "#F7F6F2"}
+        fallbackColor={style?.backgroundColor || THEME_COLORS.bgSand}
         mode="background"
         className="h-full w-full object-cover"
         containerClassName="absolute inset-0 z-0 pointer-events-none"

@@ -1,15 +1,15 @@
 import { useState } from "react"
 import { motion } from "framer-motion"
 import { Check, X, Loader2, Inbox } from "lucide-react"
-import Pagination from "@/components/pages/UserList/Pagination"
+import { Pagination } from "@/components/shared/Pagination"
 import { useGetRequests } from "@/hooks/requests/useGetRequests"
 import { useUpdateRequestStatus } from "@/hooks/requests/useUpdateRequestStatus"
 import RequestDetailsModal from "./RequestDetailsModal"
 
 export default function RequestListTable() {
   const [currentPage, setCurrentPage] = useState(1)
+  const [limit, setLimit] = useState(10)
   const [selectedUser, setSelectedUser] = useState<any | null>(null)
-  const limit = 10
 
   const { data, isLoading, isError } = useGetRequests(currentPage, limit)
   const { mutate: updateStatus, isPending: isUpdating } =
@@ -238,12 +238,19 @@ export default function RequestListTable() {
               </table>
             </div>
 
-            {totalPages > 1 && (
+            {(data?.meta?.total ?? 0) > 0 && (
               <div className="border-t border-border/60 bg-background/50 p-5 backdrop-blur-xl">
                 <Pagination
                   currentPage={currentPage}
                   totalPages={totalPages}
+                  totalItems={data?.meta?.total}
+                  pageSize={limit}
+                  pageSizeOptions={[10, 20, 50, 100]}
                   onPageChange={handlePageChange}
+                  onPageSizeChange={(sz) => {
+                    setLimit(sz)
+                    setCurrentPage(1)
+                  }}
                 />
               </div>
             )}

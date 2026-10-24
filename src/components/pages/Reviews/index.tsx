@@ -21,6 +21,7 @@ import {
   SelectValue,
 } from "@/components/ui/select"
 import { Card, CardContent } from "@/components/ui/card"
+import { Pagination } from "@/components/shared/Pagination"
 import { cn } from "@/lib/utils"
 
 export interface ReviewItem {
@@ -126,6 +127,8 @@ export default function ReviewsPage() {
   const [search, setSearch] = useState("")
   const [statusFilter, setStatusFilter] = useState("ALL")
   const [ratingFilter, setRatingFilter] = useState("ALL")
+  const [currentPage, setCurrentPage] = useState(1)
+  const [pageSize, setPageSize] = useState(5)
 
   const handleStatusChange = (id: string, newStatus: ReviewItem["status"]) => {
     setReviews((prev) =>
@@ -277,7 +280,9 @@ export default function ReviewsPage() {
 
       {/* Reviews List Cards */}
       <div className="space-y-4">
-        {filtered.map((rev) => (
+        {filtered
+          .slice((currentPage - 1) * pageSize, currentPage * pageSize)
+          .map((rev) => (
           <Card key={rev.id} className="border-border/60 bg-card/60 backdrop-blur-xl transition-all hover:border-border">
             <CardContent className="p-6">
               <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
@@ -377,6 +382,24 @@ export default function ReviewsPage() {
           </Card>
         ))}
       </div>
+
+      {/* Universal Pagination */}
+      {filtered.length > 0 && (
+        <div className="pt-2">
+          <Pagination
+            currentPage={currentPage}
+            totalPages={Math.max(1, Math.ceil(filtered.length / pageSize))}
+            totalItems={filtered.length}
+            pageSize={pageSize}
+            pageSizeOptions={[5, 10, 20, 50]}
+            onPageChange={setCurrentPage}
+            onPageSizeChange={(sz) => {
+              setPageSize(sz)
+              setCurrentPage(1)
+            }}
+          />
+        </div>
+      )}
     </div>
   )
 }

@@ -1,3 +1,4 @@
+import { THEME_COLORS } from "@/config/theme"
 import { DynamicStyledTextPreview } from "@/components/pages/CMS/shared/DynamicStyledTextPreview"
 import { UniversalMultimediaPreview } from "@/components/pages/CMS/shared/UniversalMultimediaPreview"
 import { emptyStay } from "./emptyStay"
@@ -13,7 +14,7 @@ function StarSparkle({ className }: { className?: string }) {
     <svg
       viewBox="0 0 24 40"
       fill="currentColor"
-      className={`pointer-events-none select-none absolute text-[#E5A84B] ${className}`}
+      className={`pointer-events-none select-none absolute text-accent-muted ${className}`}
     >
       <path
         d="M12 0 C12 12 14 18 24 20 C14 22 12 28 12 40 C12 28 10 22 0 20 C10 18 12 12 12 0 Z"
@@ -37,7 +38,7 @@ export function StayPreview({ section }: StayPreviewProps) {
   return (
     <section className="relative w-full overflow-hidden bg-background py-16 md:py-24 xl:py-32">
       <div className="relative z-10 mx-auto w-full max-w-[1280px] px-4 md:px-8 lg:px-12">
-        <div className="relative flex min-h-[420px] w-full flex-col items-center justify-center overflow-hidden rounded-[2px] bg-[#182D09] px-6 py-14 text-center sm:px-10 sm:py-16 md:px-16 md:py-20 xl:px-20 xl:py-24">
+        <div className="relative flex min-h-[420px] w-full flex-col items-center justify-center overflow-hidden rounded-[2px] bg-brand-primary px-6 py-14 text-center sm:px-10 sm:py-16 md:px-16 md:py-20 xl:px-20 xl:py-24">
           {/* Universal Background Media (Color/Image/Video) */}
           {bgMedia && (
             <UniversalMultimediaPreview multimedia={bgMedia} mode="background" />
@@ -57,7 +58,7 @@ export function StayPreview({ section }: StayPreviewProps) {
               <DynamicStyledTextPreview
                 data={title}
                 as="h2"
-                fallbackColor="#F3F4F6"
+                fallbackColor={THEME_COLORS.lightText}
                 className="font-serif font-light text-[26px] leading-[34px] tracking-[-0.3px] text-neutral-100 sm:text-[32px] sm:leading-[42px] md:text-[36px] md:leading-[46px] xl:text-[42px] xl:leading-[50px]"
               />
             </div>
@@ -72,7 +73,7 @@ export function StayPreview({ section }: StayPreviewProps) {
                     key={sIdx}
                     data={item}
                     as="p"
-                    fallbackColor="#F3F4F6"
+                    fallbackColor={THEME_COLORS.lightText}
                     className="max-w-[600px] text-[13px] font-normal leading-6 text-neutral-100/80 sm:text-[14px] sm:leading-7 xl:text-[15px]"
                   />
                 )
@@ -84,8 +85,8 @@ export function StayPreview({ section }: StayPreviewProps) {
               <DynamicStyledTextPreview
                 data={closingText}
                 as="p"
-                fallbackColor="#B86B3A"
-                className="font-serif text-[13px] font-medium italic leading-6 tracking-[0.2px] text-[#B86B3A] sm:text-[14px] sm:leading-7 md:text-base"
+                fallbackColor={THEME_COLORS.accentWarm}
+                className="font-serif text-[13px] font-medium italic leading-6 tracking-[0.2px] text-accent-warm sm:text-[14px] sm:leading-7 md:text-base"
               />
             </div>
           </div>

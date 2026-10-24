@@ -1,3 +1,4 @@
+import { THEME_COLORS } from "@/config/theme"
 import type { ReactNode } from "react"
 import { ImageShowPreview } from "@/components/shared/ImageShowPreview"
 import type { HomeSection } from "../../homeTypes"
@@ -79,9 +80,9 @@ export function ExploreJourneysPreview({
       <UniversalMultimediaPreview
         multimedia={multimedia}
         fallbackAlt="Explore Journeys background"
-        fallbackColor="#FBF9F5"
+        fallbackColor={THEME_COLORS.bgSand}
         mode="background"
-        overlayClassName="bg-white/70"
+        overlayClassName="bg-white/70 dark:bg-background/80"
       />
 
       <div className="relative z-10 container mx-auto px-4 lg:px-0 flex w-full flex-col gap-14">
@@ -134,7 +135,7 @@ export function ExploreJourneysPreview({
             return (
               <div
                 key={item.id || idx}
-                className="group border-border-muted/40 relative flex w-full flex-col overflow-hidden rounded-[8px] border bg-neutral-100 transition-all duration-300 hover:shadow-md"
+                className="group border-border/70 relative flex w-full flex-col overflow-hidden rounded-[8px] border bg-card text-card-foreground transition-all duration-300 hover:shadow-md"
               >
                 <div className="lgx:h-[413px] relative h-[280px] w-full shrink-0 overflow-hidden rounded-sm md:h-[380px]">
                   <div className="relative h-full w-full overflow-hidden bg-muted">
@@ -148,14 +149,14 @@ export function ExploreJourneysPreview({
                   <div
                     className="absolute top-4 left-4 z-10 rounded-full px-3 py-1 text-[10px] font-bold tracking-[0.08em] uppercase"
                     style={{
-                      backgroundColor: item.labelBg || "#FEF3C7",
-                      color: item.labelTextColor || "#9A3412",
+                      backgroundColor: item.labelBg || THEME_COLORS.badgeYellowBg,
+                      color: item.labelTextColor || THEME_COLORS.badgeYellowText,
                     }}
                   >
                     {label}
                   </div>
 
-                  <div className="absolute top-4 right-4 z-10 flex h-8 w-8 items-center justify-center rounded-full border border-transparent bg-neutral-100 text-sm shadow-sm">
+                  <div className="absolute top-4 right-4 z-10 flex h-8 w-8 items-center justify-center rounded-full border border-border/40 bg-background/80 text-foreground text-sm shadow-sm backdrop-blur-xs">
                     ♡
                   </div>
 
@@ -166,12 +167,12 @@ export function ExploreJourneysPreview({
 
                 <div className="flex flex-1 flex-col justify-between px-4 pt-4 pb-5">
                   <div>
-                    <h3 className="font-serif text-[21px] leading-tight text-secondary group-hover:text-primary transition-colors">
+                    <h3 className="font-serif text-[21px] leading-tight text-foreground group-hover:text-primary transition-colors">
                       {title}
                     </h3>
 
                     {description ? (
-                      <p className="text-subtitle mt-2 text-xs leading-5 line-clamp-2 text-muted-foreground">
+                      <p className="text-muted-foreground mt-2 text-xs leading-5 line-clamp-2">
                         {description}
                       </p>
                     ) : null}
@@ -182,7 +183,7 @@ export function ExploreJourneysPreview({
                       {tags.map((tag: string, tIdx: number) => (
                         <span
                           key={tIdx}
-                          className="border-border-light text-subtitle rounded-[38px] border px-2 py-1 text-[8px] tracking-[0.08em] uppercase"
+                          className="border-border/60 text-muted-foreground bg-muted/30 rounded-[38px] border px-2 py-1 text-[8px] tracking-[0.08em] uppercase"
                         >
                           {tag}
                         </span>

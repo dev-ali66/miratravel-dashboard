@@ -1,14 +1,15 @@
+import { THEME_COLORS } from "@/config/theme"
 export const emptyStories = {
   eyebrow: {
     value: "The Editorial",
-    textColor: "#C5A880",
+    textColor: THEME_COLORS.goldMuted,
     textOpacity: 1,
     backgroundColor: null,
     backgroundOpacity: 1,
   },
   title: {
     value: "Location Stories",
-    textColor: "#182D09",
+    textColor: THEME_COLORS.primary,
     textOpacity: 1,
     backgroundColor: null,
     backgroundOpacity: 1,
@@ -16,7 +17,7 @@ export const emptyStories = {
   description: {
     value:
       "A collection of personal, cultural and inspiring stories. Each piece offers a deeper view of this location and its people beyond the expected.",
-    textColor: "#4B5563",
+    textColor: THEME_COLORS.sub,
     textOpacity: 1,
     backgroundColor: null,
     backgroundOpacity: 1,
@@ -24,7 +25,7 @@ export const emptyStories = {
   backgroundMultimedia: {
     show: "color",
     color: {
-      color: "#FCFBF9",
+      color: THEME_COLORS.bgWarm,
       opacity: 100,
       width: "100%",
       height: "100%",
@@ -34,7 +35,7 @@ export const emptyStories = {
       url: "",
       alt: "Location stories background",
       opacity: 100,
-      overlayColor: "#000000",
+      overlayColor: THEME_COLORS.overlayBlack,
       overlayOpacity: 0,
       width: "100%",
       height: "auto",
@@ -48,7 +49,7 @@ export const emptyStories = {
       loop: true,
       muted: true,
       opacity: 100,
-      overlayColor: "#000000",
+      overlayColor: THEME_COLORS.overlayBlack,
       overlayOpacity: 0,
       width: "100%",
       height: "auto",
@@ -59,7 +60,7 @@ export const emptyStories = {
   leftSideMultimedia: {
     show: "image",
     color: {
-      color: "#FCFBF9",
+      color: THEME_COLORS.bgWarm,
       opacity: 100,
       width: "100%",
       height: "100%",
@@ -69,7 +70,7 @@ export const emptyStories = {
       url: "",
       alt: "Location stories editorial image",
       opacity: 100,
-      overlayColor: "#000000",
+      overlayColor: THEME_COLORS.overlayBlack,
       overlayOpacity: 0,
       width: "100%",
       height: "auto",
@@ -83,7 +84,7 @@ export const emptyStories = {
       loop: true,
       muted: true,
       opacity: 100,
-      overlayColor: "#000000",
+      overlayColor: THEME_COLORS.overlayBlack,
       overlayOpacity: 0,
       width: "100%",
       height: "auto",
@@ -95,14 +96,14 @@ export const emptyStories = {
     {
       title: {
         value: "Decoding the Stećci",
-        textColor: "#182D09",
+        textColor: THEME_COLORS.primary,
         textOpacity: 1,
         backgroundColor: null,
         backgroundOpacity: 1,
       },
       subtitle: {
         value: "Mythology of the medieval tombstones",
-        textColor: "#4B5563",
+        textColor: THEME_COLORS.sub,
         textOpacity: 1,
         backgroundColor: null,
         backgroundOpacity: 1,
@@ -116,14 +117,14 @@ export const emptyStories = {
     {
       title: {
         value: "The Salt Merchants of Ston",
-        textColor: "#182D09",
+        textColor: THEME_COLORS.primary,
         textOpacity: 1,
         backgroundColor: null,
         backgroundOpacity: 1,
       },
       subtitle: {
         value: "Tracking the white gold of the Adriatic",
-        textColor: "#4B5563",
+        textColor: THEME_COLORS.sub,
         textOpacity: 1,
         backgroundColor: null,
         backgroundOpacity: 1,

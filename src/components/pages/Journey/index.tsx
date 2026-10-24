@@ -1,14 +1,13 @@
 import MiraLoader from "@/components/shared/MiraLoader"
 import { useEffect, useState } from "react"
 import { Link } from "react-router-dom"
+import { Pagination } from "@/components/shared/Pagination"
 import {
   Trash2,
   Compass,
   Loader2,
   Plus,
   Search,
-  ChevronLeft,
-  ChevronRight,
   Globe,
   Tag,
 } from "lucide-react"
@@ -106,19 +105,19 @@ export default function JourneyPages() {
       {/* Header */}
       <div className="mb-6 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
         <div>
-          <h1 className="text-3xl font-serif font-bold tracking-tight text-[#182d09] flex items-center gap-2.5">
-            <Compass className="h-8 w-8 text-[#af6348]" />
+          <h1 className="text-3xl font-serif font-bold tracking-tight text-brand-primary flex items-center gap-2.5">
+            <Compass className="h-8 w-8 text-accent" />
             Journeys Management
           </h1>
 
-          <p className="mt-1 text-sm text-[#565e69]">
+          <p className="mt-1 text-sm text-subtitle">
             Create, publish, and manage bespoke travel journeys and itineraries.
           </p>
         </div>
 
         <Link
           to="/journeys/new"
-          className="inline-flex shrink-0 items-center gap-2 rounded-xl bg-[#182d09] px-4 py-2.5 text-sm font-medium text-white shadow-sm transition hover:bg-[#af6348]"
+          className="inline-flex shrink-0 items-center gap-2 rounded-xl bg-brand-primary px-4 py-2.5 text-sm font-medium text-white shadow-sm transition hover:bg-accent"
         >
           <Plus className="h-4 w-4" />
           Create Journey
@@ -128,13 +127,13 @@ export default function JourneyPages() {
       {/* Filters */}
       <div className="mb-6 flex flex-col gap-3 md:flex-row md:items-center">
         <div className="relative flex-1">
-          <Search className="pointer-events-none absolute top-1/2 left-3 h-4 w-4 -translate-y-1/2 text-[#8A8070]" />
+          <Search className="pointer-events-none absolute top-1/2 left-3 h-4 w-4 -translate-y-1/2 text-extra-light" />
 
           <input
             value={searchInput}
             onChange={(e) => setSearchInput(e.target.value)}
             placeholder="Search journeys by title, slug or summary..."
-            className="w-full rounded-xl border border-[#D8CBB8] bg-[#FFF8F2] py-2.5 pr-3 pl-9 text-sm text-[#182d09] placeholder:text-[#8A8070] outline-none focus:border-[#af6348] focus:ring-1 focus:ring-[#af6348]"
+            className="w-full rounded-xl border border-border bg-card py-2.5 pr-3 pl-9 text-sm text-foreground placeholder:text-muted-foreground outline-none focus:border-primary focus:ring-1 focus:ring-primary"
           />
         </div>
 
@@ -144,7 +143,7 @@ export default function JourneyPages() {
             setJourneyType(e.target.value)
             setPage(1)
           }}
-          className="rounded-xl border border-[#D8CBB8] bg-[#FFF8F2] px-3 py-2.5 text-sm text-[#182d09] outline-none focus:border-[#af6348] md:w-44"
+          className="rounded-xl border border-border bg-card px-3 py-2.5 text-sm text-foreground outline-none focus:border-primary md:w-44"
         >
           <option value="">All Journey Types</option>
           {JOURNEY_TYPES.map((t) => (
@@ -160,7 +159,7 @@ export default function JourneyPages() {
             setTravelStyle(e.target.value)
             setPage(1)
           }}
-          className="rounded-xl border border-[#D8CBB8] bg-[#FFF8F2] px-3 py-2.5 text-sm text-[#182d09] outline-none focus:border-[#af6348] md:w-44"
+          className="rounded-xl border border-border bg-card px-3 py-2.5 text-sm text-foreground outline-none focus:border-primary md:w-44"
         >
           <option value="">All Travel Styles</option>
           {TRAVEL_STYLES.map((s) => (
@@ -176,7 +175,7 @@ export default function JourneyPages() {
             setStatus(e.target.value)
             setPage(1)
           }}
-          className="rounded-xl border border-[#D8CBB8] bg-[#FFF8F2] px-3 py-2.5 text-sm text-[#182d09] outline-none focus:border-[#af6348] md:w-36"
+          className="rounded-xl border border-border bg-card px-3 py-2.5 text-sm text-foreground outline-none focus:border-primary md:w-36"
         >
           <option value="">All Statuses</option>
           {JOURNEY_STATUS_LIST.map((st) => (
@@ -202,7 +201,7 @@ export default function JourneyPages() {
       ) : journeys.length > 0 ? (
         <>
           {/* Journeys Grid */}
-          <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+          <div className="grid grid-cols-1 gap-2 md:grid-cols-3 lg:grid-cols-5 xl:grid-cols-6">
             {journeys.map((j, index) => {
               const journeyTitle = j.title || "Untitled Journey"
               const slugPath = j.slug ? `/journeys/${j.slug}` : ""
@@ -222,20 +221,20 @@ export default function JourneyPages() {
               return (
                 <div
                   key={`${j.id ?? "j"}-${j.slug ?? index}`}
-                  className="group relative flex min-h-[440px] flex-col overflow-hidden rounded-2xl border border-[#D8CBB8]/80 bg-white shadow-sm transition-all duration-500 hover:-translate-y-1.5 hover:shadow-2xl hover:border-[#af6348]/60"
+                  className="group relative flex min-h-[440px] flex-col overflow-hidden rounded-2xl border border-border/70 bg-card shadow-sm transition-all duration-500 hover:-translate-y-1.5 hover:shadow-2xl hover:border-primary/40"
                 >
                   {/* Delete Button */}
                   <button
                     type="button"
                     onClick={() => openDeleteModal(j)}
-                    className="absolute top-3.5 right-3.5 z-20 rounded-full bg-white/90 p-2 text-[#565e69] opacity-0 shadow-md backdrop-blur transition-all group-hover:opacity-100 hover:bg-red-50 hover:text-red-600 focus:opacity-100 cursor-pointer"
+                    className="absolute top-3.5 right-3.5 z-20 rounded-full bg-background/90 p-2 text-muted-foreground opacity-0 shadow-md backdrop-blur transition-all group-hover:opacity-100 hover:bg-destructive/10 hover:text-destructive focus:opacity-100 cursor-pointer"
                     title="Delete Journey"
                   >
                     <Trash2 className="h-4 w-4" />
                   </button>
 
                   {/* HERO BANNER PREVIEW */}
-                  <div className="relative h-56 overflow-hidden bg-[#182d09]">
+                  <div className="relative h-56 overflow-hidden bg-brand-primary">
                     <UniversalMultimediaPreview
                       multimedia={heroMultimedia ?? undefined}
                       fallbackImageSrc={heroBgImage}
@@ -253,16 +252,16 @@ export default function JourneyPages() {
                       <span
                         className={`rounded-full px-2.5 py-0.5 text-[10px] font-bold uppercase tracking-wider shadow-sm ${
                           j.status === "PUBLISHED"
-                            ? "bg-[#182d09] text-[#FEF3C7] border border-[#182d09]"
+                            ? "bg-brand-primary text-amber-100 border border-brand-primary"
                             : j.status === "ARCHIVED"
                             ? "bg-slate-800 text-white"
-                            : "bg-[#FEF3C7] text-[#9A3412]"
+                            : "bg-amber-100 text-amber-800"
                         }`}
                       >
                         {j.status || "DRAFT"}
                       </span>
                       {j.featured && (
-                        <span className="rounded-full bg-[#af6348] px-2.5 py-0.5 text-[10px] font-bold text-white shadow-sm tracking-wider uppercase">
+                        <span className="rounded-full bg-accent px-2.5 py-0.5 text-[10px] font-bold text-white shadow-sm tracking-wider uppercase">
                           ★ Featured
                         </span>
                       )}
@@ -270,7 +269,7 @@ export default function JourneyPages() {
 
                     {/* Bottom Info Overlay */}
                     <div className="absolute right-3.5 bottom-3.5 left-3.5 z-10 space-y-1">
-                      <p className="text-[11px] font-semibold text-[#E5A84B] uppercase tracking-widest truncate">
+                      <p className="text-[11px] font-semibold text-accent-muted uppercase tracking-widest truncate">
                         {j.currency === "EUR" ? "€" : j.currency} {j.price} • {j.minDays}-{j.maxDays} Days
                       </p>
                       <h3 className="text-xl font-serif font-bold text-white leading-snug drop-shadow-sm truncate">
@@ -288,12 +287,12 @@ export default function JourneyPages() {
                   <div className="flex flex-1 flex-col p-4 justify-between gap-4">
                     {/* Tags & Attributes */}
                     <div className="space-y-2">
-                      <div className="flex items-center justify-between text-[11px] font-semibold text-[#af6348] uppercase tracking-wider">
+                      <div className="flex items-center justify-between text-[11px] font-semibold text-accent uppercase tracking-wider">
                         <span className="flex items-center gap-1">
-                          <Tag className="h-3.5 w-3.5 text-[#af6348]" />
+                          <Tag className="h-3.5 w-3.5 text-accent" />
                           Attributes
                         </span>
-                        <span className="text-[10px] text-[#182d09] font-mono bg-[#FFF8F2] border border-[#D8CBB8] px-2 py-0.5 rounded-md">
+                        <span className="text-[10px] text-foreground font-mono bg-muted/40 border border-border/60 px-2 py-0.5 rounded-md">
                           {j.pace} PACE
                         </span>
                       </div>
@@ -302,7 +301,7 @@ export default function JourneyPages() {
                         {(j.journeyType || []).slice(0, 2).map((jt) => (
                           <span
                             key={jt}
-                            className="rounded-full bg-[#FFF8F2] border border-[#D8CBB8] px-2.5 py-0.5 text-[10px] font-medium text-[#182d09] tracking-wider uppercase"
+                            className="rounded-full bg-muted/40 border border-border/60 px-2.5 py-0.5 text-[10px] font-medium text-foreground tracking-wider uppercase"
                           >
                             {jt.replace(/_/g, " ")}
                           </span>
@@ -310,7 +309,7 @@ export default function JourneyPages() {
                         {(j.travelStyle || []).slice(0, 2).map((ts) => (
                           <span
                             key={ts}
-                            className="rounded-full bg-[#FFF8F2] border border-[#D8CBB8] px-2.5 py-0.5 text-[10px] font-medium text-[#af6348] tracking-wider uppercase"
+                            className="rounded-full bg-muted/40 border border-border/60 px-2.5 py-0.5 text-[10px] font-medium text-accent tracking-wider uppercase"
                           >
                             {ts.replace(/_/g, " ")}
                           </span>
@@ -319,24 +318,24 @@ export default function JourneyPages() {
                     </div>
 
                     {/* SEO STATUS */}
-                    <div className="rounded-xl border border-[#D8CBB8]/60 bg-[#FFF8F2]/60 p-3 space-y-1.5">
+                    <div className="rounded-xl border border-border/60 bg-muted/20 p-3 space-y-1.5">
                       <div className="flex items-center justify-between">
-                        <span className="text-[11px] font-semibold uppercase tracking-wider text-[#182d09] flex items-center gap-1">
-                          <Globe className="h-3.5 w-3.5 text-[#af6348]" />
+                        <span className="text-[11px] font-semibold uppercase tracking-wider text-foreground flex items-center gap-1">
+                          <Globe className="h-3.5 w-3.5 text-accent" />
                           SEO Governance
                         </span>
                         <span
                           className={`inline-flex items-center gap-1 rounded-full px-2.5 py-0.5 text-[10px] font-medium tracking-wide ${
                             isSeoComplete
-                              ? "bg-emerald-100 text-emerald-800"
-                              : "bg-[#FEF3C7] text-[#9A3412]"
+                              ? "bg-emerald-100 text-emerald-800 dark:bg-emerald-950 dark:text-emerald-300"
+                              : "bg-amber-100 text-amber-800 dark:bg-amber-950 dark:text-amber-300"
                           }`}
                         >
                           {isSeoComplete ? "Ready" : "Partial"}
                         </span>
                       </div>
 
-                      <p className="text-[11px] font-medium text-[#565e69] truncate" title={seoTitle}>
+                      <p className="text-[11px] font-medium text-muted-foreground truncate" title={seoTitle}>
                         {seoTitle || "No Meta Title"}
                       </p>
                     </div>
@@ -344,7 +343,7 @@ export default function JourneyPages() {
                     {/* EDIT LINK */}
                     <Link
                       to={`/journeys/${j.id}/${j.slug}`}
-                      className="inline-flex items-center justify-between rounded-xl bg-[#182d09] px-4 py-2.5 text-xs font-semibold text-white tracking-wide transition-all hover:bg-[#af6348] shadow-sm cursor-pointer"
+                      className="inline-flex items-center justify-between rounded-xl bg-brand-primary px-4 py-2.5 text-xs font-semibold text-white tracking-wide transition-all hover:bg-accent shadow-sm cursor-pointer"
                     >
                       <span>Edit Journey</span>
                       <span>→</span>
@@ -355,45 +354,30 @@ export default function JourneyPages() {
             })}
           </div>
 
-          {/* Pagination */}
-          {meta && meta.totalPages > 1 && (
-            <div className="mt-8 flex items-center justify-center gap-3">
-              <button
-                type="button"
-                onClick={() => setPage((p) => Math.max(1, p - 1))}
-                disabled={page <= 1}
-                className="flex items-center gap-1 rounded-xl border border-[#D8CBB8] bg-white px-3.5 py-2 text-sm text-[#182d09] hover:bg-[#FFF8F2] disabled:opacity-40"
-              >
-                <ChevronLeft className="h-4 w-4" /> Prev
-              </button>
-
-              <span className="text-sm font-medium text-[#565e69]">
-                Page {meta.page} of {meta.totalPages}
-              </span>
-
-              <button
-                type="button"
-                onClick={() => setPage((p) => Math.min(meta.totalPages, p + 1))}
-                disabled={page >= meta.totalPages}
-                className="flex items-center gap-1 rounded-xl border border-[#D8CBB8] bg-white px-3.5 py-2 text-sm text-[#182d09] hover:bg-[#FFF8F2] disabled:opacity-40"
-              >
-                Next <ChevronRight className="h-4 w-4" />
-              </button>
-            </div>
+          {/* Universal Pagination */}
+          {meta && (
+            <Pagination
+              currentPage={meta.page}
+              totalPages={meta.totalPages}
+              totalItems={meta.total}
+              pageSize={PAGE_SIZE}
+              onPageChange={setPage}
+              className="mt-8"
+            />
           )}
         </>
       ) : (
         /* Empty State */
-        <div className="flex flex-col items-center justify-center rounded-2xl border border-dashed border-[#D8CBB8] bg-[#FFF8F2]/50 py-24 text-center">
-          <div className="mb-4 rounded-full bg-[#af6348]/10 p-4">
-            <Compass className="h-8 w-8 text-[#af6348]" />
+        <div className="flex flex-col items-center justify-center rounded-2xl border border-dashed border-border/70 bg-card/40 py-24 text-center">
+          <div className="mb-4 rounded-full bg-accent/10 p-4">
+            <Compass className="h-8 w-8 text-accent" />
           </div>
 
-          <h3 className="mb-2 text-xl font-serif font-bold text-[#182d09]">
+          <h3 className="mb-2 text-xl font-serif font-bold text-brand-primary">
             {hasFilters ? "No matching journeys found" : "No Journeys Created Yet"}
           </h3>
 
-          <p className="max-w-sm text-sm text-[#565e69]">
+          <p className="max-w-sm text-sm text-subtitle">
             {hasFilters
               ? "Try adjusting your search criteria or clearing filters."
               : "Click below to build your first bespoke journey."}
@@ -401,7 +385,7 @@ export default function JourneyPages() {
 
           <Link
             to="/journeys/new"
-            className="mt-4 inline-flex items-center gap-2 rounded-xl bg-[#182d09] px-4 py-2.5 text-sm font-medium text-white shadow-sm transition hover:bg-[#af6348]"
+            className="mt-4 inline-flex items-center gap-2 rounded-xl bg-brand-primary px-4 py-2.5 text-sm font-medium text-white shadow-sm transition hover:bg-accent"
           >
             <Plus className="h-4 w-4" /> Add Journey
           </Link>
@@ -412,10 +396,10 @@ export default function JourneyPages() {
       <Dialog open={deleteModalOpen} onOpenChange={setDeleteModalOpen}>
         <DialogContent>
           <DialogHeader>
-            <DialogTitle className="font-serif text-xl text-[#182d09]">Delete Journey?</DialogTitle>
-            <DialogDescription className="text-[#565e69]">
+            <DialogTitle className="font-serif text-xl text-brand-primary">Delete Journey?</DialogTitle>
+            <DialogDescription className="text-subtitle">
               Are you sure you want to delete{" "}
-              <span className="font-semibold text-[#182d09]">
+              <span className="font-semibold text-brand-primary">
                 "{selectedJourney?.title}"
               </span>
               ? This action cannot be undone.
@@ -427,7 +411,7 @@ export default function JourneyPages() {
               variant="outline"
               onClick={() => setDeleteModalOpen(false)}
               disabled={isDeleting}
-              className="rounded-xl border-[#D8CBB8]"
+              className="rounded-xl border-border hover:bg-muted"
             >
               Cancel
             </Button>

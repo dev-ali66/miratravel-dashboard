@@ -11,7 +11,7 @@ export function NotesPreview({ block }: { block: any }) {
           <DynamicStyledTextPreview
             as="h3"
             data={block.title}
-            className="font-serif text-3xl md:text-4xl font-normal text-[#B3884D] tracking-tight"
+            className="font-serif text-3xl md:text-4xl font-normal text-gold tracking-tight"
           />
           {block.subtitle?.value && (
             <div className="text-sm text-stone-500 dark:text-stone-400">

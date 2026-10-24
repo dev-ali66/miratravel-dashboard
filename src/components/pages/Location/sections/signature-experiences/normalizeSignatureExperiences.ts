@@ -1,3 +1,4 @@
+import { THEME_COLORS } from "@/config/theme"
 import { normalizeMultimedia, normalizeStyledField, normalizeButtonsArray } from "../../shared/normalizeHelpers"
 import { emptySignatureExperiences } from "./emptySignatureExperiences"
 
@@ -21,8 +22,8 @@ export function normalizeSignatureExperiences(signatureExperiences: any) {
 
     const normItem = {
       id: it.id || `sig-${idx}-${Date.now()}`,
-      title: normalizeStyledField(it.title, "", "#182d09"),
-      description: normalizeStyledField(it.description, "", "#565e69"),
+      title: normalizeStyledField(it.title, "", THEME_COLORS.primary),
+      description: normalizeStyledField(it.description, "", THEME_COLORS.muted),
       buttons: normalizeButtonsArray(rawButtons),
       multimedia: normalizeMultimedia(it.multimedia ?? it.imageMultimedia, "image"),
     }
@@ -36,9 +37,9 @@ export function normalizeSignatureExperiences(signatureExperiences: any) {
 
   const normalizedSignatureExperiences = {
     ...safeSig,
-    label: normalizeStyledField(safeSig.label ?? emptySignatureExperiences.label, "SIGNATURE EXPERIENCES", "#af6348"),
-    title: normalizeStyledField(safeSig.title ?? emptySignatureExperiences.title, "", "#182d09"),
-    description: normalizeStyledField(safeSig.description ?? emptySignatureExperiences.description, "", "#565e69"),
+    label: normalizeStyledField(safeSig.label ?? emptySignatureExperiences.label, "SIGNATURE EXPERIENCES", THEME_COLORS.accent),
+    title: normalizeStyledField(safeSig.title ?? emptySignatureExperiences.title, "", THEME_COLORS.primary),
+    description: normalizeStyledField(safeSig.description ?? emptySignatureExperiences.description, "", THEME_COLORS.muted),
     items: normalizedItems,
     backgroundMultimedia: normalizeMultimedia(safeSig.backgroundMultimedia || emptySignatureExperiences.backgroundMultimedia, "color"),
     style: safeSig.style ?? null,

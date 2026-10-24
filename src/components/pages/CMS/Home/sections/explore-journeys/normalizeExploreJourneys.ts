@@ -1,3 +1,4 @@
+import { THEME_COLORS } from "@/config/theme"
 import {
   normalizeMultimedia,
   normalizeStyledField,
@@ -16,22 +17,22 @@ export function normalizeExploreJourneys(section: any) {
     eyebrow: normalizeStyledField(
       safeSection.eyebrow ?? content.eyebrow,
       "Journeys",
-      "#C5A880"
+      THEME_COLORS.goldMuted
     ),
     title: normalizeStyledField(
       safeSection.title ?? content.title,
       "Explore Our Journeys",
-      "#182D09"
+      THEME_COLORS.primary
     ),
     subtitle: normalizeStyledField(
       safeSection.subtitle ?? content.subtitle,
       "Find the journey that matches the way you want to travel.",
-      "#4B5563"
+      THEME_COLORS.sub
     ),
     description: normalizeStyledField(
       safeSection.description ?? content.description,
       "A series of intentionally paced journeys designed for those who seek the authentic grain of history, from mountain monasteries to coastal ruins.",
-      "#4B5563"
+      THEME_COLORS.sub
     ),
     backgroundMultimedia: normalizeMultimedia(
       safeSection.backgroundMultimedia ?? content.backgroundMultimedia,

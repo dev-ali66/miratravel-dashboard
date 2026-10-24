@@ -1,3 +1,4 @@
+import { THEME_COLORS } from "@/config/theme"
 import { getStr, getStyleObj } from "../../shared/previewHelpers"
 
 const TITLE_CSS =
@@ -24,15 +25,15 @@ export function HighlightsPreview({ highlights, draft }: { highlights?: any; dra
     <section className="relative w-full py-8 md:py-12 overflow-hidden">
       <div className="relative z-10 w-full max-w-[1400px] mx-auto">
         <div className="flex flex-col gap-6 max-w-5xl">
-          <h2 className={TITLE_CSS} style={getStyleObj(safeData.title, "#313131")}>
+          <h2 className={TITLE_CSS} style={getStyleObj(safeData.title, THEME_COLORS.titleLight)}>
             {titleText}
           </h2>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-4 pt-2">
             {items.map((item: any, idx: number) => (
               <div key={idx} className="flex items-start gap-3 text-sm md:text-[15px] xl:text-base leading-6">
-                <span className="text-[#af6348] font-bold shrink-0">✓</span>
-                <span className="font-normal" style={getStyleObj(item.title ?? item, "#464136")}>
+                <span className="text-accent font-bold shrink-0">✓</span>
+                <span className="font-normal" style={getStyleObj(item.title ?? item, THEME_COLORS.navText)}>
                   {getStr(item.title ?? item)}
                 </span>
               </div>

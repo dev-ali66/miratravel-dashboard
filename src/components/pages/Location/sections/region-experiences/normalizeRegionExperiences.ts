@@ -1,3 +1,4 @@
+import { THEME_COLORS } from "@/config/theme"
 import { normalizeMultimedia, normalizeStyledField, LOCATION_THEME_COLORS } from "../../shared/normalizeHelpers"
 import { emptyRegionExperiences } from "./emptyRegionExperiences"
 
@@ -25,7 +26,7 @@ export function normalizeRegionExperiences(regionExperiences: any) {
             url: btn.url ?? it.buttonUrl ?? "",
             style: btn.style ?? (btn.variant ? String(btn.variant).toLowerCase() : "primary"),
             variant: (btn.variant ?? btn.style ?? "PRIMARY").toUpperCase(),
-            textColor: btn.textColor ?? "#ffffff",
+            textColor: btn.textColor ?? THEME_COLORS.white,
             backgroundColor: btn.backgroundColor ?? LOCATION_THEME_COLORS.accent,
           }))
 

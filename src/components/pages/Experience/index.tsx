@@ -4,6 +4,7 @@ import {
   type ExperienceItemData,
 } from "@/hooks/experience/useGetExperiences"
 import { useDeleteExperience } from "@/hooks/experience/useDeleteExperience"
+import { Pagination } from "@/components/shared/Pagination"
 import { Link } from "react-router-dom"
 import { useEffect, useState } from "react"
 import {
@@ -11,8 +12,6 @@ import {
   MapPin,
   Plus,
   Search,
-  ChevronLeft,
-  ChevronRight,
   Sparkles,
   Compass,
   Globe,
@@ -266,7 +265,7 @@ export default function ExperiencePages() {
           </p>
         </div>
       ) : data?.data && data.data.length > 0 ? (
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-5">
+        <div className="grid grid-cols-1 gap-2 md:grid-cols-3 lg:grid-cols-5 xl:grid-cols-6">
           {data.data.map((exp, index) => {
             const expName = exp.name ? exp.name.trim() : "Untitled Experience"
             const slugPath = exp.slug ? `/${exp.slug.replace(/^\//, "")}` : ""
@@ -521,42 +520,16 @@ export default function ExperiencePages() {
         </div>
       )}
 
-      {/* Pagination Footer */}
-      {data?.meta && data.meta.totalPages > 1 && (
-        <div className="flex items-center justify-between border-t border-border/70 pt-4">
-          <span className="text-xs text-muted-foreground">
-            Showing {(page - 1) * PAGE_SIZE + 1} to{" "}
-            {Math.min(page * PAGE_SIZE, data.meta.total)} of {data.meta.total} experiences
-          </span>
-
-          <div className="flex items-center gap-1.5">
-            <Button
-              variant="outline"
-              size="sm"
-              disabled={page <= 1}
-              onClick={() => setPage((prev) => Math.max(prev - 1, 1))}
-              className="h-8 gap-1 text-xs cursor-pointer"
-            >
-              <ChevronLeft className="h-3.5 w-3.5" />
-              <span>Previous</span>
-            </Button>
-
-            <span className="text-xs px-2 font-medium text-foreground">
-              {page} / {data.meta.totalPages}
-            </span>
-
-            <Button
-              variant="outline"
-              size="sm"
-              disabled={page >= data.meta.totalPages}
-              onClick={() => setPage((prev) => prev + 1)}
-              className="h-8 gap-1 text-xs cursor-pointer"
-            >
-              <span>Next</span>
-              <ChevronRight className="h-3.5 w-3.5" />
-            </Button>
-          </div>
-        </div>
+      {/* Universal Pagination */}
+      {data?.meta && (
+        <Pagination
+          currentPage={page}
+          totalPages={data.meta.totalPages}
+          totalItems={data.meta.total}
+          pageSize={PAGE_SIZE}
+          onPageChange={setPage}
+          className="mt-6"
+        />
       )}
 
       {/* Delete Confirmation Modal */}

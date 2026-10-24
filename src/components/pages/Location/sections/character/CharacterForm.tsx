@@ -3,6 +3,8 @@
    Form component to edit Region Character pillars section.
    Form section title is "Character".
 ===================================================== */
+import { THEME_COLORS } from "@/config/theme"
+
 
 import { useState } from "react"
 import { Plus, Trash2, ChevronDown, ChevronUp, Sparkles, Layers } from "lucide-react"
@@ -40,7 +42,7 @@ export function CharacterForm({
 
   const labelData = characterData.label || {
     value: "Character",
-    textColor: "#af6348",
+    textColor: THEME_COLORS.accent,
     textOpacity: 1,
     backgroundColor: null,
     backgroundOpacity: 1,
@@ -48,7 +50,7 @@ export function CharacterForm({
 
   const titleData = characterData.title || {
     value: "What makes this region singular",
-    textColor: "#182d09",
+    textColor: THEME_COLORS.primary,
     textOpacity: 1,
     backgroundColor: null,
     backgroundOpacity: 1,
@@ -59,7 +61,7 @@ export function CharacterForm({
 
   const bgMultimedia = characterData.backgroundMultimedia || {
     show: "color",
-    color: { color: "#FFF8F2", opacity: 100, width: "100%", height: "100%", aspectRatio: "auto" },
+    color: { color: THEME_COLORS.bgIvory, opacity: 100, width: "100%", height: "100%", aspectRatio: "auto" },
     image: { url: null, alt: null },
     video: { url: null, alt: null },
   }
@@ -100,14 +102,14 @@ export function CharacterForm({
     const newItem: CharacterItem = {
       title: {
         value: "New Character Pillar",
-        textColor: "#182d09",
+        textColor: THEME_COLORS.primary,
         textOpacity: 1,
         backgroundColor: null,
         backgroundOpacity: 1,
       },
       description: {
         value: "Describe the defining characteristic or highlight of this region.",
-        textColor: "#565e69",
+        textColor: THEME_COLORS.muted,
         textOpacity: 1,
         backgroundColor: null,
         backgroundOpacity: 1,
@@ -199,7 +201,7 @@ export function CharacterForm({
               updateCharacterField("label.value", val)
             }
             enableStyle
-            style={typeof labelData === "object" ? labelData : { textColor: "#af6348" }}
+            style={typeof labelData === "object" ? labelData : { textColor: THEME_COLORS.accent }}
             onStyleChange={(st: any) =>
               updateCharacterField("label", {
                 ...(typeof labelData === "object" ? labelData : {}),
@@ -218,7 +220,7 @@ export function CharacterForm({
               updateCharacterField("title.value", val)
             }
             enableStyle
-            style={typeof titleData === "object" ? titleData : { textColor: "#182d09" }}
+            style={typeof titleData === "object" ? titleData : { textColor: THEME_COLORS.primary }}
             onStyleChange={(st: any) =>
               updateCharacterField("title", {
                 ...(typeof titleData === "object" ? titleData : {}),
@@ -342,7 +344,7 @@ export function CharacterForm({
                       style={
                         typeof item.title === "object"
                           ? item.title
-                          : { textColor: "#182d09" }
+                          : { textColor: THEME_COLORS.primary }
                       }
                       onStyleChange={(st: any) =>
                         updateItem(index, "title", {
@@ -374,7 +376,7 @@ export function CharacterForm({
                       style={
                         typeof item.description === "object"
                           ? item.description
-                          : { textColor: "#565e69" }
+                          : { textColor: THEME_COLORS.muted }
                       }
                       onStyleChange={(st: any) =>
                         updateItem(index, "description", {

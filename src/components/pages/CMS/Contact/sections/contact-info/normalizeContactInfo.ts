@@ -1,3 +1,4 @@
+import { THEME_COLORS } from "@/config/theme"
 import { emptyContactInfo } from "./emptyContactInfo"
 import {
   normalizeStyledField,
@@ -23,12 +24,12 @@ export function normalizeContactInfo(input: any) {
         label: normalizeStyledField(
           item?.label,
           labelDefault,
-          "#6B7280"
+          THEME_COLORS.placeholder
         ),
         subtitle: normalizeStyledField(
           item?.subtitle,
           subtitleDefault,
-          "#182D09"
+          THEME_COLORS.primary
         ),
         button: normalizeButton(rawBtn || defaultItem?.button),
         multimedia: normalizeMultimedia(

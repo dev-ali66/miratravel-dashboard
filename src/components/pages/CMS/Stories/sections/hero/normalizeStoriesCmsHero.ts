@@ -1,3 +1,4 @@
+import { THEME_COLORS } from "@/config/theme"
 import {
   normalizeStyledField,
   normalizeMultimedia,
@@ -11,10 +12,10 @@ export function normalizeStoriesCmsHero(rawHero: any): typeof emptyStoriesCmsHer
   const src = rawHero.hero || rawHero.content || rawHero
 
   return {
-    breadcrumb: normalizeStyledField(src.breadcrumb || src.eyebrow, emptyStoriesCmsHero.breadcrumb.value, "#E5E7EB"),
-    title: normalizeStyledField(src.title, emptyStoriesCmsHero.title.value, "#ffffff"),
-    subtitle: normalizeStyledField(src.subtitle, emptyStoriesCmsHero.subtitle.value, "#E5E7EB"),
-    description: normalizeStyledField(src.description, emptyStoriesCmsHero.description.value, "#E5E7EB"),
+    breadcrumb: normalizeStyledField(src.breadcrumb || src.eyebrow, emptyStoriesCmsHero.breadcrumb.value, THEME_COLORS.mediaPlaceholder),
+    title: normalizeStyledField(src.title, emptyStoriesCmsHero.title.value, THEME_COLORS.white),
+    subtitle: normalizeStyledField(src.subtitle, emptyStoriesCmsHero.subtitle.value, THEME_COLORS.mediaPlaceholder),
+    description: normalizeStyledField(src.description, emptyStoriesCmsHero.description.value, THEME_COLORS.mediaPlaceholder),
     isCenter: Boolean(src.isCenter),
     buttons: normalizeButtonsArray(src.buttons) as any,
     backgroundMultimedia: normalizeMultimedia(

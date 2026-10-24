@@ -1,3 +1,4 @@
+import { THEME_COLORS } from "@/config/theme"
 import { normalizeMultimedia, normalizeStyledField } from "../../shared/normalizeHelpers"
 import { emptyStats } from "./emptyStats"
 
@@ -7,9 +8,9 @@ export function normalizeStats(statistics: any) {
   const rawFacts = Array.isArray(safeStats.facts) ? safeStats.facts : (Array.isArray(safeStats.items) ? safeStats.items : (emptyStats.items ?? []))
   const normalizedFacts = rawFacts.map((fact: any) => {
     const normFact = {
-      label: normalizeStyledField(fact.label, "", "#182d09"),
-      value: normalizeStyledField(fact.value, "", "#af6348"),
-      description: normalizeStyledField(fact.description, "", "#565e69"),
+      label: normalizeStyledField(fact.label, "", THEME_COLORS.primary),
+      value: normalizeStyledField(fact.value, "", THEME_COLORS.accent),
+      description: normalizeStyledField(fact.description, "", THEME_COLORS.muted),
       image: fact.image ?? "",
       icon: fact.icon ?? "",
       media: normalizeMultimedia(fact.media || fact.multimedia),
@@ -23,7 +24,7 @@ export function normalizeStats(statistics: any) {
 
   const normalizedStatistics = {
     ...safeStats,
-    title: normalizeStyledField(safeStats.title ?? emptyStats.title, "", "#182d09"),
+    title: normalizeStyledField(safeStats.title ?? emptyStats.title, "", THEME_COLORS.primary),
     facts: normalizedFacts,
     ...(safeStats.area ? {
       area: {

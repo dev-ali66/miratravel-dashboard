@@ -1,14 +1,15 @@
+import { THEME_COLORS } from "@/config/theme"
 export const emptyDestinations = {
   eyebrow: {
     value: "Destinations",
-    textColor: "#C5A880",
+    textColor: THEME_COLORS.goldMuted,
     textOpacity: 1,
     backgroundColor: null,
     backgroundOpacity: 1,
   },
   title: {
     value: "Explore the countries that shape our journeys",
-    textColor: "#182D09",
+    textColor: THEME_COLORS.primary,
     textOpacity: 1,
     backgroundColor: null,
     backgroundOpacity: 1,
@@ -16,7 +17,7 @@ export const emptyDestinations = {
   subtitle: {
     value:
       "Discover rich cultures, breathtaking landscapes, and timeless cities — one journey at a time",
-    textColor: "#4B5563",
+    textColor: THEME_COLORS.sub,
     textOpacity: 1,
     backgroundColor: null,
     backgroundOpacity: 1,
@@ -24,7 +25,7 @@ export const emptyDestinations = {
   backgroundMultimedia: {
     show: "color",
     color: {
-      color: "#FFFFFF",
+      color: THEME_COLORS.white,
       opacity: 100,
       width: "100%",
       height: "100%",
@@ -34,7 +35,7 @@ export const emptyDestinations = {
       url: "",
       alt: null,
       opacity: 100,
-      overlayColor: "#000000",
+      overlayColor: THEME_COLORS.overlayBlack,
       overlayOpacity: 0,
       width: "100%",
       height: "auto",
@@ -45,7 +46,7 @@ export const emptyDestinations = {
       url: "",
       alt: null,
       opacity: 100,
-      overlayColor: "#000000",
+      overlayColor: THEME_COLORS.overlayBlack,
       overlayOpacity: 0,
       autoplay: true,
       loop: true,
@@ -63,12 +64,12 @@ export const emptyDestinations = {
       variant: "PRIMARY",
       style: "primary",
       rounded: "full",
-      backgroundColor: "#182D09",
+      backgroundColor: THEME_COLORS.primary,
       backgroundOpacity: 100,
-      textColor: "#ffffff",
+      textColor: THEME_COLORS.white,
       textOpacity: 100,
-      hoverBackgroundColor: "#f3f4f6",
-      hoverTextColor: "#000000",
+      hoverBackgroundColor: THEME_COLORS.lightText,
+      hoverTextColor: THEME_COLORS.overlayBlack,
       target: "_self",
       showIcon: true,
     },

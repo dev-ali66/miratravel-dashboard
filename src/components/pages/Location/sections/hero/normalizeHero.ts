@@ -1,3 +1,4 @@
+import { THEME_COLORS } from "@/config/theme"
 import { normalizeMultimedia, normalizeStyledField, normalizeButtonsArray } from "../../shared/normalizeHelpers"
 import { emptyHero } from "./emptyHero"
 
@@ -6,8 +7,8 @@ export function normalizeHero(hero: any) {
 
   const normalizedHero = {
     ...safeHero,
-    title: normalizeStyledField(safeHero.title ?? emptyHero.title, "", "#FFFFFF"),
-    description: normalizeStyledField(safeHero.description ?? emptyHero.description, "", "#FFFFFF"),
+    title: normalizeStyledField(safeHero.title ?? emptyHero.title, "", THEME_COLORS.white),
+    description: normalizeStyledField(safeHero.description ?? emptyHero.description, "", THEME_COLORS.white),
     breadcrumb: normalizeStyledField(safeHero.breadcrumb ?? emptyHero.breadcrumb, "", null),
     subtitle: normalizeStyledField(safeHero.subtitle ?? emptyHero.subtitle, "", null),
     isCenter: safeHero.isCenter !== undefined ? Boolean(safeHero.isCenter) : emptyHero.isCenter,

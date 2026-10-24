@@ -1,3 +1,4 @@
+import { THEME_COLORS } from "@/config/theme"
 import type { ContactFormSectionProps } from "../../config/contactSections"
 import { FormSection, DynamicStyledField } from "@/components/pages/CMS/shared/FormControls"
 import { ButtonsField } from "@/components/pages/CMS/shared/ButtonsField"
@@ -62,7 +63,7 @@ export function CtaForm({
           defaultShow="color"
           showColorPicker
           colorLabel="Background color"
-          defaultColor="#FBF9F5"
+          defaultColor={THEME_COLORS.bgSand}
           imageFieldName="cmsContactCtaBackgroundImage"
           videoFieldName="cmsContactCtaBackgroundVideo"
           value={
@@ -79,7 +80,7 @@ export function CtaForm({
           defaultShow="image"
           showColorPicker
           colorLabel="Right section color"
-          defaultColor="#FBF9F5"
+          defaultColor={THEME_COLORS.bgSand}
           imageTitle="Side Image"
           imageLabel="Side image"
           imageFieldName="cmsContactCtaRightSectionImage"

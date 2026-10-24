@@ -13,14 +13,14 @@ export function MiraTouchPreview({ draft }: ExperiencePreviewSectionProps) {
   return (
     <section
       data-section="mira-touch"
-      className="relative w-full py-16 md:py-24 px-6 md:px-12 lg:px-20 bg-[#182D09] text-white overflow-hidden"
+      className="relative w-full py-16 md:py-24 px-6 md:px-12 lg:px-20 bg-brand-primary text-white overflow-hidden"
     >
       <div className="relative z-10 max-w-6xl mx-auto grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
         <div className="lg:col-span-7 flex flex-col gap-6">
           <DynamicStyledTextPreview
             as="span"
             data={touch.label}
-            className="text-xs md:text-sm font-semibold uppercase tracking-[2.5px] text-[#E5A84B]"
+            className="text-xs md:text-sm font-semibold uppercase tracking-[2.5px] text-accent-muted"
           />
 
           <DynamicStyledTextPreview
@@ -39,7 +39,7 @@ export function MiraTouchPreview({ draft }: ExperiencePreviewSectionProps) {
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mt-2">
               {items.map((it, idx) => (
                 <div key={idx} className="flex items-start gap-3 p-4 rounded-xl bg-white/5 border border-white/10 backdrop-blur-xs">
-                  <CheckCircle2 className="h-4 w-4 text-[#E5A84B] shrink-0 mt-0.5" />
+                  <CheckCircle2 className="h-4 w-4 text-accent-muted shrink-0 mt-0.5" />
                   <div className="flex flex-col gap-1">
                     <DynamicStyledTextPreview
                       as="h4"

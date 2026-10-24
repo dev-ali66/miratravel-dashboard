@@ -1,3 +1,4 @@
+import { THEME_COLORS } from "@/config/theme"
 import { emptyRegionalKnowledge } from "./emptyRegionalKnowledge"
 import {
   normalizeStyledField,
@@ -9,13 +10,13 @@ export function normalizeRegionalKnowledge(input: any) {
   const res = {
     ...emptyRegionalKnowledge,
     ...raw,
-    eyebrow: normalizeStyledField(raw.eyebrow, emptyRegionalKnowledge.eyebrow.value, "#B86B3A"),
-    title: normalizeStyledField(raw.title, emptyRegionalKnowledge.title.value, "#182D09"),
-    description: normalizeStyledField(raw.description, emptyRegionalKnowledge.description.value, "#4B5563"),
+    eyebrow: normalizeStyledField(raw.eyebrow, emptyRegionalKnowledge.eyebrow.value, THEME_COLORS.accentWarm),
+    title: normalizeStyledField(raw.title, emptyRegionalKnowledge.title.value, THEME_COLORS.primary),
+    description: normalizeStyledField(raw.description, emptyRegionalKnowledge.description.value, THEME_COLORS.sub),
     secondaryDescription: normalizeStyledField(
       raw.secondaryDescription,
       emptyRegionalKnowledge.secondaryDescription.value,
-      "#4B5563"
+      THEME_COLORS.sub
     ),
     multimedia1: normalizeMultimedia(
       raw.multimedia1,

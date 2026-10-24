@@ -1,21 +1,22 @@
+import { THEME_COLORS } from "@/config/theme"
 export const emptyHero = {
   breadcrumb: {
     value: "About Mira",
-    textColor: "#E5E7EB",
+    textColor: THEME_COLORS.mediaPlaceholder,
     textOpacity: 1,
     backgroundColor: null,
     backgroundOpacity: 1,
   },
   title: {
     value: "Thoughtfully curated journeys through the Balkans.",
-    textColor: "#ffffff",
+    textColor: THEME_COLORS.white,
     textOpacity: 1,
     backgroundColor: null,
     backgroundOpacity: 1,
   },
   subtitle: {
     value: "",
-    textColor: "#E5E7EB",
+    textColor: THEME_COLORS.mediaPlaceholder,
     textOpacity: 1,
     backgroundColor: null,
     backgroundOpacity: 1,
@@ -23,7 +24,7 @@ export const emptyHero = {
   description: {
     value:
       "MIRA creates refined travel experiences for those who value depth, beauty, and meaningful connection to place. Our journeys are designed with care, shaped by regional expertise, and guided by a belief that travel should feel personal, effortless, and memorable.",
-    textColor: "#E5E7EB",
+    textColor: THEME_COLORS.mediaPlaceholder,
     textOpacity: 1,
     backgroundColor: null,
     backgroundOpacity: 1,
@@ -33,7 +34,7 @@ export const emptyHero = {
   backgroundMultimedia: {
     show: "image",
     color: {
-      color: "#182D09",
+      color: THEME_COLORS.primary,
       opacity: 100,
       width: "100%",
       height: "100%",
@@ -43,7 +44,7 @@ export const emptyHero = {
       url: "",
       alt: "Thoughtfully curated journeys through the Balkans",
       opacity: 100,
-      overlayColor: "#000000",
+      overlayColor: THEME_COLORS.overlayBlack,
       overlayOpacity: 45,
       width: "100%",
       height: "auto",
@@ -54,7 +55,7 @@ export const emptyHero = {
       url: "",
       alt: null,
       opacity: 100,
-      overlayColor: "#000000",
+      overlayColor: THEME_COLORS.overlayBlack,
       overlayOpacity: 0,
       autoplay: true,
       loop: true,

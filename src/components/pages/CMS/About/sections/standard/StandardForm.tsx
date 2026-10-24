@@ -1,3 +1,4 @@
+import { THEME_COLORS } from "@/config/theme"
 import { useState } from "react"
 import { FormSection, DynamicStyledField } from "@/components/pages/CMS/shared/FormControls"
 import { UniversalMultimediaForm } from "@/components/pages/CMS/shared/UniversalMultimediaForm"
@@ -45,14 +46,14 @@ export function StandardForm({
     const newItem = {
       title: {
         value: "New Standard Feature",
-        textColor: "#B86B3A",
+        textColor: THEME_COLORS.accentWarm,
         textOpacity: 1,
         backgroundColor: null,
         backgroundOpacity: 1,
       },
       description: {
         value: "Feature description content...",
-        textColor: "#4B5563",
+        textColor: THEME_COLORS.sub,
         textOpacity: 1,
         backgroundColor: null,
         backgroundOpacity: 1,

@@ -13,9 +13,11 @@ import {
   Maximize2,
   FileCode,
   Sparkles,
+  Download,
+  Loader2,
 } from "lucide-react"
 import { toast } from "sonner"
-import type { MediaAsset } from "@/services/mediaService"
+import { mediaService, type MediaAsset } from "@/services/mediaService"
 import { useMediaUsage, useUpdateMediaMetadata } from "@/hooks/media/useMediaLibrary"
 
 interface MediaInspectorDrawerProps {
@@ -53,12 +55,27 @@ export const MediaInspectorDrawer: React.FC<MediaInspectorDrawerProps> = ({
 }) => {
   const [copiedUrl, setCopiedUrl] = useState(false)
   const [copiedCode, setCopiedCode] = useState(false)
+  const [isDownloading, setIsDownloading] = useState(false)
   const [title, setTitle] = useState("")
   const [altText, setAltText] = useState("")
   const [caption, setCaption] = useState("")
 
   const { data: usageReport, isLoading: isUsageLoading } = useMediaUsage(asset?.id)
   const updateMetadata = useUpdateMediaMetadata()
+
+  const handleDownload = async () => {
+    if (!asset) return
+    try {
+      setIsDownloading(true)
+      await mediaService.downloadAsset(asset)
+      toast.success("Download started")
+    } catch (err) {
+      console.error("Download failed:", err)
+      toast.error("Failed to download file")
+    } finally {
+      setIsDownloading(false)
+    }
+  }
 
   useEffect(() => {
     if (asset) {
@@ -85,12 +102,14 @@ export const MediaInspectorDrawer: React.FC<MediaInspectorDrawerProps> = ({
   }
 
   const handleCopyNextImage = async () => {
-    const code = `<Image src="${asset.url}" alt="${altText || asset.fileName}" width={${
-      asset.width || 1200
-    }} height={${asset.height || 800}} />`
+    const code = isVideo
+      ? `<video src="${asset.url}" controls className="w-full h-auto rounded-lg" />`
+      : `<Image src="${asset.url}" alt="${altText || asset.fileName}" width={${
+          asset.width || 1200
+        }} height={${asset.height || 800}} />`
     await navigator.clipboard.writeText(code)
     setCopiedCode(true)
-    toast.success("Next.js <Image> component copied")
+    toast.success(isVideo ? "Video tag copied to clipboard" : "Next.js <Image> tag copied to clipboard")
     setTimeout(() => setCopiedCode(false), 2000)
   }
 
@@ -143,37 +162,61 @@ export const MediaInspectorDrawer: React.FC<MediaInspectorDrawerProps> = ({
           ) : (
             <img src={asset.url} alt={asset.title || asset.fileName} className="max-h-[300px] w-full object-contain" />
           )}
-          <a
-            href={asset.url}
-            target="_blank"
-            rel="noreferrer"
-            className="absolute top-2 right-2 p-1.5 rounded-lg bg-background/80 hover:bg-background text-foreground backdrop-blur-sm border border-border/40 shadow-xs transition-colors"
-            title="Open in new tab"
-          >
-            <Maximize2 className="h-3.5 w-3.5" />
-          </a>
-        </div>
+          <div className="absolute top-2.5 right-2.5 flex items-center gap-1 bg-background/85 backdrop-blur-md p-1 rounded-xl border border-border/50 shadow-sm">
+            {/* 1. Direct Download */}
+            <button
+              type="button"
+              onClick={handleDownload}
+              disabled={isDownloading}
+              className="h-7 w-7 rounded-lg flex items-center justify-center hover:bg-muted text-foreground transition-all cursor-pointer disabled:opacity-50"
+              title={`Download ${asset.originalName || asset.fileName}`}
+            >
+              {isDownloading ? (
+                <Loader2 className="h-3.5 w-3.5 animate-spin text-primary" />
+              ) : (
+                <Download className="h-3.5 w-3.5" />
+              )}
+            </button>
 
-        {/* Quick Action Buttons (Copy CDN & Markdown) */}
-        <div className="grid grid-cols-2 gap-2">
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={handleCopyUrl}
-            className="text-xs h-9 gap-1.5 border-border/60 bg-muted/20"
-          >
-            {copiedUrl ? <Check className="h-3.5 w-3.5 text-emerald-600" /> : <Copy className="h-3.5 w-3.5" />}
-            {copiedUrl ? "Copied URL!" : "Copy CDN Link"}
-          </Button>
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={handleCopyNextImage}
-            className="text-xs h-9 gap-1.5 border-border/60 bg-muted/20"
-          >
-            {copiedCode ? <Check className="h-3.5 w-3.5 text-emerald-600" /> : <FileCode className="h-3.5 w-3.5" />}
-            {copiedCode ? "Copied Tag!" : "Copy <Image /> Tag"}
-          </Button>
+            {/* 2. Copy CDN URL */}
+            <button
+              type="button"
+              onClick={handleCopyUrl}
+              className="h-7 w-7 rounded-lg flex items-center justify-center hover:bg-muted text-foreground transition-all cursor-pointer"
+              title={copiedUrl ? "Copied CDN URL!" : "Copy CDN URL"}
+            >
+              {copiedUrl ? (
+                <Check className="h-3.5 w-3.5 text-emerald-600 animate-in zoom-in-50 duration-150" />
+              ) : (
+                <Copy className="h-3.5 w-3.5" />
+              )}
+            </button>
+
+            {/* 3. Copy Embed Tag / Code */}
+            <button
+              type="button"
+              onClick={handleCopyNextImage}
+              className="h-7 w-7 rounded-lg flex items-center justify-center hover:bg-muted text-foreground transition-all cursor-pointer"
+              title={copiedCode ? "Copied Embed Tag!" : isVideo ? "Copy <video> tag" : "Copy Next.js <Image /> tag"}
+            >
+              {copiedCode ? (
+                <Check className="h-3.5 w-3.5 text-emerald-600 animate-in zoom-in-50 duration-150" />
+              ) : (
+                <FileCode className="h-3.5 w-3.5" />
+              )}
+            </button>
+
+            {/* 4. Open Full Size in New Tab */}
+            <a
+              href={asset.url}
+              target="_blank"
+              rel="noreferrer"
+              className="h-7 w-7 rounded-lg flex items-center justify-center hover:bg-muted text-foreground transition-all"
+              title="Open full size in new tab"
+            >
+              <Maximize2 className="h-3.5 w-3.5" />
+            </a>
+          </div>
         </div>
 
         {/* Technical Spec Sheet */}

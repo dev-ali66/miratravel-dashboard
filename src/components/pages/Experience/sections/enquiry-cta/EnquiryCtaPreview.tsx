@@ -11,7 +11,7 @@ export function EnquiryCtaPreview({ draft }: ExperiencePreviewSectionProps) {
   return (
     <section
       data-section="enquiry-cta"
-      className="relative w-full py-20 px-6 md:px-12 lg:px-20 overflow-hidden bg-[#182D09] text-white text-center"
+      className="relative w-full py-20 px-6 md:px-12 lg:px-20 overflow-hidden bg-brand-primary text-white text-center"
     >
       {cta.backgroundMultimedia && (
         <UniversalMultimediaPreview
@@ -23,7 +23,7 @@ export function EnquiryCtaPreview({ draft }: ExperiencePreviewSectionProps) {
 
       <div className="relative z-10 max-w-3xl mx-auto flex flex-col items-center gap-6">
         {cta.badgeText && (
-          <span className="inline-flex items-center rounded-full border border-white/20 bg-white/10 px-3.5 py-1 text-xs font-semibold uppercase tracking-[2px] text-[#E5A84B] backdrop-blur-xs">
+          <span className="inline-flex items-center rounded-full border border-white/20 bg-white/10 px-3.5 py-1 text-xs font-semibold uppercase tracking-[2px] text-accent-muted backdrop-blur-xs">
             {cta.badgeText}
           </span>
         )}
@@ -45,7 +45,7 @@ export function EnquiryCtaPreview({ draft }: ExperiencePreviewSectionProps) {
           {cta.primaryButtonText && (
             <button
               type="button"
-              className="inline-flex items-center gap-2 rounded-full bg-[#E5A84B] px-8 py-3.5 text-xs font-semibold tracking-wider uppercase text-neutral-900 hover:bg-[#d8973a] transition-all shadow-lg"
+              className="inline-flex items-center gap-2 rounded-full bg-accent-muted px-8 py-3.5 text-xs font-semibold tracking-wider uppercase text-neutral-900 hover:bg-accent-warm transition-all shadow-lg"
             >
               <span>{cta.primaryButtonText}</span>
               <ArrowRight className="h-4 w-4" />

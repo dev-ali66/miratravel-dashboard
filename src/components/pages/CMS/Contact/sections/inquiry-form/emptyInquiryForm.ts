@@ -1,14 +1,15 @@
+import { THEME_COLORS } from "@/config/theme"
 export const emptyInquiryForm = {
   eyebrow: {
     value: "THE INQUIRY",
-    textColor: "#E5A84B",
+    textColor: THEME_COLORS.accentMuted,
     textOpacity: 1,
     backgroundColor: null,
     backgroundOpacity: 1,
   },
   title: {
     value: "Plan your escape",
-    textColor: "#182D09",
+    textColor: THEME_COLORS.primary,
     textOpacity: 1,
     backgroundColor: null,
     backgroundOpacity: 1,
@@ -16,7 +17,7 @@ export const emptyInquiryForm = {
   rightSideMultimedia: {
     show: "image",
     color: {
-      color: "#E5E7EB",
+      color: THEME_COLORS.mediaPlaceholder,
       opacity: 100,
       width: "100%",
       height: "100%",
@@ -26,7 +27,7 @@ export const emptyInquiryForm = {
       url: "",
       alt: "Plan your escape",
       opacity: 100,
-      overlayColor: "#000000",
+      overlayColor: THEME_COLORS.overlayBlack,
       overlayOpacity: 0,
       width: "100%",
       height: "auto",
@@ -37,7 +38,7 @@ export const emptyInquiryForm = {
       url: "",
       alt: null,
       opacity: 100,
-      overlayColor: "#000000",
+      overlayColor: THEME_COLORS.overlayBlack,
       overlayOpacity: 0,
       autoplay: true,
       loop: true,
@@ -51,7 +52,7 @@ export const emptyInquiryForm = {
   backgroundMultimedia: {
     show: "color",
     color: {
-      color: "#FAF6F0",
+      color: THEME_COLORS.bgBeige,
       opacity: 100,
       width: "100%",
       height: "100%",
@@ -61,7 +62,7 @@ export const emptyInquiryForm = {
       url: "",
       alt: "Inquiry section background image",
       opacity: 100,
-      overlayColor: "#000000",
+      overlayColor: THEME_COLORS.overlayBlack,
       overlayOpacity: 45,
       width: "100%",
       height: "auto",
@@ -72,7 +73,7 @@ export const emptyInquiryForm = {
       url: "",
       alt: "Inquiry section background video",
       opacity: 100,
-      overlayColor: "#000000",
+      overlayColor: THEME_COLORS.overlayBlack,
       overlayOpacity: 45,
       autoplay: true,
       loop: true,

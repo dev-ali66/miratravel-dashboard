@@ -1,3 +1,4 @@
+import { THEME_COLORS } from "@/config/theme"
 import { DynamicStyledField } from "@/components/pages/CMS/shared/FormControls"
 import { FormSection } from "@/components/pages/Location/shared/fields"
 import type { ExperienceFormSectionProps } from "../../config/experienceSections"
@@ -29,14 +30,14 @@ export function HighlightsForm({
       badge: `Highlight 0${nextNum}`,
       title: {
         value: "",
-        textColor: "#182d09",
+        textColor: THEME_COLORS.primary,
         textOpacity: 1,
         backgroundColor: null,
         backgroundOpacity: 1,
       },
       description: {
         value: "",
-        textColor: "#565e69",
+        textColor: THEME_COLORS.muted,
         textOpacity: 1,
         backgroundColor: null,
         backgroundOpacity: 1,

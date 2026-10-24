@@ -5,6 +5,7 @@ import {
 } from "@/hooks/location/useGetLocation"
 import { useDeleteLocation } from "@/hooks/location/useDeleteLocation"
 import { Link } from "react-router-dom"
+import { Pagination } from "@/components/shared/Pagination"
 import { useEffect, useState } from "react"
 import {
   Trash2,
@@ -12,8 +13,6 @@ import {
   Loader2,
   Plus,
   Search,
-  ChevronLeft,
-  ChevronRight,
   Globe,
   Sparkles,
 } from "lucide-react"
@@ -186,7 +185,7 @@ export default function LocationPages() {
       ) : pages.length > 0 ? (
         <>
           {/* Location Pages */}
-          <div className="grid grid-cols-1 gap-5 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+          <div className="grid grid-cols-1 gap-2 md:grid-cols-3 lg:grid-cols-5 xl:grid-cols-6">
             {pages.map((page, index) => {
               const pageName = page.name ? formatPageName(page.name) : "Untitled Location"
 
@@ -390,33 +389,16 @@ export default function LocationPages() {
             })}
           </div>
 
-          {/* Pagination */}
-          {meta && meta.totalPages > 1 && (
-            <div className="mt-8 flex items-center justify-center gap-3">
-              <button
-                type="button"
-                onClick={() => setPage((p) => Math.max(1, p - 1))}
-                disabled={page <= 1}
-                className="flex items-center gap-1 rounded-lg border border-border/60 px-3 py-2 text-sm disabled:cursor-not-allowed disabled:opacity-40"
-              >
-                <ChevronLeft className="h-4 w-4" />
-                Prev
-              </button>
-
-              <span className="text-sm text-muted-foreground">
-                Page {meta.page} of {meta.totalPages}
-              </span>
-
-              <button
-                type="button"
-                onClick={() => setPage((p) => Math.min(meta.totalPages, p + 1))}
-                disabled={page >= meta.totalPages}
-                className="flex items-center gap-1 rounded-lg border border-border/60 px-3 py-2 text-sm disabled:cursor-not-allowed disabled:opacity-40"
-              >
-                Next
-                <ChevronRight className="h-4 w-4" />
-              </button>
-            </div>
+          {/* Universal Pagination */}
+          {meta && (
+            <Pagination
+              currentPage={meta.page}
+              totalPages={meta.totalPages}
+              totalItems={meta.total}
+              pageSize={PAGE_SIZE}
+              onPageChange={setPage}
+              className="mt-8"
+            />
           )}
         </>
       ) : (

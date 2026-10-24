@@ -1,7 +1,8 @@
+import { THEME_COLORS } from "@/config/theme"
 export const emptyCta = {
   title: {
     value: "Didn't find your perfect journey?",
-    textColor: "#182d09",
+    textColor: THEME_COLORS.primary,
     textOpacity: 1,
     backgroundColor: null,
     backgroundOpacity: 1,
@@ -9,7 +10,7 @@ export const emptyCta = {
   description: {
     value:
       "Our collection is carefully designed but every travel is different.\nIf you'd like something more personal, we'd love to create it together.",
-    textColor: "#565e69",
+    textColor: THEME_COLORS.muted,
     textOpacity: 1,
     backgroundColor: null,
     backgroundOpacity: 1,
@@ -20,8 +21,8 @@ export const emptyCta = {
       url: "/contact",
       style: "primary",
       variant: "PRIMARY",
-      backgroundColor: "#af6348",
-      textColor: "#ffffff",
+      backgroundColor: THEME_COLORS.accent,
+      textColor: THEME_COLORS.white,
     },
   ],
   imageMultimedia: {
@@ -30,7 +31,7 @@ export const emptyCta = {
       url: "",
       alt: "CTA Motif",
       opacity: 100,
-      overlayColor: "#000000",
+      overlayColor: THEME_COLORS.overlayBlack,
       overlayOpacity: 0,
       width: "100%",
       height: "100%",
@@ -44,7 +45,7 @@ export const emptyCta = {
       loop: true,
       muted: true,
       opacity: 100,
-      overlayColor: "#000000",
+      overlayColor: THEME_COLORS.overlayBlack,
       overlayOpacity: 0,
       width: "100%",
       height: "auto",
@@ -52,7 +53,7 @@ export const emptyCta = {
       fit: "cover",
     },
     color: {
-      color: "#EDE7D8",
+      color: THEME_COLORS.bgSubdued,
       opacity: 100,
       width: "100%",
       height: "100%",
@@ -62,7 +63,7 @@ export const emptyCta = {
   backgroundMultimedia: {
     show: "color",
     color: {
-      color: "#EDE7D8",
+      color: THEME_COLORS.bgSubdued,
       opacity: 100,
       width: "100%",
       height: "100%",
@@ -72,7 +73,7 @@ export const emptyCta = {
       url: "",
       alt: "CTA Background Pattern",
       opacity: 100,
-      overlayColor: "#000000",
+      overlayColor: THEME_COLORS.overlayBlack,
       overlayOpacity: 0,
       width: "100%",
       height: "auto",
@@ -86,7 +87,7 @@ export const emptyCta = {
       loop: true,
       muted: true,
       opacity: 100,
-      overlayColor: "#000000",
+      overlayColor: THEME_COLORS.overlayBlack,
       overlayOpacity: 0,
       width: "100%",
       height: "auto",

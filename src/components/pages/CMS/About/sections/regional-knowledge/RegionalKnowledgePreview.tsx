@@ -1,3 +1,4 @@
+import { THEME_COLORS } from "@/config/theme"
 import { UniversalMultimediaPreview } from "@/components/pages/CMS/shared/UniversalMultimediaPreview"
 import { DynamicStyledTextPreview } from "@/components/pages/CMS/shared/DynamicStyledTextPreview"
 
@@ -9,7 +10,7 @@ export function RegionalKnowledgePreview({ section }: RegionalKnowledgePreviewPr
   if (!section) return null
 
   return (
-    <section className="relative w-full overflow-hidden py-16 md:py-20 lg:py-24 bg-[#FAF7F2]">
+    <section className="relative w-full overflow-hidden py-16 md:py-20 lg:py-24 bg-surface-sand">
       {section.backgroundMultimedia && (
         <UniversalMultimediaPreview multimedia={section.backgroundMultimedia} mode="background" />
       )}
@@ -20,15 +21,15 @@ export function RegionalKnowledgePreview({ section }: RegionalKnowledgePreviewPr
           <div className="lg:col-span-7 flex flex-col items-start w-full">
             <div className="flex flex-col items-start mb-3 max-w-[379px] w-full">
               <span className="text-xs sm:text-sm font-semibold uppercase tracking-[2.64px] mb-1">
-                <DynamicStyledTextPreview as="span" data={section.eyebrow} fallbackColor="#B86B3A" />
+                <DynamicStyledTextPreview as="span" data={section.eyebrow} fallbackColor={THEME_COLORS.accentWarm} />
               </span>
               <h2 className="font-serif font-light text-3xl sm:text-4xl lg:text-5xl leading-tight tracking-tight">
-                <DynamicStyledTextPreview as="span" data={section.title} fallbackColor="#182D09" />
+                <DynamicStyledTextPreview as="span" data={section.title} fallbackColor={THEME_COLORS.primary} />
               </h2>
             </div>
 
-            <div className="text-sm sm:text-base leading-relaxed text-[#4B5563] mb-8 w-full max-w-[1104px] whitespace-pre-line">
-              <DynamicStyledTextPreview as="div" data={section.description} fallbackColor="#4B5563" />
+            <div className="text-sm sm:text-base leading-relaxed text-sub mb-8 w-full max-w-[1104px] whitespace-pre-line">
+              <DynamicStyledTextPreview as="div" data={section.description} fallbackColor={THEME_COLORS.sub} />
             </div>
 
             <div className="relative w-full aspect-[16/9] lg:aspect-[1106/480] overflow-hidden rounded-md shadow-sm">
@@ -43,8 +44,8 @@ export function RegionalKnowledgePreview({ section }: RegionalKnowledgePreviewPr
             </div>
 
             {section.secondaryDescription && (
-              <div className="pl-6 border-l-2 border-[#B86B3A] text-sm sm:text-base leading-relaxed text-[#4B5563] whitespace-pre-line w-full">
-                <DynamicStyledTextPreview as="div" data={section.secondaryDescription} fallbackColor="#4B5563" />
+              <div className="pl-6 border-l-2 border-accent-warm text-sm sm:text-base leading-relaxed text-sub whitespace-pre-line w-full">
+                <DynamicStyledTextPreview as="div" data={section.secondaryDescription} fallbackColor={THEME_COLORS.sub} />
               </div>
             )}
           </div>

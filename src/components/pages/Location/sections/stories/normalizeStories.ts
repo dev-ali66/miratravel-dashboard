@@ -1,3 +1,4 @@
+import { THEME_COLORS } from "@/config/theme"
 import { normalizeMultimedia, normalizeStyledField, normalizeButtonsArray } from "../../shared/normalizeHelpers"
 import { emptyStories } from "./emptyStories"
 
@@ -6,15 +7,15 @@ export function normalizeStories(input: any) {
 
   const normalized = {
     ...safeInput,
-    eyebrow: normalizeStyledField(safeInput.eyebrow ?? emptyStories.eyebrow, "The Editorial", "#C5A880"),
-    title: normalizeStyledField(safeInput.title ?? emptyStories.title, "Location Stories", "#182D09"),
-    description: normalizeStyledField(safeInput.description ?? emptyStories.description, "", "#4B5563"),
-    leftSideMultimedia: normalizeMultimedia(safeInput.leftSideMultimedia || emptyStories.leftSideMultimedia, "#FCFBF9"),
-    backgroundMultimedia: normalizeMultimedia(safeInput.backgroundMultimedia || emptyStories.backgroundMultimedia, "#FCFBF9"),
+    eyebrow: normalizeStyledField(safeInput.eyebrow ?? emptyStories.eyebrow, "The Editorial", THEME_COLORS.goldMuted),
+    title: normalizeStyledField(safeInput.title ?? emptyStories.title, "Location Stories", THEME_COLORS.primary),
+    description: normalizeStyledField(safeInput.description ?? emptyStories.description, "", THEME_COLORS.sub),
+    leftSideMultimedia: normalizeMultimedia(safeInput.leftSideMultimedia || emptyStories.leftSideMultimedia, THEME_COLORS.bgWarm),
+    backgroundMultimedia: normalizeMultimedia(safeInput.backgroundMultimedia || emptyStories.backgroundMultimedia, THEME_COLORS.bgWarm),
     items: Array.isArray(safeInput.items)
       ? safeInput.items.map((it: any) => ({
-          title: normalizeStyledField(it.title, "", "#182D09"),
-          subtitle: normalizeStyledField(it.subtitle, "", "#4B5563"),
+          title: normalizeStyledField(it.title, "", THEME_COLORS.primary),
+          subtitle: normalizeStyledField(it.subtitle, "", THEME_COLORS.sub),
           button: it.button || { label: "Read Story", url: "#" },
         }))
       : [],

@@ -1,3 +1,4 @@
+import { THEME_COLORS } from "@/config/theme"
 import { useState } from "react"
 import { DynamicStyledField } from "@/components/pages/CMS/shared/FormControls"
 import { UniversalMultimediaForm } from "@/components/pages/CMS/shared/UniversalMultimediaForm"
@@ -64,7 +65,7 @@ export function OverviewForm({
     const newItem = {
       title: {
         value: "",
-        textColor: "#464136",
+        textColor: THEME_COLORS.navText,
         textOpacity: 1,
         backgroundColor: null,
         backgroundOpacity: 1,
@@ -95,9 +96,9 @@ export function OverviewForm({
   const addVsImage = () => {
     const newMedia = {
       show: "image",
-      color: { color: "#FFFFFF", opacity: 100, width: "100%", height: "100%", aspectRatio: "auto" },
-      image: { url: "", alt: "Gallery Image", opacity: 100, overlayColor: "#000000", overlayOpacity: 0, width: "100%", height: "auto", aspectRatio: "auto", fit: "cover" },
-      video: { url: null, alt: "Gallery Video", opacity: 100, overlayColor: "#000000", overlayOpacity: 0, autoplay: true, loop: true, muted: true, width: "100%", height: "auto", aspectRatio: "auto", fit: "cover" },
+      color: { color: THEME_COLORS.white, opacity: 100, width: "100%", height: "100%", aspectRatio: "auto" },
+      image: { url: "", alt: "Gallery Image", opacity: 100, overlayColor: THEME_COLORS.overlayBlack, overlayOpacity: 0, width: "100%", height: "auto", aspectRatio: "auto", fit: "cover" },
+      video: { url: null, alt: "Gallery Video", opacity: 100, overlayColor: THEME_COLORS.overlayBlack, overlayOpacity: 0, autoplay: true, loop: true, muted: true, width: "100%", height: "auto", aspectRatio: "auto", fit: "cover" },
     }
     const nextList = [...vsGalleryList, newMedia]
     updateField("overview.visualStory.items", nextList)
@@ -128,7 +129,7 @@ export function OverviewForm({
     const newItem = {
       title: {
         value: "",
-        textColor: "#464136",
+        textColor: THEME_COLORS.navText,
         textOpacity: 1,
         backgroundColor: null,
         backgroundOpacity: 1,

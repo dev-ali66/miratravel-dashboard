@@ -86,8 +86,8 @@ function AddOnExperienceItemRow({
 
   return (
     <div
-      className={`w-full rounded-[8px] md:rounded-[10px] lg:rounded-[11px] lgx:rounded-[12px] xlg:rounded-[13px] mid:rounded-[14px] xl:rounded-[14px] 2xl:rounded-[16px] border overflow-hidden bg-neutral-100 dark:bg-card transition-colors duration-200 ${
-        isExpanded ? "border-black/15 dark:border-border" : "border-black/10 dark:border-border/60 hover:border-black/20"
+      className={`w-full rounded-[8px] md:rounded-[10px] lg:rounded-[11px] lgx:rounded-[12px] xlg:rounded-[13px] mid:rounded-[14px] xl:rounded-[14px] 2xl:rounded-[16px] border overflow-hidden bg-card text-card-foreground shadow-xs transition-colors duration-200 ${
+        isExpanded ? "border-border shadow-sm" : "border-border/70 hover:border-border"
       }`}
     >
       {/* Clickable Header Row */}
@@ -98,7 +98,7 @@ function AddOnExperienceItemRow({
       >
         <div className="flex items-center gap-2.5 xs:gap-3 md:gap-3.5 lg:gap-4 lgx:gap-4 xlg:gap-[17px] mid:gap-[17px] xl:gap-[18px] min-w-0 flex-1">
           {/* Number Badge */}
-          <div className="size-6 md:size-[26px] lg:size-7 lgx:size-[28px] xlg:size-[29px] mid:size-[30px] xl:size-8 2xl:size-9 shrink-0 bg-[#182d09] text-neutral-100 rounded-full flex items-center justify-center text-xs md:text-[12.5px] lg:text-[13px] lgx:text-[13.5px] xlg:text-[13.5px] mid:text-md xl:text-md 2xl:text-base font-medium leading-none">
+          <div className="size-6 md:size-[26px] lg:size-7 lgx:size-[28px] xlg:size-[29px] mid:size-[30px] xl:size-8 2xl:size-9 shrink-0 bg-primary text-primary-foreground rounded-full flex items-center justify-center text-xs md:text-[12.5px] lg:text-[13px] lgx:text-[13.5px] xlg:text-[13.5px] mid:text-md xl:text-md 2xl:text-base font-medium leading-none">
             {itemNum}
           </div>
 
@@ -120,7 +120,7 @@ function AddOnExperienceItemRow({
           {/* Title and Price */}
           <div className="flex flex-col items-start justify-center gap-1.5 md:gap-2 min-w-0">
             <div className="flex items-center gap-2 flex-wrap">
-              <h3 className="text-[#080c1d] dark:text-foreground text-[16px] md:text-[18px] lg:text-[19px] font-semibold leading-snug font-serif truncate max-w-full">
+              <h3 className="text-foreground text-[16px] md:text-[18px] lg:text-[19px] font-semibold leading-snug font-serif truncate max-w-full">
                 {itemTitle}
               </h3>
               {typeConfig && (
@@ -132,7 +132,7 @@ function AddOnExperienceItemRow({
 
             <div className="flex items-center gap-2.5 flex-wrap">
               {formattedPrice && (
-                <span className="text-[#af6348] text-[15px] md:text-[17px] font-medium leading-none">
+                <span className="text-accent text-[15px] md:text-[17px] font-medium leading-none">
                   {formattedPrice}
                 </span>
               )}
@@ -168,19 +168,19 @@ function AddOnExperienceItemRow({
 
       {/* Expanded Content Panel */}
       {isExpanded && (
-        <div className="overflow-hidden border-t border-black/[0.06] dark:border-border/50">
+        <div className="overflow-hidden border-t border-border/60">
           <div className="p-4 md:p-6 lg:p-7 flex flex-col lg:flex-row items-stretch lg:items-center gap-5 md:gap-7">
             {/* Left Narrative Text */}
             <div className="flex-1 flex flex-col justify-center">
-              <span className="text-[#af6348] text-[11px] md:text-xs mb-2 font-bold uppercase tracking-wider">
+              <span className="text-accent text-[11px] md:text-xs mb-2 font-bold uppercase tracking-wider">
                 {typeConfig ? typeConfig.label : "OPTIONAL EXPERIENCE"}
               </span>
 
-              <h4 className="text-black dark:text-foreground font-serif text-sm md:text-base font-semibold uppercase tracking-wider mb-2 leading-snug">
+              <h4 className="text-foreground font-serif text-sm md:text-base font-semibold uppercase tracking-wider mb-2 leading-snug">
                 {detailedHeading}
               </h4>
 
-              <p className="text-[#565e69] dark:text-muted-foreground text-xs md:text-sm leading-relaxed mb-4">
+              <p className="text-muted-foreground text-xs md:text-sm leading-relaxed mb-4">
                 {narrativeText}
               </p>
 
@@ -189,8 +189,8 @@ function AddOnExperienceItemRow({
                 <button
                   type="button"
                   onClick={onToggleAdd}
-                  className={`flex h-[42px] w-[260px] max-w-full items-center justify-center rounded px-4 py-2 text-xs font-semibold text-neutral-100 transition-colors duration-200 cursor-pointer ${
-                    isAdded ? "bg-emerald-700 hover:bg-emerald-800" : "bg-[#182d09] hover:bg-[#182d09]/90"
+                  className={`flex h-[42px] w-[260px] max-w-full items-center justify-center rounded px-4 py-2 text-xs font-semibold text-primary-foreground transition-colors duration-200 cursor-pointer ${
+                    isAdded ? "bg-emerald-700 hover:bg-emerald-800" : "bg-primary hover:bg-primary/90"
                   }`}
                 >
                   {isAdded ? "Added to Trip ✓" : "Add this experience to trip"}
@@ -246,13 +246,13 @@ export function AddOnsPreview({ addOns, draft }: { addOns?: any; draft?: any }) 
         <div className="w-full flex flex-col gap-5 md:gap-7">
           {/* Section Header */}
           <div className="flex flex-col gap-1.5">
-            <span className="text-xs font-bold uppercase tracking-widest text-[#af6348]">
+            <span className="text-xs font-bold uppercase tracking-widest text-accent">
               OPTIONAL EXPERIENCES & UPGRADES
             </span>
-            <h2 className="text-[#182d09] dark:text-foreground font-serif text-xl md:text-3xl font-medium leading-tight">
+            <h2 className="text-foreground font-serif text-xl md:text-3xl font-medium leading-tight">
               Add some fun to your trip
             </h2>
-            <p className="text-[#565e69] dark:text-muted-foreground text-xs md:text-sm leading-relaxed">
+            <p className="text-muted-foreground text-xs md:text-sm leading-relaxed">
               Enhance your journey with curated optional experiences and bespoke excursions.
             </p>
           </div>

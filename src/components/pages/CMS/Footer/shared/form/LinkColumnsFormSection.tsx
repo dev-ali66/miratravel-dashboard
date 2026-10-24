@@ -1,3 +1,4 @@
+import { THEME_COLORS } from "@/config/theme"
 import { ColorField, DynamicStyledField } from "../../../shared/FormControls"
 import { RepeaterList } from "../../../shared/RepeaterList"
 import type { FooterColumn, FooterColumnLink } from "../../footerTypes"
@@ -17,7 +18,7 @@ export const LinkColumnsFormSection = ({ context }: FooterFormSectionProps) => {
         itemLabel={(column) => column.title || "Untitled Column"}
         newItem={() => ({
           title: "",
-          titleColor: theme.headingColor ?? "#FFFFFF",
+          titleColor: theme.headingColor ?? THEME_COLORS.white,
           links: [],
         })}
         renderItem={(column, updateColumn) => (
@@ -37,7 +38,7 @@ export const LinkColumnsFormSection = ({ context }: FooterFormSectionProps) => {
 
               <ColorField
                 label="Column Title Color"
-                value={column.titleColor ?? theme.headingColor ?? "#FFFFFF"}
+                value={column.titleColor ?? theme.headingColor ?? THEME_COLORS.white}
                 onChange={(value) =>
                   updateColumn({
                     ...column,

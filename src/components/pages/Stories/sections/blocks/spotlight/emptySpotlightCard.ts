@@ -1,17 +1,18 @@
+import { THEME_COLORS } from "@/config/theme"
 import { createDefaultMultimedia } from "../shared/defaultMediaHelper"
 
 export const emptySpotlightCard = {
   type: "spotlight",
   title: {
     value: "",
-    textColor: "#B3884D",
+    textColor: THEME_COLORS.gold,
     textOpacity: 1,
     backgroundColor: null,
     backgroundOpacity: 1,
   },
   content: {
     value: "",
-    textColor: "#44403C",
+    textColor: THEME_COLORS.navText,
     textOpacity: 1,
     backgroundColor: null,
     backgroundOpacity: 1,

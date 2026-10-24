@@ -1,7 +1,8 @@
+import { THEME_COLORS } from "@/config/theme"
 export const emptySharedInfo = {
   text: {
     value: "Dhermi is not just a beach destination. It's where the mountains quietly meet the sea, where turquoise waters meet rugged landscapes, and where every sunset feels a little more magical.",
-    textColor: "#AF6348",
+    textColor: THEME_COLORS.accent,
     textOpacity: 1,
     backgroundColor: null,
     backgroundOpacity: 1,
@@ -9,7 +10,7 @@ export const emptySharedInfo = {
   backgroundMultimedia: {
     show: "color",
     color: {
-      color: "#FAF6F0",
+      color: THEME_COLORS.bgBeige,
       opacity: 100,
       width: "100%",
       height: "100%",
@@ -19,7 +20,7 @@ export const emptySharedInfo = {
       url: "",
       alt: "",
       opacity: 100,
-      overlayColor: "#000000",
+      overlayColor: THEME_COLORS.overlayBlack,
       overlayOpacity: 0,
       width: "100%",
       height: "auto",
@@ -33,7 +34,7 @@ export const emptySharedInfo = {
       loop: true,
       muted: true,
       opacity: 100,
-      overlayColor: "#000000",
+      overlayColor: THEME_COLORS.overlayBlack,
       overlayOpacity: 0,
       width: "100%",
       height: "auto",

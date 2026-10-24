@@ -1,3 +1,4 @@
+import { THEME_COLORS } from "@/config/theme"
 import { useState } from "react"
 import { useDevMode } from "@/context/DevModeContext"
 import { RepeaterList } from "./RepeaterList"
@@ -52,14 +53,14 @@ interface ButtonsFieldProps {
 }
 
 const VARIANT_OPTIONS: Array<{ value: ButtonVariant; label: string; bg: string; text: string }> = [
-  { value: "primary", label: "Primary (Forest Green Fill)", bg: "#182D09", text: "#ffffff" },
-  { value: "secondary", label: "Secondary (Forest Green Fill)", bg: "#1a3d14", text: "#ffffff" },
-  { value: "outline", label: "Outline (Translucent Glass)", bg: "transparent", text: "#182d09" },
-  { value: "dark", label: "Dark (Solid Black)", bg: "#171717", text: "#ffffff" },
-  { value: "ghost", label: "Ghost (Minimalist Text)", bg: "transparent", text: "#af6348" },
-  { value: "link", label: "Text Link with Arrow (Read More →)", bg: "transparent", text: "#af6348" },
-  { value: "pill", label: "Pill Badge Tag (SIGNATURE JOURNEY)", bg: "#fef3c7", text: "#9a3412" },
-  { value: "custom", label: "Custom (Manual Overrides)", bg: "#ffffff", text: "#000000" },
+  { value: "primary", label: "Primary (Forest Green Fill)", bg: THEME_COLORS.primary, text: THEME_COLORS.white },
+  { value: "secondary", label: "Secondary (Forest Green Fill)", bg: THEME_COLORS.primary, text: THEME_COLORS.white },
+  { value: "outline", label: "Outline (Translucent Glass)", bg: "transparent", text: THEME_COLORS.primary },
+  { value: "dark", label: "Dark (Solid Black)", bg: THEME_COLORS.bgHeroDark, text: THEME_COLORS.white },
+  { value: "ghost", label: "Ghost (Minimalist Text)", bg: "transparent", text: THEME_COLORS.accent },
+  { value: "link", label: "Text Link with Arrow (Read More →)", bg: "transparent", text: THEME_COLORS.accent },
+  { value: "pill", label: "Pill Badge Tag (SIGNATURE JOURNEY)", bg: THEME_COLORS.badgeYellowBg, text: THEME_COLORS.badgeYellowText },
+  { value: "custom", label: "Custom (Manual Overrides)", bg: THEME_COLORS.white, text: THEME_COLORS.overlayBlack },
 ]
 
 const ROUNDED_OPTIONS: Array<{ value: ButtonRounded; label: string; classPreview: string }> = [
@@ -121,12 +122,12 @@ export function ButtonsField({
           url: "/journeys",
           variant: "primary",
           rounded: "full",
-          backgroundColor: "#ffffff",
+          backgroundColor: THEME_COLORS.white,
           backgroundOpacity: 100,
-          textColor: "#000000",
+          textColor: THEME_COLORS.overlayBlack,
           textOpacity: 100,
-          hoverBackgroundColor: "#f3f4f6",
-          hoverTextColor: "#000000",
+          hoverBackgroundColor: THEME_COLORS.lightText,
+          hoverTextColor: THEME_COLORS.overlayBlack,
           target: "_self",
           showIcon: true,
         })}
@@ -146,7 +147,7 @@ export function ButtonsField({
                     backgroundColor: preset.bg,
                     textColor: preset.text,
                     backgroundOpacity: v === "outline" ? 0 : 100,
-                    borderColor: v === "outline" ? "#ffffff" : undefined,
+                    borderColor: v === "outline" ? THEME_COLORS.white : undefined,
                     borderWidth: v === "outline" ? "1px" : undefined,
                   }
                 : {}),
@@ -190,10 +191,10 @@ export function ButtonsField({
                   <div
                     style={{
                       backgroundColor: colorWithOpacity(
-                        item.backgroundColor || "#ffffff",
+                        item.backgroundColor || THEME_COLORS.white,
                         item.backgroundOpacity ?? 100
                       ),
-                      color: colorWithOpacity(item.textColor || "#000000", item.textOpacity ?? 100),
+                      color: colorWithOpacity(item.textColor || THEME_COLORS.overlayBlack, item.textOpacity ?? 100),
                       borderColor: item.borderColor || "transparent",
                       borderWidth: item.borderWidth ? `${item.borderWidth}` : "1px",
                     }}
@@ -329,7 +330,7 @@ export function ButtonsField({
                     <div className="flex items-center gap-2">
                       <input
                         type="color"
-                        value={item.backgroundColor || "#ffffff"}
+                        value={item.backgroundColor || THEME_COLORS.white}
                         onChange={(e) => update({ ...item, backgroundColor: e.target.value })}
                         className="h-7 w-8 rounded border border-border bg-transparent p-0.5 cursor-pointer"
                       />
@@ -371,7 +372,7 @@ export function ButtonsField({
                     <div className="flex items-center gap-2">
                       <input
                         type="color"
-                        value={item.textColor || "#000000"}
+                        value={item.textColor || THEME_COLORS.overlayBlack}
                         onChange={(e) => update({ ...item, textColor: e.target.value })}
                         className="h-7 w-8 rounded border border-border bg-transparent p-0.5 cursor-pointer"
                       />
@@ -408,7 +409,7 @@ export function ButtonsField({
                     <div className="flex items-center gap-2">
                       <input
                         type="color"
-                        value={item.hoverBackgroundColor || "#f3f4f6"}
+                        value={item.hoverBackgroundColor || THEME_COLORS.lightText}
                         onChange={(e) => update({ ...item, hoverBackgroundColor: e.target.value })}
                         className="h-7 w-8 rounded border border-border bg-transparent p-0.5 cursor-pointer"
                       />
@@ -428,7 +429,7 @@ export function ButtonsField({
                     <div className="flex items-center gap-2">
                       <input
                         type="color"
-                        value={item.hoverTextColor || "#000000"}
+                        value={item.hoverTextColor || THEME_COLORS.overlayBlack}
                         onChange={(e) => update({ ...item, hoverTextColor: e.target.value })}
                         className="h-7 w-8 rounded border border-border bg-transparent p-0.5 cursor-pointer"
                       />
@@ -448,7 +449,7 @@ export function ButtonsField({
                     <div className="flex items-center gap-2">
                       <input
                         type="color"
-                        value={item.borderColor || "#ffffff"}
+                        value={item.borderColor || THEME_COLORS.white}
                         onChange={(e) => update({ ...item, borderColor: e.target.value })}
                         className="h-7 w-8 rounded border border-border bg-transparent p-0.5 cursor-pointer"
                       />
@@ -499,9 +500,9 @@ export function SingleButtonField({
     variant: "PRIMARY",
     style: "primary",
     rounded: "none",
-    backgroundColor: "#182D09",
+    backgroundColor: THEME_COLORS.primary,
     backgroundOpacity: 100,
-    textColor: "#ffffff",
+    textColor: THEME_COLORS.white,
     textOpacity: 100,
     target: "_self",
     showIcon: true,

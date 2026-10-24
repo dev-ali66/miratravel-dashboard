@@ -1,3 +1,4 @@
+import { THEME_COLORS } from "@/config/theme"
 import { emptyStandard, emptyStandardItemIcon } from "./emptyStandard"
 import {
   normalizeStyledField,
@@ -18,8 +19,8 @@ export function normalizeStandard(input: any) {
     const rawIcon = item?.icon ?? item?.multimedia ?? emptyStandardItemIcon
 
     return {
-      title: normalizeStyledField(rawTitle, "Standard Feature", "#B86B3A"),
-      description: normalizeStyledField(rawDesc, "", "#4B5563"),
+      title: normalizeStyledField(rawTitle, "Standard Feature", THEME_COLORS.accentWarm),
+      description: normalizeStyledField(rawDesc, "", THEME_COLORS.sub),
       icon: normalizeMultimedia(rawIcon, "image"),
     }
   })
@@ -29,8 +30,8 @@ export function normalizeStandard(input: any) {
   const res = {
     ...emptyStandard,
     ...raw,
-    eyebrow: normalizeStyledField(raw.eyebrow, emptyStandard.eyebrow.value, "#B86B3A"),
-    title: normalizeStyledField(raw.title, emptyStandard.title.value, "#182D09"),
+    eyebrow: normalizeStyledField(raw.eyebrow, emptyStandard.eyebrow.value, THEME_COLORS.accentWarm),
+    title: normalizeStyledField(raw.title, emptyStandard.title.value, THEME_COLORS.primary),
     multimedia: normalizeMultimedia(rawMedia, emptyStandard.multimedia.show),
     items,
     backgroundMultimedia: normalizeMultimedia(

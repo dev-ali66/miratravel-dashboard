@@ -1,3 +1,4 @@
+import { THEME_COLORS } from "@/config/theme"
 import type { JourneyPreviewSectionProps } from "../../journeyTypes"
 import { DynamicStyledTextPreview } from "@/components/pages/CMS/shared/DynamicStyledTextPreview"
 import { UniversalMultimediaPreview } from "@/components/pages/CMS/shared/UniversalMultimediaPreview"
@@ -16,7 +17,7 @@ export function EditorialHighlightPreview({ draft }: JourneyPreviewSectionProps)
       {/* Background Media (Color / Image / Video) */}
       <UniversalMultimediaPreview
         multimedia={highlightData.backgroundMultimedia}
-        fallbackColor="#FAF6F0"
+        fallbackColor={THEME_COLORS.bgBeige}
         mode="background"
       />
 
@@ -25,7 +26,7 @@ export function EditorialHighlightPreview({ draft }: JourneyPreviewSectionProps)
           <DynamicStyledTextPreview
             as="p"
             data={highlightData.text}
-            fallbackColor="#AF6348"
+            fallbackColor={THEME_COLORS.accent}
             className="w-full max-w-[1326px] text-center font-heading text-[22px] leading-[36px] md:text-[30px] md:leading-[46px] xl:text-[36px] xl:leading-[52px] font-semibold tracking-[2px]"
           />
         </div>

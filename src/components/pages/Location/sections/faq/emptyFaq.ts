@@ -1,7 +1,8 @@
+import { THEME_COLORS } from "@/config/theme"
 export const emptyFaq = {
   title: {
     value: "Frequently Asked Questions",
-    textColor: "#182d09",
+    textColor: THEME_COLORS.primary,
     textOpacity: 1,
     backgroundColor: null,
     backgroundOpacity: 1,
@@ -12,7 +13,7 @@ export const emptyFaq = {
       url: "",
       alt: "Frequently Asked Questions",
       opacity: 100,
-      overlayColor: "#000000",
+      overlayColor: THEME_COLORS.overlayBlack,
       overlayOpacity: 0,
       width: "100%",
       height: "100%",
@@ -26,7 +27,7 @@ export const emptyFaq = {
       loop: true,
       muted: true,
       opacity: 100,
-      overlayColor: "#000000",
+      overlayColor: THEME_COLORS.overlayBlack,
       overlayOpacity: 0,
       width: "100%",
       height: "auto",
@@ -34,7 +35,7 @@ export const emptyFaq = {
       fit: "cover",
     },
     color: {
-      color: "#EDE7D8",
+      color: THEME_COLORS.bgSubdued,
       opacity: 100,
       width: "100%",
       height: "100%",
@@ -44,7 +45,7 @@ export const emptyFaq = {
   backgroundMultimedia: {
     show: "color",
     color: {
-      color: "#F8F5EE",
+      color: THEME_COLORS.bgSand,
       opacity: 100,
       width: "100%",
       height: "100%",
@@ -54,7 +55,7 @@ export const emptyFaq = {
       url: "",
       alt: "FAQ Background Pattern",
       opacity: 100,
-      overlayColor: "#000000",
+      overlayColor: THEME_COLORS.overlayBlack,
       overlayOpacity: 0,
       width: "100%",
       height: "auto",
@@ -68,7 +69,7 @@ export const emptyFaq = {
       loop: true,
       muted: true,
       opacity: 100,
-      overlayColor: "#000000",
+      overlayColor: THEME_COLORS.overlayBlack,
       overlayOpacity: 0,
       width: "100%",
       height: "auto",

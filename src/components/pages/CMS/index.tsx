@@ -67,17 +67,17 @@ export default function CMSPage() {
       {isLoading ? (
         <MiraLoader text="Loading CMS pages..." className="py-12 min-h-[300px]" />
       ) : (
-        <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
+        <div className="grid grid-cols-1 gap-2 md:grid-cols-3 lg:grid-cols-5 xl:grid-cols-6">
           {displayedPages.map((page) => (
             <div
               key={page.slug}
-              className="group relative flex flex-col justify-between overflow-hidden rounded-xl border border-border/60 bg-card p-6 shadow-sm transition-all hover:shadow-md"
+              className="group relative flex flex-col gap-2 justify-between overflow-hidden rounded-xl border border-border/60 bg-card p-6 shadow-sm transition-all hover:shadow-md"
             >
               <div>
-                <h3 className="mb-2 pr-8 text-[17px] font-bold text-foreground capitalize">
-                  Manage {page.name} Page
+                <h3 className=" text-[14px] font-bold text-foreground capitalize">
+                  Manage : {page.name} Page
                 </h3>
-                <p className="mb-6 text-[13px] leading-relaxed text-muted-foreground">
+                <p className=" text-[13px] leading-relaxed text-muted-foreground">
                   {page.description}
                 </p>
               </div>

@@ -1,3 +1,4 @@
+import { THEME_COLORS } from "@/config/theme"
 import {
   normalizeMultimedia,
   normalizeStyledField,
@@ -25,12 +26,12 @@ export function normalizeCta(section: any) {
     title: normalizeStyledField(
       rawTitle,
       emptyCta.title.value,
-      "#182D09"
+      THEME_COLORS.primary
     ),
     description: normalizeStyledField(
       safeSection.description ?? content.description,
       emptyCta.description.value,
-      "#4B5563"
+      THEME_COLORS.sub
     ),
     backgroundMultimedia: normalizeMultimedia(
       safeSection.backgroundMultimedia ?? content.backgroundMultimedia,

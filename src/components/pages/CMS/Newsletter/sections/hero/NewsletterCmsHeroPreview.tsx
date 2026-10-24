@@ -1,3 +1,4 @@
+import { THEME_COLORS } from "@/config/theme"
 import { normalizeNewsletterCmsHero } from "./normalizeNewsletterCmsHero"
 import type { NewsletterCmsPayload } from "../../newsletterCmsTypes"
 import { Image as ImageIcon } from "lucide-react"
@@ -6,15 +7,15 @@ export function NewsletterCmsHeroPreview({ draft }: { draft: NewsletterCmsPayloa
   const hero = normalizeNewsletterCmsHero(draft?.data?.hero || (draft as any)?.hero)
 
   const titleText = hero.title?.value || "A Curated Travel Perspective"
-  const titleColor = hero.title?.textColor || "#182D09"
+  const titleColor = hero.title?.textColor || THEME_COLORS.primary
 
   const subtitleText =
     hero.subtitle?.value ||
     "Thoughtful dispatches featuring curated Balkan travel inspiration, MIRA Stories, regional travel insights, and selected journeys."
-  const subtitleColor = hero.subtitle?.textColor || "#565E69"
+  const subtitleColor = hero.subtitle?.textColor || THEME_COLORS.muted
 
   const emailLabelText = (hero as any).emailLabel?.value || "Enter your email address"
-  const emailLabelColor = (hero as any).emailLabel?.textColor || "#182D09"
+  const emailLabelColor = (hero as any).emailLabel?.textColor || THEME_COLORS.primary
 
   const buttonText = (hero as any).buttonText || "Subscribe"
   const inputPlaceholder = (hero as any).inputPlaceholder || "Insert your email here"
@@ -94,7 +95,7 @@ export function NewsletterCmsHeroPreview({ draft }: { draft: NewsletterCmsPayloa
                 >
                   {emailLabelText}
                 </label>
-                <div className="h-12 w-full px-4 bg-[#FFF2EF] rounded-sm border border-border/60 flex items-center">
+                <div className="h-12 w-full px-4 bg-card rounded-sm border border-border flex items-center">
                   <input
                     type="email"
                     disabled

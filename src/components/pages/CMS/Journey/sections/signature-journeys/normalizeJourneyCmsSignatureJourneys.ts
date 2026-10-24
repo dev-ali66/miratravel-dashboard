@@ -1,3 +1,4 @@
+import { THEME_COLORS } from "@/config/theme"
 import {
   normalizeStyledField,
   normalizeMultimedia,
@@ -11,9 +12,9 @@ export function normalizeJourneyCmsSignatureJourneys(rawSec: any): typeof emptyJ
   const src = rawSec.signature_journeys || rawSec.signatureJourneys || rawSec.content || rawSec
 
   return {
-    eyebrow: normalizeStyledField(src.eyebrow, emptyJourneyCmsSignatureJourneys.eyebrow.value, "#AF6348"),
-    title: normalizeStyledField(src.title, emptyJourneyCmsSignatureJourneys.title.value, "#111827"),
-    subtitle: normalizeStyledField(src.subtitle || src.description, emptyJourneyCmsSignatureJourneys.subtitle.value, "#4B5563"),
+    eyebrow: normalizeStyledField(src.eyebrow, emptyJourneyCmsSignatureJourneys.eyebrow.value, THEME_COLORS.accent),
+    title: normalizeStyledField(src.title, emptyJourneyCmsSignatureJourneys.title.value, THEME_COLORS.darkNeutral),
+    subtitle: normalizeStyledField(src.subtitle || src.description, emptyJourneyCmsSignatureJourneys.subtitle.value, THEME_COLORS.sub),
     buttons: normalizeButtonsArray(src.buttons) as any,
     backgroundMultimedia: normalizeMultimedia(
       src.backgroundMultimedia || src.multimedia || src.backgroundMedia,

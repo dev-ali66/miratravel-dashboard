@@ -68,6 +68,61 @@ export interface WorkerStatus {
   } | null
 }
 
+export interface StorageOptimizerAssetUsage {
+  entityType: string
+  entityId: string
+  entityTitle: string
+  fieldPath: string
+  editUrl?: string
+}
+
+export interface StorageOptimizerAsset {
+  id: string
+  fileName: string
+  url: string
+  mimeType: string
+  size: number
+  usageCount: number
+  createdAt: string
+  references: StorageOptimizerAssetUsage[]
+}
+
+export interface StorageOptimizerGroup {
+  hash: string
+  mimeType: string
+  fileSize: number
+  fileSizeFormatted: string
+  reclaimableBytes: number
+  reclaimableFormatted: string
+  masterCandidate: StorageOptimizerAsset
+  duplicates: StorageOptimizerAsset[]
+}
+
+export interface StorageOptimizerScanResult {
+  totalDuplicateGroups: number
+  totalDuplicateAssets: number
+  reclaimableBytes: number
+  reclaimableFormatted: string
+  groups: StorageOptimizerGroup[]
+}
+
+export interface ExecuteStorageOptimizationPayload {
+  overrides?: Array<{
+    hash: string
+    masterId: string
+  }>
+}
+
+export interface ExecuteStorageOptimizationResult {
+  success: boolean
+  groupsProcessed: number
+  referencesMigrated: number
+  assetsMovedToTrash: number
+  freedBytes: number
+  freedFormatted: string
+  trashedAssetNames: string[]
+}
+
 export interface MediaGalleryParams {
   page?: number
   limit?: number
@@ -123,8 +178,27 @@ export const mediaService = {
    * Fetch media library KPI stats (total count, storage used, images vs videos, trash count)
    */
   async getStats(): Promise<MediaStats> {
-    const { data } = await apiPrivate.get<ApiResponse<MediaStats>>("/media/stats")
-    return data.data
+    const { data } = await apiPrivate.get<ApiResponse<any>>("/media/stats")
+    const d = data?.data || {}
+    const totalCount = d.totalCount ?? d.activeAssets ?? d.totalAssets ?? 0
+    const unusedCount = d.unusedCount ?? d.unusedAssets ?? 0
+    const totalSizeBytes = d.totalSizeBytes ?? 0
+    const totalSizeMB = d.totalSizeMB ?? (totalSizeBytes / (1024 * 1024)).toFixed(2)
+    const totalSizeFormatted =
+      d.totalSizeFormatted ??
+      (totalSizeBytes >= 1024 * 1024 * 1024
+        ? `${(totalSizeBytes / (1024 * 1024 * 1024)).toFixed(2)} GB`
+        : `${totalSizeMB} MB`)
+
+    return {
+      totalCount,
+      totalSizeBytes,
+      totalSizeFormatted,
+      imageCount: d.imageCount ?? d.totalImages ?? 0,
+      videoCount: d.videoCount ?? d.totalVideos ?? 0,
+      trashCount: d.trashCount ?? d.trashedAssets ?? 0,
+      unusedCount,
+    }
   },
 
   /**
@@ -276,5 +350,74 @@ export const mediaService = {
   async triggerWorker(): Promise<any> {
     const { data } = await apiPrivate.post<ApiResponse<any>>("/media/worker/trigger")
     return data.data
+  },
+
+  /**
+   * Scan library for identical duplicate assets by SHA-256 hash
+   */
+  async scanStorageOptimization(): Promise<StorageOptimizerScanResult> {
+    const { data } = await apiPrivate.get<ApiResponse<StorageOptimizerScanResult>>(
+      "/media/optimizer/scan"
+    )
+    return data.data
+  },
+
+  /**
+   * Execute atomic storage optimization: re-links references to master and moves unlinked duplicates to 30d trash
+   */
+  async executeStorageOptimization(
+    payload: ExecuteStorageOptimizationPayload = {}
+  ): Promise<ExecuteStorageOptimizationResult> {
+    const { data } = await apiPrivate.post<ApiResponse<ExecuteStorageOptimizationResult>>(
+      "/media/optimizer/execute",
+      payload
+    )
+    return data.data
+  },
+
+  /**
+   * Universal 1-click single media download helper.
+   * Downloads directly via Blob and falls back to server Content-Disposition attachment endpoint.
+   */
+  async downloadAsset(
+    asset: Pick<MediaAsset, "id" | "url" | "fileName" | "originalName">
+  ): Promise<void> {
+    const fileName = asset.originalName || asset.fileName || "download"
+
+    // Strategy 1: Client-side fetch blob (instant, silent, preserves filename)
+    try {
+      const response = await fetch(asset.url, { mode: "cors" })
+      if (!response.ok) throw new Error(`HTTP ${response.status}`)
+      const blob = await response.blob()
+      const blobUrl = window.URL.createObjectURL(blob)
+
+      const link = document.createElement("a")
+      link.style.display = "none"
+      link.href = blobUrl
+      link.download = fileName
+      document.body.appendChild(link)
+      link.click()
+
+      setTimeout(() => {
+        document.body.removeChild(link)
+        window.URL.revokeObjectURL(blobUrl)
+      }, 300)
+      return
+    } catch (err) {
+      console.warn("Direct blob download failed, falling back to server download endpoint:", err)
+    }
+
+    // Strategy 2: Server download route with Content-Disposition
+    const BASE_URL = import.meta.env.VITE_API_URL || "http://localhost:5010/api/v1"
+    const serverUrl = `${BASE_URL}/media/${asset.id}/download`
+    const link = document.createElement("a")
+    link.style.display = "none"
+    link.href = serverUrl
+    link.download = fileName
+    document.body.appendChild(link)
+    link.click()
+    setTimeout(() => {
+      document.body.removeChild(link)
+    }, 300)
   },
 }

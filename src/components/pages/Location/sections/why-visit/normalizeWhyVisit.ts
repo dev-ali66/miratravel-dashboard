@@ -1,3 +1,4 @@
+import { THEME_COLORS } from "@/config/theme"
 import { normalizeMultimedia, normalizeStyledField } from "../../shared/normalizeHelpers"
 import { emptyWhyVisit } from "./emptyWhyVisit"
 
@@ -22,8 +23,8 @@ export function normalizeWhyVisit(why: any) {
 
   const normalizedWhy = {
     ...safeWhy,
-    title: normalizeStyledField(safeWhy.title ?? emptyWhyVisit.title, "", "#182d09"),
-    subtitle: normalizeStyledField(safeWhy.subtitle ?? emptyWhyVisit.subtitle, "", "#565e69"),
+    title: normalizeStyledField(safeWhy.title ?? emptyWhyVisit.title, "", THEME_COLORS.primary),
+    subtitle: normalizeStyledField(safeWhy.subtitle ?? emptyWhyVisit.subtitle, "", THEME_COLORS.muted),
     tags: Array.isArray(safeWhy.tags) ? safeWhy.tags : (emptyWhyVisit.tags ?? []),
     imageMultimedia,
     backgroundMultimedia: normalizeMultimedia(

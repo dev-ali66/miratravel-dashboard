@@ -150,7 +150,7 @@ export default function PrivacyPolicyPage() {
       backToUrl="/"
       backToLabel="Back to Dashboard"
       icon={ShieldCheck}
-      iconColor="text-[#6E7F5B]"
+      iconColor="text-brand-green"
       title="Privacy Policy Editor"
       useWorkspaceScale={true}
       sidebarContent={

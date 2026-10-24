@@ -40,7 +40,7 @@ export function SpotlightCardPreview({ block }: { block: any }) {
           <DynamicStyledTextPreview
             as="h4"
             data={block.title}
-            className="font-serif text-xl md:text-2xl font-bold text-[#B3884D]"
+            className="font-serif text-xl md:text-2xl font-bold text-gold"
           />
         )}
         {block.content?.value && (

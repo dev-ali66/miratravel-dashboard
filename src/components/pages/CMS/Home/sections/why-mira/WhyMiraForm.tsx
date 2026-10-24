@@ -1,3 +1,4 @@
+import { THEME_COLORS } from "@/config/theme"
 import type { HomeFormSectionProps } from "../../config/homeSections"
 import { FormSection, DynamicStyledField } from "@/components/pages/CMS/shared/FormControls"
 import { UniversalMultimediaForm } from "@/components/pages/CMS/shared/UniversalMultimediaForm"
@@ -69,7 +70,7 @@ export function WhyMiraForm({
           defaultShow="color"
           showColorPicker
           colorLabel="Background color"
-          defaultColor="#182D09"
+          defaultColor={THEME_COLORS.primary}
           imageFieldName="cmsHomeWhyMiraBackgroundImage"
           videoFieldName="cmsHomeWhyMiraBackgroundVideo"
           value={
@@ -86,7 +87,7 @@ export function WhyMiraForm({
           defaultShow="image"
           showColorPicker
           colorLabel="Right section color"
-          defaultColor="#FBF9F5"
+          defaultColor={THEME_COLORS.bgSand}
           imageTitle="Side Image"
           imageLabel="Side image"
           imageFieldName="cmsHomeWhyMiraRightSectionImage"

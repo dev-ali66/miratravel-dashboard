@@ -1,3 +1,4 @@
+import { THEME_COLORS } from "@/config/theme"
 import { normalizeMultimedia, normalizeStyledField } from "../../shared/normalizeHelpers"
 import { emptyGlance } from "./emptyGlance"
 
@@ -16,8 +17,8 @@ export function normalizeGlance(regionGlance: any) {
 
   const normalizedGlance = {
     ...safeGlance,
-    label: normalizeStyledField(safeGlance.label ?? emptyGlance.label, "AT A GLANCE", "#af6348"),
-    title: normalizeStyledField(safeGlance.title ?? emptyGlance.title, "", "#182d09"),
+    label: normalizeStyledField(safeGlance.label ?? emptyGlance.label, "AT A GLANCE", THEME_COLORS.accent),
+    title: normalizeStyledField(safeGlance.title ?? emptyGlance.title, "", THEME_COLORS.primary),
     items: rawGlanceItemIds,
     backgroundMultimedia: normalizeMultimedia(safeGlance.backgroundMultimedia || emptyGlance.backgroundMultimedia, "color"),
     style: safeGlance.style ?? null,

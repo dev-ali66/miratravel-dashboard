@@ -1,3 +1,4 @@
+import { THEME_COLORS } from "@/config/theme"
 import { emptyHomePayload } from "../Home/shared/emptyHomePayload"
 import { emptyFaqPayload } from "../Faq/config/emptyFaqPayload"
 
@@ -23,10 +24,10 @@ export function getDefaultCmsPageData(slug: string, name: string) {
       data: {
         page: "footer",
         theme: {
-          backgroundColor: "#09090b",
-          textColor: "#a1a1aa",
-          headingColor: "#ffffff",
-          accentColor: "#2563eb",
+          backgroundColor: THEME_COLORS.dark,
+          textColor: THEME_COLORS.lightMuted,
+          headingColor: THEME_COLORS.white,
+          accentColor: THEME_COLORS.blue,
         },
         content: {
           brand: {

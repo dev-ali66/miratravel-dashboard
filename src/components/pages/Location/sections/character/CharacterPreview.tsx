@@ -1,3 +1,4 @@
+import { THEME_COLORS } from "@/config/theme"
 import { Sparkles } from "lucide-react"
 import { DynamicStyledTextPreview } from "@/components/pages/CMS/shared/DynamicStyledTextPreview"
 import { DynamicCmsButtonPreview } from "@/components/pages/CMS/shared/DynamicCmsButtonPreview"
@@ -24,7 +25,7 @@ export function CharacterPreview({ draft }: LocationPreviewSectionProps) {
     >
       <UniversalMultimediaPreview
         multimedia={bgMultimedia}
-        fallbackColor="#FFF8F2"
+        fallbackColor={THEME_COLORS.bgIvory}
         mode="background"
       />
 
@@ -35,14 +36,14 @@ export function CharacterPreview({ draft }: LocationPreviewSectionProps) {
             <DynamicStyledTextPreview
               as="span"
               data={characterData.label}
-              fallbackColor="#af6348"
+              fallbackColor={THEME_COLORS.accent}
               className="font-normal uppercase text-xs @xs:text-sm @md:text-[15px] @xl:text-base tracking-[3px] leading-tight"
             />
             <div className="w-full max-w-[1023px] pt-3">
               <DynamicStyledTextPreview
                 as="h2"
                 data={characterData.title}
-                fallbackColor="#182d09"
+                fallbackColor={THEME_COLORS.primary}
                 className="font-serif text-2xl sm:text-3xl md:text-4xl lg:text-[42px] leading-tight font-normal tracking-tight"
               />
             </div>
@@ -51,7 +52,7 @@ export function CharacterPreview({ draft }: LocationPreviewSectionProps) {
           {/* Pillars Grid or Admin Empty State Notice */}
           {items.length === 0 ? (
             <div className="w-full flex flex-col items-center justify-center rounded-xl border-2 border-dashed border-primary/30 bg-muted/20 p-10 text-center min-h-[200px]">
-              <div className="flex h-10 w-10 items-center justify-center rounded-full bg-[#af6348]/10 text-[#af6348] mb-2.5">
+              <div className="flex h-10 w-10 items-center justify-center rounded-full bg-accent/10 text-accent mb-2.5">
                 <Sparkles className="h-5 w-5" />
               </div>
               <h3 className="text-base font-serif font-medium text-foreground mb-1">
@@ -62,7 +63,7 @@ export function CharacterPreview({ draft }: LocationPreviewSectionProps) {
               </p>
             </div>
           ) : (
-            <div className="w-full border-t border-[#182d09]/15 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 divide-y md:divide-y-0 md:divide-x divide-[#182d09]/15">
+            <div className="w-full border-t border-brand-primary/15 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 divide-y md:divide-y-0 md:divide-x divide-brand-primary/15">
               {items.map((item: any, index: number) => {
                 const rawButtons =
                   Array.isArray(item.buttons) && item.buttons.length > 0
@@ -97,7 +98,7 @@ export function CharacterPreview({ draft }: LocationPreviewSectionProps) {
                           />
                         </div>
                       ) : (
-                        <div className="flex size-10 items-center justify-center rounded-lg bg-[#af6348]/10 text-[#af6348]">
+                        <div className="flex size-10 items-center justify-center rounded-lg bg-accent/10 text-accent">
                           <svg
                             width="20"
                             height="20"
@@ -121,7 +122,7 @@ export function CharacterPreview({ draft }: LocationPreviewSectionProps) {
                       <DynamicStyledTextPreview
                         as="h3"
                         data={item.title}
-                        fallbackColor="#182d09"
+                        fallbackColor={THEME_COLORS.primary}
                         className="font-serif text-lg sm:text-xl md:text-2xl font-normal leading-snug"
                       />
 
@@ -129,7 +130,7 @@ export function CharacterPreview({ draft }: LocationPreviewSectionProps) {
                       <DynamicStyledTextPreview
                         as="p"
                         data={item.description}
-                        fallbackColor="#565e69"
+                        fallbackColor={THEME_COLORS.muted}
                         className="text-sm md:text-[15px] leading-relaxed font-sans"
                       />
                     </div>

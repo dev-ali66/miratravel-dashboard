@@ -1,14 +1,15 @@
+import { THEME_COLORS } from "@/config/theme"
 export const emptyRegionExperiences = {
   label: {
     value: "EXPLORE ALBANIA",
-    textColor: "#af6348",
+    textColor: THEME_COLORS.accent,
     textOpacity: 1,
     backgroundColor: null,
     backgroundOpacity: 1,
   },
   title: {
     value: "Four Regions. Four Different Experiences.",
-    textColor: "#182d09",
+    textColor: THEME_COLORS.primary,
     textOpacity: 1,
     backgroundColor: null,
     backgroundOpacity: 1,
@@ -16,7 +17,7 @@ export const emptyRegionExperiences = {
   backgroundMultimedia: {
     show: "color",
     color: {
-      color: "#f5f5f5",
+      color: THEME_COLORS.bgLightGray,
       opacity: 100,
       width: "100%",
       height: "100%",
@@ -26,7 +27,7 @@ export const emptyRegionExperiences = {
       url: "",
       alt: "Region Experiences background",
       opacity: 100,
-      overlayColor: "#000000",
+      overlayColor: THEME_COLORS.overlayBlack,
       overlayOpacity: 0,
       width: "100%",
       height: "auto",
@@ -40,7 +41,7 @@ export const emptyRegionExperiences = {
       loop: true,
       muted: true,
       opacity: 100,
-      overlayColor: "#000000",
+      overlayColor: THEME_COLORS.overlayBlack,
       overlayOpacity: 0,
       width: "100%",
       height: "auto",

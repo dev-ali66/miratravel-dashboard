@@ -1,3 +1,4 @@
+import { THEME_COLORS } from "@/config/theme"
 import { useCmsDraft } from "../shared/CmsDraftContext"
 import { useGetCmsBySlug } from "@/hooks/cms/useGetCmsBySlug"
 import { getDefaultCmsPageData } from "../shared/defaultCmsData"
@@ -35,10 +36,10 @@ export const HomePreview = () => {
    * ============================================================
    */
 
-  const accentColor = theme.accentColor ?? "#E5A84B"
-  const primaryColor = theme.primaryColor ?? "#182D09"
-  const darkText = theme.textColorDark ?? "#182D09"
-  const lightText = theme.textColorLight ?? "#FFFFFF"
+  const accentColor = theme.accentColor ?? THEME_COLORS.accentMuted
+  const primaryColor = theme.primaryColor ?? THEME_COLORS.primary
+  const darkText = theme.textColorDark ?? THEME_COLORS.primary
+  const lightText = theme.textColorLight ?? THEME_COLORS.white
 
   const getSectionData = (key: string): HomeSection => {
     const rawSec = data[key] ?? data[key.replace(/-/g, "_")]

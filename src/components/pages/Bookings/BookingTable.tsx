@@ -13,7 +13,7 @@ import {
   Ban,
 } from "lucide-react"
 import { cn } from "@/lib/utils"
-import Pagination from "@/components/pages/UserList/Pagination"
+import { Pagination } from "@/components/shared/Pagination"
 import {
   useGetBookings,
   type BookingItem,
@@ -26,6 +26,7 @@ import { RecordPaymentModal } from "./RecordPaymentModal"
 
 export default function BookingTable() {
   const [currentPage, setCurrentPage] = useState(1)
+  const [limit, setLimit] = useState(10)
   const [selectedBooking, setSelectedBooking] = useState<BookingItem | null>(null)
   const [approveBookingItem, setApproveBookingItem] = useState<BookingItem | null>(null)
   const [paymentBookingItem, setPaymentBookingItem] = useState<BookingItem | null>(null)
@@ -35,7 +36,6 @@ export default function BookingTable() {
   const [selectedBookingStatus, setSelectedBookingStatus] = useState<string>("ALL")
   const [selectedPaymentStatus, setSelectedPaymentStatus] = useState<string>("ALL")
 
-  const limit = 10
   const { data, isLoading, isError } = useGetBookings({
     page: currentPage,
     limit,
@@ -491,12 +491,19 @@ export default function BookingTable() {
               </table>
             </div>
 
-            {totalPages > 1 && (
+            {totalCount > 0 && (
               <div className="border-t border-border/60 bg-background/50 p-5 backdrop-blur-xl">
                 <Pagination
                   currentPage={currentPage}
                   totalPages={totalPages}
+                  totalItems={data?.meta?.total ?? totalCount}
+                  pageSize={limit}
+                  pageSizeOptions={[10, 20, 50, 100]}
                   onPageChange={handlePageChange}
+                  onPageSizeChange={(sz) => {
+                    setLimit(sz)
+                    setCurrentPage(1)
+                  }}
                 />
               </div>
             )}

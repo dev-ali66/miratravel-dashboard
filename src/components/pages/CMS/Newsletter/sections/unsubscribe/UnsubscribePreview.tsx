@@ -1,3 +1,4 @@
+import { THEME_COLORS } from "@/config/theme"
 import { useState } from "react"
 import { normalizeNewsletterCmsUnsubscribe } from "./normalizeUnsubscribe"
 import type { NewsletterCmsPayload } from "../../newsletterCmsTypes"
@@ -76,8 +77,8 @@ export function UnsubscribePreview({ draft }: UnsubscribePreviewProps) {
               className="text-sm md:text-base leading-relaxed mb-6"
               style={{
                 color: isUnsubscribed
-                  ? unsubscribe.unsubscribedSubtitle?.textColor || "#565E69"
-                  : unsubscribe.subtitle?.textColor || "#565E69",
+                  ? unsubscribe.unsubscribedSubtitle?.textColor || THEME_COLORS.muted
+                  : unsubscribe.subtitle?.textColor || THEME_COLORS.muted,
               }}
             >
               {isUnsubscribed
@@ -105,14 +106,14 @@ export function UnsubscribePreview({ draft }: UnsubscribePreviewProps) {
                   >
                     {unSubAny.emailLabel?.value || "Enter your email address"}
                   </label>
-                  <div className="h-11 px-4 bg-[#FFF2EF] rounded-sm outline outline-1 outline-border flex items-center">
+                  <div className="h-11 px-4 bg-card rounded-sm outline outline-1 outline-border flex items-center">
                     <input
                       type="email"
                       required
                       value={testEmail}
                       onChange={(e) => setTestEmail(e.target.value)}
                       placeholder={unSubAny.inputPlaceholder || "xmpl@gmail.com"}
-                      className="w-full bg-transparent text-[#565E69] text-xs md:text-sm outline-none"
+                      className="w-full bg-transparent text-subtitle text-xs md:text-sm outline-none"
                     />
                   </div>
                 </div>

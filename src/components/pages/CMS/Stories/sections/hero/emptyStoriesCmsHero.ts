@@ -1,28 +1,29 @@
+import { THEME_COLORS } from "@/config/theme"
 export const emptyStoriesCmsHero = {
   breadcrumb: {
     value: "MIRA STORIES",
-    textColor: "#E5E7EB",
+    textColor: THEME_COLORS.mediaPlaceholder,
     textOpacity: 1,
     backgroundColor: null,
     backgroundOpacity: 1,
   },
   title: {
     value: "Perspectives, History & Cultural Narratives",
-    textColor: "#ffffff",
+    textColor: THEME_COLORS.white,
     textOpacity: 1,
     backgroundColor: null,
     backgroundOpacity: 1,
   },
   subtitle: {
     value: "",
-    textColor: "#E5E7EB",
+    textColor: THEME_COLORS.mediaPlaceholder,
     textOpacity: 1,
     backgroundColor: null,
     backgroundOpacity: 1,
   },
   description: {
     value: "A curated collection of stories, essays, and editorial pieces offering deep insight into the soul of the Balkans.",
-    textColor: "#E5E7EB",
+    textColor: THEME_COLORS.mediaPlaceholder,
     textOpacity: 1,
     backgroundColor: null,
     backgroundOpacity: 1,
@@ -32,7 +33,7 @@ export const emptyStoriesCmsHero = {
   backgroundMultimedia: {
     show: "image",
     color: {
-      color: "#182D09",
+      color: THEME_COLORS.primary,
       opacity: 100,
       width: "100%",
       height: "100%",
@@ -46,7 +47,7 @@ export const emptyStoriesCmsHero = {
       height: "auto",
       opacity: 100,
       aspectRatio: "auto",
-      overlayColor: "#000000",
+      overlayColor: THEME_COLORS.overlayBlack,
       overlayOpacity: 35,
     },
     video: {
@@ -60,7 +61,7 @@ export const emptyStoriesCmsHero = {
       loop: true,
       muted: true,
       aspectRatio: "auto",
-      overlayColor: "#000000",
+      overlayColor: THEME_COLORS.overlayBlack,
       overlayOpacity: 0,
     },
   },

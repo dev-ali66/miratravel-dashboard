@@ -1,3 +1,4 @@
+import { THEME_COLORS } from "@/config/theme"
 import { useState } from "react"
 import type { JourneyData } from "../../journeyTypes"
 import { FormSection } from "../../shared/fields"
@@ -77,21 +78,21 @@ export function ItineraryForm({
     const RomanNumerals = ["I", "II", "III", "IV", "V", "VI", "VII", "VIII", "IX", "X"]
     const romanStr = RomanNumerals[nextChapterNum - 1] || `${nextChapterNum}`
     const newChapter = {
-      chapterNumber: { value: `Chapter ${romanStr}`, textColor: "#af6348", textOpacity: 1, backgroundColor: null, backgroundOpacity: 1 },
-      title: { value: `Chapter ${nextChapterNum} Title`, textColor: "#182d09", textOpacity: 1, backgroundColor: null, backgroundOpacity: 1 },
-      subtitle: { value: `Days ${nextChapterNum} · Highlight Region`, textColor: "#235347", textOpacity: 1, backgroundColor: null, backgroundOpacity: 1 },
-      description: { value: "Chapter narrative background...", textColor: "#707070", textOpacity: 1, backgroundColor: null, backgroundOpacity: 1 },
+      chapterNumber: { value: `Chapter ${romanStr}`, textColor: THEME_COLORS.accent, textOpacity: 1, backgroundColor: null, backgroundOpacity: 1 },
+      title: { value: `Chapter ${nextChapterNum} Title`, textColor: THEME_COLORS.primary, textOpacity: 1, backgroundColor: null, backgroundOpacity: 1 },
+      subtitle: { value: `Days ${nextChapterNum} · Highlight Region`, textColor: THEME_COLORS.secondary, textOpacity: 1, backgroundColor: null, backgroundOpacity: 1 },
+      description: { value: "Chapter narrative background...", textColor: THEME_COLORS.muted, textOpacity: 1, backgroundColor: null, backgroundOpacity: 1 },
       multimedia: {
         show: "image",
-        image: { url: "", alt: "", opacity: 100, overlayColor: "#000000", overlayOpacity: 0, width: "100%", height: "auto", aspectRatio: "auto", fit: "cover" },
-        video: { url: "", alt: "", autoplay: true, loop: true, muted: true, opacity: 100, overlayColor: "#000000", overlayOpacity: 0, width: "100%", height: "auto", aspectRatio: "auto", fit: "cover" },
-        color: { color: "#ffffff", opacity: 100, width: "100%", height: "100%", aspectRatio: "auto" },
+        image: { url: "", alt: "", opacity: 100, overlayColor: THEME_COLORS.overlayBlack, overlayOpacity: 0, width: "100%", height: "auto", aspectRatio: "auto", fit: "cover" },
+        video: { url: "", alt: "", autoplay: true, loop: true, muted: true, opacity: 100, overlayColor: THEME_COLORS.overlayBlack, overlayOpacity: 0, width: "100%", height: "auto", aspectRatio: "auto", fit: "cover" },
+        color: { color: THEME_COLORS.white, opacity: 100, width: "100%", height: "100%", aspectRatio: "auto" },
       },
       days: [
         {
           dayNumber: 1,
           locationId: "",
-          description: { value: "Detailed daily description narrative...", textColor: "#464136", textOpacity: 1, backgroundColor: null, backgroundOpacity: 1 },
+          description: { value: "Detailed daily description narrative...", textColor: THEME_COLORS.navText, textOpacity: 1, backgroundColor: null, backgroundOpacity: 1 },
         },
       ],
     }
@@ -112,7 +113,7 @@ export function ItineraryForm({
     const newDay = {
       dayNumber: nextDayNum,
       locationId: "",
-      description: { value: "Daily narrative description...", textColor: "#464136", textOpacity: 1, backgroundColor: null, backgroundOpacity: 1 },
+      description: { value: "Daily narrative description...", textColor: THEME_COLORS.navText, textOpacity: 1, backgroundColor: null, backgroundOpacity: 1 },
     }
     const updatedChap = { ...chap, days: [...currentDays, newDay] }
     const updatedList = [...chaptersList]

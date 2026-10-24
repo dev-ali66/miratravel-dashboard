@@ -1,3 +1,4 @@
+import { THEME_COLORS } from "@/config/theme"
 import { normalizeMultimedia, normalizeStyledField } from "@/components/pages/Journey/shared/normalizeHelpers"
 import { emptyWhatsIncluded } from "./emptyWhatsIncluded"
 
@@ -11,9 +12,9 @@ export function normalizeWhatsIncluded(whatsIncluded: any) {
     : emptyWhatsIncluded.items
 
   const normalizedInclusions = rawInclusions.map((item: any) => ({
-    category: normalizeStyledField(item.category, "General", "#af6348"),
-    title: normalizeStyledField(item.title ?? item, "", "#464136"),
-    description: normalizeStyledField(item.description, "", "#565e69"),
+    category: normalizeStyledField(item.category, "General", THEME_COLORS.accent),
+    title: normalizeStyledField(item.title ?? item, "", THEME_COLORS.navText),
+    description: normalizeStyledField(item.description, "", THEME_COLORS.muted),
   }))
 
   const rawExclusions = Array.isArray(safe.exclusions) && safe.exclusions.length > 0
@@ -21,21 +22,21 @@ export function normalizeWhatsIncluded(whatsIncluded: any) {
     : emptyWhatsIncluded.exclusions
 
   const normalizedExclusions = rawExclusions.map((item: any) => ({
-    category: normalizeStyledField(item.category, "General", "#9A3412"),
-    title: normalizeStyledField(item.title ?? item, "", "#464136"),
-    description: normalizeStyledField(item.description, "", "#565e69"),
+    category: normalizeStyledField(item.category, "General", THEME_COLORS.badgeYellowText),
+    title: normalizeStyledField(item.title ?? item, "", THEME_COLORS.navText),
+    description: normalizeStyledField(item.description, "", THEME_COLORS.muted),
   }))
 
   const rawNotes = Array.isArray(safe.notes) && safe.notes.length > 0
     ? safe.notes
     : emptyWhatsIncluded.notes
 
-  const normalizedNotes = rawNotes.map((n: any) => normalizeStyledField(n, "", "#464136"))
+  const normalizedNotes = rawNotes.map((n: any) => normalizeStyledField(n, "", THEME_COLORS.navText))
 
   return {
-    badge: normalizeStyledField(safe.badge ?? emptyWhatsIncluded.badge, "", "#af6348"),
-    title: normalizeStyledField(safe.title ?? emptyWhatsIncluded.title, "", "#313131"),
-    description: normalizeStyledField(safe.description ?? emptyWhatsIncluded.description, "", "#565e69"),
+    badge: normalizeStyledField(safe.badge ?? emptyWhatsIncluded.badge, "", THEME_COLORS.accent),
+    title: normalizeStyledField(safe.title ?? emptyWhatsIncluded.title, "", THEME_COLORS.titleLight),
+    description: normalizeStyledField(safe.description ?? emptyWhatsIncluded.description, "", THEME_COLORS.muted),
     items: normalizedInclusions,
     exclusions: normalizedExclusions,
     notes: normalizedNotes,

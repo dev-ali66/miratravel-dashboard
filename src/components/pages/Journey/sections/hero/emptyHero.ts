@@ -1,14 +1,15 @@
+import { THEME_COLORS } from "@/config/theme"
 export const emptyHero = {
   label: {
     value: "MIRA EXCLUSIVE JOURNEY",
-    textColor: "#af6348",
+    textColor: THEME_COLORS.accent,
     textOpacity: 1,
     backgroundColor: null,
     backgroundOpacity: 1,
   },
   title: {
     value: "",
-    textColor: "#FFFFFF",
+    textColor: THEME_COLORS.white,
     textOpacity: 1,
     backgroundColor: null,
     backgroundOpacity: 1,
@@ -19,7 +20,7 @@ export const emptyHero = {
       url: "",
       alt: "Classic Albania Hero View",
       opacity: 100,
-      overlayColor: "#000000",
+      overlayColor: THEME_COLORS.overlayBlack,
       overlayOpacity: 30,
       width: "100%",
       height: "auto",
@@ -33,7 +34,7 @@ export const emptyHero = {
       loop: true,
       muted: true,
       opacity: 100,
-      overlayColor: "#000000",
+      overlayColor: THEME_COLORS.overlayBlack,
       overlayOpacity: 30,
       width: "100%",
       height: "auto",
@@ -41,7 +42,7 @@ export const emptyHero = {
       fit: "cover",
     },
     color: {
-      color: "#182d09",
+      color: THEME_COLORS.primary,
       opacity: 100,
       width: "100%",
       height: "100%",

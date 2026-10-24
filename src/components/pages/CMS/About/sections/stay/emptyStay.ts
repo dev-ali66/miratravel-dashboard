@@ -1,6 +1,7 @@
+import { THEME_COLORS } from "@/config/theme"
 export const emptyStaySentenceItem = {
   value: "",
-  textColor: "#F3F4F6",
+  textColor: THEME_COLORS.lightText,
   textOpacity: 1,
   backgroundColor: null,
   backgroundOpacity: 1,
@@ -9,7 +10,7 @@ export const emptyStaySentenceItem = {
 export const emptyStay = {
   title: {
     value: "The journeys that stay with us are never only about where we went.",
-    textColor: "#F3F4F6",
+    textColor: THEME_COLORS.lightText,
     textOpacity: 1,
     backgroundColor: null,
     backgroundOpacity: 1,
@@ -17,35 +18,35 @@ export const emptyStay = {
   items: [
     {
       value: "They are about how a place made us feel.",
-      textColor: "#F3F4F6",
+      textColor: THEME_COLORS.lightText,
       textOpacity: 1,
       backgroundColor: null,
       backgroundOpacity: 1,
     },
     {
       value: "The atmosphere of a quiet coastal village.",
-      textColor: "#F3F4F6",
+      textColor: THEME_COLORS.lightText,
       textOpacity: 1,
       backgroundColor: null,
       backgroundOpacity: 1,
     },
     {
       value: "A conversation shared over dinner.",
-      textColor: "#F3F4F6",
+      textColor: THEME_COLORS.lightText,
       textOpacity: 1,
       backgroundColor: null,
       backgroundOpacity: 1,
     },
     {
       value: "A road through the mountains at sunset.",
-      textColor: "#F3F4F6",
+      textColor: THEME_COLORS.lightText,
       textOpacity: 1,
       backgroundColor: null,
       backgroundOpacity: 1,
     },
     {
       value: "The sense of discovering something genuine and deeply connected to its surroundings.",
-      textColor: "#F3F4F6",
+      textColor: THEME_COLORS.lightText,
       textOpacity: 1,
       backgroundColor: null,
       backgroundOpacity: 1,
@@ -53,7 +54,7 @@ export const emptyStay = {
   ],
   closingText: {
     value: "At MIRA, we create journeys designed to leave exactly that feeling behind.",
-    textColor: "#B86B3A",
+    textColor: THEME_COLORS.accentWarm,
     textOpacity: 1,
     backgroundColor: null,
     backgroundOpacity: 1,
@@ -61,7 +62,7 @@ export const emptyStay = {
   backgroundMultimedia: {
     show: "color",
     color: {
-      color: "#182D09",
+      color: THEME_COLORS.primary,
       opacity: 100,
       width: "100%",
       height: "100%",
@@ -71,7 +72,7 @@ export const emptyStay = {
       url: "",
       alt: "",
       opacity: 100,
-      overlayColor: "#000000",
+      overlayColor: THEME_COLORS.overlayBlack,
       overlayOpacity: 45,
       width: "100%",
       height: "auto",
@@ -82,7 +83,7 @@ export const emptyStay = {
       url: "",
       alt: null,
       opacity: 100,
-      overlayColor: "#000000",
+      overlayColor: THEME_COLORS.overlayBlack,
       overlayOpacity: 0,
       autoplay: true,
       loop: true,

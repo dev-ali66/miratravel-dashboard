@@ -1,3 +1,4 @@
+import { THEME_COLORS } from "@/config/theme"
 import { useState } from "react"
 import { MapPin, ChevronDown, Compass, ArrowRight, Loader2, Sparkles } from "lucide-react"
 
@@ -43,7 +44,7 @@ function resolveExperienceMultimedia(expData: any) {
   if (!expData) {
     return {
       show: "color",
-      color: { color: "#FAF7F2", opacity: 100 },
+      color: { color: THEME_COLORS.bgSand, opacity: 100 },
     }
   }
 
@@ -75,7 +76,7 @@ function resolveExperienceMultimedia(expData: any) {
   if (videoUrl) {
     return {
       show: "video",
-      color: { color: "#FAF7F2", opacity: 100 },
+      color: { color: THEME_COLORS.bgSand, opacity: 100 },
       video: {
         url: videoUrl,
         alt: expData?.name || "Experience Video",
@@ -97,7 +98,7 @@ function resolveExperienceMultimedia(expData: any) {
   if (imageUrl) {
     return {
       show: "image",
-      color: { color: "#FAF7F2", opacity: 100 },
+      color: { color: THEME_COLORS.bgSand, opacity: 100 },
       image: {
         url: imageUrl,
         alt: expData?.name || "Experience Media",
@@ -110,7 +111,7 @@ function resolveExperienceMultimedia(expData: any) {
 
   return {
     show: "color",
-    color: { color: "#FAF7F2", opacity: 100 },
+    color: { color: THEME_COLORS.bgSand, opacity: 100 },
     image: { url: "", alt: "" },
     video: { url: "", alt: "" },
   }
@@ -123,8 +124,8 @@ function FeaturedExperienceBanner({ experienceId }: { experienceId: string }) {
   if (isLoading) {
     return (
       <div className="w-full pt-6 md:pt-8">
-        <div className="h-[340px] md:h-[380px] lg:h-[420px] w-full rounded-[8px] bg-neutral-200 dark:bg-neutral-800 animate-pulse flex items-center justify-center">
-          <Loader2 className="h-6 w-6 animate-spin text-neutral-400" />
+        <div className="h-[340px] md:h-[380px] lg:h-[420px] w-full rounded-[8px] bg-muted/60 border border-border/40 animate-pulse flex items-center justify-center">
+          <Loader2 className="h-6 w-6 animate-spin text-muted-foreground" />
         </div>
       </div>
     )
@@ -152,7 +153,7 @@ function FeaturedExperienceBanner({ experienceId }: { experienceId: string }) {
       <div className="group relative flex min-h-[340px] md:min-h-[380px] lg:h-[420px] xl:h-[460px] w-full flex-col justify-end items-start overflow-hidden rounded-[8px] p-6 md:p-8 lg:p-10 xl:p-12 text-white bg-neutral-900 border border-neutral-800/80 shadow-md">
         <UniversalMultimediaPreview
           multimedia={multimedia}
-          fallbackColor="#1c2813"
+          fallbackColor={THEME_COLORS.primary}
           mode="background"
         />
 
@@ -163,7 +164,7 @@ function FeaturedExperienceBanner({ experienceId }: { experienceId: string }) {
         <div className="relative z-20 flex flex-col items-start gap-3 max-w-2xl">
           <div className="flex flex-wrap items-center gap-2">
             {category && (
-              <div className="inline-flex items-center rounded-full bg-[#182d09] px-3 py-1 text-[11px] font-semibold uppercase text-neutral-200 tracking-wider">
+              <div className="inline-flex items-center rounded-full bg-brand-primary px-3 py-1 text-[11px] font-semibold uppercase text-neutral-200 tracking-wider">
                 {category}
               </div>
             )}
@@ -184,14 +185,14 @@ function FeaturedExperienceBanner({ experienceId }: { experienceId: string }) {
 
           <DynamicStyledTextPreview
             data={title}
-            fallbackColor="#FFFFFF"
+            fallbackColor={THEME_COLORS.white}
             as="h3"
             className="text-xl md:text-2xl lg:text-3xl font-semibold font-heading text-white"
           />
 
           <DynamicStyledTextPreview
             data={subtitle}
-            fallbackColor="#E5E5E5"
+            fallbackColor={THEME_COLORS.lightText}
             as="p"
             className="text-xs md:text-sm text-neutral-200 line-clamp-2 leading-relaxed"
           />
@@ -215,10 +216,10 @@ function PreviewExperienceCard({ experienceId }: { experienceId: string }) {
 
   if (isLoading) {
     return (
-      <div className="w-full rounded-[14px] bg-white border border-neutral-200 p-6 animate-pulse">
-        <div className="aspect-[4/3] w-full rounded-lg bg-neutral-200 mb-4" />
-        <div className="h-4 bg-neutral-200 rounded w-3/4 mb-2" />
-        <div className="h-3 bg-neutral-200 rounded w-1/2" />
+      <div className="w-full rounded-[14px] bg-card border border-border p-6 animate-pulse">
+        <div className="aspect-[4/3] w-full rounded-lg bg-muted mb-4" />
+        <div className="h-4 bg-muted rounded w-3/4 mb-2" />
+        <div className="h-3 bg-muted rounded w-1/2" />
       </div>
     )
   }
@@ -254,13 +255,13 @@ function PreviewExperienceCard({ experienceId }: { experienceId: string }) {
   return (
     <div
       onClick={toggleExpand}
-      className="group relative flex w-full cursor-pointer flex-col items-start overflow-hidden rounded-[14px] bg-white border border-neutral-200/70 shadow-2xs transition-all duration-300 hover:shadow-md self-start h-fit"
+      className="group relative flex w-full cursor-pointer flex-col items-start overflow-hidden rounded-[14px] bg-card text-card-foreground border border-border/70 shadow-2xs transition-all duration-300 hover:shadow-md self-start h-fit"
     >
       {/* Top Image / Video Container */}
-      <div className="relative w-full aspect-[4/3] md:aspect-[16/10] overflow-hidden rounded-t-[14px] bg-[#FAF7F2]">
+      <div className="relative w-full aspect-[4/3] md:aspect-[16/10] overflow-hidden rounded-t-[14px] bg-surface-sand">
         <UniversalMultimediaPreview
           multimedia={multimedia}
-          fallbackColor="#FAF7F2"
+          fallbackColor={THEME_COLORS.bgSand}
           mode="background"
         />
 
@@ -269,7 +270,7 @@ function PreviewExperienceCard({ experienceId }: { experienceId: string }) {
 
         {/* Category Pill Badge */}
         {category && (
-          <div className="absolute left-3 top-3 z-20 inline-flex items-center rounded-full bg-[#182d09] px-2.5 py-1 shadow-2xs transition-transform duration-300 group-hover:scale-105">
+          <div className="absolute left-3 top-3 z-20 inline-flex items-center rounded-full bg-brand-primary px-2.5 py-1 shadow-2xs transition-transform duration-300 group-hover:scale-105">
             <span className="text-[10px] md:text-xs font-semibold uppercase leading-4 tracking-wider text-neutral-100">
               {category}
             </span>
@@ -289,19 +290,19 @@ function PreviewExperienceCard({ experienceId }: { experienceId: string }) {
         <div className="flex w-full items-start justify-between gap-2">
           <DynamicStyledTextPreview
             data={title}
-            fallbackColor="#182d09"
+            fallbackColor={THEME_COLORS.primary}
             as="h4"
-            className="font-heading text-base md:text-lg font-semibold text-[#182d09] leading-snug group-hover:text-[#af6348] transition-colors"
+            className="font-heading text-base md:text-lg font-semibold text-brand-primary leading-snug group-hover:text-accent transition-colors"
           />
-          <div className="pt-0.5 shrink-0 text-[#C8956C]">
-            <Compass className="h-4 w-4 md:h-4.5 md:w-4.5 text-[#C8956C]" />
+          <div className="pt-0.5 shrink-0 text-gold">
+            <Compass className="h-4 w-4 md:h-4.5 md:w-4.5 text-gold" />
           </div>
         </div>
 
         {/* Subtitle */}
         <DynamicStyledTextPreview
           data={subtitle}
-          fallbackColor="#565e69"
+          fallbackColor={THEME_COLORS.muted}
           as="p"
           className="text-xs md:text-[13px] font-normal text-neutral-500 leading-relaxed line-clamp-2"
         />
@@ -311,7 +312,7 @@ function PreviewExperienceCard({ experienceId }: { experienceId: string }) {
           <div className="w-full pt-2 border-t border-neutral-100 mt-1 animate-fadeIn">
             <DynamicStyledTextPreview
               data={description}
-              fallbackColor="#444a53"
+              fallbackColor={THEME_COLORS.sub}
               as="p"
               className="text-xs md:text-sm font-normal text-neutral-700 leading-relaxed"
             />
@@ -327,7 +328,7 @@ function PreviewExperienceCard({ experienceId }: { experienceId: string }) {
           <button
             type="button"
             onClick={toggleExpand}
-            className="inline-flex cursor-pointer items-center gap-1 text-[#C8956C] hover:text-[#af6348] font-semibold text-xs md:text-sm transition-colors focus:outline-none"
+            className="inline-flex cursor-pointer items-center gap-1 text-gold hover:text-accent font-semibold text-xs md:text-sm transition-colors focus:outline-none"
             aria-expanded={isExpanded}
           >
             <span>{isExpanded ? "Collapse" : "Expand"}</span>
@@ -392,14 +393,14 @@ export function PlaceExperiencesPreview({ draft }: LocationPreviewSectionProps) 
           <div className="flex w-full flex-col items-start gap-3 md:gap-4">
             {/* Eyebrow Location Tag */}
             {Boolean(locationTag) && (
-              <span className="text-[#af6348] font-semibold text-xs md:text-sm tracking-[2.64px] uppercase">
+              <span className="text-accent font-semibold text-xs md:text-sm tracking-[2.64px] uppercase">
                 {locationTag}
               </span>
             )}
 
             {/* Title & Subtitle Row */}
             <div className="flex w-full flex-col lg:flex-row items-start lg:items-end justify-between gap-4">
-              <h2 className="text-2xl md:text-3xl lg:text-4xl font-semibold font-heading text-[#182d09]">
+              <h2 className="text-2xl md:text-3xl lg:text-4xl font-semibold font-heading text-brand-primary">
                 Curated Experiences
               </h2>
 
@@ -420,10 +421,10 @@ export function PlaceExperiencesPreview({ draft }: LocationPreviewSectionProps) 
           {/* Experience Cards Grid (Items 1+ IDs) */}
           <div className="w-full pt-6 md:pt-8 lg:pt-10">
             {gridIds.length === 0 && !featuredId ? (
-              <div className="p-8 text-center rounded-xl border border-dashed border-neutral-300/80 bg-white/50">
-                <Sparkles className="h-8 w-8 text-neutral-400 mx-auto mb-2" />
-                <p className="text-sm font-medium text-neutral-700">No experiences linked yet</p>
-                <p className="text-xs text-neutral-500 mt-1">
+              <div className="p-8 text-center rounded-xl border border-dashed border-border/80 bg-muted/20">
+                <Sparkles className="h-8 w-8 text-muted-foreground mx-auto mb-2" />
+                <p className="text-sm font-medium text-foreground">No experiences linked yet</p>
+                <p className="text-xs text-muted-foreground mt-1">
                   Search and connect experiences from the Experience catalogue in the form editor.
                 </p>
               </div>
@@ -441,7 +442,7 @@ export function PlaceExperiencesPreview({ draft }: LocationPreviewSectionProps) 
                 <button
                   type="button"
                   onClick={() => setShowAll(!showAll)}
-                  className="rounded bg-[#af6348] px-6 py-2.5 text-xs md:text-sm font-semibold text-white transition hover:bg-[#9c553d] cursor-pointer shadow-2xs"
+                  className="rounded bg-accent px-6 py-2.5 text-xs md:text-sm font-semibold text-white transition hover:bg-accent-warm cursor-pointer shadow-2xs"
                 >
                   {showAll ? "Show Less" : `Load More (${gridIds.length - 3})`}
                 </button>

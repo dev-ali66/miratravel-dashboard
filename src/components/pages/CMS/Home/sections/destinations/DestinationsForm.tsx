@@ -1,3 +1,4 @@
+import { THEME_COLORS } from "@/config/theme"
 import type { HomeFormSectionProps } from "../../config/homeSections"
 import { FormSection, DynamicStyledField } from "@/components/pages/CMS/shared/FormControls"
 import { ButtonsField } from "@/components/pages/CMS/shared/ButtonsField"
@@ -70,7 +71,7 @@ export function DestinationsForm({
           defaultShow="color"
           showColorPicker
           colorLabel="Background color"
-          defaultColor="#FFFFFF"
+          defaultColor={THEME_COLORS.white}
           imageFieldName="cmsHomeDestinationsBackgroundImage"
           videoFieldName="cmsHomeDestinationsBackgroundVideo"
           value={

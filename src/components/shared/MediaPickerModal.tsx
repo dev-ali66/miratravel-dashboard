@@ -18,9 +18,8 @@ import {
   Loader2,
   FolderOpen,
   Sparkles,
-  ChevronLeft,
-  ChevronRight,
 } from "lucide-react"
+import { Pagination } from "@/components/shared/Pagination"
 import { useMediaGallery } from "@/hooks/media/useMediaLibrary"
 import { mediaService, type MediaAsset } from "@/services/mediaService"
 import { cn } from "@/lib/utils"
@@ -47,6 +46,15 @@ export interface MediaPickerModalProps {
   allowedTypes?: ("image" | "video")[]
   title?: string
   initialSelectedUrl?: string
+}
+
+function formatBytes(bytes?: number | null, decimals = 1): string {
+  if (!bytes || bytes <= 0) return "—"
+  const k = 1024
+  const dm = decimals < 0 ? 0 : decimals
+  const sizes = ["B", "KB", "MB", "GB"]
+  const i = Math.floor(Math.log(bytes) / Math.log(k))
+  return parseFloat((bytes / Math.pow(k, i)).toFixed(dm)) + " " + sizes[i]
 }
 
 export function MediaPickerModal({
@@ -96,11 +104,12 @@ export function MediaPickerModal({
   const [isUploading, setIsUploading] = useState(false)
   const [uploadProgress, setUploadProgress] = useState(0)
   const uploadInputRef = useRef<HTMLInputElement>(null)
+  const [limit, setLimit] = useState(24)
 
   // Query gallery
   const galleryQuery = useMediaGallery({
     page,
-    limit: 24,
+    limit,
     search: debouncedSearch || undefined,
     type: typeFilter,
     status: "ACTIVE",
@@ -109,7 +118,7 @@ export function MediaPickerModal({
 
   const { data: galleryData, isLoading } = galleryQuery
   const assets = galleryData?.data || []
-  const meta = galleryData?.meta || { page: 1, limit: 24, total: 0, totalPages: 1 }
+  const meta = galleryData?.meta || { page: 1, limit, total: 0, totalPages: 1 }
 
   // Pre-select initial URL if provided when modal opens
   useEffect(() => {
@@ -478,7 +487,7 @@ export function MediaPickerModal({
                   </Button>
                 </div>
               ) : (
-                <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-3.5">
+                <div className="grid grid-cols-1 gap-2 md:grid-cols-3 lg:grid-cols-5 xl:grid-cols-6">
                   {assets.map((asset) => {
                     const isSelected = selectedMap.has(asset.id)
                     const isVideo = asset.mimeType.startsWith("video/")
@@ -544,7 +553,7 @@ export function MediaPickerModal({
                             {asset.title || asset.fileName}
                           </p>
                           <div className="flex items-center justify-between text-[10px] text-muted-foreground font-mono">
-                            <span>{(asset.size / 1024).toFixed(0)} KB</span>
+                            <span>{formatBytes(asset.size)}</span>
                             <span className="uppercase">{asset.mimeType.split("/")[1] || "file"}</span>
                           </div>
                         </div>
@@ -555,37 +564,22 @@ export function MediaPickerModal({
               )}
             </div>
 
-            {/* Pagination footer inside browse */}
-            {meta.totalPages > 1 && (
-              <div className="flex items-center justify-between px-5 py-2 border-t border-border/50 bg-muted/10 shrink-0 text-xs text-muted-foreground">
-                <span>
-                  Showing {assets.length} of {meta.total} assets
-                </span>
-                <div className="flex items-center gap-1.5">
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    className="h-7 px-2 text-xs"
-                    disabled={page <= 1}
-                    onClick={() => setPage((p) => Math.max(1, p - 1))}
-                  >
-                    <ChevronLeft className="h-3.5 w-3.5 mr-0.5" />
-                    Prev
-                  </Button>
-                  <span className="px-2 font-medium text-foreground">
-                    {page} / {meta.totalPages}
-                  </span>
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    className="h-7 px-2 text-xs"
-                    disabled={page >= meta.totalPages}
-                    onClick={() => setPage((p) => Math.min(meta.totalPages, p + 1))}
-                  >
-                    Next
-                    <ChevronRight className="h-3.5 w-3.5 ml-0.5" />
-                  </Button>
-                </div>
+            {/* Universal Pagination footer inside browse */}
+            {meta.total > 0 && (
+              <div className="px-5 py-2.5 border-t border-border/50 bg-muted/10 shrink-0">
+                <Pagination
+                  currentPage={page}
+                  totalPages={meta.totalPages}
+                  totalItems={meta.total}
+                  pageSize={limit}
+                  pageSizeOptions={[12, 24, 48, 96]}
+                  onPageChange={setPage}
+                  onPageSizeChange={(sz) => {
+                    setLimit(sz)
+                    setPage(1)
+                  }}
+                  className="py-0"
+                />
               </div>
             )}
           </div>
@@ -709,3 +703,6 @@ export function MediaPickerModal({
     </Dialog>
   )
 }
+
+export default MediaPickerModal
+

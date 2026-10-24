@@ -1,21 +1,22 @@
+import { THEME_COLORS } from "@/config/theme"
 export const emptyGlance = {
   label: {
     value: "REGIONAL ORIENTATION",
-    textColor: "#af6348",
+    textColor: THEME_COLORS.accent,
     textOpacity: 1,
     backgroundColor: null,
     backgroundOpacity: 1,
   },
   title: {
     value: "The Region at a Glance",
-    textColor: "#182d09",
+    textColor: THEME_COLORS.primary,
     textOpacity: 1,
     backgroundColor: null,
     backgroundOpacity: 1,
   },
   description: {
     value: "",
-    textColor: "#565e69",
+    textColor: THEME_COLORS.muted,
     textOpacity: 1,
     backgroundColor: null,
     backgroundOpacity: 1,
@@ -24,7 +25,7 @@ export const emptyGlance = {
   backgroundMultimedia: {
     show: "color",
     color: {
-      color: "#FFFFFF",
+      color: THEME_COLORS.white,
       opacity: 100,
       width: "100%",
       height: "100%",
@@ -34,7 +35,7 @@ export const emptyGlance = {
       url: "",
       alt: "Glance section background",
       opacity: 100,
-      overlayColor: "#000000",
+      overlayColor: THEME_COLORS.overlayBlack,
       overlayOpacity: 0,
       width: "100%",
       height: "auto",
@@ -48,7 +49,7 @@ export const emptyGlance = {
       loop: true,
       muted: true,
       opacity: 100,
-      overlayColor: "#000000",
+      overlayColor: THEME_COLORS.overlayBlack,
       overlayOpacity: 0,
       width: "100%",
       height: "auto",

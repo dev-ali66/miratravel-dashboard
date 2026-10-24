@@ -1,3 +1,4 @@
+import { THEME_COLORS } from "@/config/theme"
 import {
   FormSection,
   DynamicStyledField,
@@ -82,7 +83,7 @@ export function JourneyCmsAllJourneysForm({
           title="Section Background Media & Styling"
           value={allData.backgroundMultimedia}
           onChange={(val: any) => updateAllField("backgroundMultimedia", val)}
-          defaultColor="#FFFFFF"
+          defaultColor={THEME_COLORS.white}
         />
       </div>
     </FormSection>

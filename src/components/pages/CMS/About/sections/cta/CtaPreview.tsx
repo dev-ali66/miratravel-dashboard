@@ -1,3 +1,4 @@
+import { THEME_COLORS } from "@/config/theme"
 import type { ReactNode } from "react"
 import { UniversalMultimediaPreview } from "@/components/pages/CMS/shared/UniversalMultimediaPreview"
 import { DynamicStyledPreview } from "@/components/shared/DynamicStyledPreview"
@@ -18,7 +19,7 @@ export type CtaPreviewProps = {
 
 export function CtaPreview({
   section,
-  darkText = "#182D09",
+  darkText = THEME_COLORS.primary,
   renderButtons,
 }: CtaPreviewProps) {
   const sec = (section || emptyCta) as Record<string, any>
@@ -44,7 +45,7 @@ export function CtaPreview({
         fallbackAlt="Custom Journey CTA background"
         fallbackColor={sec.bgColor ?? "transparent"}
         mode="background"
-        overlayClassName="bg-white/70"
+        overlayClassName="bg-white/70 dark:bg-background/80"
       />
 
       <div className="relative z-10 grid grid-cols-1 lg:grid-cols-2 items-center gap-8 xlg:gap-10 xl:gap-12 w-full">

@@ -1,14 +1,15 @@
+import { THEME_COLORS } from "@/config/theme"
 export const emptySubscribe = {
   title: {
     value: "A Curated Travel Perspective",
-    textColor: "#182D09",
+    textColor: THEME_COLORS.primary,
     textOpacity: 1,
     backgroundColor: null,
     backgroundOpacity: 1,
   },
   subtitle: {
     value: "Thoughtful dispatches featuring curated Balkan travel inspiration, MIRA Stories, regional travel insights, and selected journeys.",
-    textColor: "#565E69",
+    textColor: THEME_COLORS.muted,
     textOpacity: 1,
     backgroundColor: null,
     backgroundOpacity: 1,
@@ -16,7 +17,7 @@ export const emptySubscribe = {
   leftSideMultimedia: {
     show: "image",
     color: {
-      color: "#FFFFFF",
+      color: THEME_COLORS.white,
       opacity: 100,
       width: "100%",
       height: "100%",
@@ -30,7 +31,7 @@ export const emptySubscribe = {
       height: "auto",
       opacity: 100,
       aspectRatio: "auto",
-      overlayColor: "#000000",
+      overlayColor: THEME_COLORS.overlayBlack,
       overlayOpacity: 0,
     },
     video: {
@@ -44,14 +45,14 @@ export const emptySubscribe = {
       loop: true,
       muted: true,
       aspectRatio: "auto",
-      overlayColor: "#000000",
+      overlayColor: THEME_COLORS.overlayBlack,
       overlayOpacity: 0,
     },
   },
   backgroundMultimedia: {
     show: "color",
     color: {
-      color: "#FFFFFF",
+      color: THEME_COLORS.white,
       opacity: 100,
       width: "100%",
       height: "100%",
@@ -65,7 +66,7 @@ export const emptySubscribe = {
       height: "auto",
       opacity: 100,
       aspectRatio: "auto",
-      overlayColor: "#000000",
+      overlayColor: THEME_COLORS.overlayBlack,
       overlayOpacity: 0,
     },
     video: {
@@ -79,7 +80,7 @@ export const emptySubscribe = {
       loop: true,
       muted: true,
       aspectRatio: "auto",
-      overlayColor: "#000000",
+      overlayColor: THEME_COLORS.overlayBlack,
       overlayOpacity: 0,
     },
   },

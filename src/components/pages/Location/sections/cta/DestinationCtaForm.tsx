@@ -1,3 +1,4 @@
+import { THEME_COLORS } from "@/config/theme"
 import { Sparkles } from "lucide-react"
 import { DynamicStyledField } from "@/components/pages/CMS/shared/FormControls"
 import { ButtonsField } from "@/components/pages/CMS/shared/ButtonsField"
@@ -20,7 +21,7 @@ export function DestinationCtaForm({
     (draft as any)?.data?.destinationCta || {
       title: {
         value: "Didn't find your perfect journey?",
-        textColor: "#182d09",
+        textColor: THEME_COLORS.primary,
         textOpacity: 1,
         backgroundColor: null,
         backgroundOpacity: 1,
@@ -28,7 +29,7 @@ export function DestinationCtaForm({
       description: {
         value:
           "Our collection is carefully designed but every travel is different.\nIf you'd like something more personal, we'd love to create it together.",
-        textColor: "#565e69",
+        textColor: THEME_COLORS.muted,
         textOpacity: 1,
         backgroundColor: null,
         backgroundOpacity: 1,
@@ -39,8 +40,8 @@ export function DestinationCtaForm({
           url: "/contact",
           style: "primary",
           variant: "PRIMARY",
-          backgroundColor: "#af6348",
-          textColor: "#ffffff",
+          backgroundColor: THEME_COLORS.accent,
+          textColor: THEME_COLORS.white,
         },
       ],
       imageMultimedia: null,
@@ -68,8 +69,8 @@ export function DestinationCtaForm({
             url: ctaData.button?.url || ctaData.buttonUrl || "/contact",
             style: ctaData.button?.style || "primary",
             variant: "PRIMARY",
-            backgroundColor: ctaData.button?.backgroundColor || "#af6348",
-            textColor: ctaData.button?.textColor || "#ffffff",
+            backgroundColor: ctaData.button?.backgroundColor || THEME_COLORS.accent,
+            textColor: ctaData.button?.textColor || THEME_COLORS.white,
           },
         ]
       : [
@@ -78,8 +79,8 @@ export function DestinationCtaForm({
             url: "/contact",
             style: "primary",
             variant: "PRIMARY",
-            backgroundColor: "#af6348",
-            textColor: "#ffffff",
+            backgroundColor: THEME_COLORS.accent,
+            textColor: THEME_COLORS.white,
           },
         ]
 

@@ -51,7 +51,10 @@
   --font-karena: 'Karena Serif', Georgia, serif;
   --font-sansation: 'Sansation', system-ui, -apple-system, sans-serif;
 
-  /* Frontend Brand Colors */
+  /* Frontend Brand Colors & Single Source of Truth */
+  --color-brand-primary: #182D09;
+  --color-brand-forest: #182D09;
+  --color-brand-green: #6E7F5B;
   --color-dark: #080c1d;
   --color-title: #0a0a0a;
   --color-title-light: #313131;
@@ -61,30 +64,41 @@
   --color-neutral-200: #fefefe;
   --color-neutral-300: #F9FAFB;
   --color-subtitle: #565e69;
-  --color-sub: #454842;
+  --color-sub: #4B5563;
   --color-subtext: #717182;
   --color-accent: #af6348;
   --color-accent-light: #b85c38;
+  --color-accent-warm: #b86b3a;
   --color-accent-muted: #E5A84B;
   --color-accent-hover: #ff7747;
+  --color-gold: #B3884D;
+  --color-gold-muted: #C5A880;
   --color-text-card-title: #1b1712;
   --color-extra-light: #8A8070;
   --color-body: #4a4a4a;
+  --color-body-muted: #4A4337;
   --color-muted: var(--muted);
   --color-surface: #EDE7D8;
   --color-surface-light: #FFF8F2;
+  --color-surface-sand: #FAF7F2;
+  --color-surface-beige: #FAF6F0;
+  --color-surface-warm: #FAF8F5;
   --color-surface-muted: #E8E5DD;
   --color-surface-accent: #EFE8DE;
+  --color-hero-dark: #171717;
+  --color-loader-bg: #F2E9E3;
+  --color-loader-border: #E8DCD5;
+  --color-loader-text: #8C7A6B;
   --color-form-bg: rgba(242, 239, 233);
   --color-stroke: #d1d5db;
-  --color-primary-hover: #365314;
+  --color-primary-hover: #2B3425;
   --color-nav-text: #464136;
   --color-highlight: #f3c684;
   --color-sidebar-active: #1f3d2b;
   --color-overlay: #0a3c4b;
   --color-border-light: #D8CBB8;
   --color-border-neutral: #F3F4F6;
-  --color-border-muted: rgba(183, 182, 182);
+  --color-border-muted: #E8E2D8;
   --color-border-form: #C5C7C0;
   --color-input-border: #efefef;
   --color-placeholder: #6B7280;
@@ -229,38 +243,61 @@
 }
 
 .dark {
-  --background: #080c1d;
-  /* frontend --color-dark */
+  /* Travelling Albania Figma Design Tokens (Node 15:2) */
+  --background: #080C1D;
   --foreground: #F9FAFB;
-  --card: #0c1328;
+  --card: #0D1529;
   --card-foreground: #F9FAFB;
-  --popover: #0c1328;
+  --popover: #0D1529;
   --popover-foreground: #F9FAFB;
-  --primary: #1f3d2b;
+  --primary: #142F68;
   --primary-foreground: #FFFFFF;
-  --secondary: #121b36;
+  --secondary: #0E1B38;
   --secondary-foreground: #F9FAFB;
-  --muted: #121b36;
-  --muted-foreground: #7E7E7E;
-  --accent: #af6348;
+  --muted: #121B36;
+  --muted-foreground: #94A3B8;
+  --accent: #B86B3A;
   --accent-foreground: #FFFFFF;
   --destructive: #EF4444;
-  --border: #1a2545;
-  --input: #1a2545;
-  --ring: #1f3d2b;
-  --chart-1: #1f3d2b;
-  --chart-2: #af6348;
+  --border: #1A2545;
+  --input: #1A2545;
+  --ring: #142F68;
+  --chart-1: #142F68;
+  --chart-2: #B86B3A;
   --chart-3: #C9A227;
-  --chart-4: #3F7D58;
-  --chart-5: #15428C;
-  --sidebar: #080c1d;
+  --chart-4: #4A7C59;
+  --chart-5: #3B82F6;
+  --sidebar: #060A17;
   --sidebar-foreground: #F9FAFB;
-  --sidebar-primary: #1f3d2b;
+  --sidebar-primary: #142F68;
   --sidebar-primary-foreground: #FFFFFF;
-  --sidebar-accent: #121b36;
+  --sidebar-accent: #0D1529;
   --sidebar-accent-foreground: #F9FAFB;
-  --sidebar-border: #1a2545;
-  --sidebar-ring: #1f3d2b;
+  --sidebar-border: #1A2545;
+  --sidebar-ring: #142F68;
+
+  /* Global Surface & Component Dark Overrides */
+  --color-brand-primary: #142F68;
+  --color-primary-hover: #1E3A7B;
+  --color-surface-sand: #0C1524;
+  --color-surface-beige: #0D1529;
+  --color-surface-warm: #0A162D;
+  --color-surface: #0E1B38;
+  --color-surface-light: #0C1524;
+  --color-surface-muted: #121B36;
+  --color-surface-accent: #152244;
+  --color-loader-bg: #0A162D;
+  --color-loader-border: #1A2545;
+  --color-loader-text: #94A3B8;
+  --color-border-light: #233256;
+  --color-border-muted: #1A2545;
+  --color-border-form: #233256;
+  --color-input-border: #1A2545;
+  --color-body: #CBD5E1;
+  --color-body-muted: #94A3B8;
+  --color-title: #FFFFFF;
+  --color-title-light: #F3F4F6;
+  --color-card-title: #F9FAFB;
 }
 
 @layer base {

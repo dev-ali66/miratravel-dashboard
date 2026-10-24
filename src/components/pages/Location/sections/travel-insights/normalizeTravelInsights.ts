@@ -1,3 +1,4 @@
+import { THEME_COLORS } from "@/config/theme"
 import { normalizeMultimedia, normalizeStyledField, normalizeButtonsArray } from "../../shared/normalizeHelpers"
 import { emptyTravelInsights } from "./emptyTravelInsights"
 
@@ -6,9 +7,9 @@ export function normalizeTravelInsights(travelInsights: any) {
 
   const normalizedTravelInsights = {
     ...safeInsights,
-    label: normalizeStyledField(safeInsights.label ?? emptyTravelInsights.label, "TRAVEL INSIGHTS", "#af6348"),
-    title: normalizeStyledField(safeInsights.title ?? emptyTravelInsights.title, "", "#182d09"),
-    description: normalizeStyledField(safeInsights.description ?? emptyTravelInsights.description, "", "#d4d4d4"),
+    label: normalizeStyledField(safeInsights.label ?? emptyTravelInsights.label, "TRAVEL INSIGHTS", THEME_COLORS.accent),
+    title: normalizeStyledField(safeInsights.title ?? emptyTravelInsights.title, "", THEME_COLORS.primary),
+    description: normalizeStyledField(safeInsights.description ?? emptyTravelInsights.description, "", THEME_COLORS.borderLight),
     featuredMultimedia: normalizeMultimedia(safeInsights.featuredMultimedia || emptyTravelInsights.featuredMultimedia, "image"),
     backgroundMultimedia: normalizeMultimedia(safeInsights.backgroundMultimedia || emptyTravelInsights.backgroundMultimedia, "color"),
     articles: Array.isArray(safeInsights.articles)
@@ -27,8 +28,8 @@ export function normalizeTravelInsights(travelInsights: any) {
               : [{ label: "Read Article", url: art.href || "#" }]
 
           const normArt: any = {
-            category: normalizeStyledField(art.category, "Guide", "#af6348"),
-            title: normalizeStyledField(art.title, "", "#F3F4F6"),
+            category: normalizeStyledField(art.category, "Guide", THEME_COLORS.accent),
+            title: normalizeStyledField(art.title, "", THEME_COLORS.lightText),
             buttons: normalizeButtonsArray(rawButtons),
             thumbnailMultimedia: normalizeMultimedia(
               art.thumbnailMultimedia ??

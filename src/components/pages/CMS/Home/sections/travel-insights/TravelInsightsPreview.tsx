@@ -1,3 +1,4 @@
+import { THEME_COLORS } from "@/config/theme"
 import type { ReactNode } from "react"
 import type { HomeSection } from "../../homeTypes"
 import { UniversalMultimediaPreview } from "../../shared/preview/UniversalMultimediaPreview"
@@ -123,16 +124,16 @@ export function TravelInsightsPreview({
       id="travel-insights"
       className="relative w-full overflow-hidden pt-[65px] md:pt-[90px] lg:pt-[100px] xlg:pt-[110px] xl:pt-[120px] pb-[65px] md:pb-[90px] lg:pb-[100px] xlg:pb-[110px] xl:pb-[120px]"
       style={{
-        backgroundColor: (section as any).bgColor ?? "#FBF9F5",
+        backgroundColor: (section as any).bgColor ?? THEME_COLORS.bgSand,
         color: darkText,
       }}
     >
       <UniversalMultimediaPreview
         multimedia={backgroundMultimedia}
         fallbackAlt="Travel Insights background"
-        fallbackColor={(section as any).bgColor ?? "#FBF9F5"}
+        fallbackColor={(section as any).bgColor ?? THEME_COLORS.bgSand}
         mode="background"
-        overlayClassName="bg-white/70"
+        overlayClassName="bg-white/70 dark:bg-background/80"
       />
 
       <div className="relative z-10 container mx-auto px-4 lg:px-0 flex flex-col gap-10 md:gap-12">
@@ -143,15 +144,15 @@ export function TravelInsightsPreview({
               as="span"
               field={eyebrow}
               styleObj={(section as any).homeTravelInsightsEyebrowStyle ?? content.homeTravelInsightsEyebrowStyle}
-              fallbackColor={accentColor || "#E5A84B"}
-              className="text-xs md:text-sm font-semibold tracking-[2px] uppercase text-[#E5A84B] flex items-center gap-1.5"
+              fallbackColor={accentColor || THEME_COLORS.accentMuted}
+              className="text-xs md:text-sm font-semibold tracking-[2px] uppercase text-accent-muted flex items-center gap-1.5"
             />
 
             <h2 className="font-heading font-normal text-card-title text-[32px] md:text-[42px] lg:text-[48px] leading-tight">
               {accentTitlePart ? (
                 <>
                   <span style={{ color: darkText }}>{mainTitlePart} </span>
-                  <span style={{ color: accentColor || "#E5A84B" }}>{accentTitlePart}</span>
+                  <span style={{ color: accentColor || THEME_COLORS.accentMuted }}>{accentTitlePart}</span>
                 </>
               ) : (
                 <DynamicStyledPreview
@@ -195,8 +196,8 @@ export function TravelInsightsPreview({
 
             {/* Bottom Content */}
             <div className="absolute inset-0 p-6 md:p-8 flex flex-col justify-end text-white z-10 pointer-events-none">
-              <span className="text-[11px] font-semibold tracking-[2px] uppercase text-[#E5A84B] mb-1.5 flex items-center gap-1.5">
-                <span className="w-3 h-px bg-[#E5A84B]" />
+              <span className="text-[11px] font-semibold tracking-[2px] uppercase text-accent-muted mb-1.5 flex items-center gap-1.5">
+                <span className="w-3 h-px bg-accent-muted" />
                 {featuredInsight?.tag || "FEATURED"}
               </span>
               <h3 className="font-serif text-2xl md:text-3xl font-semibold leading-tight text-white mb-2 line-clamp-2">

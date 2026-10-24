@@ -1,3 +1,4 @@
+import { THEME_COLORS } from "@/config/theme"
 import type { ExperienceData } from "../experienceTypes"
 
 export const emptyCanonicalMultimedia = {
@@ -6,7 +7,7 @@ export const emptyCanonicalMultimedia = {
     url: "",
     alt: "",
     opacity: 100,
-    overlayColor: "#000000",
+    overlayColor: THEME_COLORS.overlayBlack,
     overlayOpacity: 0,
     width: "100%",
     height: "auto",
@@ -20,7 +21,7 @@ export const emptyCanonicalMultimedia = {
     loop: true,
     muted: true,
     opacity: 100,
-    overlayColor: "#000000",
+    overlayColor: THEME_COLORS.overlayBlack,
     overlayOpacity: 0,
     width: "100%",
     height: "auto",
@@ -28,7 +29,7 @@ export const emptyCanonicalMultimedia = {
     fit: "cover",
   },
   color: {
-    color: "#171717",
+    color: THEME_COLORS.bgHeroDark,
     opacity: 100,
     width: "100%",
     height: "100%",
@@ -39,28 +40,28 @@ export const emptyCanonicalMultimedia = {
 export const emptyHero = {
   breadcrumb: {
     value: "EXPERIENCES",
-    textColor: "#d29393",
+    textColor: THEME_COLORS.accentLight,
     textOpacity: 1,
     backgroundColor: null,
     backgroundOpacity: 1,
   },
   title: {
     value: "",
-    textColor: "#FFFFFF",
+    textColor: THEME_COLORS.white,
     textOpacity: 1,
     backgroundColor: null,
     backgroundOpacity: 1,
   },
   subtitle: {
     value: "",
-    textColor: "#E5E7EB",
+    textColor: THEME_COLORS.mediaPlaceholder,
     textOpacity: 1,
     backgroundColor: null,
     backgroundOpacity: 1,
   },
   description: {
     value: "",
-    textColor: "#F3F4F6",
+    textColor: THEME_COLORS.lightText,
     textOpacity: 1,
     backgroundColor: null,
     backgroundOpacity: 1,
@@ -71,7 +72,7 @@ export const emptyHero = {
     ...emptyCanonicalMultimedia,
     show: "video" as const,
     color: {
-      color: "#171717",
+      color: THEME_COLORS.bgHeroDark,
       opacity: 100,
       width: "100%",
       height: "100%",
@@ -83,35 +84,35 @@ export const emptyHero = {
 export const emptyTheExperience = {
   label: {
     value: "THE EXPERIENCE",
-    textColor: "#af6348",
+    textColor: THEME_COLORS.accent,
     textOpacity: 1,
     backgroundColor: null,
     backgroundOpacity: 1,
   },
   title: {
     value: "",
-    textColor: "#182d09",
+    textColor: THEME_COLORS.primary,
     textOpacity: 1,
     backgroundColor: null,
     backgroundOpacity: 1,
   },
   summary: {
     value: "",
-    textColor: "#565e69",
+    textColor: THEME_COLORS.muted,
     textOpacity: 1,
     backgroundColor: null,
     backgroundOpacity: 1,
   },
   narrative: {
     value: "",
-    textColor: "#333333",
+    textColor: THEME_COLORS.body,
     textOpacity: 1,
     backgroundColor: null,
     backgroundOpacity: 1,
   },
   quote: {
     value: "",
-    textColor: "#182d09",
+    textColor: THEME_COLORS.primary,
     textOpacity: 1,
     backgroundColor: null,
     backgroundOpacity: 1,
@@ -130,7 +131,7 @@ export const emptyTheExperience = {
     show: "color" as const,
     color: {
       ...emptyCanonicalMultimedia.color,
-      color: "#FFFFFF",
+      color: THEME_COLORS.white,
     },
   },
 }
@@ -138,14 +139,14 @@ export const emptyTheExperience = {
 export const emptyHighlights = {
   label: {
     value: "KEY HIGHLIGHTS",
-    textColor: "#af6348",
+    textColor: THEME_COLORS.accent,
     textOpacity: 1,
     backgroundColor: null,
     backgroundOpacity: 1,
   },
   title: {
     value: "What makes this unforgettable",
-    textColor: "#182d09",
+    textColor: THEME_COLORS.primary,
     textOpacity: 1,
     backgroundColor: null,
     backgroundOpacity: 1,
@@ -156,14 +157,14 @@ export const emptyHighlights = {
       badge: "Highlight 01",
       title: {
         value: "",
-        textColor: "#182d09",
+        textColor: THEME_COLORS.primary,
         textOpacity: 1,
         backgroundColor: null,
         backgroundOpacity: 1,
       },
       description: {
         value: "",
-        textColor: "#565e69",
+        textColor: THEME_COLORS.muted,
         textOpacity: 1,
         backgroundColor: null,
         backgroundOpacity: 1,
@@ -174,14 +175,14 @@ export const emptyHighlights = {
       badge: "Highlight 02",
       title: {
         value: "",
-        textColor: "#182d09",
+        textColor: THEME_COLORS.primary,
         textOpacity: 1,
         backgroundColor: null,
         backgroundOpacity: 1,
       },
       description: {
         value: "",
-        textColor: "#565e69",
+        textColor: THEME_COLORS.muted,
         textOpacity: 1,
         backgroundColor: null,
         backgroundOpacity: 1,
@@ -192,14 +193,14 @@ export const emptyHighlights = {
       badge: "Highlight 03",
       title: {
         value: "",
-        textColor: "#182d09",
+        textColor: THEME_COLORS.primary,
         textOpacity: 1,
         backgroundColor: null,
         backgroundOpacity: 1,
       },
       description: {
         value: "",
-        textColor: "#565e69",
+        textColor: THEME_COLORS.muted,
         textOpacity: 1,
         backgroundColor: null,
         backgroundOpacity: 1,
@@ -211,35 +212,35 @@ export const emptyHighlights = {
 export const emptyPracticalInfo = {
   duration: {
     value: "Half Day (~4 hours)",
-    textColor: "#182d09",
+    textColor: THEME_COLORS.primary,
     textOpacity: 1,
     backgroundColor: null,
     backgroundOpacity: 1,
   },
   season: {
     value: "May – October",
-    textColor: "#182d09",
+    textColor: THEME_COLORS.primary,
     textOpacity: 1,
     backgroundColor: null,
     backgroundOpacity: 1,
   },
   activityLevel: {
     value: "Moderate — comfortable walking pace",
-    textColor: "#182d09",
+    textColor: THEME_COLORS.primary,
     textOpacity: 1,
     backgroundColor: null,
     backgroundOpacity: 1,
   },
   groupSize: {
     value: "Private (2-8 guests)",
-    textColor: "#182d09",
+    textColor: THEME_COLORS.primary,
     textOpacity: 1,
     backgroundColor: null,
     backgroundOpacity: 1,
   },
   locationNotes: {
     value: "Direct pick-up from your accommodation or dedicated rendezvous point.",
-    textColor: "#565e69",
+    textColor: THEME_COLORS.muted,
     textOpacity: 1,
     backgroundColor: null,
     backgroundOpacity: 1,
@@ -249,21 +250,21 @@ export const emptyPracticalInfo = {
 export const emptyMiraTouch = {
   label: {
     value: "THE MIRA TOUCH",
-    textColor: "#af6348",
+    textColor: THEME_COLORS.accent,
     textOpacity: 1,
     backgroundColor: null,
     backgroundOpacity: 1,
   },
   title: {
     value: "Distinction, Privacy & Insider Access",
-    textColor: "#182d09",
+    textColor: THEME_COLORS.primary,
     textOpacity: 1,
     backgroundColor: null,
     backgroundOpacity: 1,
   },
   description: {
     value: "Every MIRA experience is curated with private access, master hosts, and bespoke comfort designed around your journey rhythm.",
-    textColor: "#565e69",
+    textColor: THEME_COLORS.muted,
     textOpacity: 1,
     backgroundColor: null,
     backgroundOpacity: 1,
@@ -272,14 +273,14 @@ export const emptyMiraTouch = {
     {
       title: {
         value: "Private Insider Access",
-        textColor: "#182d09",
+        textColor: THEME_COLORS.primary,
         textOpacity: 1,
         backgroundColor: null,
         backgroundOpacity: 1,
       },
       description: {
         value: "Behind-the-scenes access unavailable to general visitors.",
-        textColor: "#565e69",
+        textColor: THEME_COLORS.muted,
         textOpacity: 1,
         backgroundColor: null,
         backgroundOpacity: 1,
@@ -288,14 +289,14 @@ export const emptyMiraTouch = {
     {
       title: {
         value: "Local Master Guide",
-        textColor: "#182d09",
+        textColor: THEME_COLORS.primary,
         textOpacity: 1,
         backgroundColor: null,
         backgroundOpacity: 1,
       },
       description: {
         value: "Accompanied by dedicated specialists and respected local storytellers.",
-        textColor: "#565e69",
+        textColor: THEME_COLORS.muted,
         textOpacity: 1,
         backgroundColor: null,
         backgroundOpacity: 1,
@@ -316,14 +317,14 @@ export const emptyMiraTouch = {
 export const emptyEnquiryCta = {
   title: {
     value: "Include This Experience in Your Journey",
-    textColor: "#FFFFFF",
+    textColor: THEME_COLORS.white,
     textOpacity: 1,
     backgroundColor: null,
     backgroundOpacity: 1,
   },
   subtitle: {
     value: "Our travel architects will seamlessly integrate this into your bespoke itinerary.",
-    textColor: "#E5E7EB",
+    textColor: THEME_COLORS.mediaPlaceholder,
     textOpacity: 1,
     backgroundColor: null,
     backgroundOpacity: 1,
@@ -333,7 +334,7 @@ export const emptyEnquiryCta = {
   secondaryButtonText: "Enquire About This Experience",
   note: {
     value: "Available exclusively for MIRA bespoke journeys.",
-    textColor: "#9CA3AF",
+    textColor: THEME_COLORS.lightMuted,
     textOpacity: 1,
     backgroundColor: null,
     backgroundOpacity: 1,
@@ -343,7 +344,7 @@ export const emptyEnquiryCta = {
     show: "color" as const,
     color: {
       ...emptyCanonicalMultimedia.color,
-      color: "#182d09",
+      color: THEME_COLORS.primary,
     },
   },
 }
@@ -351,28 +352,28 @@ export const emptyEnquiryCta = {
 export const emptyEssence = {
   label: {
     value: "EXPERIENCE ESSENCE",
-    textColor: "#af6348",
+    textColor: THEME_COLORS.accent,
     textOpacity: 1,
     backgroundColor: null,
     backgroundOpacity: 1,
   },
   title: {
     value: "",
-    textColor: "#182d09",
+    textColor: THEME_COLORS.primary,
     textOpacity: 1,
     backgroundColor: null,
     backgroundOpacity: 1,
   },
   paragraphs: {
     value: "",
-    textColor: "#565e69",
+    textColor: THEME_COLORS.muted,
     textOpacity: 1,
     backgroundColor: null,
     backgroundOpacity: 1,
   },
   quote: {
     value: "",
-    textColor: "#1A1209",
+    textColor: THEME_COLORS.quote,
     textOpacity: 1,
     backgroundColor: null,
     backgroundOpacity: 1,
@@ -380,19 +381,19 @@ export const emptyEssence = {
   stat: {
     statValue: {
       value: "",
-      textColor: "#ffffff",
+      textColor: THEME_COLORS.white,
       textOpacity: 1,
       backgroundColor: null,
       backgroundOpacity: 1,
     },
     statLabel: {
       value: "",
-      textColor: "#ffffff",
+      textColor: THEME_COLORS.white,
       textOpacity: 0.75,
       backgroundColor: null,
       backgroundOpacity: 1,
     },
-    statBadgeBg: "#E5A84B",
+    statBadgeBg: THEME_COLORS.accentMuted,
   },
   imageMultimedia: {
     ...emptyCanonicalMultimedia,
@@ -405,7 +406,7 @@ export const emptyEssence = {
     },
     color: {
       ...emptyCanonicalMultimedia.color,
-      color: "#EDE7D8",
+      color: THEME_COLORS.bgSubdued,
     },
   },
   backgroundMultimedia: {
@@ -413,7 +414,7 @@ export const emptyEssence = {
     show: "color" as const,
     color: {
       ...emptyCanonicalMultimedia.color,
-      color: "#FFF8F2",
+      color: THEME_COLORS.bgIvory,
     },
   },
 }
@@ -421,7 +422,7 @@ export const emptyEssence = {
 export const emptyFaq = {
   title: {
     value: "Frequently Asked Questions",
-    textColor: "#182d09",
+    textColor: THEME_COLORS.primary,
     textOpacity: 1,
     backgroundColor: null,
     backgroundOpacity: 1,
@@ -431,7 +432,7 @@ export const emptyFaq = {
     show: "image" as const,
     color: {
       ...emptyCanonicalMultimedia.color,
-      color: "#EDE7D8",
+      color: THEME_COLORS.bgSubdued,
     },
   },
   backgroundMultimedia: {
@@ -439,7 +440,7 @@ export const emptyFaq = {
     show: "color" as const,
     color: {
       ...emptyCanonicalMultimedia.color,
-      color: "#F8F5EE",
+      color: THEME_COLORS.bgSand,
     },
   },
   items: [],

@@ -258,7 +258,7 @@ export default function MapLibrePreview({
             onChange={(e) => handleSearchChange(e.target.value)}
             onFocus={() => searchResults.length > 0 && setShowDropdown(true)}
             placeholder="Search location (e.g. Bangladesh, Tirana)..."
-            className="w-full rounded-md border border-border/80 bg-white/95 px-3 py-1.5 pl-8 pr-7 text-xs text-foreground placeholder:text-muted-foreground/60 shadow-md backdrop-blur-md focus:outline-none focus:ring-1 focus:ring-primary"
+            className="w-full rounded-md border border-border/80 bg-card/95 px-3 py-1.5 pl-8 pr-7 text-xs text-foreground placeholder:text-muted-foreground/60 shadow-md backdrop-blur-md focus:outline-none focus:ring-1 focus:ring-primary"
           />
           <Search className="absolute left-2.5 h-3.5 w-3.5 text-muted-foreground pointer-events-none" />
           {isSearching ? (
@@ -280,7 +280,7 @@ export default function MapLibrePreview({
 
         {/* Dropdown Results */}
         {showDropdown && searchResults.length > 0 && (
-          <div className="absolute left-0 top-full mt-1 w-full max-h-44 overflow-y-auto rounded-md border border-border/80 bg-white/95 shadow-lg backdrop-blur-md z-40 py-1">
+          <div className="absolute left-0 top-full mt-1 w-full max-h-44 overflow-y-auto rounded-md border border-border/80 bg-card/95 shadow-lg backdrop-blur-md z-40 py-1">
             {searchResults.map((place, idx) => (
               <button
                 key={place.place_id || idx}
@@ -303,7 +303,7 @@ export default function MapLibrePreview({
           type="button"
           aria-label="Zoom in"
           onClick={handleZoomIn}
-          className="rounded-md bg-white/90 p-2 text-black shadow"
+          className="rounded-md border border-border/80 bg-card/95 hover:bg-card p-2 text-foreground shadow transition-colors"
         >
           +
         </button>
@@ -312,7 +312,7 @@ export default function MapLibrePreview({
           type="button"
           aria-label="Zoom out"
           onClick={handleZoomOut}
-          className="rounded-md bg-white/90 p-2 text-black shadow"
+          className="rounded-md border border-border/80 bg-card/95 hover:bg-card p-2 text-foreground shadow transition-colors"
         >
           −
         </button>
@@ -321,12 +321,12 @@ export default function MapLibrePreview({
           type="button"
           aria-label="Locate"
           onClick={handleLocate}
-          className="rounded-md bg-white/90 p-2 text-black shadow"
+          className="rounded-md border border-border/80 bg-card/95 hover:bg-card p-2 text-foreground shadow transition-colors"
         >
           ⌖
         </button>
       </div>
-      <div className="absolute bottom-3 left-3 z-20 rounded-md bg-white/90 p-2 text-xs text-black shadow">
+      <div className="absolute bottom-3 left-3 z-20 rounded-md border border-border/80 bg-card/95 p-2 text-xs text-foreground shadow">
         <div>Lat: {coords.lat.toFixed(5)}</div>
         <div>Lng: {coords.lng.toFixed(5)}</div>
         <div>Zoom: {coords.zoom.toFixed(2)}</div>

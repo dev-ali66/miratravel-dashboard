@@ -8,12 +8,12 @@ function DefaultContactIcon({ item, index }: { item: any; index: number }) {
   const upperLabel = String(labelText).toUpperCase()
 
   if (upperLabel.includes("WHATSAPP") || index === 1) {
-    return <MessageSquare className="h-5 w-5 md:h-6 md:w-6 text-[#6B7280]" />
+    return <MessageSquare className="h-5 w-5 md:h-6 md:w-6 text-placeholder" />
   }
   if (upperLabel.includes("RESPONSE") || upperLabel.includes("TIME") || index === 2) {
-    return <Clock className="h-5 w-5 md:h-6 md:w-6 text-[#6B7280]" />
+    return <Clock className="h-5 w-5 md:h-6 md:w-6 text-placeholder" />
   }
-  return <Mail className="h-5 w-5 md:h-6 md:w-6 text-[#6B7280]" />
+  return <Mail className="h-5 w-5 md:h-6 md:w-6 text-placeholder" />
 }
 
 export function ContactInfoPreview({ section }: { section?: any }) {
@@ -25,7 +25,7 @@ export function ContactInfoPreview({ section }: { section?: any }) {
   return (
     <section
       data-section="contact-info"
-      className="relative w-full bg-[#FAF7F2] min-h-[220px] md:h-[260px] flex items-center justify-center py-10 md:py-0 overflow-hidden"
+      className="relative w-full bg-surface-sand min-h-[220px] md:h-[260px] flex items-center justify-center py-10 md:py-0 overflow-hidden"
     >
       <UniversalMultimediaPreview
         multimedia={backgroundMultimedia}
@@ -43,14 +43,14 @@ export function ContactInfoPreview({ section }: { section?: any }) {
                 key={idx}
                 className={`flex flex-col items-center justify-center w-full text-center py-4 ${
                   idx === 0
-                    ? "md:pr-8 md:border-r md:border-[#E5A84B]/60"
+                    ? "md:pr-8 md:border-r md:border-accent-muted/60"
                     : idx === 1
-                    ? "md:px-8 md:border-r md:border-[#E5A84B]/60"
+                    ? "md:px-8 md:border-r md:border-accent-muted/60"
                     : "md:pl-8"
                 }`}
               >
                 {/* Icon */}
-                <div className="flex items-center justify-center mb-3 text-[#6B7280]">
+                <div className="flex items-center justify-center mb-3 text-placeholder">
                   {hasMediaUrl ? (
                     <div className="h-6 w-6 relative overflow-hidden flex items-center justify-center">
                       <UniversalMultimediaPreview
@@ -64,12 +64,12 @@ export function ContactInfoPreview({ section }: { section?: any }) {
                 </div>
 
                 {/* Label */}
-                <h3 className="text-xs md:text-[13px] xl:text-sm font-medium uppercase tracking-[1.2px] xl:tracking-[1.5px] leading-tight text-[#6B7280] mb-2">
+                <h3 className="text-xs md:text-[13px] xl:text-sm font-medium uppercase tracking-[1.2px] xl:tracking-[1.5px] leading-tight text-placeholder mb-2">
                   <DynamicStyledTextPreview as="span" data={item.label} />
                 </h3>
 
                 {/* Subtitle */}
-                <p className="text-sm md:text-[15px] xl:text-base font-normal leading-[22px] md:leading-[24px] tracking-[0.3px] text-[#182D09]">
+                <p className="text-sm md:text-[15px] xl:text-base font-normal leading-[22px] md:leading-[24px] tracking-[0.3px] text-brand-primary">
                   <DynamicStyledTextPreview as="span" data={item.subtitle} />
                 </p>
               </div>

@@ -1,3 +1,4 @@
+import { THEME_COLORS } from "@/config/theme"
 import { DynamicStyledField } from "@/components/pages/CMS/shared/FormControls"
 import { UniversalMultimediaForm } from "@/components/pages/CMS/shared/UniversalMultimediaForm"
 import { FormSection } from "../../shared/fields"
@@ -48,7 +49,7 @@ export function PlaceInfoForm({
           title="Section Background Styling & Multimedia"
           value={infoData.backgroundMultimedia}
           onChange={(val: any) => updateField("infoCard.backgroundMultimedia", val)}
-          defaultColor="#182d09"
+          defaultColor={THEME_COLORS.primary}
         />
       </div>
     </FormSection>

@@ -1,15 +1,16 @@
+import { THEME_COLORS } from "@/config/theme"
 export const emptyParagraphBlock = {
   type: "paragraph" as const,
   title: {
     value: "",
-    textColor: "#171717",
+    textColor: THEME_COLORS.bgHeroDark,
     textOpacity: 1,
     backgroundColor: null,
     backgroundOpacity: 1,
   },
   content: {
     value: "",
-    textColor: "#4A4A4A",
+    textColor: THEME_COLORS.body,
     textOpacity: 1,
     backgroundColor: null,
     backgroundOpacity: 1,

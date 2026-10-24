@@ -18,14 +18,14 @@ export function ProcessPreview({ section }: { section?: any }) {
   return (
     <div
       data-section="process"
-      className="relative w-full overflow-hidden py-16 px-6 md:px-12 bg-[#F5F5F5]"
+      className="relative w-full overflow-hidden py-16 px-6 md:px-12 bg-background text-foreground"
     >
       <UniversalMultimediaPreview
         multimedia={backgroundMultimedia}
         mode="background"
       />
       <div className="relative z-10 mx-auto max-w-6xl space-y-12">
-        <h2 className="text-center font-serif text-2xl font-medium tracking-widest text-emerald-950 uppercase md:text-3xl">
+        <h2 className="text-center font-serif text-2xl font-medium tracking-widest text-foreground uppercase md:text-3xl">
           <DynamicStyledTextPreview as="span" data={process.title} />
         </h2>
 
@@ -34,16 +34,16 @@ export function ProcessPreview({ section }: { section?: any }) {
             const stepBadge = String(idx + 1).padStart(2, "0")
             return (
               <div key={idx} className="flex flex-col gap-3">
-                <span className="text-xs font-semibold uppercase tracking-widest text-amber-600">
+                <span className="text-xs font-semibold uppercase tracking-widest text-accent font-mono">
                   {stepBadge}
                 </span>
-                <h3 className="font-serif text-xl font-semibold text-neutral-900 tracking-wide">
+                <h3 className="font-serif text-xl font-semibold text-foreground tracking-wide">
                   <DynamicStyledTextPreview as="span" data={item.title} />
                 </h3>
-                <div className="h-[2px] w-8 bg-emerald-800" />
+                <div className="h-[2px] w-8 bg-brand-primary" />
                 <DynamicStyledTextPreview
                   as="p"
-                  className="text-sm leading-relaxed text-neutral-600"
+                  className="text-sm leading-relaxed text-muted-foreground"
                   data={item.description}
                 />
               </div>

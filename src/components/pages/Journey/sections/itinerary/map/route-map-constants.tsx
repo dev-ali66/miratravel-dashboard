@@ -173,27 +173,29 @@ export function ChevronDownIcon({ className }: { className?: string }) {
 }
 
 /* -------------------------------------------------------------------------- */
-/*  MIRA Design System Palette Constants (Strictly Cosmetic Visual System)   */
+/*  MIRA Design System Palette Constants (Derived from Global THEME_COLORS)   */
 /* -------------------------------------------------------------------------- */
+import { THEME_COLORS } from "@/config/theme";
+
 export const MIRA_COLORS = {
-    primary: '#182D09',           // --color-primary (Signature Deep Forest Green)
-    secondary: '#235347',         // --color-secondary (Deep Pine Teal)
-    secondaryMuted: '#2B3424',    // --color-secondary-muted (Balkan Typography & Topography)
-    accent: '#af6348',            // --color-accent
-    accentLight: '#b85c38',       // --color-accent-light
-    accentMuted: '#B86B3A',       // --color-accent-muted
-    seaCanvas: '#FFF8F2',         // --color-surface-light (Luminous Editorial Ivory Sea)
-    landFill: '#F1EEE5',          // --color-secondary-background (Warm Balkan Landmass)
-    coastStroke: '#D8CBB8',       // --color-border-light (Refined Naturalistic Coastline)
-    gridLine: '#D8CBB8',          // --color-border-light (Subtle Coordinate Grid)
-    gridText: '#8A8070',          // --color-extra-light (Cartographic Longitude/Latitude)
-    labelSea: '#8A8070',          // --color-extra-light (Marine Region Italic Labels)
-    labelLand: '#2B3424',         // --color-secondary-muted (Terrestrial Regional Serif Typography)
-    leaderLine: '#B09C80',        // --color-border-accent-muted (Offset Leader Line Ticks)
-    pillBg: '#FFF8F2',            // --color-surface-light (Collision-Free Stop Pill Base)
-    pillBorder: '#D8CBB8',        // --color-border-light
-    pillBorderActive: '#af6348',  // --color-accent (Active Highlight Border)
-    white: '#FFFFFF',             // --color-neutral-100
+    primary: THEME_COLORS.primary,
+    secondary: THEME_COLORS.secondary,
+    secondaryMuted: THEME_COLORS.secondaryMuted,
+    accent: THEME_COLORS.accent,
+    accentLight: THEME_COLORS.accentLight,
+    accentMuted: THEME_COLORS.accentWarm,
+    seaCanvas: THEME_COLORS.bgIvory,
+    landFill: THEME_COLORS.landFill,
+    coastStroke: THEME_COLORS.borderLight,
+    gridLine: THEME_COLORS.borderLight,
+    gridText: THEME_COLORS.extraLight,
+    labelSea: THEME_COLORS.extraLight,
+    labelLand: THEME_COLORS.secondaryMuted,
+    leaderLine: THEME_COLORS.leaderLine,
+    pillBg: THEME_COLORS.bgIvory,
+    pillBorder: THEME_COLORS.borderLight,
+    pillBorderActive: THEME_COLORS.accent,
+    white: THEME_COLORS.white,
 } as const;
 
 /* -------------------------------------------------------------------------- */

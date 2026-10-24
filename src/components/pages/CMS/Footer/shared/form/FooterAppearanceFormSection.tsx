@@ -1,3 +1,4 @@
+import { THEME_COLORS } from "@/config/theme"
 import { ColorField } from "../../../shared/FormControls"
 import { UniversalMultimediaForm } from "../../../shared/UniversalMultimediaForm"
 import type { FooterFormSectionProps } from "./sectionTypes"
@@ -18,25 +19,25 @@ export const FooterAppearanceFormSection = ({
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         <ColorField
           label="Text Color"
-          value={theme.textColor ?? "#FFFFFF"}
+          value={theme.textColor ?? THEME_COLORS.white}
           onChange={(value) => updateTheme({ textColor: value })}
         />
 
         <ColorField
           label="Heading Color"
-          value={theme.headingColor ?? "#FFFFFF"}
+          value={theme.headingColor ?? THEME_COLORS.white}
           onChange={(value) => updateTheme({ headingColor: value })}
         />
 
         <ColorField
           label="Muted Text Color"
-          value={theme.mutedTextColor ?? "#D8DED5"}
+          value={theme.mutedTextColor ?? THEME_COLORS.borderLight}
           onChange={(value) => updateTheme({ mutedTextColor: value })}
         />
 
         <ColorField
           label="Accent Color"
-          value={theme.accentColor ?? "#C97B4A"}
+          value={theme.accentColor ?? THEME_COLORS.accentWarm}
           onChange={(value) => updateTheme({ accentColor: value })}
         />
 

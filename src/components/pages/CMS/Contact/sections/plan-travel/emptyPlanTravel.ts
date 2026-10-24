@@ -1,21 +1,22 @@
+import { THEME_COLORS } from "@/config/theme"
 export const emptyPlanTravel = {
   label: {
     value: "A PERSONAL APPROACH",
-    textColor: "#E5A84B",
+    textColor: THEME_COLORS.accentMuted,
     textOpacity: 1,
     backgroundColor: null,
     backgroundOpacity: 1,
   },
   title: {
     value: "A more thoughtful way to plan travel.",
-    textColor: "#182D09",
+    textColor: THEME_COLORS.primary,
     textOpacity: 1,
     backgroundColor: null,
     backgroundOpacity: 1,
   },
   description: {
     value: "We believe every traveler moves differently.\n\nThat is why every journey begins with conversation, not templates.\n\nOur team works closely with each traveler to design experiences that feel balanced, personal, and deeply connected to the region.",
-    textColor: "#4B5563",
+    textColor: THEME_COLORS.sub,
     textOpacity: 1,
     backgroundColor: null,
     backgroundOpacity: 1,
@@ -23,7 +24,7 @@ export const emptyPlanTravel = {
   leftSideMultimedia: {
     show: "image",
     color: {
-      color: "#E5E7EB",
+      color: THEME_COLORS.mediaPlaceholder,
       opacity: 100,
       width: "100%",
       height: "100%",
@@ -33,7 +34,7 @@ export const emptyPlanTravel = {
       url: "",
       alt: "A more thoughtful way to plan travel",
       opacity: 100,
-      overlayColor: "#000000",
+      overlayColor: THEME_COLORS.overlayBlack,
       overlayOpacity: 0,
       width: "100%",
       height: "auto",
@@ -44,7 +45,7 @@ export const emptyPlanTravel = {
       url: "",
       alt: null,
       opacity: 100,
-      overlayColor: "#000000",
+      overlayColor: THEME_COLORS.overlayBlack,
       overlayOpacity: 0,
       autoplay: true,
       loop: true,
@@ -58,7 +59,7 @@ export const emptyPlanTravel = {
   backgroundMultimedia: {
     show: "color",
     color: {
-      color: "#FAF6F0",
+      color: THEME_COLORS.bgBeige,
       opacity: 100,
       width: "100%",
       height: "100%",
@@ -68,7 +69,7 @@ export const emptyPlanTravel = {
       url: "",
       alt: "Plan travel background image",
       opacity: 100,
-      overlayColor: "#000000",
+      overlayColor: THEME_COLORS.overlayBlack,
       overlayOpacity: 45,
       width: "100%",
       height: "auto",
@@ -79,7 +80,7 @@ export const emptyPlanTravel = {
       url: "",
       alt: "Plan travel background video",
       opacity: 100,
-      overlayColor: "#000000",
+      overlayColor: THEME_COLORS.overlayBlack,
       overlayOpacity: 45,
       autoplay: true,
       loop: true,

@@ -13,11 +13,11 @@ export function PracticalNotesPreview({ story }: { story: StoryData }) {
   if (!hasContent) return null
 
   return (
-    <section className="w-full xl:pb-[84px] lgx:pb-[74px] md:pb-[60px] pb-10 bg-white">
+    <section className="w-full xl:pb-[84px] lgx:pb-[74px] md:pb-[60px] pb-10 bg-background">
       <div className="container mx-auto px-4 md:px-6 lg:px-8 max-w-[1360px]">
-        <div className="mx-auto w-full max-w-[700px] border-l-[3px] border-[#B3884D] bg-[#F7F7F7] p-6 md:p-9 lgx:p-10 lg:p-11 shadow-sm">
+        <div className="mx-auto w-full max-w-[700px] border-l-[3px] border-gold bg-card text-card-foreground border border-border/60 p-6 md:p-9 lgx:p-10 lg:p-11 shadow-sm rounded-r-lg">
           {subtitle?.value && (
-            <div className="text-[11px] md:text-[12px] xl:text-[13px] font-bold uppercase tracking-[1px] text-[#B3884D] mb-1">
+            <div className="text-[11px] md:text-[12px] xl:text-[13px] font-bold uppercase tracking-[1px] text-gold mb-1">
               <DynamicStyledTextPreview data={subtitle} />
             </div>
           )}
@@ -26,7 +26,7 @@ export function PracticalNotesPreview({ story }: { story: StoryData }) {
             <DynamicStyledTextPreview
               as="h3"
               data={title}
-              className="font-serif text-[18px] md:text-xl lgx:text-[22px] xl:text-[24px] font-medium text-stone-900 tracking-[0.6px] md:tracking-[0.8px]"
+              className="font-serif text-[18px] md:text-xl lgx:text-[22px] xl:text-[24px] font-medium text-foreground tracking-[0.6px] md:tracking-[0.8px]"
             />
           )}
 
@@ -34,7 +34,7 @@ export function PracticalNotesPreview({ story }: { story: StoryData }) {
             <div className="mt-5 md:mt-6 lgx:mt-7 xl:mt-8 grid grid-cols-1 md:grid-cols-2 gap-5 md:gap-7">
               {items.map((item: any, idx: number) => (
                 <div key={idx} className="flex flex-col items-start gap-1 md:gap-1.5">
-                  <span className="text-[11px] md:text-[12px] xl:text-[13px] font-bold uppercase tracking-[0.8px] md:tracking-[1.2px] text-[#B3884D]">
+                  <span className="text-[11px] md:text-[12px] xl:text-[13px] font-bold uppercase tracking-[0.8px] md:tracking-[1.2px] text-gold">
                     {typeof item.category === "string" ? item.category : item.category?.value || "LOGISTICS"}
                   </span>
 
@@ -42,12 +42,12 @@ export function PracticalNotesPreview({ story }: { story: StoryData }) {
                     <DynamicStyledTextPreview
                       as="span"
                       data={item.title}
-                      className="text-sm md:text-[15px] font-semibold text-stone-900"
+                      className="text-sm md:text-[15px] font-semibold text-foreground"
                     />
                   )}
 
                   {item.description?.value && (
-                    <div className="text-sm md:text-[15px] xl:text-base font-normal text-stone-600 leading-[20px] md:leading-[22px] xl:leading-[26px] tracking-[0.2px]">
+                    <div className="text-sm md:text-[15px] xl:text-base font-normal text-muted-foreground leading-[20px] md:leading-[22px] xl:leading-[26px] tracking-[0.2px]">
                       <DynamicStyledTextPreview data={item.description} />
                     </div>
                   )}

@@ -1,3 +1,4 @@
+import { THEME_COLORS } from "@/config/theme"
 import { UniversalMultimediaPreview } from "@/components/pages/CMS/shared/UniversalMultimediaPreview"
 import { DynamicStyledTextPreview } from "@/components/pages/CMS/shared/DynamicStyledTextPreview"
 import { Globe } from "lucide-react"
@@ -62,7 +63,7 @@ export function PeoplePreview({ section }: PeoplePreviewProps) {
     : []
 
   return (
-    <section className="relative w-full overflow-hidden py-16 lg:py-24 bg-[#FAF7F2]">
+    <section className="relative w-full overflow-hidden py-16 lg:py-24 bg-surface-sand">
       {section.backgroundMultimedia && (
         <UniversalMultimediaPreview multimedia={section.backgroundMultimedia} mode="background" />
       )}
@@ -85,13 +86,13 @@ export function PeoplePreview({ section }: PeoplePreviewProps) {
                 {/* Hover overlay showing name, designation, and social links */}
                 <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/30 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 p-4 flex flex-col justify-end text-white">
                   <div className="font-serif font-medium text-sm sm:text-base leading-tight">
-                    <DynamicStyledTextPreview as="span" data={person.name} fallbackColor="#ffffff" />
+                    <DynamicStyledTextPreview as="span" data={person.name} fallbackColor={THEME_COLORS.white} />
                   </div>
-                  <div className="text-[11px] font-medium tracking-wider text-[#E5A84B] mt-0.5">
+                  <div className="text-[11px] font-medium tracking-wider text-accent-muted mt-0.5">
                     <DynamicStyledTextPreview
                       as="span"
                       data={person.designation || person.role}
-                      fallbackColor="#E5A84B"
+                      fallbackColor={THEME_COLORS.accentMuted}
                     />
                   </div>
 
@@ -120,13 +121,13 @@ export function PeoplePreview({ section }: PeoplePreviewProps) {
           <div className="absolute inset-0 flex flex-col justify-center items-center pointer-events-none z-10">
             <div className="pointer-events-auto flex flex-col justify-center items-center text-center max-w-[550px] xl:max-w-[665px] px-4">
               <span className="text-xs sm:text-sm font-semibold uppercase tracking-[2.64px] mb-3">
-                <DynamicStyledTextPreview as="span" data={section.eyebrow} fallbackColor="#B86B3A" />
+                <DynamicStyledTextPreview as="span" data={section.eyebrow} fallbackColor={THEME_COLORS.accentWarm} />
               </span>
               <h2 className="font-serif font-light text-3xl sm:text-4xl lg:text-5xl leading-tight tracking-tight mb-4">
-                <DynamicStyledTextPreview as="span" data={section.title} fallbackColor="#182D09" />
+                <DynamicStyledTextPreview as="span" data={section.title} fallbackColor={THEME_COLORS.primary} />
               </h2>
-              <div className="text-sm sm:text-base leading-relaxed text-[#4B5563] whitespace-pre-line">
-                <DynamicStyledTextPreview as="div" data={section.description} fallbackColor="#4B5563" />
+              <div className="text-sm sm:text-base leading-relaxed text-sub whitespace-pre-line">
+                <DynamicStyledTextPreview as="div" data={section.description} fallbackColor={THEME_COLORS.sub} />
               </div>
             </div>
           </div>
@@ -136,13 +137,13 @@ export function PeoplePreview({ section }: PeoplePreviewProps) {
         <div className="flex flex-col items-center lg:hidden">
           <div className="flex flex-col items-center text-center max-w-[600px] mb-10">
             <span className="text-xs sm:text-sm font-semibold uppercase tracking-[2.64px] mb-2">
-              <DynamicStyledTextPreview as="span" data={section.eyebrow} fallbackColor="#B86B3A" />
+              <DynamicStyledTextPreview as="span" data={section.eyebrow} fallbackColor={THEME_COLORS.accentWarm} />
             </span>
             <h2 className="font-serif font-light text-3xl sm:text-4xl leading-tight mb-3">
-              <DynamicStyledTextPreview as="span" data={section.title} fallbackColor="#182D09" />
+              <DynamicStyledTextPreview as="span" data={section.title} fallbackColor={THEME_COLORS.primary} />
             </h2>
-            <div className="text-sm sm:text-base leading-relaxed text-[#4B5563] whitespace-pre-line">
-              <DynamicStyledTextPreview as="div" data={section.description} fallbackColor="#4B5563" />
+            <div className="text-sm sm:text-base leading-relaxed text-sub whitespace-pre-line">
+              <DynamicStyledTextPreview as="div" data={section.description} fallbackColor={THEME_COLORS.sub} />
             </div>
           </div>
 
@@ -152,20 +153,20 @@ export function PeoplePreview({ section }: PeoplePreviewProps) {
               return (
                 <div
                   key={idx}
-                  className="bg-white/80 rounded-xl p-4 border border-black/5 shadow-sm flex flex-col space-y-3"
+                  className="bg-card text-card-foreground rounded-xl p-4 border border-border/70 shadow-sm flex flex-col space-y-3"
                 >
                   <div className="relative aspect-square w-full rounded-lg overflow-hidden bg-muted">
                     <UniversalMultimediaPreview multimedia={person.multimedia} />
                   </div>
                   <div>
-                    <h3 className="text-base font-serif font-medium text-[#182D09]">
-                      <DynamicStyledTextPreview as="span" data={person.name} fallbackColor="#182D09" />
+                    <h3 className="text-base font-serif font-medium text-brand-primary">
+                      <DynamicStyledTextPreview as="span" data={person.name} fallbackColor={THEME_COLORS.primary} />
                     </h3>
-                    <p className="text-xs font-semibold uppercase tracking-wider text-[#B86B3A] mt-0.5">
+                    <p className="text-xs font-semibold uppercase tracking-wider text-accent-warm mt-0.5">
                       <DynamicStyledTextPreview
                         as="span"
                         data={person.designation || person.role}
-                        fallbackColor="#B86B3A"
+                        fallbackColor={THEME_COLORS.accentWarm}
                       />
                     </p>
                   </div>

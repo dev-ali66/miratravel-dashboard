@@ -1,3 +1,4 @@
+import { THEME_COLORS } from "@/config/theme"
 import type { JourneyCmsPreviewSectionProps } from "../../journeyCmsTypes"
 import { DynamicStyledTextPreview } from "@/components/pages/CMS/shared/DynamicStyledTextPreview"
 import { UniversalMultimediaPreview } from "@/components/pages/CMS/shared/UniversalMultimediaPreview"
@@ -17,7 +18,7 @@ export function JourneyCmsHeroPreview({ draft }: JourneyCmsPreviewSectionProps) 
       {/* Background Media (Video / Image / Color) */}
       <UniversalMultimediaPreview
         multimedia={hero.backgroundMultimedia}
-        fallbackColor="#182D09"
+        fallbackColor={THEME_COLORS.primary}
         mode="background"
       />
 
@@ -41,7 +42,7 @@ export function JourneyCmsHeroPreview({ draft }: JourneyCmsPreviewSectionProps) 
             <DynamicStyledTextPreview
               as="nav"
               data={hero.breadcrumb}
-              fallbackColor="#E5E7EB"
+              fallbackColor={THEME_COLORS.mediaPlaceholder}
               className="inline-flex items-center flex-wrap text-[18px] md:text-[20px] lg:text-[21px] lgx:text-[22px] xlg:text-[23px] mid:text-[23.5px] xl:text-[24px] leading-6 md:leading-[27px] lg:leading-[28px] tracking-[1.05px] md:tracking-[1.17px] uppercase text-neutral-200 xl:mb-3 mb-2 md:mb-2.5 font-medium"
             />
           )}
@@ -50,7 +51,7 @@ export function JourneyCmsHeroPreview({ draft }: JourneyCmsPreviewSectionProps) 
           <DynamicStyledTextPreview
             as="h1"
             data={hero.title}
-            fallbackColor="#FFFFFF"
+            fallbackColor={THEME_COLORS.white}
             className="font-heading font-semibold capitalize text-[36px] md:text-[52px] xlg:text-[56px] xl:text-[60px] xl:leading-[68px] md:leading-[64px] leading-12 tracking-[0.905px] text-neutral-100 xl:mb-4 mb-3"
           />
 
@@ -59,7 +60,7 @@ export function JourneyCmsHeroPreview({ draft }: JourneyCmsPreviewSectionProps) 
             <DynamicStyledTextPreview
               as="h2"
               data={hero.subtitle}
-              fallbackColor="#E5E7EB"
+              fallbackColor={THEME_COLORS.mediaPlaceholder}
               className="text-[15px] md:text-[16px] xlg:text-[17px] xl:text-[18px] xl:leading-7 md:leading-[22px] text-neutral-100 font-normal xl:mb-3 mb-2"
             />
           )}
@@ -69,7 +70,7 @@ export function JourneyCmsHeroPreview({ draft }: JourneyCmsPreviewSectionProps) 
             <DynamicStyledTextPreview
               as="div"
               data={hero.description}
-              fallbackColor="#E5E7EB"
+              fallbackColor={THEME_COLORS.mediaPlaceholder}
               className="xl:text-[20px] mid:text-[20px] lgx:text-[19px] md:text-[17px] text-base font-normal xl:leading-7 lgx:leading-6 md:leading-[22px] tracking-[0.94px] text-neutral-100 xl:mb-8 md:mb-6 mb-5"
             />
           )}

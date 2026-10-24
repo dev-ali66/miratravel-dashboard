@@ -32,7 +32,7 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
-import Pagination from "./Pagination"
+import { Pagination } from "@/components/shared/Pagination"
 import { useGetUsers, type UserItem } from "@/hooks/users/useGetUsers"
 import { useEditUser } from "@/hooks/users/useEditUser"
 import UserStatsCards from "./UserStatsCards"
@@ -68,8 +68,7 @@ export default function UserListTable() {
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false)
   const [selectedUserForEdit, setSelectedUserForEdit] = useState<UserItem | null>(null)
   const [selectedUserForDelete, setSelectedUserForDelete] = useState<UserItem | null>(null)
-
-  const limit = 10
+  const [limit, setLimit] = useState(10)
 
   const { data, isLoading } = useGetUsers(currentPage, limit, {
     search: search || undefined,
@@ -426,13 +425,20 @@ export default function UserListTable() {
           </table>
         </div>
 
-        {/* Pagination */}
-        {totalPages > 1 && (
-          <div className="border-t border-border/60 bg-muted/20 px-5 py-3">
+        {/* Universal Pagination */}
+        {(data?.meta?.total ?? 0) > 0 && (
+          <div className="border-t border-border/60 bg-muted/10 px-5 py-3">
             <Pagination
               currentPage={currentPage}
               totalPages={totalPages}
+              totalItems={data?.meta?.total}
+              pageSize={limit}
+              pageSizeOptions={[10, 20, 50, 100]}
               onPageChange={(page) => setCurrentPage(page)}
+              onPageSizeChange={(sz) => {
+                setLimit(sz)
+                setCurrentPage(1)
+              }}
             />
           </div>
         )}

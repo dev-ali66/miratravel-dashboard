@@ -1,3 +1,4 @@
+import { THEME_COLORS } from "@/config/theme"
 import {
   normalizeMultimedia,
   normalizeStyledField,
@@ -14,22 +15,22 @@ export function normalizeHero(hero: any) {
     title: normalizeStyledField(
       safeHero.title,
       emptyHero.title.value,
-      "#FFFFFF"
+      THEME_COLORS.white
     ),
     description: normalizeStyledField(
       safeHero.description,
       emptyHero.description.value,
-      "#FFFFFF"
+      THEME_COLORS.white
     ),
     breadcrumb: normalizeStyledField(
       safeHero.breadcrumb,
       emptyHero.breadcrumb.value,
-      "#E5A84B"
+      THEME_COLORS.accentMuted
     ),
     subtitle: normalizeStyledField(
       safeHero.subtitle,
       emptyHero.subtitle.value,
-      "#E5E7EB"
+      THEME_COLORS.mediaPlaceholder
     ),
     isCenter: Boolean(safeHero.isCenter),
     buttons: normalizeButtonsArray(safeHero.buttons ?? emptyHero.buttons),

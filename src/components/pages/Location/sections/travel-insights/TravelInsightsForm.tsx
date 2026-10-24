@@ -1,3 +1,4 @@
+import { THEME_COLORS } from "@/config/theme"
 import { useState } from "react"
 import {
   Plus,
@@ -29,14 +30,14 @@ export function TravelInsightsForm({
     (draft as any)?.data?.travel_insights || {
       label: {
         value: "TRAVEL INSIGHTS",
-        textColor: "#d29393",
+        textColor: THEME_COLORS.accentLight,
         textOpacity: 1,
         backgroundColor: null,
         backgroundOpacity: 1,
       },
       title: {
         value: "Everything you need to know before you go",
-        textColor: "#e5e5e5",
+        textColor: THEME_COLORS.lightText,
         textOpacity: 1,
         backgroundColor: null,
         backgroundOpacity: 1,
@@ -65,14 +66,14 @@ export function TravelInsightsForm({
     const newArticle: TravelInsightArticle = {
       category: {
         value: "Guide",
-        textColor: "#af6348",
+        textColor: THEME_COLORS.accent,
         textOpacity: 1,
         backgroundColor: null,
         backgroundOpacity: 1,
       },
       title: {
         value: "",
-        textColor: "#F3F4F6",
+        textColor: THEME_COLORS.lightText,
         textOpacity: 1,
         backgroundColor: null,
         backgroundOpacity: 1,
@@ -90,7 +91,7 @@ export function TravelInsightsForm({
           url: "",
           alt: "Article thumbnail",
           opacity: 100,
-          overlayColor: "#000000",
+          overlayColor: THEME_COLORS.overlayBlack,
           overlayOpacity: 0,
           width: "100%",
           height: "100%",

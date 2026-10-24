@@ -1,3 +1,4 @@
+import { THEME_COLORS } from "@/config/theme"
 import type { JourneyCmsPreviewSectionProps } from "../../journeyCmsTypes"
 import { DynamicStyledTextPreview } from "@/components/pages/CMS/shared/DynamicStyledTextPreview"
 import { UniversalMultimediaPreview } from "@/components/pages/CMS/shared/UniversalMultimediaPreview"
@@ -85,7 +86,7 @@ export function JourneyCmsSignatureJourneysPreview({ draft }: JourneyCmsPreviewS
       {/* Background Media */}
       <UniversalMultimediaPreview
         multimedia={sigData.backgroundMultimedia}
-        fallbackColor="#FAF7F2"
+        fallbackColor={THEME_COLORS.bgSand}
         mode="background"
       />
 
@@ -97,24 +98,24 @@ export function JourneyCmsSignatureJourneysPreview({ draft }: JourneyCmsPreviewS
               <DynamicStyledTextPreview
                 as="span"
                 data={sigData.eyebrow}
-                fallbackColor="#AF6348"
-                className="text-xs font-semibold uppercase tracking-widest text-[#AF6348]"
+                fallbackColor={THEME_COLORS.accent}
+                className="text-xs font-semibold uppercase tracking-widest text-accent"
               />
             )}
 
             <DynamicStyledTextPreview
               as="h2"
               data={sigData.title}
-              fallbackColor="#182D09"
-              className="font-heading font-semibold text-[28px] md:text-[36px] lgx:text-[40px] xl:text-[44px] leading-tight text-[#182D09]"
+              fallbackColor={THEME_COLORS.primary}
+              className="font-heading font-semibold text-[28px] md:text-[36px] lgx:text-[40px] xl:text-[44px] leading-tight text-brand-primary"
             />
 
             {sigData.subtitle && (
               <DynamicStyledTextPreview
                 as="p"
                 data={sigData.subtitle}
-                fallbackColor="#4B5563"
-                className="text-sm md:text-base text-[#4B5563] max-w-3xl"
+                fallbackColor={THEME_COLORS.sub}
+                className="text-sm md:text-base text-sub max-w-3xl"
               />
             )}
 
@@ -148,7 +149,7 @@ export function JourneyCmsSignatureJourneysPreview({ draft }: JourneyCmsPreviewS
 
               {/* Price Tag Pill Bottom Right */}
               <div className="absolute right-4 bottom-4 z-20">
-                <span className="text-white font-sans font-bold text-sm md:text-base tracking-wider px-4 py-1.5 bg-[#111827]/90 rounded-[2px]">
+                <span className="text-white font-sans font-bold text-sm md:text-base tracking-wider px-4 py-1.5 bg-zinc-900/90 rounded-[2px]">
                   From {mainItem.priceFrom}
                 </span>
               </div>
@@ -194,7 +195,7 @@ export function JourneyCmsSignatureJourneysPreview({ draft }: JourneyCmsPreviewS
 
                   {/* Price Tag Pill */}
                   <div className="absolute right-4 bottom-4 z-20">
-                    <span className="text-white font-sans font-bold text-xs md:text-sm tracking-wider px-3 py-1 bg-[#111827]/90 rounded-[2px]">
+                    <span className="text-white font-sans font-bold text-xs md:text-sm tracking-wider px-3 py-1 bg-zinc-900/90 rounded-[2px]">
                       From {item.priceFrom}
                     </span>
                   </div>

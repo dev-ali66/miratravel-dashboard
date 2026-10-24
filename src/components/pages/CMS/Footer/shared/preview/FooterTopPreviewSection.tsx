@@ -1,3 +1,4 @@
+import { THEME_COLORS } from "@/config/theme"
 import type { FooterPreviewSectionProps } from "./sectionTypes"
 import { UniversalMultimediaPreview } from "../../../Home/shared/preview/UniversalMultimediaPreview"
 import { getSafeString } from "../../../shared/FormControls"
@@ -110,7 +111,7 @@ export const FooterTopPreviewSection = ({
                 {socialLinks.map((link, index) => {
                   const itemSize = getSafeString(link.itemSize || theme.socialItemSize, "36px")
                   const bg = getSafeString(link.backgroundColor || theme.socialBackgroundColor, "rgba(255,255,255,0.08)")
-                  const color = getSafeString(link.textColor || theme.socialTextColor, "#FFFFFF")
+                  const color = getSafeString(link.textColor || theme.socialTextColor, THEME_COLORS.white)
                   const border = getSafeString(link.borderColor || theme.socialBorderColor)
                   const radius = getSafeString(link.borderRadius || theme.socialBorderRadius, "4px")
                   const url = getSafeString(link.url)

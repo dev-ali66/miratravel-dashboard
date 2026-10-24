@@ -5,6 +5,8 @@
    + an articles[] repeater), so it lives here once instead
    of being duplicated per section.
 ===================================================== */
+import { THEME_COLORS } from "@/config/theme"
+
 
 import { useState } from "react"
 import { ChevronDown, Plus, Trash2 } from "lucide-react"
@@ -161,7 +163,7 @@ export function GuideSection({
           sectionTitle="Background"
           showColorPicker
           colorLabel="Background color"
-          defaultColor={sectionKey === "local-guide" ? "#e9e7df" : "#1A2E2A"}
+          defaultColor={sectionKey === 'local-guide' ? THEME_COLORS.borderLight : THEME_COLORS.sidebarActive}
           imageTitle="Background Image"
           imageLabel="Background image"
           imageFieldName={`location${

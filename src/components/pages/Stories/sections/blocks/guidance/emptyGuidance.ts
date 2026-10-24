@@ -1,17 +1,18 @@
+import { THEME_COLORS } from "@/config/theme"
 import { createDefaultMultimedia } from "../shared/defaultMediaHelper"
 
 export const emptyGuidanceBlock = {
   type: "guidance",
   title: {
     value: "The Dalmatian Hinterland & Karst Canyons",
-    textColor: "#171717",
+    textColor: THEME_COLORS.bgHeroDark,
     textOpacity: 1,
     backgroundColor: null,
     backgroundOpacity: 1,
   },
   content: {
     value: "Rising sharply behind the Adriatic coast, the rugged karst plateau of the Dalmatian hinterland is a terrain of stark beauty. Sweeping limestone valleys, dramatic gorges, and fortified towns stand as sentinel outposts over centuries of Venetian-Ottoman frontier history.",
-    textColor: "#4A4A4A",
+    textColor: THEME_COLORS.body,
     textOpacity: 1,
     backgroundColor: null,
     backgroundOpacity: 1,
@@ -21,7 +22,7 @@ export const emptyGuidanceBlock = {
   items: [] as any[],
   experiencesTitle: {
     value: "ESSENTIAL EXPERIENCES",
-    textColor: "#B3884D",
+    textColor: THEME_COLORS.gold,
     textOpacity: 1,
     backgroundColor: null,
     backgroundOpacity: 1,
@@ -34,21 +35,21 @@ export const emptyGuidanceBlock = {
   ],
   knowledgeTitle: {
     value: "LOCAL KNOWLEDGE",
-    textColor: "#292524",
+    textColor: THEME_COLORS.quote,
     textOpacity: 1,
     backgroundColor: null,
     backgroundOpacity: 1,
   },
   knowledgeContent: {
     value: "Visit the canyon viewpoints during the late afternoon golden hour when the limestone cliffs turn warm terracotta and the water reflects the amber Balkan sky.",
-    textColor: "#57534E",
+    textColor: THEME_COLORS.sub,
     textOpacity: 1,
     backgroundColor: null,
     backgroundOpacity: 1,
   },
   routeInfo: {
     value: "Route: Easily accessed via the scenic coastal highway or inland mountain corridors connecting Zadar and Split.",
-    textColor: "#44403C",
+    textColor: THEME_COLORS.navText,
     textOpacity: 1,
     backgroundColor: null,
     backgroundOpacity: 1,

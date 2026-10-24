@@ -1,3 +1,4 @@
+import { THEME_COLORS } from "@/config/theme"
 import { useState } from "react"
 import { FormSection, DynamicStyledField } from "@/components/pages/CMS/shared/FormControls"
 import { UniversalMultimediaForm } from "@/components/pages/CMS/shared/UniversalMultimediaForm"
@@ -50,21 +51,21 @@ export function PeopleForm({
     const newPerson = {
       name: {
         value: "New Team Member",
-        textColor: "#182D09",
+        textColor: THEME_COLORS.primary,
         textOpacity: 1,
         backgroundColor: null,
         backgroundOpacity: 1,
       },
       designation: {
         value: "Travel Curator",
-        textColor: "#B86B3A",
+        textColor: THEME_COLORS.accentWarm,
         textOpacity: 1,
         backgroundColor: null,
         backgroundOpacity: 1,
       },
       multimedia: {
         show: "image",
-        color: { color: "#E5E7EB", opacity: 100 },
+        color: { color: THEME_COLORS.mediaPlaceholder, opacity: 100 },
         image: { url: "", alt: "Team member", opacity: 100, fit: "cover" },
       },
       social: [

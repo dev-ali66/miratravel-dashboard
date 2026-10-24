@@ -1,3 +1,4 @@
+import { THEME_COLORS } from "@/config/theme"
 import { normalizeMultimedia, normalizeStyledField } from "../../shared/normalizeHelpers"
 import { emptySharedInfo } from "./emptySharedInfo"
 
@@ -9,11 +10,11 @@ export function normalizeSharedInfo(input: any) {
     text: normalizeStyledField(
       safeInput.text ?? emptySharedInfo.text,
       "",
-      "#AF6348"
+      THEME_COLORS.accent
     ),
     backgroundMultimedia: normalizeMultimedia(
       safeInput.backgroundMultimedia || emptySharedInfo.backgroundMultimedia,
-      "#FAF6F0"
+      THEME_COLORS.bgBeige
     ),
   }
 

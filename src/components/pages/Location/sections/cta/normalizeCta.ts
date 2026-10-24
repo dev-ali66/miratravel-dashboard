@@ -1,3 +1,4 @@
+import { THEME_COLORS } from "@/config/theme"
 import { normalizeMultimedia, normalizeStyledField, normalizeButtonsArray } from "../../shared/normalizeHelpers"
 import { emptyCta } from "./emptyCta"
 
@@ -12,9 +13,9 @@ export function normalizeCta(ctaSection: any) {
 
   const normalizedCta = {
     ...safeCta,
-    label: normalizeStyledField(safeCta.label, "", "#af6348"),
-    title: normalizeStyledField(safeCta.title ?? emptyCta.title, "", "#182d09"),
-    description: normalizeStyledField(safeCta.description ?? emptyCta.description, "", "#565e69"),
+    label: normalizeStyledField(safeCta.label, "", THEME_COLORS.accent),
+    title: normalizeStyledField(safeCta.title ?? emptyCta.title, "", THEME_COLORS.primary),
+    description: normalizeStyledField(safeCta.description ?? emptyCta.description, "", THEME_COLORS.muted),
     buttons: normalizeButtonsArray(rawButtons),
     imageMultimedia: normalizeMultimedia(safeCta.imageMultimedia || emptyCta.imageMultimedia, "image"),
     backgroundMultimedia: normalizeMultimedia(safeCta.backgroundMultimedia || emptyCta.backgroundMultimedia, "color"),

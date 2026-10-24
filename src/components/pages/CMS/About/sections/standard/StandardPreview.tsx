@@ -1,3 +1,4 @@
+import { THEME_COLORS } from "@/config/theme"
 import { UniversalMultimediaPreview } from "@/components/pages/CMS/shared/UniversalMultimediaPreview"
 import { DynamicStyledTextPreview } from "@/components/pages/CMS/shared/DynamicStyledTextPreview"
 
@@ -11,7 +12,7 @@ export function StandardPreview({ section }: StandardPreviewProps) {
   const itemsList = Array.isArray(section.items) ? section.items : []
 
   return (
-    <section className="relative w-full overflow-hidden py-16 md:py-20 lg:py-24 bg-[#FAF7F2]">
+    <section className="relative w-full overflow-hidden py-16 md:py-20 lg:py-24 bg-surface-sand">
       {section.backgroundMultimedia && (
         <UniversalMultimediaPreview multimedia={section.backgroundMultimedia} mode="background" />
       )}
@@ -29,10 +30,10 @@ export function StandardPreview({ section }: StandardPreviewProps) {
           <div className="lg:col-span-6 flex flex-col items-start w-full">
             <div className="flex flex-col items-start mb-6 md:mb-8">
               <span className="text-xs sm:text-sm font-semibold uppercase tracking-[2.64px] mb-2">
-                <DynamicStyledTextPreview as="span" data={section.eyebrow} fallbackColor="#B86B3A" />
+                <DynamicStyledTextPreview as="span" data={section.eyebrow} fallbackColor={THEME_COLORS.accentWarm} />
               </span>
               <h2 className="font-serif font-light text-3xl sm:text-4xl lg:text-5xl leading-tight tracking-tight">
-                <DynamicStyledTextPreview as="span" data={section.title} fallbackColor="#182D09" />
+                <DynamicStyledTextPreview as="span" data={section.title} fallbackColor={THEME_COLORS.primary} />
               </h2>
             </div>
 
@@ -71,14 +72,14 @@ export function StandardPreview({ section }: StandardPreviewProps) {
                         >
                           <path
                             d="M14 25C20.0751 25 25 20.0751 25 14C25 7.92487 20.0751 3 14 3C7.92487 3 3 7.92487 3 14C3 20.0751 7.92487 25 14 25Z"
-                            stroke="#8B7355"
+                            stroke={THEME_COLORS.amberGold}
                             strokeWidth="1.2"
                             strokeLinecap="round"
                             strokeLinejoin="round"
                           />
                           <path
                             d="M14 8V14L18 16"
-                            stroke="#8B7355"
+                            stroke={THEME_COLORS.amberGold}
                             strokeWidth="1.2"
                             strokeLinecap="round"
                             strokeLinejoin="round"
@@ -86,11 +87,11 @@ export function StandardPreview({ section }: StandardPreviewProps) {
                         </svg>
                       )}
                       <h3 className="font-serif text-base sm:text-lg xl:text-xl font-light leading-snug">
-                        <DynamicStyledTextPreview as="span" data={item.title} fallbackColor="#B86B3A" />
+                        <DynamicStyledTextPreview as="span" data={item.title} fallbackColor={THEME_COLORS.accentWarm} />
                       </h3>
                     </div>
-                    <div className="text-xs sm:text-sm xl:text-base leading-relaxed text-[#4B5563]">
-                      <DynamicStyledTextPreview as="div" data={item.description} fallbackColor="#4B5563" />
+                    <div className="text-xs sm:text-sm xl:text-base leading-relaxed text-sub">
+                      <DynamicStyledTextPreview as="div" data={item.description} fallbackColor={THEME_COLORS.sub} />
                     </div>
                   </div>
                 )

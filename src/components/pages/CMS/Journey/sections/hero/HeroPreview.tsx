@@ -1,3 +1,4 @@
+import { THEME_COLORS } from "@/config/theme"
 import type { JourneyPreviewSectionProps } from "../../journeyTypes"
 import { DynamicStyledTextPreview } from "@/components/pages/CMS/shared/DynamicStyledTextPreview"
 import { UniversalMultimediaPreview } from "@/components/pages/CMS/shared/UniversalMultimediaPreview"
@@ -17,7 +18,7 @@ export function HeroPreview({ draft }: JourneyPreviewSectionProps) {
       {/* Background Media (Color / Image / Video) */}
       <UniversalMultimediaPreview
         multimedia={hero.backgroundMultimedia}
-        fallbackColor="#182D09"
+        fallbackColor={THEME_COLORS.primary}
         mode="background"
       />
 
@@ -32,7 +33,7 @@ export function HeroPreview({ draft }: JourneyPreviewSectionProps) {
             <DynamicStyledTextPreview
               as="span"
               data={hero.breadcrumb}
-              fallbackColor="#E5E7EB"
+              fallbackColor={THEME_COLORS.mediaPlaceholder}
               className="mb-3 inline-block font-sans text-xs font-semibold uppercase tracking-widest"
             />
           )}
@@ -41,7 +42,7 @@ export function HeroPreview({ draft }: JourneyPreviewSectionProps) {
           <DynamicStyledTextPreview
             as="h1"
             data={hero.title}
-            fallbackColor="#FFFFFF"
+            fallbackColor={THEME_COLORS.white}
             className="mb-4 font-serif text-3xl font-bold leading-tight sm:text-4xl md:text-5xl lg:text-6xl text-white"
           />
 
@@ -50,7 +51,7 @@ export function HeroPreview({ draft }: JourneyPreviewSectionProps) {
             <DynamicStyledTextPreview
               as="p"
               data={hero.subtitle}
-              fallbackColor="#E5E7EB"
+              fallbackColor={THEME_COLORS.mediaPlaceholder}
               className="mb-4 text-base font-medium sm:text-lg md:text-xl text-gray-200"
             />
           )}
@@ -60,7 +61,7 @@ export function HeroPreview({ draft }: JourneyPreviewSectionProps) {
             <DynamicStyledTextPreview
               as="div"
               data={hero.description}
-              fallbackColor="#D1D5DB"
+              fallbackColor={THEME_COLORS.mediaPlaceholder}
               className="mb-6 text-sm leading-relaxed text-gray-300 sm:text-base max-w-2xl"
             />
           )}

@@ -1,3 +1,4 @@
+import { THEME_COLORS } from "@/config/theme"
 import type { JourneyPreviewSectionProps } from "../../journeyTypes"
 import { DynamicStyledTextPreview } from "@/components/pages/CMS/shared/DynamicStyledTextPreview"
 import { UniversalMultimediaPreview } from "@/components/pages/CMS/shared/UniversalMultimediaPreview"
@@ -43,7 +44,7 @@ export function SignatureJourneysPreview({ draft }: JourneyPreviewSectionProps) 
       {/* Background Media (Color / Image / Video) */}
       <UniversalMultimediaPreview
         multimedia={sigData.backgroundMultimedia}
-        fallbackColor="#FAF7F2"
+        fallbackColor={THEME_COLORS.bgSand}
         mode="background"
       />
 
@@ -54,21 +55,21 @@ export function SignatureJourneysPreview({ draft }: JourneyPreviewSectionProps) 
               <DynamicStyledTextPreview
                 as="span"
                 data={sigData.eyebrow}
-                fallbackColor="#AF6348"
+                fallbackColor={THEME_COLORS.accent}
                 className="mb-2 inline-block font-sans text-xs font-semibold uppercase tracking-widest"
               />
             )}
             <DynamicStyledTextPreview
               as="h2"
               data={sigData.title}
-              fallbackColor="#111827"
+              fallbackColor={THEME_COLORS.darkNeutral}
               className="font-serif text-3xl font-bold tracking-tight text-gray-900 sm:text-4xl"
             />
             {sigData.subtitle && (
               <DynamicStyledTextPreview
                 as="p"
                 data={sigData.subtitle}
-                fallbackColor="#4B5563"
+                fallbackColor={THEME_COLORS.sub}
                 className="mt-3 text-base text-gray-600 sm:text-lg"
               />
             )}

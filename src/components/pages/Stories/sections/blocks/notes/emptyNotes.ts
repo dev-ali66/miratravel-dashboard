@@ -1,15 +1,16 @@
+import { THEME_COLORS } from "@/config/theme"
 export const emptyNotesBlock = {
   type: "notes",
   title: {
     value: "Practical Notes",
-    textColor: "#B3884D",
+    textColor: THEME_COLORS.gold,
     textOpacity: 1,
     backgroundColor: null,
     backgroundOpacity: 1,
   },
   subtitle: {
     value: "",
-    textColor: "#78716C",
+    textColor: THEME_COLORS.muted,
     textOpacity: 1,
     backgroundColor: null,
     backgroundOpacity: 1,

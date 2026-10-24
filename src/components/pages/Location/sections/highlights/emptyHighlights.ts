@@ -1,14 +1,15 @@
+import { THEME_COLORS } from "@/config/theme"
 export const emptyHighlights = {
   label: {
     value: "SEASONAL HIGHLIGHTS",
-    textColor: "#af6348",
+    textColor: THEME_COLORS.accent,
     textOpacity: 1,
     backgroundColor: null,
     backgroundOpacity: 1,
   },
   title: {
     value: "Regions of Europe",
-    textColor: "#182d09",
+    textColor: THEME_COLORS.primary,
     textOpacity: 1,
     backgroundColor: null,
     backgroundOpacity: 1,
@@ -16,7 +17,7 @@ export const emptyHighlights = {
   description: {
     value:
       "A selection of destinations currently resonating with our most discerning travelers.",
-    textColor: "#565e69",
+    textColor: THEME_COLORS.muted,
     textOpacity: 1,
     backgroundColor: null,
     backgroundOpacity: 1,
@@ -25,7 +26,7 @@ export const emptyHighlights = {
   backgroundMultimedia: {
     show: "color",
     color: {
-      color: "#FFF8F2",
+      color: THEME_COLORS.bgIvory,
       opacity: 100,
       width: "100%",
       height: "100%",
@@ -35,7 +36,7 @@ export const emptyHighlights = {
       url: "",
       alt: "Highlights background",
       opacity: 100,
-      overlayColor: "#000000",
+      overlayColor: THEME_COLORS.overlayBlack,
       overlayOpacity: 0,
       width: "100%",
       height: "auto",
@@ -49,7 +50,7 @@ export const emptyHighlights = {
       loop: true,
       muted: true,
       opacity: 100,
-      overlayColor: "#000000",
+      overlayColor: THEME_COLORS.overlayBlack,
       overlayOpacity: 0,
       width: "100%",
       height: "auto",

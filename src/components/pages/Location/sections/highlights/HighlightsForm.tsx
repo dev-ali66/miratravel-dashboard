@@ -1,3 +1,4 @@
+import { THEME_COLORS } from "@/config/theme"
 import { useState, useRef, useEffect } from "react"
 import {
   Search,
@@ -181,7 +182,7 @@ export function HighlightsForm({
             emptyLocation.highlights?.backgroundMultimedia || {
               show: "color",
               color: {
-                color: "#FFFFFF",
+                color: THEME_COLORS.white,
                 opacity: 100,
                 width: "100%",
                 height: "100%",

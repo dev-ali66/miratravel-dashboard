@@ -1,3 +1,4 @@
+import { THEME_COLORS } from "@/config/theme"
 import { useState } from "react"
 import type { JourneyData } from "../../journeyTypes"
 import { FormSection } from "../../shared/fields"
@@ -41,9 +42,9 @@ export function WhatsIncludedForm({
 
   const addInclusion = () => {
     const newItem = {
-      category: { value: "Services", textColor: "#af6348", textOpacity: 1, backgroundColor: null, backgroundOpacity: 1 },
-      title: { value: "", textColor: "#464136", textOpacity: 1, backgroundColor: null, backgroundOpacity: 1 },
-      description: { value: "", textColor: "#565e69", textOpacity: 1, backgroundColor: null, backgroundOpacity: 1 },
+      category: { value: "Services", textColor: THEME_COLORS.accent, textOpacity: 1, backgroundColor: null, backgroundOpacity: 1 },
+      title: { value: "", textColor: THEME_COLORS.navText, textOpacity: 1, backgroundColor: null, backgroundOpacity: 1 },
+      description: { value: "", textColor: THEME_COLORS.muted, textOpacity: 1, backgroundColor: null, backgroundOpacity: 1 },
     }
     updateInclusions([...inclusions, newItem])
   }
@@ -60,9 +61,9 @@ export function WhatsIncludedForm({
   // --- Helpers for Part 2: Exclusions ---
   const addExclusion = () => {
     const newItem = {
-      category: { value: "General", textColor: "#9A3412", textOpacity: 1, backgroundColor: null, backgroundOpacity: 1 },
-      title: { value: "", textColor: "#464136", textOpacity: 1, backgroundColor: null, backgroundOpacity: 1 },
-      description: { value: "", textColor: "#565e69", textOpacity: 1, backgroundColor: null, backgroundOpacity: 1 },
+      category: { value: "General", textColor: THEME_COLORS.badgeYellowText, textOpacity: 1, backgroundColor: null, backgroundOpacity: 1 },
+      title: { value: "", textColor: THEME_COLORS.navText, textOpacity: 1, backgroundColor: null, backgroundOpacity: 1 },
+      description: { value: "", textColor: THEME_COLORS.muted, textOpacity: 1, backgroundColor: null, backgroundOpacity: 1 },
     }
     updateField("whatsIncluded.exclusions", [...exclusions, newItem])
   }
@@ -80,7 +81,7 @@ export function WhatsIncludedForm({
 
   // --- Helpers for Part 3: Important Information ---
   const addNote = () => {
-    const newNote = { value: "", textColor: "#464136", textOpacity: 1, backgroundColor: null, backgroundOpacity: 1 }
+    const newNote = { value: "", textColor: THEME_COLORS.navText, textOpacity: 1, backgroundColor: null, backgroundOpacity: 1 }
     updateField("whatsIncluded.notes", [...notes, newNote])
   }
 
@@ -369,7 +370,7 @@ export function WhatsIncludedForm({
             What's Included Section Background Multimedia
           </label>
           <UniversalMultimediaForm
-            value={incData.backgroundMultimedia || { show: "color", color: { color: "#ffffff" } }}
+            value={incData.backgroundMultimedia || { show: "color", color: { color: THEME_COLORS.white } }}
             onChange={(val) => updateField("whatsIncluded.backgroundMultimedia", val)}
           />
         </div>

@@ -1,7 +1,8 @@
+import { THEME_COLORS } from "@/config/theme"
 export const emptyStandardItemIcon = {
   show: "image",
   color: {
-    color: "#E5E7EB",
+    color: THEME_COLORS.mediaPlaceholder,
     opacity: 100,
     width: "100%",
     height: "100%",
@@ -11,7 +12,7 @@ export const emptyStandardItemIcon = {
     url: "",
     alt: "Feature Icon",
     opacity: 100,
-    overlayColor: "#000000",
+    overlayColor: THEME_COLORS.overlayBlack,
     overlayOpacity: 0,
     width: "100%",
     height: "auto",
@@ -22,7 +23,7 @@ export const emptyStandardItemIcon = {
     url: "",
     alt: null,
     opacity: 100,
-    overlayColor: "#000000",
+    overlayColor: THEME_COLORS.overlayBlack,
     overlayOpacity: 0,
     autoplay: true,
     loop: true,
@@ -37,7 +38,7 @@ export const emptyStandardItemIcon = {
 export const emptyStandardItem = {
   title: {
     value: "Thoughtful Pace",
-    textColor: "#B86B3A",
+    textColor: THEME_COLORS.accentWarm,
     textOpacity: 1,
     backgroundColor: null,
     backgroundOpacity: 1,
@@ -45,7 +46,7 @@ export const emptyStandardItem = {
   description: {
     value:
       "Lorem ipsum dolor sit amet consectetur. Non pretium id eu justo massa condimentum proin. Aliquam vitae tellus quis nulla et bibendum. Vulputate quis enim arcu congue.",
-    textColor: "#4B5563",
+    textColor: THEME_COLORS.sub,
     textOpacity: 1,
     backgroundColor: null,
     backgroundOpacity: 1,
@@ -56,14 +57,14 @@ export const emptyStandardItem = {
 export const emptyStandard = {
   eyebrow: {
     value: "THE MIRA STANDARD",
-    textColor: "#B86B3A",
+    textColor: THEME_COLORS.accentWarm,
     textOpacity: 1,
     backgroundColor: null,
     backgroundOpacity: 1,
   },
   title: {
     value: "What defines every journey we create.",
-    textColor: "#182D09",
+    textColor: THEME_COLORS.primary,
     textOpacity: 1,
     backgroundColor: null,
     backgroundOpacity: 1,
@@ -71,7 +72,7 @@ export const emptyStandard = {
   multimedia: {
     show: "image",
     color: {
-      color: "#E5E7EB",
+      color: THEME_COLORS.mediaPlaceholder,
       opacity: 100,
       width: "100%",
       height: "100%",
@@ -81,7 +82,7 @@ export const emptyStandard = {
       url: "",
       alt: "The MIRA Standard of travel excellence",
       opacity: 100,
-      overlayColor: "#000000",
+      overlayColor: THEME_COLORS.overlayBlack,
       overlayOpacity: 0,
       width: "100%",
       height: "auto",
@@ -92,7 +93,7 @@ export const emptyStandard = {
       url: "",
       alt: null,
       opacity: 100,
-      overlayColor: "#000000",
+      overlayColor: THEME_COLORS.overlayBlack,
       overlayOpacity: 0,
       autoplay: true,
       loop: true,
@@ -107,7 +108,7 @@ export const emptyStandard = {
     {
       title: {
         value: "Thoughtful Pace",
-        textColor: "#B86B3A",
+        textColor: THEME_COLORS.accentWarm,
         textOpacity: 1,
         backgroundColor: null,
         backgroundOpacity: 1,
@@ -115,7 +116,7 @@ export const emptyStandard = {
       description: {
         value:
           "Lorem ipsum dolor sit amet consectetur. Non pretium id eu justo massa condimentum proin. Aliquam vitae tellus quis nulla et bibendum. Vulputate quis enim arcu congue.",
-        textColor: "#4B5563",
+        textColor: THEME_COLORS.sub,
         textOpacity: 1,
         backgroundColor: null,
         backgroundOpacity: 1,
@@ -125,7 +126,7 @@ export const emptyStandard = {
     {
       title: {
         value: "Distinctive Places",
-        textColor: "#B86B3A",
+        textColor: THEME_COLORS.accentWarm,
         textOpacity: 1,
         backgroundColor: null,
         backgroundOpacity: 1,
@@ -133,7 +134,7 @@ export const emptyStandard = {
       description: {
         value:
           "Lorem ipsum dolor sit amet consectetur. Non pretium id eu justo massa condimentum proin. Aliquam vitae tellus quis nulla et bibendum. Vulputate quis enim arcu congue.",
-        textColor: "#4B5563",
+        textColor: THEME_COLORS.sub,
         textOpacity: 1,
         backgroundColor: null,
         backgroundOpacity: 1,
@@ -143,7 +144,7 @@ export const emptyStandard = {
     {
       title: {
         value: "Regional Depth",
-        textColor: "#B86B3A",
+        textColor: THEME_COLORS.accentWarm,
         textOpacity: 1,
         backgroundColor: null,
         backgroundOpacity: 1,
@@ -151,7 +152,7 @@ export const emptyStandard = {
       description: {
         value:
           "Lorem ipsum dolor sit amet consectetur. Non pretium id eu justo massa condimentum proin. Aliquam vitae tellus quis nulla et bibendum. Vulputate quis enim arcu congue.",
-        textColor: "#4B5563",
+        textColor: THEME_COLORS.sub,
         textOpacity: 1,
         backgroundColor: null,
         backgroundOpacity: 1,
@@ -161,7 +162,7 @@ export const emptyStandard = {
     {
       title: {
         value: "Seamless Execution",
-        textColor: "#B86B3A",
+        textColor: THEME_COLORS.accentWarm,
         textOpacity: 1,
         backgroundColor: null,
         backgroundOpacity: 1,
@@ -169,7 +170,7 @@ export const emptyStandard = {
       description: {
         value:
           "Lorem ipsum dolor sit amet consectetur. Non pretium id eu justo massa condimentum proin. Aliquam vitae tellus quis nulla et bibendum. Vulputate quis enim arcu congue.",
-        textColor: "#4B5563",
+        textColor: THEME_COLORS.sub,
         textOpacity: 1,
         backgroundColor: null,
         backgroundOpacity: 1,
@@ -180,7 +181,7 @@ export const emptyStandard = {
   backgroundMultimedia: {
     show: "color",
     color: {
-      color: "#FAF7F2",
+      color: THEME_COLORS.bgSand,
       opacity: 100,
       width: "100%",
       height: "100%",
@@ -190,7 +191,7 @@ export const emptyStandard = {
       url: "",
       alt: "",
       opacity: 100,
-      overlayColor: "#000000",
+      overlayColor: THEME_COLORS.overlayBlack,
       overlayOpacity: 0,
       width: "100%",
       height: "auto",
@@ -201,7 +202,7 @@ export const emptyStandard = {
       url: "",
       alt: null,
       opacity: 100,
-      overlayColor: "#000000",
+      overlayColor: THEME_COLORS.overlayBlack,
       overlayOpacity: 0,
       autoplay: true,
       loop: true,

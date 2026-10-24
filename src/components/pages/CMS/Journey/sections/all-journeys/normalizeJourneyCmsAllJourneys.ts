@@ -1,3 +1,4 @@
+import { THEME_COLORS } from "@/config/theme"
 import {
   normalizeStyledField,
   normalizeMultimedia,
@@ -10,9 +11,9 @@ export function normalizeJourneyCmsAllJourneys(rawSec: any): typeof emptyJourney
   const src = rawSec.all_journeys || rawSec.allJourneys || rawSec.content || rawSec
 
   return {
-    eyebrow: normalizeStyledField(src.eyebrow, emptyJourneyCmsAllJourneys.eyebrow.value, "#AF6348"),
-    title: normalizeStyledField(src.title, emptyJourneyCmsAllJourneys.title.value, "#111827"),
-    subtitle: normalizeStyledField(src.subtitle || src.description, emptyJourneyCmsAllJourneys.subtitle.value, "#4B5563"),
+    eyebrow: normalizeStyledField(src.eyebrow, emptyJourneyCmsAllJourneys.eyebrow.value, THEME_COLORS.accent),
+    title: normalizeStyledField(src.title, emptyJourneyCmsAllJourneys.title.value, THEME_COLORS.darkNeutral),
+    subtitle: normalizeStyledField(src.subtitle || src.description, emptyJourneyCmsAllJourneys.subtitle.value, THEME_COLORS.sub),
     searchPlaceholder: String(src.searchPlaceholder || emptyJourneyCmsAllJourneys.searchPlaceholder),
     backgroundMultimedia: normalizeMultimedia(
       src.backgroundMultimedia || src.multimedia || src.backgroundMedia,

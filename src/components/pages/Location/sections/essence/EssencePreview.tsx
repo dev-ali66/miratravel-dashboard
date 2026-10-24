@@ -1,3 +1,4 @@
+import { THEME_COLORS } from "@/config/theme"
 import { DynamicStyledTextPreview } from "@/components/pages/CMS/shared/DynamicStyledTextPreview"
 import { UniversalMultimediaPreview } from "@/components/pages/CMS/shared/UniversalMultimediaPreview"
 import type { LocationPreviewSectionProps } from "../../config/locationSections"
@@ -13,7 +14,7 @@ export function EssencePreview({ draft }: LocationPreviewSectionProps) {
       {/* Background Media (Image / Video / Color) */}
       <UniversalMultimediaPreview
         multimedia={essence.backgroundMultimedia}
-        fallbackColor="#F9F9F9"
+        fallbackColor={THEME_COLORS.bgLightGray}
         mode="background"
       />
 
@@ -66,10 +67,10 @@ export function EssencePreview({ draft }: LocationPreviewSectionProps) {
                 h-[350px] @xs:h-[425px] @sm:h-[520px] @md:h-[600px] @lg:h-[520px] @xlg:h-[580px] @xl:h-[640px] @2xl:h-[700px]"
               >
                 {/* Image Box */}
-                <div className="relative size-full overflow-hidden rounded-[2px] flex items-center justify-center bg-[#EDE7D8]">
+                <div className="relative size-full overflow-hidden rounded-[2px] flex items-center justify-center bg-surface">
                   <UniversalMultimediaPreview
                     multimedia={essence.imageMultimedia || essence.multimedia}
-                    fallbackColor="#EDE7D8"
+                    fallbackColor={THEME_COLORS.bgSubdued}
                     mode="inline"
                     className="size-full object-cover object-center"
                     containerClassName="size-full"
@@ -85,8 +86,7 @@ export function EssencePreview({ draft }: LocationPreviewSectionProps) {
                     (stat.statBadgeBg ??
                     stat.badgeBg ??
                     (typeof statValue === "object" && statValue?.backgroundColor)) ||
-                    essence.statBadgeBg ||
-                    "#E5A84B"
+                    essence.statBadgeBg || THEME_COLORS.accentMuted
                   const rawBadgeOpacity =
                     (typeof statValue === "object" && statValue?.backgroundOpacity !== undefined
                       ? statValue.backgroundOpacity
@@ -98,7 +98,7 @@ export function EssencePreview({ draft }: LocationPreviewSectionProps) {
                     <div
                       className="absolute w-[145px] @xs:w-[165px] @sm:w-[180px] @md:w-[195px] @xl:w-[195.922px] -bottom-3 @xs:-bottom-4 @sm:-bottom-5 @md:-bottom-6 -left-2 @xs:-left-3 @sm:-left-4 @md:-left-5 @xl:-left-6 px-3.5 @xs:px-4 @sm:px-5 @md:px-6 @lg:px-[26px] @xl:px-7 py-2.5 @xs:py-3 @sm:py-3.5 @md:py-[18px] @lg:py-[19px] @xl:py-5 flex flex-col justify-start items-start z-10 shadow-md transition-colors"
                       style={{
-                        backgroundColor: rawBadgeBg || "#E5A84B",
+                        backgroundColor: rawBadgeBg || THEME_COLORS.accentMuted,
                         opacity: rawBadgeOpacity,
                       }}
                     >

@@ -1,3 +1,4 @@
+import { THEME_COLORS } from "@/config/theme"
 import {
   FormSection,
   DynamicStyledField,
@@ -87,7 +88,7 @@ export function FaqCtaForm({
           defaultShow="color"
           showColorPicker
           colorLabel="Background color"
-          defaultColor="#101912"
+          defaultColor={THEME_COLORS.forestDark}
           imageFieldName="cmsFaqCtaBackgroundImage"
           videoFieldName="cmsFaqCtaBackgroundVideo"
           value={
@@ -105,7 +106,7 @@ export function FaqCtaForm({
           defaultShow="image"
           showColorPicker
           colorLabel="Side media color"
-          defaultColor="#101912"
+          defaultColor={THEME_COLORS.forestDark}
           imageTitle="Side Image"
           imageLabel="Side image"
           imageFieldName="cmsFaqWhyMiraImage"

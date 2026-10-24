@@ -1,3 +1,4 @@
+import { THEME_COLORS } from "@/config/theme"
 import { DynamicStyledTextPreview } from "@/components/pages/CMS/shared/DynamicStyledTextPreview"
 import { UniversalMultimediaPreview } from "@/components/pages/CMS/Home/shared/preview/UniversalMultimediaPreview"
 import type { LocationPreviewSectionProps } from "../../config/locationSections"
@@ -30,7 +31,7 @@ export function StatsPreview({ draft }: LocationPreviewSectionProps) {
       {/* Background Media / Color */}
       <UniversalMultimediaPreview
         multimedia={statsData.backgroundMultimedia}
-        fallbackColor="#FFFFFF"
+        fallbackColor={THEME_COLORS.white}
         mode="background"
       />
 
@@ -44,21 +45,21 @@ export function StatsPreview({ draft }: LocationPreviewSectionProps) {
               <DynamicStyledTextPreview
                 as="span"
                 data={item.label}
-                fallbackColor="#565e69"
+                fallbackColor={THEME_COLORS.muted}
                 className="text-muted text-[11px] @md:text-[11.3px] @lg:text-[11.7px] @lgx:text-[12px] @xlg:text-[12.4px] @mid:text-[12.7px] @xl:text-[13px] font-normal uppercase leading-[13.5px] @md:leading-[14px] @lg:leading-[14.5px] @lgx:leading-[15px] @xl:leading-4 tracking-[0.12px]"
               />
 
               <DynamicStyledTextPreview
                 as="span"
                 data={item.value}
-                fallbackColor="#182d09"
+                fallbackColor={THEME_COLORS.primary}
                 className="text-primary text-base @md:text-[17.5px] @lg:text-[19px] @lgx:text-[20px] @xlg:text-[22px] @mid:text-[24px] @xl:text-[26px] font-semibold font-heading leading-[20px] @md:leading-[21px] @lg:leading-[22.2px] @lgx:leading-[23px] @xlg:leading-[24px] @mid:leading-[25px] @xl:leading-[26px]"
               />
 
               <DynamicStyledTextPreview
                 as="span"
                 data={item.description}
-                fallbackColor="#565e69"
+                fallbackColor={THEME_COLORS.muted}
                 className="text-muted text-[11px] @md:text-[11.3px] @lg:text-[11.7px] @lgx:text-[12px] @xlg:text-[12.4px] @mid:text-[12.7px] @xl:text-[13px] font-normal leading-[15px] @md:leading-[15.5px] @lg:leading-[16px] @xl:leading-[17px] tracking-[0.12px]"
               />
             </div>

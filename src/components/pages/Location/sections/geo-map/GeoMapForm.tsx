@@ -1,3 +1,4 @@
+import { THEME_COLORS } from "@/config/theme"
 import MapLibrePreview from "@/components/ui/MapLibrePreview"
 import { DynamicStyledField } from "@/components/pages/CMS/shared/FormControls"
 import { UniversalMultimediaForm } from "@/components/pages/CMS/shared/UniversalMultimediaForm"
@@ -79,7 +80,7 @@ export function GeoMapForm({
             emptyLocation.geoData?.backgroundMultimedia || {
               show: "color",
               color: {
-                color: "#FFFFFF",
+                color: THEME_COLORS.white,
                 opacity: 100,
                 width: "100%",
                 height: "100%",

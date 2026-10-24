@@ -1,3 +1,4 @@
+import { THEME_COLORS } from "@/config/theme"
 import { useState, useEffect } from "react"
 import { motion, AnimatePresence } from "framer-motion"
 import { DynamicStyledTextPreview } from "@/components/pages/CMS/shared/DynamicStyledTextPreview"
@@ -113,7 +114,7 @@ export function RegionExperiencesPreview({ draft }: LocationPreviewSectionProps)
       {/* Universal Background Media (Color / Image / Video) */}
       <UniversalMultimediaPreview
         multimedia={regionExperiences.backgroundMultimedia}
-        fallbackColor="#F5F5F5"
+        fallbackColor={THEME_COLORS.bgLightGray}
         mode="background"
       />
 
@@ -131,7 +132,7 @@ export function RegionExperiencesPreview({ draft }: LocationPreviewSectionProps)
                 <DynamicStyledTextPreview
                   as="div"
                   data={regionExperiences.label}
-                  fallbackColor="#af6348"
+                  fallbackColor={THEME_COLORS.accent}
                   className="self-stretch text-accent text-sm @xs:text-base @md:text-lg @lgx:text-[20px] @mid:text-[22px] @xl:text-2xl leading-5 @xs:leading-6 @md:leading-[26px] @lgx:leading-7 @mid:leading-[30px] @xl:leading-8 mx-auto w-full text-center justify-center font-medium uppercase tracking-[2px] @md:tracking-[3px]"
                 />
               </div>
@@ -141,7 +142,7 @@ export function RegionExperiencesPreview({ draft }: LocationPreviewSectionProps)
                 <DynamicStyledTextPreview
                   as="h2"
                   data={regionExperiences.title}
-                  fallbackColor="#182d09"
+                  fallbackColor={THEME_COLORS.primary}
                   className="self-stretch shrink-0 h-auto font-medium font-heading text-[24px] @xs:text-[28px] @sm:text-[32px] @md:text-[38px] @lg:text-[42px] @xlg:text-[44px] @xl:text-[48px] @2xl:text-[50px] leading-[32px] @xs:leading-[38px] @sm:leading-[42px] @md:leading-[47px] @lg:leading-[50px] @xlg:leading-[52px] @xl:leading-[56px] @2xl:leading-[58px] mx-auto w-full text-center justify-center text-primary max-w-full @md:max-w-[600px] @lg:max-w-[690px] @xlg:max-w-[780px] @xl:max-w-[920px]"
                 />
               </div>
@@ -152,7 +153,7 @@ export function RegionExperiencesPreview({ draft }: LocationPreviewSectionProps)
                 {/* Left Column: Dynamic Animated Image Frame */}
                 <div
                   className="relative flex items-start shrink-0 overflow-hidden w-full @md:max-w-[580px] @lg:w-[460px] @xlg:w-[527px] @xl:w-[632px]
-                  h-[320px] @xs:h-[340px] @md:h-[364px] @lg:h-[410px] @xlg:h-[457px] @xl:h-[530px] rounded-sm bg-[#EDE7D8]"
+                  h-[320px] @xs:h-[340px] @md:h-[364px] @lg:h-[410px] @xlg:h-[457px] @xl:h-[530px] rounded-sm bg-surface"
                 >
                   {activeRegion ? (
                     <div
@@ -181,7 +182,7 @@ export function RegionExperiencesPreview({ draft }: LocationPreviewSectionProps)
                                       ? activeRegion.title?.value
                                       : activeRegion.title || "Region Experience",
                                   opacity: 100,
-                                  overlayColor: "#000000",
+                                  overlayColor: THEME_COLORS.overlayBlack,
                                   overlayOpacity: 0,
                                   width: "100%",
                                   height: "100%",
@@ -189,7 +190,7 @@ export function RegionExperiencesPreview({ draft }: LocationPreviewSectionProps)
                                 },
                               }
                             }
-                            fallbackColor="#EDE7D8"
+                            fallbackColor={THEME_COLORS.bgSubdued}
                             mode="inline"
                             className="size-full object-cover object-center transition-transform duration-700 hover:scale-105"
                             containerClassName="size-full"
@@ -207,7 +208,7 @@ export function RegionExperiencesPreview({ draft }: LocationPreviewSectionProps)
                               <DynamicStyledTextPreview
                                 as="span"
                                 data={activeRegion.tag}
-                                fallbackColor="#ffffff"
+                                fallbackColor={THEME_COLORS.white}
                                 className="rounded bg-black/60 backdrop-blur-md px-3 py-1 text-[11px] font-medium uppercase tracking-wider text-white border border-white/20"
                               />
                             </div>
@@ -299,7 +300,7 @@ export function RegionExperiencesPreview({ draft }: LocationPreviewSectionProps)
                           <DynamicStyledTextPreview
                             as="h3"
                             data={region.title}
-                            fallbackColor="#182d09"
+                            fallbackColor={THEME_COLORS.primary}
                             className="font-heading font-semibold text-base @md:text-[16.3px] @lg:text-[16.7px] @xlg:text-[17.2px] @xl:text-lg leading-[22px] @md:leading-[22.7px] @lg:leading-[24.2px] @xlg:leading-[25.7px] @xl:leading-7 transition-colors duration-300 mb-1 text-primary"
                           />
 
@@ -307,7 +308,7 @@ export function RegionExperiencesPreview({ draft }: LocationPreviewSectionProps)
                           <DynamicStyledTextPreview
                             as="p"
                             data={region.subtitle}
-                            fallbackColor={isActive ? "#af6348" : "#9c705d"}
+                            fallbackColor={isActive ? THEME_COLORS.accent : THEME_COLORS.accentWarm}
                             className={`mb-2 text-xs @md:text-[12.3px] @xl:text-sm font-normal leading-4 italic transition-colors duration-300 ${
                               isActive ? "text-accent-hover font-medium" : "text-accent-muted"
                             }`}
@@ -317,7 +318,7 @@ export function RegionExperiencesPreview({ draft }: LocationPreviewSectionProps)
                           <DynamicStyledTextPreview
                             as="p"
                             data={region.description}
-                            fallbackColor="#565e69"
+                            fallbackColor={THEME_COLORS.muted}
                             className="w-full text-xs @md:text-[12.3px] @xl:text-sm font-normal leading-5 transition-colors duration-300 text-subtitle"
                           />
 

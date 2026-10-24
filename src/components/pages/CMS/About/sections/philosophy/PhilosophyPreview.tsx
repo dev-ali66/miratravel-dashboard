@@ -18,19 +18,19 @@ export function PhilosophyPreview({ section }: PhilosophyPreviewProps) {
   const extraMedia = multimedias.slice(3)
 
   return (
-    <section className="relative py-16 sm:py-20 px-6 sm:px-12 lg:px-20 overflow-hidden bg-[#FAF6F0]">
+    <section className="relative py-16 sm:py-20 px-6 sm:px-12 lg:px-20 overflow-hidden bg-background text-foreground">
       {/* Background Media */}
       {section.backgroundMultimedia && (
         <UniversalMultimediaPreview multimedia={section.backgroundMultimedia} mode="background" />
       )}
 
       {/* Background Decorative Starburst Icons */}
-      <div className="absolute top-1/3 right-1/4 opacity-15 pointer-events-none select-none text-[#E5A84B]">
+      <div className="absolute top-1/3 right-1/4 opacity-15 pointer-events-none select-none text-accent-muted">
         <svg width="60" height="60" viewBox="0 0 24 24" fill="currentColor">
           <path d="M12 0L13.5 10.5L24 12L13.5 13.5L12 24L10.5 13.5L0 12L10.5 10.5L12 0Z" />
         </svg>
       </div>
-      <div className="absolute top-1/2 left-4 opacity-15 pointer-events-none select-none text-[#E5A84B]">
+      <div className="absolute top-1/2 left-4 opacity-15 pointer-events-none select-none text-accent-muted">
         <svg width="40" height="40" viewBox="0 0 24 24" fill="currentColor">
           <path d="M12 0L13.5 10.5L24 12L13.5 13.5L12 24L10.5 13.5L0 12L10.5 10.5L12 0Z" />
         </svg>
@@ -39,11 +39,11 @@ export function PhilosophyPreview({ section }: PhilosophyPreviewProps) {
       <div className="relative z-10 max-w-[1240px] mx-auto space-y-10 sm:space-y-12">
         {/* TOP HEADER: Eyebrow & Title */}
         <div className="max-w-xl space-y-2.5">
-          <p className="text-xs sm:text-sm font-semibold tracking-[0.2em] uppercase text-[#E5A84B]">
+          <p className="text-xs sm:text-sm font-semibold tracking-[0.2em] uppercase text-accent-muted">
             <DynamicStyledTextPreview as="span" data={section.eyebrow} />
           </p>
 
-          <h2 className="text-3xl sm:text-4xl lg:text-[44px] lg:leading-[52px] font-serif font-light text-[#182D09]">
+          <h2 className="text-3xl sm:text-4xl lg:text-[44px] lg:leading-[52px] font-serif font-light text-brand-primary">
             <DynamicStyledTextPreview as="span" data={section.title} />
           </h2>
         </div>
@@ -67,12 +67,12 @@ export function PhilosophyPreview({ section }: PhilosophyPreviewProps) {
 
           {/* Column 3: Description Paragraphs & Highlight Quote (lg:col-span-4) */}
           <div className="lg:col-span-4 flex flex-col justify-between space-y-6 pt-1">
-            <div className="text-sm sm:text-[15px] leading-relaxed text-[#5A6258] space-y-4">
+            <div className="text-sm sm:text-[15px] leading-relaxed text-subtitle space-y-4">
               <DynamicStyledTextPreview as="div" data={section.description} />
             </div>
 
             {section.quote && (
-              <div className="italic text-sm sm:text-base text-[#E5A84B] font-serif pt-1">
+              <div className="italic text-sm sm:text-base text-accent-muted font-serif pt-1">
                 <DynamicStyledTextPreview as="span" data={section.quote} />
               </div>
             )}

@@ -1,3 +1,4 @@
+import { THEME_COLORS } from "@/config/theme"
 import { emptyHero } from "../sections/hero"
 import { emptyExploreJourneys } from "../sections/explore-journeys"
 import { emptyDestinations } from "../sections/destinations"
@@ -15,10 +16,10 @@ export const emptyHomePayload: HomePageData = {
   data: {
     page: "home",
     theme: {
-      accentColor: "#E5A84B",
-      primaryColor: "#182D09",
-      textColorDark: "#182D09",
-      textColorLight: "#FFFFFF",
+      accentColor: THEME_COLORS.accentMuted,
+      primaryColor: THEME_COLORS.primary,
+      textColorDark: THEME_COLORS.primary,
+      textColorLight: THEME_COLORS.white,
     },
     hero: emptyHero,
     explore_journeys: emptyExploreJourneys,

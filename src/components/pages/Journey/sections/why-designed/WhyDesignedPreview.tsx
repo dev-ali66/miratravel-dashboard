@@ -1,3 +1,4 @@
+import { THEME_COLORS } from "@/config/theme"
 import { getStr, getStyleObj } from "../../shared/previewHelpers"
 import { DynamicStyledTextPreview } from "@/components/pages/CMS/shared/DynamicStyledTextPreview"
 
@@ -5,7 +6,7 @@ function MiraStarIcon() {
   return (
     <svg
       viewBox="757.62 552.4 484.76 895.2"
-      className="w-[18px] h-[26px] md:w-[22px] md:h-[30px] xl:w-[24px] xl:h-[32px] text-[#af6348] fill-current shrink-0 inline-block"
+      className="w-[18px] h-[26px] md:w-[22px] md:h-[30px] xl:w-[24px] xl:h-[32px] text-accent fill-current shrink-0 inline-block"
       aria-hidden="true"
     >
       <polygon points="1029.99,1000 1000.04,1447.6 970.01,1000 1000.04,552.4" />
@@ -41,12 +42,12 @@ export function WhyDesignedPreview({ whyDesigned, draft }: { whyDesigned?: any; 
           <div className="flex flex-col items-start gap-2">
             <div className="flex items-center gap-2">
               <MiraStarIcon />
-              <span className="text-xs md:text-sm font-semibold uppercase tracking-[2.5px]" style={getStyleObj(safeData.badge, "#af6348")}>
+              <span className="text-xs md:text-sm font-semibold uppercase tracking-[2.5px]" style={getStyleObj(safeData.badge, THEME_COLORS.accent)}>
                 {badgeText}
               </span>
-              <span className="w-24 md:w-32 h-[1px] bg-[#af6348]/40 inline-block" />
+              <span className="w-24 md:w-32 h-[1px] bg-accent/40 inline-block" />
             </div>
-            <h2 className={TITLE_CSS} style={getStyleObj(safeData.title, "#313131")}>
+            <h2 className={TITLE_CSS} style={getStyleObj(safeData.title, THEME_COLORS.titleLight)}>
               {titleText}
             </h2>
           </div>
@@ -56,12 +57,12 @@ export function WhyDesignedPreview({ whyDesigned, draft }: { whyDesigned?: any; 
             <DynamicStyledTextPreview
               data={safeData.description ?? safeData.overviewText}
               fallbackText="Viverra blandit neque ac risus euismod tincidunt ut nec velit. Hendrerit potenti eleifend hendrerit lobortis enim duis duis rhoncus vulputate. Integer volutpat purus feugiat eros sed volutpat mauris faucibus."
-              className="text-[#464136] text-sm md:text-[15px] xl:text-base font-normal leading-6 md:leading-[27px] tracking-[1.5px]"
+              className="text-nav-text text-sm md:text-[15px] xl:text-base font-normal leading-6 md:leading-[27px] tracking-[1.5px]"
             />
 
             {/* Signature Line */}
-            <div className="flex items-center justify-end font-serif text-xl md:text-2xl font-normal leading-7 tracking-[2px] pt-4 gap-2" style={getStyleObj(safeData.signature, "#af6348")}>
-              <span className="w-6 md:w-8 h-[1.5px] bg-[#af6348] inline-block shrink-0" aria-hidden="true" />
+            <div className="flex items-center justify-end font-serif text-xl md:text-2xl font-normal leading-7 tracking-[2px] pt-4 gap-2" style={getStyleObj(safeData.signature, THEME_COLORS.accent)}>
+              <span className="w-6 md:w-8 h-[1.5px] bg-accent inline-block shrink-0" aria-hidden="true" />
               <span>{signatureText}</span>
               <MiraStarIcon />
             </div>

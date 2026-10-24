@@ -1,3 +1,4 @@
+import { THEME_COLORS } from "@/config/theme"
 import { useDevMode } from "@/context/DevModeContext"
 import {
   FormSection,
@@ -101,7 +102,7 @@ export function JourneyCmsHeroForm({
           title="Section Background Media & Styling"
           value={hero.backgroundMultimedia}
           onChange={(val: any) => updateHeroField("backgroundMultimedia", val)}
-          defaultColor="#182D09"
+          defaultColor={THEME_COLORS.primary}
         />
       </div>
     </FormSection>

@@ -1,3 +1,4 @@
+import { THEME_COLORS } from "@/config/theme"
 import { useEffect, useRef, useState, useMemo } from "react"
 import * as maplibregl from "maplibre-gl"
 import "maplibre-gl/dist/maplibre-gl.css"
@@ -232,11 +233,11 @@ export function GeoMapPreview({ draft }: LocationPreviewSectionProps) {
         try {
           map.setProjection({ type: "globe" as any })
           map.setSky({
-            "sky-color": "#f6f5f2",
+            "sky-color": THEME_COLORS.bgWarm,
             "sky-horizon-blend": 0.6,
-            "horizon-color": "#e6e3dc",
+            "horizon-color": THEME_COLORS.borderLight,
             "horizon-fog-blend": 0.6,
-            "fog-color": "#f2f1ee",
+            "fog-color": THEME_COLORS.bgWarm,
             "fog-ground-blend": 0.7,
             "atmosphere-blend": ["interpolate", ["linear"], ["zoom"], 0, 1, 6, 1, 9, 0],
           } as any)
@@ -250,32 +251,32 @@ export function GeoMapPreview({ draft }: LocationPreviewSectionProps) {
           for (const layer of style.layers) {
             try {
               if (layer.type === "background") {
-                map.setPaintProperty(layer.id, "background-color", "#F6F3EB")
+                map.setPaintProperty(layer.id, "background-color", THEME_COLORS.bgSand)
               } else if (layer.type === "fill") {
                 if (layer.id.includes("water") || layer.id.includes("ocean")) {
-                  map.setPaintProperty(layer.id, "fill-color", "#D5E1E3")
+                  map.setPaintProperty(layer.id, "fill-color", THEME_COLORS.mediaPlaceholder)
                 } else if (layer.id.includes("building")) {
-                  map.setPaintProperty(layer.id, "fill-color", "#EFEBE2")
+                  map.setPaintProperty(layer.id, "fill-color", THEME_COLORS.bgSand)
                 } else if (
                   layer.id.includes("park") ||
                   layer.id.includes("landuse") ||
                   layer.id.includes("wood")
                 ) {
-                  map.setPaintProperty(layer.id, "fill-color", "#E7ECE0")
+                  map.setPaintProperty(layer.id, "fill-color", THEME_COLORS.bgSubdued)
                 } else if (layer.id.includes("land")) {
-                  map.setPaintProperty(layer.id, "fill-color", "#F6F3EB")
+                  map.setPaintProperty(layer.id, "fill-color", THEME_COLORS.bgSand)
                 }
               } else if (layer.type === "line") {
                 if (layer.id.includes("water")) {
-                  map.setPaintProperty(layer.id, "line-color", "#D5E1E3")
+                  map.setPaintProperty(layer.id, "line-color", THEME_COLORS.mediaPlaceholder)
                 } else if (layer.id.includes("admin") || layer.id.includes("border") || layer.id.includes("boundary")) {
-                  map.setPaintProperty(layer.id, "line-color", "#D2C5B2")
+                  map.setPaintProperty(layer.id, "line-color", THEME_COLORS.borderLight)
                 } else if (
                   layer.id.includes("road") ||
                   layer.id.includes("street") ||
                   layer.id.includes("highway")
                 ) {
-                  map.setPaintProperty(layer.id, "line-color", "#E9E3D8")
+                  map.setPaintProperty(layer.id, "line-color", THEME_COLORS.borderLight)
                 }
               }
             } catch (e) {
@@ -329,12 +330,12 @@ export function GeoMapPreview({ draft }: LocationPreviewSectionProps) {
         // MOTHER LOCATION PIN
         const ping = document.createElement("span")
         ping.className = "absolute h-9 w-9 rounded-full pointer-events-none"
-        ping.style.backgroundColor = "#1f3d2b"
+        ping.style.backgroundColor = THEME_COLORS.sidebarActive
         ping.style.opacity = "0.2"
         el.appendChild(ping)
 
         const halo = document.createElement("span")
-        halo.className = "absolute h-8 w-8 rounded-full border-2 border-[#1f3d2b]/60 pointer-events-none"
+        halo.className = "absolute h-8 w-8 rounded-full border-2 border-sidebar-active/60 pointer-events-none"
         el.appendChild(halo)
 
         const svg = document.createElementNS("http://www.w3.org/2000/svg", "svg")
@@ -349,8 +350,8 @@ export function GeoMapPreview({ draft }: LocationPreviewSectionProps) {
           "d",
           "M12 2C7.3 2 3.5 5.8 3.5 10.5C3.5 16.8 11.1 22.3 11.4 22.5C11.6 22.6 11.8 22.7 12 22.7C12.2 22.7 12.4 22.6 12.6 22.5C12.9 22.3 20.5 16.8 20.5 10.5C20.5 5.8 16.7 2 12 2Z"
         )
-        path.setAttribute("fill", "#1f3d2b")
-        path.setAttribute("stroke", "#ffffff")
+        path.setAttribute("fill", THEME_COLORS.sidebarActive)
+        path.setAttribute("stroke", THEME_COLORS.white)
         path.setAttribute("stroke-width", "1.8")
         path.setAttribute("stroke-linejoin", "round")
         svg.appendChild(path)
@@ -360,7 +361,7 @@ export function GeoMapPreview({ draft }: LocationPreviewSectionProps) {
           "d",
           "M12 6.5L13.5 9.5L16.8 10L14.4 12.3L15 15.5L12 14L9 15.5L9.6 12.3L7.2 10L10.5 9.5L12 6.5Z"
         )
-        star.setAttribute("fill", "#ffffff")
+        star.setAttribute("fill", THEME_COLORS.white)
         svg.appendChild(star)
 
         el.appendChild(svg)
@@ -368,7 +369,7 @@ export function GeoMapPreview({ draft }: LocationPreviewSectionProps) {
         // CHILD LOCATION PIN
         const ping = document.createElement("span")
         ping.className = "absolute h-7 w-7 rounded-full pointer-events-none"
-        ping.style.backgroundColor = "var(--color-accent, #af6348)"
+        ping.style.backgroundColor = THEME_COLORS.accent
         ping.style.opacity = "0.2"
         el.appendChild(ping)
 
@@ -384,8 +385,8 @@ export function GeoMapPreview({ draft }: LocationPreviewSectionProps) {
           "d",
           "M12 2C7.86 2 4.5 5.36 4.5 9.5c0 5.5 6.5 11.5 7.13 12.07a.5.5 0 0 0 .74 0C13 21 19.5 15 19.5 9.5 19.5 5.36 16.14 2 12 2Z"
         )
-        path.setAttribute("fill", "var(--color-accent-light, #b85c38)")
-        path.setAttribute("stroke", "#ffffff")
+        path.setAttribute("fill", THEME_COLORS.accentLight)
+        path.setAttribute("stroke", THEME_COLORS.white)
         path.setAttribute("stroke-width", "1.5")
         path.setAttribute("stroke-linejoin", "round")
         svg.appendChild(path)
@@ -394,7 +395,7 @@ export function GeoMapPreview({ draft }: LocationPreviewSectionProps) {
         circle.setAttribute("cx", "12")
         circle.setAttribute("cy", "9.5")
         circle.setAttribute("r", "2.75")
-        circle.setAttribute("fill", "#ffffff")
+        circle.setAttribute("fill", THEME_COLORS.white)
         svg.appendChild(circle)
 
         el.appendChild(svg)
@@ -493,14 +494,14 @@ export function GeoMapPreview({ draft }: LocationPreviewSectionProps) {
             <DynamicStyledTextPreview
               as="h2"
               data={geoData.title}
-              fallbackColor="#0a0a0a"
+              fallbackColor={THEME_COLORS.title}
               className="self-stretch shrink-0 h-auto justify-start font-medium font-heading text-[28px] leading-[38px] md:text-[38px] md:leading-[47px] lg:text-[42px] lg:leading-[50px] lgx:text-[43px] lgx:leading-[51px] xlg:text-[44px] xlg:leading-[52px] mid:text-[46px] mid:leading-[54px] xl:text-[48px] xl:leading-[56px] 2xl:text-[50px] 2xl:leading-[58px] text-title text-center"
             />
 
             <DynamicStyledTextPreview
               as="p"
               data={geoData.description}
-              fallbackColor="#565e69"
+              fallbackColor={THEME_COLORS.muted}
               className="mt-[11px] md:mt-3 lgx:mt-[13px] mid:mt-[14px] xl:mt-[15px] w-full max-w-[672px] text-center font-normal text-subtitle text-sm md:text-[15px] lg:text-[15.5px] lgx:text-base xlg:text-[16.5px] mid:text-[17px] xl:text-[18px] leading-[20px] md:leading-[22px] lg:leading-[23px] lgx:leading-[24px] xlg:leading-[25px] mid:leading-[26px] xl:leading-[28px] tracking-[1.2px] md:tracking-[1.6px] lg:tracking-[1.7px] lgx:tracking-[1.8px] xlg:tracking-[1.85px] mid:tracking-[1.9px] xl:tracking-[2px]"
             />
           </div>
@@ -541,7 +542,7 @@ export function GeoMapPreview({ draft }: LocationPreviewSectionProps) {
             />
 
             {/* Floating Zoom Controls at Bottom Right */}
-            <div className="absolute right-3 md:right-[31px] lg:right-[33px] lgx:right-[35px] xlg:right-[36.5px] mid:right-[38px] xl:right-[40px] bottom-3 md:bottom-[27px] lg:bottom-[29px] lgx:bottom-[30px] xlg:bottom-[32px] mid:bottom-[33.5px] xl:bottom-[35px] z-20 flex flex-col items-center gap-2.5 md:gap-3 lg:gap-[12.5px] lgx:gap-[13px] xlg:gap-[13.25px] mid:gap-[13.75px] xl:gap-3.5 bg-white/95 backdrop-blur-md border border-border/80 rounded-full p-2 md:p-2.5 lg:p-[10.5px] lgx:p-[11px] xlg:p-[11.5px] mid:p-[11.75px] xl:p-3 select-none shadow-md">
+            <div className="absolute right-3 md:right-[31px] lg:right-[33px] lgx:right-[35px] xlg:right-[36.5px] mid:right-[38px] xl:right-[40px] bottom-3 md:bottom-[27px] lg:bottom-[29px] lgx:bottom-[30px] xlg:bottom-[32px] mid:bottom-[33.5px] xl:bottom-[35px] z-20 flex flex-col items-center gap-2.5 md:gap-3 lg:gap-[12.5px] lgx:gap-[13px] xlg:gap-[13.25px] mid:gap-[13.75px] xl:gap-3.5 bg-card/95 backdrop-blur-md border border-border/80 rounded-full p-2 md:p-2.5 lg:p-[10.5px] lgx:p-[11px] xlg:p-[11.5px] mid:p-[11.75px] xl:p-3 select-none shadow-md">
               <button
                 type="button"
                 aria-label="Zoom in"
@@ -582,7 +583,7 @@ export function GeoMapPreview({ draft }: LocationPreviewSectionProps) {
             </div>
 
             {/* Bottom-Right Attribution */}
-            <div className="absolute left-3 bottom-3 z-10 text-[10px] text-muted-foreground/70 bg-white/70 px-2 py-0.5 rounded backdrop-blur-sm pointer-events-none">
+            <div className="absolute left-3 bottom-3 z-10 text-[10px] text-muted-foreground/70 bg-card/80 px-2 py-0.5 rounded backdrop-blur-sm pointer-events-none border border-border/40">
               © <span className="font-semibold">CARTO</span>, © OpenStreetMap contributors
             </div>
 
@@ -623,8 +624,8 @@ export function GeoMapPreview({ draft }: LocationPreviewSectionProps) {
                     <span
                       className={`inline-flex items-center gap-1 max-w-[90%] truncate rounded-full px-2.5 py-0.5 text-[10px] font-bold uppercase tracking-wider shadow-sm backdrop-blur-sm ${
                         activePin.isMother
-                          ? "bg-[#1f3d2b] text-white border border-amber-300/40"
-                          : "bg-white/95 text-primary border border-border/60"
+                          ? "bg-sidebar-active text-white border border-amber-300/40"
+                          : "bg-card/95 text-foreground border border-border/60"
                       }`}
                     >
                       {activePin.isMother && <span className="text-amber-300">★</span>}

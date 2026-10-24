@@ -14,8 +14,8 @@ interface MediaGridProps {
   isLoading?: boolean
 }
 
-function formatBytes(bytes: number, decimals = 1): string {
-  if (bytes === 0) return "0 B"
+function formatBytes(bytes?: number | null, decimals = 1): string {
+  if (!bytes || bytes <= 0) return "—"
   const k = 1024
   const dm = decimals < 0 ? 0 : decimals
   const sizes = ["B", "KB", "MB", "GB"]
@@ -48,10 +48,10 @@ export const MediaGrid: React.FC<MediaGridProps> = ({
     return (
       <div
         className={cn(
-          "grid gap-4 p-1",
+          "grid gap-2 p-1",
           selectedAssetId
-            ? "grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5"
-            : "grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6"
+            ? "grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5"
+            : "grid-cols-1 md:grid-cols-3 lg:grid-cols-5 xl:grid-cols-6"
         )}
       >
         {Array.from({ length: 18 }).map((_, i) => (
@@ -87,10 +87,10 @@ export const MediaGrid: React.FC<MediaGridProps> = ({
   return (
     <div
       className={cn(
-        "grid gap-4 p-1 transition-all duration-300",
+        "grid gap-2 p-1 transition-all duration-300",
         selectedAssetId
-          ? "grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5"
-          : "grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6"
+          ? "grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5"
+          : "grid-cols-1 md:grid-cols-3 lg:grid-cols-5 xl:grid-cols-6"
       )}
     >
       {assets.map((asset) => {

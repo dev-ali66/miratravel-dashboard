@@ -1,3 +1,4 @@
+import { THEME_COLORS } from "@/config/theme"
 import { useEffect, useMemo, useState, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { getStr, getStyleObj } from '@/components/pages/Journey/shared/previewHelpers';
@@ -147,11 +148,11 @@ function DayCard({
                 className="w-full pl-5 md:pl-[21px] lg:pl-6 lgx:pl-[26px] xlg:pl-[27px] mid:pl-[29px] xl:pl-8 pr-4 md:pr-[17px] lg:pr-[19px] lgx:pr-5 xlg:pr-[21px] mid:pr-[22px] xl:pr-6 py-4 md:py-[16.5px] lg:py-[17.5px] lgx:py-[18px] xlg:py-[18.5px] mid:py-[19px] xl:py-5 flex items-center justify-between gap-4 md:gap-[17px] lg:gap-[19px] lgx:gap-5 xlg:gap-[21px] mid:gap-[22px] xl:gap-6 text-left cursor-pointer hover:bg-black/[0.02] transition-colors group select-none"
             >
                 <div className="flex items-center gap-4 md:gap-[17px] lg:gap-[19px] lgx:gap-5 xlg:gap-[21px] mid:gap-[22px] xl:gap-6 min-w-0 flex-1">
-                    <div className="shrink-0 text-xs lg:text-[13px] lgx:text-[13px] xlg:text-[13px] mid:text-[13.5px] xl:text-sm font-semibold leading-normal" style={getStyleObj(item.dayLabel, '#182D09')}>
+                    <div className="shrink-0 text-xs lg:text-[13px] lgx:text-[13px] xlg:text-[13px] mid:text-[13.5px] xl:text-sm font-semibold leading-normal" style={getStyleObj(item.dayLabel, THEME_COLORS.primary)}>
                         {getStr(dayLabel)}
                     </div>
 
-                    <div className="relative w-14 h-10 md:w-[57px] md:h-[40.5px] lg:w-[59px] lg:h-[41.5px] lgx:w-15 lgx:h-[42px] xlg:w-[61px] xlg:h-[42.5px] mid:w-[62px] mid:h-[43px] xl:w-16 xl:h-11 rounded-lg overflow-hidden shrink-0 bg-neutral-200">
+                    <div className="relative w-14 h-10 md:w-[57px] md:h-[40.5px] lg:w-[59px] lg:h-[41.5px] lgx:w-15 lgx:h-[42px] xlg:w-[61px] xlg:h-[42.5px] mid:w-[62px] mid:h-[43px] xl:w-16 xl:h-11 rounded-lg overflow-hidden shrink-0 bg-muted">
                         {resolvedMedia?.isVideo && resolvedMedia?.videoUrl ? (
                             <video
                                 src={resolvedMedia.videoUrl}
@@ -168,11 +169,11 @@ function DayCard({
                                 className="w-full h-full object-cover object-center group-hover:scale-105 transition-transform duration-300"
                             />
                         ) : (
-                            <div className="w-full h-full bg-[#E5E0D8] flex items-center justify-center text-[10px] text-[#707070]">No Img</div>
+                            <div className="w-full h-full bg-surface-muted flex items-center justify-center text-[10px] text-subtitle">No Img</div>
                         )}
                     </div>
 
-                    <span className="flex-1 text-xs lg:text-[13px] lgx:text-[13px] xlg:text-[13px] mid:text-[13.5px] xl:text-sm font-normal leading-normal group-hover:text-[#182D09]/80 transition-colors" style={getStyleObj(item.title, '#182D09')}>
+                    <span className="flex-1 text-xs lg:text-[13px] lgx:text-[13px] xlg:text-[13px] mid:text-[13.5px] xl:text-sm font-normal leading-normal group-hover:text-brand-primary/80 transition-colors" style={getStyleObj(item.title, THEME_COLORS.primary)}>
                         {getStr(displayTitle)}
                     </span>
                 </div>
@@ -180,7 +181,7 @@ function DayCard({
                 <motion.div
                     animate={{ rotate: isExpanded ? 180 : 0 }}
                     transition={{ duration: 0.28, ease: [0.32, 0.72, 0, 1] }}
-                    className="size-5 sm:size-6 text-[#707070] group-hover:text-[#182D09] transition-colors flex items-center justify-center shrink-0"
+                    className="size-5 sm:size-6 text-subtitle group-hover:text-brand-primary transition-colors flex items-center justify-center shrink-0"
                 >
                     <ChevronIcon className="xl:size-6 mid:size-5 lgx:size-[18px] md:size-4 size-3.5" />
                 </motion.div>
@@ -209,22 +210,22 @@ function DayCard({
                         }}
                         className="overflow-hidden w-full px-4 sm:px-6 md:px-8 pb-6 pt-1"
                     >
-                        <div className="w-full relative bg-white/50 rounded-l-2xl flex flex-col lg:flex-row items-stretch overflow-hidden">
+                        <div className="w-full relative bg-card/60 border border-border/40 rounded-l-2xl flex flex-col lg:flex-row items-stretch overflow-hidden">
                             <div className="flex-1 xl:py-2.5 xl:px-6 flex flex-col justify-center gap-2">
                                 {getStr(item.description).includes('<') ? (
                                     <div
                                         className="prose prose-sm max-w-none text-xs xl:text-sm font-normal xl:leading-7 xl:tracking-[1.5px] [&_p]:m-0"
-                                        style={getStyleObj(item.description, '#52575C')}
+                                        style={getStyleObj(item.description, THEME_COLORS.muted)}
                                         dangerouslySetInnerHTML={{ __html: getStr(item.description) }}
                                     />
                                 ) : (
-                                    <p className="text-xs xl:text-sm font-normal xl:leading-7 xl:tracking-[1.5px]" style={getStyleObj(item.description, '#52575C')}>
+                                    <p className="text-xs xl:text-sm font-normal xl:leading-7 xl:tracking-[1.5px]" style={getStyleObj(item.description, THEME_COLORS.muted)}>
                                         {getStr(item.description)}
                                     </p>
                                 )}
                             </div>
 
-                            <div className="relative w-full lg:w-[380px] lgx:w-[384px] xlg:w-[392px] mid:w-[399px] xl:w-[410px] h-[220px] md:h-[225px] lg:h-auto lgx:h-[238px] xlg:h-[245px] mid:h-[251px] xl:h-[260px] min-h-[220px] shrink-0 overflow-hidden select-none bg-neutral-200">
+                            <div className="relative w-full lg:w-[380px] lgx:w-[384px] xlg:w-[392px] mid:w-[399px] xl:w-[410px] h-[220px] md:h-[225px] lg:h-auto lgx:h-[238px] xlg:h-[245px] mid:h-[251px] xl:h-[260px] min-h-[220px] shrink-0 overflow-hidden select-none bg-muted">
                                 <motion.div
                                     variants={imageHoverScaleVariants}
                                     whileHover="hover"
@@ -246,7 +247,7 @@ function DayCard({
                                             className="w-full h-full object-cover object-center"
                                         />
                                     ) : (
-                                        <div className="w-full h-full bg-[#E5E0D8] flex items-center justify-center text-xs text-[#707070]">No Image</div>
+                                        <div className="w-full h-full bg-surface-muted flex items-center justify-center text-xs text-subtitle">No Image</div>
                                     )}
                                 </motion.div>
                             </div>
@@ -413,25 +414,25 @@ export function DayByDayItinerary({
                         {badge ? (
                             <span
                                 className="text-xs md:text-[13px] font-semibold uppercase tracking-[2px]"
-                                style={getStyleObj(badgeObj || itinerary?.badge, '#af6348')}
+                                style={getStyleObj(badgeObj || itinerary?.badge, THEME_COLORS.accent)}
                             >
                                 {badge}
                             </span>
                         ) : null}
-                        <h2 className="font-heading text-[18px] md:text-[20px] lg:text-[21px] lgx:text-[22px] xlg:text-[23px] xl:text-[24px] 2xl:text-[26px] font-semibold leading-5 md:leading-6 lg:leading-[26px] lgx:leading-7 xlg:leading-[30px] mid:leading-[31px] xl:leading-8 2xl:leading-9" style={getStyleObj(titleObj || itinerary?.title, '#182D09')}>
+                        <h2 className="font-heading text-[18px] md:text-[20px] lg:text-[21px] lgx:text-[22px] xlg:text-[23px] xl:text-[24px] 2xl:text-[26px] font-semibold leading-5 md:leading-6 lg:leading-[26px] lgx:leading-7 xlg:leading-[30px] mid:leading-[31px] xl:leading-8 2xl:leading-9" style={getStyleObj(titleObj || itinerary?.title, THEME_COLORS.primary)}>
                             {title}
                         </h2>
-                        <p className="text-sm md:text-[15px] lgx:text-[15.5px] mid:text-base xl:text-base 2xl:text-[17px] font-normal leading-4 md:leading-5 lg:leading-[21px] lgx:leading-[22px] xlg:leading-[23px] xl:leading-6 2xl:leading-[26px] md:tracking-[0.2px] lg:tracking-[0.4px] lgx:tracking-[0.6px] xlg:tracking-[0.8px] mid:tracking-[0.9px] xl:tracking-[1px] 2xl:tracking-[1.2px]" style={getStyleObj(subtitleObj || itinerary?.subtitle, '#707070')}>
+                        <p className="text-sm md:text-[15px] lgx:text-[15.5px] mid:text-base xl:text-base 2xl:text-[17px] font-normal leading-4 md:leading-5 lg:leading-[21px] lgx:leading-[22px] xlg:leading-[23px] xl:leading-6 2xl:leading-[26px] md:tracking-[0.2px] lg:tracking-[0.4px] lgx:tracking-[0.6px] xlg:tracking-[0.8px] mid:tracking-[0.9px] xl:tracking-[1px] 2xl:tracking-[1.2px]" style={getStyleObj(subtitleObj || itinerary?.subtitle, THEME_COLORS.muted)}>
                             {subtitle}
                         </p>
                     </div>
 
                     {!hasData ? (
-                        <div className="w-full rounded-2xl border border-dashed border-[#D8CBB8] p-8 md:p-12 flex flex-col items-center justify-center text-center bg-[#FFF8F2]">
-                            <h3 className="text-base md:text-lg font-heading font-semibold text-[#182D09] mb-1.5">
+                        <div className="w-full rounded-2xl border border-dashed border-border p-8 md:p-12 flex flex-col items-center justify-center text-center bg-card/60 text-card-foreground">
+                            <h3 className="text-base md:text-lg font-heading font-semibold text-brand-primary mb-1.5">
                                 Itinerary coming soon
                             </h3>
-                            <p className="text-[#707070] text-xs md:text-sm max-w-md leading-relaxed">
+                            <p className="text-muted-foreground text-xs md:text-sm max-w-md leading-relaxed">
                                 Detailed day-by-day experiences and route highlights for this journey are currently being curated by our specialists.
                             </p>
                         </div>
@@ -465,16 +466,16 @@ export function DayByDayItinerary({
                                 return (
                                     <div
                                         key={chapterKey}
-                                        className="w-full relative bg-[#F9F6ED] rounded-2xl border border-[#b7b6b6]/40 flex flex-col overflow-hidden"
+                                        className="w-full relative bg-card text-card-foreground rounded-2xl border border-border/70 shadow-sm flex flex-col overflow-hidden"
                                     >
                                         <button
                                             type="button"
                                             onClick={() => toggleChapter(chapterKey)}
                                             aria-expanded={isChapterExpanded}
-                                            className={`w-full flex flex-col md:flex-row items-stretch text-left cursor-pointer group select-none transition-colors ${isChapterExpanded ? 'border-b border-[#b7b6b6]/40' : ''
+                                            className={`w-full flex flex-col md:flex-row items-stretch text-left cursor-pointer group select-none transition-colors ${isChapterExpanded ? 'border-b border-border-muted/40' : ''
                                                 }`}
                                         >
-                                            <div className="relative w-full md:w-56 lg:w-[228px] lgx:w-[230px] xlg:w-[233px] mid:w-[236px] xl:w-60 md:min-w-[220px] lg:min-w-[226px] lgx:min-w-[228px] xlg:min-w-[231px] mid:min-w-[235px] xl:min-w-[240px] h-44 md:h-auto min-h-[160px] overflow-hidden shrink-0 bg-neutral-200">
+                                            <div className="relative w-full md:w-56 lg:w-[228px] lgx:w-[230px] xlg:w-[233px] mid:w-[236px] xl:w-60 md:min-w-[220px] lg:min-w-[226px] lgx:min-w-[228px] xlg:min-w-[231px] mid:min-w-[235px] xl:min-w-[240px] h-44 md:h-auto min-h-[160px] overflow-hidden shrink-0 bg-muted">
                                                 {chapterThumbnail ? (
                                                     <img
                                                         src={chapterThumbnail}
@@ -482,13 +483,13 @@ export function DayByDayItinerary({
                                                         className="w-full h-full object-cover object-center group-hover:scale-105 transition-transform duration-500"
                                                     />
                                                 ) : (
-                                                    <div className="w-full h-full bg-[#E5E0D8] flex items-center justify-center text-xs text-[#707070]">No Image</div>
+                                                    <div className="w-full h-full bg-surface-muted flex items-center justify-center text-xs text-subtitle">No Image</div>
                                                 )}
                                             </div>
 
                                             <div className="flex-1 p-5 md:p-[20.5px] lg:p-[21.5px] lgx:p-[22px] xlg:p-[22.5px] mid:p-[23px] xl:p-6 flex flex-col justify-center items-start gap-1.5 md:gap-[6.25px] lg:gap-[6.75px] lgx:gap-[7px] xlg:gap-[7.25px] mid:gap-[7.5px] xl:gap-2 relative">
                                                 <div className="w-full flex items-center justify-between">
-                                                    <span className="text-sm md:text-[15px] lgx:text-[15.5px] mid:text-[15.75px] xl:text-base font-bold xl:tracking-[1px] uppercase" style={getStyleObj(chapter.badge || chapter.chapterNumber, '#af6348')}>
+                                                    <span className="text-sm md:text-[15px] lgx:text-[15.5px] mid:text-[15.75px] xl:text-base font-bold xl:tracking-[1px] uppercase" style={getStyleObj(chapter.badge || chapter.chapterNumber, THEME_COLORS.accent)}>
                                                         {(() => {
                                                             const badgeText = getStr(chapter.badge || chapter.chapterNumber)
                                                             if (badgeText) {
@@ -500,18 +501,18 @@ export function DayByDayItinerary({
                                                     <motion.div
                                                         animate={{ rotate: isChapterExpanded ? 180 : 0 }}
                                                         transition={{ duration: 0.28, ease: [0.32, 0.72, 0, 1] }}
-                                                        className="size-6 text-[#707070] group-hover:text-[#182D09] transition-colors flex items-center justify-center shrink-0"
+                                                        className="size-6 text-subtitle group-hover:text-brand-primary transition-colors flex items-center justify-center shrink-0"
                                                     >
                                                         <ChevronIcon className="xl:size-6 mid:size-5 lgx:size-[18px] md:size-4 size-3.5" />
                                                     </motion.div>
                                                 </div>
 
-                                                <h3 className="text-xl md:text-[20.5px] lg:text-[21.5px] lgx:text-[22px] xlg:text-[22.5px] mid:text-[23px] xl:text-2xl font-[200] font-heading group-hover:text-[#182D09]/80 transition-colors" style={getStyleObj(chapter.title, '#182D09')}>
+                                                <h3 className="text-xl md:text-[20.5px] lg:text-[21.5px] lgx:text-[22px] xlg:text-[22.5px] mid:text-[23px] xl:text-2xl font-[200] font-heading group-hover:text-brand-primary/80 transition-colors" style={getStyleObj(chapter.title, THEME_COLORS.primary)}>
                                                     {getStr(chapter.title) || `Chapter ${roman}`}
                                                 </h3>
 
                                                 {subLine && (
-                                                    <div className="text-xs lg:text-[13px] lgx:text-[13px] xlg:text-[13px] mid:text-[13.5px] xl:text-sm font-normal" style={getStyleObj(chapter.subtitle, '#235347')}>
+                                                    <div className="text-xs lg:text-[13px] lgx:text-[13px] xlg:text-[13px] mid:text-[13.5px] xl:text-sm font-normal" style={getStyleObj(chapter.subtitle, THEME_COLORS.secondary)}>
                                                         {subLine}
                                                     </div>
                                                 )}
@@ -520,11 +521,11 @@ export function DayByDayItinerary({
                                                     getStr(chapterDescription).includes('<') ? (
                                                         <div
                                                             className="prose prose-sm max-w-none text-xs lg:text-[13px] lgx:text-[13px] xlg:text-[13px] mid:text-[13.5px] xl:text-sm font-normal xl:leading-5 [&_p]:m-0"
-                                                            style={getStyleObj(chapter.description, '#707070')}
+                                                            style={getStyleObj(chapter.description, THEME_COLORS.muted)}
                                                             dangerouslySetInnerHTML={{ __html: getStr(chapterDescription) }}
                                                         />
                                                     ) : (
-                                                        <p className="text-xs lg:text-[13px] lgx:text-[13px] xlg:text-[13px] mid:text-[13.5px] xl:text-sm font-normal xl:leading-5" style={getStyleObj(chapter.description, '#707070')}>
+                                                        <p className="text-xs lg:text-[13px] lgx:text-[13px] xlg:text-[13px] mid:text-[13.5px] xl:text-sm font-normal xl:leading-5" style={getStyleObj(chapter.description, THEME_COLORS.muted)}>
                                                             {getStr(chapterDescription)}
                                                         </p>
                                                     )
@@ -552,7 +553,7 @@ export function DayByDayItinerary({
                                                             opacity: { duration: 0.15 },
                                                         },
                                                     }}
-                                                    className="overflow-hidden w-full flex flex-col divide-y divide-[#B7B6B6]/40"
+                                                    className="overflow-hidden w-full flex flex-col divide-y divide-border-muted/40"
                                                 >
                                                     {chapter.days.map((item, indexWithinChapter) => {
                                                         const dayKey = item.dayNumber ?? indexWithinChapter + 1;

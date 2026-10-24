@@ -1,3 +1,4 @@
+import { THEME_COLORS } from "@/config/theme"
 import { emptyPeople } from "./emptyPeople"
 import {
   normalizeStyledField,
@@ -32,8 +33,8 @@ export function normalizePeople(input: any) {
       : []
 
     return {
-      name: normalizeStyledField(rawName, "Team Member", "#182D09"),
-      designation: normalizeStyledField(rawDesignation, "Specialist", "#B86B3A"),
+      name: normalizeStyledField(rawName, "Team Member", THEME_COLORS.primary),
+      designation: normalizeStyledField(rawDesignation, "Specialist", THEME_COLORS.accentWarm),
       multimedia: normalizeMultimedia(m?.multimedia, "image"),
       social,
     }
@@ -42,9 +43,9 @@ export function normalizePeople(input: any) {
   const res = {
     ...emptyPeople,
     ...raw,
-    eyebrow: normalizeStyledField(raw.eyebrow, emptyPeople.eyebrow.value, "#B86B3A"),
-    title: normalizeStyledField(raw.title, emptyPeople.title.value, "#182D09"),
-    description: normalizeStyledField(raw.description, emptyPeople.description.value, "#4B5563"),
+    eyebrow: normalizeStyledField(raw.eyebrow, emptyPeople.eyebrow.value, THEME_COLORS.accentWarm),
+    title: normalizeStyledField(raw.title, emptyPeople.title.value, THEME_COLORS.primary),
+    description: normalizeStyledField(raw.description, emptyPeople.description.value, THEME_COLORS.sub),
     members,
     backgroundMultimedia: normalizeMultimedia(
       raw.backgroundMultimedia,

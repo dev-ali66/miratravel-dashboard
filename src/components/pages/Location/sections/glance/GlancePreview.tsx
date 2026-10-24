@@ -1,3 +1,4 @@
+import { THEME_COLORS } from "@/config/theme"
 import { DynamicStyledTextPreview } from "@/components/pages/CMS/shared/DynamicStyledTextPreview"
 import { UniversalMultimediaPreview } from "@/components/pages/CMS/Home/shared/preview/UniversalMultimediaPreview"
 import type { LocationPreviewSectionProps } from "../../config/locationSections"
@@ -126,7 +127,7 @@ export function GlancePreview({ draft }: LocationPreviewSectionProps) {
     <section id="region-glance" data-section="glance" className="relative w-full py-12 md:py-16 overflow-hidden">
       <UniversalMultimediaPreview
         multimedia={glanceData.backgroundMultimedia}
-        fallbackColor="#FFFFFF"
+        fallbackColor={THEME_COLORS.white}
         mode="background"
       />
 
@@ -137,13 +138,13 @@ export function GlancePreview({ draft }: LocationPreviewSectionProps) {
             <DynamicStyledTextPreview
               as="span"
               data={glanceData.label}
-              fallbackColor="#af6348"
+              fallbackColor={THEME_COLORS.accent}
               className="text-xs font-semibold uppercase tracking-widest"
             />
             <DynamicStyledTextPreview
               as="h2"
               data={glanceData.title}
-              fallbackColor="#182d09"
+              fallbackColor={THEME_COLORS.primary}
               className="text-2xl md:text-3xl font-normal font-serif"
             />
           </div>
@@ -152,7 +153,7 @@ export function GlancePreview({ draft }: LocationPreviewSectionProps) {
             <DynamicStyledTextPreview
               as="p"
               data={glanceData.description}
-              fallbackColor="#565e69"
+              fallbackColor={THEME_COLORS.muted}
               className="text-sm leading-relaxed"
             />
           </div>
@@ -196,7 +197,7 @@ export function GlancePreview({ draft }: LocationPreviewSectionProps) {
                   <DynamicStyledTextPreview
                     as="h3"
                     data={featured.title}
-                    fallbackColor="#FFFFFF"
+                    fallbackColor={THEME_COLORS.white}
                     className="text-xl md:text-2xl font-serif text-white font-normal"
                   />
                 </div>
@@ -227,7 +228,7 @@ export function GlancePreview({ draft }: LocationPreviewSectionProps) {
                       <DynamicStyledTextPreview
                         as="h3"
                         data={item.title}
-                        fallbackColor="#FFFFFF"
+                        fallbackColor={THEME_COLORS.white}
                         className="text-lg md:text-xl font-heading text-white font-normal"
                       />
                     </div>

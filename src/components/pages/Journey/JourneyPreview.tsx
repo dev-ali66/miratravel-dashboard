@@ -41,14 +41,14 @@ export function JourneyPreview() {
   )
 
   return (
-    <div className="@container w-full min-h-full bg-[#FAF6F0] text-foreground text-sm md:text-base selection:bg-[#af6348]/20 selection:text-[#af6348] flex flex-col">
+    <div className="@container w-full min-h-full bg-background text-foreground text-sm md:text-base selection:bg-accent/20 selection:text-accent flex flex-col">
       {/* 1. Hero Section */}
       <div data-section="hero" className="w-full">
         <HeroPreview draft={draft} hero={draft.hero} />
       </div>
 
       {/* 2. Tabs Navigation Bar */}
-      <div className="w-full sticky top-0 bg-[#FAF6F0] z-30 border-b border-[#D8CBB8] shadow-xs">
+      <div className="w-full sticky top-0 bg-card/95 backdrop-blur-md z-30 border-b border-border shadow-xs">
         <div className="w-full max-w-[1400px] mx-auto px-4 md:px-8 xl:px-12">
           <nav className="flex items-center gap-4 md:gap-8 xl:gap-[50px] overflow-x-auto [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden py-1">
             {JOURNEY_TABS.map((tab) => {
@@ -59,12 +59,12 @@ export function JourneyPreview() {
                   type="button"
                   onClick={() => setActiveTab(tab.id)}
                   className={`relative py-3.5 px-2 text-sm md:text-base xl:text-lg font-serif tracking-[1.5px] cursor-pointer transition-colors whitespace-nowrap shrink-0 ${
-                    isActive ? "text-[#af6348] font-semibold" : "text-[#464136] hover:text-[#080c1d]"
+                    isActive ? "text-accent font-semibold" : "text-muted-foreground hover:text-foreground"
                   }`}
                 >
                   {tab.label}
                   {isActive && (
-                    <span className="absolute left-0 right-0 bottom-0 h-[2px] bg-[#af6348]" />
+                    <span className="absolute left-0 right-0 bottom-0 h-[2px] bg-accent" />
                   )}
                 </button>
               )

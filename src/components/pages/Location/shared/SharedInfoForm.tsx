@@ -2,6 +2,8 @@
    SHARED INFO — FORM SECTION
    Simple form to edit shared info text used by previews.
 ===================================================== */
+import { THEME_COLORS } from "@/config/theme"
+
 
 import { DynamicStyledField, FormSection } from "./fields"
 import { UniversalMultimediaForm } from "../../CMS/shared/UniversalMultimediaForm"
@@ -64,7 +66,7 @@ export function SharedInfoForm({
           sectionTitle="Shared Info Background"
           showColorPicker
           colorLabel="Background color"
-          defaultColor="#F7F6F2"
+          defaultColor={THEME_COLORS.bgSand}
           imageTitle="Background Image"
           imageLabel="Background image"
           imageFieldName="locationSharedInfoBackgroundImage"

@@ -22,7 +22,7 @@ export default function MiraLoader({
         aria-label="Loading page"
         aria-live="polite"
         className={cn(
-          "fixed inset-0 z-[999999] flex flex-col items-center justify-center bg-[#F2E9E3] select-none transition-opacity duration-300 ease-out",
+          "fixed inset-0 z-[999999] flex flex-col items-center justify-center bg-loader-bg select-none transition-opacity duration-300 ease-out",
           className
         )}
       >
@@ -38,7 +38,7 @@ export default function MiraLoader({
           />
         </div>
         {text && (
-          <p className="mt-4 text-xs tracking-widest uppercase font-mono text-[#8C7A6B] animate-pulse">
+          <p className="mt-4 text-xs tracking-widest uppercase font-mono text-loader-text animate-pulse">
             {text}
           </p>
         )}
@@ -48,7 +48,7 @@ export default function MiraLoader({
 
   if (size === "xs") {
     return (
-      <span className={cn("inline-flex items-center justify-center size-4 overflow-hidden rounded-full bg-[#F2E9E3]", className)}>
+      <span className={cn("inline-flex items-center justify-center size-4 overflow-hidden rounded-full bg-loader-bg", className)}>
         <video
           src={EXACT_VIDEO_PATH}
           autoPlay
@@ -64,7 +64,7 @@ export default function MiraLoader({
 
   if (size === "sm") {
     return (
-      <span className={cn("inline-flex items-center justify-center size-7 overflow-hidden rounded-full bg-[#F2E9E3] shadow-xs border border-[#E8DCD5]", className)}>
+      <span className={cn("inline-flex items-center justify-center size-7 overflow-hidden rounded-full bg-loader-bg shadow-xs border border-loader-border", className)}>
         <video
           src={EXACT_VIDEO_PATH}
           autoPlay
@@ -88,7 +88,7 @@ export default function MiraLoader({
     <div
       className={cn(
         "flex flex-col items-center justify-center p-6 text-center select-none",
-        showBg && "bg-[#F2E9E3]/60 backdrop-blur-xs rounded-xl border border-[#E8DCD5]/60",
+        showBg && "bg-loader-bg/60 backdrop-blur-xs rounded-xl border border-loader-border/60",
         className
       )}
     >
@@ -104,7 +104,7 @@ export default function MiraLoader({
         />
       </div>
       {text && (
-        <p className="mt-3 text-xs tracking-widest uppercase font-mono text-[#8C7A6B] animate-pulse">
+        <p className="mt-3 text-xs tracking-widest uppercase font-mono text-loader-text animate-pulse">
           {text}
         </p>
       )}

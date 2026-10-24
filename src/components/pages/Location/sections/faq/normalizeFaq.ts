@@ -1,3 +1,4 @@
+import { THEME_COLORS } from "@/config/theme"
 import { normalizeMultimedia, normalizeStyledField } from "../../shared/normalizeHelpers"
 import { emptyFaq } from "./emptyFaq"
 
@@ -12,8 +13,8 @@ export function normalizeFaq(faqSection: any) {
 
   const normalizedItems = rawItems.map((q: any) => {
     const normItem = {
-      question: normalizeStyledField(q.question, "", "#182d09"),
-      answer: normalizeStyledField(q.answer, "", "#565e69"),
+      question: normalizeStyledField(q.question, "", THEME_COLORS.primary),
+      answer: normalizeStyledField(q.answer, "", THEME_COLORS.muted),
       multimedia: normalizeMultimedia(q.multimedia ?? q.imageMultimedia),
     }
     delete (normItem as any).questionStyle
@@ -24,7 +25,7 @@ export function normalizeFaq(faqSection: any) {
 
   const normalizedFaq = {
     ...safeFaq,
-    title: normalizeStyledField(safeFaq.title ?? emptyFaq.title, "", "#182d09"),
+    title: normalizeStyledField(safeFaq.title ?? emptyFaq.title, "", THEME_COLORS.primary),
     items: normalizedItems,
     imageMultimedia: normalizeMultimedia(safeFaq.imageMultimedia || emptyFaq.imageMultimedia, "image"),
     backgroundMultimedia: normalizeMultimedia(safeFaq.backgroundMultimedia || emptyFaq.backgroundMultimedia, "color"),

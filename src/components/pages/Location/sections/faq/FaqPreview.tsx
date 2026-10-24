@@ -1,3 +1,4 @@
+import { THEME_COLORS } from "@/config/theme"
 import { useState } from "react"
 import { DynamicStyledTextPreview } from "@/components/pages/CMS/shared/DynamicStyledTextPreview"
 import { UniversalMultimediaPreview } from "@/components/pages/CMS/Home/shared/preview/UniversalMultimediaPreview"
@@ -70,7 +71,7 @@ export function FaqPreview({ draft }: LocationPreviewSectionProps) {
           <DynamicStyledTextPreview
             as="h2"
             data={faqData.title}
-            fallbackColor="#182d09"
+            fallbackColor={THEME_COLORS.primary}
             className="text-center font-heading font-semibold text-[34px] md:text-[38px] md:leading-[48px] lg:text-[42px] lg:leading-[52px] xlg:text-[46px] xlg:leading-[58px] xl:text-5xl xl:leading-[64px] text-title"
           />
 
@@ -121,7 +122,7 @@ export function FaqPreview({ draft }: LocationPreviewSectionProps) {
                         <DynamicStyledTextPreview
                           as="span"
                           data={q.question}
-                          fallbackColor="#182d09"
+                          fallbackColor={THEME_COLORS.primary}
                           className="text-sm md:text-[15px] xl:text-base xl:leading-[30px] md:leading-[28px] leading-[26px] font-normal text-card-title transition-colors duration-200 group-hover:text-primary"
                         />
 
@@ -161,7 +162,7 @@ export function FaqPreview({ draft }: LocationPreviewSectionProps) {
                             <DynamicStyledTextPreview
                               as="p"
                               data={q.answer}
-                              fallbackColor="#565e69"
+                              fallbackColor={THEME_COLORS.muted}
                               className="font-inter text-xs md:text-[13px] xl:text-sm font-normal leading-5 md:leading-[22px] xl:leading-6 text-muted-foreground"
                             />
                           </div>

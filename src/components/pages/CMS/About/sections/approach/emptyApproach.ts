@@ -1,14 +1,15 @@
+import { THEME_COLORS } from "@/config/theme"
 export const emptyApproach = {
   eyebrow: {
     value: "OUR APPROACH",
-    textColor: "#B86B3A",
+    textColor: THEME_COLORS.accentWarm,
     textOpacity: 1,
     backgroundColor: null,
     backgroundOpacity: 1,
   },
   title: {
     value: "How we curate\nexperiences.",
-    textColor: "#182D09",
+    textColor: THEME_COLORS.primary,
     textOpacity: 1,
     backgroundColor: null,
     backgroundOpacity: 1,
@@ -16,14 +17,14 @@ export const emptyApproach = {
   description: {
     value:
       "Every destination within the MIRA collection is personally reviewed and continuously refined by our team. We spend time on the ground revisiting regions, evaluating properties, meeting local partners, and understanding how each journey feels from beginning to end.\n\nEvery detail is curated with absolute precision. We bridge local access, boutique accommodations, and private transportation to deliver an effortless experience.",
-    textColor: "#4B5563",
+    textColor: THEME_COLORS.sub,
     textOpacity: 1,
     backgroundColor: null,
     backgroundOpacity: 1,
   },
   quote: {
     value: "“Our role is not simply to organize travel. It is to curate experiences that feel considered in every detail.”",
-    textColor: "#B86B3A",
+    textColor: THEME_COLORS.accentWarm,
     textOpacity: 1,
     backgroundColor: null,
     backgroundOpacity: 1,
@@ -31,7 +32,7 @@ export const emptyApproach = {
   leftMultimedia: {
     show: "image",
     color: {
-      color: "#E5E7EB",
+      color: THEME_COLORS.mediaPlaceholder,
       opacity: 100,
       width: "100%",
       height: "100%",
@@ -41,7 +42,7 @@ export const emptyApproach = {
       url: "",
       alt: "Curated Balkan journey",
       opacity: 100,
-      overlayColor: "#000000",
+      overlayColor: THEME_COLORS.overlayBlack,
       overlayOpacity: 0,
       width: "100%",
       height: "auto",
@@ -52,7 +53,7 @@ export const emptyApproach = {
       url: "",
       alt: null,
       opacity: 100,
-      overlayColor: "#000000",
+      overlayColor: THEME_COLORS.overlayBlack,
       overlayOpacity: 0,
       autoplay: true,
       loop: true,
@@ -66,7 +67,7 @@ export const emptyApproach = {
   rightMultimedia: {
     show: "video",
     color: {
-      color: "#E5E5EB",
+      color: THEME_COLORS.mediaPlaceholder,
       opacity: 100,
       width: "100%",
       height: "100%",
@@ -76,7 +77,7 @@ export const emptyApproach = {
       url: "",
       alt: "",
       opacity: 100,
-      overlayColor: "#000000",
+      overlayColor: THEME_COLORS.overlayBlack,
       overlayOpacity: 0,
       width: "100%",
       height: "auto",
@@ -87,7 +88,7 @@ export const emptyApproach = {
       url: "",
       alt: null,
       opacity: 100,
-      overlayColor: "#000000",
+      overlayColor: THEME_COLORS.overlayBlack,
       overlayOpacity: 0,
       autoplay: true,
       loop: true,
@@ -101,7 +102,7 @@ export const emptyApproach = {
   backgroundMultimedia: {
     show: "color",
     color: {
-      color: "#FAF7F2",
+      color: THEME_COLORS.bgSand,
       opacity: 100,
       width: "100%",
       height: "100%",
@@ -111,7 +112,7 @@ export const emptyApproach = {
       url: "",
       alt: "",
       opacity: 100,
-      overlayColor: "#000000",
+      overlayColor: THEME_COLORS.overlayBlack,
       overlayOpacity: 0,
       width: "100%",
       height: "auto",
@@ -122,7 +123,7 @@ export const emptyApproach = {
       url: "",
       alt: null,
       opacity: 100,
-      overlayColor: "#000000",
+      overlayColor: THEME_COLORS.overlayBlack,
       overlayOpacity: 0,
       autoplay: true,
       loop: true,

@@ -1,3 +1,4 @@
+import { THEME_COLORS } from "@/config/theme"
 import { emptyProcess } from "./emptyProcess"
 import {
   normalizeStyledField,
@@ -18,11 +19,11 @@ export function normalizeProcess(input: any) {
     title: normalizeStyledField(
       raw.title,
       emptyProcess.title.value,
-      "#182D09"
+      THEME_COLORS.primary
     ),
     items: rawItems.map((item: any) => ({
-      title: normalizeStyledField(item?.title, "", "#182D09"),
-      description: normalizeStyledField(item?.description, "", "#6B7280"),
+      title: normalizeStyledField(item?.title, "", THEME_COLORS.primary),
+      description: normalizeStyledField(item?.description, "", THEME_COLORS.placeholder),
     })),
     backgroundMultimedia: normalizeMultimedia(
       raw.backgroundMultimedia ?? raw.multimedia,

@@ -1,14 +1,15 @@
+import { THEME_COLORS } from "@/config/theme"
 export const emptyWhyVisit = {
   subtitle: {
     value: "WHY VISIT",
-    textColor: "#af6348",
+    textColor: THEME_COLORS.accent,
     textOpacity: 1,
     backgroundColor: null,
     backgroundOpacity: 1,
   },
   title: {
     value: "A destination where mountains meet the sea",
-    textColor: "#182d09",
+    textColor: THEME_COLORS.primary,
     textOpacity: 1,
     backgroundColor: null,
     backgroundOpacity: 1,
@@ -19,12 +20,12 @@ export const emptyWhyVisit = {
   tags: ["Beaches", "Hiking", "Restaurant", "Sunset", "Historic village"],
   imageMultimedia: {
     show: "image",
-    color: { color: "#EDE7D8", opacity: 100, width: "100%", height: "100%", aspectRatio: "auto" },
+    color: { color: THEME_COLORS.bgSubdued, opacity: 100, width: "100%", height: "100%", aspectRatio: "auto" },
     image: {
       url: "",
       alt: "Why Visit Destination",
       opacity: 100,
-      overlayColor: "#000000",
+      overlayColor: THEME_COLORS.overlayBlack,
       overlayOpacity: 0,
       width: "100%",
       height: "auto",
@@ -38,7 +39,7 @@ export const emptyWhyVisit = {
       loop: true,
       muted: true,
       opacity: 100,
-      overlayColor: "#000000",
+      overlayColor: THEME_COLORS.overlayBlack,
       overlayOpacity: 0,
       width: "100%",
       height: "auto",
@@ -48,12 +49,12 @@ export const emptyWhyVisit = {
   },
   backgroundMultimedia: {
     show: "color",
-    color: { color: "#FFFFFF", opacity: 100, width: "100%", height: "100%", aspectRatio: "auto" },
+    color: { color: THEME_COLORS.white, opacity: 100, width: "100%", height: "100%", aspectRatio: "auto" },
     image: {
       url: "",
       alt: "",
       opacity: 100,
-      overlayColor: "#000000",
+      overlayColor: THEME_COLORS.overlayBlack,
       overlayOpacity: 0,
       width: "100%",
       height: "auto",
@@ -67,7 +68,7 @@ export const emptyWhyVisit = {
       loop: true,
       muted: true,
       opacity: 100,
-      overlayColor: "#000000",
+      overlayColor: THEME_COLORS.overlayBlack,
       overlayOpacity: 0,
       width: "100%",
       height: "auto",

@@ -1,3 +1,4 @@
+import { THEME_COLORS } from "@/config/theme"
 import { DynamicStyledTextPreview } from "@/components/pages/CMS/shared/DynamicStyledTextPreview"
 import { DynamicCmsButtonPreview } from "@/components/pages/CMS/shared/DynamicCmsButtonPreview"
 import { UniversalMultimediaPreview } from "@/components/pages/CMS/shared/UniversalMultimediaPreview"
@@ -22,9 +23,9 @@ export function LocationStoriesPreview({ draft }: LocationPreviewSectionProps) {
       {/* Background Media */}
       <UniversalMultimediaPreview
         multimedia={storiesData.backgroundMultimedia}
-        fallbackColor="#FCFBF9"
+        fallbackColor={THEME_COLORS.bgWarm}
         mode="background"
-        overlayClassName="bg-white/70"
+        overlayClassName="bg-white/70 dark:bg-background/80"
       />
 
       <div className="relative z-10 container mx-auto px-4 lg:px-0 flex w-full max-w-[1336px] flex-col items-center justify-center lg:items-center gap-[38px] md:gap-[50px] lg:gap-[48px] lgx:gap-[56px] xl:gap-[64px] lg:flex-row">
@@ -33,7 +34,7 @@ export function LocationStoriesPreview({ draft }: LocationPreviewSectionProps) {
           <UniversalMultimediaPreview
             multimedia={storiesData.leftSideMultimedia}
             fallbackAlt="Location stories editorial"
-            fallbackColor="#E5E7EB"
+            fallbackColor={THEME_COLORS.mediaPlaceholder}
             className="h-full w-full object-cover"
           />
         </div>
@@ -44,21 +45,21 @@ export function LocationStoriesPreview({ draft }: LocationPreviewSectionProps) {
             <DynamicStyledTextPreview
               as="p"
               data={storiesData.eyebrow}
-              fallbackColor="#C5A880"
+              fallbackColor={THEME_COLORS.goldMuted}
               className="text-sm md:text-[15px] font-normal xl:leading-4 leading-3 tracking-[1.5px] md:tracking-[2px] xl:tracking-[2.4px] uppercase"
             />
 
             <DynamicStyledTextPreview
               as="h2"
               data={storiesData.title}
-              fallbackColor="#182D09"
+              fallbackColor={THEME_COLORS.primary}
               className="font-heading max-w-[496px] font-semibold tracking-[2px] md:tracking-[3px] xl:tracking-[4px] text-[36px] md:text-[52px] lgx:text-[56px] xl:text-[64px] leading-[44px] md:leading-[64px] lgx:leading-[70px] xl:leading-[80px] self-stretch"
             />
 
             <DynamicStyledTextPreview
               as="p"
               data={storiesData.description}
-              fallbackColor="#4B5563"
+              fallbackColor={THEME_COLORS.sub}
               className="w-full text-sm sm:text-[15px] font-normal leading-[24px] sm:leading-[26px] md:leading-[28px] xl:leading-[30px] max-w-[550px]"
             />
           </div>
@@ -73,7 +74,7 @@ export function LocationStoriesPreview({ draft }: LocationPreviewSectionProps) {
                   className="group flex items-start gap-4 md:gap-6 lgx:gap-7 xl:gap-8 transition-opacity hover:opacity-80"
                 >
                   <span
-                    className="mt-0.5 text-sm font-normal leading-5 tracking-wide transition-colors group-hover:text-accent font-mono text-[#C5A880]"
+                    className="mt-0.5 text-sm font-normal leading-5 tracking-wide transition-colors group-hover:text-accent font-mono text-gold-muted"
                   >
                     {String(index + 1).padStart(2, "0")}
                   </span>
@@ -82,14 +83,14 @@ export function LocationStoriesPreview({ draft }: LocationPreviewSectionProps) {
                     <DynamicStyledTextPreview
                       as="h3"
                       data={item.title}
-                      fallbackColor="#182D09"
+                      fallbackColor={THEME_COLORS.primary}
                       className="font-heading text-base md:text-[18px] xl:text-[20px] font-medium leading-5 md:leading-6 xl:leading-7 transition-colors group-hover:text-primary"
                     />
 
                     <DynamicStyledTextPreview
                       as="p"
                       data={item.subtitle}
-                      fallbackColor="#4B5563"
+                      fallbackColor={THEME_COLORS.sub}
                       className="text-xs md:text-[13px] xl:text-sm font-normal xl:leading-5 leading-[18px]"
                     />
                   </div>

@@ -34,7 +34,7 @@ export function DestinationCtaPreview({ draft }: LocationPreviewSectionProps) {
       >
         <div className="w-full">
           {/* Rounded Card Container */}
-          <div className="relative mx-auto flex w-full max-w-[1520px] min-h-[380px] @xl:h-[458px] flex-col justify-center items-start overflow-hidden rounded-[24px] @md:rounded-[50px] @lg:rounded-[70px] @xl:rounded-[90px] bg-neutral-200/50 dark:bg-neutral-800/40 border border-border/40 shadow-xs">
+          <div className="relative mx-auto flex w-full max-w-[1520px] min-h-[380px] @xl:h-[458px] flex-col justify-center items-start overflow-hidden rounded-[24px] @md:rounded-[50px] @lg:rounded-[70px] @xl:rounded-[90px] bg-card border border-border/70 shadow-sm">
             {/* Background Media inside Card */}
             <UniversalMultimediaPreview
               multimedia={ctaData.backgroundMultimedia}

@@ -1,3 +1,4 @@
+import { THEME_COLORS } from "@/config/theme"
 import { useState } from "react"
 import { useDevMode } from "@/context/DevModeContext"
 import { Input } from "@/components/ui/input"
@@ -121,7 +122,7 @@ const DEFAULT_IMAGE_CONFIG: MultimediaImageConfig = {
   url: "",
   alt: "",
   opacity: 100,
-  overlayColor: "#000000",
+  overlayColor: THEME_COLORS.overlayBlack,
   overlayOpacity: 0,
   width: "100%",
   height: "auto",
@@ -138,7 +139,7 @@ const DEFAULT_VIDEO_CONFIG: MultimediaVideoConfig = {
   loop: true,
   muted: true,
   opacity: 100,
-  overlayColor: "#000000",
+  overlayColor: THEME_COLORS.overlayBlack,
   overlayOpacity: 0,
   width: "100%",
   height: "auto",
@@ -149,7 +150,7 @@ const DEFAULT_VIDEO_CONFIG: MultimediaVideoConfig = {
 }
 
 const DEFAULT_COLOR_CONFIG: MultimediaColorConfig = {
-  color: "#171717",
+  color: THEME_COLORS.bgHeroDark,
   opacity: 100,
   width: "100%",
   height: "100%",
@@ -458,7 +459,7 @@ export function UniversalMultimediaForm(props: UniversalMultimediaFormProps) {
           url: media?.image?.url || content.imageUrl || content[imageFieldName],
           alt: media?.image?.alt || content.imageAlt || "",
           opacity: media?.image?.opacity ?? content.imageOpacity ?? 100,
-          overlayColor: media?.image?.overlayColor ?? content.imageOverlayColor ?? "#000000",
+          overlayColor: media?.image?.overlayColor ?? content.imageOverlayColor ?? THEME_COLORS.overlayBlack,
           overlayOpacity: media?.image?.overlayOpacity ?? content.imageOverlayOpacity ?? 0,
           aspectRatio: media?.image?.aspectRatio || "16:9",
           width: media?.image?.width || "100%",
@@ -475,7 +476,7 @@ export function UniversalMultimediaForm(props: UniversalMultimediaFormProps) {
           loop: media?.video?.loop ?? content.videoLoop ?? true,
           muted: media?.video?.muted ?? content.videoMuted ?? true,
           opacity: media?.video?.opacity ?? content.videoOpacity ?? 100,
-          overlayColor: media?.video?.overlayColor ?? content.videoOverlayColor ?? "#000000",
+          overlayColor: media?.video?.overlayColor ?? content.videoOverlayColor ?? THEME_COLORS.overlayBlack,
           overlayOpacity: media?.video?.overlayOpacity ?? content.videoOverlayOpacity ?? 0,
           aspectRatio: media?.video?.aspectRatio || "16:9",
           width: media?.video?.width || "100%",
@@ -485,7 +486,7 @@ export function UniversalMultimediaForm(props: UniversalMultimediaFormProps) {
           isFullHeight: media?.video?.isFullHeight ?? false,
         },
         color: {
-          color: media?.color?.color || content.backgroundColor || "#171717",
+          color: media?.color?.color || content.backgroundColor || THEME_COLORS.bgHeroDark,
           opacity: media?.color?.opacity ?? content.backgroundOpacity ?? 100,
           width: media?.color?.width || "100%",
           height: media?.color?.height || "100%",
@@ -711,7 +712,7 @@ export function UniversalMultimediaForm(props: UniversalMultimediaFormProps) {
                 }}
                 opacity={currentVal.image?.opacity ?? 100}
                 onOpacityChange={showAdvancedDimensions ? (opacity) => updateImage({ opacity }) : undefined}
-                overlayColor={currentVal.image?.overlayColor ?? "#000000"}
+                overlayColor={currentVal.image?.overlayColor ?? THEME_COLORS.overlayBlack}
                 onOverlayColorChange={showAdvancedDimensions ? (overlayColor) => updateImage({ overlayColor }) : undefined}
                 overlayOpacity={currentVal.image?.overlayOpacity ?? 0}
                 onOverlayOpacityChange={showAdvancedDimensions ? (overlayOpacity) => updateImage({ overlayOpacity }) : undefined}
@@ -763,7 +764,7 @@ export function UniversalMultimediaForm(props: UniversalMultimediaFormProps) {
                 }}
                 opacity={currentVal.video?.opacity ?? 100}
                 onOpacityChange={showAdvancedDimensions ? (opacity) => updateVideo({ opacity }) : undefined}
-                overlayColor={currentVal.video?.overlayColor ?? "#000000"}
+                overlayColor={currentVal.video?.overlayColor ?? THEME_COLORS.overlayBlack}
                 onOverlayColorChange={showAdvancedDimensions ? (overlayColor) => updateVideo({ overlayColor }) : undefined}
                 overlayOpacity={currentVal.video?.overlayOpacity ?? 0}
                 onOverlayOpacityChange={showAdvancedDimensions ? (overlayOpacity) => updateVideo({ overlayOpacity }) : undefined}
@@ -823,7 +824,7 @@ export function UniversalMultimediaForm(props: UniversalMultimediaFormProps) {
             <div className="flex flex-col gap-3 rounded-lg border border-border/60 bg-muted/20 p-3 pt-2">
               <ColorField
                 label="Background Color"
-                value={currentVal.color?.color ?? "#171717"}
+                value={currentVal.color?.color ?? THEME_COLORS.bgHeroDark}
                 onChange={(color) => updateColor({ color })}
               />
               {showAdvancedDimensions && (

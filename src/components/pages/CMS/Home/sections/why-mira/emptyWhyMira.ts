@@ -1,14 +1,15 @@
+import { THEME_COLORS } from "@/config/theme"
 export const emptyWhyMira = {
   eyebrow: {
     value: "Why MIRA",
-    textColor: "#E5A84B",
+    textColor: THEME_COLORS.accentMuted,
     textOpacity: 1,
     backgroundColor: null,
     backgroundOpacity: 1,
   },
   title: {
     value: "Travel, shaped by insight. Refined through experience.",
-    textColor: "#FFFFFF",
+    textColor: THEME_COLORS.white,
     textOpacity: 1,
     backgroundColor: null,
     backgroundOpacity: 1,
@@ -16,14 +17,14 @@ export const emptyWhyMira = {
   description: {
     value:
       "MIRA exists as a quiet force behind the region's most curated journeys. We are rooted in the authentic Balkan heritage, believing that true exploration requires a deep, editorial understanding of the land's silent narratives. Every expedition is a private monograph, meticulously designed to bridge the gap between contemporary luxury and the raw, untethered spirit of the frontier.\n\nMIRA exists as a quiet force behind the region's most curated journeys. We are rooted in the authentic Balkan heritage, believing that true exploration requires a deep, editorial understanding of the land's silent narratives. Every expedition is a private monograph, meticulously designed to bridge the gap between contemporary luxury and the raw, untethered spirit of the frontier.",
-    textColor: "#F3F4F6",
+    textColor: THEME_COLORS.lightText,
     textOpacity: 1,
     backgroundColor: null,
     backgroundOpacity: 1,
   },
   signature: {
     value: "— MIRA",
-    textColor: "#E5A84B",
+    textColor: THEME_COLORS.accentMuted,
     textOpacity: 1,
     backgroundColor: null,
     backgroundOpacity: 1,
@@ -31,7 +32,7 @@ export const emptyWhyMira = {
   backgroundMultimedia: {
     show: "color",
     color: {
-      color: "#182D09",
+      color: THEME_COLORS.primary,
       opacity: 100,
       width: "100%",
       height: "100%",
@@ -41,7 +42,7 @@ export const emptyWhyMira = {
       url: "",
       alt: null,
       opacity: 100,
-      overlayColor: "#000000",
+      overlayColor: THEME_COLORS.overlayBlack,
       overlayOpacity: 0,
       width: "100%",
       height: "auto",
@@ -52,7 +53,7 @@ export const emptyWhyMira = {
       url: "",
       alt: null,
       opacity: 100,
-      overlayColor: "#000000",
+      overlayColor: THEME_COLORS.overlayBlack,
       overlayOpacity: 0,
       autoplay: true,
       loop: true,
@@ -66,7 +67,7 @@ export const emptyWhyMira = {
   rightSideMultimedia: {
     show: "image",
     color: {
-      color: "#182D09",
+      color: THEME_COLORS.primary,
       opacity: 100,
       width: "100%",
       height: "100%",
@@ -76,7 +77,7 @@ export const emptyWhyMira = {
       url: "",
       alt: "Why MIRA curated Balkan journey",
       opacity: 100,
-      overlayColor: "#000000",
+      overlayColor: THEME_COLORS.overlayBlack,
       overlayOpacity: 0,
       width: "100%",
       height: "auto",
@@ -87,7 +88,7 @@ export const emptyWhyMira = {
       url: "",
       alt: null,
       opacity: 100,
-      overlayColor: "#000000",
+      overlayColor: THEME_COLORS.overlayBlack,
       overlayOpacity: 0,
       autoplay: true,
       loop: true,

@@ -8,7 +8,7 @@ export function HeroPreview({ story }: StoryPreviewProps) {
   const isCenter = hero.isCenter !== false;
 
   return (
-    <section className="relative flex min-h-[500px] h-[560px] @xl:h-[725px] w-full items-center overflow-hidden bg-[#171717] text-white justify-center">
+    <section className="relative flex min-h-[500px] h-[560px] @xl:h-[725px] w-full items-center overflow-hidden bg-hero-dark text-white justify-center">
       {/* Background Media (Image / Video / Color) */}
       <UniversalMultimediaPreview
         multimedia={hero.backgroundMultimedia}
@@ -31,7 +31,7 @@ export function HeroPreview({ story }: StoryPreviewProps) {
           <DynamicStyledTextPreview
             as="span"
             data={hero.breadcrumb}
-            className="text-xs @md:text-[13px] font-semibold uppercase tracking-[2.5px] text-[#E5A84B] mb-2"
+            className="text-xs @md:text-[13px] font-semibold uppercase tracking-[2.5px] text-accent-muted mb-2"
           />
 
           {/* Subtitle / Tagline */}

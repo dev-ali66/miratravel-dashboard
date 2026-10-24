@@ -44,16 +44,16 @@ export function GuidancePreview({ block }: { block: any }) {
         {/* Essential Experiences Section */}
         {experiences.length > 0 && (
           <div className="flex flex-col gap-2.5 pt-1">
-            <div className="border-l-2 border-[#B3884D] pl-3 py-0.5">
+            <div className="border-l-2 border-gold pl-3 py-0.5">
               <DynamicStyledTextPreview
                 data={block.experiencesTitle}
-                className="text-[11px] font-bold tracking-wider text-[#B3884D] uppercase"
+                className="text-[11px] font-bold tracking-wider text-gold uppercase"
               />
             </div>
             <ul className="flex flex-col gap-2 pl-3">
               {experiences.map((exp: string, idx: number) => (
                 <li key={idx} className="flex items-start gap-2 text-xs md:text-sm text-stone-700 dark:text-stone-300 leading-normal">
-                  <span className="text-[#B3884D] font-bold text-sm shrink-0 leading-none mt-0.5">•</span>
+                  <span className="text-gold font-bold text-sm shrink-0 leading-none mt-0.5">•</span>
                   <span>{exp}</span>
                 </li>
               ))}
@@ -65,7 +65,7 @@ export function GuidancePreview({ block }: { block: any }) {
         {(block.knowledgeTitle?.value || block.knowledgeContent?.value) && (
           <div className="rounded-xl bg-stone-100/90 dark:bg-stone-800/60 p-4 border border-stone-200/60 dark:border-stone-700/50 flex flex-col gap-2 mt-1">
             <div className="flex items-center gap-1.5 text-[11px] font-bold tracking-wider text-stone-800 dark:text-stone-200 uppercase">
-              <Compass className="h-3.5 w-3.5 text-[#B3884D] shrink-0" />
+              <Compass className="h-3.5 w-3.5 text-gold shrink-0" />
               <DynamicStyledTextPreview data={block.knowledgeTitle} />
             </div>
             {block.knowledgeContent?.value && (

@@ -17,7 +17,7 @@ export function FaqCtaPreview({ section }: FaqCtaPreviewProps) {
   return (
     <section className="w-full pb-16 md:pb-24 xl:pb-32 overflow-hidden bg-background relative">
       <div className="container mx-auto px-4 md:px-6 lg:px-8 xl:px-12">
-        <div className="group relative w-full overflow-hidden rounded-[16px] bg-[#101912] text-neutral-100 flex flex-col lg:flex-row items-stretch shadow-md">
+        <div className="group relative w-full overflow-hidden rounded-[16px] bg-brand-primary text-neutral-100 flex flex-col lg:flex-row items-stretch shadow-md">
           {/* Optional Background Media overlay inside card */}
           {backgroundMultimedia && backgroundMultimedia.show !== "color" && (
             <UniversalMultimediaPreview

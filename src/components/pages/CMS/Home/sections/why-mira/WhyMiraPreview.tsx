@@ -1,3 +1,4 @@
+import { THEME_COLORS } from "@/config/theme"
 import type { HomeSection } from "../../homeTypes"
 import { UniversalMultimediaPreview } from "../../shared/preview/UniversalMultimediaPreview"
 import { DynamicStyledPreview } from "@/components/shared/DynamicStyledPreview"
@@ -20,26 +21,26 @@ export function WhyMiraPreview({
   const rightSideMultimedia = sec.rightSideMultimedia || content.rightSideMultimedia || (content as any).rightSideMedia
   const paragraphs = Array.isArray(sec.paragraphs) ? sec.paragraphs : Array.isArray(content.paragraphs) ? content.paragraphs : []
 
-  const isDarkBg = section.bgColor === "#182D09" || section.bgColor === "#1F3A1B" || !section.bgColor
-  const textColor = isDarkBg ? "#FFFFFF" : darkText
-  const paraTextColor = isDarkBg ? "#F3F4F6" : darkText
-  const goldColor = isDarkBg ? "#E5A84B" : accentColor
+  const isDarkBg = section.bgColor === THEME_COLORS.primary || section.bgColor === THEME_COLORS.sidebarActive || !section.bgColor
+  const textColor = isDarkBg ? THEME_COLORS.white : darkText
+  const paraTextColor = isDarkBg ? THEME_COLORS.lightText : darkText
+  const goldColor = isDarkBg ? THEME_COLORS.accentMuted : accentColor
 
   return (
     <section
       id="about"
       className="relative w-full overflow-hidden pt-[65px] md:pt-[90px] lg:pt-[100px] xlg:pt-[110px] xl:pt-[120px] pb-[65px] md:pb-[90px] lg:pb-[100px] xlg:pb-[110px] xl:pb-[120px]"
       style={{
-        backgroundColor: section.bgColor ?? "#182D09",
+        backgroundColor: section.bgColor ?? THEME_COLORS.primary,
         color: textColor,
       }}
     >
       <UniversalMultimediaPreview
         multimedia={backgroundMultimedia}
         fallbackAlt="Why Mira background"
-        fallbackColor={section.bgColor ?? "#182D09"}
+        fallbackColor={section.bgColor ?? THEME_COLORS.primary}
         mode="background"
-        overlayClassName={isDarkBg ? undefined : "bg-white/70"}
+        overlayClassName={isDarkBg ? undefined : "bg-white/70 dark:bg-background/80"}
       />
 
       <div className="relative z-10 container mx-auto px-4 lg:px-0 flex w-full flex-col-reverse items-center justify-center lg:items-center gap-10 md:gap-14 lg:gap-[60px] xl:gap-[80px] lg:flex-row">
@@ -86,7 +87,7 @@ export function WhyMiraPreview({
           <UniversalMultimediaPreview
             multimedia={rightSideMultimedia}
             fallbackAlt="Why Mira story"
-            fallbackColor="#FBF9F5"
+            fallbackColor={THEME_COLORS.bgSand}
             className="h-full w-full object-cover"
           />
         </div>

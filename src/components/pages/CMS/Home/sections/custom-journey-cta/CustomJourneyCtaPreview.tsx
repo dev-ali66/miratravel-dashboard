@@ -43,7 +43,7 @@ export function CustomJourneyCtaPreview({
         fallbackAlt="Custom Journey CTA background"
         fallbackColor={section.bgColor ?? "transparent"}
         mode="background"
-        overlayClassName="bg-white/70"
+        overlayClassName="bg-white/70 dark:bg-background/80"
       />
 
       <div className="relative z-10 grid grid-cols-1 lg:grid-cols-2 items-center gap-8 xlg:gap-10 xl:gap-12 w-full">

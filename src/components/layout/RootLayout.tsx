@@ -67,20 +67,32 @@ export function RootLayout() {
   return (
     <div className="flex min-h-svh flex-col bg-muted/10">
       <Navbar onMenuClick={() => setIsMobileMenuOpen(true)} />
-      <div className="flex flex-1 pt-16 overflow-hidden">
+      {/* <div className="flex flex-1 pt-16 overflow-hidden">
         <Sidebar 
           sections={sections} 
           isMobileOpen={isMobileMenuOpen} 
           onMobileClose={() => setIsMobileMenuOpen(false)} 
         />
-        <main className="flex-1 overflow-y-auto p-4 md:p-8 w-full md:pl-[280px]">
+        <main className="flex-1 overflow-y-auto w-full p-4 md:p-8 md:pl-[280px]">
+          <Outlet />
+        </main>
+      </div> */}
+      <div className="flex flex-1 min-w-0 pt-16 overflow-hidden">
+        <Sidebar
+          sections={sections}
+          isMobileOpen={isMobileMenuOpen}
+          onMobileClose={() => setIsMobileMenuOpen(false)}
+        />
+
+        <main className="flex-1 min-w-0 overflow-y-auto px-2 md:ml-[280px]">
           <Outlet />
         </main>
       </div>
-      
+
+
       {/* Mobile overlay */}
       {isMobileMenuOpen && (
-        <div 
+        <div
           className="fixed inset-0 z-40 bg-black/50 md:hidden"
           onClick={() => setIsMobileMenuOpen(false)}
         />

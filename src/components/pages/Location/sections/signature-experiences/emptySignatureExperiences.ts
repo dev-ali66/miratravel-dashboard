@@ -1,14 +1,15 @@
+import { THEME_COLORS } from "@/config/theme"
 export const emptySignatureExperiences = {
   label: {
     value: "Signature Experiences",
-    textColor: "#af6348",
+    textColor: THEME_COLORS.accent,
     textOpacity: 1,
     backgroundColor: null,
     backgroundOpacity: 1,
   },
   title: {
     value: "Five ways to fall in love with Europe",
-    textColor: "#182d09",
+    textColor: THEME_COLORS.primary,
     textOpacity: 1,
     backgroundColor: null,
     backgroundOpacity: 1,
@@ -16,7 +17,7 @@ export const emptySignatureExperiences = {
   description: {
     value:
       "Immerse yourself in authentic cultural encounters, historic marvels, and breathtaking wilderness adventures crafted exclusively for discerning travelers.",
-    textColor: "#565e69",
+    textColor: THEME_COLORS.muted,
     textOpacity: 1,
     backgroundColor: null,
     backgroundOpacity: 1,
@@ -24,7 +25,7 @@ export const emptySignatureExperiences = {
   backgroundMultimedia: {
     show: "color",
     color: {
-      color: "#FFFFFF",
+      color: THEME_COLORS.white,
       opacity: 100,
       width: "100%",
       height: "100%",
@@ -34,7 +35,7 @@ export const emptySignatureExperiences = {
       url: "",
       alt: "Signature experiences background",
       opacity: 100,
-      overlayColor: "#000000",
+      overlayColor: THEME_COLORS.overlayBlack,
       overlayOpacity: 0,
       width: "100%",
       height: "auto",
@@ -48,7 +49,7 @@ export const emptySignatureExperiences = {
       loop: true,
       muted: true,
       opacity: 100,
-      overlayColor: "#000000",
+      overlayColor: THEME_COLORS.overlayBlack,
       overlayOpacity: 0,
       width: "100%",
       height: "auto",

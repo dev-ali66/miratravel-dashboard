@@ -6,6 +6,7 @@ import {
   type MediaStats,
   type MediaUsageReport,
   type WorkerStatus,
+  type ExecuteStorageOptimizationPayload,
 } from "@/services/mediaService"
 
 export const MEDIA_QUERY_KEYS = {
@@ -14,6 +15,7 @@ export const MEDIA_QUERY_KEYS = {
   stats: () => ["media", "stats"] as const,
   usage: (id: string) => ["media", "usage", id] as const,
   workerStatus: () => ["media", "worker-status"] as const,
+  optimizerScan: () => ["media", "optimizer-scan"] as const,
 }
 
 /**
@@ -208,6 +210,39 @@ export function useTriggerMediaWorker() {
     },
     onError: (err: any) => {
       toast.error(err?.response?.data?.message || "Worker trigger failed")
+    },
+  })
+}
+
+/**
+ * Scan for duplicate storage optimization
+ */
+export function useStorageOptimizerScan(enabled = true) {
+  return useQuery({
+    queryKey: MEDIA_QUERY_KEYS.optimizerScan(),
+    queryFn: () => mediaService.scanStorageOptimization(),
+    enabled,
+    staleTime: 1000 * 60, // 60s
+  })
+}
+
+/**
+ * Execute storage optimization (re-link to master, move unlinked duplicates to trash)
+ */
+export function useExecuteStorageOptimization() {
+  const queryClient = useQueryClient()
+
+  return useMutation({
+    mutationFn: (payload: ExecuteStorageOptimizationPayload = {}) =>
+      mediaService.executeStorageOptimization(payload),
+    onSuccess: (res) => {
+      queryClient.invalidateQueries({ queryKey: MEDIA_QUERY_KEYS.all })
+      toast.success(
+        `Optimization complete! Migrated ${res.referencesMigrated} references and moved ${res.assetsMovedToTrash} duplicate files to trash (${res.freedFormatted} storage reclaimed).`
+      )
+    },
+    onError: (err: any) => {
+      toast.error(err?.response?.data?.message || "Storage optimization failed")
     },
   })
 }

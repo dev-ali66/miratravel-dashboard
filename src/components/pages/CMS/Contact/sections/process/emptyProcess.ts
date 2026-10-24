@@ -1,7 +1,8 @@
+import { THEME_COLORS } from "@/config/theme"
 export const emptyProcess = {
   title: {
     value: "How The Process Works",
-    textColor: "#182D09",
+    textColor: THEME_COLORS.primary,
     textOpacity: 1,
     backgroundColor: null,
     backgroundOpacity: 1,
@@ -11,14 +12,14 @@ export const emptyProcess = {
       badge: "STEP 01",
       title: {
         value: "Share your travel ideas",
-        textColor: "#182D09",
+        textColor: THEME_COLORS.primary,
         textOpacity: 1,
         backgroundColor: null,
         backgroundOpacity: 1,
       },
       description: {
         value: "Tell us about your dreams, preferred pace, and the experiences that move you.",
-        textColor: "#4B5563",
+        textColor: THEME_COLORS.sub,
         textOpacity: 1,
         backgroundColor: null,
         backgroundOpacity: 1,
@@ -28,14 +29,14 @@ export const emptyProcess = {
       badge: "STEP 02",
       title: {
         value: "We curate your journey",
-        textColor: "#182D09",
+        textColor: THEME_COLORS.primary,
         textOpacity: 1,
         backgroundColor: null,
         backgroundOpacity: 1,
       },
       description: {
         value: "Our specialists draft a narrative itinerary that balances discovery with moments of rest.",
-        textColor: "#4B5563",
+        textColor: THEME_COLORS.sub,
         textOpacity: 1,
         backgroundColor: null,
         backgroundOpacity: 1,
@@ -45,14 +46,14 @@ export const emptyProcess = {
       badge: "STEP 03",
       title: {
         value: "Refine every detail together",
-        textColor: "#182D09",
+        textColor: THEME_COLORS.primary,
         textOpacity: 1,
         backgroundColor: null,
         backgroundOpacity: 1,
       },
       description: {
         value: "We iterate until the itinerary feels perfect, ensuring every stay and connection is seamless.",
-        textColor: "#4B5563",
+        textColor: THEME_COLORS.sub,
         textOpacity: 1,
         backgroundColor: null,
         backgroundOpacity: 1,
@@ -62,7 +63,7 @@ export const emptyProcess = {
   backgroundMultimedia: {
     show: "color",
     color: {
-      color: "#FFFFFF",
+      color: THEME_COLORS.white,
       opacity: 100,
       width: "100%",
       height: "100%",
@@ -72,7 +73,7 @@ export const emptyProcess = {
       url: "",
       alt: "Contact us hero image",
       opacity: 100,
-      overlayColor: "#000000",
+      overlayColor: THEME_COLORS.overlayBlack,
       overlayOpacity: 45,
       width: "100%",
       height: "auto",
@@ -83,7 +84,7 @@ export const emptyProcess = {
       url: "",
       alt: "Contact us hero video",
       opacity: 100,
-      overlayColor: "#000000",
+      overlayColor: THEME_COLORS.overlayBlack,
       overlayOpacity: 45,
       autoplay: true,
       loop: true,

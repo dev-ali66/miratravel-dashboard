@@ -1,7 +1,8 @@
+import { THEME_COLORS } from "@/config/theme"
 export const emptyCustomJourneyCta = {
   title: {
     value: "Prefer something more personal? Let’s design it together",
-    textColor: "#182D09",
+    textColor: THEME_COLORS.primary,
     textOpacity: 1,
     backgroundColor: null,
     backgroundOpacity: 1,
@@ -9,7 +10,7 @@ export const emptyCustomJourneyCta = {
   description: {
     value:
       "Tell us how you like to travel. We will create a personal journey shaped around your pace, interests, and preferred level of comfort — tailored with intimate local insight down to every unhurried detail.",
-    textColor: "#4B5563",
+    textColor: THEME_COLORS.sub,
     textOpacity: 1,
     backgroundColor: null,
     backgroundOpacity: 1,
@@ -17,7 +18,7 @@ export const emptyCustomJourneyCta = {
   backgroundMultimedia: {
     show: "color",
     color: {
-      color: "#FBF9F5",
+      color: THEME_COLORS.bgSand,
       opacity: 100,
       width: "100%",
       height: "100%",
@@ -27,7 +28,7 @@ export const emptyCustomJourneyCta = {
       url: "",
       alt: null,
       opacity: 100,
-      overlayColor: "#000000",
+      overlayColor: THEME_COLORS.overlayBlack,
       overlayOpacity: 0,
       width: "100%",
       height: "auto",
@@ -38,7 +39,7 @@ export const emptyCustomJourneyCta = {
       url: "",
       alt: null,
       opacity: 100,
-      overlayColor: "#000000",
+      overlayColor: THEME_COLORS.overlayBlack,
       overlayOpacity: 0,
       autoplay: true,
       loop: true,
@@ -52,7 +53,7 @@ export const emptyCustomJourneyCta = {
   rightSideMultimedia: {
     show: "image",
     color: {
-      color: "#FBF9F5",
+      color: THEME_COLORS.bgSand,
       opacity: 100,
       width: "100%",
       height: "100%",
@@ -62,7 +63,7 @@ export const emptyCustomJourneyCta = {
       url: "",
       alt: "Let us design your journey",
       opacity: 100,
-      overlayColor: "#000000",
+      overlayColor: THEME_COLORS.overlayBlack,
       overlayOpacity: 0,
       width: "100%",
       height: "auto",
@@ -73,7 +74,7 @@ export const emptyCustomJourneyCta = {
       url: "",
       alt: null,
       opacity: 100,
-      overlayColor: "#000000",
+      overlayColor: THEME_COLORS.overlayBlack,
       overlayOpacity: 0,
       autoplay: true,
       loop: true,
@@ -91,12 +92,12 @@ export const emptyCustomJourneyCta = {
       variant: "PRIMARY",
       style: "primary",
       rounded: "full",
-      backgroundColor: "#182D09",
+      backgroundColor: THEME_COLORS.primary,
       backgroundOpacity: 100,
-      textColor: "#ffffff",
+      textColor: THEME_COLORS.white,
       textOpacity: 100,
-      hoverBackgroundColor: "#f3f4f6",
-      hoverTextColor: "#000000",
+      hoverBackgroundColor: THEME_COLORS.lightText,
+      hoverTextColor: THEME_COLORS.overlayBlack,
       target: "_self",
       showIcon: true,
     },

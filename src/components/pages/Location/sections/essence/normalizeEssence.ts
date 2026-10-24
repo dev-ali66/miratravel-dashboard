@@ -1,3 +1,4 @@
+import { THEME_COLORS } from "@/config/theme"
 import { normalizeMultimedia, normalizeStyledField, LOCATION_THEME_COLORS } from "../../shared/normalizeHelpers"
 import { emptyEssence } from "./emptyEssence"
 
@@ -27,9 +28,9 @@ export function normalizeEssence(essence: any) {
     paragraphs: normalizeStyledField(safeEssence.paragraphs ?? emptyEssence.paragraphs, "", LOCATION_THEME_COLORS.muted),
     quote: normalizeStyledField(safeEssence.quote ?? emptyEssence.quote, "", LOCATION_THEME_COLORS.primary),
     stat: {
-      statValue: normalizeStyledField(rawStatValue, "", "#ffffff"),
-      statLabel: normalizeStyledField(rawStatLabel, "", "#ffffff"),
-      statBadgeBg: typeof rawStatBadgeBg === "string" ? rawStatBadgeBg : "#E5A84B",
+      statValue: normalizeStyledField(rawStatValue, "", THEME_COLORS.white),
+      statLabel: normalizeStyledField(rawStatLabel, "", THEME_COLORS.white),
+      statBadgeBg: typeof rawStatBadgeBg === "string" ? rawStatBadgeBg : THEME_COLORS.accentMuted,
     },
     imageMultimedia: normalizeMultimedia(
       safeEssence.imageMultimedia || safeEssence.multimedia || emptyEssence.imageMultimedia,

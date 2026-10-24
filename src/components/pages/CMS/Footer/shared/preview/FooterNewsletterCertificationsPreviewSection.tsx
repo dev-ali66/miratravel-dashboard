@@ -1,3 +1,4 @@
+import { THEME_COLORS } from "@/config/theme"
 import { ArrowRight } from "lucide-react"
 import { UniversalMultimediaPreview } from "../../../Home/shared/preview/UniversalMultimediaPreview"
 import { getSafeString } from "../../../shared/FormControls"
@@ -32,7 +33,7 @@ export const FooterNewsletterCertificationsPreviewSection = ({
               href={url || "#"}
               className="group relative inline-flex items-center gap-1.5 font-medium transition-opacity duration-300 hover:opacity-90 focus-visible:outline-none"
               style={{
-                color: theme.accentColor || "#C97B4A",
+                color: theme.accentColor || THEME_COLORS.accentWarm,
               }}
             >
               <span>{linkText}</span>

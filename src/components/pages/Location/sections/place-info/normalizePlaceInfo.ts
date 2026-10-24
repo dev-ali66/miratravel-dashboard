@@ -1,3 +1,4 @@
+import { THEME_COLORS } from "@/config/theme"
 import { normalizeMultimedia, normalizeStyledField } from "../../shared/normalizeHelpers"
 import { emptyPlaceInfo } from "./emptyPlaceInfo"
 
@@ -6,8 +7,8 @@ export function normalizePlaceInfo(info: any) {
 
   const normalizedInfo = {
     ...safeInfo,
-    headline: normalizeStyledField(safeInfo.headline ?? emptyPlaceInfo.headline, "", "#182d09"),
-    description: normalizeStyledField(safeInfo.description ?? emptyPlaceInfo.description, "", "#565e69"),
+    headline: normalizeStyledField(safeInfo.headline ?? emptyPlaceInfo.headline, "", THEME_COLORS.primary),
+    description: normalizeStyledField(safeInfo.description ?? emptyPlaceInfo.description, "", THEME_COLORS.muted),
     backgroundMultimedia: normalizeMultimedia(safeInfo.backgroundMultimedia || emptyPlaceInfo.backgroundMultimedia),
   }
 

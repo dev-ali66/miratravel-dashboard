@@ -1,3 +1,4 @@
+import { THEME_COLORS } from "@/config/theme"
 import type { StoryData } from "../../config/storyTypes"
 import { emptyBlocks, emptyBlocksBackgroundMultimedia } from "./emptyBlocks"
 import { UniversalMultimediaPreview } from "@/components/pages/CMS/shared/UniversalMultimediaPreview"
@@ -24,7 +25,7 @@ export function BlocksPreview({ story }: { story: StoryData }) {
       <UniversalMultimediaPreview
         multimedia={bgMultimedia}
         mode="background"
-        fallbackColor="#FFFFFF"
+        fallbackColor={THEME_COLORS.white}
       />
 
       <div className="relative z-10 container mx-auto px-4 md:px-6 lg:px-8 max-w-[1360px] flex flex-col gap-10 md:gap-14 xl:gap-16">

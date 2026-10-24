@@ -1,3 +1,4 @@
+import { THEME_COLORS } from "@/config/theme"
 import type { StoryData } from "../../config/storyTypes"
 import { emptyIntro } from "./emptyIntro"
 import { DynamicStyledTextPreview } from "@/components/pages/CMS/shared/DynamicStyledTextPreview"
@@ -20,13 +21,13 @@ export function IntroPreview({ story }: { story: StoryData }) {
       <UniversalMultimediaPreview
         multimedia={media}
         mode="background"
-        fallbackColor="#FAF7F2"
+        fallbackColor={THEME_COLORS.bgSand}
       />
 
       <div className="relative z-10 container mx-auto px-4 md:px-6 lg:px-8 max-w-[1360px]">
         <div className="mx-auto flex w-full flex-col items-center justify-center gap-6 md:gap-7 xl:gap-8">
           {subtitle?.value && (
-            <div className="w-full text-center text-xs md:text-[13px] xl:text-sm font-semibold uppercase tracking-[2px] text-[#B3884D]">
+            <div className="w-full text-center text-xs md:text-[13px] xl:text-sm font-semibold uppercase tracking-[2px] text-gold">
               <DynamicStyledTextPreview data={subtitle} />
             </div>
           )}
@@ -40,7 +41,7 @@ export function IntroPreview({ story }: { story: StoryData }) {
           )}
 
           {description?.value && (
-            <div className="w-full text-left text-base md:text-[17px] xlg:text-[18px] xl:text-[20px] font-normal text-[#4A4A4A] leading-7 md:leading-[30px] xlg:leading-[32px] xl:leading-9 tracking-[1px] md:tracking-[1.5px] lgx:tracking-[1.7px] xl:tracking-[2px]">
+            <div className="w-full text-left text-base md:text-[17px] xlg:text-[18px] xl:text-[20px] font-normal text-body leading-7 md:leading-[30px] xlg:leading-[32px] xl:leading-9 tracking-[1px] md:tracking-[1.5px] lgx:tracking-[1.7px] xl:tracking-[2px]">
               <DynamicStyledTextPreview data={description} isRichText={true} />
             </div>
           )}

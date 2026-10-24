@@ -3,7 +3,7 @@ import { DynamicStyledTextPreview } from "@/components/pages/CMS/shared/DynamicS
 import { UniversalMultimediaPreview } from "@/components/pages/CMS/shared/UniversalMultimediaPreview"
 
 const TITLE_CSS =
-  "text-[#313131] text-2xl tracking-normal leading-8 " +
+  "text-title-light text-2xl tracking-normal leading-8 " +
   "md:text-4xl md:tracking-[0.5px] md:leading-10 " +
   "lg:text-[36px] lg:tracking-[1px] lg:leading-[42px] " +
   "lgx:text-[38px] lgx:tracking-[1.2px] lgx:leading-[44px] " +
@@ -50,7 +50,7 @@ export function OverviewPreview({ overview, draft }: { overview?: any; draft?: a
         {/* ========================================================================= */}
         <div className="flex flex-col gap-4 max-w-5xl">
           {whyBadgeText && (
-            <span className="text-xs font-bold uppercase tracking-widest text-[#af6348]">
+            <span className="text-xs font-bold uppercase tracking-widest text-accent">
               {whyBadgeText}
             </span>
           )}
@@ -60,16 +60,16 @@ export function OverviewPreview({ overview, draft }: { overview?: any; draft?: a
           <DynamicStyledTextPreview
             data={why.description}
             fallbackText="Viverra blandit neque ac risus euismod tincidunt ut nec velit. Hendrerit potenti eleifend hendrerit lobortis enim duis duis rhoncus vulputate."
-            className="text-[#464136] text-sm md:text-[15px] xl:text-base font-normal leading-6 md:leading-[27px] tracking-[1.5px]"
+            className="text-nav-text text-sm md:text-[15px] xl:text-base font-normal leading-6 md:leading-[27px] tracking-[1.5px]"
           />
 
           {whySigText && (
-            <p className="flex items-center justify-end font-serif text-[#af6348] text-xl md:text-2xl font-normal leading-7 tracking-[2px] pt-2 gap-1.5">
-              <span className="w-6 md:w-7 h-[1.5px] bg-[#af6348] inline-block shrink-0" />
+            <p className="flex items-center justify-end font-serif text-accent text-xl md:text-2xl font-normal leading-7 tracking-[2px] pt-2 gap-1.5">
+              <span className="w-6 md:w-7 h-[1.5px] bg-accent inline-block shrink-0" />
               <span>{whySigText}</span>
               <svg
                 viewBox="757.62 552.4 484.76 895.2"
-                className="w-[18px] h-[26px] md:w-[22px] md:h-[30px] text-[#af6348] fill-current shrink-0"
+                className="w-[18px] h-[26px] md:w-[22px] md:h-[30px] text-accent fill-current shrink-0"
                 aria-hidden="true"
               >
                 <polygon points="1029.99,1000 1000.04,1447.6 970.01,1000 1000.04,552.4" />
@@ -89,7 +89,7 @@ export function OverviewPreview({ overview, draft }: { overview?: any; draft?: a
           <DynamicStyledTextPreview
             data={ov.description ?? safeData.description ?? safeData.overviewText}
             fallbackText="Immerse yourself in the timeless beauty and rich history of Italy on this carefully curated 7-day journey."
-            className="text-[#464136] text-sm md:text-[15px] xl:text-base font-normal leading-6 md:leading-[27px] tracking-[1.5px]"
+            className="text-nav-text text-sm md:text-[15px] xl:text-base font-normal leading-6 md:leading-[27px] tracking-[1.5px]"
           />
         </div>
 
@@ -105,11 +105,11 @@ export function OverviewPreview({ overview, draft }: { overview?: any; draft?: a
                 const titleVal = typeof item === "string" ? item : item?.title
                 return (
                   <div key={idx} className="flex items-start gap-2.5 text-sm md:text-base">
-                    <span className="text-[#af6348] font-bold">✓</span>
+                    <span className="text-accent font-bold">✓</span>
                     <DynamicStyledTextPreview
                       data={titleVal}
                       fallbackText="Highlight item detail"
-                      className="text-[#464136] leading-6 tracking-[0.5px]"
+                      className="text-nav-text leading-6 tracking-[0.5px]"
                     />
                   </div>
                 )
@@ -125,7 +125,7 @@ export function OverviewPreview({ overview, draft }: { overview?: any; draft?: a
           <div className="flex flex-col gap-5 w-full pt-8 border-t border-border/40">
             <div className="flex flex-col gap-2 max-w-4xl">
               {vsEyebrowText && (
-                <span className="text-xs font-bold uppercase tracking-widest text-[#af6348]">
+                <span className="text-xs font-bold uppercase tracking-widest text-accent">
                   {vsEyebrowText}
                 </span>
               )}
@@ -134,7 +134,7 @@ export function OverviewPreview({ overview, draft }: { overview?: any; draft?: a
               {vs.description && (
                 <DynamicStyledTextPreview
                   data={vs.description}
-                  className="text-[#565e69] text-sm md:text-base leading-6 tracking-[0.5px]"
+                  className="text-subtitle text-sm md:text-base leading-6 tracking-[0.5px]"
                 />
               )}
             </div>
@@ -159,7 +159,7 @@ export function OverviewPreview({ overview, draft }: { overview?: any; draft?: a
           <div className="flex flex-col gap-5 max-w-5xl pt-8 border-t border-border/40">
             <div className="flex flex-col gap-2">
               {fyEyebrowText && (
-                <span className="text-xs font-bold uppercase tracking-widest text-[#313131]">
+                <span className="text-xs font-bold uppercase tracking-widest text-title-light">
                   {fyEyebrowText}
                 </span>
               )}
@@ -171,11 +171,11 @@ export function OverviewPreview({ overview, draft }: { overview?: any; draft?: a
                 const titleVal = typeof item === "string" ? item : item?.title
                 return (
                   <div key={idx} className="flex items-start gap-2.5 text-sm md:text-base">
-                    <span className="text-[#af6348] font-bold">✓</span>
+                    <span className="text-accent font-bold">✓</span>
                     <DynamicStyledTextPreview
                       data={titleVal}
                       fallbackText="Consideration item detail"
-                      className="text-[#464136] leading-6 tracking-[0.5px]"
+                      className="text-nav-text leading-6 tracking-[0.5px]"
                     />
                   </div>
                 )

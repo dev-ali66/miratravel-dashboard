@@ -1,3 +1,4 @@
+import { THEME_COLORS } from "@/config/theme"
 import { useState } from "react"
 import { Sparkles, ChevronDown } from "lucide-react"
 import { DynamicStyledTextPreview } from "@/components/pages/CMS/shared/DynamicStyledTextPreview"
@@ -48,7 +49,7 @@ export function PracticalInfoPreview({ draft }: LocationPreviewSectionProps) {
     >
       <UniversalMultimediaPreview
         multimedia={bgMultimedia}
-        fallbackColor="#FFF8F2"
+        fallbackColor={THEME_COLORS.bgIvory}
         mode="background"
       />
 
@@ -56,12 +57,12 @@ export function PracticalInfoPreview({ draft }: LocationPreviewSectionProps) {
         <div className="w-full xl:px-[88.5px] flex flex-col items-start">
           {/* Eyebrow Label with Amber Accent Line */}
           <div className="flex items-center gap-3 mb-4 xl:mb-6">
-            <div className="w-8 h-px bg-[#af6348]" />
+            <div className="w-8 h-px bg-accent" />
             <DynamicStyledTextPreview
               as="span"
               data={practicalData.label}
-              fallbackColor="#af6348"
-              className="text-[#af6348] text-[11px] md:text-xs xl:text-sm font-normal uppercase leading-4 tracking-[3px] md:tracking-[4.2px]"
+              fallbackColor={THEME_COLORS.accent}
+              className="text-accent text-[11px] md:text-xs xl:text-sm font-normal uppercase leading-4 tracking-[3px] md:tracking-[4.2px]"
             />
           </div>
 
@@ -72,14 +73,14 @@ export function PracticalInfoPreview({ draft }: LocationPreviewSectionProps) {
               <DynamicStyledTextPreview
                 as="h2"
                 data={practicalData.title}
-                fallbackColor="#182d09"
-                className="text-[#182d09] font-serif text-[26px] sm:text-[28px] md:text-[30px] lg:text-[32px] xlg:text-[34px] xl:text-[36px] leading-[36px] lg:leading-[42px] xl:leading-[49.5px] font-semibold"
+                fallbackColor={THEME_COLORS.primary}
+                className="text-brand-primary font-serif text-[26px] sm:text-[28px] md:text-[30px] lg:text-[32px] xlg:text-[34px] xl:text-[36px] leading-[36px] lg:leading-[42px] xl:leading-[49.5px] font-semibold"
               />
 
               <div className="mt-6 md:mt-10 lg:mt-12 xlg:mt-[52px] xl:mt-[56px] relative w-[260px] md:w-[334px] xlg:w-[314px] lg:w-[300px] xl:w-[334px] aspect-square overflow-hidden group rounded-[2px] border border-black/10 shadow-xs">
                 <UniversalMultimediaPreview
                   multimedia={featuredMedia}
-                  fallbackColor="#182d09"
+                  fallbackColor={THEME_COLORS.primary}
                   mode="inline"
                   className="w-full h-full object-cover transition-transform duration-700 hover:scale-105"
                 />
@@ -90,7 +91,7 @@ export function PracticalInfoPreview({ draft }: LocationPreviewSectionProps) {
             <div className="w-full lg:flex-1 lg:max-w-[780px] flex flex-col">
               {items.length === 0 ? (
                 <div className="w-full flex flex-col items-center justify-center rounded-xl border-2 border-dashed border-primary/30 bg-muted/20 p-10 text-center min-h-[220px]">
-                  <div className="flex h-10 w-10 items-center justify-center rounded-full bg-[#af6348]/10 text-[#af6348] mb-2.5">
+                  <div className="flex h-10 w-10 items-center justify-center rounded-full bg-accent/10 text-accent mb-2.5">
                     <Sparkles className="h-5 w-5" />
                   </div>
                   <h3 className="text-base font-serif font-medium text-foreground mb-1">
@@ -118,15 +119,15 @@ export function PracticalInfoPreview({ draft }: LocationPreviewSectionProps) {
                         <DynamicStyledTextPreview
                           as="span"
                           data={item.title}
-                          fallbackColor="#182d09"
-                          className="text-[15px] md:text-base font-serif lg:text-[18px] xl:text-lg font-semibold leading-6 text-[#182d09] transition-colors duration-300 group-hover:text-[#af6348]"
+                          fallbackColor={THEME_COLORS.primary}
+                          className="text-[15px] md:text-base font-serif lg:text-[18px] xl:text-lg font-semibold leading-6 text-brand-primary transition-colors duration-300 group-hover:text-accent"
                         />
 
                         {/* Chevron Indicator */}
-                        <div className="relative size-6 shrink-0 flex items-center justify-center text-[#565e69] group-hover:text-[#af6348] transition-colors duration-300">
+                        <div className="relative size-6 shrink-0 flex items-center justify-center text-subtitle group-hover:text-accent transition-colors duration-300">
                           <ChevronDown
                             className={`size-4 transition-transform duration-300 ease-out ${
-                              isOpen ? "rotate-180 text-[#af6348]" : "rotate-0"
+                              isOpen ? "rotate-180 text-accent" : "rotate-0"
                             }`}
                           />
                         </div>
@@ -139,8 +140,8 @@ export function PracticalInfoPreview({ draft }: LocationPreviewSectionProps) {
                             as="p"
                             isRichText
                             data={item.content}
-                            fallbackColor="#565e69"
-                            className="w-full md:text-sm text-xs font-normal leading-[18px] md:leading-[22.5px] text-[#565e69]"
+                            fallbackColor={THEME_COLORS.muted}
+                            className="w-full md:text-sm text-xs font-normal leading-[18px] md:leading-[22.5px] text-subtitle"
                           />
                         </div>
                       )}

@@ -38,8 +38,8 @@ function getDaysRemaining(deletedAt?: string | null): number {
   }
 }
 
-function formatBytes(bytes: number, decimals = 1): string {
-  if (bytes === 0) return "0 B"
+function formatBytes(bytes?: number | null, decimals = 1): string {
+  if (!bytes || bytes <= 0) return "—"
   const k = 1024
   const dm = decimals < 0 ? 0 : decimals
   const sizes = ["B", "KB", "MB", "GB"]
@@ -143,7 +143,7 @@ export const MediaTrashView: React.FC<MediaTrashViewProps> = ({ assets, isLoadin
             <span>
               Pending In Outbox: <strong className="text-foreground">{workerStatus.pendingJobsCount}</strong>
             </span>
-            {workerStatus.nextRunAt && (
+            {workerStatus.pendingJobsCount > 0 && workerStatus.nextRunAt ? (
               <span>
                 Next Automated Purge:{" "}
                 <strong className="text-foreground">
@@ -155,6 +155,11 @@ export const MediaTrashView: React.FC<MediaTrashViewProps> = ({ assets, isLoadin
                   })}
                 </strong>
               </span>
+            ) : (
+              <span>
+                Next Automated Purge:{" "}
+                <strong className="text-emerald-600 dark:text-emerald-400 font-medium">None scheduled</strong>
+              </span>
             )}
           </div>
         </div>
@@ -162,7 +167,7 @@ export const MediaTrashView: React.FC<MediaTrashViewProps> = ({ assets, isLoadin
 
       {/* Trashed Assets Grid */}
       {isLoading ? (
-        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-4 p-1">
+        <div className="grid grid-cols-1 gap-2 md:grid-cols-3 lg:grid-cols-5 xl:grid-cols-6 p-1">
           {Array.from({ length: 12 }).map((_, i) => (
             <div
               key={i}
@@ -181,7 +186,7 @@ export const MediaTrashView: React.FC<MediaTrashViewProps> = ({ assets, isLoadin
           </p>
         </div>
       ) : (
-        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-4 p-1">
+        <div className="grid grid-cols-1 gap-2 md:grid-cols-3 lg:grid-cols-5 xl:grid-cols-6 p-1">
           {assets.map((asset) => {
             const daysLeft = getDaysRemaining(asset.deletedAt)
             const isVideo = asset.mimeType.startsWith("video/")

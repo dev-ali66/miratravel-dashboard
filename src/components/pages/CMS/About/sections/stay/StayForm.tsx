@@ -1,3 +1,4 @@
+import { THEME_COLORS } from "@/config/theme"
 import { useState } from "react"
 import { ArrowDown, ArrowUp, Plus, Trash2, Sparkles, ChevronDown, ChevronRight } from "lucide-react"
 
@@ -179,7 +180,7 @@ export function StayForm({
                     <div className="p-3 border-t border-border/40 bg-muted/10">
                       <DynamicStyledField
                         label={`Item #${sIdx + 1} Text & Style`}
-                        value={typeof sent === "object" ? sent : { value: sent, textColor: "#F3F4F6", textOpacity: 1 }}
+                        value={typeof sent === "object" ? sent : { value: sent, textColor: THEME_COLORS.lightText, textOpacity: 1 }}
                         onChange={(val) => updateItem(sIdx, val)}
                       />
                     </div>

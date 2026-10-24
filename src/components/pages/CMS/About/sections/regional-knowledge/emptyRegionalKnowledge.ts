@@ -1,14 +1,15 @@
+import { THEME_COLORS } from "@/config/theme"
 export const emptyRegionalKnowledge = {
   eyebrow: {
     value: "REGIONAL KNOWLEDGE",
-    textColor: "#B86B3A",
+    textColor: THEME_COLORS.accentWarm,
     textOpacity: 1,
     backgroundColor: null,
     backgroundOpacity: 1,
   },
   title: {
     value: "Deeply rooted in the Balkans.",
-    textColor: "#182D09",
+    textColor: THEME_COLORS.primary,
     textOpacity: 1,
     backgroundColor: null,
     backgroundOpacity: 1,
@@ -16,7 +17,7 @@ export const emptyRegionalKnowledge = {
   description: {
     value:
       "Lorem ipsum dolor sit amet consectetur. Fusce egestas risus placerat ornare vitae ut. Est fermentum amet duis imperdiet fames. Vestibulum amet quis nisl risus mattis. Est amet sed facilisis molestie. Augue eget elementum habitant nulla fermentum. Tortor interdum rhoncus et justo cras. Elit pellentesque nisi nulla habitasse dui ipsum adipiscing.\n\nLorem ipsum dolor sit amet consectetur. Nisi ligula consectetur odio urna. Cras vitae amet aenean feugiat. Mattis lorem mauris hendrerit adipiscing tempor posuere amet lacus. Integer potenti diam ullamcorper integer massa urna elementum.",
-    textColor: "#4B5563",
+    textColor: THEME_COLORS.sub,
     textOpacity: 1,
     backgroundColor: null,
     backgroundOpacity: 1,
@@ -24,7 +25,7 @@ export const emptyRegionalKnowledge = {
   secondaryDescription: {
     value:
       "From remote mountain villages and coastal hideaways to historic cities and lesser-known cultural regions, we focus on places that retain a strong sense of identity and authenticity.\n\nOver the years, we have built long-standing relationships with local guides, boutique properties, drivers, artisans, and hospitality partners throughout the region. These connections allow us to create journeys that feel both refined and deeply personal.",
-    textColor: "#4B5563",
+    textColor: THEME_COLORS.sub,
     textOpacity: 1,
     backgroundColor: null,
     backgroundOpacity: 1,
@@ -32,7 +33,7 @@ export const emptyRegionalKnowledge = {
   multimedia1: {
     show: "image",
     color: {
-      color: "#E5E7EB",
+      color: THEME_COLORS.mediaPlaceholder,
       opacity: 100,
       width: "100%",
       height: "100%",
@@ -42,7 +43,7 @@ export const emptyRegionalKnowledge = {
       url: "",
       alt: "Deeply rooted in the Balkans",
       opacity: 100,
-      overlayColor: "#000000",
+      overlayColor: THEME_COLORS.overlayBlack,
       overlayOpacity: 0,
       width: "100%",
       height: "auto",
@@ -53,7 +54,7 @@ export const emptyRegionalKnowledge = {
       url: "",
       alt: null,
       opacity: 100,
-      overlayColor: "#000000",
+      overlayColor: THEME_COLORS.overlayBlack,
       overlayOpacity: 0,
       autoplay: true,
       loop: true,
@@ -67,7 +68,7 @@ export const emptyRegionalKnowledge = {
   multimedia2: {
     show: "image",
     color: {
-      color: "#E5E7EB",
+      color: THEME_COLORS.mediaPlaceholder,
       opacity: 100,
       width: "100%",
       height: "100%",
@@ -77,7 +78,7 @@ export const emptyRegionalKnowledge = {
       url: "",
       alt: "Balkan cultural heritage",
       opacity: 100,
-      overlayColor: "#000000",
+      overlayColor: THEME_COLORS.overlayBlack,
       overlayOpacity: 0,
       width: "100%",
       height: "auto",
@@ -88,7 +89,7 @@ export const emptyRegionalKnowledge = {
       url: "",
       alt: null,
       opacity: 100,
-      overlayColor: "#000000",
+      overlayColor: THEME_COLORS.overlayBlack,
       overlayOpacity: 0,
       autoplay: true,
       loop: true,
@@ -102,7 +103,7 @@ export const emptyRegionalKnowledge = {
   backgroundMultimedia: {
     show: "color",
     color: {
-      color: "#FAF7F2",
+      color: THEME_COLORS.bgSand,
       opacity: 100,
       width: "100%",
       height: "100%",
@@ -112,7 +113,7 @@ export const emptyRegionalKnowledge = {
       url: "",
       alt: "",
       opacity: 100,
-      overlayColor: "#000000",
+      overlayColor: THEME_COLORS.overlayBlack,
       overlayOpacity: 0,
       width: "100%",
       height: "auto",
@@ -123,7 +124,7 @@ export const emptyRegionalKnowledge = {
       url: "",
       alt: null,
       opacity: 100,
-      overlayColor: "#000000",
+      overlayColor: THEME_COLORS.overlayBlack,
       overlayOpacity: 0,
       autoplay: true,
       loop: true,

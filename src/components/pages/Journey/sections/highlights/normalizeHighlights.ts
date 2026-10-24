@@ -1,3 +1,4 @@
+import { THEME_COLORS } from "@/config/theme"
 import { normalizeStyledField } from "@/components/pages/Journey/shared/normalizeHelpers"
 
 export function normalizeHighlights(data?: any) {
@@ -9,11 +10,11 @@ export function normalizeHighlights(data?: any) {
     : []
 
   const items = rawItems.map((item: any) => ({
-    title: normalizeStyledField(item.title ?? item, "", "#464136"),
+    title: normalizeStyledField(item.title ?? item, "", THEME_COLORS.navText),
   }))
 
   return {
-    title: normalizeStyledField(safeData.title, "Highlights", "#313131"),
+    title: normalizeStyledField(safeData.title, "Highlights", THEME_COLORS.titleLight),
     items,
   }
 }

@@ -1,3 +1,4 @@
+import { THEME_COLORS } from "@/config/theme"
 import { useState } from "react"
 import type { StoriesCmsFormSectionProps } from "../../storiesCmsTypes"
 import { FormSection, DynamicStyledField, getSafeString } from "@/components/pages/CMS/shared/FormControls"
@@ -41,14 +42,14 @@ export function StoriesCmsMiraStoriesForm({
     const newItem = {
       title: {
         value: "",
-        textColor: "#182D09",
+        textColor: THEME_COLORS.primary,
         textOpacity: 1,
         backgroundColor: null,
         backgroundOpacity: 1,
       },
       subtitle: {
         value: "",
-        textColor: "#4B5563",
+        textColor: THEME_COLORS.sub,
         textOpacity: 1,
         backgroundColor: null,
         backgroundOpacity: 1,
@@ -59,12 +60,12 @@ export function StoriesCmsMiraStoriesForm({
         variant: "PRIMARY",
         style: "primary",
         rounded: "full",
-        backgroundColor: "#182D09",
+        backgroundColor: THEME_COLORS.primary,
         backgroundOpacity: 100,
-        textColor: "#ffffff",
+        textColor: THEME_COLORS.white,
         textOpacity: 100,
-        hoverBackgroundColor: "#f3f4f6",
-        hoverTextColor: "#000000",
+        hoverBackgroundColor: THEME_COLORS.lightText,
+        hoverTextColor: THEME_COLORS.overlayBlack,
         target: "_self",
         showIcon: true,
       },
@@ -126,7 +127,7 @@ export function StoriesCmsMiraStoriesForm({
           ? { ...currentItem.title, value: newTitleText }
           : {
               value: newTitleText,
-              textColor: "#182D09",
+              textColor: THEME_COLORS.primary,
               textOpacity: 1,
               backgroundColor: null,
               backgroundOpacity: 1,
@@ -136,7 +137,7 @@ export function StoriesCmsMiraStoriesForm({
           ? { ...currentItem.subtitle, value: newSubtitleText }
           : {
               value: newSubtitleText,
-              textColor: "#4B5563",
+              textColor: THEME_COLORS.sub,
               textOpacity: 1,
               backgroundColor: null,
               backgroundOpacity: 1,
@@ -147,12 +148,12 @@ export function StoriesCmsMiraStoriesForm({
           variant: "PRIMARY",
           style: "primary",
           rounded: "full",
-          backgroundColor: "#182D09",
+          backgroundColor: THEME_COLORS.primary,
           backgroundOpacity: 100,
-          textColor: "#ffffff",
+          textColor: THEME_COLORS.white,
           textOpacity: 100,
-          hoverBackgroundColor: "#f3f4f6",
-          hoverTextColor: "#000000",
+          hoverBackgroundColor: THEME_COLORS.lightText,
+          hoverTextColor: THEME_COLORS.overlayBlack,
           target: "_self",
           showIcon: true,
         }),
@@ -362,12 +363,12 @@ export function StoriesCmsMiraStoriesForm({
                                       variant: "PRIMARY",
                                       style: "primary",
                                       rounded: "full",
-                                      backgroundColor: "#182D09",
+                                      backgroundColor: THEME_COLORS.primary,
                                       backgroundOpacity: 100,
-                                      textColor: "#ffffff",
+                                      textColor: THEME_COLORS.white,
                                       textOpacity: 100,
-                                      hoverBackgroundColor: "#f3f4f6",
-                                      hoverTextColor: "#000000",
+                                      hoverBackgroundColor: THEME_COLORS.lightText,
+                                      hoverTextColor: THEME_COLORS.overlayBlack,
                                       target: "_self",
                                       showIcon: true,
                                     },
@@ -399,7 +400,7 @@ export function StoriesCmsMiraStoriesForm({
           allowVideo={true}
           allowColor={true}
           defaultShow="color"
-          defaultColor="#FCFBF9"
+          defaultColor={THEME_COLORS.bgWarm}
           value={miraStories.backgroundMultimedia}
           onChange={(multimedia) => updateMiraStoriesField("backgroundMultimedia", multimedia)}
         />
@@ -411,7 +412,7 @@ export function StoriesCmsMiraStoriesForm({
           allowVideo={true}
           allowColor={true}
           defaultShow="image"
-          defaultColor="#E5E7EB"
+          defaultColor={THEME_COLORS.mediaPlaceholder}
           imageTitle="Side Image"
           imageLabel="Side image"
           value={miraStories.leftSideMultimedia}

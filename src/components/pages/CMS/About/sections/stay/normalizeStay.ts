@@ -1,3 +1,4 @@
+import { THEME_COLORS } from "@/config/theme"
 import { emptyStay } from "./emptyStay"
 import {
   normalizeStyledField,
@@ -26,7 +27,7 @@ export function normalizeStay(raw: any) {
     : emptyStay.items
 
   const items = rawItems.map((s: any) =>
-    normalizeStyledField(s, typeof s === "string" ? s : s?.value || "", "#F3F4F6")
+    normalizeStyledField(s, typeof s === "string" ? s : s?.value || "", THEME_COLORS.lightText)
   )
 
   const backgroundMultimedia = normalizeMultimedia(

@@ -1,28 +1,29 @@
+import { THEME_COLORS } from "@/config/theme"
 export const emptyHero = {
   breadcrumb: {
     value: "EXPLORE JOURNEYS",
-    textColor: "#E5E7EB",
+    textColor: THEME_COLORS.mediaPlaceholder,
     textOpacity: 1,
     backgroundColor: null,
     backgroundOpacity: 1,
   },
   title: {
     value: "Tailored Balkan Journeys Crafted for Discerning Travelers",
-    textColor: "#ffffff",
+    textColor: THEME_COLORS.white,
     textOpacity: 1,
     backgroundColor: null,
     backgroundOpacity: 1,
   },
   subtitle: {
     value: "",
-    textColor: "#E5E7EB",
+    textColor: THEME_COLORS.mediaPlaceholder,
     textOpacity: 1,
     backgroundColor: null,
     backgroundOpacity: 1,
   },
   description: {
     value: "Discover handcrafted itineraries that combine cultural depth, boutique luxury, and unforgettable landscapes across the Balkans.",
-    textColor: "#E5E7EB",
+    textColor: THEME_COLORS.mediaPlaceholder,
     textOpacity: 1,
     backgroundColor: null,
     backgroundOpacity: 1,
@@ -32,7 +33,7 @@ export const emptyHero = {
   backgroundMultimedia: {
     show: "color",
     color: {
-      color: "#182D09",
+      color: THEME_COLORS.primary,
       opacity: 100,
       width: "100%",
       height: "100%",
@@ -42,7 +43,7 @@ export const emptyHero = {
       url: "",
       alt: "Tailored Balkan Journeys",
       opacity: 100,
-      overlayColor: "#000000",
+      overlayColor: THEME_COLORS.overlayBlack,
       overlayOpacity: 30,
       width: "100%",
       height: "auto",
@@ -53,7 +54,7 @@ export const emptyHero = {
       url: "",
       alt: "",
       opacity: 100,
-      overlayColor: "#000000",
+      overlayColor: THEME_COLORS.overlayBlack,
       overlayOpacity: 0,
       autoplay: true,
       loop: true,

@@ -1,7 +1,8 @@
+import { THEME_COLORS } from "@/config/theme"
 export const emptyGeoData = {
   title: {
     value: "Interactive Map",
-    textColor: "#0a0a0a",
+    textColor: THEME_COLORS.title,
     textOpacity: 1,
     backgroundColor: null,
     backgroundOpacity: 1,
@@ -9,7 +10,7 @@ export const emptyGeoData = {
   description: {
     value:
       "Spin the globe, then zoom into the destination to explore our properties.",
-    textColor: "#565e69",
+    textColor: THEME_COLORS.muted,
     textOpacity: 1,
     backgroundColor: null,
     backgroundOpacity: 1,
@@ -17,7 +18,7 @@ export const emptyGeoData = {
   backgroundMultimedia: {
     show: "color",
     color: {
-      color: "#FFF8F2",
+      color: THEME_COLORS.bgIvory,
       opacity: 100,
       width: "100%",
       height: "100%",
@@ -27,7 +28,7 @@ export const emptyGeoData = {
       url: "",
       alt: "Map background",
       opacity: 100,
-      overlayColor: "#000000",
+      overlayColor: THEME_COLORS.overlayBlack,
       overlayOpacity: 0,
       width: "100%",
       height: "auto",
@@ -41,7 +42,7 @@ export const emptyGeoData = {
       loop: true,
       muted: true,
       opacity: 100,
-      overlayColor: "#000000",
+      overlayColor: THEME_COLORS.overlayBlack,
       overlayOpacity: 0,
       width: "100%",
       height: "auto",

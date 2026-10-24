@@ -1,3 +1,4 @@
+import { THEME_COLORS } from "@/config/theme"
 import { DynamicStyledField } from "@/components/pages/CMS/shared/FormControls"
 import { FormSection } from "../../shared/fields"
 import type { JourneyData } from "../../journeyTypes"
@@ -33,7 +34,7 @@ export function HighlightsForm({
 
   const addItem = () => {
     const newItem = {
-      title: { value: "", textColor: "#464136", textOpacity: 1, backgroundColor: null, backgroundOpacity: 1 },
+      title: { value: "", textColor: THEME_COLORS.navText, textOpacity: 1, backgroundColor: null, backgroundOpacity: 1 },
     }
     const nextItems = [...items, newItem]
     updateHighlightsField("items", nextItems)

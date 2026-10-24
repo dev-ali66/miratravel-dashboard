@@ -1,3 +1,4 @@
+import { THEME_COLORS } from "@/config/theme"
 import { emptyPlanTravel } from "./emptyPlanTravel"
 import {
   normalizeStyledField,
@@ -21,17 +22,17 @@ export function normalizePlanTravel(input: any) {
     label: normalizeStyledField(
       raw.label,
       emptyPlanTravel.label.value,
-      "#E5A84B"
+      THEME_COLORS.accentMuted
     ),
     title: normalizeStyledField(
       raw.title,
       emptyPlanTravel.title.value,
-      "#182D09"
+      THEME_COLORS.primary
     ),
     description: normalizeStyledField(
       rawDesc,
       emptyPlanTravel.description.value,
-      "#44403C"
+      THEME_COLORS.navText
     ),
     leftSideMultimedia: normalizeMultimedia(
       raw.leftSideMultimedia ?? raw.multimedia,

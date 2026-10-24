@@ -1,3 +1,4 @@
+import { THEME_COLORS } from "@/config/theme"
 import {
   normalizeMultimedia,
   normalizeStyledField,
@@ -23,12 +24,12 @@ export function normalizeCustomJourneyCta(section: any) {
     title: normalizeStyledField(
       rawTitle,
       "Prefer something more personal? Let’s design it together",
-      "#182D09"
+      THEME_COLORS.primary
     ),
     description: normalizeStyledField(
       safeSection.description ?? content.description,
       "Tell us how you like to travel. We will create a personal journey shaped around your pace, interests, and preferred level of comfort — tailored with intimate local insight down to every unhurried detail.",
-      "#4B5563"
+      THEME_COLORS.sub
     ),
     backgroundMultimedia: normalizeMultimedia(
       safeSection.backgroundMultimedia ?? content.backgroundMultimedia,

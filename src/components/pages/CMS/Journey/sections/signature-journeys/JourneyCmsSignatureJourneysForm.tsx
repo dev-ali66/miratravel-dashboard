@@ -1,3 +1,4 @@
+import { THEME_COLORS } from "@/config/theme"
 import {
   FormSection,
   DynamicStyledField,
@@ -77,7 +78,7 @@ export function JourneyCmsSignatureJourneysForm({
           title="Section Background Media & Styling"
           value={sigData.backgroundMultimedia}
           onChange={(val: any) => updateSigField("backgroundMultimedia", val)}
-          defaultColor="#FAF7F2"
+          defaultColor={THEME_COLORS.bgSand}
         />
       </div>
     </FormSection>

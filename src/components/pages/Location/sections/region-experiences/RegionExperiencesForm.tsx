@@ -1,3 +1,4 @@
+import { THEME_COLORS } from "@/config/theme"
 import { useState, useRef, useEffect } from "react"
 import {
   Search,
@@ -112,32 +113,32 @@ export function RegionExperiencesForm({
       ? structuredClone(heroMedia)
       : {
           show: imgUrl ? "image" : "color",
-          color: { color: "#FFFFFF", opacity: 100, width: "100%", height: "100%", aspectRatio: "auto" },
-          image: { url: imgUrl, alt: loc.name, opacity: 100, overlayColor: "#000000", overlayOpacity: 0, width: "100%", height: "100%", aspectRatio: "auto", fit: "cover" },
-          video: { url: "", alt: loc.name, opacity: 100, overlayColor: "#000000", overlayOpacity: 0, autoplay: true, loop: true, muted: true, width: "100%", height: "auto", aspectRatio: "auto", fit: "cover" },
+          color: { color: THEME_COLORS.white, opacity: 100, width: "100%", height: "100%", aspectRatio: "auto" },
+          image: { url: imgUrl, alt: loc.name, opacity: 100, overlayColor: THEME_COLORS.overlayBlack, overlayOpacity: 0, width: "100%", height: "100%", aspectRatio: "auto", fit: "cover" },
+          video: { url: "", alt: loc.name, opacity: 100, overlayColor: THEME_COLORS.overlayBlack, overlayOpacity: 0, autoplay: true, loop: true, muted: true, width: "100%", height: "auto", aspectRatio: "auto", fit: "cover" },
         }
 
     const newItem: RegionExperienceItemData = {
       id: loc.id || loc.slug,
       title: {
         value: loc.name,
-        textColor: "#182d09",
+        textColor: THEME_COLORS.primary,
         textOpacity: 1,
       },
       subtitle: {
         value: subtitleText,
-        textColor: "#9c705d",
+        textColor: THEME_COLORS.accentWarm,
         textOpacity: 1,
       },
       description: {
         value: descText,
-        textColor: "#565e69",
+        textColor: THEME_COLORS.muted,
         textOpacity: 1,
       },
       imageMultimedia: mediaToUse,
       tag: {
         value: loc.type || "REGION",
-        textColor: "#9c705d",
+        textColor: THEME_COLORS.accentWarm,
         textOpacity: 1,
       },
       buttons: [
@@ -146,8 +147,8 @@ export function RegionExperiencesForm({
           url: `/destinations/${loc.slug || loc.id}`,
           style: "primary",
           variant: "PRIMARY",
-          textColor: "#ffffff",
-          backgroundColor: "#af6348",
+          textColor: THEME_COLORS.white,
+          backgroundColor: THEME_COLORS.accent,
         },
       ],
     }
@@ -175,32 +176,32 @@ export function RegionExperiencesForm({
         ? structuredClone(heroMedia)
         : {
             show: imgUrl ? "image" : "color",
-            color: { color: "#FFFFFF", opacity: 100, width: "100%", height: "100%", aspectRatio: "auto" },
-            image: { url: imgUrl, alt: child.name, opacity: 100, overlayColor: "#000000", overlayOpacity: 0, width: "100%", height: "100%", aspectRatio: "auto", fit: "cover" },
-            video: { url: "", alt: child.name, opacity: 100, overlayColor: "#000000", overlayOpacity: 0, autoplay: true, loop: true, muted: true, width: "100%", height: "auto", aspectRatio: "auto", fit: "cover" },
+            color: { color: THEME_COLORS.white, opacity: 100, width: "100%", height: "100%", aspectRatio: "auto" },
+            image: { url: imgUrl, alt: child.name, opacity: 100, overlayColor: THEME_COLORS.overlayBlack, overlayOpacity: 0, width: "100%", height: "100%", aspectRatio: "auto", fit: "cover" },
+            video: { url: "", alt: child.name, opacity: 100, overlayColor: THEME_COLORS.overlayBlack, overlayOpacity: 0, autoplay: true, loop: true, muted: true, width: "100%", height: "auto", aspectRatio: "auto", fit: "cover" },
           }
 
       return {
         id: child.id,
         title: {
           value: child.name,
-          textColor: "#182d09",
+          textColor: THEME_COLORS.primary,
           textOpacity: 1,
         },
         subtitle: {
           value: "Scenic highlights and local heritage",
-          textColor: "#9c705d",
+          textColor: THEME_COLORS.accentWarm,
           textOpacity: 1,
         },
         description: {
           value: `Experience the unique character, traditions, and landscapes of ${child.name}.`,
-          textColor: "#565e69",
+          textColor: THEME_COLORS.muted,
           textOpacity: 1,
         },
         imageMultimedia: mediaToUse,
         tag: {
           value: child.type || "REGION",
-          textColor: "#9c705d",
+          textColor: THEME_COLORS.accentWarm,
           textOpacity: 1,
         },
         buttons: [
@@ -209,8 +210,8 @@ export function RegionExperiencesForm({
             url: `/destinations/${child.name.toLowerCase().replace(/\s+/g, "-")}`,
             style: "primary",
             variant: "PRIMARY",
-            textColor: "#ffffff",
-            backgroundColor: "#af6348",
+            textColor: THEME_COLORS.white,
+            backgroundColor: THEME_COLORS.accent,
           },
         ],
       }
@@ -288,7 +289,7 @@ export function RegionExperiencesForm({
             emptyLocation.regionExperiences?.backgroundMultimedia || {
               show: "color",
               color: {
-                color: "#FFFFFF",
+                color: THEME_COLORS.white,
                 opacity: 100,
                 width: "100%",
                 height: "100%",
@@ -649,8 +650,8 @@ export function RegionExperiencesForm({
                                     url: `/destinations/${item.id}`,
                                     style: "primary",
                                     variant: "PRIMARY",
-                                    textColor: "#ffffff",
-                                    backgroundColor: "#af6348",
+                                    textColor: THEME_COLORS.white,
+                                    backgroundColor: THEME_COLORS.accent,
                                   },
                                 ]
                           }

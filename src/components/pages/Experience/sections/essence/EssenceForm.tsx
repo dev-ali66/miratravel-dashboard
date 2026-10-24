@@ -1,3 +1,4 @@
+import { THEME_COLORS } from "@/config/theme"
 import { DynamicStyledField } from "@/components/pages/CMS/shared/FormControls"
 import { UniversalMultimediaForm } from "@/components/pages/CMS/shared/UniversalMultimediaForm"
 import { FormSection } from "@/components/pages/Location/shared/fields"
@@ -85,8 +86,7 @@ export function EssenceForm({
             (stat.statBadgeBg ??
             stat.badgeBg ??
             (typeof statValue === "object" ? statValue?.backgroundColor : null)) ||
-            essence.statBadgeBg ||
-            "#E5A84B"
+            essence.statBadgeBg || THEME_COLORS.accentMuted
 
           const updateStatField = (key: string, val: any) => {
             const currentStat = (essence.stat || {}) as Record<string, any>
@@ -102,7 +102,7 @@ export function EssenceForm({
                 <h4 className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
                   Media Stat Highlight Badge
                 </h4>
-                <span className="rounded bg-[#E5A84B]/20 px-2 py-0.5 text-[10px] font-medium text-[#E5A84B]">
+                <span className="rounded bg-accent-muted/20 px-2 py-0.5 text-[10px] font-medium text-accent-muted">
                   Overlaid on Media
                 </span>
               </div>

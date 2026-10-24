@@ -4,7 +4,7 @@ import { DynamicStyledTextPreview } from "@/components/pages/CMS/shared/DynamicS
 const CONFIRM_MARK_IMG = "/images/confirm-mark.png"
 
 const TITLE_CSS =
-  "text-[#313131] text-2xl tracking-normal leading-8 " +
+  "text-title-light text-2xl tracking-normal leading-8 " +
   "md:text-4xl md:tracking-[0.5px] md:leading-10 " +
   "lg:text-[36px] lg:tracking-[1px] lg:leading-[42px] " +
   "lgx:text-[38px] lgx:tracking-[1.2px] lgx:leading-[44px] " +
@@ -57,14 +57,14 @@ export function WhatsIncludedPreview({ whatsIncluded, draft }: { whatsIncluded?:
     <div className="w-full flex flex-col gap-10">
       <div className="flex flex-col lg:flex-row gap-8 lg:gap-12 w-full">
         {/* Included Column */}
-        <div className="flex-1 flex flex-col gap-5 lg:pr-8 lg:border-r lg:border-[#D8CBB8]">
+        <div className="flex-1 flex flex-col gap-5 lg:pr-8 lg:border-r lg:border-border/70">
           <h2 className={TITLE_CSS}>{incTitleText}</h2>
           <div className="flex flex-col gap-3">
             {inclusions.map((item: any, idx: number) => {
               const itemData = typeof item === "string" ? item : item?.title ?? item
               return (
-                <div key={idx} className="flex items-start gap-3 text-sm md:text-base leading-6 text-[#464136]">
-                  <span className="text-[#af6348] font-bold">✓</span>
+                <div key={idx} className="flex items-start gap-3 text-sm md:text-base leading-6 text-muted-foreground">
+                  <span className="text-accent font-bold">✓</span>
                   <DynamicStyledTextPreview data={itemData} fallbackText="Included amenity" />
                 </div>
               )
@@ -79,7 +79,7 @@ export function WhatsIncludedPreview({ whatsIncluded, draft }: { whatsIncluded?:
             {exclusions.map((item: any, idx: number) => {
               const itemData = typeof item === "string" ? item : item?.title ?? item
               return (
-                <div key={idx} className="flex items-start gap-3 text-sm md:text-base leading-6 text-[#464136]">
+                <div key={idx} className="flex items-start gap-3 text-sm md:text-base leading-6 text-muted-foreground">
                   <span className="text-neutral-400 font-bold">✗</span>
                   <DynamicStyledTextPreview data={itemData} fallbackText="Excluded service" />
                 </div>
@@ -90,14 +90,14 @@ export function WhatsIncludedPreview({ whatsIncluded, draft }: { whatsIncluded?:
       </div>
 
       {/* Important Information Box */}
-      <div className="w-full rounded-[10px] bg-[#F6F1ED] p-6 md:p-8 flex flex-col gap-4 relative border border-[#D8CBB8]/50 shadow-xs">
-        <h3 className="text-[#080c1d] font-serif text-lg md:text-xl font-semibold">
+      <div className="w-full rounded-[10px] bg-card text-card-foreground p-6 md:p-8 flex flex-col gap-4 relative border border-border/70 shadow-sm">
+        <h3 className="text-foreground font-serif text-lg md:text-xl font-semibold">
           {notesTitleText}
         </h3>
         <ul className="flex flex-col gap-2.5 z-10">
           {notes.map((info: any, idx: number) => (
-            <li key={idx} className="flex items-start gap-2.5 text-sm md:text-base text-[#464136]">
-              <span className="select-none font-bold text-[#af6348]">•</span>
+            <li key={idx} className="flex items-start gap-2.5 text-sm md:text-base text-muted-foreground">
+              <span className="select-none font-bold text-accent">•</span>
               <DynamicStyledTextPreview data={info} fallbackText="Important travel note" />
             </li>
           ))}

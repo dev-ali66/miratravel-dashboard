@@ -1,3 +1,4 @@
+import { THEME_COLORS } from "@/config/theme"
 import {
   normalizeMultimedia,
   normalizeStyledField,
@@ -16,17 +17,17 @@ export function normalizeDestinations(section: any) {
     eyebrow: normalizeStyledField(
       safeSection.eyebrow ?? content.eyebrow,
       "Destinations",
-      "#C5A880"
+      THEME_COLORS.goldMuted
     ),
     title: normalizeStyledField(
       safeSection.title ?? content.title,
       "Explore the countries that shape our journeys",
-      "#182D09"
+      THEME_COLORS.primary
     ),
     subtitle: normalizeStyledField(
       safeSection.subtitle ?? content.subtitle,
       "Discover rich cultures, breathtaking landscapes, and timeless cities — one journey at a time",
-      "#4B5563"
+      THEME_COLORS.sub
     ),
     backgroundMultimedia: normalizeMultimedia(
       safeSection.backgroundMultimedia ?? content.backgroundMultimedia,

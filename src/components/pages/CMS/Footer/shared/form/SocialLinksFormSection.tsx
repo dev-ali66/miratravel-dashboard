@@ -1,3 +1,4 @@
+import { THEME_COLORS } from "@/config/theme"
 import { ColorField, DynamicStyledField } from "../../../shared/FormControls"
 import { RepeaterList } from "../../../shared/RepeaterList"
 import type { FooterSocialLink } from "../../footerTypes"
@@ -27,12 +28,12 @@ export const SocialLinksFormSection = ({ context }: FooterFormSectionProps) => {
           iconSize: theme.socialIconSize ?? "14px",
           itemSize: theme.socialItemSize ?? "32px",
           backgroundColor: theme.socialBackgroundColor ?? "rgba(255,255,255,0.10)",
-          textColor: theme.socialTextColor ?? "#FFFFFF",
+          textColor: theme.socialTextColor ?? THEME_COLORS.white,
           borderColor: theme.socialBorderColor ?? "transparent",
           borderWidth: "0px",
           borderRadius: theme.socialBorderRadius ?? "4px",
           hoverBackgroundColor: theme.socialHoverBackgroundColor ?? "rgba(255,255,255,0.18)",
-          hoverTextColor: theme.socialHoverTextColor ?? "#FFFFFF",
+          hoverTextColor: theme.socialHoverTextColor ?? THEME_COLORS.white,
         })}
         renderItem={(link, updateLink) => (
           <div className="space-y-4 p-1">
@@ -94,7 +95,7 @@ export const SocialLinksFormSection = ({ context }: FooterFormSectionProps) => {
                 />
                 <ColorField
                   label="Icon / Text"
-                  value={link.textColor ?? theme.socialTextColor ?? "#FFFFFF"}
+                  value={link.textColor ?? theme.socialTextColor ?? THEME_COLORS.white}
                   onChange={(value) => updateLink({ ...link, textColor: value })}
                 />
                 <ColorField
@@ -109,7 +110,7 @@ export const SocialLinksFormSection = ({ context }: FooterFormSectionProps) => {
                 />
                 <ColorField
                   label="Hover Icon / Text"
-                  value={link.hoverTextColor ?? theme.socialHoverTextColor ?? "#FFFFFF"}
+                  value={link.hoverTextColor ?? theme.socialHoverTextColor ?? THEME_COLORS.white}
                   onChange={(value) => updateLink({ ...link, hoverTextColor: value })}
                 />
                 <DynamicStyledField

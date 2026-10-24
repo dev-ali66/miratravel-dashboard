@@ -1,6 +1,8 @@
 /**
  * Normalizes a multimedia object so that no subfield is omitted.
  */
+import { THEME_COLORS } from "@/config/theme"
+
 export function normalizeMultimedia(media: any, defaultShow?: "image" | "video" | "color" | string | any): any {
   const safeMedia = media && typeof media === "object" ? media : {}
 
@@ -15,7 +17,7 @@ export function normalizeMultimedia(media: any, defaultShow?: "image" | "video" 
     typeof safeMedia.color === "object"
       ? safeMedia.color
       : {
-          color: typeof safeMedia.color === "string" ? safeMedia.color : "#FFFFFF",
+          color: typeof safeMedia.color === "string" ? safeMedia.color : THEME_COLORS.white,
           opacity: 100,
           width: "100%",
           height: "100%",
@@ -39,7 +41,7 @@ export function normalizeMultimedia(media: any, defaultShow?: "image" | "video" 
   return {
     show,
     color: {
-      color: colorObj.color ?? "#FFFFFF",
+      color: colorObj.color ?? THEME_COLORS.white,
       opacity: colorObj.opacity ?? 100,
       width: colorObj.width || "100%",
       height: colorObj.height || "100%",
@@ -49,7 +51,7 @@ export function normalizeMultimedia(media: any, defaultShow?: "image" | "video" 
       url: imageObj.url || (show === "image" ? resolvedUrl : null) || null,
       alt: imageObj.alt || resolvedAlt || null,
       opacity: imageObj.opacity ?? 100,
-      overlayColor: imageObj.overlayColor || "#000000",
+      overlayColor: imageObj.overlayColor || THEME_COLORS.overlayBlack,
       overlayOpacity: imageObj.overlayOpacity ?? 0,
       width: imageObj.width || "100%",
       height: imageObj.height || "auto",
@@ -60,7 +62,7 @@ export function normalizeMultimedia(media: any, defaultShow?: "image" | "video" 
       url: videoObj.url || (show === "video" ? resolvedUrl : null) || null,
       alt: videoObj.alt || resolvedAlt || null,
       opacity: videoObj.opacity ?? 100,
-      overlayColor: videoObj.overlayColor || "#000000",
+      overlayColor: videoObj.overlayColor || THEME_COLORS.overlayBlack,
       overlayOpacity: videoObj.overlayOpacity ?? 0,
       autoplay: videoObj.autoplay ?? true,
       loop: videoObj.loop ?? true,
@@ -126,12 +128,12 @@ export function normalizeButton(btn: any): any {
     variant: variant,
     style: btn.style || variant,
     rounded: btn.rounded || "full",
-    backgroundColor: btn.backgroundColor || (variant === "primary" ? "#182D09" : "#ffffff"),
+    backgroundColor: btn.backgroundColor || (variant === "primary" ? THEME_COLORS.primary : THEME_COLORS.white),
     backgroundOpacity: btn.backgroundOpacity ?? (variant === "outline" ? 0 : 100),
-    textColor: btn.textColor || (variant === "primary" || variant === "secondary" || variant === "dark" ? "#ffffff" : "#000000"),
+    textColor: btn.textColor || (variant === "primary" || variant === "secondary" || variant === "dark" ? THEME_COLORS.white : THEME_COLORS.overlayBlack),
     textOpacity: btn.textOpacity ?? 100,
-    hoverBackgroundColor: btn.hoverBackgroundColor || "#f3f4f6",
-    hoverTextColor: btn.hoverTextColor || "#000000",
+    hoverBackgroundColor: btn.hoverBackgroundColor || THEME_COLORS.lightText,
+    hoverTextColor: btn.hoverTextColor || THEME_COLORS.overlayBlack,
     target: btn.target || "_self",
     showIcon: btn.showIcon !== false,
   }

@@ -1,3 +1,4 @@
+import { THEME_COLORS } from "@/config/theme"
 import {
   FormSection,
   DynamicStyledField,
@@ -46,7 +47,7 @@ export function EditorialHighlightForm({
           title="Section Background Media & Styling"
           value={highlightData.backgroundMultimedia}
           onChange={(val: any) => updateHighlightField("backgroundMultimedia", val)}
-          defaultColor="#FAF6F0"
+          defaultColor={THEME_COLORS.bgBeige}
         />
       </div>
     </FormSection>

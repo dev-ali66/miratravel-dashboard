@@ -1,6 +1,7 @@
 import { useEditor, EditorContent } from "@tiptap/react"
 import StarterKit from "@tiptap/starter-kit"
 import Link from "@tiptap/extension-link"
+import Image from "@tiptap/extension-image"
 import { TextStyle } from "@tiptap/extension-text-style"
 import { Color } from "@tiptap/extension-color"
 import Underline from "@tiptap/extension-underline"
@@ -30,9 +31,11 @@ import {
   Palette,
   Highlighter,
   Eraser,
+  Image as ImageIcon,
 } from "lucide-react"
 import { useCallback, useEffect, useState } from "react"
 import { cn } from "@/lib/utils"
+import { MediaPickerModal, type SelectedMediaAsset } from "@/components/shared/MediaPickerModal"
 
 export interface RichTextEditorProps {
   value: string
@@ -43,34 +46,37 @@ export interface RichTextEditorProps {
   minHeight?: string
 }
 
+import { THEME_COLORS } from "@/config/theme"
+
 const PRESET_COLORS = [
-  "#000000",
-  "#171717",
-  "#4B5563",
-  "#9CA3AF",
-  "#FFFFFF",
-  "#D97706",
-  "#B45309",
-  "#E11D48",
-  "#2563EB",
-  "#059669",
-  "#7C3AED",
-  "#DB2777",
+  THEME_COLORS.black,
+  THEME_COLORS.bgHeroDark,
+  THEME_COLORS.sub,
+  THEME_COLORS.lightMuted,
+  THEME_COLORS.white,
+  THEME_COLORS.primary,
+  THEME_COLORS.accent,
+  THEME_COLORS.accentMuted,
+  THEME_COLORS.gold,
+  THEME_COLORS.success,
+  THEME_COLORS.error,
+  THEME_COLORS.blue,
 ]
 
 const PRESET_HIGHLIGHTS = [
-  "#FEF08A",
-  "#FED7AA",
-  "#BBF7D0",
-  "#BFDBFE",
-  "#DDD6FE",
-  "#FBCFE8",
-  "#E5E7EB",
-  "#374151",
+  THEME_COLORS.badgeYellowBg,
+  THEME_COLORS.badgeYellowBg,
+  THEME_COLORS.badgeYellowBg,
+  THEME_COLORS.lightText,
+  THEME_COLORS.lightText,
+  THEME_COLORS.lightText,
+  THEME_COLORS.mediaPlaceholder,
+  THEME_COLORS.sub,
 ]
 
 const MenuBar = ({ editor }: { editor: any }) => {
-  const [customColor, setCustomColor] = useState("#FFFFFF")
+  const [customColor, setCustomColor] = useState<string>(THEME_COLORS.white)
+  const [isMediaPickerOpen, setIsMediaPickerOpen] = useState(false)
 
   const setLink = useCallback(() => {
     if (!editor) return
@@ -404,6 +410,16 @@ const MenuBar = ({ editor }: { editor: any }) => {
         >
           <LinkIcon className="h-3.5 w-3.5" />
         </Button>
+        <Button
+          type="button"
+          variant="ghost"
+          size="icon"
+          onClick={() => setIsMediaPickerOpen(true)}
+          className={cn("h-7 w-7 text-muted-foreground hover:text-foreground", isMediaPickerOpen && "bg-background text-foreground shadow-xs")}
+          title="Insert Image from Library"
+        >
+          <ImageIcon className="h-3.5 w-3.5 text-primary" />
+        </Button>
         {editor.isActive("link") && (
           <Button
             type="button"
@@ -455,6 +471,29 @@ const MenuBar = ({ editor }: { editor: any }) => {
           <Redo className="h-3.5 w-3.5" />
         </Button>
       </div>
+
+      {isMediaPickerOpen && (
+        <MediaPickerModal
+          isOpen={isMediaPickerOpen}
+          onClose={() => setIsMediaPickerOpen(false)}
+          allowedTypes={["image"]}
+          mode="single"
+          onSelect={(assets: SelectedMediaAsset[]) => {
+            if (assets && assets.length > 0 && assets[0]?.url) {
+              editor
+                .chain()
+                .focus()
+                .setImage({
+                  src: assets[0].url,
+                  alt: assets[0].altText || assets[0].title || "",
+                  title: assets[0].title || "",
+                })
+                .run()
+            }
+            setIsMediaPickerOpen(false)
+          }}
+        />
+      )}
     </div>
   )
 }
@@ -489,6 +528,13 @@ export const RichTextEditor = ({
           class: "text-primary underline cursor-pointer",
         },
       }),
+      Image.configure({
+        inline: false,
+        allowBase64: false,
+        HTMLAttributes: {
+          class: "rounded-xl max-w-full my-3.5 border border-border/60 shadow-xs",
+        },
+      }),
     ],
     content: value || "",
     onUpdate: ({ editor }) => {
@@ -498,6 +544,7 @@ export const RichTextEditor = ({
       attributes: {
         class: cn(
           "prose prose-sm dark:prose-invert max-w-none focus:outline-none p-3.5 min-h-[140px] text-foreground leading-relaxed",
+          "[&_img]:rounded-xl [&_img]:max-w-full [&_img]:my-3.5 [&_img]:border [&_img]:border-border/60 [&_img]:shadow-xs",
           canvasClassName
         ),
       },

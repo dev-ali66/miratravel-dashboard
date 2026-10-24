@@ -1,3 +1,4 @@
+import { THEME_COLORS } from "@/config/theme"
 import type { JourneyData } from "../../journeyTypes"
 import { FormSection } from "../../shared/fields"
 import { DynamicStyledField } from "@/components/pages/CMS/shared/FormControls"
@@ -59,8 +60,8 @@ export function AccommodationsForm({
 
   const addPrinciple = () => {
     const newPrinciple = {
-      title: { value: "NEW PRINCIPLE", textColor: "#080c1d", textOpacity: 1, backgroundColor: null, backgroundOpacity: 1 },
-      description: { value: "Principle card description overview...", textColor: "#565e69", textOpacity: 1, backgroundColor: null, backgroundOpacity: 1 },
+      title: { value: "NEW PRINCIPLE", textColor: THEME_COLORS.dark, textOpacity: 1, backgroundColor: null, backgroundOpacity: 1 },
+      description: { value: "Principle card description overview...", textColor: THEME_COLORS.muted, textOpacity: 1, backgroundColor: null, backgroundOpacity: 1 },
       iconType: "character",
       multimedia: { show: "image", image: { url: "" } },
     }
@@ -91,10 +92,10 @@ export function AccommodationsForm({
   const addStay = () => {
     const newStay = {
       locationId: "",
-      stayType: { value: "Boutique Hotel", textColor: "#af6348", textOpacity: 1, backgroundColor: null, backgroundOpacity: 1 },
-      duration: { value: "2 nights", textColor: "#af6348", textOpacity: 1, backgroundColor: null, backgroundOpacity: 1 },
-      description: { value: "Exquisite accommodations curated for comfort and panoramic views.", textColor: "#565e69", textOpacity: 1, backgroundColor: null, backgroundOpacity: 1 },
-      confirmationBadge: { value: "Personally confirmed by Mira", textColor: "#af6348", textOpacity: 1, backgroundColor: null, backgroundOpacity: 1 },
+      stayType: { value: "Boutique Hotel", textColor: THEME_COLORS.accent, textOpacity: 1, backgroundColor: null, backgroundOpacity: 1 },
+      duration: { value: "2 nights", textColor: THEME_COLORS.accent, textOpacity: 1, backgroundColor: null, backgroundOpacity: 1 },
+      description: { value: "Exquisite accommodations curated for comfort and panoramic views.", textColor: THEME_COLORS.muted, textOpacity: 1, backgroundColor: null, backgroundOpacity: 1 },
+      confirmationBadge: { value: "Personally confirmed by Mira", textColor: THEME_COLORS.accent, textOpacity: 1, backgroundColor: null, backgroundOpacity: 1 },
       showMiraSeal: true,
       multimedia: { show: "image", image: { url: "" } },
       amenities: [],
@@ -129,7 +130,7 @@ export function AccommodationsForm({
   const addStandard = () => {
     const newStandard = {
       value: "Signature MIRA Service & Comfort",
-      textColor: "#464136",
+      textColor: THEME_COLORS.navText,
       textOpacity: 1,
       backgroundColor: null,
       backgroundOpacity: 1,

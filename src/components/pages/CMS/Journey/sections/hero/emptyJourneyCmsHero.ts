@@ -1,28 +1,29 @@
+import { THEME_COLORS } from "@/config/theme"
 export const emptyJourneyCmsHero = {
   breadcrumb: {
     value: "EXPLORE JOURNEYS",
-    textColor: "#E5E7EB",
+    textColor: THEME_COLORS.mediaPlaceholder,
     textOpacity: 1,
     backgroundColor: null,
     backgroundOpacity: 1,
   },
   title: {
     value: "Tailored Balkan Journeys Crafted for Discerning Travelers",
-    textColor: "#ffffff",
+    textColor: THEME_COLORS.white,
     textOpacity: 1,
     backgroundColor: null,
     backgroundOpacity: 1,
   },
   subtitle: {
     value: "",
-    textColor: "#E5E7EB",
+    textColor: THEME_COLORS.mediaPlaceholder,
     textOpacity: 1,
     backgroundColor: null,
     backgroundOpacity: 1,
   },
   description: {
     value: "Discover handcrafted itineraries that combine cultural depth, boutique luxury, and unforgettable landscapes across the Balkans.",
-    textColor: "#E5E7EB",
+    textColor: THEME_COLORS.mediaPlaceholder,
     textOpacity: 1,
     backgroundColor: null,
     backgroundOpacity: 1,
@@ -32,7 +33,7 @@ export const emptyJourneyCmsHero = {
   backgroundMultimedia: {
     show: "image",
     color: {
-      color: "#182D09",
+      color: THEME_COLORS.primary,
       opacity: 100,
       width: "100%",
       height: "100%",
@@ -46,7 +47,7 @@ export const emptyJourneyCmsHero = {
       height: "auto",
       opacity: 100,
       aspectRatio: "auto",
-      overlayColor: "#000000",
+      overlayColor: THEME_COLORS.overlayBlack,
       overlayOpacity: 30,
     },
     video: {
@@ -60,7 +61,7 @@ export const emptyJourneyCmsHero = {
       loop: true,
       muted: true,
       aspectRatio: "auto",
-      overlayColor: "#000000",
+      overlayColor: THEME_COLORS.overlayBlack,
       overlayOpacity: 0,
     },
   },

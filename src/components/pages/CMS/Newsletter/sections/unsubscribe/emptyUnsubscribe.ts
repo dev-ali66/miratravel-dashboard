@@ -1,35 +1,36 @@
+import { THEME_COLORS } from "@/config/theme"
 export const emptyNewsletterCmsUnsubscribe = {
   title: {
     value: "We're Sorry to See You Go",
-    textColor: "#182D09",
+    textColor: THEME_COLORS.primary,
     textOpacity: 1,
     backgroundColor: null,
     backgroundOpacity: 1,
   },
   unsubscribedTitle: {
     value: "You're Unsubscribed",
-    textColor: "#182D09",
+    textColor: THEME_COLORS.primary,
     textOpacity: 1,
     backgroundColor: null,
     backgroundOpacity: 1,
   },
   subtitle: {
     value: "If our travel dispatches no longer inspire your adventures, confirm your email below to unsubscribe. You can return at any time.",
-    textColor: "#565E69",
+    textColor: THEME_COLORS.muted,
     textOpacity: 1,
     backgroundColor: null,
     backgroundOpacity: 1,
   },
   unsubscribedSubtitle: {
     value: "You have been removed from our dispatch list. Our curated stories and journey itineraries remain open whenever you wish to return.",
-    textColor: "#565E69",
+    textColor: THEME_COLORS.muted,
     textOpacity: 1,
     backgroundColor: null,
     backgroundOpacity: 1,
   },
   reasonsTitle: {
     value: "Help us understand why (optional):",
-    textColor: "#182D09",
+    textColor: THEME_COLORS.primary,
     textOpacity: 1,
     backgroundColor: null,
     backgroundOpacity: 1,
@@ -44,7 +45,7 @@ export const emptyNewsletterCmsUnsubscribe = {
   leftSideMultimedia: {
     show: "image",
     color: {
-      color: "#FFFFFF",
+      color: THEME_COLORS.white,
       opacity: 100,
       width: "100%",
       height: "100%",
@@ -58,7 +59,7 @@ export const emptyNewsletterCmsUnsubscribe = {
       height: "auto",
       opacity: 100,
       aspectRatio: "auto",
-      overlayColor: "#000000",
+      overlayColor: THEME_COLORS.overlayBlack,
       overlayOpacity: 0,
     },
     video: {
@@ -72,14 +73,14 @@ export const emptyNewsletterCmsUnsubscribe = {
       loop: true,
       muted: true,
       aspectRatio: "auto",
-      overlayColor: "#000000",
+      overlayColor: THEME_COLORS.overlayBlack,
       overlayOpacity: 0,
     },
   },
   backgroundMultimedia: {
     show: "color",
     color: {
-      color: "#FFFFFF",
+      color: THEME_COLORS.white,
       opacity: 100,
       width: "100%",
       height: "100%",
@@ -93,7 +94,7 @@ export const emptyNewsletterCmsUnsubscribe = {
       height: "auto",
       opacity: 100,
       aspectRatio: "auto",
-      overlayColor: "#000000",
+      overlayColor: THEME_COLORS.overlayBlack,
       overlayOpacity: 0,
     },
     video: {
@@ -107,7 +108,7 @@ export const emptyNewsletterCmsUnsubscribe = {
       loop: true,
       muted: true,
       aspectRatio: "auto",
-      overlayColor: "#000000",
+      overlayColor: THEME_COLORS.overlayBlack,
       overlayOpacity: 0,
     },
   },

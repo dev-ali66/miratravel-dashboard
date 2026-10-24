@@ -14,6 +14,7 @@ import {
   UserX,
   Loader2,
 } from "lucide-react"
+import { Pagination } from "@/components/shared/Pagination"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import {
@@ -51,6 +52,8 @@ export default function NewsletterPage() {
   const [search, setSearch] = useState("")
   const [statusFilter, setStatusFilter] = useState("ALL")
   const [sourceFilter, setSourceFilter] = useState("ALL")
+  const [currentPage, setCurrentPage] = useState(1)
+  const [pageSize, setPageSize] = useState(10)
 
   const fetchSubscribers = useCallback(async () => {
     try {
@@ -294,81 +297,101 @@ export default function NewsletterPage() {
                 </tr>
               </thead>
               <tbody className="divide-y divide-border/40 text-foreground">
-                {filtered.map((s) => (
-                  <tr key={s.id} className="transition-colors hover:bg-muted/30">
-                    <td className="px-5 py-3.5 font-medium text-xs text-foreground">
-                      {s.email}
-                    </td>
-                    <td className="px-5 py-3.5 text-xs text-muted-foreground">
-                      <span className="rounded bg-muted px-2 py-0.5 text-[11px] font-medium text-muted-foreground border border-border/50">
-                        {(s.source || "FOOTER").replace(/_/g, " ")}
-                      </span>
-                    </td>
-                    <td className="px-5 py-3.5">
-                      <span
-                        className={cn(
-                          "inline-block rounded-md border px-2 py-0.5 text-[11px] font-semibold uppercase",
-                          statusStyles[s.status] || statusStyles.SUBSCRIBED
-                        )}
-                      >
-                        {s.status}
-                      </span>
-                    </td>
-                    <td className="px-5 py-3.5 text-xs text-muted-foreground">
-                      {s.createdAt ? new Date(s.createdAt).toLocaleDateString("en-US", {
-                        year: "numeric",
-                        month: "short",
-                        day: "numeric",
-                        hour: "2-digit",
-                        minute: "2-digit",
-                      }) : "N/A"}
-                    </td>
-                    <td className="px-5 py-3.5 text-right">
-                      <div className="flex items-center justify-end gap-1.5">
-                        <Button
-                          variant="ghost"
-                          size="sm"
-                          disabled={updatingId === s.id}
-                          onClick={() => handleToggleStatus(s)}
-                          title={s.status === "SUBSCRIBED" ? "Mark Unsubscribed" : "Mark Subscribed"}
-                          className="h-8 text-xs gap-1"
-                        >
-                          {updatingId === s.id ? (
-                            <Loader2 className="h-3.5 w-3.5 animate-spin" />
-                          ) : s.status === "SUBSCRIBED" ? (
-                            <>
-                              <UserX className="h-3.5 w-3.5 text-amber-500" />
-                              <span>Unsubscribe</span>
-                            </>
-                          ) : (
-                            <>
-                              <UserCheck className="h-3.5 w-3.5 text-emerald-500" />
-                              <span>Subscribe</span>
-                            </>
+                {filtered
+                  .slice((currentPage - 1) * pageSize, currentPage * pageSize)
+                  .map((s) => (
+                    <tr key={s.id} className="transition-colors hover:bg-muted/30">
+                      <td className="px-5 py-3.5 font-medium text-xs text-foreground">
+                        {s.email}
+                      </td>
+                      <td className="px-5 py-3.5 text-xs text-muted-foreground">
+                        <span className="rounded bg-muted px-2 py-0.5 text-[11px] font-medium text-muted-foreground border border-border/50">
+                          {(s.source || "FOOTER").replace(/_/g, " ")}
+                        </span>
+                      </td>
+                      <td className="px-5 py-3.5">
+                        <span
+                          className={cn(
+                            "inline-block rounded-md border px-2 py-0.5 text-[11px] font-semibold uppercase",
+                            statusStyles[s.status] || statusStyles.SUBSCRIBED
                           )}
-                        </Button>
+                        >
+                          {s.status}
+                        </span>
+                      </td>
+                      <td className="px-5 py-3.5 text-xs text-muted-foreground">
+                        {s.createdAt ? new Date(s.createdAt).toLocaleDateString("en-US", {
+                          year: "numeric",
+                          month: "short",
+                          day: "numeric",
+                          hour: "2-digit",
+                          minute: "2-digit",
+                        }) : "N/A"}
+                      </td>
+                      <td className="px-5 py-3.5 text-right">
+                        <div className="flex items-center justify-end gap-1.5">
+                          <Button
+                            variant="ghost"
+                            size="sm"
+                            disabled={updatingId === s.id}
+                            onClick={() => handleToggleStatus(s)}
+                            title={s.status === "SUBSCRIBED" ? "Mark Unsubscribed" : "Mark Subscribed"}
+                            className="h-8 text-xs gap-1"
+                          >
+                            {updatingId === s.id ? (
+                              <Loader2 className="h-3.5 w-3.5 animate-spin" />
+                            ) : s.status === "SUBSCRIBED" ? (
+                              <>
+                                <UserX className="h-3.5 w-3.5 text-amber-500" />
+                                <span>Unsubscribe</span>
+                              </>
+                            ) : (
+                              <>
+                                <UserCheck className="h-3.5 w-3.5 text-emerald-500" />
+                                <span>Subscribe</span>
+                              </>
+                            )}
+                          </Button>
 
-                        <Button
-                          variant="ghost"
-                          size="icon"
-                          disabled={deletingId === s.id}
-                          onClick={() => handleDeleteSubscriber(s.id)}
-                          className="h-8 w-8 text-rose-500 hover:bg-rose-500/10 hover:text-rose-600"
-                        >
-                          {deletingId === s.id ? (
-                            <Loader2 className="h-3.5 w-3.5 animate-spin" />
-                          ) : (
-                            <Trash2 className="h-4 w-4" />
-                          )}
-                        </Button>
-                      </div>
-                    </td>
-                  </tr>
-                ))}
+                          <Button
+                            variant="ghost"
+                            size="icon"
+                            disabled={deletingId === s.id}
+                            onClick={() => handleDeleteSubscriber(s.id)}
+                            className="h-8 w-8 text-rose-500 hover:bg-rose-500/10 hover:text-rose-600"
+                          >
+                            {deletingId === s.id ? (
+                              <Loader2 className="h-3.5 w-3.5 animate-spin" />
+                            ) : (
+                              <Trash2 className="h-4 w-4" />
+                            )}
+                          </Button>
+                        </div>
+                      </td>
+                    </tr>
+                  ))}
               </tbody>
             </table>
           )}
         </div>
+
+        {/* Universal Pagination */}
+        {filtered.length > 0 && (
+          <div className="border-t border-border/60 bg-muted/10 px-5 py-3">
+            <Pagination
+              currentPage={currentPage}
+              totalPages={Math.max(1, Math.ceil(filtered.length / pageSize))}
+              totalItems={filtered.length}
+              pageSize={pageSize}
+              pageSizeOptions={[10, 20, 50, 100]}
+              onPageChange={setCurrentPage}
+              onPageSizeChange={(sz) => {
+                setPageSize(sz)
+                setCurrentPage(1)
+              }}
+            />
+          </div>
+        )}
       </div>
     </div>
   )

@@ -1,3 +1,4 @@
+import { THEME_COLORS } from "@/config/theme"
 import { useState } from "react"
 import type { JourneyCmsPreviewSectionProps } from "../../journeyCmsTypes"
 import { DynamicStyledTextPreview } from "@/components/pages/CMS/shared/DynamicStyledTextPreview"
@@ -141,7 +142,7 @@ export function JourneyCmsAllJourneysPreview({ draft }: JourneyCmsPreviewSection
       {/* Background Media */}
       <UniversalMultimediaPreview
         multimedia={allData.backgroundMultimedia}
-        fallbackColor="#FFFFFF"
+        fallbackColor={THEME_COLORS.white}
         mode="background"
       />
 
@@ -155,41 +156,41 @@ export function JourneyCmsAllJourneysPreview({ draft }: JourneyCmsPreviewSection
                 <DynamicStyledTextPreview
                   as="span"
                   data={allData.eyebrow}
-                  fallbackColor="#AF6348"
-                  className="text-xs font-semibold uppercase tracking-widest text-[#AF6348]"
+                  fallbackColor={THEME_COLORS.accent}
+                  className="text-xs font-semibold uppercase tracking-widest text-accent"
                 />
               )}
               <DynamicStyledTextPreview
                 as="h2"
                 data={allData.title}
-                fallbackColor="#182D09"
-                className="font-heading font-semibold text-[28px] md:text-[36px] lgx:text-[40px] xl:text-[44px] leading-tight text-[#182D09]"
+                fallbackColor={THEME_COLORS.primary}
+                className="font-heading font-semibold text-[28px] md:text-[36px] lgx:text-[40px] xl:text-[44px] leading-tight text-brand-primary"
               />
               {allData.subtitle && (
                 <DynamicStyledTextPreview
                   as="p"
                   data={allData.subtitle}
-                  fallbackColor="#4B5563"
-                  className="text-sm md:text-base text-[#4B5563]"
+                  fallbackColor={THEME_COLORS.sub}
+                  className="text-sm md:text-base text-sub"
                 />
               )}
             </div>
 
             {/* Right: Search Input + Filter Button */}
             <div className="w-full md:flex-1 md:min-w-0 inline-flex items-center justify-end gap-3">
-              <div className="group flex flex-1 min-w-0 w-full max-w-[480px] items-center gap-2.5 rounded-[6px] border border-gray-200 bg-white py-2.5 px-3.5 shadow-2xs focus-within:border-[#182D09] transition-all">
-                <Search className="h-4 w-4 text-gray-400 shrink-0" />
+              <div className="group flex flex-1 min-w-0 w-full max-w-[480px] items-center gap-2.5 rounded-[6px] border border-border bg-card py-2.5 px-3.5 shadow-2xs focus-within:border-brand-primary transition-all">
+                <Search className="h-4 w-4 text-muted-foreground shrink-0" />
                 <input
                   type="text"
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
                   placeholder={allData.searchPlaceholder || "Search journeys..."}
-                  className="w-full bg-transparent text-sm text-gray-800 placeholder:text-gray-400 focus:outline-none"
+                  className="w-full bg-transparent text-sm text-foreground placeholder:text-muted-foreground focus:outline-none"
                 />
                 {searchQuery && (
                   <button
                     onClick={() => setSearchQuery("")}
-                    className="text-gray-400 hover:text-gray-600 p-0.5 rounded-full"
+                    className="text-muted-foreground hover:text-foreground p-0.5 rounded-full"
                   >
                     <X className="h-3.5 w-3.5" />
                   </button>
@@ -198,9 +199,9 @@ export function JourneyCmsAllJourneysPreview({ draft }: JourneyCmsPreviewSection
 
               <button
                 type="button"
-                className="inline-flex items-center justify-center gap-2 rounded-[6px] border border-gray-200 bg-white px-4 py-2.5 text-sm font-medium text-gray-700 shadow-2xs hover:bg-gray-50 transition-colors shrink-0 cursor-pointer"
+                className="inline-flex items-center justify-center gap-2 rounded-[6px] border border-border bg-card px-4 py-2.5 text-sm font-medium text-foreground shadow-2xs hover:bg-muted transition-colors shrink-0 cursor-pointer"
               >
-                <SlidersHorizontal className="h-4 w-4 text-gray-600" />
+                <SlidersHorizontal className="h-4 w-4 text-muted-foreground" />
                 <span>Filter</span>
               </button>
             </div>
@@ -209,7 +210,7 @@ export function JourneyCmsAllJourneysPreview({ draft }: JourneyCmsPreviewSection
 
         {/* 3-Column Responsive Grid matching screenshot 2 100% 1:1 */}
         {filteredJourneys.length === 0 ? (
-          <div className="py-16 text-center text-gray-500 bg-gray-50 rounded-lg border border-dashed border-gray-200">
+          <div className="py-16 text-center text-muted-foreground bg-card rounded-lg border border-dashed border-border">
             No journeys match your search query &quot;{searchQuery}&quot;.
           </div>
         ) : (
@@ -219,10 +220,10 @@ export function JourneyCmsAllJourneysPreview({ draft }: JourneyCmsPreviewSection
               return (
                 <div
                   key={j.id}
-                  className="group relative flex w-full flex-col overflow-hidden rounded-[8px] border border-gray-200/90 bg-white shadow-xs transition-all duration-300 hover:shadow-md"
+                  className="group relative flex w-full flex-col overflow-hidden rounded-[8px] border border-border/80 bg-card text-card-foreground shadow-xs transition-all duration-300 hover:shadow-md"
                 >
                   {/* Media Cover */}
-                  <div className="relative h-[250px] md:h-[270px] w-full overflow-hidden bg-gray-100">
+                  <div className="relative h-[250px] md:h-[270px] w-full overflow-hidden bg-muted">
                     <img
                       src={j.image}
                       alt={j.title}
@@ -230,7 +231,7 @@ export function JourneyCmsAllJourneysPreview({ draft }: JourneyCmsPreviewSection
                     />
 
                     {/* Top-Left Category Badge (Dark pill with uppercase text) */}
-                    <div className="absolute left-3 top-3 z-20 rounded-[3px] bg-[#111827] px-2.5 py-1 text-[10px] font-bold uppercase tracking-wider text-white">
+                    <div className="absolute left-3 top-3 z-20 rounded-[3px] bg-zinc-900 px-2.5 py-1 text-[10px] font-bold uppercase tracking-wider text-white">
                       {j.journeyType}
                     </div>
 
@@ -238,12 +239,12 @@ export function JourneyCmsAllJourneysPreview({ draft }: JourneyCmsPreviewSection
                     <button
                       type="button"
                       onClick={() => toggleHeart(j.id)}
-                      className="absolute right-3 top-3 z-20 flex h-8 w-8 items-center justify-center rounded-full bg-white/90 text-gray-700 shadow-xs hover:bg-white transition-all cursor-pointer"
+                      className="absolute right-3 top-3 z-20 flex h-8 w-8 items-center justify-center rounded-full bg-background/90 text-foreground shadow-xs hover:bg-background transition-all cursor-pointer"
                       aria-label="Save journey"
                     >
                       <Heart
                         className={`h-4 w-4 ${
-                          isLiked ? "fill-red-500 text-red-500" : "text-gray-700"
+                          isLiked ? "fill-red-500 text-red-500" : "text-foreground"
                         }`}
                       />
                     </button>
@@ -257,10 +258,10 @@ export function JourneyCmsAllJourneysPreview({ draft }: JourneyCmsPreviewSection
                   {/* Card Body */}
                   <div className="flex flex-1 flex-col justify-between p-5">
                     <div className="flex flex-col gap-2">
-                      <h3 className="font-heading text-xl md:text-[22px] font-normal leading-snug tracking-wide text-[#182D09] group-hover:text-[#AF6348] transition-colors">
+                      <h3 className="font-heading text-xl md:text-[22px] font-normal leading-snug tracking-wide text-brand-primary group-hover:text-accent transition-colors">
                         {j.title}
                       </h3>
-                      <p className="text-xs md:text-sm text-[#4B5563] line-clamp-2 leading-relaxed">
+                      <p className="text-xs md:text-sm text-sub line-clamp-2 leading-relaxed">
                         {j.description}
                       </p>
                     </div>
@@ -280,7 +281,7 @@ export function JourneyCmsAllJourneysPreview({ draft }: JourneyCmsPreviewSection
 
                       <span className="text-xs text-gray-500 shrink-0">
                         From{" "}
-                        <span className="text-sm md:text-base font-bold text-[#C97B4A]">
+                        <span className="text-sm md:text-base font-bold text-accent-warm">
                           {j.priceFrom}
                         </span>
                       </span>

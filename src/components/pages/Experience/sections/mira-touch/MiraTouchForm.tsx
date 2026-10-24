@@ -1,3 +1,4 @@
+import { THEME_COLORS } from "@/config/theme"
 import { DynamicStyledField } from "@/components/pages/CMS/shared/FormControls"
 import { UniversalMultimediaForm } from "@/components/pages/CMS/shared/UniversalMultimediaForm"
 import { FormSection } from "@/components/pages/Location/shared/fields"
@@ -24,14 +25,14 @@ export function MiraTouchForm({
     const newItem = {
       title: {
         value: "",
-        textColor: "#182d09",
+        textColor: THEME_COLORS.primary,
         textOpacity: 1,
         backgroundColor: null,
         backgroundOpacity: 1,
       },
       description: {
         value: "",
-        textColor: "#565e69",
+        textColor: THEME_COLORS.muted,
         textOpacity: 1,
         backgroundColor: null,
         backgroundOpacity: 1,

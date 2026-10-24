@@ -1,3 +1,4 @@
+import { THEME_COLORS } from "@/config/theme"
 import type { ReactNode } from "react"
 import type { HomeSection, HomeStoryItem } from "../../homeTypes"
 import { UniversalMultimediaPreview } from "../../shared/preview/UniversalMultimediaPreview"
@@ -46,7 +47,7 @@ export function MiraStoriesPreview({
         fallbackAlt="Mira Stories background"
         fallbackColor={(section as any).bgColor ?? "transparent"}
         mode="background"
-        overlayClassName="bg-white/70"
+        overlayClassName="bg-white/70 dark:bg-background/80"
       />
 
       <div className="relative z-10 container mx-auto px-4 lg:px-0 flex w-full max-w-[1336px] flex-col items-center justify-center lg:items-center gap-[38px] md:gap-[50px] lg:gap-[48px] lgx:gap-[56px] xl:gap-[64px] lg:flex-row">
@@ -54,7 +55,7 @@ export function MiraStoriesPreview({
           <UniversalMultimediaPreview
             multimedia={leftSideMultimedia}
             fallbackAlt="Mira Stories editorial"
-            fallbackColor="#E5E7EB"
+            fallbackColor={THEME_COLORS.mediaPlaceholder}
             className="h-full w-full object-cover"
           />
         </div>

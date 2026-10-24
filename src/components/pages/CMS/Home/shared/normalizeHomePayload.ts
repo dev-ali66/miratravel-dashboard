@@ -1,3 +1,4 @@
+import { THEME_COLORS } from "@/config/theme"
 import { normalizeHero } from "../sections/hero"
 import { normalizeExploreJourneys } from "../sections/explore-journeys"
 import { normalizeDestinations } from "../sections/destinations"
@@ -41,10 +42,10 @@ export function normalizeHomePayload(raw: any): HomePageData {
     data: {
       page: "home",
       theme: {
-        accentColor: safeData.theme?.accentColor ?? "#E5A84B",
-        primaryColor: safeData.theme?.primaryColor ?? "#182D09",
-        textColorDark: safeData.theme?.textColorDark ?? "#182D09",
-        textColorLight: safeData.theme?.textColorLight ?? "#FFFFFF",
+        accentColor: safeData.theme?.accentColor ?? THEME_COLORS.accentMuted,
+        primaryColor: safeData.theme?.primaryColor ?? THEME_COLORS.primary,
+        textColorDark: safeData.theme?.textColorDark ?? THEME_COLORS.primary,
+        textColorLight: safeData.theme?.textColorLight ?? THEME_COLORS.white,
       },
       hero: finalHero,
       explore_journeys: finalExplore,

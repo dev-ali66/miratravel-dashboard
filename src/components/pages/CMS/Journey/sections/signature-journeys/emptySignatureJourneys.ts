@@ -1,21 +1,22 @@
+import { THEME_COLORS } from "@/config/theme"
 export const emptySignatureJourneys = {
   eyebrow: {
     value: "CURATED EXPERIENCES",
-    textColor: "#AF6348",
+    textColor: THEME_COLORS.accent,
     textOpacity: 1,
     backgroundColor: null,
     backgroundOpacity: 1,
   },
   title: {
     value: "Signature Journeys",
-    textColor: "#111827",
+    textColor: THEME_COLORS.darkNeutral,
     textOpacity: 1,
     backgroundColor: null,
     backgroundOpacity: 1,
   },
   subtitle: {
     value: "Handcrafted multi-day itineraries designed to showcase the region's finest highlights.",
-    textColor: "#4B5563",
+    textColor: THEME_COLORS.sub,
     textOpacity: 1,
     backgroundColor: null,
     backgroundOpacity: 1,
@@ -24,7 +25,7 @@ export const emptySignatureJourneys = {
   backgroundMultimedia: {
     show: "color",
     color: {
-      color: "#FAF7F2",
+      color: THEME_COLORS.bgSand,
       opacity: 100,
       width: "100%",
       height: "100%",
@@ -34,7 +35,7 @@ export const emptySignatureJourneys = {
       url: "",
       alt: "",
       opacity: 100,
-      overlayColor: "#000000",
+      overlayColor: THEME_COLORS.overlayBlack,
       overlayOpacity: 0,
       width: "100%",
       height: "auto",
@@ -45,7 +46,7 @@ export const emptySignatureJourneys = {
       url: "",
       alt: null,
       opacity: 100,
-      overlayColor: "#000000",
+      overlayColor: THEME_COLORS.overlayBlack,
       overlayOpacity: 0,
       autoplay: true,
       loop: true,

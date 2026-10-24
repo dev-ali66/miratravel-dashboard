@@ -1,3 +1,4 @@
+import { THEME_COLORS } from "@/config/theme"
 import { useState, useMemo } from "react"
 import {
   History,
@@ -32,6 +33,7 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog"
 import { Card, CardContent } from "@/components/ui/card"
+import { Pagination } from "@/components/shared/Pagination"
 import { useAuditSocket, type LiveAuditLog } from "@/hooks/audit/useAuditSocket"
 import axios from "axios"
 
@@ -122,6 +124,8 @@ export default function AuditLogsPage() {
   const [selectedLog, setSelectedLog] = useState<LiveAuditLog | null>(null)
   const [isSimulating, setIsSimulating] = useState(false)
   const [showTerminal, setShowTerminal] = useState(true)
+  const [currentPage, setCurrentPage] = useState(1)
+  const [pageSize, setPageSize] = useState(10)
 
   // Combined logs: live incoming socket logs prepend to the list seamlessly
   const allLogs = useMemo(() => {
@@ -281,8 +285,8 @@ export default function AuditLogsPage() {
 
       {/* Live Socket Audit Terminal Console */}
       {showTerminal && (
-        <div className="rounded-xl border border-zinc-800 bg-[#090d13] text-zinc-200 shadow-xl overflow-hidden font-mono text-xs">
-          <div className="flex items-center justify-between border-b border-zinc-800 bg-[#0d121c] px-4 py-2.5">
+        <div className="rounded-xl border border-zinc-800 bg-zinc-950 text-zinc-200 shadow-xl overflow-hidden font-mono text-xs">
+          <div className="flex items-center justify-between border-b border-zinc-800 bg-zinc-900 px-4 py-2.5">
             <div className="flex items-center gap-2">
               <div className="flex gap-1.5">
                 <span className="size-3 rounded-full bg-rose-500/80 inline-block" />
@@ -324,10 +328,10 @@ export default function AuditLogsPage() {
                   style={{
                     borderColor:
                       log.status === "FAILED"
-                        ? "#f43f5e"
+                        ? THEME_COLORS.error
                         : log.status === "WARNING"
-                        ? "#f59e0b"
-                        : "#10b981",
+                        ? THEME_COLORS.warning
+                        : THEME_COLORS.success,
                   }}
                 >
                   <span className="text-zinc-500 shrink-0">[{new Date(log.timestamp).toLocaleTimeString()}]</span>
@@ -463,7 +467,9 @@ export default function AuditLogsPage() {
               </tr>
             </thead>
             <tbody className="divide-y divide-border/40 text-foreground">
-              {filteredLogs.map((log) => (
+              {filteredLogs
+                .slice((currentPage - 1) * pageSize, currentPage * pageSize)
+                .map((log) => (
                 <tr key={log.id} className="transition-colors hover:bg-muted/30">
                   <td className="px-5 py-3.5 text-xs text-muted-foreground whitespace-nowrap">
                     {formatDate(log.timestamp)}
@@ -520,6 +526,24 @@ export default function AuditLogsPage() {
             </tbody>
           </table>
         </div>
+
+        {/* Universal Pagination */}
+        {filteredLogs.length > 0 && (
+          <div className="border-t border-border/60 bg-muted/10 px-5 py-3">
+            <Pagination
+              currentPage={currentPage}
+              totalPages={Math.max(1, Math.ceil(filteredLogs.length / pageSize))}
+              totalItems={filteredLogs.length}
+              pageSize={pageSize}
+              pageSizeOptions={[10, 20, 50, 100]}
+              onPageChange={setCurrentPage}
+              onPageSizeChange={(sz) => {
+                setPageSize(sz)
+                setCurrentPage(1)
+              }}
+            />
+          </div>
+        )}
       </div>
 
       {/* Detail Dialog */}

@@ -1,3 +1,4 @@
+import { THEME_COLORS } from "@/config/theme"
 import { FormSection, DynamicStyledField } from "@/components/pages/CMS/shared/FormControls"
 import { RepeaterList } from "@/components/pages/CMS/shared/RepeaterList"
 import { UniversalMultimediaForm } from "@/components/pages/CMS/shared/UniversalMultimediaForm"
@@ -43,14 +44,14 @@ export function ContactInfoForm({
             newItemTemplate={() => ({
               label: {
                 value: "NEW CONTACT ITEM",
-                textColor: "#6B7280",
+                textColor: THEME_COLORS.placeholder,
                 textOpacity: 1,
                 backgroundColor: null,
                 backgroundOpacity: 1,
               },
               subtitle: {
                 value: "contact@example.com",
-                textColor: "#182D09",
+                textColor: THEME_COLORS.primary,
                 textOpacity: 1,
                 backgroundColor: null,
                 backgroundOpacity: 1,
@@ -61,16 +62,16 @@ export function ContactInfoForm({
                 variant: "PRIMARY",
                 style: "primary",
                 rounded: "none",
-                backgroundColor: "#182D09",
+                backgroundColor: THEME_COLORS.primary,
                 backgroundOpacity: 100,
-                textColor: "#ffffff",
+                textColor: THEME_COLORS.white,
                 textOpacity: 100,
                 target: "_self",
                 showIcon: true,
               },
               multimedia: {
                 show: "image",
-                color: { color: "#E5E7EB", opacity: 100 },
+                color: { color: THEME_COLORS.mediaPlaceholder, opacity: 100 },
                 image: { url: "", alt: "Contact Icon", opacity: 100 },
                 video: { url: "", opacity: 100 },
               },

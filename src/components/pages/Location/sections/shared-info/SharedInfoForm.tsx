@@ -1,3 +1,4 @@
+import { THEME_COLORS } from "@/config/theme"
 import { DynamicStyledField } from "@/components/pages/CMS/shared/FormControls"
 import { UniversalMultimediaForm } from "@/components/pages/CMS/shared/UniversalMultimediaForm"
 import { FormSection } from "../../shared/fields"
@@ -37,7 +38,7 @@ export function SharedInfoForm({
           value={typeof textData === "object" && textData !== null ? textData.value : textData}
           onChange={(val: string) => updateSharedInfoField("text.value", val)}
           enableStyle
-          style={typeof textData === "object" ? textData : { textColor: "#AF6348" }}
+          style={typeof textData === "object" ? textData : { textColor: THEME_COLORS.accent }}
           onStyleChange={(st: any) =>
             updateSharedInfoField("text", {
               ...(typeof textData === "object" ? textData : {}),
@@ -51,7 +52,7 @@ export function SharedInfoForm({
           title="Section Background Media & Styling"
           value={sharedData.backgroundMultimedia}
           onChange={(val: any) => updateSharedInfoField("backgroundMultimedia", val)}
-          defaultColor="#FAF6F0"
+          defaultColor={THEME_COLORS.bgBeige}
         />
       </div>
     </FormSection>

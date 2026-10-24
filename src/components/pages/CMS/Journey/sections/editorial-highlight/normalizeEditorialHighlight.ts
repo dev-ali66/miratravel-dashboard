@@ -1,3 +1,4 @@
+import { THEME_COLORS } from "@/config/theme"
 import {
   normalizeStyledField,
   normalizeMultimedia,
@@ -10,7 +11,7 @@ export function normalizeEditorialHighlight(rawSec: any): typeof emptyEditorialH
   const src = rawSec.editorial_highlight || rawSec.sharedInfo || rawSec.content || rawSec
 
   return {
-    text: normalizeStyledField(src.text || src.statement || src.quote, emptyEditorialHighlight.text.value, "#AF6348"),
+    text: normalizeStyledField(src.text || src.statement || src.quote, emptyEditorialHighlight.text.value, THEME_COLORS.accent),
     backgroundMultimedia: normalizeMultimedia(
       src.backgroundMultimedia || src.multimedia || src.backgroundMedia,
       emptyEditorialHighlight.backgroundMultimedia

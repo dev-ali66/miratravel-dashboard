@@ -1,7 +1,8 @@
+import { THEME_COLORS } from "@/config/theme"
 export const createEmptyMultimediaItem = () => ({
   show: "image" as const,
   color: {
-    color: "#FFFFFF",
+    color: THEME_COLORS.white,
     opacity: 100,
     width: "100%",
     height: "100%",
@@ -11,7 +12,7 @@ export const createEmptyMultimediaItem = () => ({
     url: "",
     alt: "",
     opacity: 100,
-    overlayColor: "#000000",
+    overlayColor: THEME_COLORS.overlayBlack,
     overlayOpacity: 0,
     width: "100%",
     height: "auto",
@@ -22,7 +23,7 @@ export const createEmptyMultimediaItem = () => ({
     url: "",
     alt: null,
     opacity: 100,
-    overlayColor: "#000000",
+    overlayColor: THEME_COLORS.overlayBlack,
     overlayOpacity: 0,
     autoplay: true,
     loop: true,
@@ -37,14 +38,14 @@ export const createEmptyMultimediaItem = () => ({
 export const emptyPhilosophy = {
   eyebrow: {
     value: "OUR PHILOSOPHY",
-    textColor: "#B86B3A",
+    textColor: THEME_COLORS.accentWarm,
     textOpacity: 1,
     backgroundColor: null,
     backgroundOpacity: 1,
   },
   title: {
     value: "We believe the way you travel matters.",
-    textColor: "#182D09",
+    textColor: THEME_COLORS.primary,
     textOpacity: 1,
     backgroundColor: null,
     backgroundOpacity: 1,
@@ -52,14 +53,14 @@ export const emptyPhilosophy = {
   description: {
     value:
       "We believe true luxury lies in unhurried moments and intimate local insight. Every journey is designed specifically around your pace, preferences, and desires.\n\nOur team works closely with each traveler to craft narrative itineraries that balance discovery with rest.",
-    textColor: "#4B5563",
+    textColor: THEME_COLORS.sub,
     textOpacity: 1,
     backgroundColor: null,
     backgroundOpacity: 1,
   },
   quote: {
     value: "“Because the most memorable travel experiences are rarely the loudest ones.”",
-    textColor: "#B86B3A",
+    textColor: THEME_COLORS.accentWarm,
     textOpacity: 1,
     backgroundColor: null,
     backgroundOpacity: 1,
@@ -67,12 +68,12 @@ export const emptyPhilosophy = {
   multimedias: [
     {
       show: "image",
-      color: { color: "#FFFFFF", opacity: 100, width: "100%", height: "100%", aspectRatio: "auto" },
+      color: { color: THEME_COLORS.white, opacity: 100, width: "100%", height: "100%", aspectRatio: "auto" },
       image: {
         url: "",
         alt: "Balkan authentic travel",
         opacity: 100,
-        overlayColor: "#000000",
+        overlayColor: THEME_COLORS.overlayBlack,
         overlayOpacity: 0,
         width: "100%",
         height: "auto",
@@ -83,7 +84,7 @@ export const emptyPhilosophy = {
         url: "",
         alt: null,
         opacity: 100,
-        overlayColor: "#000000",
+        overlayColor: THEME_COLORS.overlayBlack,
         overlayOpacity: 0,
         autoplay: true,
         loop: true,
@@ -96,12 +97,12 @@ export const emptyPhilosophy = {
     },
     {
       show: "image",
-      color: { color: "#FFFFFF", opacity: 100, width: "100%", height: "100%", aspectRatio: "auto" },
+      color: { color: THEME_COLORS.white, opacity: 100, width: "100%", height: "100%", aspectRatio: "auto" },
       image: {
         url: "",
         alt: "Balkan destination",
         opacity: 100,
-        overlayColor: "#000000",
+        overlayColor: THEME_COLORS.overlayBlack,
         overlayOpacity: 0,
         width: "100%",
         height: "auto",
@@ -112,7 +113,7 @@ export const emptyPhilosophy = {
         url: "",
         alt: null,
         opacity: 100,
-        overlayColor: "#000000",
+        overlayColor: THEME_COLORS.overlayBlack,
         overlayOpacity: 0,
         autoplay: true,
         loop: true,
@@ -125,12 +126,12 @@ export const emptyPhilosophy = {
     },
     {
       show: "image",
-      color: { color: "#FFFFFF", opacity: 100, width: "100%", height: "100%", aspectRatio: "auto" },
+      color: { color: THEME_COLORS.white, opacity: 100, width: "100%", height: "100%", aspectRatio: "auto" },
       image: {
         url: "",
         alt: "Balkan scenery",
         opacity: 100,
-        overlayColor: "#000000",
+        overlayColor: THEME_COLORS.overlayBlack,
         overlayOpacity: 0,
         width: "100%",
         height: "auto",
@@ -141,7 +142,7 @@ export const emptyPhilosophy = {
         url: "",
         alt: null,
         opacity: 100,
-        overlayColor: "#000000",
+        overlayColor: THEME_COLORS.overlayBlack,
         overlayOpacity: 0,
         autoplay: true,
         loop: true,
@@ -155,12 +156,12 @@ export const emptyPhilosophy = {
   ],
   backgroundMultimedia: {
     show: "color",
-    color: { color: "#FAF7F2", opacity: 100, width: "100%", height: "100%", aspectRatio: "auto" },
+    color: { color: THEME_COLORS.bgSand, opacity: 100, width: "100%", height: "100%", aspectRatio: "auto" },
     image: {
       url: "",
       alt: "",
       opacity: 100,
-      overlayColor: "#000000",
+      overlayColor: THEME_COLORS.overlayBlack,
       overlayOpacity: 0,
       width: "100%",
       height: "auto",
@@ -171,7 +172,7 @@ export const emptyPhilosophy = {
       url: "",
       alt: null,
       opacity: 100,
-      overlayColor: "#000000",
+      overlayColor: THEME_COLORS.overlayBlack,
       overlayOpacity: 0,
       autoplay: true,
       loop: true,

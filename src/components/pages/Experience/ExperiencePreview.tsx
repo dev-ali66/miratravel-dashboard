@@ -9,7 +9,7 @@ export const ExperiencePreview = () => {
   const activeSections = getExperienceSections()
 
   return (
-    <div className="@container w-full min-h-full bg-[#F9F9F9] text-foreground text-sm md:text-base">
+    <div className="@container w-full min-h-full bg-background text-foreground text-sm md:text-base">
       {activeSections.map((key) => {
         const SectionPreview = experienceSectionRegistry[key]?.preview
 

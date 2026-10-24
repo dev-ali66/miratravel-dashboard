@@ -25,6 +25,7 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog"
 import { Switch } from "@/components/ui/switch"
+import { Pagination } from "@/components/shared/Pagination"
 import { cn } from "@/lib/utils"
 
 export interface PromotionVoucher {
@@ -125,6 +126,8 @@ export default function PromotionsPage() {
   const [statusFilter, setStatusFilter] = useState("ALL")
   const [copiedCode, setCopiedCode] = useState<string | null>(null)
   const [isCreateOpen, setIsCreateOpen] = useState(false)
+  const [currentPage, setCurrentPage] = useState(1)
+  const [pageSize, setPageSize] = useState(10)
 
   // New promo form state
   const [newCode, setNewCode] = useState("")
@@ -296,7 +299,9 @@ export default function PromotionsPage() {
               </tr>
             </thead>
             <tbody className="divide-y divide-border/40 text-foreground">
-              {filtered.map((p) => {
+              {filtered
+                .slice((currentPage - 1) * pageSize, currentPage * pageSize)
+                .map((p) => {
                 const percentUsed = Math.min(100, Math.round((p.usageCount / p.usageLimit) * 100))
                 return (
                   <tr key={p.id} className="transition-colors hover:bg-muted/30">
@@ -376,6 +381,24 @@ export default function PromotionsPage() {
             </tbody>
           </table>
         </div>
+
+        {/* Universal Pagination */}
+        {filtered.length > 0 && (
+          <div className="border-t border-border/60 bg-muted/10 px-5 py-3">
+            <Pagination
+              currentPage={currentPage}
+              totalPages={Math.max(1, Math.ceil(filtered.length / pageSize))}
+              totalItems={filtered.length}
+              pageSize={pageSize}
+              pageSizeOptions={[10, 20, 50, 100]}
+              onPageChange={setCurrentPage}
+              onPageSizeChange={(sz) => {
+                setPageSize(sz)
+                setCurrentPage(1)
+              }}
+            />
+          </div>
+        )}
       </div>
 
       {/* Create Modal */}

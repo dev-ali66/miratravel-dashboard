@@ -1,3 +1,4 @@
+import { THEME_COLORS } from "@/config/theme"
 import { ColorField, DynamicStyledField } from "../../../shared/FormControls"
 import type { FooterFormSectionProps } from "./sectionTypes"
 
@@ -21,7 +22,7 @@ export const SocialAppearanceFormSection = ({
 
         <ColorField
           label="Icon / Text Color"
-          value={theme.socialTextColor ?? "#FFFFFF"}
+          value={theme.socialTextColor ?? THEME_COLORS.white}
           onChange={(value) => updateTheme({ socialTextColor: value })}
         />
 
@@ -39,7 +40,7 @@ export const SocialAppearanceFormSection = ({
 
         <ColorField
           label="Hover Icon / Text Color"
-          value={theme.socialHoverTextColor ?? "#FFFFFF"}
+          value={theme.socialHoverTextColor ?? THEME_COLORS.white}
           onChange={(value) => updateTheme({ socialHoverTextColor: value })}
         />
 

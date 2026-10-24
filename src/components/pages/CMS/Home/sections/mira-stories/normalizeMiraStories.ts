@@ -1,3 +1,4 @@
+import { THEME_COLORS } from "@/config/theme"
 import {
   normalizeMultimedia,
   normalizeStyledField,
@@ -17,17 +18,17 @@ export function normalizeMiraStories(section: any) {
     eyebrow: normalizeStyledField(
       safeSection.eyebrow ?? content.eyebrow,
       "The Editorial",
-      "#C5A880"
+      THEME_COLORS.goldMuted
     ),
     title: normalizeStyledField(
       safeSection.title ?? content.title,
       "Mira Stories",
-      "#182D09"
+      THEME_COLORS.primary
     ),
     description: normalizeStyledField(
       safeSection.description ?? content.description,
       "A collection of personal, cultural and inspiring stories. Each piece offers a deeper view of the Balkans and its people beyond the expected.",
-      "#4B5563"
+      THEME_COLORS.sub
     ),
     backgroundMultimedia: normalizeMultimedia(
       safeSection.backgroundMultimedia ?? content.backgroundMultimedia,
@@ -50,12 +51,12 @@ export function normalizeMiraStories(section: any) {
         variant: "PRIMARY",
         style: "primary",
         rounded: "full",
-        backgroundColor: "#182D09",
+        backgroundColor: THEME_COLORS.primary,
         backgroundOpacity: 100,
-        textColor: "#ffffff",
+        textColor: THEME_COLORS.white,
         textOpacity: 100,
-        hoverBackgroundColor: "#f3f4f6",
-        hoverTextColor: "#000000",
+        hoverBackgroundColor: THEME_COLORS.lightText,
+        hoverTextColor: THEME_COLORS.overlayBlack,
         target: "_self",
         showIcon: true,
       }
@@ -65,12 +66,12 @@ export function normalizeMiraStories(section: any) {
         title: normalizeStyledField(
           item?.title,
           "Story title",
-          "#182D09"
+          THEME_COLORS.primary
         ),
         subtitle: normalizeStyledField(
           item?.subtitle,
           "Story subtitle",
-          "#4B5563"
+          THEME_COLORS.sub
         ),
         button: buttonObj,
         url: buttonObj.url,

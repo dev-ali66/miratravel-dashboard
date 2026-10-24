@@ -1,7 +1,7 @@
 import { useState } from "react"
 import { motion } from "framer-motion"
 import { Compass, Calendar, Euro, Sparkles, Eye, Trash2, CheckCircle2, Search, X, Mail, User, Phone } from "lucide-react"
-import Pagination from "@/components/pages/UserList/Pagination"
+import { Pagination } from "@/components/shared/Pagination"
 import {
   useGetJourneyWizardRequests,
   useUpdateJourneyWizardRequestStatus,
@@ -12,10 +12,10 @@ import JourneyWizardDetailsModal from "./JourneyWizardDetailsModal"
 
 export default function JourneyWizardTable() {
   const [currentPage, setCurrentPage] = useState(1)
+  const [limit, setLimit] = useState(10)
   const [selectedStatusFilter, setSelectedStatusFilter] = useState<string>("")
   const [searchQuery, setSearchQuery] = useState<string>("")
   const [selectedRequest, setSelectedRequest] = useState<JourneyWizardRequestItem | null>(null)
-  const limit = 10
 
   const { data, isLoading, isError } = useGetJourneyWizardRequests(
     currentPage,
@@ -319,13 +319,20 @@ export default function JourneyWizardTable() {
               </table>
             </div>
 
-            {/* Pagination */}
-            {totalPages > 1 && (
+            {/* Universal Pagination */}
+            {totalItems > 0 && (
               <div className="border-t border-border/60 bg-background/50 p-4">
                 <Pagination
                   currentPage={currentPage}
                   totalPages={totalPages}
+                  totalItems={totalItems}
+                  pageSize={limit}
+                  pageSizeOptions={[10, 20, 50, 100]}
                   onPageChange={handlePageChange}
+                  onPageSizeChange={(sz) => {
+                    setLimit(sz)
+                    setCurrentPage(1)
+                  }}
                 />
               </div>
             )}

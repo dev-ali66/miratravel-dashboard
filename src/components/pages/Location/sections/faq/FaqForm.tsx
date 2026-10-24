@@ -1,3 +1,4 @@
+import { THEME_COLORS } from "@/config/theme"
 import { useState } from "react"
 import {
   Plus,
@@ -32,7 +33,7 @@ export function FaqForm({
     (draft as any)?.data?.faq_section || {
       title: {
         value: "Frequently Asked Questions",
-        textColor: "#182d09",
+        textColor: THEME_COLORS.primary,
         textOpacity: 1,
         backgroundColor: null,
         backgroundOpacity: 1,
@@ -63,14 +64,14 @@ export function FaqForm({
     const newQ: FAQItemData = {
       question: {
         value: "",
-        textColor: "#182d09",
+        textColor: THEME_COLORS.primary,
         textOpacity: 1,
         backgroundColor: null,
         backgroundOpacity: 1,
       },
       answer: {
         value: "",
-        textColor: "#565e69",
+        textColor: THEME_COLORS.muted,
         textOpacity: 1,
         backgroundColor: null,
         backgroundOpacity: 1,

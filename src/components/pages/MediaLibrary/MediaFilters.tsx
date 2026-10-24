@@ -18,6 +18,7 @@ import {
   Layers,
   ArrowUpDown,
   RefreshCw,
+  CheckSquare,
 } from "lucide-react"
 import { cn } from "@/lib/utils"
 import type { MediaGalleryParams } from "@/services/mediaService"
@@ -28,6 +29,9 @@ interface MediaFiltersProps {
   onParamsChange: (newParams: Partial<MediaGalleryParams>) => void
   onViewModeChange: (mode: "grid" | "table") => void
   onRefresh: () => void
+  onToggleSelectAll?: () => void
+  isAllSelected?: boolean
+  selectedCount?: number
   isFetching?: boolean
 }
 
@@ -37,6 +41,9 @@ export const MediaFilters: React.FC<MediaFiltersProps> = ({
   onParamsChange,
   onViewModeChange,
   onRefresh,
+  onToggleSelectAll,
+  isAllSelected,
+  selectedCount,
   isFetching,
 }) => {
   const currentType = params.type || "all"
@@ -172,6 +179,25 @@ export const MediaFilters: React.FC<MediaFiltersProps> = ({
           >
             <RefreshCw className={cn("h-3.5 w-3.5", isFetching && "animate-spin text-primary")} />
           </Button>
+
+          {/* Select All Quick Button */}
+          {onToggleSelectAll && (
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={onToggleSelectAll}
+              className={cn(
+                "h-8 text-xs gap-1.5 border-border/60 bg-muted/20 hover:bg-muted/40 transition-all",
+                isAllSelected && "border-primary/40 bg-primary/10 text-primary font-medium"
+              )}
+              title={isAllSelected ? "Deselect all files" : "Select all files on page"}
+            >
+              <CheckSquare className="h-3.5 w-3.5 text-primary" />
+              <span className="hidden sm:inline">
+                {isAllSelected ? "Deselect All" : selectedCount ? `Select All (${selectedCount})` : "Select All"}
+              </span>
+            </Button>
+          )}
 
           {/* View Mode Switcher (Grid vs Table) */}
           <div className="inline-flex items-center rounded-lg border border-border/60 bg-muted/30 p-0.5">

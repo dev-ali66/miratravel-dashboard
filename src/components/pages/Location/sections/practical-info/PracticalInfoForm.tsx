@@ -2,6 +2,8 @@
    LOCATION — PRACTICAL INFORMATION FORM SECTION
    Form component to edit Region Practical Information (Before Travel) section.
 ===================================================== */
+import { THEME_COLORS } from "@/config/theme"
+
 
 import { useState } from "react"
 import {
@@ -58,14 +60,14 @@ export function PracticalInfoForm({
     const newItem: PracticalInfoItem = {
       title: {
         value: "New Practical Travel Guide Item",
-        textColor: "#182d09",
+        textColor: THEME_COLORS.primary,
         textOpacity: 1,
         backgroundColor: null,
         backgroundOpacity: 1,
       },
       content: {
         value: "Provide essential travel tips, visa rules, currency guidelines, or safety recommendations for visitors.",
-        textColor: "#565e69",
+        textColor: THEME_COLORS.muted,
         textOpacity: 1,
         backgroundColor: null,
         backgroundOpacity: 1,
@@ -126,7 +128,7 @@ export function PracticalInfoForm({
           value={
             practicalData.label || {
               value: "PRACTICAL INFORMATION",
-              textColor: "#af6348",
+              textColor: THEME_COLORS.accent,
               textOpacity: 1,
               backgroundColor: null,
               backgroundOpacity: 1,
@@ -144,7 +146,7 @@ export function PracticalInfoForm({
           value={
             practicalData.title || {
               value: "Essential Insights Before You Travel",
-              textColor: "#182d09",
+              textColor: THEME_COLORS.primary,
               textOpacity: 1,
               backgroundColor: null,
               backgroundOpacity: 1,
@@ -161,7 +163,7 @@ export function PracticalInfoForm({
           value={
             practicalData.imageMultimedia || {
               show: "image",
-              color: { color: "#FFFFFF", opacity: 100, width: "100%", height: "100%", aspectRatio: "auto" },
+              color: { color: THEME_COLORS.white, opacity: 100, width: "100%", height: "100%", aspectRatio: "auto" },
               image: { url: "", alt: "Practical Information" },
               video: { url: null, alt: null },
             }
@@ -178,7 +180,7 @@ export function PracticalInfoForm({
           value={
             practicalData.backgroundMultimedia || {
               show: "color",
-              color: { color: "#FFF8F2", opacity: 100, width: "100%", height: "100%", aspectRatio: "auto" },
+              color: { color: THEME_COLORS.bgIvory, opacity: 100, width: "100%", height: "100%", aspectRatio: "auto" },
               image: { url: null, alt: null },
               video: { url: null, alt: null },
             }

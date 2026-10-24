@@ -1,3 +1,4 @@
+import { THEME_COLORS } from "@/config/theme"
 import { DynamicStyledTextPreview } from "@/components/pages/CMS/shared/DynamicStyledTextPreview"
 import { UniversalMultimediaPreview } from "@/components/pages/CMS/Home/shared/preview/UniversalMultimediaPreview"
 import { DynamicCmsButtonPreview } from "@/components/pages/CMS/shared/DynamicCmsButtonPreview"
@@ -72,7 +73,7 @@ function SignatureExperienceRow({
             label: "Explore this experience",
             url: targetUrl,
             variant: "link",
-            textColor: "#af6348",
+            textColor: THEME_COLORS.accent,
           },
         ]
 
@@ -83,7 +84,7 @@ function SignatureExperienceRow({
     >
       {/* Left Number Column */}
       <div className="w-16 shrink-0 flex items-start justify-start pr-8 py-7 border-r border-neutral-300/60 dark:border-neutral-700/60 transition-colors duration-300">
-        <span className="text-primary text-[24px] @md:text-[25.5px] @lg:text-[28.5px] @lgx:text-[29.5px] @xlg:text-[31.5px] @mid:text-[33px] @xl:text-[36px] font-normal leading-7 @lg:leading-8 @lgx:leading-[33px] @xlg:leading-[35px] @mid:leading-[37px] @xl:leading-10 transition-colors duration-300 font-mono text-[#182d09]">
+        <span className="text-primary text-[24px] @md:text-[25.5px] @lg:text-[28.5px] @lgx:text-[29.5px] @xlg:text-[31.5px] @mid:text-[33px] @xl:text-[36px] font-normal leading-7 @lg:leading-8 @lgx:leading-[33px] @xlg:leading-[35px] @mid:leading-[37px] @xl:leading-10 transition-colors duration-300 font-mono text-brand-primary">
           {expNum}
         </span>
       </div>
@@ -93,14 +94,14 @@ function SignatureExperienceRow({
         <DynamicStyledTextPreview
           as="h3"
           data={itemTitle}
-          fallbackColor="#182d09"
+          fallbackColor={THEME_COLORS.primary}
           className="text-primary text-base @md:text-[17px] @lg:text-[19px] @lgx:text-[19.7px] @xlg:text-[21px] @mid:text-[22px] @xl:text-[24px] font-medium font-heading leading-6 @md:leading-[25px] @lg:leading-[27px] @lgx:leading-[27.7px] @xlg:leading-[29px] @mid:leading-[30px] @xl:leading-8 transition-colors duration-300 group-hover/item:text-accent-light"
         />
 
         <DynamicStyledTextPreview
           as="p"
           data={itemDesc}
-          fallbackColor="#565e69"
+          fallbackColor={THEME_COLORS.muted}
           className="mt-2 text-subtitle text-sm @md:text-[15px] @lg:text-[15.3px] @lgx:text-[15.4px] @xlg:text-[15.6px] @mid:text-[15.7px] @xl:text-base font-normal leading-4 @md:leading-[16.5px] @lg:leading-[17.5px] @lgx:leading-[17.9px] @xlg:leading-[18.5px] @mid:leading-[19.1px] @xl:leading-5"
         />
 
@@ -145,19 +146,19 @@ export function SignatureExperiencesPreview({
 
   const headerLabel = signatureExperiences?.label || {
     value: "Signature Experiences",
-    textColor: "#af6348",
+    textColor: THEME_COLORS.accent,
     textOpacity: 1,
   }
 
   const headerTitle = signatureExperiences?.title || {
     value: "Five ways to fall in love with " + (draft?.name || "the destination"),
-    textColor: "#182d09",
+    textColor: THEME_COLORS.primary,
     textOpacity: 1,
   }
 
   const headerDesc = signatureExperiences?.description || {
     value: "Discover the most iconic, unhurried encounters across the country.",
-    textColor: "#565e69",
+    textColor: THEME_COLORS.muted,
     textOpacity: 1,
   }
 
@@ -171,7 +172,7 @@ export function SignatureExperiencesPreview({
       {/* Background Media (Color / Image / Video) */}
       <UniversalMultimediaPreview
         multimedia={backgroundMultimedia}
-        fallbackColor="#FFFFFF"
+        fallbackColor={THEME_COLORS.white}
         mode="background"
       />
 
@@ -188,7 +189,7 @@ export function SignatureExperiencesPreview({
               <DynamicStyledTextPreview
                 as="div"
                 data={headerLabel}
-                fallbackColor="#af6348"
+                fallbackColor={THEME_COLORS.accent}
                 className="self-stretch justify-start font-normal text-accent text-base @md:text-lg @lgx:text-[20px] @mid:text-[22px] @xl:text-2xl leading-6 @md:leading-[26px] @lgx:leading-7 @mid:leading-[30px] @xl:leading-8"
               />
 
@@ -196,7 +197,7 @@ export function SignatureExperiencesPreview({
               <DynamicStyledTextPreview
                 as="h2"
                 data={headerTitle}
-                fallbackColor="#182d09"
+                fallbackColor={THEME_COLORS.primary}
                 className="self-stretch shrink-0 h-auto justify-start font-medium text-primary font-heading text-[28px] leading-[38px] @md:text-[38px] @md:leading-[47px] @lg:text-[42px] @lg:leading-[50px] @lgx:text-[43px] @lgx:leading-[51px] @xlg:text-[44px] @xlg:leading-[52px] @mid:text-[46px] @mid:leading-[54px] @xl:text-[48px] @xl:leading-[56px] @2xl:text-[50px] @2xl:leading-[58px]"
               />
             </div>
@@ -206,7 +207,7 @@ export function SignatureExperiencesPreview({
               <DynamicStyledTextPreview
                 as="p"
                 data={headerDesc}
-                fallbackColor="#565e69"
+                fallbackColor={THEME_COLORS.muted}
                 className="text-[13px] @md:text-sm @lg:text-[14.7px] @lgx:text-[15px] @xlg:text-[15.3px] @mid:text-[15.6px] @xl:text-base font-normal leading-5 @md:leading-[22px] @lg:leading-[23.5px] @lgx:leading-6 @xlg:leading-[25px] @mid:leading-[26px] @xl:leading-7 tracking-normal @md:tracking-[0.3px] @lg:tracking-[0.5px] @lgx:tracking-[0.6px] @xlg:tracking-[0.7px] @mid:tracking-[0.85px] @xl:tracking-[1px] text-muted"
               />
             </div>

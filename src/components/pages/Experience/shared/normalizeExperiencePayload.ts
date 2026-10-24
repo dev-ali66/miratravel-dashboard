@@ -1,3 +1,4 @@
+import { THEME_COLORS } from "@/config/theme"
 import {
   normalizeMultimedia,
   normalizeStyledField,
@@ -21,8 +22,8 @@ export function normalizeHero(hero: any) {
 
   const normalizedHero = {
     ...safeHero,
-    title: normalizeStyledField(safeHero.title ?? emptyHero.title, "", "#FFFFFF"),
-    description: normalizeStyledField(safeHero.description ?? emptyHero.description, "", "#FFFFFF"),
+    title: normalizeStyledField(safeHero.title ?? emptyHero.title, "", THEME_COLORS.white),
+    description: normalizeStyledField(safeHero.description ?? emptyHero.description, "", THEME_COLORS.white),
     breadcrumb: normalizeStyledField(safeHero.breadcrumb ?? emptyHero.breadcrumb, "EXPERIENCES", null),
     subtitle: normalizeStyledField(safeHero.subtitle ?? emptyHero.subtitle, "", null),
     isCenter: safeHero.isCenter !== undefined ? Boolean(safeHero.isCenter) : emptyHero.isCenter,
@@ -49,11 +50,11 @@ export function normalizeTheExperience(theExp: any) {
   const safe = theExp && typeof theExp === "object" ? theExp : {}
 
   return {
-    label: normalizeStyledField(safe.label ?? emptyTheExperience.label, "THE EXPERIENCE", "#af6348"),
-    title: normalizeStyledField(safe.title ?? emptyTheExperience.title, "", "#182d09"),
-    summary: normalizeStyledField(safe.summary ?? emptyTheExperience.summary, "", "#565e69"),
-    narrative: normalizeStyledField(safe.narrative ?? emptyTheExperience.narrative, "", "#333333"),
-    quote: normalizeStyledField(safe.quote ?? emptyTheExperience.quote, "", "#182d09"),
+    label: normalizeStyledField(safe.label ?? emptyTheExperience.label, "THE EXPERIENCE", THEME_COLORS.accent),
+    title: normalizeStyledField(safe.title ?? emptyTheExperience.title, "", THEME_COLORS.primary),
+    summary: normalizeStyledField(safe.summary ?? emptyTheExperience.summary, "", THEME_COLORS.muted),
+    narrative: normalizeStyledField(safe.narrative ?? emptyTheExperience.narrative, "", THEME_COLORS.body),
+    quote: normalizeStyledField(safe.quote ?? emptyTheExperience.quote, "", THEME_COLORS.primary),
     imageMultimedia: normalizeMultimedia(safe.imageMultimedia || emptyTheExperience.imageMultimedia, "image"),
     backgroundMultimedia: normalizeMultimedia(safe.backgroundMultimedia || emptyTheExperience.backgroundMultimedia, "color"),
   }
@@ -67,13 +68,13 @@ export function normalizeHighlights(highlights: any) {
   const normalizedItems = rawItems.map((item: any, idx: number) => ({
     id: item.id || `h-${idx + 1}`,
     badge: item.badge || `Highlight 0${idx + 1}`,
-    title: normalizeStyledField(item.title, "", "#182d09"),
-    description: normalizeStyledField(item.description, "", "#565e69"),
+    title: normalizeStyledField(item.title, "", THEME_COLORS.primary),
+    description: normalizeStyledField(item.description, "", THEME_COLORS.muted),
   }))
 
   return {
-    label: normalizeStyledField(safe.label ?? emptyHighlights.label, "KEY HIGHLIGHTS", "#af6348"),
-    title: normalizeStyledField(safe.title ?? emptyHighlights.title, "What makes this unforgettable", "#182d09"),
+    label: normalizeStyledField(safe.label ?? emptyHighlights.label, "KEY HIGHLIGHTS", THEME_COLORS.accent),
+    title: normalizeStyledField(safe.title ?? emptyHighlights.title, "What makes this unforgettable", THEME_COLORS.primary),
     items: normalizedItems,
   }
 }
@@ -82,11 +83,11 @@ export function normalizePracticalInfo(practical: any) {
   const safe = practical && typeof practical === "object" ? practical : {}
 
   return {
-    duration: normalizeStyledField(safe.duration ?? emptyPracticalInfo.duration, "", "#182d09"),
-    season: normalizeStyledField(safe.season ?? emptyPracticalInfo.season, "", "#182d09"),
-    activityLevel: normalizeStyledField(safe.activityLevel ?? emptyPracticalInfo.activityLevel, "", "#182d09"),
-    groupSize: normalizeStyledField(safe.groupSize ?? emptyPracticalInfo.groupSize, "", "#182d09"),
-    locationNotes: normalizeStyledField(safe.locationNotes ?? emptyPracticalInfo.locationNotes, "", "#565e69"),
+    duration: normalizeStyledField(safe.duration ?? emptyPracticalInfo.duration, "", THEME_COLORS.primary),
+    season: normalizeStyledField(safe.season ?? emptyPracticalInfo.season, "", THEME_COLORS.primary),
+    activityLevel: normalizeStyledField(safe.activityLevel ?? emptyPracticalInfo.activityLevel, "", THEME_COLORS.primary),
+    groupSize: normalizeStyledField(safe.groupSize ?? emptyPracticalInfo.groupSize, "", THEME_COLORS.primary),
+    locationNotes: normalizeStyledField(safe.locationNotes ?? emptyPracticalInfo.locationNotes, "", THEME_COLORS.muted),
   }
 }
 
@@ -96,14 +97,14 @@ export function normalizeMiraTouch(miraTouch: any) {
   const rawItems = Array.isArray(safe.items) ? safe.items : emptyMiraTouch.items
 
   const normalizedItems = rawItems.map((item: any) => ({
-    title: normalizeStyledField(item.title, "", "#182d09"),
-    description: normalizeStyledField(item.description, "", "#565e69"),
+    title: normalizeStyledField(item.title, "", THEME_COLORS.primary),
+    description: normalizeStyledField(item.description, "", THEME_COLORS.muted),
   }))
 
   return {
-    label: normalizeStyledField(safe.label ?? emptyMiraTouch.label, "THE MIRA TOUCH", "#af6348"),
-    title: normalizeStyledField(safe.title ?? emptyMiraTouch.title, "Distinction, Privacy & Insider Access", "#182d09"),
-    description: normalizeStyledField(safe.description ?? emptyMiraTouch.description, "", "#565e69"),
+    label: normalizeStyledField(safe.label ?? emptyMiraTouch.label, "THE MIRA TOUCH", THEME_COLORS.accent),
+    title: normalizeStyledField(safe.title ?? emptyMiraTouch.title, "Distinction, Privacy & Insider Access", THEME_COLORS.primary),
+    description: normalizeStyledField(safe.description ?? emptyMiraTouch.description, "", THEME_COLORS.muted),
     items: normalizedItems,
     imageMultimedia: normalizeMultimedia(safe.imageMultimedia || emptyMiraTouch.imageMultimedia, "image"),
   }
@@ -113,12 +114,12 @@ export function normalizeEnquiryCta(cta: any) {
   const safe = cta && typeof cta === "object" ? cta : {}
 
   return {
-    title: normalizeStyledField(safe.title ?? emptyEnquiryCta.title, "", "#FFFFFF"),
-    subtitle: normalizeStyledField(safe.subtitle ?? emptyEnquiryCta.subtitle, "", "#E5E7EB"),
+    title: normalizeStyledField(safe.title ?? emptyEnquiryCta.title, "", THEME_COLORS.white),
+    subtitle: normalizeStyledField(safe.subtitle ?? emptyEnquiryCta.subtitle, "", THEME_COLORS.mediaPlaceholder),
     badgeText: typeof safe.badgeText === "string" ? safe.badgeText : "EXPERIENCE RESERVATION",
     primaryButtonText: typeof safe.primaryButtonText === "string" ? safe.primaryButtonText : "Include in My Journey",
     secondaryButtonText: typeof safe.secondaryButtonText === "string" ? safe.secondaryButtonText : "Enquire About This Experience",
-    note: normalizeStyledField(safe.note ?? emptyEnquiryCta.note, "", "#9CA3AF"),
+    note: normalizeStyledField(safe.note ?? emptyEnquiryCta.note, "", THEME_COLORS.lightMuted),
     backgroundMultimedia: normalizeMultimedia(safe.backgroundMultimedia || emptyEnquiryCta.backgroundMultimedia, "color"),
   }
 }
@@ -149,9 +150,9 @@ export function normalizeEssence(essence: any) {
     paragraphs: normalizeStyledField(safeEssence.paragraphs ?? emptyEssence.paragraphs, "", LOCATION_THEME_COLORS.muted),
     quote: normalizeStyledField(safeEssence.quote ?? emptyEssence.quote, "", LOCATION_THEME_COLORS.primary),
     stat: {
-      statValue: normalizeStyledField(rawStatValue, "", "#ffffff"),
-      statLabel: normalizeStyledField(rawStatLabel, "", "#ffffff"),
-      statBadgeBg: typeof rawStatBadgeBg === "string" ? rawStatBadgeBg : "#E5A84B",
+      statValue: normalizeStyledField(rawStatValue, "", THEME_COLORS.white),
+      statLabel: normalizeStyledField(rawStatLabel, "", THEME_COLORS.white),
+      statBadgeBg: typeof rawStatBadgeBg === "string" ? rawStatBadgeBg : THEME_COLORS.accentMuted,
     },
     imageMultimedia: normalizeMultimedia(
       safeEssence.imageMultimedia || safeEssence.multimedia || emptyEssence.imageMultimedia,
@@ -183,8 +184,8 @@ export function normalizeFaq(faqSection: any) {
 
   const normalizedItems = rawItems.map((q: any) => {
     const normItem = {
-      question: normalizeStyledField(q.question, "", "#182d09"),
-      answer: normalizeStyledField(q.answer, "", "#565e69"),
+      question: normalizeStyledField(q.question, "", THEME_COLORS.primary),
+      answer: normalizeStyledField(q.answer, "", THEME_COLORS.muted),
       multimedia: normalizeMultimedia(q.multimedia ?? q.imageMultimedia),
     }
     delete (normItem as any).questionStyle
@@ -195,7 +196,7 @@ export function normalizeFaq(faqSection: any) {
 
   const normalizedFaq = {
     ...safeFaq,
-    title: normalizeStyledField(safeFaq.title ?? emptyFaq.title, "", "#182d09"),
+    title: normalizeStyledField(safeFaq.title ?? emptyFaq.title, "", THEME_COLORS.primary),
     items: normalizedItems,
     imageMultimedia: normalizeMultimedia(safeFaq.imageMultimedia || emptyFaq.imageMultimedia, "image"),
     backgroundMultimedia: normalizeMultimedia(safeFaq.backgroundMultimedia || emptyFaq.backgroundMultimedia, "color"),

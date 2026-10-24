@@ -1,14 +1,15 @@
+import { THEME_COLORS } from "@/config/theme"
 export const emptyEssence = {
   label: {
     value: "THE ESSENCE OF EUROPE",
-    textColor: "#af6348",
+    textColor: THEME_COLORS.accent,
     textOpacity: 1,
     backgroundColor: null,
     backgroundOpacity: 1,
   },
   title: {
     value: "A tapestry of living history, untamed wilderness, and timeless elegance",
-    textColor: "#182d09",
+    textColor: THEME_COLORS.primary,
     textOpacity: 1,
     backgroundColor: null,
     backgroundOpacity: 1,
@@ -16,7 +17,7 @@ export const emptyEssence = {
   paragraphs: {
     value:
       "Europe is an extraordinary mosaic where centuries of civilization meet pristine natural wonder. From the snow-capped summits of the Alps and the sun-drenched coves of the Mediterranean to fairy-tale medieval towns and ancient pine forests, every corner holds a distinct chapter waiting to be discovered.\n\nHere, travel transcends the ordinary. Wander through cobblestone alleyways that have witnessed millennia of history, savour world-renowned culinary heritage crafted by generational artisans, and lose yourself in landscapes that have inspired poets, artists, and explorers across generations.\n\nWhether navigating remote coastal paths or uncovering secluded mountain refuges far from the beaten track, Europe rewards curious minds with profound intimacy and indelible memories.",
-    textColor: "#565e69",
+    textColor: THEME_COLORS.muted,
     textOpacity: 1,
     backgroundColor: null,
     backgroundOpacity: 1,
@@ -24,7 +25,7 @@ export const emptyEssence = {
   quote: {
     value:
       "To travel through Europe is to witness the living poetry of the ancient world reimagined for the modern spirit.",
-    textColor: "#1A1209",
+    textColor: THEME_COLORS.quote,
     textOpacity: 1,
     backgroundColor: null,
     backgroundOpacity: 1,
@@ -32,19 +33,19 @@ export const emptyEssence = {
   stat: {
     statValue: {
       value: "50+",
-      textColor: "#ffffff",
+      textColor: THEME_COLORS.white,
       textOpacity: 1,
       backgroundColor: null,
       backgroundOpacity: 1,
     },
     statLabel: {
       value: "Countries & Sovereign Territories",
-      textColor: "#ffffff",
+      textColor: THEME_COLORS.white,
       textOpacity: 0.75,
       backgroundColor: null,
       backgroundOpacity: 1,
     },
-    statBadgeBg: "#E5A84B",
+    statBadgeBg: THEME_COLORS.accentMuted,
   },
   imageMultimedia: {
     show: "image",
@@ -52,7 +53,7 @@ export const emptyEssence = {
       url: "",
       alt: "The Essence of Europe — Landscapes & Heritage",
       opacity: 100,
-      overlayColor: "#000000",
+      overlayColor: THEME_COLORS.overlayBlack,
       overlayOpacity: 0,
       width: "100%",
       height: "100%",
@@ -66,7 +67,7 @@ export const emptyEssence = {
       loop: true,
       muted: true,
       opacity: 100,
-      overlayColor: "#000000",
+      overlayColor: THEME_COLORS.overlayBlack,
       overlayOpacity: 0,
       width: "100%",
       height: "100%",
@@ -74,7 +75,7 @@ export const emptyEssence = {
       fit: "cover",
     },
     color: {
-      color: "#EDE7D8",
+      color: THEME_COLORS.bgSubdued,
       opacity: 100,
       width: "100%",
       height: "100%",
@@ -87,7 +88,7 @@ export const emptyEssence = {
       url: "",
       alt: "Europe essence background pattern",
       opacity: 100,
-      overlayColor: "#000000",
+      overlayColor: THEME_COLORS.overlayBlack,
       overlayOpacity: 0,
       width: "100%",
       height: "auto",
@@ -101,7 +102,7 @@ export const emptyEssence = {
       loop: true,
       muted: true,
       opacity: 100,
-      overlayColor: "#000000",
+      overlayColor: THEME_COLORS.overlayBlack,
       overlayOpacity: 0,
       width: "100%",
       height: "auto",
@@ -109,7 +110,7 @@ export const emptyEssence = {
       fit: "cover",
     },
     color: {
-      color: "#FFF8F2",
+      color: THEME_COLORS.bgIvory,
       opacity: 100,
       width: "100%",
       height: "100%",

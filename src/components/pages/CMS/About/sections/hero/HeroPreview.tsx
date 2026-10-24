@@ -25,7 +25,7 @@ export function HeroPreview({ section }: { section?: any }) {
     <div data-section="hero" className="w-full">
       <section
         className={cn(
-          "relative flex h-[700px] @md:h-[900px] @lg:h-[1000px] @xl:h-[1086px] w-full items-center overflow-hidden bg-[#182D09] text-white",
+          "relative flex h-[700px] @md:h-[900px] @lg:h-[1000px] @xl:h-[1086px] w-full items-center overflow-hidden bg-brand-primary text-white",
           isCenter && "justify-center"
         )}
       >

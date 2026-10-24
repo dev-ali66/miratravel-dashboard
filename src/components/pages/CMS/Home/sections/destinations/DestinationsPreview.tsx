@@ -56,7 +56,7 @@ export function DestinationsPreview({
         fallbackAlt="Destinations background"
         fallbackColor={(section as any).bgColor ?? "transparent"}
         mode="background"
-        overlayClassName="bg-white/70"
+        overlayClassName="bg-white/70 dark:bg-background/80"
       />
 
       <div className="relative z-10 container mx-auto px-4 lg:px-0 flex w-full flex-col items-center gap-14">
@@ -90,7 +90,7 @@ export function DestinationsPreview({
           {["Croatia", "Bosnia & Herzegovina", "Albania"].map((name) => (
             <div
               key={name}
-              className="group border-border-muted/40 flex w-full flex-col gap-8 rounded-[2px] border bg-neutral-100 p-4 md:gap-9 md:p-[18px] xl:gap-10 xl:p-6"
+              className="group border-border/70 flex w-full flex-col gap-8 rounded-lg border bg-card text-card-foreground p-4 md:gap-9 md:p-[18px] xl:gap-10 xl:p-6 shadow-sm"
             >
               <div className="lgx:h-[360px] relative h-[300px] w-full overflow-hidden rounded-[2px] md:h-[320px] xl:h-[394px]">
                 <DummyImage className="h-full w-full" />
@@ -105,7 +105,7 @@ export function DestinationsPreview({
                   <ArrowUpRight className="h-5 w-5 shrink-0 text-accent" />
                 </div>
 
-                <p className="text-subtitle text-sm leading-[21px] md:text-[15px]">
+                <p className="text-muted-foreground text-sm leading-[21px] md:text-[15px]">
                   Experience timeless coastal villages and crystal clear waters.
                 </p>
               </div>

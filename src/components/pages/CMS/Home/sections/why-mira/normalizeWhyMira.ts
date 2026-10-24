@@ -1,3 +1,4 @@
+import { THEME_COLORS } from "@/config/theme"
 import {
   normalizeMultimedia,
   normalizeStyledField,
@@ -15,17 +16,17 @@ export function normalizeWhyMira(section: any) {
     eyebrow: normalizeStyledField(
       safeSection.eyebrow ?? content.eyebrow,
       "Why MIRA",
-      "#E5A84B"
+      THEME_COLORS.accentMuted
     ),
     title: normalizeStyledField(
       safeSection.title ?? content.title,
       "Travel, shaped by insight. Refined through experience.",
-      "#FFFFFF"
+      THEME_COLORS.white
     ),
     signature: normalizeStyledField(
       safeSection.signature ?? content.signature,
       "— MIRA",
-      "#E5A84B"
+      THEME_COLORS.accentMuted
     ),
     description: normalizeStyledField(
       safeSection.description ??
@@ -36,7 +37,7 @@ export function normalizeWhyMira(section: any) {
           ? content.paragraphs.join("\n\n")
           : safeSection.paragraphs ?? content.paragraphs),
       "MIRA exists as a quiet force behind the region's most curated journeys. We are rooted in the authentic Balkan heritage, believing that true exploration requires a deep, editorial understanding of the land's silent narratives. Every expedition is a private monograph, meticulously designed to bridge the gap between contemporary luxury and the raw, untethered spirit of the frontier.",
-      "#F3F4F6"
+      THEME_COLORS.lightText
     ),
     backgroundMultimedia: normalizeMultimedia(
       safeSection.backgroundMultimedia ?? content.backgroundMultimedia,

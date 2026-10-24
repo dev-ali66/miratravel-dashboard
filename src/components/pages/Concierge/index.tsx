@@ -14,6 +14,7 @@ import {
   Users,
   Compass,
 } from "lucide-react"
+import { Pagination } from "@/components/shared/Pagination"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import {
@@ -65,6 +66,8 @@ export default function InquiryPage() {
   const [statusFilter, setStatusFilter] = useState("ALL")
   const [selectedInquiry, setSelectedInquiry] = useState<InquiryItem | null>(null)
   const [isUpdating, setIsUpdating] = useState(false)
+  const [currentPage, setCurrentPage] = useState(1)
+  const [pageSize, setPageSize] = useState(10)
 
   const fetchInquiries = useCallback(async () => {
     setLoading(true)
@@ -77,6 +80,7 @@ export default function InquiryPage() {
       const json = await res.json()
       if (json.success && Array.isArray(json.data)) {
         setInquiries(json.data)
+        setCurrentPage(1)
       } else {
         setInquiries([])
       }
@@ -255,89 +259,109 @@ export default function InquiryPage() {
                   </td>
                 </tr>
               ) : (
-                inquiries.map((inquiry) => (
-                  <tr key={inquiry.id} className="transition-colors hover:bg-muted/30">
-                    <td className="px-5 py-3.5 font-mono text-xs font-semibold">
-                      {inquiry.inquiryNumber || `INQ-${inquiry.id.slice(-6)}`}
-                    </td>
-                    <td className="px-5 py-3.5">
-                      <div className="flex flex-col">
-                        <span className="font-semibold text-foreground text-xs">{inquiry.fullName}</span>
-                        <span className="text-[11px] text-muted-foreground">{inquiry.email}</span>
-                        {inquiry.phone && <span className="text-[10px] text-muted-foreground/80">{inquiry.phone}</span>}
-                      </div>
-                    </td>
-                    <td className="px-5 py-3.5">
-                      <div className="flex flex-col text-xs">
-                        <span className="font-semibold text-foreground">{inquiry.destination || "Not specified"}</span>
-                        <span className="text-muted-foreground text-[11px]">{inquiry.travelDate || "Date TBD"}</span>
-                      </div>
-                    </td>
-                    <td className="px-5 py-3.5">
-                      <div className="flex flex-col text-xs gap-1">
-                        <span className="font-medium text-foreground">{inquiry.travelers ? `${inquiry.travelers} Guests` : "Guests TBD"}</span>
-                        {inquiry.journeyTypes && inquiry.journeyTypes.length > 0 && (
-                          <div className="flex flex-wrap gap-1">
-                            {inquiry.journeyTypes.map((type, idx) => (
-                              <span key={idx} className="rounded bg-primary/10 px-1.5 py-0.5 text-[10px] font-medium text-primary">
-                                {type}
-                              </span>
-                            ))}
-                          </div>
-                        )}
-                      </div>
-                    </td>
-                    <td className="px-5 py-3.5">
-                      <Select
-                        value={inquiry.status}
-                        onValueChange={(val) => handleStatusChange(inquiry.id, val)}
-                        disabled={isUpdating}
-                      >
-                        <SelectTrigger className={cn("h-7 w-[120px] text-xs font-semibold uppercase border px-2 py-0.5", statusStyles[inquiry.status])}>
-                          <SelectValue />
-                        </SelectTrigger>
-                        <SelectContent>
-                          <SelectItem value="NEW">New</SelectItem>
-                          <SelectItem value="IN_REVIEW">In Review</SelectItem>
-                          <SelectItem value="CONTACTED">Contacted</SelectItem>
-                          <SelectItem value="CLOSED">Closed</SelectItem>
-                        </SelectContent>
-                      </Select>
-                    </td>
-                    <td className="px-5 py-3.5 text-xs text-muted-foreground">
-                      {new Date(inquiry.createdAt).toLocaleDateString("en-US", {
-                        month: "short",
-                        day: "numeric",
-                        year: "numeric",
-                      })}
-                    </td>
-                    <td className="px-5 py-3.5 text-right">
-                      <div className="flex items-center justify-end gap-1">
-                        <Button
-                          variant="ghost"
-                          size="sm"
-                          onClick={() => setSelectedInquiry(inquiry)}
-                          className="h-7 text-xs"
+                inquiries
+                  .slice((currentPage - 1) * pageSize, currentPage * pageSize)
+                  .map((inquiry) => (
+                    <tr key={inquiry.id} className="transition-colors hover:bg-muted/30">
+                      <td className="px-5 py-3.5 font-mono text-xs font-semibold">
+                        {inquiry.inquiryNumber || `INQ-${inquiry.id.slice(-6)}`}
+                      </td>
+                      <td className="px-5 py-3.5">
+                        <div className="flex flex-col">
+                          <span className="font-semibold text-foreground text-xs">{inquiry.fullName}</span>
+                          <span className="text-[11px] text-muted-foreground">{inquiry.email}</span>
+                          {inquiry.phone && <span className="text-[10px] text-muted-foreground/80">{inquiry.phone}</span>}
+                        </div>
+                      </td>
+                      <td className="px-5 py-3.5">
+                        <div className="flex flex-col text-xs">
+                          <span className="font-semibold text-foreground">{inquiry.destination || "Not specified"}</span>
+                          <span className="text-muted-foreground text-[11px]">{inquiry.travelDate || "Date TBD"}</span>
+                        </div>
+                      </td>
+                      <td className="px-5 py-3.5">
+                        <div className="flex flex-col text-xs gap-1">
+                          <span className="font-medium text-foreground">{inquiry.travelers ? `${inquiry.travelers} Guests` : "Guests TBD"}</span>
+                          {inquiry.journeyTypes && inquiry.journeyTypes.length > 0 && (
+                            <div className="flex flex-wrap gap-1">
+                              {inquiry.journeyTypes.map((type, idx) => (
+                                <span key={idx} className="rounded bg-primary/10 px-1.5 py-0.5 text-[10px] font-medium text-primary">
+                                  {type}
+                                </span>
+                              ))}
+                            </div>
+                          )}
+                        </div>
+                      </td>
+                      <td className="px-5 py-3.5">
+                        <Select
+                          value={inquiry.status}
+                          onValueChange={(val) => handleStatusChange(inquiry.id, val)}
+                          disabled={isUpdating}
                         >
-                          <Eye className="mr-1 h-3.5 w-3.5" />
-                          View
-                        </Button>
-                        <Button
-                          variant="ghost"
-                          size="icon"
-                          onClick={() => handleDelete(inquiry.id)}
-                          className="h-7 w-7 text-destructive hover:bg-destructive/10"
-                        >
-                          <Trash2 className="h-3.5 w-3.5" />
-                        </Button>
-                      </div>
-                    </td>
-                  </tr>
-                ))
+                          <SelectTrigger className={cn("h-7 w-[120px] text-xs font-semibold uppercase border px-2 py-0.5", statusStyles[inquiry.status])}>
+                            <SelectValue />
+                          </SelectTrigger>
+                          <SelectContent>
+                            <SelectItem value="NEW">New</SelectItem>
+                            <SelectItem value="IN_REVIEW">In Review</SelectItem>
+                            <SelectItem value="CONTACTED">Contacted</SelectItem>
+                            <SelectItem value="CLOSED">Closed</SelectItem>
+                          </SelectContent>
+                        </Select>
+                      </td>
+                      <td className="px-5 py-3.5 text-xs text-muted-foreground">
+                        {new Date(inquiry.createdAt).toLocaleDateString("en-US", {
+                          month: "short",
+                          day: "numeric",
+                          year: "numeric",
+                        })}
+                      </td>
+                      <td className="px-5 py-3.5 text-right">
+                        <div className="flex items-center justify-end gap-1">
+                          <Button
+                            variant="ghost"
+                            size="sm"
+                            onClick={() => setSelectedInquiry(inquiry)}
+                            className="h-7 text-xs"
+                          >
+                            <Eye className="mr-1 h-3.5 w-3.5" />
+                            View
+                          </Button>
+                          <Button
+                            variant="ghost"
+                            size="icon"
+                            onClick={() => handleDelete(inquiry.id)}
+                            className="h-7 w-7 text-destructive hover:bg-destructive/10"
+                          >
+                            <Trash2 className="h-3.5 w-3.5" />
+                          </Button>
+                        </div>
+                      </td>
+                    </tr>
+                  ))
               )}
             </tbody>
           </table>
         </div>
+
+        {/* Universal Pagination */}
+        {inquiries.length > 0 && (
+          <div className="border-t border-border/60 bg-muted/10 px-5 py-3">
+            <Pagination
+              currentPage={currentPage}
+              totalPages={Math.max(1, Math.ceil(inquiries.length / pageSize))}
+              totalItems={inquiries.length}
+              pageSize={pageSize}
+              pageSizeOptions={[10, 20, 50, 100]}
+              onPageChange={setCurrentPage}
+              onPageSizeChange={(sz) => {
+                setPageSize(sz)
+                setCurrentPage(1)
+              }}
+            />
+          </div>
+        )}
       </div>
 
       {/* Inspection Modal */}

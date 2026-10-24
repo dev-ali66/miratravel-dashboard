@@ -11,7 +11,7 @@ export function PlanTravelPreview({ section }: { section?: any }) {
   return (
     <div
       data-section="plan-travel"
-      className="relative w-full overflow-hidden bg-neutral-100 py-16 px-6 md:px-12"
+      className="relative w-full overflow-hidden bg-background py-16 px-6 md:px-12 text-foreground"
     >
       <UniversalMultimediaPreview
         multimedia={backgroundMultimedia}
@@ -19,7 +19,7 @@ export function PlanTravelPreview({ section }: { section?: any }) {
       />
       <div className="relative z-10 mx-auto max-w-6xl grid grid-cols-1 lg:grid-cols-12 gap-10 items-center">
         {/* Left: Featured Image */}
-        <div className="lg:col-span-6 relative flex flex-col min-h-[380px] h-full w-full rounded-lg overflow-hidden shadow-md bg-neutral-300">
+        <div className="lg:col-span-6 relative flex flex-col min-h-[380px] h-full w-full rounded-lg overflow-hidden shadow-md bg-muted">
           <UniversalMultimediaPreview
             multimedia={multimedia}
             className="h-full w-full object-cover"
@@ -30,19 +30,19 @@ export function PlanTravelPreview({ section }: { section?: any }) {
         {/* Right: Content Block */}
         <div className="lg:col-span-6 flex flex-col justify-center space-y-4">
           {plan.label && (
-            <span className="text-xs uppercase tracking-widest text-amber-700 font-medium">
+            <span className="text-xs uppercase tracking-widest text-accent font-medium">
               <DynamicStyledTextPreview as="span" data={plan.label} />
             </span>
           )}
 
-          <h2 className="font-serif text-3xl font-semibold text-emerald-950">
+          <h2 className="font-serif text-3xl font-semibold text-foreground">
             <DynamicStyledTextPreview as="span" data={plan.title} />
           </h2>
 
           <DynamicStyledTextPreview
             as="div"
             isRichText
-            className="text-sm leading-relaxed text-neutral-700 space-y-3"
+            className="text-sm leading-relaxed text-muted-foreground space-y-3"
             data={plan.description || plan.titlegraphs}
           />
         </div>

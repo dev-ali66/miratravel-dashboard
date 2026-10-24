@@ -1,3 +1,4 @@
+import { THEME_COLORS } from "@/config/theme"
 import { cn } from "@/lib/utils"
 import { Video as VideoIcon } from "lucide-react"
 
@@ -29,7 +30,7 @@ export function VideoShowPreview({
   muted = true,
   loop = true,
   opacity = 100,
-  overlayColor = "#000000",
+  overlayColor = THEME_COLORS.overlayBlack,
   overlayOpacity = 0,
   fit = "cover",
   aspectRatio,

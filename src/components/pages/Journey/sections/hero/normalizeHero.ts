@@ -1,3 +1,4 @@
+import { THEME_COLORS } from "@/config/theme"
 import { normalizeMultimedia, normalizeStyledField } from "@/components/pages/Journey/shared/normalizeHelpers"
 import { emptyHero } from "./emptyHero"
 
@@ -6,8 +7,8 @@ export function normalizeHero(hero: any) {
 
   const normalizedHero = {
     ...safeHero,
-    label: normalizeStyledField(safeHero.label ?? emptyHero.label, "", "#af6348"),
-    title: normalizeStyledField(safeHero.title ?? emptyHero.title, "", "#FFFFFF"),
+    label: normalizeStyledField(safeHero.label ?? emptyHero.label, "", THEME_COLORS.accent),
+    title: normalizeStyledField(safeHero.title ?? emptyHero.title, "", THEME_COLORS.white),
     backgroundMultimedia: normalizeMultimedia(
       safeHero.backgroundMultimedia ?? safeHero.multimedia ?? emptyHero.backgroundMultimedia
     ),

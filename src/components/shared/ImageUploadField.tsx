@@ -1,3 +1,4 @@
+import { THEME_COLORS } from "@/config/theme"
 import { useRef, useState } from "react"
 import { useImageUpload } from "@/hooks/cms/useImageUpload"
 import { Label } from "@/components/ui/label"
@@ -36,7 +37,7 @@ export function ImageUploadField({
   onSelectAsset,
   opacity = 100,
   onOpacityChange,
-  overlayColor = "#000000",
+  overlayColor = THEME_COLORS.overlayBlack,
   onOverlayColorChange,
   overlayOpacity = 0,
   onOverlayOpacityChange,

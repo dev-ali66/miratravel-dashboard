@@ -1,21 +1,22 @@
+import { THEME_COLORS } from "@/config/theme"
 export const emptyWhatsIncluded = {
   badge: {
     value: "Inclusions",
-    textColor: "#af6348",
+    textColor: THEME_COLORS.accent,
     textOpacity: 1,
     backgroundColor: null,
     backgroundOpacity: 1,
   },
   title: {
     value: "What's Included & Excluded",
-    textColor: "#313131",
+    textColor: THEME_COLORS.titleLight,
     textOpacity: 1,
     backgroundColor: null,
     backgroundOpacity: 1,
   },
   description: {
     value: "Transparent details on all amenities and services provided.",
-    textColor: "#565e69",
+    textColor: THEME_COLORS.muted,
     textOpacity: 1,
     backgroundColor: null,
     backgroundOpacity: 1,
@@ -29,7 +30,7 @@ export const emptyWhatsIncluded = {
       url: "",
       alt: "What's Included Background Image",
       opacity: 100,
-      overlayColor: "#000000",
+      overlayColor: THEME_COLORS.overlayBlack,
       overlayOpacity: 0,
       width: "100%",
       height: "auto",
@@ -43,7 +44,7 @@ export const emptyWhatsIncluded = {
       loop: true,
       muted: true,
       opacity: 100,
-      overlayColor: "#000000",
+      overlayColor: THEME_COLORS.overlayBlack,
       overlayOpacity: 0,
       width: "100%",
       height: "auto",
@@ -51,7 +52,7 @@ export const emptyWhatsIncluded = {
       fit: "cover",
     },
     color: {
-      color: "#F6F1ED",
+      color: THEME_COLORS.bgWarm,
       opacity: 100,
       width: "100%",
       height: "100%",

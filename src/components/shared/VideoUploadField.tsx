@@ -1,3 +1,4 @@
+import { THEME_COLORS } from "@/config/theme"
 import { useRef, useState } from "react"
 import { useVideoUpload } from "@/hooks/cms/useVideoUpload"
 import { Label } from "@/components/ui/label"
@@ -34,7 +35,7 @@ export function VideoUploadField({
   onSelectAsset,
   opacity = 100,
   onOpacityChange,
-  overlayColor = "#000000",
+  overlayColor = THEME_COLORS.overlayBlack,
   onOverlayColorChange,
   overlayOpacity = 0,
   onOverlayOpacityChange,

@@ -1,3 +1,4 @@
+import { THEME_COLORS } from "@/config/theme"
 import { motion } from "framer-motion"
 import { DynamicStyledTextPreview } from "@/components/pages/CMS/shared/DynamicStyledTextPreview"
 import { UniversalMultimediaPreview } from "@/components/pages/CMS/Home/shared/preview/UniversalMultimediaPreview"
@@ -41,12 +42,12 @@ export function TravelInsightsPreview({ draft }: LocationPreviewSectionProps) {
   return (
     <section
       data-section="travel-insights"
-      className="relative w-full overflow-hidden bg-[#182d09] pt-[60px] @xs:pt-[70px] @sm:pt-[80px] @md:pt-[95px] @lg:pt-[110px] @lgx:pt-[115px] @xlg:pt-[120px] @mid:pt-[135px] @xl:pt-[145px] pb-[60px] @xs:pb-[70px] @sm:pb-[80px] @md:pb-[95px] @lg:pb-[110px] @lgx:pb-[115px] @xlg:pb-[120px] @mid:pb-[135px] @xl:pb-[145px]"
+      className="relative w-full overflow-hidden bg-brand-primary pt-[60px] @xs:pt-[70px] @sm:pt-[80px] @md:pt-[95px] @lg:pt-[110px] @lgx:pt-[115px] @xlg:pt-[120px] @mid:pt-[135px] @xl:pt-[145px] pb-[60px] @xs:pb-[70px] @sm:pb-[80px] @md:pb-[95px] @lg:pb-[110px] @lgx:pb-[115px] @xlg:pb-[120px] @mid:pb-[135px] @xl:pb-[145px]"
     >
       {/* Background Media (Color / Image / Video) */}
       <UniversalMultimediaPreview
         multimedia={travelInsight.backgroundMultimedia}
-        fallbackColor="#182d09"
+        fallbackColor={THEME_COLORS.primary}
         mode="background"
       />
 
@@ -61,13 +62,13 @@ export function TravelInsightsPreview({ draft }: LocationPreviewSectionProps) {
             <div className="inline-flex items-center gap-3">
               <div
                 className="h-px w-6 @md:w-8 @lg:w-9 @xl:w-10 bg-accent shrink-0"
-                style={{ backgroundColor: "#af6348" }}
+                style={{ backgroundColor: THEME_COLORS.accent }}
               />
               <DynamicStyledTextPreview
                 as="span"
                 data={travelInsight.label}
-                fallbackColor="#af6348"
-                className="text-accent [text-shadow:-1px_-1px_0_#000,1px_-1px_0_#000,-1px_1px_0_#000,1px_1px_0_#000] text-[16px] @md:text-[20px] @lg:text-[21px] @lgx:text-[22px] @xlg:text-[23px] @mid:text-[23.5px] @xl:text-[24px] leading-[22px] @md:leading-[27px] @lg:leading-[28px] @lgx:leading-[29px] @xlg:leading-[30px] @mid:leading-[31px] @xl:leading-8 tracking-[0.9px] @md:tracking-[1.17px] @lg:tracking-[1.22px] @lgx:tracking-[1.28px] @xlg:tracking-[1.34px] @mid:tracking-[1.37px] @xl:tracking-[1.4px] font-medium uppercase"
+                fallbackColor={THEME_COLORS.accent}
+                className="text-accent [text-shadow:-1px_-1px_0_black,1px_-1px_0_black,-1px_1px_0_black,1px_1px_0_black] text-[16px] @md:text-[20px] @lg:text-[21px] @lgx:text-[22px] @xlg:text-[23px] @mid:text-[23.5px] @xl:text-[24px] leading-[22px] @md:leading-[27px] @lg:leading-[28px] @lgx:leading-[29px] @xlg:leading-[30px] @mid:leading-[31px] @xl:leading-8 tracking-[0.9px] @md:tracking-[1.17px] @lg:tracking-[1.22px] @lgx:tracking-[1.28px] @xlg:tracking-[1.34px] @mid:tracking-[1.37px] @xl:tracking-[1.4px] font-medium uppercase"
               />
             </div>
 
@@ -79,7 +80,7 @@ export function TravelInsightsPreview({ draft }: LocationPreviewSectionProps) {
                 <DynamicStyledTextPreview
                   as="h3"
                   data={travelInsight.title}
-                  fallbackColor="#e5e5e5"
+                  fallbackColor={THEME_COLORS.lightText}
                   className="text-2xl tracking-normal leading-8 @md:text-4xl @md:tracking-[0.5px] @md:leading-10 @lg:text-[36px] @lg:tracking-[1px] @lg:leading-[42px] @lgx:text-[38px] @lgx:leading-[44px] @xlg:text-[38px] @xlg:tracking-[1.5px] @xlg:leading-[46px] @mid:text-[40px] @mid:tracking-[2px] @mid:leading-[48px] @xl:text-[40px] @xl:tracking-[2px] @xl:leading-[48px] font-heading font-medium text-neutral-200"
                 />
 
@@ -137,7 +138,7 @@ export function TravelInsightsPreview({ draft }: LocationPreviewSectionProps) {
                           {/* Number Indicator */}
                           <span
                             className="relative z-10 text-sm @md:text-[15px] @lg:text-[15.3px] @lgx:text-[15.4px] @xlg:text-[15.6px] @mid:text-[15.7px] @xl:text-base leading-3 @md:leading-[14.6px] @lg:leading-[14.6px] @lgx:leading-[14.8px] @xlg:leading-[15.1px] @mid:leading-[15.5px] @xl:leading-4 text-accent-muted transition-transform duration-300 group-hover:translate-x-1 font-mono"
-                            style={{ color: "#af6348" }}
+                            style={{ color: THEME_COLORS.accent }}
                           >
                             {displayNum}
                           </span>
@@ -147,14 +148,14 @@ export function TravelInsightsPreview({ draft }: LocationPreviewSectionProps) {
                             <DynamicStyledTextPreview
                               as="span"
                               data={article.category}
-                              fallbackColor="#af6348"
+                              fallbackColor={THEME_COLORS.accent}
                               className="text-sm @md:text-[15px] @lg:text-[15.3px] @lgx:text-[15.4px] @xlg:text-[15.6px] @mid:text-[15.7px] @xl:text-base leading-3 @md:leading-[14.6px] @lg:leading-[14.6px] @lgx:leading-[14.8px] @xlg:leading-[15.1px] @mid:leading-[15.5px] @xl:leading-4 uppercase tracking-[0.3px] text-accent font-heading font-medium"
                             />
 
                             <DynamicStyledTextPreview
                               as="p"
                               data={article.title}
-                              fallbackColor="#d4d4d4"
+                              fallbackColor={THEME_COLORS.borderLight}
                               className="text-xs @md:text-[13px] @lg:text-[13.3px] @lgx:text-[13.4px] @xlg:text-[13.6px] @mid:text-[13.7px] @xl:text-sm font-normal leading-4 @md:leading-[18px] @lg:leading-[18.6px] @lgx:leading-[18.8px] @xlg:leading-[19.1px] @mid:leading-[19.5px] @xl:leading-5 text-neutral-300 transition-colors duration-200 group-hover:text-neutral-100 line-clamp-2"
                             />
                           </div>
@@ -192,7 +193,7 @@ export function TravelInsightsPreview({ draft }: LocationPreviewSectionProps) {
                     <DynamicStyledTextPreview
                       as="p"
                       data={travelInsight.description}
-                      fallbackColor="#d4d4d4"
+                      fallbackColor={THEME_COLORS.borderLight}
                       className="text-xs @md:text-sm @xl:text-base font-normal leading-relaxed text-neutral-300 text-left @lg:text-right"
                     />
                   </div>
@@ -214,7 +215,7 @@ export function TravelInsightsPreview({ draft }: LocationPreviewSectionProps) {
                   ) : travelInsight.featuredMultimedia ? (
                     <UniversalMultimediaPreview
                       multimedia={travelInsight.featuredMultimedia}
-                      fallbackColor="#182d09"
+                      fallbackColor={THEME_COLORS.primary}
                       mode="inline"
                     />
                   ) : (

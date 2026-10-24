@@ -1,3 +1,4 @@
+import { THEME_COLORS } from "@/config/theme"
 import { useState } from "react"
 import type { JourneyData } from "../../journeyTypes"
 import { FormSection } from "../../shared/fields"
@@ -28,14 +29,14 @@ export function GalleryForm({
 
   const addMediaItem = (type: "image" | "video") => {
     const newItem = {
-      title: { value: type === "image" ? "Photo Shot" : "Video Experience", textColor: "#080c1d", textOpacity: 1, backgroundColor: null, backgroundOpacity: 1 },
+      title: { value: type === "image" ? "Photo Shot" : "Video Experience", textColor: THEME_COLORS.dark, textOpacity: 1, backgroundColor: null, backgroundOpacity: 1 },
       type,
-      caption: { value: "", textColor: "#565e69", textOpacity: 1, backgroundColor: null, backgroundOpacity: 1 },
+      caption: { value: "", textColor: THEME_COLORS.muted, textOpacity: 1, backgroundColor: null, backgroundOpacity: 1 },
       multimedia: {
         show: type,
-        image: { url: "", alt: "", opacity: 100, overlayColor: "#000000", overlayOpacity: 0, width: "100%", height: "auto", aspectRatio: "auto", fit: "cover" },
-        video: { url: "", alt: "", autoplay: true, loop: true, muted: true, opacity: 100, overlayColor: "#000000", overlayOpacity: 0, width: "100%", height: "auto", aspectRatio: "auto", fit: "cover" },
-        color: { color: "#ffffff", opacity: 100, width: "100%", height: "100%", aspectRatio: "auto" },
+        image: { url: "", alt: "", opacity: 100, overlayColor: THEME_COLORS.overlayBlack, overlayOpacity: 0, width: "100%", height: "auto", aspectRatio: "auto", fit: "cover" },
+        video: { url: "", alt: "", autoplay: true, loop: true, muted: true, opacity: 100, overlayColor: THEME_COLORS.overlayBlack, overlayOpacity: 0, width: "100%", height: "auto", aspectRatio: "auto", fit: "cover" },
+        color: { color: THEME_COLORS.white, opacity: 100, width: "100%", height: "100%", aspectRatio: "auto" },
       },
     }
     updateField("gallery.items", [...items, newItem])
@@ -48,7 +49,7 @@ export function GalleryForm({
       return {
         title: {
           value: asset.title || asset.fileName.split(".")[0] || "Photo Shot",
-          textColor: "#080c1d",
+          textColor: THEME_COLORS.dark,
           textOpacity: 1,
           backgroundColor: null,
           backgroundOpacity: 1,
@@ -56,7 +57,7 @@ export function GalleryForm({
         type,
         caption: {
           value: asset.caption || "",
-          textColor: "#565e69",
+          textColor: THEME_COLORS.muted,
           textOpacity: 1,
           backgroundColor: null,
           backgroundOpacity: 1,
@@ -67,7 +68,7 @@ export function GalleryForm({
             url: isVideo ? "" : asset.url,
             alt: asset.altText || asset.title || "",
             opacity: 100,
-            overlayColor: "#000000",
+            overlayColor: THEME_COLORS.overlayBlack,
             overlayOpacity: 0,
             width: asset.width ? `${asset.width}px` : "100%",
             height: "auto",
@@ -81,14 +82,14 @@ export function GalleryForm({
             loop: true,
             muted: true,
             opacity: 100,
-            overlayColor: "#000000",
+            overlayColor: THEME_COLORS.overlayBlack,
             overlayOpacity: 0,
             width: "100%",
             height: "auto",
             aspectRatio: "auto",
             fit: "cover",
           },
-          color: { color: "#ffffff", opacity: 100, width: "100%", height: "100%", aspectRatio: "auto" },
+          color: { color: THEME_COLORS.white, opacity: 100, width: "100%", height: "100%", aspectRatio: "auto" },
         },
       }
     })
@@ -232,7 +233,7 @@ export function GalleryForm({
             Gallery Section Background Multimedia
           </label>
           <UniversalMultimediaForm
-            value={galleryData.backgroundMultimedia || { show: "color", color: { color: "#ffffff" } }}
+            value={galleryData.backgroundMultimedia || { show: "color", color: { color: THEME_COLORS.white } }}
             onChange={(val) => updateField("gallery.backgroundMultimedia", val)}
           />
         </div>

@@ -1,14 +1,15 @@
+import { THEME_COLORS } from "@/config/theme"
 export const emptyCharacter = {
   label: {
     value: "CHARACTER",
-    textColor: "#af6348",
+    textColor: THEME_COLORS.accent,
     textOpacity: 1,
     backgroundColor: null,
     backgroundOpacity: 1,
   },
   title: {
     value: "What makes this region singular",
-    textColor: "#182d09",
+    textColor: THEME_COLORS.primary,
     textOpacity: 1,
     backgroundColor: null,
     backgroundOpacity: 1,
@@ -17,14 +18,14 @@ export const emptyCharacter = {
     {
       title: {
         value: "Untouched Alpine Wilderness",
-        textColor: "#182d09",
+        textColor: THEME_COLORS.primary,
         textOpacity: 1,
         backgroundColor: null,
         backgroundOpacity: 1,
       },
       description: {
         value: "The Accursed Mountains remained almost entirely off-limits to outsiders until the early 2000s. Today they offer trekking with a frontier quality that the Alps lost generations ago — without the lifts or crowds.",
-        textColor: "#565e69",
+        textColor: THEME_COLORS.muted,
         textOpacity: 1,
         backgroundColor: null,
         backgroundOpacity: 1,
@@ -37,8 +38,8 @@ export const emptyCharacter = {
           url: "/destinations/albania/north-albania/wilderness",
           variant: "PRIMARY",
           style: "primary",
-          backgroundColor: "#af6348",
-          textColor: "#ffffff",
+          backgroundColor: THEME_COLORS.accent,
+          textColor: THEME_COLORS.white,
         },
       ],
       multimedia: null,
@@ -46,14 +47,14 @@ export const emptyCharacter = {
     {
       title: {
         value: "Living Highland Culture",
-        textColor: "#182d09",
+        textColor: THEME_COLORS.primary,
         textOpacity: 1,
         backgroundColor: null,
         backgroundOpacity: 1,
       },
       description: {
         value: "The Kanun — a 15th-century code of highland law governing hospitality, marriage, and property — is still informally observed in remote villages.",
-        textColor: "#565e69",
+        textColor: THEME_COLORS.muted,
         textOpacity: 1,
         backgroundColor: null,
         backgroundOpacity: 1,
@@ -66,8 +67,8 @@ export const emptyCharacter = {
           url: "/destinations/albania/north-albania/culture",
           variant: "PRIMARY",
           style: "primary",
-          backgroundColor: "#af6348",
-          textColor: "#ffffff",
+          backgroundColor: THEME_COLORS.accent,
+          textColor: THEME_COLORS.white,
         },
       ],
       multimedia: null,
@@ -75,14 +76,14 @@ export const emptyCharacter = {
     {
       title: {
         value: "The Great Slow Journeys",
-        textColor: "#182d09",
+        textColor: THEME_COLORS.primary,
         textOpacity: 1,
         backgroundColor: null,
         backgroundOpacity: 1,
       },
       description: {
         value: "The Komani Lake ferry and the Valbona-to-Theth trail have become essential experiences of the northern Balkans. Both remain unhurried and impossible to replicate.",
-        textColor: "#565e69",
+        textColor: THEME_COLORS.muted,
         textOpacity: 1,
         backgroundColor: null,
         backgroundOpacity: 1,
@@ -95,8 +96,8 @@ export const emptyCharacter = {
           url: "/destinations/albania/north-albania/slow-journeys",
           variant: "PRIMARY",
           style: "primary",
-          backgroundColor: "#af6348",
-          textColor: "#ffffff",
+          backgroundColor: THEME_COLORS.accent,
+          textColor: THEME_COLORS.white,
         },
       ],
       multimedia: null,
@@ -105,7 +106,7 @@ export const emptyCharacter = {
   backgroundMultimedia: {
     show: "color",
     color: {
-      color: "#FFF8F2",
+      color: THEME_COLORS.bgIvory,
       opacity: 100,
       width: "100%",
       height: "100%",
@@ -115,7 +116,7 @@ export const emptyCharacter = {
       url: "",
       alt: "Character Background Pattern",
       opacity: 100,
-      overlayColor: "#000000",
+      overlayColor: THEME_COLORS.overlayBlack,
       overlayOpacity: 0,
       width: "100%",
       height: "auto",
@@ -129,7 +130,7 @@ export const emptyCharacter = {
       loop: true,
       muted: true,
       opacity: 100,
-      overlayColor: "#000000",
+      overlayColor: THEME_COLORS.overlayBlack,
       overlayOpacity: 0,
       width: "100%",
       height: "auto",

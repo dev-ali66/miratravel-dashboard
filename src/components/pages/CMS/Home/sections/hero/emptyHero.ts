@@ -1,14 +1,15 @@
+import { THEME_COLORS } from "@/config/theme"
 export const emptyHero = {
   breadcrumb: {
     value: "",
-    textColor: "#d29393",
+    textColor: THEME_COLORS.accentLight,
     textOpacity: 1,
     backgroundColor: null,
     backgroundOpacity: 1,
   },
   title: {
     value: "Extraordinary Journeys,\nThoughtfully Designed",
-    textColor: "#FFFFFF",
+    textColor: THEME_COLORS.white,
     textOpacity: 1,
     backgroundColor: null,
     backgroundOpacity: 1,
@@ -16,14 +17,14 @@ export const emptyHero = {
   subtitle: {
     value:
       "Private, tailor-made journeys across the Balkans, combining distinctive stays, meaningful experiences and unhurried travel.",
-    textColor: "#E5E7EB",
+    textColor: THEME_COLORS.mediaPlaceholder,
     textOpacity: 1,
     backgroundColor: null,
     backgroundOpacity: 1,
   },
   description: {
     value: "",
-    textColor: "#F3F4F6",
+    textColor: THEME_COLORS.lightText,
     textOpacity: 1,
     backgroundColor: null,
     backgroundOpacity: 1,
@@ -36,12 +37,12 @@ export const emptyHero = {
       variant: "PRIMARY",
       style: "primary",
       rounded: "none",
-      backgroundColor: "#ffffff",
+      backgroundColor: THEME_COLORS.white,
       backgroundOpacity: 100,
-      textColor: "#000000",
+      textColor: THEME_COLORS.overlayBlack,
       textOpacity: 100,
-      hoverBackgroundColor: "#f3f4f6",
-      hoverTextColor: "#000000",
+      hoverBackgroundColor: THEME_COLORS.lightText,
+      hoverTextColor: THEME_COLORS.overlayBlack,
       target: "_self",
       showIcon: true,
     },
@@ -49,7 +50,7 @@ export const emptyHero = {
   backgroundMultimedia: {
     show: "video",
     color: {
-      color: "#171717",
+      color: THEME_COLORS.bgHeroDark,
       opacity: 100,
       width: "100%",
       height: "100%",
@@ -59,7 +60,7 @@ export const emptyHero = {
       url: "",
       alt: "mira hero",
       opacity: 100,
-      overlayColor: "#000000",
+      overlayColor: THEME_COLORS.overlayBlack,
       overlayOpacity: 45,
       width: "100%",
       height: "auto",
@@ -70,7 +71,7 @@ export const emptyHero = {
       url: "",
       alt: "Cinematic Aerial View",
       opacity: 100,
-      overlayColor: "#000000",
+      overlayColor: THEME_COLORS.overlayBlack,
       overlayOpacity: 45,
       autoplay: true,
       loop: true,

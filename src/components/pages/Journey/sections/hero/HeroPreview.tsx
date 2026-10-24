@@ -1,3 +1,4 @@
+import { THEME_COLORS } from "@/config/theme"
 import { UniversalMultimediaPreview } from "@/components/pages/CMS/Home/shared/preview/UniversalMultimediaPreview"
 import { DynamicStyledTextPreview } from "@/components/pages/CMS/shared/DynamicStyledTextPreview"
 
@@ -87,8 +88,8 @@ export function HeroPreview({ hero, draft }: { hero?: any; draft?: any }) {
               as="div"
               data={rawLabel}
               fallbackText="MIRA EXCLUSIVE JOURNEY"
-              fallbackColor="#af6348"
-              className="inline-flex items-center justify-center bg-neutral-100/90 px-3 py-1 text-xs font-semibold uppercase tracking-wider rounded-xs"
+              fallbackColor={THEME_COLORS.accent}
+              className="inline-flex items-center justify-center bg-card/90 border border-border/60 text-foreground px-3 py-1 text-xs font-semibold uppercase tracking-wider rounded-xs backdrop-blur-sm"
             />
           ) : null}
 
@@ -96,7 +97,7 @@ export function HeroPreview({ hero, draft }: { hero?: any; draft?: any }) {
             as="h1"
             data={rawTitle}
             fallbackText="Classic Albania & The Ionian Coast"
-            fallbackColor="#FFFFFF"
+            fallbackColor={THEME_COLORS.white}
             className="font-serif xl:text-[72px] mid:text-[68px] lgx:text-[64px] lg:text-[60px] md:text-[52px] text-[32px] font-[600] capitalize xl:leading-[92px] mid:leading-[88px] lgx:leading-[84px] lg:leading-[80px] md:leading-[66px] leading-[42px] drop-shadow-xs"
           />
 

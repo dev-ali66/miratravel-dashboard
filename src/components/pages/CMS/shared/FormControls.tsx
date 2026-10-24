@@ -1,3 +1,4 @@
+import { THEME_COLORS } from "@/config/theme"
 import * as React from "react"
 import { useEffect, useState, useMemo } from "react"
 import { Input } from "@/components/ui/input"
@@ -274,7 +275,7 @@ export function FieldHeader({
                   <div className="mt-1 flex items-center gap-2">
                     <input
                       type="color"
-                      value={style?.textColor || "#FFFFFF"}
+                      value={style?.textColor || THEME_COLORS.white}
                       onChange={(e) => onStyleChange({ ...style, textColor: e.target.value })}
                       className="h-6 w-7 cursor-pointer rounded border border-border bg-transparent p-0.5"
                     />
@@ -311,7 +312,7 @@ export function FieldHeader({
                   <div className="mt-1 flex items-center gap-2">
                     <input
                       type="color"
-                      value={style?.backgroundColor || "#000000"}
+                      value={style?.backgroundColor || THEME_COLORS.overlayBlack}
                       onChange={(e) => onStyleChange({ ...style, backgroundColor: e.target.value })}
                       className="h-6 w-7 cursor-pointer rounded border border-border bg-transparent p-0.5"
                     />
@@ -646,7 +647,7 @@ export function DynamicStyledField(props: DynamicStyledFieldProps) {
               <div className="flex items-center gap-2.5">
                 <input
                   type="color"
-                  value={rawValue || "#000000"}
+                  value={rawValue || THEME_COLORS.overlayBlack}
                   onChange={(e) => handleValueChange(e.target.value)}
                   disabled={disabled}
                   className="h-8 w-10 cursor-pointer rounded border border-border bg-transparent p-0.5"

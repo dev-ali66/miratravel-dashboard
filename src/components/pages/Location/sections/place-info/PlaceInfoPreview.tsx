@@ -1,3 +1,4 @@
+import { THEME_COLORS } from "@/config/theme"
 import type { LocationPreviewSectionProps } from "../../config/locationSections"
 import { DynamicStyledTextPreview } from "@/components/pages/CMS/shared/DynamicStyledTextPreview"
 import { UniversalMultimediaPreview } from "@/components/pages/CMS/shared/UniversalMultimediaPreview"
@@ -11,7 +12,7 @@ export function PlaceInfoPreview({ draft }: LocationPreviewSectionProps) {
     <div className="relative w-full py-10 md:py-[60px] xlg:py-[64px] overflow-hidden">
       <UniversalMultimediaPreview
         multimedia={infoData.backgroundMultimedia}
-        fallbackColor="#182d09"
+        fallbackColor={THEME_COLORS.primary}
         mode="background"
       />
 

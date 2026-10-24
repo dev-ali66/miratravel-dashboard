@@ -1,3 +1,4 @@
+import { THEME_COLORS } from "@/config/theme"
 import { emptyApproach } from "./emptyApproach"
 import {
   normalizeStyledField,
@@ -9,10 +10,10 @@ export function normalizeApproach(input: any) {
   const res = {
     ...emptyApproach,
     ...raw,
-    eyebrow: normalizeStyledField(raw.eyebrow, emptyApproach.eyebrow.value, "#B86B3A"),
-    title: normalizeStyledField(raw.title, emptyApproach.title.value, "#182D09"),
-    description: normalizeStyledField(raw.description, emptyApproach.description.value, "#4B5563"),
-    quote: normalizeStyledField(raw.quote, emptyApproach.quote?.value ?? "", "#B86B3A"),
+    eyebrow: normalizeStyledField(raw.eyebrow, emptyApproach.eyebrow.value, THEME_COLORS.accentWarm),
+    title: normalizeStyledField(raw.title, emptyApproach.title.value, THEME_COLORS.primary),
+    description: normalizeStyledField(raw.description, emptyApproach.description.value, THEME_COLORS.sub),
+    quote: normalizeStyledField(raw.quote, emptyApproach.quote?.value ?? "", THEME_COLORS.accentWarm),
     leftMultimedia: normalizeMultimedia(
       raw.leftMultimedia,
       emptyApproach.leftMultimedia.show

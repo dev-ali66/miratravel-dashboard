@@ -1,14 +1,15 @@
+import { THEME_COLORS } from "@/config/theme"
 export const emptyPracticalNotesItem = {
   title: {
     value: "",
-    textColor: "#171717",
+    textColor: THEME_COLORS.bgHeroDark,
     textOpacity: 1,
     backgroundColor: null,
     backgroundOpacity: 1,
   },
   description: {
     value: "",
-    textColor: "#57534E",
+    textColor: THEME_COLORS.sub,
     textOpacity: 1,
     backgroundColor: null,
     backgroundOpacity: 1,
@@ -19,14 +20,14 @@ export const emptyPracticalNotesItem = {
 export const emptyPracticalNotes = {
   title: {
     value: "",
-    textColor: "#171717",
+    textColor: THEME_COLORS.bgHeroDark,
     textOpacity: 1,
     backgroundColor: null,
     backgroundOpacity: 1,
   },
   subtitle: {
     value: "",
-    textColor: "#B3884D",
+    textColor: THEME_COLORS.gold,
     textOpacity: 1,
     backgroundColor: null,
     backgroundOpacity: 1,

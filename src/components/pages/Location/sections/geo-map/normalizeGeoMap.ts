@@ -1,3 +1,4 @@
+import { THEME_COLORS } from "@/config/theme"
 import { normalizeMultimedia, normalizeStyledField } from "../../shared/normalizeHelpers"
 import { emptyGeoData } from "./emptyGeoMap"
 
@@ -25,12 +26,12 @@ export function normalizeGeoMap(rawGeoData: any) {
     title: normalizeStyledField(
       safeGeoData.title ?? emptyGeoData.title,
       "Interactive Map",
-      "#0a0a0a"
+      THEME_COLORS.title
     ),
     description: normalizeStyledField(
       safeGeoData.description ?? emptyGeoData.description,
       "Spin the globe, then zoom into the destination to explore our properties.",
-      "#565e69"
+      THEME_COLORS.muted
     ),
     backgroundMultimedia: normalizeMultimedia(
       safeGeoData.backgroundMultimedia || emptyGeoData.backgroundMultimedia,

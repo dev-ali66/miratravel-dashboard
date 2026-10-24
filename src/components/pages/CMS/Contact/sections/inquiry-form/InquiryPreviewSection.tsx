@@ -22,7 +22,7 @@ export function InquiryPreviewSection({ section }: { section?: any }) {
   return (
     <div
       data-section="inquiry-form"
-      className="relative w-full overflow-hidden bg-[#FAF6F0] py-12 md:py-16 px-4 md:px-12"
+      className="relative w-full overflow-hidden bg-background text-foreground py-12 md:py-16 px-4 md:px-12"
     >
       <UniversalMultimediaPreview
         multimedia={backgroundMultimedia}
@@ -33,7 +33,7 @@ export function InquiryPreviewSection({ section }: { section?: any }) {
         <div className="lg:col-span-7 flex flex-col justify-start gap-5">
           {/* Header */}
           <div className="flex flex-col gap-1">
-            <span className="text-xs uppercase tracking-[2px] text-[#E5A84B] font-semibold">
+            <span className="text-xs uppercase tracking-[2px] text-accent-muted font-semibold">
               <DynamicStyledTextPreview as="span" data={inquiry.eyebrow} />
             </span>
             <h2 className="font-serif text-3xl md:text-[38px] leading-tight font-normal text-neutral-900">
@@ -44,34 +44,34 @@ export function InquiryPreviewSection({ section }: { section?: any }) {
           {/* Input Fields Grid */}
           <div className="flex flex-col gap-3.5 pt-2">
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
-              <div className="h-11 rounded border border-neutral-200/80 bg-white/70 px-3.5 flex items-center text-xs text-neutral-400">
+              <div className="h-11 rounded border border-border/70 bg-card/80 px-3.5 flex items-center text-xs text-muted-foreground">
                 Full Name *
               </div>
-              <div className="h-11 rounded border border-neutral-200/80 bg-white/70 px-3.5 flex items-center text-xs text-neutral-400">
+              <div className="h-11 rounded border border-border/70 bg-card/80 px-3.5 flex items-center text-xs text-muted-foreground">
                 Email Address *
               </div>
             </div>
 
-            <div className="h-11 rounded border border-neutral-200/80 bg-white/70 px-3.5 flex items-center text-xs text-neutral-400">
+            <div className="h-11 rounded border border-border/70 bg-card/80 px-3.5 flex items-center text-xs text-muted-foreground">
               Phone Number (optional)
             </div>
 
-            <div className="h-11 rounded border border-neutral-200/80 bg-white/70 px-3.5 flex items-center text-xs text-neutral-400">
+            <div className="h-11 rounded border border-border/70 bg-card/80 px-3.5 flex items-center text-xs text-muted-foreground">
               Destination
             </div>
 
-            <div className="h-11 rounded border border-neutral-200/80 bg-white/70 px-3.5 flex items-center justify-between text-xs text-neutral-400">
+            <div className="h-11 rounded border border-border/70 bg-card/80 px-3.5 flex items-center justify-between text-xs text-muted-foreground">
               <span>Approximate Travel Date</span>
-              <Calendar className="h-4 w-4 text-neutral-400" />
+              <Calendar className="h-4 w-4 text-muted-foreground" />
             </div>
 
-            <div className="h-11 rounded border border-neutral-200/80 bg-white/70 px-3.5 flex items-center text-xs text-neutral-400">
+            <div className="h-11 rounded border border-border/70 bg-card/80 px-3.5 flex items-center text-xs text-muted-foreground">
               Number of Travelers
             </div>
 
             {/* Journey Types Selector */}
             <div className="flex flex-col gap-2 pt-1">
-              <span className="text-[10px] md:text-[11px] font-semibold text-neutral-500 uppercase tracking-widest">
+              <span className="text-[10px] md:text-[11px] font-semibold text-muted-foreground uppercase tracking-widest">
                 WHAT KIND OF JOURNEY ARE YOU LOOKING FOR?
               </span>
               <div className="flex flex-wrap gap-2">
@@ -82,8 +82,8 @@ export function InquiryPreviewSection({ section }: { section?: any }) {
                       key={type}
                       className={
                         isActive
-                          ? "rounded-full bg-[#182D09] border border-[#182D09] px-3.5 py-1 text-[10px] md:text-[11px] font-semibold text-white tracking-wider uppercase shadow-2xs"
-                          : "rounded-full bg-white/80 border border-neutral-200/90 px-3.5 py-1 text-[10px] md:text-[11px] font-medium text-neutral-600 tracking-wider uppercase"
+                          ? "rounded-full bg-brand-primary border border-brand-primary px-3.5 py-1 text-[10px] md:text-[11px] font-semibold text-white tracking-wider uppercase shadow-2xs"
+                          : "rounded-full bg-card/80 border border-border/70 px-3.5 py-1 text-[10px] md:text-[11px] font-medium text-foreground/80 tracking-wider uppercase"
                       }
                     >
                       {type}
@@ -94,13 +94,13 @@ export function InquiryPreviewSection({ section }: { section?: any }) {
             </div>
 
             {/* Vision Textarea */}
-            <div className="min-h-[100px] rounded border border-neutral-200/80 bg-white/70 p-3.5 text-xs text-neutral-400">
+            <div className="min-h-[100px] rounded border border-border/70 bg-card/80 p-3.5 text-xs text-muted-foreground">
               Describe your vision for this journey...
             </div>
 
             {/* Submit Button */}
             <div className="pt-2">
-              <div className="h-11 px-8 rounded-none bg-[#182D09] text-white font-semibold text-xs tracking-[2px] uppercase inline-flex items-center justify-center cursor-default">
+              <div className="h-11 px-8 rounded-none bg-brand-primary text-white font-semibold text-xs tracking-[2px] uppercase inline-flex items-center justify-center cursor-default">
                 SEND INQUIRY
               </div>
             </div>
@@ -108,7 +108,7 @@ export function InquiryPreviewSection({ section }: { section?: any }) {
         </div>
 
         {/* Right Column: Featured Multimedia */}
-        <div className="lg:col-span-5 relative flex flex-col min-h-[460px] h-full w-full rounded-md overflow-hidden shadow-sm bg-neutral-200">
+        <div className="lg:col-span-5 relative flex flex-col min-h-[460px] h-full w-full rounded-md overflow-hidden shadow-sm bg-card border border-border/60">
           <UniversalMultimediaPreview
             multimedia={multimedia}
             className="h-full w-full object-cover"

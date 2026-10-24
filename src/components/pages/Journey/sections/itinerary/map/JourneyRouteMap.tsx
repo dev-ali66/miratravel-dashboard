@@ -1,3 +1,4 @@
+import { THEME_COLORS } from "@/config/theme"
 import React, { useState, useMemo, useRef, useEffect, useCallback, useImperativeHandle } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 
@@ -901,18 +902,18 @@ export const JourneyRouteMap = React.forwardRef<JourneyRouteMapRef, JourneyRoute
                     type="button"
                     onClick={() => handleSelectStop(idx)}
                     className={`w-full flex items-center gap-2.5 text-left p-2 rounded-[8px] transition-all cursor-pointer ${isSelected
-                        ? 'bg-[#FAF6F0] border border-[#D8CBB8]/70 shadow-xs'
-                        : 'hover:bg-[#FFF8F2] border border-transparent'
+                        ? 'bg-muted/60 border border-border/80 shadow-xs'
+                        : 'hover:bg-muted/30 border border-transparent'
                         }`}
                 >
                     <div
                         className={`size-5 rounded-full flex items-center justify-center font-heading text-[10px] font-bold shrink-0 transition-colors ${isStart
-                            ? 'bg-[#182D09] text-white'
+                            ? 'bg-brand-primary text-white'
                             : isEnd
-                                ? 'bg-[#af6348] text-white'
+                                ? 'bg-accent text-white'
                                 : isSelected
-                                    ? 'bg-[#182D09] text-white'
-                                    : 'bg-white text-[#182D09]'
+                                    ? 'bg-brand-primary text-white'
+                                    : 'bg-card text-card-foreground border border-border'
                             }`}
                     >
                         {getStopBadgeLabel(stop)}
@@ -921,19 +922,19 @@ export const JourneyRouteMap = React.forwardRef<JourneyRouteMapRef, JourneyRoute
                     <div className="flex flex-col min-w-0 flex-1">
                         <div className="flex items-center justify-between">
                             <span
-                                className={`text-xs md:text-[13px] truncate ${isSelected ? 'font-semibold text-[#182D09]' : 'font-medium text-[#313131]'
+                                className={`text-xs md:text-[13px] truncate ${isSelected ? 'font-semibold text-brand-primary' : 'font-medium text-title-light'
                                     }`}
                             >
                                 {stop.name}
                             </span>
-                            <span className="text-[10px] font-medium text-[#707070] shrink-0">
+                            <span className="text-[10px] font-medium text-subtitle shrink-0">
                                 {stop.dayLabel}
                             </span>
                         </div>
                     </div>
 
                     {isSelected && (
-                        <ChevronRightIcon className="size-3 text-[#af6348] shrink-0" />
+                        <ChevronRightIcon className="size-3 text-accent shrink-0" />
                     )}
                 </button>
             );
@@ -942,7 +943,7 @@ export const JourneyRouteMap = React.forwardRef<JourneyRouteMapRef, JourneyRoute
         const renderStopListContent = () => {
             if (chapters.length > 0) {
                 return (
-                    <div className="flex flex-col divide-y divide-[#D8CBB8]/50">
+                    <div className="flex flex-col divide-y divide-border-light/50">
                         {chapters.map((chapter, chIdx) => {
                             const chNum = chapter.chapter_number || chIdx + 1;
                             const roman = toRomanNumeral(chNum);
@@ -956,11 +957,11 @@ export const JourneyRouteMap = React.forwardRef<JourneyRouteMapRef, JourneyRoute
                             return (
                                 <div key={chNum} className="py-1">
                                     <div className="px-2 pt-1 pb-1 flex items-start justify-between gap-2 select-none">
-                                        <span className="text-[9.5px] font-bold uppercase tracking-[1px] text-[#707070] line-clamp-2 leading-tight break-words">
+                                        <span className="text-[9.5px] font-bold uppercase tracking-[1px] text-subtitle line-clamp-2 leading-tight break-words">
                                             {chapterHeading}
                                         </span>
                                         {dayRange && (
-                                            <span className="text-[9px] font-medium text-[#707070] shrink-0 whitespace-nowrap pt-0.5">
+                                            <span className="text-[9px] font-medium text-subtitle shrink-0 whitespace-nowrap pt-0.5">
                                                 {dayRange}
                                             </span>
                                         )}
@@ -979,7 +980,7 @@ export const JourneyRouteMap = React.forwardRef<JourneyRouteMapRef, JourneyRoute
             }
 
             return (
-                <div className="divide-y divide-[#D8CBB8]/50">
+                <div className="divide-y divide-border-light/50">
                     {stops.map((stop, idx) => renderStopItem(stop, idx))}
                 </div>
             );
@@ -995,21 +996,21 @@ export const JourneyRouteMap = React.forwardRef<JourneyRouteMapRef, JourneyRoute
                     <SectionSlideTop id="journey-route" className="w-full">
                         <div className="w-full flex flex-col gap-6 md:gap-8 lg:gap-9 xl:gap-10">
                             <div className="flex max-w-full flex-col gap-2 md:max-w-[640px]">
-                                <h2 className="font-heading text-[22px] md:text-[26px] lg:text-[28px] xl:text-[32px] font-semibold leading-tight" style={getStyleObj(routeTitleObj, "#182D09")}>
+                                <h2 className="font-heading text-[22px] md:text-[26px] lg:text-[28px] xl:text-[32px] font-semibold leading-tight" style={getStyleObj(routeTitleObj, THEME_COLORS.primary)}>
                                     {routeTitle}
                                 </h2>
-                                <p className="text-sm md:text-[15px] xl:text-base font-normal leading-relaxed" style={getStyleObj(routeDescObj, "#707070")}>
+                                <p className="text-sm md:text-[15px] xl:text-base font-normal leading-relaxed" style={getStyleObj(routeDescObj, THEME_COLORS.muted)}>
                                     {routeDescription}
                                 </p>
                             </div>
                             <div
-                                className="relative w-full h-[480px] md:h-[580px] lg:h-[640px] xl:h-[680px] rounded-[16px] overflow-hidden ring-1 ring-inset ring-[#D8CBB8] bg-clip-padding flex flex-col items-center justify-center text-center p-8 select-none"
+                                className="relative w-full h-[480px] md:h-[580px] lg:h-[640px] xl:h-[680px] rounded-[16px] overflow-hidden ring-1 ring-inset ring-border-light bg-clip-padding flex flex-col items-center justify-center text-center p-8 select-none"
                                 style={{ backgroundColor: MIRA_COLORS.seaCanvas }}
                             >
-                                <h3 className="text-base md:text-lg font-heading font-semibold text-[#182D09] mb-1.5">
+                                <h3 className="text-base md:text-lg font-heading font-semibold text-brand-primary mb-1.5">
                                     Route map coming soon
                                 </h3>
-                                <p className="text-[#707070] text-xs md:text-sm max-w-md leading-relaxed">
+                                <p className="text-subtitle text-xs md:text-sm max-w-md leading-relaxed">
                                     Geographic coordinates and route cartography for this journey are currently being curated by our specialists.
                                 </p>
                             </div>
@@ -1026,10 +1027,10 @@ export const JourneyRouteMap = React.forwardRef<JourneyRouteMapRef, JourneyRoute
                         {/* Header Section */}
                         <div className="flex flex-col md:flex-row md:items-end justify-between gap-4">
                             <div className="flex max-w-full flex-col gap-2 md:max-w-[640px]">
-                                <h2 className="font-heading text-[22px] md:text-[26px] lg:text-[28px] xl:text-[32px] font-semibold leading-tight" style={getStyleObj(routeTitleObj, "#182D09")}>
+                                <h2 className="font-heading text-[22px] md:text-[26px] lg:text-[28px] xl:text-[32px] font-semibold leading-tight" style={getStyleObj(routeTitleObj, THEME_COLORS.primary)}>
                                     {routeTitle}
                                 </h2>
-                                <p className="text-sm md:text-[15px] xl:text-base font-normal leading-relaxed" style={getStyleObj(routeDescObj, "#707070")}>
+                                <p className="text-sm md:text-[15px] xl:text-base font-normal leading-relaxed" style={getStyleObj(routeDescObj, THEME_COLORS.muted)}>
                                     {routeDescription}
                                 </p>
                             </div>
@@ -1038,8 +1039,8 @@ export const JourneyRouteMap = React.forwardRef<JourneyRouteMapRef, JourneyRoute
                             <div className="flex flex-wrap items-center gap-2 shrink-0 self-start md:self-end">
                                 {routeBadgeObj ? (
                                     <span
-                                        className="px-2.5 py-1 rounded-full bg-[#FAF6F0] border border-[#D8CBB8] text-[11px] font-semibold"
-                                        style={getStyleObj(routeBadgeObj, "#182D09")}
+                                        className="px-2.5 py-1 rounded-full bg-muted/40 border border-border/60 text-[11px] font-semibold"
+                                        style={getStyleObj(routeBadgeObj, THEME_COLORS.primary)}
                                     >
                                         {getStr(routeBadgeObj, countryBadges.join(" · "))}
                                     </span>
@@ -1047,14 +1048,14 @@ export const JourneyRouteMap = React.forwardRef<JourneyRouteMapRef, JourneyRoute
                                     countryBadges.map((c, i) => (
                                         <span
                                             key={i}
-                                            className="px-2.5 py-1 rounded-full bg-[#FAF6F0] border border-[#D8CBB8] text-[11px] font-semibold text-[#182D09]"
+                                            className="px-2.5 py-1 rounded-full bg-muted/40 border border-border/60 text-[11px] font-semibold text-foreground"
                                         >
                                             {c}
                                         </span>
                                     ))
                                 )}
-                                <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-[#FFF8F2] border border-[#D8CBB8] text-xs text-[#182D09] font-medium">
-                                    <span className="size-1.5 rounded-full bg-[#af6348] animate-pulse" />
+                                <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-muted/40 border border-border/60 text-xs text-foreground font-medium">
+                                    <span className="size-1.5 rounded-full bg-accent animate-pulse" />
                                     <span>{stops.length} Signature Destinations</span>
                                 </div>
                             </div>
@@ -1070,7 +1071,7 @@ export const JourneyRouteMap = React.forwardRef<JourneyRouteMapRef, JourneyRoute
                             role="group"
                             aria-label="Route map"
                             onKeyDown={handleKeyDown}
-                            className="relative w-full h-[480px] md:h-[580px] lg:h-[640px] xl:h-[680px] rounded-[16px] overflow-hidden ring-1 ring-inset ring-[#D8CBB8] bg-clip-padding select-none [transform:translateZ(0)] focus-visible:ring-2 focus-visible:ring-[#af6348] focus-visible:outline-none"
+                            className="relative w-full h-[480px] md:h-[580px] lg:h-[640px] xl:h-[680px] rounded-[16px] overflow-hidden ring-1 ring-inset ring-border-light bg-clip-padding select-none [transform:translateZ(0)] focus-visible:ring-2 focus-visible:ring-accent focus-visible:outline-none"
                             style={{
                                 backgroundColor: MIRA_COLORS.seaCanvas,
                                 touchAction: camera.zoom > 1.02 ? 'none' : 'pan-y',
@@ -1102,7 +1103,7 @@ export const JourneyRouteMap = React.forwardRef<JourneyRouteMapRef, JourneyRoute
                                         transition={{ duration: 0.2 }}
                                         className="pointer-events-none absolute inset-0 z-30 flex items-center justify-center"
                                     >
-                                        <div className="px-3.5 py-1.5 rounded-full bg-[#182D09]/90 text-white text-xs font-medium backdrop-blur-md shadow-md border border-white/10">
+                                        <div className="px-3.5 py-1.5 rounded-full bg-brand-primary/90 text-white text-xs font-medium backdrop-blur-md shadow-md border border-white/10">
                                             Use <kbd className="px-1 py-0.5 rounded bg-white/20 text-[11px] font-semibold">Ctrl</kbd> + scroll to zoom map
                                         </div>
                                     </motion.div>
@@ -1431,38 +1432,38 @@ export const JourneyRouteMap = React.forwardRef<JourneyRouteMapRef, JourneyRoute
                             </svg>
 
                             {/* Floating Navigation Controls */}
-                            <div className="absolute right-3.5 bottom-3.5 md:right-5 md:bottom-5 z-20 flex flex-col items-center gap-1.5 p-1 rounded-full bg-white/95 backdrop-blur-md border border-[#D8CBB8] shadow-[0_4px_16px_rgba(24,45,9,0.06)]">
+                            <div className="absolute right-3.5 bottom-3.5 md:right-5 md:bottom-5 z-20 flex flex-col items-center gap-1.5 p-1 rounded-full bg-card/95 backdrop-blur-md border border-border shadow-[0_4px_16px_rgba(24,45,9,0.06)]">
                                 <button
                                     type="button"
                                     onClick={handleZoomIn}
                                     disabled={camera.zoom >= CAMERA_MAX_ZOOM - 0.01}
                                     aria-label="Zoom In"
                                     className={`size-8 rounded-full flex items-center justify-center transition-all ${camera.zoom >= CAMERA_MAX_ZOOM - 0.01
-                                            ? 'opacity-40 cursor-not-allowed text-[#707070]'
-                                            : 'text-[#182D09] hover:bg-[#FAF6F0] hover:text-[#af6348] active:scale-95 cursor-pointer'
+                                            ? 'opacity-40 cursor-not-allowed text-muted-foreground'
+                                            : 'text-brand-primary hover:bg-muted hover:text-accent active:scale-95 cursor-pointer'
                                         }`}
                                 >
                                     <PlusIcon className="size-4" />
                                 </button>
-                                <div className="w-4 h-px bg-[#D8CBB8]" />
+                                <div className="w-4 h-px bg-border" />
                                 <button
                                     type="button"
                                     onClick={handleZoomOut}
                                     disabled={camera.zoom <= CAMERA_MIN_ZOOM + 0.01}
                                     aria-label="Zoom Out"
                                     className={`size-8 rounded-full flex items-center justify-center transition-all ${camera.zoom <= CAMERA_MIN_ZOOM + 0.01
-                                            ? 'opacity-40 cursor-not-allowed text-[#707070]'
-                                            : 'text-[#182D09] hover:bg-[#FAF6F0] hover:text-[#af6348] active:scale-95 cursor-pointer'
+                                            ? 'opacity-40 cursor-not-allowed text-muted-foreground'
+                                            : 'text-brand-primary hover:bg-muted hover:text-accent active:scale-95 cursor-pointer'
                                         }`}
                                 >
                                     <MinusIcon className="size-4" />
                                 </button>
-                                <div className="w-4 h-px bg-[#D8CBB8]" />
+                                <div className="w-4 h-px bg-border" />
                                 <button
                                     type="button"
                                     onClick={handleResetView}
                                     aria-label="Reset Route View"
-                                    className="size-8 rounded-full flex items-center justify-center text-[#182D09] hover:bg-[#FAF6F0] hover:text-[#af6348] active:scale-95 transition-all cursor-pointer"
+                                    className="size-8 rounded-full flex items-center justify-center text-brand-primary hover:bg-muted hover:text-accent active:scale-95 transition-all cursor-pointer"
                                 >
                                     <ResetIcon className="size-3.5" />
                                 </button>
@@ -1471,20 +1472,20 @@ export const JourneyRouteMap = React.forwardRef<JourneyRouteMapRef, JourneyRoute
                             {/* Sidebar / Mobile Overlay */}
                             {containerDimensions.width < 640 ? (
                                 mobileListOpen ? (
-                                    <div className="absolute left-3 top-3 z-20 w-[min(260px,calc(100%-24px))] max-h-[60%] rounded-[12px] bg-white/95 backdrop-blur-md border border-[#D8CBB8] shadow-lg flex flex-col overflow-hidden pointer-events-auto">
-                                        <div className="p-2.5 border-b border-[#D8CBB8] flex items-center justify-between">
+                                    <div className="absolute left-3 top-3 z-20 w-[min(260px,calc(100%-24px))] max-h-[60%] rounded-[12px] bg-card/95 backdrop-blur-md border border-border shadow-lg flex flex-col overflow-hidden pointer-events-auto">
+                                        <div className="p-2.5 border-b border-border flex items-center justify-between">
                                             <button
                                                 type="button"
                                                 onClick={() => setMobileListOpen(false)}
                                                 className="flex items-center gap-1.5 text-left cursor-pointer group"
                                             >
                                                 <div className="flex flex-col">
-                                                    <span className="text-[10px] font-bold uppercase tracking-[1.2px] text-[#707070]">
+                                                    <span className="text-[10px] font-bold uppercase tracking-[1.2px] text-subtitle">
                                                         Itinerary Route
                                                     </span>
-                                                    <span className="text-xs font-semibold text-[#182D09] group-hover:text-[#af6348] flex items-center gap-1">
+                                                    <span className="text-xs font-semibold text-brand-primary group-hover:text-accent flex items-center gap-1">
                                                         {stops.length} Stops · {totalDays} Days
-                                                        <ChevronDownIcon className="size-3 rotate-180 transition-transform text-[#707070]" />
+                                                        <ChevronDownIcon className="size-3 rotate-180 transition-transform text-subtitle" />
                                                     </span>
                                                 </div>
                                             </button>
@@ -1492,8 +1493,8 @@ export const JourneyRouteMap = React.forwardRef<JourneyRouteMapRef, JourneyRoute
                                                 type="button"
                                                 onClick={() => setIsPlaying((p) => !p)}
                                                 className={`flex items-center gap-1 px-2.5 py-1 rounded-full text-[11px] font-semibold transition-all cursor-pointer shadow-xs ${isPlaying
-                                                    ? 'bg-[#182D09] text-white'
-                                                    : 'bg-[#FAF6F0] text-[#182D09] hover:bg-[#FFF8F2] border border-[#D8CBB8]/60'
+                                                    ? 'bg-primary text-primary-foreground'
+                                                    : 'bg-card text-foreground hover:bg-muted border border-border/70'
                                                     }`}
                                             >
                                                 {isPlaying ? (
@@ -1515,13 +1516,13 @@ export const JourneyRouteMap = React.forwardRef<JourneyRouteMapRef, JourneyRoute
                                         </div>
 
                                         {activeStop && (
-                                            <div className="p-2 bg-[#FFF8F2] border-t border-[#D8CBB8] flex items-center gap-2 shrink-0">
-                                                <MapPinIcon className="size-3.5 text-[#af6348] shrink-0" />
+                                            <div className="p-2 bg-card/90 border-t border-border flex items-center gap-2 shrink-0">
+                                                <MapPinIcon className="size-3.5 text-accent shrink-0" />
                                                 <div className="flex flex-col min-w-0">
-                                                    <span className="text-[10.5px] font-bold text-[#182D09] truncate">
+                                                    <span className="text-[10.5px] font-bold text-foreground truncate">
                                                         {activeStop.name}
                                                     </span>
-                                                    <span className="text-[9.5px] text-[#707070]">
+                                                    <span className="text-[9.5px] text-muted-foreground">
                                                         {activeStopIndex === 0
                                                             ? `${activeStop.dayLabel} · Starting departure`
                                                             : activeStopIndex === stops.length - 1
@@ -1535,23 +1536,23 @@ export const JourneyRouteMap = React.forwardRef<JourneyRouteMapRef, JourneyRoute
                                 ) : (
                                     <div
                                         ref={sidebarRef}
-                                        className="absolute left-3 top-3 z-20 flex items-center gap-1.5 p-1 rounded-full bg-white/95 backdrop-blur-md border border-[#D8CBB8] shadow-xs pointer-events-auto"
+                                        className="absolute left-3 top-3 z-20 flex items-center gap-1.5 p-1 rounded-full bg-card/95 backdrop-blur-md border border-border shadow-xs pointer-events-auto"
                                     >
                                         <button
                                             type="button"
                                             onClick={() => setMobileListOpen(true)}
-                                            className="flex items-center gap-1.5 px-2.5 py-1 text-xs font-semibold text-[#182D09] hover:text-[#af6348] transition-colors cursor-pointer"
+                                            className="flex items-center gap-1.5 px-2.5 py-1 text-xs font-semibold text-brand-primary hover:text-accent transition-colors cursor-pointer"
                                         >
                                             <span>Route · {stops.length} stops</span>
-                                            <ChevronDownIcon className="size-3 text-[#707070]" />
+                                            <ChevronDownIcon className="size-3 text-muted-foreground" />
                                         </button>
-                                        <div className="w-px h-3.5 bg-[#D8CBB8]" />
+                                        <div className="w-px h-3.5 bg-border" />
                                         <button
                                             type="button"
                                             onClick={() => setIsPlaying((p) => !p)}
                                             className={`flex items-center gap-1 px-2.5 py-1 rounded-full text-[11px] font-semibold transition-all cursor-pointer shadow-xs ${isPlaying
-                                                ? 'bg-[#182D09] text-white'
-                                                : 'bg-[#FAF6F0] text-[#182D09] hover:bg-[#FFF8F2] border border-[#D8CBB8]/60'
+                                                ? 'bg-primary text-primary-foreground'
+                                                : 'bg-card text-foreground hover:bg-muted border border-border/70'
                                                 }`}
                                         >
                                             {isPlaying ? (
@@ -1571,14 +1572,14 @@ export const JourneyRouteMap = React.forwardRef<JourneyRouteMapRef, JourneyRoute
                             ) : (
                                 <div
                                     ref={sidebarRef}
-                                    className="absolute left-3 top-3 md:left-5 md:top-5 bottom-3 md:bottom-5 z-20 w-[190px] md:w-[230px] rounded-[12px] bg-white/95 backdrop-blur-md border border-[#D8CBB8] shadow-md flex flex-col overflow-hidden pointer-events-auto"
+                                    className="absolute left-3 top-3 md:left-5 md:top-5 bottom-3 md:bottom-5 z-20 w-[190px] md:w-[230px] rounded-[12px] bg-card/95 backdrop-blur-md border border-border shadow-md flex flex-col overflow-hidden pointer-events-auto"
                                 >
-                                    <div className="p-3 border-b border-[#D8CBB8] flex items-center justify-between">
+                                    <div className="p-3 border-b border-border flex items-center justify-between">
                                         <div className="flex flex-col">
-                                            <span className="text-[10.5px] font-bold uppercase tracking-[1.5px] text-[#707070]">
+                                            <span className="text-[10.5px] font-bold uppercase tracking-[1.5px] text-muted-foreground">
                                                 Itinerary Route
                                             </span>
-                                            <span className="text-xs text-[#182D09] font-semibold">
+                                            <span className="text-xs text-foreground font-semibold">
                                                 {stops.length} Stops · {totalDays} Days
                                             </span>
                                         </div>
@@ -1586,8 +1587,8 @@ export const JourneyRouteMap = React.forwardRef<JourneyRouteMapRef, JourneyRoute
                                             type="button"
                                             onClick={() => setIsPlaying((p) => !p)}
                                             className={`flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[11px] font-semibold transition-all cursor-pointer shadow-xs ${isPlaying
-                                                ? 'bg-[#182D09] text-white'
-                                                : 'bg-[#FAF6F0] text-[#182D09] hover:bg-[#FFF8F2] border border-[#D8CBB8]/60'
+                                                ? 'bg-primary text-primary-foreground'
+                                                : 'bg-card text-foreground hover:bg-muted border border-border/70'
                                                 }`}
                                         >
                                             {isPlaying ? (
@@ -1609,13 +1610,13 @@ export const JourneyRouteMap = React.forwardRef<JourneyRouteMapRef, JourneyRoute
                                     </div>
 
                                     {activeStop && (
-                                        <div className="p-2.5 bg-[#FFF8F2] border-t border-[#D8CBB8] flex items-center gap-2">
-                                            <MapPinIcon className="size-4 text-[#af6348] shrink-0" />
+                                        <div className="p-2.5 bg-card/90 border-t border-border flex items-center gap-2">
+                                            <MapPinIcon className="size-4 text-accent shrink-0" />
                                             <div className="flex flex-col min-w-0">
-                                                <span className="text-[11px] font-bold text-[#182D09] truncate">
+                                                <span className="text-[11px] font-bold text-foreground truncate">
                                                     {activeStop.name}
                                                 </span>
-                                                <span className="text-[10px] text-[#707070]">
+                                                <span className="text-[10px] text-muted-foreground">
                                                     {activeStopIndex === 0
                                                         ? `${activeStop.dayLabel} · Starting departure`
                                                         : activeStopIndex === stops.length - 1

@@ -111,7 +111,7 @@ export default function PageLoader() {
       role="status"
       aria-label="Loading page"
       aria-live="polite"
-      className={`fixed inset-0 z-[999999] flex items-center justify-center bg-[#F2E9E3] select-none transition-opacity duration-500 ease-out ${
+      className={`fixed inset-0 z-[999999] flex items-center justify-center bg-loader-bg select-none transition-opacity duration-500 ease-out ${
         isFading ? 'opacity-0 pointer-events-none' : 'opacity-100'
       }`}
     >

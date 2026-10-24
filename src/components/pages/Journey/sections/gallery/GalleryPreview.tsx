@@ -1,3 +1,4 @@
+import { THEME_COLORS } from "@/config/theme"
 import { getStr, getStyleObj } from "../../shared/previewHelpers"
 import { UniversalMultimediaPreview } from "@/components/pages/CMS/Home/shared/preview/UniversalMultimediaPreview"
 
@@ -19,11 +20,11 @@ export function GalleryPreview({ gallery, draft }: { gallery?: any; draft?: any 
 
   return (
     <div className="flex flex-col gap-5">
-      <div className="flex flex-col gap-2 border-b border-[#D8CBB8] pb-4">
-        <span className="text-xs font-semibold uppercase tracking-wider text-[#af6348]">
+      <div className="flex flex-col gap-2 border-b border-border/70 pb-4">
+        <span className="text-xs font-semibold uppercase tracking-wider text-accent">
           VISUAL STORY
         </span>
-        <h2 className="font-serif text-2xl md:text-3xl font-semibold" style={getStyleObj(safeGal.title, "#080c1d")}>
+        <h2 className="font-serif text-2xl md:text-3xl font-semibold" style={getStyleObj(safeGal.title, THEME_COLORS.dark)}>
           {galTitle}
         </h2>
       </div>

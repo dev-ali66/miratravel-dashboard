@@ -1,3 +1,4 @@
+import { THEME_COLORS } from "@/config/theme"
 import { emptyPhilosophy } from "./emptyPhilosophy"
 import {
   normalizeStyledField,
@@ -25,10 +26,10 @@ export function normalizePhilosophy(input: any) {
   const res = {
     ...emptyPhilosophy,
     ...raw,
-    eyebrow: normalizeStyledField(raw.eyebrow, emptyPhilosophy.eyebrow.value, "#B86B3A"),
-    title: normalizeStyledField(raw.title, emptyPhilosophy.title.value, "#182D09"),
-    description: normalizeStyledField(raw.description, emptyPhilosophy.description.value, "#4B5563"),
-    quote: normalizeStyledField(raw.quote, emptyPhilosophy.quote.value, "#B86B3A"),
+    eyebrow: normalizeStyledField(raw.eyebrow, emptyPhilosophy.eyebrow.value, THEME_COLORS.accentWarm),
+    title: normalizeStyledField(raw.title, emptyPhilosophy.title.value, THEME_COLORS.primary),
+    description: normalizeStyledField(raw.description, emptyPhilosophy.description.value, THEME_COLORS.sub),
+    quote: normalizeStyledField(raw.quote, emptyPhilosophy.quote.value, THEME_COLORS.accentWarm),
     multimedias: multimediasArray,
     backgroundMultimedia: normalizeMultimedia(
       raw.backgroundMultimedia,

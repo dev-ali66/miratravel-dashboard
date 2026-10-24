@@ -12,7 +12,7 @@ export function HeroPreview({ draft }: LocationPreviewSectionProps) {
   return (
     <section
       className={cn(
-        "relative flex min-h-[500px] h-[560px] @xs:h-[600px] @sm:h-[640px] @md:h-[720px] @lg:h-[740px] @xlg:h-[750px] @xl:h-[768px] w-full items-center overflow-hidden bg-[#171717] text-white",
+        "relative flex min-h-[500px] h-[560px] @xs:h-[600px] @sm:h-[640px] @md:h-[720px] @lg:h-[740px] @xlg:h-[750px] @xl:h-[768px] w-full items-center overflow-hidden bg-hero-dark text-white",
         isCenter && "justify-center"
       )}
     >

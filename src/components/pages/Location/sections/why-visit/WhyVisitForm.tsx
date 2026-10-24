@@ -1,3 +1,4 @@
+import { THEME_COLORS } from "@/config/theme"
 import { useState } from "react"
 import { Plus, Trash2, Tag, FileText } from "lucide-react"
 
@@ -196,7 +197,7 @@ export function WhyVisitForm({
           value={whyData.imageMultimedia}
           onChange={(val: any) => updateField("why.imageMultimedia", val)}
           defaultShow="image"
-          defaultColor="#EDE7D8"
+          defaultColor={THEME_COLORS.bgSubdued}
         />
 
         {/* Section Background Multimedia */}
@@ -204,7 +205,7 @@ export function WhyVisitForm({
           title="Section Background Styling & Multimedia"
           value={whyData.backgroundMultimedia}
           onChange={(val: any) => updateField("why.backgroundMultimedia", val)}
-          defaultColor="#FFFFFF"
+          defaultColor={THEME_COLORS.white}
         />
       </div>
     </FormSection>

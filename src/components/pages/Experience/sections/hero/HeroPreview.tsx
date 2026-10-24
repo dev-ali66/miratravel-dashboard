@@ -52,7 +52,7 @@ export function HeroPreview({ draft }: ExperiencePreviewSectionProps) {
     <section
       data-section="hero"
       className={cn(
-        "relative flex min-h-[500px] h-[560px] @xs:h-[600px] @sm:h-[640px] @md:h-[720px] @lg:h-[740px] @xlg:h-[750px] @xl:h-[768px] w-full items-center overflow-hidden bg-[#171717] text-white",
+        "relative flex min-h-[500px] h-[560px] @xs:h-[600px] @sm:h-[640px] @md:h-[720px] @lg:h-[740px] @xlg:h-[750px] @xl:h-[768px] w-full items-center overflow-hidden bg-hero-dark text-white",
         isCenter && "justify-center"
       )}
     >
@@ -73,7 +73,7 @@ export function HeroPreview({ draft }: ExperiencePreviewSectionProps) {
           {/* Top Badges / Tags Bar */}
           <div className="flex flex-wrap items-center gap-2 mb-3">
             {/* Price Badge */}
-            <span className="inline-flex items-center gap-1.5 rounded-full border border-[#E5A84B]/60 bg-black/60 px-3.5 py-1 text-xs font-semibold uppercase tracking-wider text-[#E5A84B] shadow-sm backdrop-blur-md">
+            <span className="inline-flex items-center gap-1.5 rounded-full border border-accent-muted/60 bg-black/60 px-3.5 py-1 text-xs font-semibold uppercase tracking-wider text-accent-muted shadow-sm backdrop-blur-md">
               {priceBadgeText}
             </span>
 
@@ -87,7 +87,7 @@ export function HeroPreview({ draft }: ExperiencePreviewSectionProps) {
 
             {/* Featured Badge */}
             {isFeatured && (
-              <span className="inline-flex items-center gap-1 rounded-full bg-[#af6348] px-3 py-1 text-xs font-semibold text-white shadow-sm tracking-wider uppercase">
+              <span className="inline-flex items-center gap-1 rounded-full bg-accent px-3 py-1 text-xs font-semibold text-white shadow-sm tracking-wider uppercase">
                 <Sparkles className="h-3 w-3" />
                 Featured
               </span>

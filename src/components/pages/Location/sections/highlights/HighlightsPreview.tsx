@@ -1,3 +1,4 @@
+import { THEME_COLORS } from "@/config/theme"
 import { useState } from "react"
 import { DynamicStyledTextPreview } from "@/components/pages/CMS/shared/DynamicStyledTextPreview"
 import { UniversalMultimediaPreview } from "@/components/pages/CMS/Home/shared/preview/UniversalMultimediaPreview"
@@ -173,7 +174,7 @@ export function HighlightsPreview({ draft }: LocationPreviewSectionProps) {
       {/* Background Media (Image / Video / Color) */}
       <UniversalMultimediaPreview
         multimedia={highlights.backgroundMultimedia}
-        fallbackColor="#fbf8f2"
+        fallbackColor={THEME_COLORS.bgIvory}
         mode="background"
       />
 
@@ -191,7 +192,7 @@ export function HighlightsPreview({ draft }: LocationPreviewSectionProps) {
                 <DynamicStyledTextPreview
                   as="span"
                   data={highlights.label}
-                  fallbackColor="#af6348"
+                  fallbackColor={THEME_COLORS.accent}
                   className="text-center font-normal uppercase tracking-[2.34px]"
                 />
               </div>
@@ -201,7 +202,7 @@ export function HighlightsPreview({ draft }: LocationPreviewSectionProps) {
                 <DynamicStyledTextPreview
                   as="h2"
                   data={highlights.title}
-                  fallbackColor="#182d09"
+                  fallbackColor={THEME_COLORS.primary}
                   className="font-semibold font-heading text-[28px] md:text-[38px] lg:text-[42px] lg:leading-[42px] lgx:text-[42px] mid:text-[44px] mid:leading-[44px] xlg:text-[46px] xlg:leading-[46px] xl:text-[48px] text-center"
                 />
               </div>
@@ -211,7 +212,7 @@ export function HighlightsPreview({ draft }: LocationPreviewSectionProps) {
                 <DynamicStyledTextPreview
                   as="p"
                   data={highlights.description}
-                  fallbackColor="#565e69"
+                  fallbackColor={THEME_COLORS.muted}
                   className="text-center font-normal text-[16px] md:text-[18px] lg:text-[20px]"
                 />
               </div>
@@ -288,7 +289,7 @@ export function HighlightsPreview({ draft }: LocationPreviewSectionProps) {
 
                     {/* Left-to-Right Primary Color Slide-In Layer */}
                     <div
-                      className="absolute inset-0 -translate-x-full bg-gradient-to-r from-[#182d09]/60 via-[#182d09]/40 to-[#182d09]/20 transition-transform duration-700 ease-out group-hover:translate-x-0 pointer-events-none z-10"
+                      className="absolute inset-0 -translate-x-full bg-gradient-to-r from-brand-primary/60 via-brand-primary/40 to-brand-primary/20 transition-transform duration-700 ease-out group-hover:translate-x-0 pointer-events-none z-10"
                       aria-hidden="true"
                     />
 
@@ -314,7 +315,7 @@ export function HighlightsPreview({ draft }: LocationPreviewSectionProps) {
                       <DynamicStyledTextPreview
                         as="span"
                         data={item.country}
-                        fallbackColor="#f3f4f6"
+                        fallbackColor={THEME_COLORS.lightText}
                         className="text-neutral-100/60 uppercase text-xs md:text-[13.5px] xl:text-sm font-normal xl:leading-[22.5px] md:leading-[20px] leading-[18px] tracking-[1.4px]"
                       />
 
@@ -322,7 +323,7 @@ export function HighlightsPreview({ draft }: LocationPreviewSectionProps) {
                       <DynamicStyledTextPreview
                         as="h3"
                         data={item.region}
-                        fallbackColor="#ffffff"
+                        fallbackColor={THEME_COLORS.white}
                         className="text-neutral-100 font-heading text-xl md:text-[26px] xl:text-[27px] font-normal leading-9 md:leading-[38px] xl:leading-[41px] transition-colors duration-300 group-hover:text-accent"
                       />
 
@@ -330,7 +331,7 @@ export function HighlightsPreview({ draft }: LocationPreviewSectionProps) {
                       <DynamicStyledTextPreview
                         as="p"
                         data={item.tags}
-                        fallbackColor="#ffffff"
+                        fallbackColor={THEME_COLORS.white}
                         className="text-neutral-100 text-sm md:text-[15px] xl:text-base font-normal xl:leading-5 md:leading-[18px] leading-4 tracking-[1px] pt-[5px] transition-colors duration-300 group-hover:text-neutral-100/95 line-clamp-1"
                       />
                     </div>

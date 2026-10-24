@@ -1,3 +1,4 @@
+import { THEME_COLORS } from "@/config/theme"
 import type { HomeFormSectionProps } from "../../config/homeSections"
 import { FormSection, DynamicStyledField } from "@/components/pages/CMS/shared/FormControls"
 import { ButtonsField } from "@/components/pages/CMS/shared/ButtonsField"
@@ -80,7 +81,7 @@ export function ExploreJourneysForm({
           defaultShow="color"
           showColorPicker
           colorLabel="Background color"
-          defaultColor="#FBF9F5"
+          defaultColor={THEME_COLORS.bgSand}
           imageFieldName="cmsHomeExploreJourneysBackgroundImage"
           videoFieldName="cmsHomeExploreJourneysBackgroundVideo"
           value={

@@ -1,3 +1,4 @@
+import { THEME_COLORS } from "@/config/theme"
 import { normalizeSubscribe } from "./normalizeSubscribe"
 import type { NewsletterCmsPayload } from "../../newsletterCmsTypes"
 import { Image as ImageIcon } from "lucide-react"
@@ -8,12 +9,12 @@ export function SubscribePreview({ draft }: { draft: NewsletterCmsPayload }) {
   )
 
   const titleText = subscribe.title?.value || "A Curated Travel Perspective"
-  const titleColor = subscribe.title?.textColor || "#182D09"
+  const titleColor = subscribe.title?.textColor || THEME_COLORS.primary
 
   const subtitleText =
     subscribe.subtitle?.value ||
     "Thoughtful dispatches featuring curated Balkan travel inspiration, MIRA Stories, regional travel insights, and selected journeys."
-  const subtitleColor = subscribe.subtitle?.textColor || "#565E69"
+  const subtitleColor = subscribe.subtitle?.textColor || THEME_COLORS.muted
 
   const imageUrl =
     subscribe.leftSideMultimedia?.image?.url ||
@@ -88,7 +89,7 @@ export function SubscribePreview({ draft }: { draft: NewsletterCmsPayload }) {
                 <label className="text-xs md:text-sm font-normal tracking-wide text-primary">
                   Enter your email address
                 </label>
-                <div className="h-12 w-full px-4 bg-[#FFF2EF] rounded-sm border border-border/60 flex items-center">
+                <div className="h-12 w-full px-4 bg-card rounded-sm border border-border flex items-center">
                   <input
                     type="email"
                     disabled
