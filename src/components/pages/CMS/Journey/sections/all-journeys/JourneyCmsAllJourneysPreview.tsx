@@ -58,7 +58,7 @@ export function JourneyCmsAllJourneysPreview({ draft }: JourneyCmsPreviewSection
       days: "7 DAYS",
       priceFrom: "$3195",
       tags: ["COASTAL_ESCAPE", "HONEYMOONERS", "CURATED"],
-      image: "https://res.cloudinary.com/dscqp4wwt/image/upload/v1790266904/P/why_mira.rightSideMultimedia.image.url/ruqyyawdzhxflzu3jcy7.jpg",
+      image: "https://images.unsplash.com/photo-1507525428034-b723cf961d3e?auto=format&fit=crop&w=800&q=80",
     },
     {
       id: "wildlife-discovery",
@@ -68,7 +68,7 @@ export function JourneyCmsAllJourneysPreview({ draft }: JourneyCmsPreviewSection
       days: "12 DAYS",
       priceFrom: "$4195",
       tags: ["NATURE", "NATURE_LOVERS", "CURATED"],
-      image: "https://res.cloudinary.com/dscqp4wwt/image/upload/v1790018470/P/mira_stories.leftSideMultimedia.image.url/bv0ei4gpbq82lbnrrxzg.jpg",
+      image: "https://images.unsplash.com/photo-1470071459604-3b5ec3a7fe05?auto=format&fit=crop&w=800&q=80",
     },
     {
       id: "temple-trail",

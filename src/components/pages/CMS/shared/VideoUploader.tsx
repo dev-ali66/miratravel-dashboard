@@ -1,7 +1,7 @@
 import { useRef, useState } from "react"
 import { Video, Loader2, Trash2, Upload } from "lucide-react"
 
-import { uploadFile, removeFiles } from "@/services/fileUpload"
+import { uploadFile } from "@/services/fileUpload"
 
 import { cn } from "@/lib/utils"
 
@@ -26,19 +26,12 @@ export function VideoUploader({
 
   const [uploading, setUploading] = useState(false)
 
-  const [removing, setRemoving] = useState(false)
-
   const [error, setError] = useState<string | null>(null)
 
   const handleUpload = async (file: File) => {
     try {
       setError(null)
       setUploading(true)
-
-      // Remove old video first
-      if (value) {
-        await removeFiles([value])
-      }
 
       const url = await uploadFile(file, fieldName)
 
@@ -52,23 +45,11 @@ export function VideoUploader({
     }
   }
 
-  const handleRemove = async () => {
+  const handleRemove = () => {
     if (!value) return
-
-    try {
-      setError(null)
-      setRemoving(true)
-
-      await removeFiles([value])
-
-      onChange("")
-    } catch (error) {
-      console.error(error)
-
-      setError("Failed to remove video.")
-    } finally {
-      setRemoving(false)
-    }
+    setError(null)
+    // Safely clear the form value without destroying the physical file on VPS disk
+    onChange("")
   }
 
   const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -107,7 +88,7 @@ export function VideoUploader({
           <div className="absolute inset-0 flex items-center justify-center gap-2 bg-black/30 opacity-0 transition-opacity group-hover:opacity-100">
             <button
               type="button"
-              disabled={uploading || removing}
+              disabled={uploading}
               onClick={() => inputRef.current?.click()}
               className="rounded-md bg-background px-4 py-2 text-sm font-medium text-foreground shadow"
             >
@@ -116,15 +97,11 @@ export function VideoUploader({
 
             <button
               type="button"
-              disabled={removing || uploading}
+              disabled={uploading}
               onClick={handleRemove}
               className="rounded-md bg-background p-2 text-destructive shadow"
             >
-              {removing ? (
-                <Loader2 className="h-4 w-4 animate-spin" />
-              ) : (
-                <Trash2 className="h-4 w-4" />
-              )}
+              <Trash2 className="h-4 w-4" />
             </button>
           </div>
 

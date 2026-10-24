@@ -1,9 +1,8 @@
-import { useRef, useState } from "react"
+import { useRef } from "react"
 import { useVideoUpload } from "@/hooks/cms/useVideoUpload"
-import { removeFiles } from "@/services/fileUpload"
 import { Label } from "@/components/ui/label"
 import { Button } from "@/components/ui/button"
-import { Loader2, Trash2, Upload, Video as VideoIcon } from "lucide-react"
+import { Trash2, Upload, Video as VideoIcon } from "lucide-react"
 import { cn } from "@/lib/utils"
 import { ColorField } from "@/components/pages/CMS/shared/FormControls"
 
@@ -52,8 +51,6 @@ export function VideoUploadField({
   const { mutate: uploadVideo, isPending: isUploading } = useVideoUpload()
 
   const fileInputRef = useRef<HTMLInputElement>(null)
-
-  const [isRemoving, setIsRemoving] = useState(false)
 
   const extractUploadedUrl = (res: any): string | null => {
     if (!res) return null
@@ -118,13 +115,12 @@ export function VideoUploadField({
 
     if (!file) return
 
-    const fileRemove = value ? [value] : []
-
+    // Do NOT send fileRemove during field edit to prevent destroying shared assets
     uploadVideo(
       {
         file,
         fieldName,
-        fileRemove,
+        fileRemove: [],
       },
       {
         onSuccess: (res) => {
@@ -140,17 +136,12 @@ export function VideoUploadField({
     e.target.value = ""
   }
 
-  const handleRemove = async (e: React.MouseEvent) => {
+  const handleRemove = (e: React.MouseEvent) => {
     e.stopPropagation()
-    if (!value || isRemoving) return
+    if (!value) return
 
-    try {
-      setIsRemoving(true)
-      await removeFiles([value])
-      onChange("")
-    } finally {
-      setIsRemoving(false)
-    }
+    // Safely clear the form field value without destroying the physical file on VPS disk
+    onChange("")
   }
 
   return (
@@ -210,16 +201,12 @@ export function VideoUploadField({
             <Button
               type="button"
               variant="destructive"
-              disabled={isRemoving || isUploading}
+              disabled={isUploading}
               aria-label="Delete video"
               className="absolute top-3 left-3 z-30 size-9 rounded-full p-0 shadow-md"
               onClick={handleRemove}
             >
-              {isRemoving ? (
-                <Loader2 className="size-4 animate-spin" />
-              ) : (
-                <Trash2 className="size-4" />
-              )}
+              <Trash2 className="size-4" />
             </Button>
 
             <div className="pointer-events-none absolute inset-0 z-20 flex items-center justify-center opacity-0 transition-opacity duration-300 group-hover:opacity-100">

@@ -1,7 +1,7 @@
 import { useRef, useState } from "react"
 import { ImagePlus, Loader2, Trash2 } from "lucide-react"
 
-import { uploadFile, removeFiles } from "@/services/fileUpload"
+import { uploadFile } from "@/services/fileUpload"
 
 import { cn } from "@/lib/utils"
 
@@ -26,8 +26,6 @@ export function ImageUploader({
 
   const [uploading, setUploading] = useState(false)
 
-  const [removing, setRemoving] = useState(false)
-
   const [error, setError] = useState<string | null>(null)
 
   const handleUpload = async (file: File) => {
@@ -47,23 +45,11 @@ export function ImageUploader({
     }
   }
 
-  const handleRemove = async () => {
+  const handleRemove = () => {
     if (!value) return
-
-    try {
-      setError(null)
-      setRemoving(true)
-
-      await removeFiles([value])
-
-      onChange("")
-    } catch (error) {
-      console.error(error)
-
-      setError("Failed to remove image.")
-    } finally {
-      setRemoving(false)
-    }
+    setError(null)
+    // Safely clear the form value without destroying the physical file on VPS disk
+    onChange("")
   }
 
   const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -92,15 +78,10 @@ export function ImageUploader({
 
           <button
             type="button"
-            disabled={removing}
             onClick={handleRemove}
             className="absolute top-2 right-2 rounded-md bg-background/90 p-2 text-destructive opacity-0 shadow transition-opacity group-hover:opacity-100"
           >
-            {removing ? (
-              <Loader2 className="h-4 w-4 animate-spin" />
-            ) : (
-              <Trash2 className="h-4 w-4" />
-            )}
+            <Trash2 className="h-4 w-4" />
           </button>
         </div>
       ) : (

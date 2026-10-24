@@ -14,7 +14,6 @@ import {
 import { toast } from "sonner"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { Button } from "@/components/ui/button"
-import { removeFiles } from "@/services/fileUpload"
 import { useGetSettings, useUpdateSettings } from "@/hooks/settings/useSettings"
 
 // Modular form components & types
@@ -110,15 +109,7 @@ export default function SettingsPage() {
   }
 
   const handleRemoveSocialLink = (index: number) => {
-    const itemToRemove = formData.socialLinks[index]
-
-    // Clean up uploaded image if present so no orphan file remains in cloud storage
-    if (itemToRemove?.iconImage) {
-      removeFiles([itemToRemove.iconImage]).catch((err) =>
-        console.error("Failed to delete orphan social icon:", err)
-      )
-    }
-
+    // Safely update form state; physical media lifecycle is managed via backend reference tracking
     setFormData((prev) => ({
       ...prev,
       socialLinks: (prev.socialLinks || []).filter((_, i) => i !== index),

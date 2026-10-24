@@ -1,5 +1,3 @@
-import { removeFiles } from "@/services/fileUpload"
-
 /**
  * Recursively extracts all image and video file URLs from a block or multimedia item object.
  */
@@ -62,18 +60,10 @@ export function extractMediaUrls(data: any): string[] {
 }
 
 /**
- * Removes media files from backend storage via removeFiles endpoint.
+ * Media files are safely managed by the backend Central Media Reference Tracker.
+ * Client-side premature deletions are disabled to prevent destroying shared assets.
  */
-export async function deleteMediaFiles(target: string[] | any): Promise<void> {
-  const urls = Array.isArray(target) && (target.length === 0 || typeof target[0] === "string")
-    ? (target as string[])
-    : extractMediaUrls(target)
-
-  if (urls.length > 0) {
-    try {
-      await removeFiles(urls)
-    } catch (err) {
-      console.error("Failed to remove media files from server:", err)
-    }
-  }
+export async function deleteMediaFiles(_target: string[] | any): Promise<void> {
+  // Intentionally a safe no-op on the frontend; central backend reference tracking manages safe cleanup
+  return Promise.resolve()
 }
