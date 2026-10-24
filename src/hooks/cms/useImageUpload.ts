@@ -20,19 +20,24 @@ export function useImageUpload() {
       file,
       fieldName,
       fileRemove: _fileRemove = [],
+      onProgress,
     }: {
       file: File
       fieldName: string
       fileRemove?: string[]
+      onProgress?: (percent: number) => void
     }) => {
       // 1. Instant Pre-check: Compute SHA-256 in browser to skip upload if file already exists
+      if (onProgress) onProgress(15)
       try {
         const hash = await computeFileSha256(file)
+        if (onProgress) onProgress(30)
         const { data: checkRes } = await apiUpload.get<{
           data: { exists: boolean; url: string | null }
         }>(`/file-upload/check-hash/${hash}`)
 
         if (checkRes?.data?.exists && checkRes.data.url) {
+          if (onProgress) onProgress(100)
           return {
             success: true,
             message: "Image already exists on server (reused from library)",
@@ -63,9 +68,16 @@ export function useImageUpload() {
           headers: {
             "Content-Type": "multipart/form-data",
           },
+          onUploadProgress: (progressEvent) => {
+            if (progressEvent.total && onProgress) {
+              const percent = Math.round((progressEvent.loaded * 100) / progressEvent.total)
+              onProgress(Math.max(30, percent))
+            }
+          },
         }
       )
 
+      if (onProgress) onProgress(100)
       return res.data
     },
 

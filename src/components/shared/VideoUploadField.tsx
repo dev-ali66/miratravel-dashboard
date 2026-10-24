@@ -1,10 +1,11 @@
-import { useRef } from "react"
+import { useRef, useState } from "react"
 import { useVideoUpload } from "@/hooks/cms/useVideoUpload"
 import { Label } from "@/components/ui/label"
 import { Button } from "@/components/ui/button"
-import { Trash2, Upload, Video as VideoIcon } from "lucide-react"
+import { Trash2, Upload, Video as VideoIcon, FolderOpen, Loader2, Sparkles } from "lucide-react"
 import { cn } from "@/lib/utils"
 import { ColorField } from "@/components/pages/CMS/shared/FormControls"
+import { MediaPickerModal, type SelectedMediaAsset } from "@/components/shared/MediaPickerModal"
 
 export interface VideoUploadFieldProps extends Omit<
   React.HTMLAttributes<HTMLDivElement>,
@@ -15,6 +16,7 @@ export interface VideoUploadFieldProps extends Omit<
   fieldName?: string
   fit?: "cover" | "contain" | "fill" | "none" | "scale-down"
   onChange: (value: string) => void
+  onSelectAsset?: (asset: SelectedMediaAsset) => void
   opacity?: number
   onOpacityChange?: (value: number) => void
   overlayColor?: string
@@ -29,6 +31,7 @@ export function VideoUploadField({
   fieldName = "",
   fit = "contain",
   onChange,
+  onSelectAsset,
   opacity = 100,
   onOpacityChange,
   overlayColor = "#000000",
@@ -38,6 +41,11 @@ export function VideoUploadField({
   className,
   ...props
 }: VideoUploadFieldProps) {
+  const [isPickerOpen, setIsPickerOpen] = useState(false)
+  const [localUploading, setLocalUploading] = useState(false)
+  const [uploadProgress, setUploadProgress] = useState(0)
+  const [uploadFileName, setUploadFileName] = useState("")
+
   const objectFitClass =
     fit === "cover"
       ? "object-cover"
@@ -48,7 +56,8 @@ export function VideoUploadField({
       : fit === "scale-down"
       ? "object-scale-down"
       : "object-contain"
-  const { mutate: uploadVideo, isPending: isUploading } = useVideoUpload()
+  const { mutate: uploadVideo, isPending: isMutationPending } = useVideoUpload()
+  const isCurrentlyUploading = isMutationPending || localUploading
 
   const fileInputRef = useRef<HTMLInputElement>(null)
 
@@ -115,20 +124,37 @@ export function VideoUploadField({
 
     if (!file) return
 
+    setLocalUploading(true)
+    setUploadProgress(15)
+    setUploadFileName(file.name)
+
     // Do NOT send fileRemove during field edit to prevent destroying shared assets
     uploadVideo(
       {
         file,
         fieldName,
         fileRemove: [],
+        onProgress: (percent) => setUploadProgress(percent),
       },
       {
         onSuccess: (res) => {
+          setUploadProgress(100)
           const newVideo = extractUploadedUrl(res)
 
           if (newVideo) {
             onChange(newVideo)
           }
+
+          setTimeout(() => {
+            setLocalUploading(false)
+            setUploadProgress(0)
+            setUploadFileName("")
+          }, 350)
+        },
+        onError: () => {
+          setLocalUploading(false)
+          setUploadProgress(0)
+          setUploadFileName("")
         },
       }
     )
@@ -147,16 +173,31 @@ export function VideoUploadField({
   return (
     <div className={cn("flex flex-col gap-3", className)} {...props}>
       {label && (
-        <div className="flex items-center gap-2 text-foreground">
-          <VideoIcon className="h-4 w-4 text-muted-foreground" />
-          <Label className="text-sm font-bold text-inherit">{label}</Label>
+        <div className="flex items-center justify-between text-foreground">
+          <div className="flex items-center gap-2">
+            <VideoIcon className="h-4 w-4 text-muted-foreground" />
+            <Label className="text-sm font-bold text-inherit">{label}</Label>
+          </div>
+          <Button
+            type="button"
+            variant="ghost"
+            size="sm"
+            onClick={(e) => {
+              e.stopPropagation()
+              setIsPickerOpen(true)
+            }}
+            className="h-6 text-[11px] font-medium gap-1 px-2 text-primary hover:text-primary hover:bg-primary/10 rounded-md cursor-pointer"
+          >
+            <FolderOpen className="h-3.5 w-3.5" />
+            Choose from Library
+          </Button>
         </div>
       )}
 
       <div
         className={cn(
           "relative flex h-55 w-full cursor-pointer items-center justify-center rounded-xl border-2 border-dashed border-border p-2 transition-colors hover:bg-muted/50",
-          isUploading && "pointer-events-none opacity-50"
+          isCurrentlyUploading && "pointer-events-none opacity-95 border-primary/50 bg-primary/5"
         )}
         onClick={() => fileInputRef.current?.click()}
       >
@@ -168,10 +209,31 @@ export function VideoUploadField({
           onChange={handleFileChange}
         />
 
-        {isUploading ? (
-          <div className="flex flex-col items-center gap-2">
-            <div className="size-6 animate-spin rounded-full border-2 border-primary border-t-transparent" />
-            <span className="text-sm font-medium">Uploading...</span>
+        {isCurrentlyUploading ? (
+          <div className="flex flex-col items-center justify-center gap-3 w-full max-w-xs px-4 py-2 animate-in fade-in-50 duration-200">
+            <div className="flex items-center justify-between w-full">
+              <div className="flex items-center gap-2 min-w-0">
+                <Loader2 className="h-4 w-4 animate-spin text-primary shrink-0" />
+                <span className="text-xs font-semibold text-foreground truncate max-w-[190px]">
+                  {uploadFileName || "Uploading video..."}
+                </span>
+              </div>
+              <span className="text-xs font-mono font-bold text-primary shrink-0 ml-2">
+                {uploadProgress}%
+              </span>
+            </div>
+
+            <div className="h-2 w-full bg-muted rounded-full overflow-hidden shadow-inner">
+              <div
+                className="h-full bg-primary transition-all duration-150 rounded-full"
+                style={{ width: `${uploadProgress}%` }}
+              />
+            </div>
+
+            <p className="text-[11px] text-muted-foreground flex items-center gap-1.5">
+              <Sparkles className="h-3 w-3 text-primary shrink-0" />
+              <span>Instant SHA-256 zero-byte check active</span>
+            </p>
           </div>
         ) : value ? (
           <div className="group relative flex h-full w-full items-center justify-center overflow-hidden rounded-lg bg-black">
@@ -201,7 +263,7 @@ export function VideoUploadField({
             <Button
               type="button"
               variant="destructive"
-              disabled={isUploading}
+              disabled={isCurrentlyUploading}
               aria-label="Delete video"
               className="absolute top-3 left-3 z-30 size-9 rounded-full p-0 shadow-md"
               onClick={handleRemove}
@@ -209,31 +271,74 @@ export function VideoUploadField({
               <Trash2 className="size-4" />
             </Button>
 
-            <div className="pointer-events-none absolute inset-0 z-20 flex items-center justify-center opacity-0 transition-opacity duration-300 group-hover:opacity-100">
+            <div className="pointer-events-none absolute inset-0 z-20 flex items-center justify-center gap-2 opacity-0 transition-opacity duration-300 group-hover:opacity-100">
               <Button
                 type="button"
                 variant="secondary"
-                className="pointer-events-auto gap-2 rounded-full px-6 shadow-md"
+                size="sm"
+                className="pointer-events-auto gap-1.5 rounded-full px-3.5 shadow-md text-xs font-medium"
                 onClick={(e) => {
                   e.stopPropagation()
                   fileInputRef.current?.click()
                 }}
               >
-                <div className="h-2 w-2 rounded-full bg-primary" />
-                Change Video
+                <Upload className="h-3 w-3" />
+                Upload New
+              </Button>
+              <Button
+                type="button"
+                variant="secondary"
+                size="sm"
+                className="pointer-events-auto gap-1.5 rounded-full px-3.5 shadow-md text-xs font-medium bg-primary/10 hover:bg-primary/20 text-primary border border-primary/20"
+                onClick={(e) => {
+                  e.stopPropagation()
+                  setIsPickerOpen(true)
+                }}
+              >
+                <FolderOpen className="h-3.5 w-3.5" />
+                From Library
               </Button>
             </div>
           </div>
         ) : (
-          <div className="flex flex-col items-center gap-2 text-muted-foreground">
-            <Upload className="mb-2 h-8 w-8 opacity-50" />
-            <span className="text-sm font-medium">Click to upload video</span>
-            <span className="text-xs text-muted-foreground/70">
+          <div className="flex flex-col items-center justify-center gap-2 text-muted-foreground py-2">
+            <Upload className="h-7 w-7 opacity-50" />
+            <div className="flex items-center gap-1.5">
+              <span className="text-xs font-medium">Click to upload video</span>
+              <span className="text-[10px] text-muted-foreground/60">• or •</span>
+              <button
+                type="button"
+                onClick={(e) => {
+                  e.stopPropagation()
+                  setIsPickerOpen(true)
+                }}
+                className="inline-flex items-center gap-1 text-xs font-semibold text-primary hover:underline cursor-pointer"
+              >
+                <FolderOpen className="h-3.5 w-3.5" />
+                browse library
+              </button>
+            </div>
+            <span className="text-[11px] text-muted-foreground/70 font-mono">
               MP4, WebM, MOV
             </span>
           </div>
         )}
       </div>
+
+      <MediaPickerModal
+        isOpen={isPickerOpen}
+        onClose={() => setIsPickerOpen(false)}
+        allowedTypes={["video"]}
+        initialSelectedUrl={value}
+        onSelect={(assets) => {
+          if (assets.length > 0) {
+            onChange(assets[0].url)
+            if (onSelectAsset) {
+              onSelectAsset(assets[0])
+            }
+          }
+        }}
+      />
 
       {onOverlayColorChange && onOverlayOpacityChange && (
         <div className="flex flex-col gap-2 rounded-lg border border-border/60 bg-muted/20 p-2.5">

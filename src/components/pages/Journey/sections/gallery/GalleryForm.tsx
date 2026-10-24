@@ -1,8 +1,10 @@
+import { useState } from "react"
 import type { JourneyData } from "../../journeyTypes"
 import { FormSection } from "../../shared/fields"
 import { DynamicStyledField } from "@/components/pages/CMS/shared/FormControls"
 import { UniversalMultimediaForm } from "@/components/pages/CMS/shared/UniversalMultimediaForm"
-import { Plus, Trash2, Image as ImageIcon } from "lucide-react"
+import { Plus, Trash2, Image as ImageIcon, FolderOpen } from "lucide-react"
+import { MediaPickerModal, type SelectedMediaAsset } from "@/components/shared/MediaPickerModal"
 
 interface GalleryFormProps {
   draft: JourneyData
@@ -19,6 +21,7 @@ export function GalleryForm({
   toggleSection,
   sectionNumber,
 }: GalleryFormProps) {
+  const [isPickerOpen, setIsPickerOpen] = useState(false)
   const isOpen = Boolean(openSections["gallery"])
   const galleryData = draft.gallery || {}
   const items = galleryData.items || []
@@ -36,6 +39,60 @@ export function GalleryForm({
       },
     }
     updateField("gallery.items", [...items, newItem])
+  }
+
+  const handleAddMultipleFromLibrary = (selectedAssets: SelectedMediaAsset[]) => {
+    const newItems = selectedAssets.map((asset) => {
+      const isVideo = asset.mimeType.startsWith("video/")
+      const type = isVideo ? "video" : "image"
+      return {
+        title: {
+          value: asset.title || asset.fileName.split(".")[0] || "Photo Shot",
+          textColor: "#080c1d",
+          textOpacity: 1,
+          backgroundColor: null,
+          backgroundOpacity: 1,
+        },
+        type,
+        caption: {
+          value: asset.caption || "",
+          textColor: "#565e69",
+          textOpacity: 1,
+          backgroundColor: null,
+          backgroundOpacity: 1,
+        },
+        multimedia: {
+          show: type,
+          image: {
+            url: isVideo ? "" : asset.url,
+            alt: asset.altText || asset.title || "",
+            opacity: 100,
+            overlayColor: "#000000",
+            overlayOpacity: 0,
+            width: asset.width ? `${asset.width}px` : "100%",
+            height: "auto",
+            aspectRatio: "auto",
+            fit: "cover",
+          },
+          video: {
+            url: isVideo ? asset.url : "",
+            alt: asset.altText || asset.title || "",
+            autoplay: true,
+            loop: true,
+            muted: true,
+            opacity: 100,
+            overlayColor: "#000000",
+            overlayOpacity: 0,
+            width: "100%",
+            height: "auto",
+            aspectRatio: "auto",
+            fit: "cover",
+          },
+          color: { color: "#ffffff", opacity: 100, width: "100%", height: "100%", aspectRatio: "auto" },
+        },
+      }
+    })
+    updateField("gallery.items", [...items, ...newItems])
   }
 
   const removeItem = (index: number) => {
@@ -93,17 +150,24 @@ export function GalleryForm({
             <div className="flex items-center gap-2">
               <button
                 type="button"
-                onClick={() => addMediaItem("image")}
-                className="flex items-center gap-1 rounded bg-primary/10 px-2.5 py-1 text-xs font-semibold text-primary hover:bg-primary hover:text-primary-foreground transition-all cursor-pointer"
+                onClick={() => setIsPickerOpen(true)}
+                className="flex items-center gap-1.5 rounded-lg border border-primary/30 bg-primary/10 px-2.5 py-1 text-xs font-semibold text-primary hover:bg-primary hover:text-primary-foreground transition-all cursor-pointer shadow-2xs"
               >
-                <Plus className="h-3.5 w-3.5" /> Add Photo
+                <FolderOpen className="h-3.5 w-3.5" /> Choose from Library
+              </button>
+              <button
+                type="button"
+                onClick={() => addMediaItem("image")}
+                className="flex items-center gap-1 rounded bg-muted hover:bg-muted/80 px-2 py-1 text-xs font-medium text-foreground transition-all cursor-pointer"
+              >
+                <Plus className="h-3.5 w-3.5" /> Empty Photo
               </button>
               <button
                 type="button"
                 onClick={() => addMediaItem("video")}
-                className="flex items-center gap-1 rounded bg-accent/10 px-2.5 py-1 text-xs font-semibold text-accent hover:bg-accent hover:text-accent-foreground transition-all cursor-pointer"
+                className="flex items-center gap-1 rounded bg-muted hover:bg-muted/80 px-2 py-1 text-xs font-medium text-foreground transition-all cursor-pointer"
               >
-                <Plus className="h-3.5 w-3.5" /> Add Video
+                <Plus className="h-3.5 w-3.5" /> Empty Video
               </button>
             </div>
           </div>
@@ -173,6 +237,14 @@ export function GalleryForm({
           />
         </div>
       </div>
+
+      <MediaPickerModal
+        isOpen={isPickerOpen}
+        onClose={() => setIsPickerOpen(false)}
+        mode="multiple"
+        title="Add Media to Journey Gallery"
+        onSelect={(selectedAssets) => handleAddMultipleFromLibrary(selectedAssets)}
+      />
     </FormSection>
   )
 }

@@ -696,6 +696,19 @@ export function UniversalMultimediaForm(props: UniversalMultimediaFormProps) {
                 value={currentVal.image?.url ?? ""}
                 fit={currentVal.image?.fit ?? "contain"}
                 onChange={(url) => updateImage({ url })}
+                onSelectAsset={(asset) => {
+                  const patch: Partial<MultimediaImageConfig> = { url: asset.url }
+                  if (!currentVal.image?.alt && (asset.altText || asset.title)) {
+                    patch.alt = asset.altText || asset.title
+                  }
+                  if (asset.width && (!currentVal.image?.width || currentVal.image.width === "100%")) {
+                    patch.width = `${asset.width}px`
+                  }
+                  if (asset.height && (!currentVal.image?.height || currentVal.image.height === "auto")) {
+                    patch.height = `${asset.height}px`
+                  }
+                  updateImage(patch)
+                }}
                 opacity={currentVal.image?.opacity ?? 100}
                 onOpacityChange={showAdvancedDimensions ? (opacity) => updateImage({ opacity }) : undefined}
                 overlayColor={currentVal.image?.overlayColor ?? "#000000"}
@@ -741,6 +754,13 @@ export function UniversalMultimediaForm(props: UniversalMultimediaFormProps) {
                 value={currentVal.video?.url ?? ""}
                 fit={currentVal.video?.fit ?? "contain"}
                 onChange={(url) => updateVideo({ url })}
+                onSelectAsset={(asset) => {
+                  const patch: Partial<MultimediaVideoConfig> = { url: asset.url }
+                  if (!currentVal.video?.alt && (asset.altText || asset.title)) {
+                    patch.alt = asset.altText || asset.title
+                  }
+                  updateVideo(patch)
+                }}
                 opacity={currentVal.video?.opacity ?? 100}
                 onOpacityChange={showAdvancedDimensions ? (opacity) => updateVideo({ opacity }) : undefined}
                 overlayColor={currentVal.video?.overlayColor ?? "#000000"}
