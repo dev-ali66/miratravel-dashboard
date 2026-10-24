@@ -18,6 +18,7 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog"
+import { PageHeader, CompactStatCard } from "@/components/shared/PageHeader"
 import { cn } from "@/lib/utils"
 
 export interface NotificationTrigger {
@@ -128,58 +129,51 @@ export default function NotificationsPage() {
 
   return (
     <div className="w-full space-y-6 pt-2">
-      {/* Header */}
-      <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-        <div>
-          <h1 className="flex items-center gap-2.5 text-2xl font-bold tracking-tight text-foreground sm:text-3xl">
-            <Bell className="h-7 w-7 text-primary" />
-            Automated Notification Triggers & Delivery
-          </h1>
-          <p className="mt-1 text-sm text-muted-foreground">
-            Configure lifecycle event triggers, email reminders, SMS alerts, and concierge notifications.
-          </p>
-        </div>
-
-        {sentToast && (
-          <div className="flex items-center gap-2 rounded-lg bg-emerald-500/10 border border-emerald-500/30 px-3 py-1.5 text-xs font-semibold text-emerald-600 dark:text-emerald-400">
-            <CheckCircle2 className="h-4 w-4" />
-            {sentToast}
+      {/* Header with 30% title & 70% compact statistics */}
+      <PageHeader
+        icon={Bell}
+        title="Notifications"
+        subtitle="Lifecycle event triggers, email reminders, and concierge alerts."
+        stats={
+          <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 sm:gap-2.5 w-full">
+            <CompactStatCard
+              label="Workflows"
+              value={`${triggers.filter((t) => t.isActive).length} / ${triggers.length} Active`}
+              subtext="Lifecycle triggers"
+              icon={Bell}
+              iconColor="text-emerald-500"
+            />
+            <CompactStatCard
+              label="Deliverability"
+              value="99.8%"
+              subtext="Email (Resend)"
+              icon={Mail}
+              iconColor="text-blue-500"
+            />
+            <CompactStatCard
+              label="SMS Gateway"
+              value="Twilio VIP"
+              subtext="Active carrier"
+              icon={Smartphone}
+              iconColor="text-purple-500"
+            />
+            <CompactStatCard
+              label="Webhooks"
+              value="Connected"
+              subtext="Real-time alerts"
+              icon={CheckCircle2}
+              iconColor="text-emerald-500"
+            />
           </div>
-        )}
-      </div>
+        }
+      />
 
-      {/* Overview Cards */}
-      <div className="grid grid-cols-1 gap-4 sm:grid-cols-4">
-        <Card className="border-border/60 bg-card/60 backdrop-blur-xl">
-          <CardContent className="p-5">
-            <span className="text-xs font-semibold uppercase text-muted-foreground">Active Workflows</span>
-            <div className="mt-1 text-2xl font-bold text-emerald-600 dark:text-emerald-400">
-              {triggers.filter((t) => t.isActive).length} / {triggers.length} Active
-            </div>
-          </CardContent>
-        </Card>
-
-        <Card className="border-border/60 bg-card/60 backdrop-blur-xl">
-          <CardContent className="p-5">
-            <span className="text-xs font-semibold uppercase text-muted-foreground">Email Deliverability</span>
-            <div className="mt-1 text-2xl font-bold text-foreground">99.8% (Resend)</div>
-          </CardContent>
-        </Card>
-
-        <Card className="border-border/60 bg-card/60 backdrop-blur-xl">
-          <CardContent className="p-5">
-            <span className="text-xs font-semibold uppercase text-muted-foreground">SMS Provider</span>
-            <div className="mt-1 text-2xl font-bold text-blue-600 dark:text-blue-400">Twilio VIP</div>
-          </CardContent>
-        </Card>
-
-        <Card className="border-border/60 bg-card/60 backdrop-blur-xl">
-          <CardContent className="p-5">
-            <span className="text-xs font-semibold uppercase text-muted-foreground">Admin Webhooks</span>
-            <div className="mt-1 text-2xl font-bold text-purple-600 dark:text-purple-400">Connected</div>
-          </CardContent>
-        </Card>
-      </div>
+      {sentToast && (
+        <div className="flex items-center gap-2 rounded-lg bg-emerald-500/10 border border-emerald-500/30 px-3 py-2 text-xs font-semibold text-emerald-600 dark:text-emerald-400">
+          <CheckCircle2 className="h-4 w-4" />
+          {sentToast}
+        </div>
+      )}
 
       {/* Triggers List */}
       <div className="space-y-4">

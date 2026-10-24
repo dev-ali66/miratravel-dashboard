@@ -1,7 +1,8 @@
 import { useState } from "react"
 import { motion } from "framer-motion"
-import { Compass, Calendar, Euro, Sparkles, Eye, Trash2, CheckCircle2, Search, X, Mail, User, Phone } from "lucide-react"
+import { Compass, Calendar, Euro, Sparkles, Eye, Trash2, CheckCircle2, Search, X, Mail, User, Phone, Clock } from "lucide-react"
 import { Pagination } from "@/components/shared/Pagination"
+import { PageHeader, CompactStatCard } from "@/components/shared/PageHeader"
 import {
   useGetJourneyWizardRequests,
   useUpdateJourneyWizardRequestStatus,
@@ -49,18 +50,54 @@ export default function JourneyWizardTable() {
     }
   }
 
+  const newCount = requestList.filter((r) => r.status === "NEW").length
+  const contactedCount = requestList.filter((r) => r.status === "CONTACTED").length
+  const inProgressCount = requestList.filter((r) => r.status === "IN_PROGRESS").length
+  const closedCount = requestList.filter((r) => r.status === "CLOSED").length
+
   return (
-    <div className="w-full animate-in pt-2 duration-700 fade-in slide-in-from-bottom-4">
-      {/* Header & Controls Bar */}
-      <div className="mb-6 flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
-        <div>
-          <h1 className="flex items-center gap-2.5 text-2xl font-bold tracking-tight text-foreground">
-            <Compass className="h-7 w-7 text-primary" /> Journey Planner Submissions ({totalItems})
-          </h1>
-          <p className="mt-1 text-xs text-muted-foreground">
-            Curated travel wizard preference submissions received from frontend explorers.
-          </p>
-        </div>
+    <div className="w-full animate-in duration-700 fade-in slide-in-from-bottom-4">
+      {/* Universal Page Header with 30% title & 70% compact statistics */}
+      <PageHeader
+        icon={Compass}
+        title="Journey Requests"
+        subtitle="Travel wizard preference submissions from frontend explorers."
+        stats={
+          <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 sm:gap-2.5 w-full">
+            <CompactStatCard
+              label="Total Requests"
+              value={totalItems}
+              subtext="Wizard submissions"
+              icon={Compass}
+              iconColor="text-primary"
+            />
+            <CompactStatCard
+              label="New / Unread"
+              value={newCount}
+              subtext="Awaiting contact"
+              icon={Sparkles}
+              iconColor="text-blue-500"
+            />
+            <CompactStatCard
+              label="In Follow-Up"
+              value={contactedCount + inProgressCount}
+              subtext="In proposal stage"
+              icon={Clock}
+              iconColor="text-amber-500"
+            />
+            <CompactStatCard
+              label="Completed"
+              value={closedCount}
+              subtext="Finalized & booked"
+              icon={CheckCircle2}
+              iconColor="text-emerald-500"
+            />
+          </div>
+        }
+      />
+
+      {/* Controls Bar */}
+      <div className="mb-6 flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-end">
 
         {/* Search Bar and Status Filter Badges */}
         <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3">

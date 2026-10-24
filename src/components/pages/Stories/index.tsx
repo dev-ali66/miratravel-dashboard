@@ -2,6 +2,7 @@ import MiraLoader from "@/components/shared/MiraLoader"
 import { useEffect, useState } from "react"
 import { Link } from "react-router-dom"
 import { Pagination } from "@/components/shared/Pagination"
+import { PageHeader, CompactStatCard } from "@/components/shared/PageHeader"
 import {
   Trash2,
   BookOpen,
@@ -12,6 +13,8 @@ import {
   Tag,
   Clock,
   User,
+  CheckCircle2,
+  Sparkles,
 } from "lucide-react"
 import {
   Dialog,
@@ -109,27 +112,44 @@ export default function StoriesPage() {
 
   return (
     <div className="w-full animate-in pt-2 duration-700 fade-in slide-in-from-bottom-4">
-      {/* Header */}
-      <div className="mb-6 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-        <div>
-          <h1 className="text-3xl font-serif font-bold tracking-tight text-brand-primary flex items-center gap-2.5">
-            <BookOpen className="h-8 w-8 text-accent" />
-            Stories Management
-          </h1>
-
-          <p className="mt-1 text-sm text-subtitle">
-            Create, publish, filter, and manage your travel stories and editorial guides.
-          </p>
-        </div>
-
-        <Link
-          to="/stories/new"
-          className="inline-flex shrink-0 items-center gap-2 rounded-xl bg-brand-primary px-4 py-2.5 text-sm font-medium text-white shadow-sm transition hover:bg-accent"
-        >
-          <Plus className="h-4 w-4" />
-          Create Story
-        </Link>
-      </div>
+      {/* Header with 30% title & 70% compact statistics */}
+      <PageHeader
+        icon={BookOpen}
+        title="Stories Management"
+        subtitle="Publish, filter, and curate editorial guides."
+        stats={
+          <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 sm:gap-2.5 w-full">
+            <CompactStatCard
+              label="Total Stories"
+              value={meta?.total ?? stories.length}
+              subtext="Editorial guides"
+              icon={BookOpen}
+              iconColor="text-primary"
+            />
+            <CompactStatCard
+              label="Live Published"
+              value={`${stories.filter((s) => (s as any).status === "PUBLISHED").length} Active`}
+              subtext="Public stories hub"
+              icon={CheckCircle2}
+              iconColor="text-emerald-500"
+            />
+            <CompactStatCard
+              label="Editor's Picks"
+              value={`${stories.filter((s) => (s as any).recommended).length} Curated`}
+              subtext="Featured stories"
+              icon={Sparkles}
+              iconColor="text-purple-500"
+            />
+            <CompactStatCard
+              label="Drafts / Review"
+              value={`${stories.filter((s) => (s as any).status !== "PUBLISHED").length} Drafts`}
+              subtext="Pending publishing"
+              icon={Clock}
+              iconColor="text-amber-500"
+            />
+          </div>
+        }
+      />
 
       {/* Filters Bar */}
       <div className="mb-6 flex flex-col gap-3 md:flex-row md:items-center">
@@ -189,6 +209,14 @@ export default function StoriesPage() {
           <option value="PUBLISHED">PUBLISHED</option>
           <option value="DRAFT">DRAFT</option>
         </select>
+        
+        <Link
+          to="/stories/new"
+          className="inline-flex shrink-0 items-center gap-2 rounded-xl bg-brand-primary px-4 py-2.5 text-sm font-medium text-white shadow-sm transition hover:bg-accent"
+        >
+          <Plus className="h-4 w-4" />
+          Create Story
+        </Link>
       </div>
 
       {/* Loading State */}
@@ -240,8 +268,8 @@ export default function StoriesPage() {
               const rawCategories = s.categories && s.categories.length > 0
                 ? s.categories
                 : s.category
-                ? [s.category]
-                : []
+                  ? [s.category]
+                  : []
 
               const categories = Array.isArray(rawCategories) ? rawCategories : [rawCategories]
 
@@ -277,11 +305,10 @@ export default function StoriesPage() {
                     {/* Top Badges */}
                     <div className="absolute top-3.5 left-3.5 z-10 flex flex-wrap gap-1.5 items-center">
                       <span
-                        className={`rounded-full px-2.5 py-0.5 text-[10px] font-bold uppercase tracking-wider shadow-sm ${
-                          (s as any).status === "PUBLISHED"
+                        className={`rounded-full px-2.5 py-0.5 text-[10px] font-bold uppercase tracking-wider shadow-sm ${(s as any).status === "PUBLISHED"
                             ? "bg-brand-primary text-amber-100 border border-brand-primary"
                             : "bg-amber-100 text-amber-800"
-                        }`}
+                          }`}
                       >
                         {(s as any).status || "DRAFT"}
                       </span>
@@ -367,11 +394,10 @@ export default function StoriesPage() {
                           SEO Governance
                         </span>
                         <span
-                          className={`inline-flex items-center gap-1 rounded-full px-2.5 py-0.5 text-[10px] font-medium tracking-wide ${
-                            isSeoComplete
+                          className={`inline-flex items-center gap-1 rounded-full px-2.5 py-0.5 text-[10px] font-medium tracking-wide ${isSeoComplete
                               ? "bg-emerald-100 text-emerald-800 dark:bg-emerald-950 dark:text-emerald-300"
                               : "bg-amber-100 text-amber-800 dark:bg-amber-950 dark:text-amber-300"
-                          }`}
+                            }`}
                         >
                           {isSeoComplete ? "Ready" : "Partial"}
                         </span>

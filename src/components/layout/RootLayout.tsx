@@ -11,12 +11,12 @@ export function RootLayout() {
       title: "Operations & Bookings",
       items: [
         { href: "/", label: "Dashboard", icon: "dashboard" },
+        { href: "/user", label: "Users", icon: "user" },
         { href: "/bookings", label: "Bookings", icon: "bookings" as any },
-        { href: "/requests", label: "Journey Requests", icon: "requests" as any },
         { href: "/inquiries", label: "Inquiries", icon: "concierge" as any },
-        { href: "/newsletter", label: "Newsletter Subscribers", icon: "newsletter" as any },
-        { href: "/user", label: "Travelers & Users", icon: "user" },
+        { href: "/requests", label: "Journey Requests", icon: "requests" as any },
         { href: "/reviews", label: "Reviews & Ratings", icon: "reviews" as any },
+        { href: "/newsletter", label: "Newsletter Subscribers", icon: "newsletter" as any },
       ],
     },
     {
@@ -30,22 +30,21 @@ export function RootLayout() {
         { href: "/stories", label: "Stories", icon: "cms" as any },
       ],
     },
-    {
-      title: "Marketing & Growth",
-      items: [
-        { href: "/promotions", label: "Promotions & Vouchers", icon: "promotions" as any },
-        { href: "/newsletter", label: "Newsletter Subscribers", icon: "newsletter" as any },
-        { href: "/notifications", label: "Notification Triggers", icon: "notifications" as any },
-      ],
-    },
+    // {
+    //   title: "Marketing & Growth",
+    //   items: [
+    //     { href: "/promotions", label: "Promotions & Vouchers", icon: "promotions" as any },
+    //     { href: "/notifications", label: "Notification Triggers", icon: "notifications" as any },
+    //   ],
+    // },
     {
       title: "System & Governance",
       items: [
         { href: "/system-health", label: "System Health", icon: "health" as any },
         { href: "/audit-logs", label: "Audit Logs", icon: "audit" as any },
-        { href: "/payment-config", label: "Payment Rules & Config", icon: "paymentConfig" as any },
+        { href: "/payment-config", label: "Payment Config", icon: "paymentConfig" as any },
         { href: "/settings", label: "Site Settings", icon: "settings" as any },
-        { href: "/iam", label: "IAM Roles & Access", icon: "iam" as any },
+        { href: "/iam", label: "Roles & Access", icon: "iam" as any },
       ],
     },
     {

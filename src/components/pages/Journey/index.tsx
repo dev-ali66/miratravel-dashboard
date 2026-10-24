@@ -2,6 +2,7 @@ import MiraLoader from "@/components/shared/MiraLoader"
 import { useEffect, useState } from "react"
 import { Link } from "react-router-dom"
 import { Pagination } from "@/components/shared/Pagination"
+import { PageHeader, CompactStatCard } from "@/components/shared/PageHeader"
 import {
   Trash2,
   Compass,
@@ -10,6 +11,8 @@ import {
   Search,
   Globe,
   Tag,
+  CheckCircle2,
+  Sparkles,
 } from "lucide-react"
 import {
   Dialog,
@@ -102,27 +105,44 @@ export default function JourneyPages() {
 
   return (
     <div className="w-full animate-in pt-2 duration-700 fade-in slide-in-from-bottom-4">
-      {/* Header */}
-      <div className="mb-6 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-        <div>
-          <h1 className="text-3xl font-serif font-bold tracking-tight text-brand-primary flex items-center gap-2.5">
-            <Compass className="h-8 w-8 text-accent" />
-            Journeys Management
-          </h1>
-
-          <p className="mt-1 text-sm text-subtitle">
-            Create, publish, and manage bespoke travel journeys and itineraries.
-          </p>
-        </div>
-
-        <Link
-          to="/journeys/new"
-          className="inline-flex shrink-0 items-center gap-2 rounded-xl bg-brand-primary px-4 py-2.5 text-sm font-medium text-white shadow-sm transition hover:bg-accent"
-        >
-          <Plus className="h-4 w-4" />
-          Create Journey
-        </Link>
-      </div>
+      {/* Header with 30% title & 70% compact statistics */}
+      <PageHeader
+        icon={Compass}
+        title="Journeys Management"
+        subtitle="Create, publish, and manage bespoke travel itineraries."
+        stats={
+          <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 sm:gap-2.5 w-full">
+            <CompactStatCard
+              label="Total Journeys"
+              value={meta?.total ?? journeys.length}
+              subtext="Bespoke catalog"
+              icon={Compass}
+              iconColor="text-primary"
+            />
+            <CompactStatCard
+              label="Live Published"
+              value={`${journeys.filter((j) => (j as any).status === "PUBLISHED").length} Active`}
+              subtext="Public explorer"
+              icon={CheckCircle2}
+              iconColor="text-emerald-500"
+            />
+            <CompactStatCard
+              label="Signatures"
+              value={`${journeys.filter((j) => (j as any).isSignature || (j as any).isFeatured).length} Curated`}
+              subtext="Featured routes"
+              icon={Sparkles}
+              iconColor="text-purple-500"
+            />
+            <CompactStatCard
+              label="Drafts / Review"
+              value={`${journeys.filter((j) => (j as any).status !== "PUBLISHED").length} Drafts`}
+              subtext="In review"
+              icon={Globe}
+              iconColor="text-amber-500"
+            />
+          </div>
+        }
+      />
 
       {/* Filters */}
       <div className="mb-6 flex flex-col gap-3 md:flex-row md:items-center">
@@ -184,6 +204,14 @@ export default function JourneyPages() {
             </option>
           ))}
         </select>
+
+         <Link
+            to="/journeys/new"
+            className="inline-flex shrink-0 items-center gap-2 rounded-xl bg-brand-primary px-4 py-2.5 text-sm font-medium text-white shadow-sm transition hover:bg-accent"
+          >
+            <Plus className="h-4 w-4" />
+            Create Journey
+          </Link>
       </div>
 
       {/* Loading */}

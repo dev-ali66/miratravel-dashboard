@@ -10,10 +10,12 @@ import {
   Share2,
   Sparkles,
   Terminal,
+  Sliders,
 } from "lucide-react"
 import { toast } from "sonner"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { Button } from "@/components/ui/button"
+import { PageHeader, CompactStatCard } from "@/components/shared/PageHeader"
 import { useGetSettings, useUpdateSettings } from "@/hooks/settings/useSettings"
 
 // Modular form components & types
@@ -159,54 +161,81 @@ export default function SettingsPage() {
 
   return (
     <div className="w-full space-y-6 pt-2 pb-16">
-      {/* Page Header */}
-      <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-        <div>
-          <h1 className="flex items-center gap-2.5 text-2xl font-bold tracking-tight text-foreground sm:text-3xl">
-            <Globe className="h-7 w-7 text-primary" />
-            Global Site Settings
-          </h1>
-          <p className="mt-1 text-sm text-muted-foreground">
-            Modular configuration forms for Identity, Brand Assets, Social Channels, Social Meta, and SEO.
-          </p>
-        </div>
+      {/* Page Header with 30% title & 70% compact statistics */}
+      <PageHeader
+        icon={Globe}
+        title="Global Site Settings"
+        subtitle="Modular configuration forms for Identity, Brand Assets, Social, Meta, and SEO."
+        stats={
+          <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 sm:gap-2.5 w-full">
+            <CompactStatCard
+              label="Modules"
+              value="5 Sections"
+              subtext="Identity to SEO"
+              icon={Sliders}
+              iconColor="text-emerald-500"
+            />
+            <CompactStatCard
+              label="Socials"
+              value={`${formData?.socialLinks?.length || 4} Profiles`}
+              subtext="Connected channels"
+              icon={Share2}
+              iconColor="text-blue-500"
+            />
+            <CompactStatCard
+              label="Brand Media"
+              value="8 Assets"
+              subtext="Logos & loaders"
+              icon={ImageIcon}
+              iconColor="text-purple-500"
+            />
+            <CompactStatCard
+              label="SEO / Meta"
+              value="Configured"
+              subtext="Search & OG tags"
+              icon={Search}
+              iconColor="text-amber-500"
+            />
+          </div>
+        }
+      />
 
-        <div className="flex items-center gap-2.5">
-          <Button
-            type="button"
-            variant="outline"
-            onClick={() => {
-              console.log("⚙️ [GLOBAL SITE SETTINGS PAYLOAD]:", formData)
-              toast.info("Site settings payload logged to browser console (F12)")
-            }}
-            className="flex items-center gap-2 cursor-pointer"
-            title="Inspect clean site settings payload in browser console (F12)"
-          >
-            <Terminal className="h-4 w-4 text-primary" />
-            <span>Console Data</span>
-          </Button>
+      {/* Action Bar */}
+      <div className="flex items-center justify-end gap-2.5">
+        <Button
+          type="button"
+          variant="outline"
+          onClick={() => {
+            console.log("⚙️ [GLOBAL SITE SETTINGS PAYLOAD]:", formData)
+            toast.info("Site settings payload logged to browser console (F12)")
+          }}
+          className="flex items-center gap-2 cursor-pointer"
+          title="Inspect clean site settings payload in browser console (F12)"
+        >
+          <Terminal className="h-4 w-4 text-primary" />
+          <span>Console Data</span>
+        </Button>
 
-          <Button
-            type="button"
-            variant="outline"
-            onClick={handleReset}
-            disabled={isSaving}
-            className="flex items-center gap-2 cursor-pointer"
-          >
-            <RotateCcw className="h-4 w-4" />
-            <span>Reset</span>
-          </Button>
+        <Button
+          type="button"
+          variant="outline"
+          onClick={handleReset}
+          disabled={isSaving}
+          className="flex items-center gap-2 cursor-pointer"
+        >
+          <RotateCcw className="h-4 w-4" />
+          <span>Reset</span>
+        </Button>
 
-          <Button
-            type="button"
-            onClick={handleSubmit}
-            disabled={isSaving}
-            className="flex items-center gap-2 shadow-sm cursor-pointer"
-          >
-            <Save className="h-4 w-4" />
-            <span>{isSaving ? "Saving Settings..." : "Save Settings"}</span>
-          </Button>
-        </div>
+        <Button
+          type="button"
+          onClick={handleSubmit}
+          disabled={isSaving}
+          className="flex items-center gap-2 shadow-sm cursor-pointer"
+        >
+          <Save className="h-4 w-4" />
+          <span>{isSaving ? "Saving Settings..." : "Save Settings"}</span>
+        </Button>
       </div>
 
       {/* Separate Forms Tabs */}

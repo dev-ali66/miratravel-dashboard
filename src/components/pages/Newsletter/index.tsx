@@ -15,6 +15,7 @@ import {
   Loader2,
 } from "lucide-react"
 import { Pagination } from "@/components/shared/Pagination"
+import { PageHeader, CompactStatCard } from "@/components/shared/PageHeader"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import {
@@ -24,7 +25,6 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select"
-import { Card, CardContent } from "@/components/ui/card"
 import { cn } from "@/lib/utils"
 import { apiPrivate } from "@/lib/api-client"
 
@@ -146,77 +146,44 @@ export default function NewsletterPage() {
 
   return (
     <div className="w-full space-y-6 pt-2">
-      {/* Header */}
-      <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-        <div>
-          <h1 className="flex items-center gap-2.5 text-2xl font-bold tracking-tight text-foreground sm:text-3xl">
-            <Send className="h-7 w-7 text-primary" />
-            Newsletter & Editorial Subscribers
-          </h1>
-          <p className="mt-1 text-sm text-muted-foreground">
-            Manage live mailing lists, website subscribers, and editorial dispatch subscriptions.
-          </p>
-        </div>
-
-        <div className="flex items-center gap-2">
-          <Button onClick={fetchSubscribers} variant="outline" size="icon" disabled={loading}>
-            <RefreshCw className={cn("h-4 w-4", loading && "animate-spin")} />
-          </Button>
-          <Button onClick={handleExportCSV} variant="outline" className="flex items-center gap-2">
-            <Download className="h-4 w-4" />
-            <span>Export CSV</span>
-          </Button>
-        </div>
-      </div>
-
-      {/* KPI Cards */}
-      <div className="grid grid-cols-1 gap-4 sm:grid-cols-4">
-        <Card className="border-border/60 bg-card/60 backdrop-blur-xl">
-          <CardContent className="p-5">
-            <div className="flex items-center justify-between">
-              <span className="text-xs font-semibold uppercase text-muted-foreground">Total Subscribers</span>
-              <MailCheck className="h-4 w-4 text-emerald-500" />
-            </div>
-            <div className="mt-1 text-2xl font-bold text-foreground">
-              {subscribers.length.toLocaleString()} Total
-            </div>
-          </CardContent>
-        </Card>
-
-        <Card className="border-border/60 bg-card/60 backdrop-blur-xl">
-          <CardContent className="p-5">
-            <div className="flex items-center justify-between">
-              <span className="text-xs font-semibold uppercase text-muted-foreground">Active Subscribed</span>
-              <TrendingUp className="h-4 w-4 text-emerald-500" />
-            </div>
-            <div className="mt-1 text-2xl font-bold text-emerald-600 dark:text-emerald-400">
-              {activeCount.toLocaleString()} Active
-            </div>
-          </CardContent>
-        </Card>
-
-        <Card className="border-border/60 bg-card/60 backdrop-blur-xl">
-          <CardContent className="p-5">
-            <div className="flex items-center justify-between">
-              <span className="text-xs font-semibold uppercase text-muted-foreground">Unsubscribed</span>
-              <Sparkles className="h-4 w-4 text-amber-500" />
-            </div>
-            <div className="mt-1 text-2xl font-bold text-zinc-500">
-              {unsubscribedCount.toLocaleString()} Opted Out
-            </div>
-          </CardContent>
-        </Card>
-
-        <Card className="border-border/60 bg-card/60 backdrop-blur-xl">
-          <CardContent className="p-5">
-            <div className="flex items-center justify-between">
-              <span className="text-xs font-semibold uppercase text-muted-foreground">Deliverability Health</span>
-              <CheckCircle2 className="h-4 w-4 text-blue-500" />
-            </div>
-            <div className="mt-1 text-2xl font-bold text-blue-600 dark:text-blue-400">100% Verified</div>
-          </CardContent>
-        </Card>
-      </div>
+      {/* Universal Page Header with 30% title & 70% compact statistics */}
+      <PageHeader
+        icon={Send}
+        title="Newsletter"
+        subtitle="Manage live mailing lists and subscriber dispatches."
+        stats={
+          <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 sm:gap-2.5 w-full">
+            <CompactStatCard
+              label="Subscribers"
+              value={`${subscribers.length.toLocaleString()}`}
+              subtext="Total audience"
+              icon={MailCheck}
+              iconColor="text-emerald-500"
+            />
+            <CompactStatCard
+              label="Active Status"
+              value={`${activeCount.toLocaleString()}`}
+              subtext="Subscribed"
+              icon={TrendingUp}
+              iconColor="text-blue-500"
+            />
+            <CompactStatCard
+              label="Unsubscribed"
+              value={`${unsubscribedCount.toLocaleString()}`}
+              subtext="Opted out"
+              icon={Sparkles}
+              iconColor="text-amber-500"
+            />
+            <CompactStatCard
+              label="Deliverability"
+              value="100% Valid"
+              subtext="Clean list"
+              icon={CheckCircle2}
+              iconColor="text-emerald-500"
+            />
+          </div>
+        }
+      />
 
       {/* Toolbar */}
       <div className="flex flex-col gap-3 rounded-xl border border-border/60 bg-card/60 p-4 backdrop-blur-xl md:flex-row md:items-center md:justify-between">
@@ -268,6 +235,15 @@ export default function NewsletterPage() {
               <FilterX className="h-4 w-4" />
             </Button>
           )}
+
+          <Button onClick={fetchSubscribers} variant="outline" size="icon" disabled={loading} title="Refresh list">
+            <RefreshCw className={cn("h-4 w-4", loading && "animate-spin")} />
+          </Button>
+
+          <Button onClick={handleExportCSV} variant="outline" className="flex items-center gap-2 shadow-xs">
+            <Download className="h-4 w-4" />
+            <span>Export CSV</span>
+          </Button>
         </div>
       </div>
 

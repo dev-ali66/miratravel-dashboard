@@ -1,7 +1,8 @@
-import { useState } from "react"
+import { useState, useMemo } from "react"
 import { motion } from "framer-motion"
-import { Check, X, Loader2, Inbox } from "lucide-react"
+import { Check, X, Loader2, Inbox, Users, Clock, CheckCircle2, ShieldAlert } from "lucide-react"
 import { Pagination } from "@/components/shared/Pagination"
+import { PageHeader, CompactStatCard } from "@/components/shared/PageHeader"
 import { useGetRequests } from "@/hooks/requests/useGetRequests"
 import { useUpdateRequestStatus } from "@/hooks/requests/useUpdateRequestStatus"
 import RequestDetailsModal from "./RequestDetailsModal"
@@ -17,6 +18,14 @@ export default function RequestListTable() {
 
   const requestList = data?.data || []
   const totalPages = data?.meta?.totalPages || 1
+  const totalCount = data?.meta?.total || requestList.length
+
+  const metrics = useMemo(() => {
+    const pending = requestList.filter((r: any) => r.status === "PENDING").length
+    const approved = requestList.filter((r: any) => r.status === "APPROVED").length
+    const rejected = requestList.filter((r: any) => r.status === "REJECTED").length
+    return { pending, approved, rejected }
+  }, [requestList])
 
   const handlePageChange = (page: number) => {
     setCurrentPage(page)
@@ -26,16 +35,44 @@ export default function RequestListTable() {
 
   return (
     <div className="w-full animate-in pt-2 duration-700 fade-in slide-in-from-bottom-4">
-      <div className="mb-8 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-        <div>
-          <h1 className="flex items-center gap-2 text-3xl font-bold tracking-tight text-foreground">
-            <Inbox className="h-8 w-8 text-primary" /> Instructor Requests
-          </h1>
-          <p className="mt-1 text-sm text-muted-foreground">
-            Review and manage incoming requests to become an instructor.
-          </p>
-        </div>
-      </div>
+      {/* Universal Page Header with 30% title & 70% compact statistics */}
+      <PageHeader
+        icon={Inbox}
+        title="Instructor Requests"
+        subtitle="Review incoming requests to become an instructor."
+        stats={
+          <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 sm:gap-2.5 w-full">
+            <CompactStatCard
+              label="Total Requests"
+              value={totalCount}
+              subtext="Applicant profiles"
+              icon={Users}
+              iconColor="text-primary"
+            />
+            <CompactStatCard
+              label="Pending Review"
+              value={metrics.pending}
+              subtext="Awaiting decision"
+              icon={Clock}
+              iconColor="text-amber-500"
+            />
+            <CompactStatCard
+              label="Approved"
+              value={metrics.approved}
+              subtext="Active instructors"
+              icon={CheckCircle2}
+              iconColor="text-emerald-500"
+            />
+            <CompactStatCard
+              label="Declined"
+              value={metrics.rejected}
+              subtext="Ineligible"
+              icon={ShieldAlert}
+              iconColor="text-rose-500"
+            />
+          </div>
+        }
+      />
 
       <div className="min-h-100 overflow-hidden rounded-2xl border border-border/60 bg-background/50 backdrop-blur-xl">
         {isLoading ? (

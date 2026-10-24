@@ -14,6 +14,8 @@ import {
   FilterX,
   Compass,
   MoreVertical,
+  Users,
+  UserCheck,
 } from "lucide-react"
 import { cn } from "@/lib/utils"
 import { Button } from "@/components/ui/button"
@@ -33,9 +35,9 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
 import { Pagination } from "@/components/shared/Pagination"
+import { PageHeader, CompactStatCard } from "@/components/shared/PageHeader"
 import { useGetUsers, type UserItem } from "@/hooks/users/useGetUsers"
 import { useEditUser } from "@/hooks/users/useEditUser"
-import UserStatsCards from "./UserStatsCards"
 import CreateUserModal from "./CreateUserModal"
 import EditUserModal from "./EditUserModal"
 import DeleteUserModal from "./DeleteUserModal"
@@ -109,28 +111,44 @@ export default function UserListTable() {
 
   return (
     <div className="w-full space-y-6 pt-2">
-      {/* Header */}
-      <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-        <div>
-          <h1 className="text-2xl font-bold tracking-tight text-foreground sm:text-3xl">
-            User Management
-          </h1>
-          <p className="mt-1 text-sm text-muted-foreground">
-            Manage registered travelers, team roles, status access, and account verification.
-          </p>
-        </div>
-
-        <Button
-          onClick={() => setIsCreateModalOpen(true)}
-          className="flex items-center gap-2 shadow-sm"
-        >
-          <UserPlus className="h-4 w-4" />
-          <span>Add New User</span>
-        </Button>
-      </div>
-
-      {/* KPI Stats Cards */}
-      <UserStatsCards stats={stats} isLoading={isLoading} />
+      {/* Universal Page Header with 30% title & 70% compact statistics */}
+      <PageHeader
+        icon={User}
+        title="Users"
+        subtitle="Manage registered travelers, team roles, and account access."
+        stats={
+          <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 sm:gap-2.5 w-full">
+            <CompactStatCard
+              label="Registered"
+              value={stats?.totalUsers ?? 0}
+              subtext="Total accounts"
+              icon={Users}
+              iconColor="text-primary"
+            />
+            <CompactStatCard
+              label="Active Status"
+              value={stats?.activeUsers ?? 0}
+              subtext="Platform active"
+              icon={UserCheck}
+              iconColor="text-emerald-500"
+            />
+            <CompactStatCard
+              label="Verified"
+              value={stats?.verifiedUsers ?? 0}
+              subtext="Identity verified"
+              icon={ShieldCheck}
+              iconColor="text-purple-500"
+            />
+            <CompactStatCard
+              label="Admins"
+              value={stats?.adminUsers ?? 0}
+              subtext="Staff & superadmin"
+              icon={Crown}
+              iconColor="text-amber-500"
+            />
+          </div>
+        }
+      />
 
       {/* Filter and Search Toolbar */}
       <div className="flex flex-col gap-3 rounded-xl border border-border/60 bg-card/60 p-4 backdrop-blur-xl md:flex-row md:items-center md:justify-between">
@@ -221,6 +239,14 @@ export default function UserListTable() {
               <FilterX className="h-4 w-4" />
             </Button>
           )}
+
+          <Button
+            onClick={() => setIsCreateModalOpen(true)}
+            className="flex items-center gap-2 shadow-sm"
+          >
+            <UserPlus className="h-4 w-4" />
+            <span>Add New User</span>
+          </Button>
         </div>
       </div>
 

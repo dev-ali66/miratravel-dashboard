@@ -6,6 +6,7 @@ import {
 import { useDeleteLocation } from "@/hooks/location/useDeleteLocation"
 import { Link } from "react-router-dom"
 import { Pagination } from "@/components/shared/Pagination"
+import { PageHeader, CompactStatCard } from "@/components/shared/PageHeader"
 import { useEffect, useState } from "react"
 import {
   Trash2,
@@ -15,6 +16,8 @@ import {
   Search,
   Globe,
   Sparkles,
+  Building2,
+  CheckCircle2,
 } from "lucide-react"
 import {
   Dialog,
@@ -106,26 +109,44 @@ export default function LocationPages() {
 
   return (
     <div className="w-full animate-in pt-2 duration-700 fade-in slide-in-from-bottom-4">
-      {/* Header */}
-      <div className="mb-6 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-        <div>
-          <h1 className="text-3xl font-bold tracking-tight text-foreground">
-            Location Pages
-          </h1>
-
-          <p className="mt-1 text-sm text-muted-foreground">
-            Manage content for individual location and destination pages.
-          </p>
-        </div>
-
-        <Link
-          to="/locations/new"
-          className="inline-flex shrink-0 items-center gap-2 rounded-lg bg-primary px-4 py-2.5 text-sm font-medium text-primary-foreground transition hover:opacity-90"
-        >
-          <Plus className="h-4 w-4" />
-          Add Location
-        </Link>
-      </div>
+      {/* Header with 30% title & 70% compact statistics */}
+      <PageHeader
+        icon={MapPin}
+        title="Location Pages"
+        subtitle="Manage destination content, countries, and regional guides."
+        stats={
+          <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 sm:gap-2.5 w-full">
+            <CompactStatCard
+              label="Destinations"
+              value={meta?.total ?? pages.length}
+              subtext="Geographic hubs"
+              icon={MapPin}
+              iconColor="text-primary"
+            />
+            <CompactStatCard
+              label="Countries / Reg"
+              value={`${pages.filter((p) => p.type === "COUNTRY" || p.type === "REGION").length}`}
+              subtext="Top-level entities"
+              icon={Globe}
+              iconColor="text-emerald-500"
+            />
+            <CompactStatCard
+              label="Cities & Spots"
+              value={`${pages.filter((p) => p.type === "CITY" || p.type === "ATTRACTION").length}`}
+              subtext="Local attractions"
+              icon={Building2}
+              iconColor="text-blue-500"
+            />
+            <CompactStatCard
+              label="SEO Indexing"
+              value={`${pages.filter((p) => Boolean(p.seoTitle && p.seoDescription)).length} Ready`}
+              subtext="Search tags active"
+              icon={CheckCircle2}
+              iconColor="text-purple-500"
+            />
+          </div>
+        }
+      />
 
       {/* Search + Filters */}
       <div className="mb-6 flex flex-col gap-3 md:flex-row md:items-center">
@@ -167,6 +188,14 @@ export default function LocationPages() {
             }}
           />
         </div>
+
+        <Link
+          to="/locations/new"
+          className="inline-flex shrink-0 items-center gap-2 rounded-xl bg-primary px-4 py-2.5 text-sm font-medium text-primary-foreground shadow-sm transition hover:opacity-90"
+        >
+          <Plus className="h-4 w-4" />
+          Add Location
+        </Link>
       </div>
 
       {/* Loading */}
@@ -221,8 +250,8 @@ export default function LocationPages() {
               const seoKeywords: string[] = Array.isArray(seoData.keywords)
                 ? seoData.keywords
                 : typeof seoData.keywords === "string"
-                ? seoData.keywords.split(",").map((k: string) => k.trim()).filter(Boolean)
-                : []
+                  ? seoData.keywords.split(",").map((k: string) => k.trim()).filter(Boolean)
+                  : []
 
               const isSeoComplete = Boolean(seoTitle && seoDesc)
               const isSeoPartial = Boolean(seoTitle || seoDesc)
@@ -317,28 +346,26 @@ export default function LocationPages() {
                           SEO Meta
                         </span>
                         <span
-                          className={`inline-flex items-center gap-1 rounded-full px-2 py-0.5 text-[10px] font-medium ${
-                            isSeoComplete
+                          className={`inline-flex items-center gap-1 rounded-full px-2 py-0.5 text-[10px] font-medium ${isSeoComplete
                               ? "bg-emerald-500/10 text-emerald-600 dark:text-emerald-400"
                               : isSeoPartial
-                              ? "bg-amber-500/10 text-amber-600 dark:text-amber-400"
-                              : "bg-destructive/10 text-destructive"
-                          }`}
+                                ? "bg-amber-500/10 text-amber-600 dark:text-amber-400"
+                                : "bg-destructive/10 text-destructive"
+                            }`}
                         >
                           <span
-                            className={`h-1.5 w-1.5 rounded-full ${
-                              isSeoComplete
+                            className={`h-1.5 w-1.5 rounded-full ${isSeoComplete
                                 ? "bg-emerald-500"
                                 : isSeoPartial
-                                ? "bg-amber-500"
-                                : "bg-destructive"
-                            }`}
+                                  ? "bg-amber-500"
+                                  : "bg-destructive"
+                              }`}
                           />
                           {isSeoComplete
                             ? "SEO Ready"
                             : isSeoPartial
-                            ? "SEO Partial"
-                            : "SEO Missing"}
+                              ? "SEO Partial"
+                              : "SEO Missing"}
                         </span>
                       </div>
 

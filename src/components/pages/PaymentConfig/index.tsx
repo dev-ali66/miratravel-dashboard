@@ -1,10 +1,11 @@
 import { useState } from "react"
-import { Sliders, Save, CheckCircle2, RotateCcw, DollarSign } from "lucide-react"
+import { Sliders, Save, CheckCircle2, RotateCcw, DollarSign, Clock } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Switch } from "@/components/ui/switch"
 import { Card, CardContent } from "@/components/ui/card"
+import { PageHeader, CompactStatCard } from "@/components/shared/PageHeader"
 import { toast } from "sonner"
 
 export default function PaymentConfigPage() {
@@ -54,28 +55,55 @@ export default function PaymentConfigPage() {
 
   return (
     <div className="w-full space-y-6 pt-2">
-      {/* Header */}
-      <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-        <div>
-          <h1 className="flex items-center gap-2.5 text-2xl font-bold tracking-tight text-foreground sm:text-3xl">
-            <Sliders className="h-7 w-7 text-primary" />
-            Payment Rules & Booking Policy
-          </h1>
-          <p className="mt-1 text-sm text-muted-foreground">
-            Global business rules for booking approvals, staged deposit percentages, and late booking thresholds (MIRA Travel v1.0).
-          </p>
-        </div>
+      {/* Header with 30% title & 70% compact statistics */}
+      <PageHeader
+        icon={Sliders}
+        title="Payment Config"
+        subtitle="Global business rules for booking approvals, staged deposits, and late booking thresholds."
+        stats={
+          <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 sm:gap-2.5 w-full">
+            <CompactStatCard
+              label="Standard Deposit"
+              value={`${config.standardDepositPercentage}%`}
+              subtext="Initial stage"
+              icon={DollarSign}
+              iconColor="text-emerald-500"
+            />
+            <CompactStatCard
+              label="Balance Due"
+              value={`${config.balanceDueDaysBeforeDeparture} Days`}
+              subtext="Before departure"
+              icon={Clock}
+              iconColor="text-blue-500"
+            />
+            <CompactStatCard
+              label="Late Cutoff"
+              value={`${config.lateBookingCutoffDays} Days`}
+              subtext="100% full payment"
+              icon={CheckCircle2}
+              iconColor="text-purple-500"
+            />
+            <CompactStatCard
+              label="Grace Hours"
+              value={`${config.requestConfirmationGraceHours}h`}
+              subtext="Unpaid window"
+              icon={Sliders}
+              iconColor="text-amber-500"
+            />
+          </div>
+        }
+      />
 
-        <div className="flex items-center gap-2">
-          <Button variant="outline" onClick={handleReset} className="flex items-center gap-2">
-            <RotateCcw className="h-4 w-4" />
-            <span>Reset Defaults</span>
-          </Button>
-          <Button onClick={handleSave} disabled={isSaving} className="flex items-center gap-2 shadow-sm">
-            <Save className="h-4 w-4" />
-            <span>{isSaving ? "Saving..." : "Save Policy"}</span>
-          </Button>
-        </div>
+      {/* Action Bar */}
+      <div className="flex items-center justify-end gap-2.5">
+        <Button variant="outline" onClick={handleReset} className="flex items-center gap-2 cursor-pointer">
+          <RotateCcw className="h-4 w-4" />
+          <span>Reset Defaults</span>
+        </Button>
+        <Button onClick={handleSave} disabled={isSaving} className="flex items-center gap-2 shadow-sm cursor-pointer">
+          <Save className="h-4 w-4" />
+          <span>{isSaving ? "Saving..." : "Save Policy"}</span>
+        </Button>
       </div>
 
       {/* Rules Form */}

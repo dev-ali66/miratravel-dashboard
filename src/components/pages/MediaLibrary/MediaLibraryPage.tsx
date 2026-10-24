@@ -16,8 +16,8 @@ import { MediaDropzone } from "./MediaDropzone"
 import { MediaTrashView } from "./MediaTrashView"
 import { StorageOptimizerModal } from "./StorageOptimizerModal"
 import { Pagination } from "@/components/shared/Pagination"
+import { PageHeader, CompactStatCard } from "@/components/shared/PageHeader"
 import { Button } from "@/components/ui/button"
-import { Badge } from "@/components/ui/badge"
 import {
   Image as ImageIcon,
   HardDrive,
@@ -153,119 +153,45 @@ export const MediaLibraryPage: React.FC = () => {
         selectedAsset && "lg:pr-[390px] xl:pr-[430px]"
       )}
     >
-      {/* Page Header */}
-      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
-        <div>
-          <h1 className="text-2xl font-bold tracking-tight text-foreground flex items-center gap-2">
-            Media Library
-            <Badge variant="secondary" className="text-xs font-normal">
-              {stats?.totalCount ?? meta.total ?? 0} Assets
-            </Badge>
-          </h1>
-          <p className="text-sm text-muted-foreground mt-0.5">
-            Central repository with zero-waste SHA-256 deduplication and active usage tracking.
-          </p>
-        </div>
-
-        {/* Top Right: Actions */}
-        <div className="flex items-center gap-2.5">
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={() => setIsOptimizerOpen(true)}
-            className="text-xs h-9 gap-1.5 border-emerald-500/40 text-emerald-700 dark:text-emerald-400 hover:bg-emerald-500/10 hover:border-emerald-500/60 transition-all font-medium"
-            title="Scan and consolidate duplicate files into single masters"
-          >
-            <Zap className="h-4 w-4 text-amber-500 fill-amber-500/40" />
-            Optimize Storage
-            {(optimizerScan?.totalDuplicateGroups ?? 0) > 0 && (
-              <span className="ml-0.5 bg-amber-500/20 text-amber-800 dark:text-amber-200 text-[10px] px-1.5 py-0.5 rounded-full font-bold">
-                {optimizerScan?.totalDuplicateGroups}
-              </span>
-            )}
-          </Button>
-
-          <MediaDropzone
-            onUploadSuccess={() => {
-              refetchGallery()
-              refetchStats()
-              refetchOptimizer()
-            }}
-          />
-        </div>
-      </div>
-
-      {/* KPI Stats Cards */}
-      {stats && (
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-3.5">
-          <div className="p-3.5 rounded-xl border border-border/60 bg-card/60 backdrop-blur-sm shadow-xs flex items-center gap-3">
-            <div className="p-2.5 rounded-lg bg-primary/10 text-primary shrink-0">
-              <HardDrive className="h-5 w-5 stroke-[1.8]" />
-            </div>
-            <div className="truncate">
-              <span className="text-[11px] font-medium text-muted-foreground block">
-                Total Storage
-              </span>
-              <span className="text-base font-bold text-foreground font-mono">
-                {stats.totalSizeFormatted || "0 MB"}
-              </span>
-            </div>
+      {/* Page Header with 30% title & 70% compact statistics */}
+      <PageHeader
+        icon={ImageIcon}
+        title="Media Library"
+        subtitle="Central storage with SHA-256 deduplication and asset tracking."
+        stats={
+          <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 sm:gap-2.5 w-full">
+            <CompactStatCard
+              label="Total Storage"
+              value={stats?.totalSizeFormatted || "0 MB"}
+              subtext="Optimized space"
+              icon={HardDrive}
+              iconColor="text-primary"
+            />
+            <CompactStatCard
+              label="Media Assets"
+              value={`${stats?.imageCount ?? 0} Img / ${stats?.videoCount ?? 0} Vid`}
+              subtext="Catalog items"
+              icon={ImageIcon}
+              iconColor="text-blue-500"
+            />
+            <CompactStatCard
+              label="In Active Use"
+              value={`${Math.max(0, (stats?.totalCount ?? meta.total ?? 0) - (stats?.unusedCount ?? 0))} Used`}
+              subtext={`${stats?.unusedCount ?? 0} unused`}
+              icon={Layers}
+              iconColor="text-emerald-500"
+            />
+            <CompactStatCard
+              label="Trash Grace"
+              value={`${stats?.trashCount ?? 0} Items`}
+              subtext="Click trash tab"
+              icon={Trash2}
+              iconColor="text-amber-500"
+              className="cursor-pointer"
+            />
           </div>
-
-          <div className="p-3.5 rounded-xl border border-border/60 bg-card/60 backdrop-blur-sm shadow-xs flex items-center gap-3">
-            <div className="p-2.5 rounded-lg bg-blue-500/10 text-blue-600 dark:text-blue-400 shrink-0">
-              <ImageIcon className="h-5 w-5 stroke-[1.8]" />
-            </div>
-            <div className="truncate">
-              <span className="text-[11px] font-medium text-muted-foreground block">
-                Images / Videos
-              </span>
-              <span className="text-base font-bold text-foreground">
-                {stats.imageCount ?? 0}{" "}
-                <span className="text-xs font-normal text-muted-foreground">/ {stats.videoCount ?? 0}</span>
-              </span>
-            </div>
-          </div>
-
-          <div className="p-3.5 rounded-xl border border-border/60 bg-card/60 backdrop-blur-sm shadow-xs flex items-center gap-3">
-            <div className="p-2.5 rounded-lg bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 shrink-0">
-              <Layers className="h-5 w-5 stroke-[1.8]" />
-            </div>
-            <div className="truncate">
-              <span className="text-[11px] font-medium text-muted-foreground block">
-                In Active Use
-              </span>
-              <span className="text-base font-bold text-emerald-600 dark:text-emerald-400">
-                {Math.max(0, (stats.totalCount ?? meta.total ?? 0) - (stats.unusedCount ?? 0))}{" "}
-                <span className="text-xs font-normal text-muted-foreground">
-                  ({stats.unusedCount ?? 0} unused)
-                </span>
-              </span>
-            </div>
-          </div>
-
-          <div
-            onClick={() => handleTabChange("trash")}
-            className={cn(
-              "p-3.5 rounded-xl border border-border/60 bg-card/60 backdrop-blur-sm shadow-xs flex items-center gap-3 cursor-pointer hover:border-amber-500/40 transition-colors",
-              activeTab === "trash" && "border-amber-500 bg-amber-500/5 ring-1 ring-amber-500/30"
-            )}
-          >
-            <div className="p-2.5 rounded-lg bg-amber-500/10 text-amber-600 dark:text-amber-400 shrink-0">
-              <Trash2 className="h-5 w-5 stroke-[1.8]" />
-            </div>
-            <div className="truncate">
-              <span className="text-[11px] font-medium text-muted-foreground block">
-                Trash Grace Period
-              </span>
-              <span className="text-base font-bold text-amber-600 dark:text-amber-400">
-                {stats.trashCount ?? 0}{" "}
-                <span className="text-xs font-normal text-muted-foreground">in 30d trash</span>
-              </span>
-            </div>
-          </div>
-        </div>
-      )}
+        }
+      />
 
       {/* Main Tabs (Active Library vs Trash Bin) */}
       <div className="flex items-center gap-2 border-b border-border/60 pb-1">
@@ -308,6 +234,31 @@ export const MediaLibraryPage: React.FC = () => {
             </span>
           ) : null}
         </button>
+         <div className="flex items-center gap-2.5">
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => setIsOptimizerOpen(true)}
+              className="text-xs h-9 gap-1.5 border-emerald-500/40 text-emerald-700 dark:text-emerald-400 hover:bg-emerald-500/10 hover:border-emerald-500/60 transition-all font-medium"
+              title="Scan and consolidate duplicate files into single masters"
+            >
+              <Zap className="h-4 w-4 text-amber-500 fill-amber-500/40" />
+              Optimize Storage
+              {(optimizerScan?.totalDuplicateGroups ?? 0) > 0 && (
+                <span className="ml-0.5 bg-amber-500/20 text-amber-800 dark:text-amber-200 text-[10px] px-1.5 py-0.5 rounded-full font-bold">
+                  {optimizerScan?.totalDuplicateGroups}
+                </span>
+              )}
+            </Button>
+
+            <MediaDropzone
+              onUploadSuccess={() => {
+                refetchGallery()
+                refetchStats()
+                refetchOptimizer()
+              }}
+            />
+          </div>
       </div>
 
       {/* Tab 1: Active Library */}

@@ -32,8 +32,8 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog"
-import { Card, CardContent } from "@/components/ui/card"
 import { Pagination } from "@/components/shared/Pagination"
+import { PageHeader, CompactStatCard } from "@/components/shared/PageHeader"
 import { useAuditSocket, type LiveAuditLog } from "@/hooks/audit/useAuditSocket"
 import axios from "axios"
 
@@ -218,27 +218,60 @@ export default function AuditLogsPage() {
   return (
     <div className="w-full space-y-6 pt-2">
       {/* Header */}
-      <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-        <div>
-          <div className="flex items-center gap-3">
-            <h1 className="flex items-center gap-2.5 text-2xl font-bold tracking-tight text-foreground sm:text-3xl">
-              <History className="h-7 w-7 text-primary" />
-              Audit & Activity Logs
-            </h1>
-            <div
-              className={`inline-flex items-center gap-1.5 rounded-full px-2.5 py-0.5 text-xs font-semibold ${
-                isConnected
-                  ? "bg-emerald-500/10 text-emerald-600 border border-emerald-500/20 dark:text-emerald-400"
-                  : "bg-amber-500/10 text-amber-600 border border-amber-500/20 dark:text-amber-400"
-              }`}
-            >
-              <Radio className={`size-3.5 ${isConnected ? "animate-pulse text-emerald-500" : "text-amber-500"}`} />
-              <span>{isConnected ? "🟢 Live Audit Stream" : "🟡 Connecting..."}</span>
-            </div>
+      {/* Header with 30% title & 70% compact statistics */}
+      <PageHeader
+        icon={History}
+        title="Audit Logs"
+        subtitle={
+          <span>
+            Protected immutable audit trail with live stream from <code className="font-mono text-xs bg-muted px-1.5 py-0.5 rounded">/api/v1/audit</code>.
+          </span>
+        }
+        stats={
+          <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 sm:gap-2.5 w-full">
+            <CompactStatCard
+              label="Live Events"
+              value={`${streamCount} Events`}
+              subtext={isConnected ? "Socket live" : "Connecting..."}
+              icon={Radio}
+              iconColor="text-emerald-500"
+            />
+            <CompactStatCard
+              label="Total Activity"
+              value={`${allLogs.length} Records`}
+              subtext="Historical stream"
+              icon={History}
+              iconColor="text-blue-500"
+            />
+            <CompactStatCard
+              label="Security"
+              value="100% Valid"
+              subtext="Role authorization"
+              icon={ShieldCheck}
+              iconColor="text-emerald-500"
+            />
+            <CompactStatCard
+              label="Auth Mode"
+              value="JWT Strict"
+              subtext="Zero-trust verify"
+              icon={Lock}
+              iconColor="text-purple-500"
+            />
           </div>
-          <p className="mt-1 text-sm text-muted-foreground">
-            Protected immutable audit trail with live WebSockets stream broadcast from <code className="font-mono text-xs bg-muted px-1.5 py-0.5 rounded">/api/v1/audit</code>.
-          </p>
+        }
+      />
+
+      {/* Stream Status & Actions Bar */}
+      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 rounded-xl border border-border/60 bg-card/60 p-3.5 backdrop-blur-xl">
+        <div
+          className={`inline-flex items-center gap-1.5 rounded-full px-2.5 py-1 text-xs font-semibold ${
+            isConnected
+              ? "bg-emerald-500/10 text-emerald-600 border border-emerald-500/20 dark:text-emerald-400"
+              : "bg-amber-500/10 text-amber-600 border border-amber-500/20 dark:text-amber-400"
+          }`}
+        >
+          <Radio className={`size-3.5 ${isConnected ? "animate-pulse text-emerald-500" : "text-amber-500"}`} />
+          <span>{isConnected ? "🟢 Live Audit Stream" : "🟡 Connecting..."}</span>
         </div>
 
         <div className="flex flex-wrap items-center gap-2">
@@ -356,44 +389,7 @@ export default function AuditLogsPage() {
         </div>
       )}
 
-      {/* Summary KPI Cards */}
-      <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
-        <Card className="border-border/60 bg-card/60 backdrop-blur-xl">
-          <CardContent className="flex items-center justify-between p-5">
-            <div>
-              <span className="text-xs font-semibold uppercase text-muted-foreground">Total Events (24h)</span>
-              <div className="mt-1 text-2xl font-bold text-foreground">{allLogs.length}</div>
-            </div>
-            <div className="flex size-10 items-center justify-center rounded-xl bg-blue-500/10 text-blue-500 border border-blue-500/20">
-              <History className="size-5" />
-            </div>
-          </CardContent>
-        </Card>
 
-        <Card className="border-border/60 bg-card/60 backdrop-blur-xl">
-          <CardContent className="flex items-center justify-between p-5">
-            <div>
-              <span className="text-xs font-semibold uppercase text-muted-foreground">Security & Role Integrity</span>
-              <div className="mt-1 text-2xl font-bold text-emerald-600 dark:text-emerald-400">100% Protected</div>
-            </div>
-            <div className="flex size-10 items-center justify-center rounded-xl bg-emerald-500/10 text-emerald-500 border border-emerald-500/20">
-              <ShieldCheck className="size-5" />
-            </div>
-          </CardContent>
-        </Card>
-
-        <Card className="border-border/60 bg-card/60 backdrop-blur-xl">
-          <CardContent className="flex items-center justify-between p-5">
-            <div>
-              <span className="text-xs font-semibold uppercase text-muted-foreground">Audit Route Mode</span>
-              <div className="mt-1 text-2xl font-bold text-purple-600 dark:text-purple-400">Protected JWT</div>
-            </div>
-            <div className="flex size-10 items-center justify-center rounded-xl bg-purple-500/10 text-purple-500 border border-purple-500/20">
-              <Lock className="size-5" />
-            </div>
-          </CardContent>
-        </Card>
-      </div>
 
       {/* Filter Toolbar */}
       <div className="flex flex-col gap-3 rounded-xl border border-border/60 bg-card/60 p-4 backdrop-blur-xl md:flex-row md:items-center md:justify-between">

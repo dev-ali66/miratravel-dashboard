@@ -19,24 +19,17 @@ import {
 } from "@/components/ui/dropdown-menu"
 import {
   User,
-  Settings,
   ShieldCheck,
-  Bell,
   Activity,
-  Command,
-  HelpCircle,
   LogOut,
   Menu,
   ChevronDown,
-  KeyRound,
-  ExternalLink,
   Laptop,
   CheckCircle2,
   Clock,
   Code2,
 } from "lucide-react"
 import { cn } from "@/lib/utils"
-import { toast } from "sonner"
 
 const defaultAvatar = "https://i.pravatar.cc/150?u=default"
 
@@ -154,12 +147,6 @@ export function Navbar({ onMenuClick }: NavbarProps) {
   const sessionDuration =
     sessionInfo?.durationFormatted ||
     (isRemembered ? "30d" : "30m")
-
-  const handleDummyFeature = (featureName: string) => {
-    toast.info(`${featureName} is under active development and will be available in the next release!`, {
-      duration: 3000,
-    })
-  }
 
   return (
     <>
@@ -312,7 +299,7 @@ export function Navbar({ onMenuClick }: NavbarProps) {
 
                 <DropdownMenuSeparator className="my-1 bg-border/60" />
 
-                {/* Group 1: Profile & Core Account */}
+                {/* Group: Profile & Core Account */}
                 <DropdownMenuGroup>
                   <DropdownMenuItem
                     onClick={() => navigate("/settings")}
@@ -341,67 +328,11 @@ export function Navbar({ onMenuClick }: NavbarProps) {
                   </DropdownMenuItem>
 
                   <DropdownMenuItem
-                    onClick={() => navigate("/settings")}
-                    className="flex items-center gap-2.5 px-2.5 py-2 text-xs font-medium text-foreground rounded-lg cursor-pointer transition-colors hover:bg-muted focus:bg-muted"
-                  >
-                    <Settings className="h-4 w-4 text-muted-foreground" />
-                    <span>Site Preferences</span>
-                  </DropdownMenuItem>
-                </DropdownMenuGroup>
-
-                <DropdownMenuSeparator className="my-1 bg-border/60" />
-
-                {/* Group 2: Productivity & System Features */}
-                <DropdownMenuGroup>
-                  <DropdownMenuItem
-                    onClick={() => handleDummyFeature("Notification Center")}
-                    className="flex items-center justify-between px-2.5 py-2 text-xs font-medium text-foreground rounded-lg cursor-pointer transition-colors hover:bg-muted focus:bg-muted"
-                  >
-                    <div className="flex items-center gap-2.5">
-                      <Bell className="h-4 w-4 text-muted-foreground" />
-                      <span>Notifications</span>
-                    </div>
-                    <span className="flex h-4 w-4 items-center justify-center rounded-full bg-primary text-[9px] font-bold text-primary-foreground">
-                      3
-                    </span>
-                  </DropdownMenuItem>
-
-                  <DropdownMenuItem
                     onClick={() => navigate("/audit-logs")}
                     className="flex items-center gap-2.5 px-2.5 py-2 text-xs font-medium text-foreground rounded-lg cursor-pointer transition-colors hover:bg-muted focus:bg-muted"
                   >
                     <Activity className="h-4 w-4 text-muted-foreground" />
                     <span>Live Audit Logs</span>
-                  </DropdownMenuItem>
-
-                  <DropdownMenuItem
-                    onClick={() => handleDummyFeature("API Keys & Webhooks Manager")}
-                    className="flex items-center gap-2.5 px-2.5 py-2 text-xs font-medium text-foreground rounded-lg cursor-pointer transition-colors hover:bg-muted focus:bg-muted"
-                  >
-                    <KeyRound className="h-4 w-4 text-muted-foreground" />
-                    <span>API Keys & Integrations</span>
-                  </DropdownMenuItem>
-
-                  <DropdownMenuItem
-                    onClick={() => handleDummyFeature("Keyboard Shortcuts Guide")}
-                    className="flex items-center justify-between px-2.5 py-2 text-xs font-medium text-foreground rounded-lg cursor-pointer transition-colors hover:bg-muted focus:bg-muted"
-                  >
-                    <div className="flex items-center gap-2.5">
-                      <Command className="h-4 w-4 text-muted-foreground" />
-                      <span>Keyboard Shortcuts</span>
-                    </div>
-                    <span className="text-[10px] text-muted-foreground font-mono">⌘K</span>
-                  </DropdownMenuItem>
-
-                  <DropdownMenuItem
-                    onClick={() => handleDummyFeature("Documentation & Help Center")}
-                    className="flex items-center justify-between px-2.5 py-2 text-xs font-medium text-foreground rounded-lg cursor-pointer transition-colors hover:bg-muted focus:bg-muted"
-                  >
-                    <div className="flex items-center gap-2.5">
-                      <HelpCircle className="h-4 w-4 text-muted-foreground" />
-                      <span>Help & Support</span>
-                    </div>
-                    <ExternalLink className="h-3 w-3 text-muted-foreground" />
                   </DropdownMenuItem>
                 </DropdownMenuGroup>
 

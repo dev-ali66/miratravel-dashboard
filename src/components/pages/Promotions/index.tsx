@@ -16,7 +16,6 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select"
-import { Card, CardContent } from "@/components/ui/card"
 import {
   Dialog,
   DialogContent,
@@ -26,6 +25,7 @@ import {
 } from "@/components/ui/dialog"
 import { Switch } from "@/components/ui/switch"
 import { Pagination } from "@/components/shared/Pagination"
+import { PageHeader, CompactStatCard } from "@/components/shared/PageHeader"
 import { cn } from "@/lib/utils"
 
 export interface PromotionVoucher {
@@ -190,58 +190,44 @@ export default function PromotionsPage() {
 
   return (
     <div className="w-full space-y-6 pt-2">
-      {/* Header */}
-      <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-        <div>
-          <h1 className="flex items-center gap-2.5 text-2xl font-bold tracking-tight text-foreground sm:text-3xl">
-            <Tag className="h-7 w-7 text-primary" />
-            Promotions & Voucher Management
-          </h1>
-          <p className="mt-1 text-sm text-muted-foreground">
-            Create and track promotional codes, private client vouchers, seasonal campaigns, and discount rules.
-          </p>
-        </div>
-
-        <Button onClick={() => setIsCreateOpen(true)} className="flex items-center gap-2">
-          <Plus className="h-4 w-4" />
-          <span>Create Voucher Code</span>
-        </Button>
-      </div>
-
-      {/* KPI Cards */}
-      <div className="grid grid-cols-1 gap-4 sm:grid-cols-4">
-        <Card className="border-border/60 bg-card/60 backdrop-blur-xl">
-          <CardContent className="p-5">
-            <span className="text-xs font-semibold uppercase text-muted-foreground">Active Campaigns</span>
-            <div className="mt-1 text-2xl font-bold text-emerald-600 dark:text-emerald-400">
-              {promos.filter((p) => p.isActive).length} Codes Live
-            </div>
-          </CardContent>
-        </Card>
-
-        <Card className="border-border/60 bg-card/60 backdrop-blur-xl">
-          <CardContent className="p-5">
-            <span className="text-xs font-semibold uppercase text-muted-foreground">Total Redemptions</span>
-            <div className="mt-1 text-2xl font-bold text-foreground">
-              {promos.reduce((acc, p) => acc + p.usageCount, 0)} Bookings
-            </div>
-          </CardContent>
-        </Card>
-
-        <Card className="border-border/60 bg-card/60 backdrop-blur-xl">
-          <CardContent className="p-5">
-            <span className="text-xs font-semibold uppercase text-muted-foreground">Total Value Discounted</span>
-            <div className="mt-1 text-2xl font-bold text-foreground">$64,500</div>
-          </CardContent>
-        </Card>
-
-        <Card className="border-border/60 bg-card/60 backdrop-blur-xl">
-          <CardContent className="p-5">
-            <span className="text-xs font-semibold uppercase text-muted-foreground">Avg. Boost In Cart Size</span>
-            <div className="mt-1 text-2xl font-bold text-blue-600 dark:text-blue-400">+28.4%</div>
-          </CardContent>
-        </Card>
-      </div>
+      {/* Header with 30% title & 70% compact statistics */}
+      <PageHeader
+        icon={Tag}
+        title="Promotions"
+        subtitle="Manage promotional discount codes and vouchers."
+        stats={
+          <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 sm:gap-2.5 w-full">
+            <CompactStatCard
+              label="Campaigns"
+              value={`${promos.filter((p) => p.isActive).length} Active`}
+              subtext="Live codes"
+              icon={Tag}
+              iconColor="text-emerald-500"
+            />
+            <CompactStatCard
+              label="Redemptions"
+              value={`${promos.reduce((acc, p) => acc + p.usageCount, 0)}`}
+              subtext="Bookings redeemed"
+              icon={Check}
+              iconColor="text-blue-500"
+            />
+            <CompactStatCard
+              label="Discounted"
+              value="$64,500"
+              subtext="Total savings"
+              icon={Tag}
+              iconColor="text-purple-500"
+            />
+            <CompactStatCard
+              label="Cart Boost"
+              value="+28.4%"
+              subtext="Avg cart uplift"
+              icon={Tag}
+              iconColor="text-amber-500"
+            />
+          </div>
+        }
+      />
 
       {/* Toolbar */}
       <div className="flex flex-col gap-3 rounded-xl border border-border/60 bg-card/60 p-4 backdrop-blur-xl md:flex-row md:items-center md:justify-between">
@@ -279,6 +265,11 @@ export default function PromotionsPage() {
               <FilterX className="h-4 w-4" />
             </Button>
           )}
+
+          <Button onClick={() => setIsCreateOpen(true)} className="flex items-center gap-2 shadow-xs">
+            <Plus className="h-4 w-4" />
+            <span>Create Voucher Code</span>
+          </Button>
         </div>
       </div>
 

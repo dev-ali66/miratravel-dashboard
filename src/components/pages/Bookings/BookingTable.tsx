@@ -11,9 +11,11 @@ import {
   Filter,
   CreditCard,
   Ban,
+  CalendarDays,
 } from "lucide-react"
 import { cn } from "@/lib/utils"
 import { Pagination } from "@/components/shared/Pagination"
+import { PageHeader, CompactStatCard } from "@/components/shared/PageHeader"
 import {
   useGetBookings,
   type BookingItem,
@@ -169,64 +171,44 @@ export default function BookingTable() {
 
   return (
     <div className="flex flex-col gap-6">
-      {/* Top KPI Metrics Overview */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-        <div className="rounded-2xl border border-border/60 bg-background/50 p-4 backdrop-blur-xl shadow-xs flex items-center justify-between">
-          <div className="flex flex-col">
-            <span className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">
-              Total Bookings
-            </span>
-            <span className="text-2xl font-bold font-mono text-foreground mt-1">
-              {metrics.total}
-            </span>
+      {/* Universal Page Header with 30% title & 70% compact statistics */}
+      <PageHeader
+        icon={CalendarDays}
+        title="Bookings Management"
+        subtitle="Manage incoming travel requests, approve bookings, and monitor payments."
+        stats={
+          <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 sm:gap-2.5 w-full">
+            <CompactStatCard
+              label="Total Bookings"
+              value={metrics.total}
+              subtext="All incoming trips"
+              icon={Layers}
+              iconColor="text-primary"
+            />
+            <CompactStatCard
+              label="Pending Review"
+              value={metrics.pending}
+              subtext="Awaiting review"
+              icon={Clock}
+              iconColor="text-blue-500"
+            />
+            <CompactStatCard
+              label="Confirmed"
+              value={metrics.confirmed}
+              subtext="Approved departures"
+              icon={CheckCircle2}
+              iconColor="text-emerald-500"
+            />
+            <CompactStatCard
+              label="Financials"
+              value={`€${metrics.collected.toLocaleString()}`}
+              subtext={`€${metrics.outstanding.toLocaleString()} due`}
+              icon={DollarSign}
+              iconColor="text-amber-500"
+            />
           </div>
-          <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-primary/10 text-primary">
-            <Layers className="h-5 w-5" />
-          </div>
-        </div>
-
-        <div className="rounded-2xl border border-blue-500/20 bg-blue-500/5 p-4 backdrop-blur-xl shadow-xs flex items-center justify-between">
-          <div className="flex flex-col">
-            <span className="text-xs font-semibold text-blue-700 dark:text-blue-300 uppercase tracking-wider">
-              Pending Review
-            </span>
-            <span className="text-2xl font-bold font-mono text-blue-700 dark:text-blue-300 mt-1">
-              {metrics.pending}
-            </span>
-          </div>
-          <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-blue-500/10 text-blue-600">
-            <Clock className="h-5 w-5" />
-          </div>
-        </div>
-
-        <div className="rounded-2xl border border-emerald-500/20 bg-emerald-500/5 p-4 backdrop-blur-xl shadow-xs flex items-center justify-between">
-          <div className="flex flex-col">
-            <span className="text-xs font-semibold text-emerald-700 dark:text-emerald-300 uppercase tracking-wider">
-              Confirmed Trips
-            </span>
-            <span className="text-2xl font-bold font-mono text-emerald-700 dark:text-emerald-300 mt-1">
-              {metrics.confirmed}
-            </span>
-          </div>
-          <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-emerald-500/10 text-emerald-600">
-            <CheckCircle2 className="h-5 w-5" />
-          </div>
-        </div>
-
-        <div className="rounded-2xl border border-amber-500/20 bg-amber-500/5 p-4 backdrop-blur-xl shadow-xs flex items-center justify-between">
-          <div className="flex flex-col">
-            <span className="text-xs font-semibold text-amber-700 dark:text-amber-300 uppercase tracking-wider">
-              Collected / Outstanding
-            </span>
-            <div className="text-sm font-bold font-mono text-amber-700 dark:text-amber-300 mt-1">
-              €{metrics.collected.toLocaleString()} / <span className="opacity-70">€{metrics.outstanding.toLocaleString()}</span>
-            </div>
-          </div>
-          <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-amber-500/10 text-amber-600">
-            <DollarSign className="h-5 w-5" />
-          </div>
-        </div>
-      </div>
+        }
+      />
 
       {/* Filter & Search Toolbar */}
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-3 rounded-2xl border border-border/60 bg-background/50 p-4 backdrop-blur-xl">

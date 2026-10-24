@@ -41,7 +41,6 @@ import BookingsPage from "@/components/pages/Bookings"
 import AuditLogsPage from "@/components/pages/AuditLogs"
 import SystemHealthPage from "@/components/pages/SystemHealth"
 import PaymentConfigPage from "@/components/pages/PaymentConfig"
-import ConciergePage from "@/components/pages/Concierge"
 import ReviewsPage from "@/components/pages/Reviews"
 import PromotionsPage from "@/components/pages/Promotions"
 import NewsletterPage from "@/components/pages/Newsletter"
@@ -49,6 +48,7 @@ import NotificationsPage from "@/components/pages/Notifications"
 import SettingsPage from "@/components/pages/Settings"
 
 import PageLoader from "@/components/shared/PageLoader"
+import InquiryPage from "./components/pages/Inquiry"
 
 export function App() {
   return (
@@ -67,9 +67,9 @@ export function App() {
             <Route index element={<Home />} />
 
             <Route path="user" element={<UserListPage />} />
-            <Route path="concierge" element={<ConciergePage />} />
-            <Route path="inquiries" element={<ConciergePage />} />
-            <Route path="inquiry" element={<ConciergePage />} />
+            {/* <Route path="concierge" element={<ConciergePage />} /> */}
+            <Route path="inquiries" element={<InquiryPage />} />
+            <Route path="inquiry" element={<InquiryPage />} />
             <Route path="reviews" element={<ReviewsPage />} />
             <Route path="promotions" element={<PromotionsPage />} />
             <Route path="newsletter" element={<NewsletterPage />} />

@@ -22,6 +22,7 @@ import {
 } from "@/components/ui/select"
 import { Card, CardContent } from "@/components/ui/card"
 import { Pagination } from "@/components/shared/Pagination"
+import { PageHeader, CompactStatCard } from "@/components/shared/PageHeader"
 import { cn } from "@/lib/utils"
 
 export interface ReviewItem {
@@ -160,68 +161,44 @@ export default function ReviewsPage() {
 
   return (
     <div className="w-full space-y-6 pt-2">
-      {/* Header */}
-      <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-        <div>
-          <h1 className="flex items-center gap-2.5 text-2xl font-bold tracking-tight text-foreground sm:text-3xl">
-            <Star className="h-7 w-7 fill-amber-400 text-amber-500" />
-            Traveler Reviews & Testimonials
-          </h1>
-          <p className="mt-1 text-sm text-muted-foreground">
-            Manage guest feedback, ratings, journey testimonials, and homepage showcase approvals.
-          </p>
-        </div>
-      </div>
-
-      {/* KPI Cards */}
-      <div className="grid grid-cols-1 gap-4 sm:grid-cols-4">
-        <Card className="border-border/60 bg-card/60 backdrop-blur-xl">
-          <CardContent className="p-5">
-            <div className="flex items-center justify-between">
-              <span className="text-xs font-semibold uppercase text-muted-foreground">Average Rating</span>
-              <Star className="h-4 w-4 fill-amber-400 text-amber-500" />
-            </div>
-            <div className="mt-1 flex items-baseline gap-2">
-              <span className="text-2xl font-bold text-foreground">4.92</span>
-              <span className="text-xs text-muted-foreground">/ 5.0 (98% 5-star)</span>
-            </div>
-          </CardContent>
-        </Card>
-
-        <Card className="border-border/60 bg-card/60 backdrop-blur-xl">
-          <CardContent className="p-5">
-            <div className="flex items-center justify-between">
-              <span className="text-xs font-semibold uppercase text-muted-foreground">Total Reviews</span>
-              <MessageSquare className="h-4 w-4 text-primary" />
-            </div>
-            <div className="mt-1 text-2xl font-bold text-foreground">{reviews.length} Verified</div>
-          </CardContent>
-        </Card>
-
-        <Card className="border-border/60 bg-card/60 backdrop-blur-xl">
-          <CardContent className="p-5">
-            <div className="flex items-center justify-between">
-              <span className="text-xs font-semibold uppercase text-muted-foreground">Pending Moderation</span>
-              <Clock className="h-4 w-4 text-amber-500" />
-            </div>
-            <div className="mt-1 text-2xl font-bold text-amber-600 dark:text-amber-400">
-              {reviews.filter((r) => r.status === "PENDING_MODERATION").length} Needs Review
-            </div>
-          </CardContent>
-        </Card>
-
-        <Card className="border-border/60 bg-card/60 backdrop-blur-xl">
-          <CardContent className="p-5">
-            <div className="flex items-center justify-between">
-              <span className="text-xs font-semibold uppercase text-muted-foreground">Featured On Site</span>
-              <Sparkles className="h-4 w-4 text-purple-500" />
-            </div>
-            <div className="mt-1 text-2xl font-bold text-purple-600 dark:text-purple-400">
-              {reviews.filter((r) => r.isFeatured).length} Showcased
-            </div>
-          </CardContent>
-        </Card>
-      </div>
+      {/* Universal Page Header with 30% title & 70% compact statistics */}
+      <PageHeader
+        icon={Star}
+        title="Reviews & Ratings"
+        subtitle="Manage guest reviews, ratings, and testimonials."
+        stats={
+          <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 sm:gap-2.5 w-full">
+            <CompactStatCard
+              label="Rating"
+              value="4.92 / 5.0"
+              subtext="98% 5-star"
+              icon={Star}
+              iconColor="text-amber-500"
+            />
+            <CompactStatCard
+              label="Total Reviews"
+              value={`${reviews.length} Verified`}
+              subtext="Guest feedback"
+              icon={MessageSquare}
+              iconColor="text-blue-500"
+            />
+            <CompactStatCard
+              label="Pending"
+              value={`${reviews.filter((r) => r.status === "PENDING_MODERATION").length} Needs Review`}
+              subtext="Moderation queue"
+              icon={Clock}
+              iconColor="text-amber-500"
+            />
+            <CompactStatCard
+              label="Showcased"
+              value={`${reviews.filter((r) => r.isFeatured).length} Featured`}
+              subtext="Site highlights"
+              icon={Sparkles}
+              iconColor="text-purple-500"
+            />
+          </div>
+        }
+      />
 
       {/* Toolbar */}
       <div className="flex flex-col gap-3 rounded-xl border border-border/60 bg-card/60 p-4 backdrop-blur-xl md:flex-row md:items-center md:justify-between">

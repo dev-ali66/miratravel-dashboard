@@ -5,6 +5,7 @@ import {
 } from "@/hooks/experience/useGetExperiences"
 import { useDeleteExperience } from "@/hooks/experience/useDeleteExperience"
 import { Pagination } from "@/components/shared/Pagination"
+import { PageHeader, CompactStatCard } from "@/components/shared/PageHeader"
 import { Link } from "react-router-dom"
 import { useEffect, useState } from "react"
 import {
@@ -15,6 +16,8 @@ import {
   Sparkles,
   Compass,
   Globe,
+  CheckCircle2,
+  Layers,
 } from "lucide-react"
 import {
   Dialog,
@@ -125,34 +128,49 @@ export default function ExperiencePages() {
     }
   }
 
+  const experiences = data?.data || []
+  const meta = data?.meta
+
   return (
     <div className="flex flex-col gap-6">
-      {/* Page Header */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-border/70 pb-5">
-        <div>
-          <div className="flex items-center gap-2.5">
-            <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-primary/10 text-primary">
-              <Sparkles className="h-5 w-5" />
-            </div>
-            <div>
-              <h1 className="text-xl md:text-2xl font-bold tracking-tight text-foreground">
-                Experiences Management
-              </h1>
-              <p className="text-xs text-muted-foreground mt-0.5">
-                Curate independent content entities with classification, geography links, and bespoke itineraries.
-              </p>
-            </div>
+      {/* Page Header with 30% title & 70% compact statistics */}
+      <PageHeader
+        icon={Sparkles}
+        title="Experiences"
+        subtitle="Curate activities, geography links, and bespoke itineraries."
+        stats={
+          <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 sm:gap-2.5 w-full">
+            <CompactStatCard
+              label="Experiences"
+              value={meta?.total ?? experiences.length}
+              subtext="Activities & stays"
+              icon={Sparkles}
+              iconColor="text-primary"
+            />
+            <CompactStatCard
+              label="Live Published"
+              value={`${experiences.filter((e) => (e as any).status === "PUBLISHED").length} Active`}
+              subtext="Public explorer"
+              icon={CheckCircle2}
+              iconColor="text-emerald-500"
+            />
+            <CompactStatCard
+              label="Highlights"
+              value={`${experiences.filter((e) => (e as any).isFeatured).length} Curated`}
+              subtext="Hero featured"
+              icon={Compass}
+              iconColor="text-purple-500"
+            />
+            <CompactStatCard
+              label="Categories"
+              value={`${EXPERIENCE_TYPES.length} Types`}
+              subtext="Cultural to active"
+              icon={Layers}
+              iconColor="text-blue-500"
+            />
           </div>
-        </div>
-
-        <Link
-          to="/experiences/new"
-          className="inline-flex items-center justify-center gap-2 rounded-xl bg-primary px-4 py-2.5 text-xs md:text-sm font-semibold text-primary-foreground shadow-sm hover:bg-primary/90 transition-colors self-start sm:self-auto cursor-pointer"
-        >
-          <Plus className="h-4 w-4" />
-          <span>Create Experience</span>
-        </Link>
-      </div>
+        }
+      />
 
       {/* Filter and Search Bar */}
       <div className="flex flex-col gap-3">
@@ -251,7 +269,16 @@ export default function ExperiencePages() {
             <Sparkles className="h-3.5 w-3.5" />
             <span>Featured</span>
           </button>
+
+           <Link
+            to="/experiences/new"
+            className="inline-flex items-center justify-center gap-2 rounded-xl bg-primary px-4 py-2.5 text-xs md:text-sm font-semibold text-primary-foreground shadow-sm hover:bg-primary/90 transition-colors self-start sm:self-auto cursor-pointer"
+          >
+            <Plus className="h-4 w-4" />
+            <span>Create Experience</span>
+          </Link>
         </div>
+        
       </div>
 
       {/* Experience List Cards */}

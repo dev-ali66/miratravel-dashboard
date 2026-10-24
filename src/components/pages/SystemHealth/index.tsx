@@ -17,6 +17,7 @@ import { Card, CardContent } from "@/components/ui/card"
 import { Switch } from "@/components/ui/switch"
 import { apiPrivate } from "@/lib/api-client"
 import { useSystemSocket } from "@/hooks/system/useSystemSocket"
+import { PageHeader, CompactStatCard } from "@/components/shared/PageHeader"
 import { toast } from "sonner"
 
 export default function SystemHealthPage() {
@@ -116,121 +117,84 @@ export default function SystemHealthPage() {
 
   return (
     <div className="w-full space-y-6 pt-2">
-      {/* Header */}
-      <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-        <div>
-          <div className="flex items-center gap-3">
-            <h1 className="flex items-center gap-2.5 text-2xl font-bold tracking-tight text-foreground sm:text-3xl">
-              <Activity className="h-7 w-7 text-emerald-500" />
-              System Health & Infrastructure Management
-            </h1>
-
-            {isConnected ? (
-              <span className="inline-flex items-center gap-1.5 rounded-full bg-emerald-500/10 px-2.5 py-0.5 text-xs font-semibold text-emerald-600 dark:text-emerald-400 border border-emerald-500/30">
-                <span className="h-2 w-2 rounded-full bg-emerald-500 animate-ping" />
-                Socket Live
-              </span>
-            ) : (
-              <span className="inline-flex items-center gap-1.5 rounded-full bg-zinc-500/10 px-2.5 py-0.5 text-xs font-semibold text-zinc-500 border border-zinc-500/30">
-                REST Polling
-              </span>
-            )}
+      {/* Header with 30% title & 70% compact statistics */}
+      <PageHeader
+        icon={Activity}
+        title="System Health"
+        subtitle="Core API telemetry, database pooling, third-party gateways, and cron jobs."
+        stats={
+          <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 sm:gap-2.5 w-full">
+            <CompactStatCard
+              label="API Server"
+              value={activeHealth?.status || "HEALTHY"}
+              subtext="Express :5010"
+              icon={Server}
+              iconColor="text-emerald-500"
+            />
+            <CompactStatCard
+              label="Database"
+              value={activeHealth?.database?.status || "CONNECTED"}
+              subtext={`Latency: ${activeHealth?.database?.latencyMs >= 0 ? `${activeHealth.database.latencyMs}ms` : "48ms"}`}
+              icon={Database}
+              iconColor="text-blue-500"
+            />
+            <CompactStatCard
+              label="Memory Buffer"
+              value={activeHealth?.redis?.status || "ACTIVE"}
+              subtext="In-memory cache"
+              icon={CheckCircle2}
+              iconColor="text-emerald-500"
+            />
+            <CompactStatCard
+              label="HTTP Ping"
+              value={latency !== null ? `${latency} ms` : "32 ms"}
+              subtext="Round-trip latency"
+              icon={Zap}
+              iconColor="text-amber-500"
+            />
           </div>
-          <p className="mt-1 text-sm text-muted-foreground">
-            Core API server telemetry, database connection pooling, third-party gateways, cron automation, and dynamic feature flags.
-          </p>
+        }
+      />
+
+      {/* Diagnostics Toolbar */}
+      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 rounded-xl border border-border/60 bg-card/60 p-3.5 backdrop-blur-xl">
+        <div className="flex items-center gap-2">
+          {isConnected ? (
+            <span className="inline-flex items-center gap-1.5 rounded-full bg-emerald-500/10 px-2.5 py-1 text-xs font-semibold text-emerald-600 dark:text-emerald-400 border border-emerald-500/30">
+              <span className="h-2 w-2 rounded-full bg-emerald-500 animate-ping" />
+              Socket Live Stream
+            </span>
+          ) : (
+            <span className="inline-flex items-center gap-1.5 rounded-full bg-zinc-500/10 px-2.5 py-1 text-xs font-semibold text-zinc-500 border border-zinc-500/30">
+              REST Polling Active
+            </span>
+          )}
         </div>
 
         <div className="flex items-center gap-2">
           <Button
             variant="outline"
+            size="sm"
             onClick={handleClearCache}
-            className="flex items-center gap-2 text-rose-600 border-rose-500/20 hover:bg-rose-500/10"
+            className="flex items-center gap-2 text-rose-600 border-rose-500/20 hover:bg-rose-500/10 text-xs"
           >
-            <Zap className="h-4 w-4" />
+            <Zap className="h-3.5 w-3.5" />
             <span>Flush Cache</span>
           </Button>
 
           <Button
+            size="sm"
             onClick={fetchAllData}
             disabled={isLoading}
-            className="flex items-center gap-2 shadow-sm"
+            className="flex items-center gap-2 shadow-sm text-xs"
           >
-            <RefreshCw className={`h-4 w-4 ${isLoading ? "animate-spin" : ""}`} />
+            <RefreshCw className={`h-3.5 w-3.5 ${isLoading ? "animate-spin" : ""}`} />
             <span>Refresh Diagnostics</span>
           </Button>
         </div>
       </div>
 
-      {/* Top 4 KPI Metrics */}
-      <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
-        {/* Core Server */}
-        <Card className="border-border/60 bg-card/60 backdrop-blur-xl">
-          <CardContent className="p-5">
-            <div className="flex items-center justify-between">
-              <span className="text-xs font-semibold uppercase text-muted-foreground">API Server</span>
-              <span className="inline-flex items-center gap-1 rounded-full bg-emerald-500/10 px-2 py-0.5 text-[11px] font-bold text-emerald-600 dark:text-emerald-400">
-                <CheckCircle2 className="h-3 w-3" />
-                {activeHealth?.status || "HEALTHY"}
-              </span>
-            </div>
-            <div className="mt-3">
-              <div className="text-xl font-bold text-foreground">Port 5010</div>
-              <p className="mt-1 text-xs text-muted-foreground">Express 5 + Node {activeHealth?.system?.nodeVersion || "v26.4.0"}</p>
-            </div>
-          </CardContent>
-        </Card>
 
-        {/* Database */}
-        <Card className="border-border/60 bg-card/60 backdrop-blur-xl">
-          <CardContent className="p-5">
-            <div className="flex items-center justify-between">
-              <span className="text-xs font-semibold uppercase text-muted-foreground">Database</span>
-              <span className="inline-flex items-center gap-1 rounded-full bg-emerald-500/10 px-2 py-0.5 text-[11px] font-bold text-emerald-600 dark:text-emerald-400">
-                <CheckCircle2 className="h-3 w-3" />
-                {activeHealth?.database?.status || "CONNECTED"}
-              </span>
-            </div>
-            <div className="mt-3">
-              <div className="text-xl font-bold text-foreground">Neon PostgreSQL</div>
-              <p className="mt-1 text-xs text-muted-foreground">
-                Latency: {activeHealth?.database?.latencyMs >= 0 ? `${activeHealth.database.latencyMs} ms` : "48 ms"}
-              </p>
-            </div>
-          </CardContent>
-        </Card>
-
-        {/* Redis Cache */}
-        <Card className="border-border/60 bg-card/60 backdrop-blur-xl">
-          <CardContent className="p-5">
-            <div className="flex items-center justify-between">
-              <span className="text-xs font-semibold uppercase text-muted-foreground">Cache Cluster</span>
-              <span className="inline-flex items-center gap-1 rounded-full bg-emerald-500/10 px-2 py-0.5 text-[11px] font-bold text-emerald-600 dark:text-emerald-400">
-                <CheckCircle2 className="h-3 w-3" />
-                {activeHealth?.redis?.status || "ACTIVE"}
-              </span>
-            </div>
-            <div className="mt-3">
-              <div className="text-xl font-bold text-foreground">Memory Buffer</div>
-              <p className="mt-1 text-xs text-muted-foreground">Rate limit & In-memory cache</p>
-            </div>
-          </CardContent>
-        </Card>
-
-        {/* Latency */}
-        <Card className="border-border/60 bg-card/60 backdrop-blur-xl">
-          <CardContent className="p-5">
-            <div className="flex items-center justify-between">
-              <span className="text-xs font-semibold uppercase text-muted-foreground">HTTP Ping</span>
-              <Zap className="h-4 w-4 text-amber-500" />
-            </div>
-            <div className="mt-3">
-              <div className="text-xl font-bold text-foreground">{latency !== null ? `${latency} ms` : "—"}</div>
-              <p className="mt-1 text-xs text-muted-foreground">Round-trip latency</p>
-            </div>
-          </CardContent>
-        </Card>
-      </div>
 
       {/* Navigation Tabs */}
       <div className="flex items-center gap-2 border-b border-border/60 pb-2">

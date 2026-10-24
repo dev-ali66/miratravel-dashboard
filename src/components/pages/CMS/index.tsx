@@ -1,6 +1,8 @@
 import MiraLoader from "@/components/shared/MiraLoader"
 import { useGetPages } from "@/hooks/cms/useGetPages"
 import { Link } from "react-router-dom"
+import { FileText, Layers, Globe, CheckCircle2 } from "lucide-react"
+import { PageHeader, CompactStatCard } from "@/components/shared/PageHeader"
 
 export default function CMSPage() {
   const { data, isLoading } = useGetPages()
@@ -53,16 +55,43 @@ export default function CMSPage() {
 
   return (
     <div className="w-full animate-in pt-2 duration-700 fade-in slide-in-from-bottom-4">
-      <div className="mb-8 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-        <div>
-          <h1 className="text-3xl font-bold tracking-tight text-foreground">
-            Content Management System
-          </h1>
-          <p className="mt-1 text-sm text-muted-foreground">
-            Configure site pages, branding, footers, and section content.
-          </p>
-        </div>
-      </div>
+      <PageHeader
+        icon={FileText}
+        title="Content Management"
+        subtitle="Configure site pages, branding, footers, and section content."
+        stats={
+          <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 sm:gap-2.5 w-full">
+            <CompactStatCard
+              label="Templates"
+              value={`${displayedPages.length} Pages`}
+              subtext="Site page layouts"
+              icon={FileText}
+              iconColor="text-primary"
+            />
+            <CompactStatCard
+              label="DB Synced"
+              value={`${displayedPages.filter((p) => p.isExisting).length} Active`}
+              subtext="Saved in  DB"
+              icon={CheckCircle2}
+              iconColor="text-emerald-500"
+            />
+            <CompactStatCard
+              label="Core Slugs"
+              value={`${ALLOWED_SLUGS.length} Defined`}
+              subtext="Protected routes"
+              icon={Layers}
+              iconColor="text-blue-500"
+            />
+            <CompactStatCard
+              label="Delivery"
+              value="Headless"
+              subtext="Zero downtime cache"
+              icon={Globe}
+              iconColor="text-purple-500"
+            />
+          </div>
+        }
+      />
 
       {isLoading ? (
         <MiraLoader text="Loading CMS pages..." className="py-12 min-h-[300px]" />
