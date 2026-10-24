@@ -34,6 +34,7 @@ import {
   Send,
   Bell,
   Info,
+  Image as ImageIcon,
 } from "lucide-react"
 
 /* =========================================================
@@ -49,6 +50,7 @@ const iconMap = {
   logout: LogOut,
   user: User,
   cms: FileText,
+  media: ImageIcon,
   locations: LocateIcon,
   experiences: Sparkles,
   journeys: Compass,

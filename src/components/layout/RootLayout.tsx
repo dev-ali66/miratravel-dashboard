@@ -23,6 +23,7 @@ export function RootLayout() {
       title: "Content & Editorial",
       items: [
         { href: "/cms", label: "CMS Pages", icon: "cms" },
+        { href: "/media-library", label: "Media Library", icon: "media" as any },
         { href: "/journeys", label: "Journeys", icon: "journeys" as any },
         { href: "/location", label: "Locations", icon: "locations" },
         { href: "/experiences", label: "Experiences", icon: "experiences" as any },

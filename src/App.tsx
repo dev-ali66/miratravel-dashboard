@@ -34,6 +34,7 @@ import { JourneyForm } from "./components/pages/Journey/JourneyForm"
 
 import StoriesPages from "./components/pages/Stories"
 import { StoryEditorLayout } from "./components/pages/Stories/StoryEditorLayout"
+import MediaLibraryPage from "@/components/pages/MediaLibrary"
 
 import IAMPage from "@/components/pages/IAM"
 import BookingsPage from "@/components/pages/Bookings"
@@ -81,6 +82,7 @@ export function App() {
             <Route path="experiences" element={<ExperiencePages />} />
             <Route path="experience" element={<ExperiencePages />} />
             <Route path="stories" element={<StoriesPages />} />
+            <Route path="media-library" element={<MediaLibraryPage />} />
             
             <Route path="iam" element={<IAMPage />} />
             <Route path="bookings" element={<BookingsPage />} />
