@@ -114,7 +114,7 @@ export const NavbarBrandLogo = () => {
       return (
         <Link
           to="/"
-          className="inline-flex items-center h-full max-h-14 py-5 transition-opacity hover:opacity-90 shrink-0"
+          className="inline-flex items-center h-full max-h-14 py-0 transition-opacity hover:opacity-90 shrink-0"
         >
           <UniversalMultimediaPreview
             multimedia={mediaObj as any}
