@@ -122,9 +122,11 @@ export function MediaPickerModal({
   const { data: galleryData, isLoading, isFetching } = galleryQuery
 
   const [accumulatedAssets, setAccumulatedAssets] = useState<MediaAsset[]>([])
+  const isFetchingMoreRef = useRef<boolean>(false)
 
   useEffect(() => {
     if (galleryData?.data) {
+      isFetchingMoreRef.current = false
       if (page === 1) {
         setAccumulatedAssets(galleryData.data)
       } else {
@@ -137,9 +139,17 @@ export function MediaPickerModal({
     }
   }, [galleryData, page])
 
+  const handleLoadMore = () => {
+    if (isFetchingMoreRef.current || (isFetching && page > 1)) return
+    if (assets.length >= (galleryData?.meta?.total ?? 0)) return
+    isFetchingMoreRef.current = true
+    setPage((p) => p + 1)
+  }
+
   const filterKey = `${debouncedSearch}-${typeFilter}-${sortBy}`
   useEffect(() => {
     setAccumulatedAssets([])
+    isFetchingMoreRef.current = false
   }, [filterKey])
 
   const assets = accumulatedAssets.length > 0 ? accumulatedAssets : (galleryData?.data || [])
@@ -551,8 +561,8 @@ export function MediaPickerModal({
                   pageSizeOptions={[12, 24, 48, 96]}
                   loadedCount={assets.length}
                   hasMore={assets.length < meta.total}
-                  isLoadingMore={isFetching && page > 1}
-                  onLoadMore={() => setPage((p) => p + 1)}
+                  isLoadingMore={isFetchingMoreRef.current || (isFetching && page > 1)}
+                  onLoadMore={handleLoadMore}
                   onPageChange={setPage}
                   onPageSizeChange={(sz) => {
                     setAccumulatedAssets([])

@@ -170,6 +170,16 @@ export function Pagination({
     return Array.from(new Set([...pageSizeOptions, effectivePageSize])).sort((a, b) => a - b)
   }, [pageSizeOptions, effectivePageSize])
 
+  // Defense-in-depth latch to prevent multiple triggers within a single intersection event
+  const hasTriggeredRef = useRef<boolean>(false)
+
+  // Reset the trigger latch whenever loading finishes, loaded items count increases, or page changes
+  useEffect(() => {
+    if (!isLoadingMore) {
+      hasTriggeredRef.current = false
+    }
+  }, [isLoadingMore, loadedCount, safeCurrentPage, effectiveHasMore])
+
   // IntersectionObserver for auto infinite scroll
   useEffect(() => {
     if (mode !== "infinite" || infiniteTrigger !== "auto" || !effectiveHasMore || isLoadingMore || !effectiveOnLoadMore) {
@@ -184,16 +194,17 @@ export function Pagination({
     const observer = new IntersectionObserver(
       (entries) => {
         const first = entries[0]
-        if (first?.isIntersecting && effectiveHasMore && !isLoadingMore) {
+        if (first?.isIntersecting && effectiveHasMore && !isLoadingMore && !hasTriggeredRef.current) {
+          hasTriggeredRef.current = true
           if (debounceTimer) clearTimeout(debounceTimer)
           debounceTimer = setTimeout(() => {
             effectiveOnLoadMore()
-          }, 100)
+          }, 150)
         }
       },
       {
         root: null,
-        rootMargin: "0px 0px 50px 0px",
+        rootMargin: "0px 0px 80px 0px",
         threshold: 0.1,
       }
     )

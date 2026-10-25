@@ -16,6 +16,7 @@ import { MediaDropzone } from "./MediaDropzone"
 import { MediaTrashView } from "./MediaTrashView"
 import { StorageOptimizerModal } from "./StorageOptimizerModal"
 import { Pagination } from "@/components/shared/Pagination"
+import { useListingPagination } from "@/hooks/ui/useListingPagination"
 import { PageHeader, CompactStatCard } from "@/components/shared/PageHeader"
 import { Button } from "@/components/ui/button"
 import {
@@ -40,10 +41,8 @@ export const MediaLibraryPage: React.FC = () => {
     () => (searchParams.get("view") as "grid" | "table") || "grid"
   )
 
-  // Filter params
-  const [params, setParams] = useState<MediaGalleryParams>({
-    page: Number(searchParams.get("page")) || 1,
-    limit: 30,
+  // Filter params (without manual page/limit coupling)
+  const [params, setParams] = useState<Omit<MediaGalleryParams, "page" | "limit">>({
     search: searchParams.get("search") || "",
     type: (searchParams.get("type") as any) || "all",
     inUse: (searchParams.get("inUse") as any) || "all",
@@ -59,15 +58,54 @@ export const MediaLibraryPage: React.FC = () => {
   // Data queries
   const { data: stats, refetch: refetchStats } = useMediaStats()
   const { data: optimizerScan, refetch: refetchOptimizer } = useStorageOptimizerScan()
+
+  // Unified pagination manager with strict concurrency guard
+  const filterKey = `${params.search}-${params.type}-${params.inUse}-${params.sortBy}-${activeTab}`
+
+  const {
+    mode,
+    currentPage,
+    setCurrentPage,
+    setTargetItems,
+    columns,
+    effectiveLimit,
+    pageSizeOptions,
+    gridRef,
+    displayItems: assets,
+    hasMore,
+    isLoadingMore,
+    handleLoadMore,
+    setIncomingData,
+  } = useListingPagination<MediaAsset>({
+    mode: "infinite",
+    initialTargetItems: 30,
+    isGrid: viewMode === "grid",
+    gridColumns: { base: 2, sm: 3, md: 4, lg: 5, xl: 6 },
+    filterKey,
+    keyExtractor: (item) => item.id,
+  })
+
   const {
     data: galleryData,
     isLoading,
     isFetching,
     refetch: refetchGallery,
   } = useMediaGallery({
-    ...params,
+    page: currentPage,
+    limit: effectiveLimit,
+    search: params.search,
+    type: params.type,
+    inUse: params.inUse,
+    sortBy: params.sortBy,
     status: activeTab === "trash" ? "IN_TRASH" : "ACTIVE",
   })
+
+  // Sync incoming data into pagination manager
+  useEffect(() => {
+    if (galleryData) {
+      setIncomingData(galleryData.data, galleryData.meta?.total)
+    }
+  }, [galleryData, setIncomingData])
 
   // Mutations
   const softDeleteMutation = useSoftDeleteMedia()
@@ -78,9 +116,9 @@ export const MediaLibraryPage: React.FC = () => {
     const urlTab = (searchParams.get("tab") as "active" | "trash") || "active"
     if (urlTab !== activeTab) {
       setActiveTab(urlTab)
+      setCurrentPage(1)
       setParams((prev) => ({
         ...prev,
-        page: 1,
         status: urlTab === "trash" ? "IN_TRASH" : "ACTIVE",
       }))
     }
@@ -88,14 +126,13 @@ export const MediaLibraryPage: React.FC = () => {
     if (urlView !== viewMode) {
       setViewMode(urlView)
     }
-  }, [searchParams])
+  }, [searchParams, activeTab, viewMode, setCurrentPage])
 
-  // Sync params, activeTab, and viewMode to URL cleanly
+  // Sync filters, activeTab, and viewMode to URL cleanly (never spam page number into URL in infinite mode)
   useEffect(() => {
     const q = new URLSearchParams()
     if (activeTab === "trash") q.set("tab", "trash")
     if (viewMode !== "grid") q.set("view", viewMode)
-    if (params.page && params.page > 1) q.set("page", String(params.page))
     if (params.search) q.set("search", params.search)
     if (params.type && params.type !== "all") q.set("type", params.type)
     if (params.inUse && params.inUse !== "all") q.set("inUse", params.inUse)
@@ -106,15 +143,15 @@ export const MediaLibraryPage: React.FC = () => {
     if (currentStr !== nextStr) {
       setSearchParams(q, { replace: true })
     }
-  }, [params, activeTab, viewMode, setSearchParams])
+  }, [params.search, params.type, params.inUse, params.sortBy, activeTab, viewMode, searchParams, setSearchParams])
 
   const handleTabChange = (newTab: "active" | "trash") => {
     setSelectedIds([])
     setSelectedAsset(null)
     setActiveTab(newTab)
+    setCurrentPage(1)
     setParams((prev) => ({
       ...prev,
-      page: 1,
       status: newTab === "trash" ? "IN_TRASH" : "ACTIVE",
     }))
   }
@@ -130,7 +167,6 @@ export const MediaLibraryPage: React.FC = () => {
   }
 
   const handleToggleSelectAll = () => {
-    const assets = galleryData?.data || []
     if (assets.every((a) => selectedIds.includes(a.id))) {
       setSelectedIds([])
     } else {
@@ -143,30 +179,6 @@ export const MediaLibraryPage: React.FC = () => {
     refetchStats()
   }
 
-  const [accumulatedAssets, setAccumulatedAssets] = useState<MediaAsset[]>([])
-
-  // Reset or accumulate assets for infinite scroll stream
-  useEffect(() => {
-    if (galleryData?.data) {
-      if ((params.page || 1) === 1) {
-        setAccumulatedAssets(galleryData.data)
-      } else {
-        setAccumulatedAssets((prev) => {
-          const ids = new Set(prev.map((a) => a.id))
-          const fresh = galleryData.data.filter((a) => !ids.has(a.id))
-          return [...prev, ...fresh]
-        })
-      }
-    }
-  }, [galleryData, params.page])
-
-  // Reset accumulated assets on filter or tab change
-  const filterKey = `${params.search}-${params.type}-${params.inUse}-${params.sortBy}-${activeTab}`
-  useEffect(() => {
-    setAccumulatedAssets([])
-  }, [filterKey])
-
-  const assets = accumulatedAssets.length > 0 ? accumulatedAssets : (galleryData?.data || [])
   const meta = galleryData?.meta || { page: 1, limit: 30, total: 0, totalPages: 1 }
 
   return (
@@ -291,9 +303,12 @@ export const MediaLibraryPage: React.FC = () => {
       {activeTab === "active" && (
         <div className="space-y-4">
           <MediaFilters
-            params={params}
+            params={{ ...params, page: currentPage, limit: effectiveLimit }}
             viewMode={viewMode}
-            onParamsChange={(newP) => setParams((prev) => ({ ...prev, ...newP }))}
+            onParamsChange={(newP) => {
+              if (newP.page) setCurrentPage(newP.page)
+              setParams((prev) => ({ ...prev, ...newP }))
+            }}
             onViewModeChange={handleViewModeChange}
             onRefresh={handleRefresh}
             onToggleSelectAll={handleToggleSelectAll}
@@ -303,14 +318,16 @@ export const MediaLibraryPage: React.FC = () => {
           />
 
           {viewMode === "grid" ? (
-            <MediaGrid
-              assets={assets}
-              selectedAssetId={selectedAsset?.id}
-              selectedIds={selectedIds}
-              onSelectAsset={(a) => setSelectedAsset(a)}
-              onToggleSelectId={handleToggleSelectId}
-              isLoading={isLoading}
-            />
+            <div ref={gridRef}>
+              <MediaGrid
+                assets={assets}
+                selectedAssetId={selectedAsset?.id}
+                selectedIds={selectedIds}
+                onSelectAsset={(a) => setSelectedAsset(a)}
+                onToggleSelectId={handleToggleSelectId}
+                isLoading={isLoading && currentPage === 1}
+              />
+            </div>
           ) : (
             <MediaTableView
               assets={assets}
@@ -320,28 +337,26 @@ export const MediaLibraryPage: React.FC = () => {
               onToggleSelectId={handleToggleSelectId}
               onToggleSelectAll={handleToggleSelectAll}
               onSoftDelete={(id) => softDeleteMutation.mutate(id)}
-              isLoading={isLoading}
+              isLoading={isLoading && currentPage === 1}
             />
           )}
 
           {/* Universal Pagination Bar */}
-          {meta && (
+          {galleryData?.meta && (
             <Pagination
-              mode="infinite"
-              currentPage={meta.page}
-              totalPages={meta.totalPages}
-              totalItems={meta.total}
-              pageSize={meta.limit}
-              pageSizeOptions={[15, 30, 60, 120]}
+              mode={mode}
+              currentPage={currentPage}
+              totalPages={galleryData.meta.totalPages}
+              totalItems={galleryData.meta.total}
+              pageSize={effectiveLimit}
+              pageSizeOptions={pageSizeOptions}
               loadedCount={assets.length}
-              hasMore={assets.length < meta.total}
-              isLoadingMore={isFetching && meta.page > 1}
-              onLoadMore={() => setParams((prev) => ({ ...prev, page: (prev.page || 1) + 1 }))}
-              onPageChange={(p) => setParams((prev) => ({ ...prev, page: p }))}
-              onPageSizeChange={(sz) => {
-                setAccumulatedAssets([])
-                setParams((prev) => ({ ...prev, limit: sz, page: 1 }))
-              }}
+              hasMore={hasMore}
+              isLoadingMore={isLoadingMore || (isFetching && currentPage > 1)}
+              onLoadMore={handleLoadMore}
+              onPageChange={setCurrentPage}
+              onPageSizeChange={setTargetItems}
+              columns={columns}
               className="mt-6"
             />
           )}
@@ -349,7 +364,29 @@ export const MediaLibraryPage: React.FC = () => {
       )}
 
       {/* Tab 2: Trash Recovery Bin */}
-      {activeTab === "trash" && <MediaTrashView assets={assets} isLoading={isLoading} />}
+      {activeTab === "trash" && (
+        <div className="space-y-4">
+          <MediaTrashView assets={assets} isLoading={isLoading && currentPage === 1} />
+          {galleryData?.meta && galleryData.meta.total > 0 && (
+            <Pagination
+              mode={mode}
+              currentPage={currentPage}
+              totalPages={galleryData.meta.totalPages}
+              totalItems={galleryData.meta.total}
+              pageSize={effectiveLimit}
+              pageSizeOptions={pageSizeOptions}
+              loadedCount={assets.length}
+              hasMore={hasMore}
+              isLoadingMore={isLoadingMore || (isFetching && currentPage > 1)}
+              onLoadMore={handleLoadMore}
+              onPageChange={setCurrentPage}
+              onPageSizeChange={setTargetItems}
+              columns={columns}
+              className="mt-6"
+            />
+          )}
+        </div>
+      )}
 
       {/* Right-Side Fixed Inspector Sidebar (Mirrors Left Sidebar Architecture) */}
       <MediaInspectorDrawer
