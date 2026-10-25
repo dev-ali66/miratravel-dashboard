@@ -16,6 +16,7 @@ import {
   Mail,
   FolderOpen,
   CheckCircle2,
+  HardDrive,
 } from "lucide-react"
 import { useGetDashboardStatistics } from "@/hooks/analysis/useGetDashboardStatistics"
 import { cn } from "@/lib/utils"
@@ -54,6 +55,7 @@ export default function CockpitDeck() {
   const navigate = useNavigate()
   const { data } = useGetDashboardStatistics()
   const [chartMode, setChartMode] = useState<"revenue" | "bookings">("revenue")
+  const [infraMode, setInfraMode] = useState<"compute" | "storage">("compute")
   const [hoveredIdx, setHoveredIdx] = useState<number | null>(null)
 
   const modules = data?.modules
@@ -122,6 +124,7 @@ export default function CockpitDeck() {
   const usedRamGb = vps?.usedMemoryGb ?? 0
   const ramPercent = vps?.memoryPercent ?? 0
   const cpuCores = vps?.cpuCores ?? 0
+  const storage = vps?.storage
   const isPm2 = pm2?.isPm2 ?? false
   const backendInstances = pm2?.backendInstances ?? 1
   const frontendInstances = pm2?.frontendInstances ?? 1
@@ -311,128 +314,295 @@ export default function CockpitDeck() {
           {/* Top Control Bar */}
           <div className="flex items-center justify-between gap-2 pb-1.5 border-b border-border/40">
             <div className="flex items-center gap-2 min-w-0">
-              <span className="flex h-2 w-2 rounded-full bg-chart-4 animate-pulse shrink-0" />
+              <span className={cn(
+                "flex h-2 w-2 rounded-full animate-pulse shrink-0",
+                infraMode === "compute" ? "bg-chart-4" : "bg-chart-5"
+              )} />
               <h3 className="text-xs font-bold font-mono tracking-tight text-foreground truncate">
-                INFRASTRUCTURE TELEMETRY
+                {infraMode === "compute" ? "COMPUTE TELEMETRY" : "VPS STORAGE TELEMETRY"}
               </h3>
             </div>
-            <div className="flex items-center gap-2 shrink-0">
+
+            {/* Mode Switcher + Live Health Link */}
+            <div className="flex items-center gap-1.5 shrink-0">
               <span className={cn(
-                "text-[9px] font-mono font-bold px-1.5 py-0.5 rounded border uppercase",
+                "text-[9px] font-mono font-bold px-1.5 py-0.5 rounded border uppercase hidden sm:inline-block",
                 isPm2
                   ? "bg-chart-5/15 text-chart-5 border-chart-5/30"
                   : "bg-chart-4/15 text-chart-4 border-chart-4/30"
               )}>
-                {isPm2 ? `PM2: ${onlineProcesses} Online` : `Fleet: ${onlineProcesses} Active`}
+                {isPm2 ? `PM2: ${onlineProcesses}` : `Fleet: ${onlineProcesses}`}
               </span>
+
+              <div className="flex items-center rounded-lg border border-border/60 bg-muted/40 p-0.5 text-xs">
+                <button
+                  onClick={() => setInfraMode("compute")}
+                  className={cn(
+                    "flex items-center gap-1 px-1.5 py-0.5 rounded-sm text-[9px] font-mono transition-all",
+                    infraMode === "compute"
+                      ? "bg-chart-4 text-white font-bold shadow-2xs"
+                      : "text-muted-foreground hover:text-foreground"
+                  )}
+                >
+                  <Cpu className="h-2.5 w-2.5" />
+                  <span>Compute</span>
+                </button>
+                <button
+                  onClick={() => setInfraMode("storage")}
+                  className={cn(
+                    "flex items-center gap-1 px-1.5 py-0.5 rounded-sm text-[9px] font-mono transition-all",
+                    infraMode === "storage"
+                      ? "bg-chart-5 text-white font-bold shadow-2xs"
+                      : "text-muted-foreground hover:text-foreground"
+                  )}
+                >
+                  <HardDrive className="h-2.5 w-2.5" />
+                  <span>Storage</span>
+                </button>
+              </div>
+
               <button
                 onClick={() => navigate("/system-health")}
-                className="flex items-center gap-1 text-[10px] font-mono font-semibold text-chart-5 hover:underline"
+                className="flex items-center gap-0.5 text-[10px] font-mono font-semibold text-chart-5 hover:underline"
               >
-                <span>Live Health</span>
+                <span>Health</span>
                 <ArrowUpRight className="h-3 w-3" />
               </button>
             </div>
           </div>
 
-          {/* Dual Diagnostics Strip (VPS CPU % & VPS RAM %) */}
-          <div className="grid grid-cols-2 gap-2">
-            {/* Box 1: VPS CPU Usage */}
-            <div className="p-2 rounded-lg border border-chart-4/20 bg-chart-4/5 flex items-center justify-between">
-              <div className="min-w-0 flex-1 pr-1">
-                <span className="text-[10px] text-muted-foreground font-mono block">VPS CPU Load</span>
-                <div className="flex items-baseline gap-1.5 mt-0.5">
-                  <span className="text-sm font-extrabold font-mono text-chart-4">{vpsCpu}%</span>
-                  <span className="text-[9px] text-muted-foreground font-mono">{cpuCores} Cores</span>
+          {infraMode === "compute" ? (
+            <>
+              {/* Dual Diagnostics Strip (VPS CPU % & VPS RAM %) */}
+              <div className="grid grid-cols-2 gap-2">
+                {/* Box 1: VPS CPU Usage */}
+                <div className="p-2 rounded-lg border border-chart-4/20 bg-chart-4/5 flex items-center justify-between">
+                  <div className="min-w-0 flex-1 pr-1">
+                    <span className="text-[10px] text-muted-foreground font-mono block">VPS CPU Load</span>
+                    <div className="flex items-baseline gap-1.5 mt-0.5">
+                      <span className="text-sm font-extrabold font-mono text-chart-4">{vpsCpu}%</span>
+                      <span className="text-[9px] text-muted-foreground font-mono">{cpuCores} Cores</span>
+                    </div>
+                    {/* Micro Load Bar */}
+                    <div className="h-1 w-full bg-chart-4/20 rounded-full mt-1 overflow-hidden">
+                      <div
+                        className="h-full bg-chart-4 rounded-full transition-all duration-500"
+                        style={{ width: `${Math.min(100, Math.max(vpsCpu, 4))}%` }}
+                      />
+                    </div>
+                  </div>
+                  <div className="h-6 w-6 rounded-sm bg-chart-4/15 border border-chart-4/30 flex items-center justify-center shrink-0">
+                    <Cpu className="h-3.5 w-3.5 text-chart-4" />
+                  </div>
                 </div>
-                {/* Micro Load Bar */}
-                <div className="h-1 w-full bg-chart-4/20 rounded-full mt-1 overflow-hidden">
-                  <div
-                    className="h-full bg-chart-4 rounded-full transition-all duration-500"
-                    style={{ width: `${Math.min(100, Math.max(vpsCpu, 4))}%` }}
-                  />
-                </div>
-              </div>
-              <div className="h-6 w-6 rounded-sm bg-chart-4/15 border border-chart-4/30 flex items-center justify-center shrink-0">
-                <Cpu className="h-3.5 w-3.5 text-chart-4" />
-              </div>
-            </div>
 
-            {/* Box 2: VPS RAM / Memory */}
-            <div className="p-2 rounded-lg border border-chart-5/20 bg-chart-5/5 flex items-center justify-between">
-              <div className="min-w-0 flex-1 pr-1">
-                <span className="text-[10px] text-muted-foreground font-mono block">VPS Memory (RAM)</span>
-                <div className="flex items-baseline gap-1.5 mt-0.5">
-                  <span className="text-sm font-extrabold font-mono text-chart-5">
-                    {usedRamGb > 0 ? `${usedRamGb}G` : `${memoryHeap}M`}
+                {/* Box 2: VPS RAM / Memory */}
+                <div className="p-2 rounded-lg border border-chart-5/20 bg-chart-5/5 flex items-center justify-between">
+                  <div className="min-w-0 flex-1 pr-1">
+                    <span className="text-[10px] text-muted-foreground font-mono block">VPS Memory (RAM)</span>
+                    <div className="flex items-baseline gap-1.5 mt-0.5">
+                      <span className="text-sm font-extrabold font-mono text-chart-5">
+                        {usedRamGb > 0 ? `${usedRamGb}G` : `${memoryHeap}M`}
+                      </span>
+                      <span className="text-[9px] text-muted-foreground font-mono">
+                        {totalRamGb > 0 ? `of ${totalRamGb}GB (${ramPercent}%)` : `Buffer`}
+                      </span>
+                    </div>
+                    {/* Micro Memory Bar */}
+                    <div className="h-1 w-full bg-chart-5/20 rounded-full mt-1 overflow-hidden">
+                      <div
+                        className="h-full bg-chart-5 rounded-full transition-all duration-500"
+                        style={{ width: `${Math.min(100, Math.max(ramPercent, 10))}%` }}
+                      />
+                    </div>
+                  </div>
+                  <div className="h-6 w-6 rounded-sm bg-chart-5/15 border border-chart-5/30 flex items-center justify-center shrink-0">
+                    <Wifi className="h-3.5 w-3.5 text-chart-5" />
+                  </div>
+                </div>
+              </div>
+
+              {/* PM2 Process Fleet & Service Matrix */}
+              <div className="p-2 rounded-lg border border-border/50 bg-muted/20 flex flex-col gap-1.5">
+                <div className="flex items-center justify-between text-[10px] font-mono">
+                  <span className="text-muted-foreground font-semibold flex items-center gap-1.5">
+                    <span className="h-1.5 w-1.5 rounded-full bg-chart-4" /> Backend Process
                   </span>
-                  <span className="text-[9px] text-muted-foreground font-mono">
-                    {totalRamGb > 0 ? `of ${totalRamGb}GB (${ramPercent}%)` : `Buffer`}
+                  <span className="text-foreground font-bold flex items-center gap-1.5">
+                    <span className="text-[9px] px-1.5 py-0.2 rounded bg-chart-4/15 text-chart-4 font-mono font-bold">
+                      {backendInstances} {backendInstances === 1 ? "Instance" : "Instances"}
+                    </span>
+                    <span>Port 5010</span>
                   </span>
                 </div>
-                {/* Micro Memory Bar */}
-                <div className="h-1 w-full bg-chart-5/20 rounded-full mt-1 overflow-hidden">
-                  <div
-                    className="h-full bg-chart-5 rounded-full transition-all duration-500"
-                    style={{ width: `${Math.min(100, Math.max(ramPercent, 10))}%` }}
-                  />
+                <div className="flex items-center justify-between text-[10px] font-mono">
+                  <span className="text-muted-foreground font-semibold flex items-center gap-1.5">
+                    <span className="h-1.5 w-1.5 rounded-full bg-chart-5" /> Frontend Process
+                  </span>
+                  <span className="text-foreground font-bold flex items-center gap-1.5">
+                    <span className="text-[9px] px-1.5 py-0.2 rounded bg-chart-5/15 text-chart-5 font-mono font-bold">
+                      {frontendInstances} {frontendInstances === 1 ? "Instance" : "Instances"}
+                    </span>
+                    <span>Port 5173 / Next</span>
+                  </span>
+                </div>
+                <div className="flex items-center justify-between text-[10px] font-mono">
+                  <span className="text-muted-foreground font-semibold flex items-center gap-1.5">
+                    <span className="h-1.5 w-1.5 rounded-full bg-chart-3" />  PostgreSQL
+                  </span>
+                  <span className="text-chart-4 font-bold flex items-center gap-1">
+                    <CheckCircle2 className="h-3 w-3" /> {dbLatency}ms Ping
+                  </span>
                 </div>
               </div>
-              <div className="h-6 w-6 rounded-sm bg-chart-5/15 border border-chart-5/30 flex items-center justify-center shrink-0">
-                <Wifi className="h-3.5 w-3.5 text-chart-5" />
+
+              {/* Telemetry Footer */}
+              <div className="flex items-center justify-between gap-2 pt-1 border-t border-border/40 text-[10px] font-mono">
+                <div className="flex items-center gap-2 text-muted-foreground truncate">
+                  <ShieldCheck className="h-3.5 w-3.5 text-chart-2 shrink-0" />
+                  <span>Uptime: <strong className="text-foreground font-bold">{formattedUptime}</strong></span>
+                  <span className="text-border">|</span>
+                  <span>Events: <strong className="text-foreground font-bold">{totalAudit}</strong></span>
+                  <span className="text-border">|</span>
+                  <span className="cursor-pointer hover:text-chart-5" onClick={() => setInfraMode("storage")}>
+                    Disk: <strong className="text-foreground font-bold">{storage?.usedFormatted || "253G"}</strong>
+                  </span>
+                </div>
+                <span
+                  onClick={() => navigate("/audit-logs")}
+                  className="text-chart-5 hover:underline font-semibold cursor-pointer shrink-0"
+                >
+                  Audit Log ↗
+                </span>
               </div>
-            </div>
-          </div>
+            </>
+          ) : (
+            <>
+              {/* Storage Mode: Dual Disk Strip */}
+              <div className="grid grid-cols-2 gap-2">
+                {/* Box 1: VPS Used Disk */}
+                <div className="p-2 rounded-lg border border-indigo-500/20 bg-indigo-500/5 flex items-center justify-between">
+                  <div className="min-w-0 flex-1 pr-1">
+                    <span className="text-[10px] text-muted-foreground font-mono block">VPS Disk Used</span>
+                    <div className="flex items-baseline gap-1.5 mt-0.5">
+                      <span className="text-sm font-extrabold font-mono text-indigo-600 dark:text-indigo-400">
+                        {storage?.usedFormatted || "253.4 GB"}
+                      </span>
+                      <span className="text-[9px] text-muted-foreground font-mono">
+                        {storage?.usagePercent || 90.4}%
+                      </span>
+                    </div>
+                    {/* Micro Load Bar */}
+                    <div className="h-1 w-full bg-indigo-500/20 rounded-full mt-1 overflow-hidden">
+                      <div
+                        className="h-full bg-indigo-500 rounded-full transition-all duration-500"
+                        style={{ width: `${Math.min(100, Math.max(storage?.usagePercent || 90, 5))}%` }}
+                      />
+                    </div>
+                  </div>
+                  <div className="h-6 w-6 rounded-sm bg-indigo-500/15 border border-indigo-500/30 flex items-center justify-center shrink-0">
+                    <HardDrive className="h-3.5 w-3.5 text-indigo-500" />
+                  </div>
+                </div>
 
-          {/* PM2 Process Fleet & Service Matrix */}
-          <div className="p-2 rounded-lg border border-border/50 bg-muted/20 flex flex-col gap-1.5">
-            <div className="flex items-center justify-between text-[10px] font-mono">
-              <span className="text-muted-foreground font-semibold flex items-center gap-1.5">
-                <span className="h-1.5 w-1.5 rounded-full bg-chart-4" /> Backend Process
-              </span>
-              <span className="text-foreground font-bold flex items-center gap-1.5">
-                <span className="text-[9px] px-1.5 py-0.2 rounded bg-chart-4/15 text-chart-4 font-mono font-bold">
-                  {backendInstances} {backendInstances === 1 ? "Instance" : "Instances"}
-                </span>
-                <span>Port 5010</span>
-              </span>
-            </div>
-            <div className="flex items-center justify-between text-[10px] font-mono">
-              <span className="text-muted-foreground font-semibold flex items-center gap-1.5">
-                <span className="h-1.5 w-1.5 rounded-full bg-chart-5" /> Frontend Process
-              </span>
-              <span className="text-foreground font-bold flex items-center gap-1.5">
-                <span className="text-[9px] px-1.5 py-0.2 rounded bg-chart-5/15 text-chart-5 font-mono font-bold">
-                  {frontendInstances} {frontendInstances === 1 ? "Instance" : "Instances"}
-                </span>
-                <span>Port 5173 / Next</span>
-              </span>
-            </div>
-            <div className="flex items-center justify-between text-[10px] font-mono">
-              <span className="text-muted-foreground font-semibold flex items-center gap-1.5">
-                <span className="h-1.5 w-1.5 rounded-full bg-chart-3" />  PostgreSQL
-              </span>
-              <span className="text-chart-4 font-bold flex items-center gap-1">
-                <CheckCircle2 className="h-3 w-3" /> {dbLatency}ms Ping
-              </span>
-            </div>
-          </div>
+                {/* Box 2: VPS Free Disk */}
+                <div className="p-2 rounded-lg border border-emerald-500/20 bg-emerald-500/5 flex items-center justify-between">
+                  <div className="min-w-0 flex-1 pr-1">
+                    <span className="text-[10px] text-muted-foreground font-mono block">Free Space</span>
+                    <div className="flex items-baseline gap-1.5 mt-0.5">
+                      <span className="text-sm font-extrabold font-mono text-emerald-600 dark:text-emerald-400">
+                        {storage?.freeFormatted || "26.8 GB"}
+                      </span>
+                      <span className="text-[9px] text-muted-foreground font-mono">
+                        of {storage?.totalFormatted || "280 GB"}
+                      </span>
+                    </div>
+                    {/* Micro Memory Bar */}
+                    <div className="h-1 w-full bg-emerald-500/20 rounded-full mt-1 overflow-hidden">
+                      <div
+                        className="h-full bg-emerald-500 rounded-full transition-all duration-500"
+                        style={{ width: `${Math.min(100, Math.max(storage?.totalBytes ? 100 - (storage?.usagePercent || 0) : 10, 5))}%` }}
+                      />
+                    </div>
+                  </div>
+                  <div className="h-6 w-6 rounded-sm bg-emerald-500/15 border border-emerald-500/30 flex items-center justify-center shrink-0">
+                    <CheckCircle2 className="h-3.5 w-3.5 text-emerald-500" />
+                  </div>
+                </div>
+              </div>
 
-          {/* Telemetry Footer */}
-          <div className="flex items-center justify-between gap-2 pt-1 border-t border-border/40 text-[10px] font-mono">
-            <div className="flex items-center gap-2 text-muted-foreground">
-              <ShieldCheck className="h-3.5 w-3.5 text-chart-2" />
-              <span>Uptime: <strong className="text-foreground font-bold">{formattedUptime}</strong></span>
-              <span className="text-border">|</span>
-              <span>Events: <strong className="text-foreground font-bold">{totalAudit}</strong></span>
-            </div>
-            <span
-              onClick={() => navigate("/audit-logs")}
-              className="text-chart-5 hover:underline font-semibold cursor-pointer"
-            >
-              Audit Log ↗
-            </span>
-          </div>
+              {/* Proportional Segmented Bar + 5-Sector Matrix */}
+              <div className="p-2 rounded-lg border border-border/50 bg-muted/20 flex flex-col gap-1.5">
+                <div className="flex h-1.5 w-full overflow-hidden rounded-full bg-muted/60 p-0.5 border border-border/40 gap-0.5">
+                  {storage?.items?.map((item: any) => (
+                    <div
+                      key={item.id}
+                      className="h-full rounded-full transition-all duration-500"
+                      style={{
+                        width: `${Math.max(item.percentage, 1)}%`,
+                        backgroundColor:
+                          item.id === "os" ? "#6366f1" :
+                          item.id === "backend" ? "#10b981" :
+                          item.id === "frontend" ? "#3b82f6" :
+                          item.id === "media" ? "#f59e0b" : "#8b5cf6",
+                      }}
+                      title={`${item.name}: ${item.formatted}`}
+                    />
+                  ))}
+                </div>
+
+                {/* 5-Item Mini Matrix */}
+                <div className="grid grid-cols-5 gap-1 pt-0.5 text-center font-mono">
+                  <div className="p-1 rounded bg-indigo-500/10 border border-indigo-500/20 flex flex-col items-center">
+                    <span className="text-[8px] text-muted-foreground uppercase">OS</span>
+                    <span className="text-[10px] font-bold text-indigo-600 dark:text-indigo-400 truncate w-full">
+                      {storage?.breakdown?.osAndSystem?.formatted || "248G"}
+                    </span>
+                  </div>
+                  <div className="p-1 rounded bg-emerald-500/10 border border-emerald-500/20 flex flex-col items-center">
+                    <span className="text-[8px] text-muted-foreground uppercase">Backend</span>
+                    <span className="text-[10px] font-bold text-emerald-600 dark:text-emerald-400 truncate w-full">
+                      {storage?.breakdown?.backend?.formatted || "2.5G"}
+                    </span>
+                  </div>
+                  <div className="p-1 rounded bg-blue-500/10 border border-blue-500/20 flex flex-col items-center">
+                    <span className="text-[8px] text-muted-foreground uppercase">Frontend</span>
+                    <span className="text-[10px] font-bold text-blue-600 dark:text-blue-400 truncate w-full">
+                      {storage?.breakdown?.frontend?.formatted || "1.0G"}
+                    </span>
+                  </div>
+                  <div className="p-1 rounded bg-amber-500/10 border border-amber-500/20 flex flex-col items-center">
+                    <span className="text-[8px] text-muted-foreground uppercase">Media</span>
+                    <span className="text-[10px] font-bold text-amber-600 dark:text-amber-400 truncate w-full">
+                      {storage?.breakdown?.media?.formatted || "1.2G"}
+                    </span>
+                  </div>
+                  <div className="p-1 rounded bg-purple-500/10 border border-purple-500/20 flex flex-col items-center">
+                    <span className="text-[8px] text-muted-foreground uppercase">DB</span>
+                    <span className="text-[10px] font-bold text-purple-600 dark:text-purple-400 truncate w-full">
+                      {storage?.breakdown?.database?.formatted || "16M"}
+                    </span>
+                  </div>
+                </div>
+              </div>
+
+              {/* Storage Footer */}
+              <div className="flex items-center justify-between gap-2 pt-1 border-t border-border/40 text-[10px] font-mono">
+                <div className="flex items-center gap-2 text-muted-foreground truncate">
+                  <HardDrive className="h-3.5 w-3.5 text-indigo-500 shrink-0" />
+                  <span className="truncate">Root: <strong className="text-foreground font-bold">{storage?.mountPath || "/"}</strong></span>
+                  <span className="text-border">|</span>
+                  <span>Total: <strong className="text-foreground font-bold">{storage?.totalFormatted || "280 GB"}</strong></span>
+                </div>
+                <span
+                  onClick={() => navigate("/system-health")}
+                  className="text-chart-5 hover:underline font-semibold cursor-pointer shrink-0"
+                >
+                  Full Telemetry ↗
+                </span>
+              </div>
+            </>
+          )}
         </div>
 
         {/* CARD 3: Global Geographic Intelligence */}

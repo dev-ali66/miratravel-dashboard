@@ -150,6 +150,7 @@ export type DashboardModules = {
       memoryPercent: number
       cpuCores: number
       platform: string
+      storage?: any
     }
     pm2?: {
       isPm2: boolean

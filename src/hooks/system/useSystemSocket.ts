@@ -26,6 +26,26 @@ export interface LiveTelemetrySnapshot {
       usagePercentage: number
     }
   }
+  storage?: {
+    mountPath: string
+    totalBytes: number
+    usedBytes: number
+    freeBytes: number
+    usagePercent: number
+    totalFormatted: string
+    usedFormatted: string
+    freeFormatted: string
+    status: "OPTIMAL" | "MODERATE" | "WARNING" | "CRITICAL"
+    updatedAt: string
+    breakdown: {
+      osAndSystem: any
+      backend: any
+      frontend: any
+      media: any
+      database: any
+    }
+    items: any[]
+  }
 }
 
 export function useSystemSocket() {

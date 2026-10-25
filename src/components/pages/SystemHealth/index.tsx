@@ -10,6 +10,8 @@ import {
   Sliders,
   Play,
   Globe,
+  HardDrive,
+  RefreshCw,
 } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent } from "@/components/ui/card"
@@ -36,11 +38,13 @@ export default function SystemHealthPage() {
   const [backups, setBackups] = useState<any[]>([])
   const [featureFlags, setFeatureFlags] = useState<Record<string, any>>({})
   const [isLoading, setIsLoading] = useState(false)
+  const [isRefreshingStorage, setIsRefreshingStorage] = useState(false)
   const [latency, setLatency] = useState<number | null>(null)
   const [activeTab, setActiveTab] = useState<"TELEMETRY" | "GATEWAYS" | "CRON" | "BACKUPS" | "FLAGS">("TELEMETRY")
 
   // Use live socket telemetry if available, fallback to REST snapshot
   const activeHealth = liveTelemetry || health
+  const storage = activeHealth?.storage
 
   const fetchAllData = async () => {
     setIsLoading(true)
@@ -80,6 +84,25 @@ export default function SystemHealthPage() {
       fetchAllData()
     } catch (err: any) {
       toast.error("Failed to clear cache")
+    }
+  }
+
+  const handleRefreshStorage = async () => {
+    setIsRefreshingStorage(true)
+    try {
+      toast.loading("Measuring VPS storage partitions...", { id: "refresh-storage" })
+      const res = await apiPrivate.get("/system/storage")
+      if (res?.data?.data) {
+        setHealth((prev: any) => ({
+          ...prev,
+          storage: res.data.data,
+        }))
+      }
+      toast.success("VPS storage telemetry refreshed", { id: "refresh-storage" })
+    } catch (err: any) {
+      toast.error("Failed to measure VPS storage", { id: "refresh-storage" })
+    } finally {
+      setIsRefreshingStorage(false)
     }
   }
 
@@ -220,64 +243,286 @@ export default function SystemHealthPage() {
 
       {/* Tab 1: Core Telemetry */}
       {activeTab === "TELEMETRY" && (
-        <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
-          <Card className="border-border/60 bg-card/60 backdrop-blur-xl">
-            <CardContent className="p-6 space-y-4">
-              <h3 className="text-base font-semibold text-foreground flex items-center gap-2">
-                <Server className="h-5 w-5 text-primary" />
-                Process & Memory Telemetry
-              </h3>
-              <div className="divide-y divide-border/40 text-xs">
-                <div className="flex justify-between py-2.5">
-                  <span className="text-muted-foreground">Heap Memory (Used / Total):</span>
-                  <span className="font-semibold text-foreground font-mono">
-                    {health?.system?.memory?.heapUsedMb || 54} MB / {health?.system?.memory?.heapTotalMb || 71} MB
+        <div className="space-y-6">
+          {/* VPS Storage & Partition Telemetry Card */}
+          <Card className="border-border/60 bg-card/60 backdrop-blur-xl shadow-xs overflow-hidden">
+            <CardContent className="p-5 sm:p-6 space-y-5">
+              {/* Header */}
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-3 border-b border-border/40">
+                <div className="flex items-center gap-3">
+                  <div className="h-10 w-10 rounded-lg bg-indigo-500/10 border border-indigo-500/25 flex items-center justify-center text-indigo-500 shrink-0">
+                    <HardDrive className="h-5 w-5" />
+                  </div>
+                  <div>
+                    <div className="flex items-center gap-2">
+                      <h3 className="text-base font-bold text-foreground">VPS Storage & Disk Telemetry</h3>
+                      <span className={cn(
+                        "px-2 py-0.5 rounded text-[10px] font-bold font-mono uppercase border",
+                        storage?.status === "CRITICAL" ? "bg-rose-500/10 text-rose-600 dark:text-rose-400 border-rose-500/20" :
+                        storage?.status === "WARNING" ? "bg-amber-500/10 text-amber-600 dark:text-amber-400 border-amber-500/20" :
+                        storage?.status === "MODERATE" ? "bg-blue-500/10 text-blue-600 dark:text-blue-400 border-blue-500/20" :
+                        "bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border-emerald-500/20"
+                      )}>
+                        {storage?.status || "HEALTHY"}
+                      </span>
+                    </div>
+                    <p className="text-xs text-muted-foreground mt-0.5">
+                      Real-time filesystem partition allocation across OS kernel, application runtimes, multimedia, and database.
+                    </p>
+                  </div>
+                </div>
+
+                <div className="flex items-center gap-2 shrink-0">
+                  <Button
+                    size="sm"
+                    variant="outline"
+                    onClick={handleRefreshStorage}
+                    disabled={isRefreshingStorage}
+                    className="h-8 text-xs gap-1.5 font-mono"
+                  >
+                    <RefreshCw className={cn("h-3.5 w-3.5", isRefreshingStorage && "animate-spin text-primary")} />
+                    <span>{isRefreshingStorage ? "Measuring..." : "Refresh Disk"}</span>
+                  </Button>
+                </div>
+              </div>
+
+              {/* Primary Storage Metrics Row */}
+              <div className="grid grid-cols-2 sm:grid-cols-4 gap-2.5 sm:gap-3">
+                <div className="p-3 rounded-lg border border-border/60 bg-muted/20">
+                  <span className="text-[11px] font-mono text-muted-foreground block">Total Disk Capacity</span>
+                  <span className="text-base sm:text-lg font-extrabold font-mono text-foreground mt-0.5 block">
+                    {storage?.totalFormatted || "280.1 GB"}
+                  </span>
+                  <span className="text-[10px] text-muted-foreground font-mono truncate block">
+                    Mount: {storage?.mountPath || "/"}
                   </span>
                 </div>
-                <div className="flex justify-between py-2.5">
-                  <span className="text-muted-foreground">RSS Resident Memory:</span>
-                  <span className="font-semibold text-foreground font-mono">
-                    {health?.system?.memory?.rssMb || 137} MB
+
+                <div className="p-3 rounded-lg border border-indigo-500/25 bg-indigo-500/5">
+                  <span className="text-[11px] font-mono text-muted-foreground block">Used Disk Space</span>
+                  <span className="text-base sm:text-lg font-extrabold font-mono text-indigo-600 dark:text-indigo-400 mt-0.5 block">
+                    {storage?.usedFormatted || "253.4 GB"}
+                  </span>
+                  <span className="text-[10px] text-indigo-600 dark:text-indigo-400 font-mono font-semibold">
+                    {storage?.usagePercent || 90.4}% Allocated
                   </span>
                 </div>
-                <div className="flex justify-between py-2.5">
-                  <span className="text-muted-foreground">CPU Core Count:</span>
-                  <span className="font-semibold text-foreground font-mono">{health?.system?.cpus || 16} Cores (x64)</span>
+
+                <div className="p-3 rounded-lg border border-emerald-500/25 bg-emerald-500/5">
+                  <span className="text-[11px] font-mono text-muted-foreground block">Available Free Space</span>
+                  <span className="text-base sm:text-lg font-extrabold font-mono text-emerald-600 dark:text-emerald-400 mt-0.5 block">
+                    {storage?.freeFormatted || "26.8 GB"}
+                  </span>
+                  <span className="text-[10px] text-emerald-600 dark:text-emerald-400 font-mono font-semibold">
+                    {storage?.totalBytes ? (100 - (storage.usagePercent || 0)).toFixed(1) : "9.6"}% Free
+                  </span>
                 </div>
-                <div className="flex justify-between py-2.5">
-                  <span className="text-muted-foreground">Server Uptime:</span>
-                  <span className="font-semibold text-foreground font-mono">{health?.uptime?.formatted || "Running"}</span>
+
+                <div className="p-3 rounded-lg border border-border/60 bg-muted/20">
+                  <span className="text-[11px] font-mono text-muted-foreground block">Tracked Partitions</span>
+                  <span className="text-base sm:text-lg font-extrabold font-mono text-foreground mt-0.5 block">5 Core Sectors</span>
+                  <span className="text-[10px] text-muted-foreground font-mono">OS • API • Web • Media • DB</span>
+                </div>
+              </div>
+
+              {/* Multi-Segment Proportional Storage Spectrum Bar */}
+              <div className="space-y-2">
+                <div className="flex items-center justify-between text-xs font-mono">
+                  <span className="text-muted-foreground">Disk Allocation Spectrum</span>
+                  <span className="font-semibold text-foreground">
+                    {storage?.usedFormatted} of {storage?.totalFormatted} ({storage?.usagePercent}%)
+                  </span>
+                </div>
+
+                <div className="h-3 w-full rounded-full bg-muted/60 p-0.5 border border-border/40 flex gap-0.5 overflow-hidden">
+                  {storage?.items?.map((item: any) => (
+                    <div
+                      key={item.id}
+                      className="h-full rounded-full transition-all duration-500"
+                      style={{
+                        width: `${Math.max(item.percentage, 1)}%`,
+                        backgroundColor:
+                          item.id === "os" ? "#6366f1" :
+                          item.id === "backend" ? "#10b981" :
+                          item.id === "frontend" ? "#3b82f6" :
+                          item.id === "media" ? "#f59e0b" : "#8b5cf6",
+                      }}
+                      title={`${item.name}: ${item.formatted} (${item.percentage}%)`}
+                    />
+                  ))}
+                </div>
+              </div>
+
+              {/* 5-Item Sector Breakdown Grid */}
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-2.5 sm:gap-3 pt-1">
+                {/* 1. Operating System */}
+                <div className="p-3 rounded-lg border border-indigo-500/25 bg-indigo-500/5 flex flex-col justify-between">
+                  <div>
+                    <div className="flex items-center justify-between gap-1 mb-1">
+                      <span className="text-xs font-bold text-indigo-600 dark:text-indigo-400 flex items-center gap-1.5">
+                        <span className="h-2 w-2 rounded-full bg-indigo-500 shrink-0" />
+                        OS & Kernel
+                      </span>
+                      <span className="text-[10px] font-mono font-bold px-1.5 py-0.2 rounded bg-indigo-500/15 text-indigo-600 dark:text-indigo-400">
+                        {storage?.breakdown?.osAndSystem?.percentage ?? 98}%
+                      </span>
+                    </div>
+                    <span className="text-base font-extrabold font-mono text-foreground block">
+                      {storage?.breakdown?.osAndSystem?.formatted || "248.5 GB"}
+                    </span>
+                    <p className="text-[11px] text-muted-foreground mt-1 line-clamp-2">
+                      Linux kernel, system packages, PM2 daemon & Docker root
+                    </p>
+                  </div>
+                </div>
+
+                {/* 2. Backend API Service */}
+                <div className="p-3 rounded-lg border border-emerald-500/25 bg-emerald-500/5 flex flex-col justify-between">
+                  <div>
+                    <div className="flex items-center justify-between gap-1 mb-1">
+                      <span className="text-xs font-bold text-emerald-600 dark:text-emerald-400 flex items-center gap-1.5">
+                        <span className="h-2 w-2 rounded-full bg-emerald-500 shrink-0" />
+                        Backend API
+                      </span>
+                      <span className="text-[10px] font-mono font-bold px-1.5 py-0.2 rounded bg-emerald-500/15 text-emerald-600 dark:text-emerald-400">
+                        {storage?.breakdown?.backend?.percentage ?? 1}%
+                      </span>
+                    </div>
+                    <span className="text-base font-extrabold font-mono text-foreground block">
+                      {storage?.breakdown?.backend?.formatted || "2.57 GB"}
+                    </span>
+                    <p className="text-[11px] text-muted-foreground mt-1 line-clamp-2">
+                      Node.js Express runtime, dist build, and node_modules
+                    </p>
+                  </div>
+                </div>
+
+                {/* 3. Frontend & Dashboard */}
+                <div className="p-3 rounded-lg border border-blue-500/25 bg-blue-500/5 flex flex-col justify-between">
+                  <div>
+                    <div className="flex items-center justify-between gap-1 mb-1">
+                      <span className="text-xs font-bold text-blue-600 dark:text-blue-400 flex items-center gap-1.5">
+                        <span className="h-2 w-2 rounded-full bg-blue-500 shrink-0" />
+                        Frontend Web
+                      </span>
+                      <span className="text-[10px] font-mono font-bold px-1.5 py-0.2 rounded bg-blue-500/15 text-blue-600 dark:text-blue-400">
+                        {storage?.breakdown?.frontend?.percentage ?? 0.4}%
+                      </span>
+                    </div>
+                    <span className="text-base font-extrabold font-mono text-foreground block">
+                      {storage?.breakdown?.frontend?.formatted || "1.02 GB"}
+                    </span>
+                    <p className="text-[11px] text-muted-foreground mt-1 line-clamp-2">
+                      Vite SPA & Next.js production builds, client assets
+                    </p>
+                  </div>
+                </div>
+
+                {/* 4. Multimedia & Uploads */}
+                <div className="p-3 rounded-lg border border-amber-500/25 bg-amber-500/5 flex flex-col justify-between">
+                  <div>
+                    <div className="flex items-center justify-between gap-1 mb-1">
+                      <span className="text-xs font-bold text-amber-600 dark:text-amber-400 flex items-center gap-1.5">
+                        <span className="h-2 w-2 rounded-full bg-amber-500 shrink-0" />
+                        Media Assets
+                      </span>
+                      <span className="text-[10px] font-mono font-bold px-1.5 py-0.2 rounded bg-amber-500/15 text-amber-600 dark:text-amber-400">
+                        {storage?.breakdown?.media?.percentage ?? 0.5}%
+                      </span>
+                    </div>
+                    <span className="text-base font-extrabold font-mono text-foreground block">
+                      {storage?.breakdown?.media?.formatted || "1.25 GB"}
+                    </span>
+                    <p className="text-[11px] text-muted-foreground mt-1 line-clamp-2">
+                      {storage?.breakdown?.media?.fileCount || 153} optimized WebP images & gallery files
+                    </p>
+                  </div>
+                </div>
+
+                {/* 5. PostgreSQL Database */}
+                <div className="p-3 rounded-lg border border-purple-500/25 bg-purple-500/5 flex flex-col justify-between">
+                  <div>
+                    <div className="flex items-center justify-between gap-1 mb-1">
+                      <span className="text-xs font-bold text-purple-600 dark:text-purple-400 flex items-center gap-1.5">
+                        <span className="h-2 w-2 rounded-full bg-purple-500 shrink-0" />
+                        PostgreSQL DB
+                      </span>
+                      <span className="text-[10px] font-mono font-bold px-1.5 py-0.2 rounded bg-purple-500/15 text-purple-600 dark:text-purple-400">
+                        {storage?.breakdown?.database?.percentage ?? 0.1}%
+                      </span>
+                    </div>
+                    <span className="text-base font-extrabold font-mono text-foreground block">
+                      {storage?.breakdown?.database?.formatted || "16.01 MB"}
+                    </span>
+                    <p className="text-[11px] text-muted-foreground mt-1 line-clamp-2">
+                      Relational tables, B-tree indexes, bookings & audit logs
+                    </p>
+                  </div>
                 </div>
               </div>
             </CardContent>
           </Card>
 
-          <Card className="border-border/60 bg-card/60 backdrop-blur-xl">
-            <CardContent className="p-6 space-y-4">
-              <h3 className="text-base font-semibold text-foreground flex items-center gap-2">
-                <ShieldCheck className="h-5 w-5 text-primary" />
-                Security & Protection Layers
-              </h3>
-              <div className="divide-y divide-border/40 text-xs">
-                <div className="flex justify-between py-2.5">
-                  <span className="text-muted-foreground">Rate Limiter:</span>
-                  <span className="font-semibold text-emerald-600 dark:text-emerald-400">Active (100 req/min)</span>
+          {/* Process & Memory + Security & Protection Row */}
+          <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
+            <Card className="border-border/60 bg-card/60 backdrop-blur-xl">
+              <CardContent className="p-6 space-y-4">
+                <h3 className="text-base font-semibold text-foreground flex items-center gap-2">
+                  <Server className="h-5 w-5 text-primary" />
+                  Process & Memory Telemetry
+                </h3>
+                <div className="divide-y divide-border/40 text-xs">
+                  <div className="flex justify-between py-2.5">
+                    <span className="text-muted-foreground">Heap Memory (Used / Total):</span>
+                    <span className="font-semibold text-foreground font-mono">
+                      {health?.system?.memory?.heapUsedMb || 54} MB / {health?.system?.memory?.heapTotalMb || 71} MB
+                    </span>
+                  </div>
+                  <div className="flex justify-between py-2.5">
+                    <span className="text-muted-foreground">RSS Resident Memory:</span>
+                    <span className="font-semibold text-foreground font-mono">
+                      {health?.system?.memory?.rssMb || 137} MB
+                    </span>
+                  </div>
+                  <div className="flex justify-between py-2.5">
+                    <span className="text-muted-foreground">CPU Core Count:</span>
+                    <span className="font-semibold text-foreground font-mono">{health?.system?.cpus || 16} Cores (x64)</span>
+                  </div>
+                  <div className="flex justify-between py-2.5">
+                    <span className="text-muted-foreground">Server Uptime:</span>
+                    <span className="font-semibold text-foreground font-mono">{health?.uptime?.formatted || "Running"}</span>
+                  </div>
                 </div>
-                <div className="flex justify-between py-2.5">
-                  <span className="text-muted-foreground">XSS Sanitization:</span>
-                  <span className="font-semibold text-emerald-600 dark:text-emerald-400">Enabled (express-xss-sanitizer)</span>
+              </CardContent>
+            </Card>
+
+            <Card className="border-border/60 bg-card/60 backdrop-blur-xl">
+              <CardContent className="p-6 space-y-4">
+                <h3 className="text-base font-semibold text-foreground flex items-center gap-2">
+                  <ShieldCheck className="h-5 w-5 text-primary" />
+                  Security & Protection Layers
+                </h3>
+                <div className="divide-y divide-border/40 text-xs">
+                  <div className="flex justify-between py-2.5">
+                    <span className="text-muted-foreground">Rate Limiter:</span>
+                    <span className="font-semibold text-emerald-600 dark:text-emerald-400">Active (100 req/min)</span>
+                  </div>
+                  <div className="flex justify-between py-2.5">
+                    <span className="text-muted-foreground">XSS Sanitization:</span>
+                    <span className="font-semibold text-emerald-600 dark:text-emerald-400">Enabled (express-xss-sanitizer)</span>
+                  </div>
+                  <div className="flex justify-between py-2.5">
+                    <span className="text-muted-foreground">Content Security (CSP):</span>
+                    <span className="font-semibold text-emerald-600 dark:text-emerald-400">Helmet v8 Protected</span>
+                  </div>
+                  <div className="flex justify-between py-2.5">
+                    <span className="text-muted-foreground">Authentication Scheme:</span>
+                    <span className="font-semibold text-purple-600 dark:text-purple-400">JWT Dual Token + Refresh Rotation</span>
+                  </div>
                 </div>
-                <div className="flex justify-between py-2.5">
-                  <span className="text-muted-foreground">Content Security (CSP):</span>
-                  <span className="font-semibold text-emerald-600 dark:text-emerald-400">Helmet v8 Protected</span>
-                </div>
-                <div className="flex justify-between py-2.5">
-                  <span className="text-muted-foreground">Authentication Scheme:</span>
-                  <span className="font-semibold text-purple-600 dark:text-purple-400">JWT Dual Token + Refresh Rotation</span>
-                </div>
-              </div>
-            </CardContent>
-          </Card>
+              </CardContent>
+            </Card>
+          </div>
         </div>
       )}
 

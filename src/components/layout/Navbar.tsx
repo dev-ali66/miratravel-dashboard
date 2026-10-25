@@ -114,7 +114,7 @@ export const NavbarBrandLogo = () => {
       return (
         <Link
           to="/"
-          className="inline-flex items-center h-full max-h-14 py-1 transition-opacity hover:opacity-90 shrink-0"
+          className="inline-flex items-center h-full max-h-14 py-0.5 transition-opacity hover:opacity-90 shrink-0"
         >
           <UniversalMultimediaPreview
             multimedia={mediaObj as any}
@@ -138,7 +138,7 @@ export const NavbarBrandLogo = () => {
     return (
       <Link
         to="/"
-        className="inline-flex items-center h-full max-h-14 py-1 transition-opacity hover:opacity-90 shrink-0"
+        className="inline-flex items-center h-full max-h-14 py-0.5 transition-opacity hover:opacity-90 shrink-0"
       >
         <img
           src={mediaUrl}
@@ -153,7 +153,7 @@ export const NavbarBrandLogo = () => {
   return (
     <Link
       to="/"
-      className="inline-flex items-center h-full max-h-14 py-1 transition-transform hover:scale-[1.02] shrink-0"
+      className="inline-flex items-center h-full max-h-14 py-0.5 transition-transform hover:scale-[1.02] shrink-0"
     >
       <div className="flex h-11 min-w-[120px] items-center justify-center gap-2 rounded-lg border border-border/80 bg-muted/60 px-3.5 shadow-2xs transition-colors hover:bg-muted">
         <span className="font-serif text-base font-bold tracking-widest text-foreground uppercase">
