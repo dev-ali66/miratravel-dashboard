@@ -114,13 +114,13 @@ export const NavbarBrandLogo = () => {
       return (
         <Link
           to="/"
-          className="inline-flex items-center h-14 py-0 transition-opacity hover:opacity-90 shrink-0"
+          className="inline-flex items-center h-full max-h-14 py-5 transition-opacity hover:opacity-90 shrink-0"
         >
           <UniversalMultimediaPreview
             multimedia={mediaObj as any}
             fallbackAlt={brandName}
-            className="h-14 w-auto max-h-14 max-w-[280px] object-contain object-left"
-            containerClassName="h-14 max-h-14 max-w-[280px] flex items-center p-0"
+            className="h-full w-auto max-h-14 max-w-[320px] object-contain object-left"
+            containerClassName="h-full max-h-14 max-w-[320px] flex items-center p-0"
           />
         </Link>
       )
@@ -138,12 +138,12 @@ export const NavbarBrandLogo = () => {
     return (
       <Link
         to="/"
-        className="inline-flex items-center h-14 py-0 transition-opacity hover:opacity-90 shrink-0"
+        className="inline-flex items-center h-full max-h-14 py-0 transition-opacity hover:opacity-90 shrink-0"
       >
         <img
           src={mediaUrl}
           alt={brandName}
-          className="h-14 w-auto max-h-14 max-w-[280px] object-contain object-left select-none pointer-events-none"
+          className="h-full w-auto max-h-14 max-w-[320px] object-contain object-left select-none pointer-events-none"
           style={{ opacity: isNaN(safeOpacity) ? 1 : safeOpacity }}
         />
       </Link>
@@ -153,7 +153,7 @@ export const NavbarBrandLogo = () => {
   return (
     <Link
       to="/"
-      className="inline-flex items-center h-14 py-0 transition-transform hover:scale-[1.02] shrink-0"
+      className="inline-flex items-center h-full max-h-14 py-0 transition-transform hover:scale-[1.02] shrink-0"
     >
       <div className="flex h-11 min-w-[120px] items-center justify-center gap-2 rounded-lg border border-border/80 bg-muted/60 px-3.5 shadow-2xs transition-colors hover:bg-muted">
         <span className="font-serif text-base font-bold tracking-widest text-foreground uppercase">
@@ -213,7 +213,7 @@ export function Navbar({ onMenuClick }: NavbarProps) {
 
   return (
     <>
-      <header className="fixed top-0 z-50 w-full border-border/40 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
+      <header className="fixed top-0 z-50 w-full border-b border-border/40 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
         <div className="flex h-14 items-center px-4 md:px-6 justify-between">
           {/* Left: Hamburger (Mobile) + Brand Logo */}
           <div className="flex items-center gap-3 md:gap-4 h-full">
