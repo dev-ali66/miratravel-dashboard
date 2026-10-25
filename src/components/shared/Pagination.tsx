@@ -115,6 +115,10 @@ export interface PaginationProps {
   columns?: number
   /** Optional label for the batch selector in infinite mode (e.g. "Items per batch"). */
   pageSizeLabel?: string
+  /**
+   * Predictive prefetch threshold ratio (0.1 to 0.9). Default: 0.3 (triggers background load at 30% of batch scroll).
+   */
+  prefetchThreshold?: number
 }
 
 export function Pagination({
@@ -141,6 +145,7 @@ export function Pagination({
   loadedCount,
   allLoadedMessage,
   pageSizeLabel = "per page",
+  prefetchThreshold = 0.3,
 }: PaginationProps) {
   const effectivePageSize = pageSize || 10
   const safeCurrentPage = Math.max(1, Math.min(currentPage || 1, Math.max(1, totalPages || 1)))
@@ -172,6 +177,7 @@ export function Pagination({
 
   // Defense-in-depth latch to prevent multiple triggers within a single intersection event
   const hasTriggeredRef = useRef<boolean>(false)
+  const prevMaxScrollRef = useRef<number>(0)
 
   // Reset the trigger latch whenever loading finishes, loaded items count increases, or page changes
   useEffect(() => {
@@ -180,7 +186,86 @@ export function Pagination({
     }
   }, [isLoadingMore, loadedCount, safeCurrentPage, effectiveHasMore])
 
-  // IntersectionObserver for auto infinite scroll
+  // Reset batch baseline when page resets to 1 or loaded count decreases
+  useEffect(() => {
+    if (safeCurrentPage === 1 || (loadedCount !== undefined && loadedCount <= effectivePageSize)) {
+      prevMaxScrollRef.current = 0
+    }
+  }, [safeCurrentPage, loadedCount, effectivePageSize])
+
+  // Predictive early-prefetch scroll listener (triggers background load at 30% of current batch scroll range)
+  useEffect(() => {
+    if (mode !== "infinite" || infiniteTrigger !== "auto" || !effectiveHasMore || isLoadingMore || !effectiveOnLoadMore) {
+      return
+    }
+
+    const sentinel = sentinelRef.current
+    if (!sentinel) return
+
+    // Find the enclosing scroll container (ancestor with overflow-y: auto / scroll, or window)
+    let scrollParent: HTMLElement | Window = window
+    let parent: HTMLElement | null = sentinel.parentElement
+    while (parent) {
+      const style = window.getComputedStyle(parent)
+      if (style.overflowY === "auto" || style.overflowY === "scroll") {
+        scrollParent = parent
+        break
+      }
+      parent = parent.parentElement
+    }
+
+    let ticking = false
+
+    const handleScroll = () => {
+      if (ticking) return
+      ticking = true
+
+      requestAnimationFrame(() => {
+        ticking = false
+
+        if (isLoadingMore || hasTriggeredRef.current || !effectiveHasMore) {
+          return
+        }
+
+        let scrollTop = 0
+        let scrollHeight = 0
+        let clientHeight = 0
+
+        if (scrollParent instanceof HTMLElement) {
+          scrollTop = scrollParent.scrollTop
+          scrollHeight = scrollParent.scrollHeight
+          clientHeight = scrollParent.clientHeight
+        } else {
+          scrollTop = window.scrollY || document.documentElement.scrollTop
+          scrollHeight = document.documentElement.scrollHeight
+          clientHeight = window.innerHeight
+        }
+
+        const maxScroll = Math.max(0, scrollHeight - clientHeight)
+        if (maxScroll <= 0) return
+
+        // Calculate progress within current batch distance:
+        // As soon as the user scrolls past 30% of this new batch distance, start prefetching the next batch
+        const currentBatchDistance = Math.max(0, maxScroll - prevMaxScrollRef.current)
+        const threshold = prevMaxScrollRef.current + (currentBatchDistance * prefetchThreshold)
+
+        if (scrollTop >= threshold && currentBatchDistance > 20) {
+          hasTriggeredRef.current = true
+          prevMaxScrollRef.current = maxScroll
+          effectiveOnLoadMore()
+        }
+      })
+    }
+
+    scrollParent.addEventListener("scroll", handleScroll, { passive: true })
+    handleScroll()
+
+    return () => {
+      scrollParent.removeEventListener("scroll", handleScroll)
+    }
+  }, [mode, infiniteTrigger, effectiveHasMore, isLoadingMore, effectiveOnLoadMore, prefetchThreshold])
+
+  // IntersectionObserver for auto infinite scroll (catches rapid scroll jumps or short containers)
   useEffect(() => {
     if (mode !== "infinite" || infiniteTrigger !== "auto" || !effectiveHasMore || isLoadingMore || !effectiveOnLoadMore) {
       return
@@ -204,7 +289,7 @@ export function Pagination({
       },
       {
         root: null,
-        rootMargin: "0px 0px 80px 0px",
+        rootMargin: "0px 0px 150px 0px",
         threshold: 0.1,
       }
     )
