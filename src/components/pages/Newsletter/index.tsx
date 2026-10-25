@@ -253,37 +253,46 @@ export default function NewsletterPage() {
         </FilterActions>
       </FilterToolbar>
 
-      {/* Table */}
-      <div className="overflow-hidden rounded-md border border-border/60 bg-card/60 shadow-sm backdrop-blur-xl">
+      {/* Canonical Table Container */}
+      <div className="overflow-hidden rounded-md border border-border/60 bg-card/60 shadow-xs backdrop-blur-xl">
         <div className="overflow-x-auto">
-          {loading && subscribers.length === 0 ? (
-            <div className="flex h-48 items-center justify-center gap-2 text-muted-foreground">
-              <Loader2 className="h-5 w-5 animate-spin" />
-              <span>Loading subscribers...</span>
-            </div>
-          ) : filtered.length === 0 ? (
-            <div className="flex h-48 flex-col items-center justify-center gap-1 text-muted-foreground">
-              <MailCheck className="h-8 w-8 text-muted-foreground/50" />
-              <p className="font-medium text-sm">No subscribers found</p>
-              <p className="text-xs">Subscribers from website forms will appear here in real-time.</p>
-            </div>
-          ) : (
-            <table className="w-full text-left text-sm">
-              <thead className="border-b border-border/60 bg-muted/40 text-xs font-semibold uppercase tracking-wider text-muted-foreground">
+          <table className="w-full text-left text-sm border-collapse">
+            <thead className="border-b border-border/60 bg-muted/40 text-xs font-semibold uppercase tracking-wider text-muted-foreground select-none">
+              <tr>
+                <th className="px-5 py-3.5 font-semibold">Subscriber Email</th>
+                <th className="px-5 py-3.5 font-semibold">Source Channel</th>
+                <th className="px-5 py-3.5 font-semibold">Status</th>
+                <th className="px-5 py-3.5 font-semibold">Subscribed Date</th>
+                <th className="px-5 py-3.5 text-right font-semibold">Actions</th>
+              </tr>
+            </thead>
+            <tbody className="divide-y divide-border/40 text-foreground">
+              {loading && subscribers.length === 0 ? (
+                Array.from({ length: 5 }).map((_, i) => (
+                  <tr key={i} className="animate-pulse">
+                    <td className="px-5 py-3.5"><div className="h-4 w-40 rounded bg-muted/60" /></td>
+                    <td className="px-5 py-3.5"><div className="h-5 w-20 rounded bg-muted/60" /></td>
+                    <td className="px-5 py-3.5"><div className="h-5 w-24 rounded-full bg-muted/60" /></td>
+                    <td className="px-5 py-3.5"><div className="h-4 w-28 rounded bg-muted/60" /></td>
+                    <td className="px-5 py-3.5 text-right"><div className="ml-auto h-7 w-24 rounded bg-muted/60" /></td>
+                  </tr>
+                ))
+              ) : filtered.length === 0 ? (
                 <tr>
-                  <th className="px-5 py-3.5">Subscriber Email</th>
-                  <th className="px-5 py-3.5">Source Channel</th>
-                  <th className="px-5 py-3.5">Status</th>
-                  <th className="px-5 py-3.5">Subscribed Date</th>
-                  <th className="px-5 py-3.5 text-right">Actions</th>
+                  <td colSpan={5} className="px-5 py-12 text-center text-muted-foreground">
+                    <div className="flex flex-col items-center justify-center gap-2">
+                      <MailCheck className="h-8 w-8 text-muted-foreground/40" />
+                      <p className="font-medium text-sm text-foreground">No subscribers found</p>
+                      <p className="text-xs text-muted-foreground">Subscribers from website forms will appear here in real-time.</p>
+                    </div>
+                  </td>
                 </tr>
-              </thead>
-              <tbody className="divide-y divide-border/40 text-foreground">
-                {filtered
+              ) : (
+                filtered
                   .slice(0, currentPage * pageSize)
                   .map((s) => (
                     <tr key={s.id} className="transition-colors hover:bg-muted/30">
-                      <td className="px-5 py-3.5 font-medium text-xs text-foreground">
+                      <td className="px-5 py-3.5 font-medium text-sm text-foreground">
                         {s.email}
                       </td>
                       <td className="px-5 py-3.5 text-xs text-muted-foreground">
@@ -294,14 +303,14 @@ export default function NewsletterPage() {
                       <td className="px-5 py-3.5">
                         <span
                           className={cn(
-                            "inline-block rounded-sm border px-2 py-0.5 text-[11px] font-semibold uppercase",
+                            "inline-block rounded-sm border px-2 py-0.5 text-xs font-semibold uppercase tracking-wider",
                             statusStyles[s.status] || statusStyles.SUBSCRIBED
                           )}
                         >
                           {s.status}
                         </span>
                       </td>
-                      <td className="px-5 py-3.5 text-xs text-muted-foreground">
+                      <td className="px-5 py-3.5 text-sm text-muted-foreground">
                         {s.createdAt ? new Date(s.createdAt).toLocaleDateString("en-US", {
                           year: "numeric",
                           month: "short",
@@ -351,34 +360,34 @@ export default function NewsletterPage() {
                         </div>
                       </td>
                     </tr>
-                  ))}
-              </tbody>
-            </table>
-          )}
+                  ))
+              )}
+            </tbody>
+          </table>
         </div>
-
-        {/* Universal Pagination */}
-        {filtered.length > 0 && (
-          <Pagination
-            mode="infinite"
-            currentPage={currentPage}
-            totalPages={Math.max(1, Math.ceil(filtered.length / pageSize))}
-            totalItems={filtered.length}
-            pageSize={pageSize}
-            pageSizeOptions={[10, 20, 50, 100]}
-            loadedCount={Math.min(filtered.length, currentPage * pageSize)}
-            hasMore={currentPage * pageSize < filtered.length}
-            onLoadMore={() => setCurrentPage((p) => p + 1)}
-            onPageChange={setCurrentPage}
-            onPageSizeChange={(sz) => {
-              setPageSize(sz)
-              setCurrentPage(1)
-            }}
-            fixed={false}
-            isTable
-          />
-        )}
       </div>
+
+      {/* Universal Pagination */}
+      {filtered.length > 0 && (
+        <Pagination
+          mode="infinite"
+          currentPage={currentPage}
+          totalPages={Math.max(1, Math.ceil(filtered.length / pageSize))}
+          totalItems={filtered.length}
+          pageSize={pageSize}
+          pageSizeOptions={[10, 20, 50, 100]}
+          loadedCount={Math.min(filtered.length, currentPage * pageSize)}
+          hasMore={currentPage * pageSize < filtered.length}
+          onLoadMore={() => setCurrentPage((p) => p + 1)}
+          onPageChange={setCurrentPage}
+          onPageSizeChange={(sz) => {
+            setPageSize(sz)
+            setCurrentPage(1)
+          }}
+          fixed={false}
+          isTable
+        />
+      )}
     </div>
   )
 }

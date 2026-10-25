@@ -272,18 +272,18 @@ export default function UserListTable() {
       </FilterToolbar>
 
       {/* Table Card */}
-      <div className="overflow-hidden rounded-md border border-border/60 bg-card/60 shadow-sm backdrop-blur-xl">
+      <div className="overflow-hidden rounded-md border border-border/60 bg-card/60 shadow-xs backdrop-blur-xl">
         <div className="overflow-x-auto">
-          <table className="w-full text-left text-sm">
-            <thead className="border-b border-border/60 bg-muted/40 text-xs font-semibold uppercase tracking-wider text-muted-foreground">
+          <table className="w-full text-left text-sm border-collapse">
+            <thead className="border-b border-border/60 bg-muted/40 text-xs font-semibold uppercase tracking-wider text-muted-foreground select-none">
               <tr>
-                <th className="px-5 py-3.5">User</th>
-                <th className="px-5 py-3.5">Role</th>
-                <th className="px-5 py-3.5">Status</th>
-                <th className="px-5 py-3.5">Verification</th>
-                <th className="px-5 py-3.5">Bookings</th>
-                <th className="px-5 py-3.5">Joined</th>
-                <th className="px-5 py-3.5 text-right">Actions</th>
+                <th className="px-5 py-3.5 font-semibold">User</th>
+                <th className="px-5 py-3.5 font-semibold">Role</th>
+                <th className="px-5 py-3.5 font-semibold">Status</th>
+                <th className="px-5 py-3.5 font-semibold">Verification</th>
+                <th className="px-5 py-3.5 font-semibold">Bookings</th>
+                <th className="px-5 py-3.5 font-semibold">Joined</th>
+                <th className="px-5 py-3.5 text-right font-semibold">Actions</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-border/40 text-foreground">

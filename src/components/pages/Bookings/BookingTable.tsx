@@ -317,82 +317,57 @@ export default function BookingTable() {
         </FilterActions>
       </FilterToolbar>
 
-      {/* Booking Table Container */}
-      <div className="min-h-[400px] overflow-hidden rounded-xl border border-border/60 bg-background/50 backdrop-blur-xl">
-        {/* Loading State - only unmount on initial load when no items are present */}
-        {isLoading && currentPage === 1 && bookings.length === 0 ? (
-          <div className="w-full">
-            <div className="overflow-x-auto">
-              <table className="w-full text-left text-sm">
-                <thead className="border-b border-border/60 bg-muted/40 text-xs text-muted-foreground uppercase">
-                  <tr>
-                    <th className="px-6 py-4 font-semibold tracking-wider">Booking ID</th>
-                    <th className="px-6 py-4 font-semibold tracking-wider">Traveler</th>
-                    <th className="px-6 py-4 font-semibold tracking-wider">Dates</th>
-                    <th className="px-6 py-4 font-semibold tracking-wider">Total Value</th>
-                    <th className="px-6 py-4 font-semibold tracking-wider">Booking Status</th>
-                    <th className="px-6 py-4 font-semibold tracking-wider">Payment Status</th>
-                    <th className="px-6 py-4 text-right font-semibold tracking-wider">Actions</th>
+      {/* Canonical Table Container */}
+      <div className="overflow-hidden rounded-md border border-border/60 bg-card/60 shadow-xs backdrop-blur-xl">
+        <div className="overflow-x-auto">
+          <table className="w-full text-left text-sm border-collapse whitespace-nowrap">
+            <thead className="border-b border-border/60 bg-muted/40 text-xs font-semibold uppercase tracking-wider text-muted-foreground select-none">
+              <tr>
+                <th className="px-5 py-3.5 font-semibold">Booking ID</th>
+                <th className="px-5 py-3.5 font-semibold">Traveler</th>
+                <th className="px-5 py-3.5 font-semibold">Dates</th>
+                <th className="px-5 py-3.5 font-semibold">Confirmed Total</th>
+                <th className="px-5 py-3.5 font-semibold">Booking Status</th>
+                <th className="px-5 py-3.5 font-semibold">Payment Status</th>
+                <th className="px-5 py-3.5 text-right font-semibold">Actions</th>
+              </tr>
+            </thead>
+            <tbody className="divide-y divide-border/40 text-foreground">
+              {isLoading && currentPage === 1 && bookings.length === 0 ? (
+                Array.from({ length: 5 }).map((_, i) => (
+                  <tr key={i} className="animate-pulse">
+                    <td className="px-5 py-3.5"><div className="h-4 w-24 rounded bg-muted/60" /></td>
+                    <td className="px-5 py-3.5">
+                      <div className="flex flex-col gap-1.5">
+                        <div className="h-4 w-32 rounded bg-muted/60" />
+                        <div className="h-3 w-40 rounded bg-muted/40" />
+                      </div>
+                    </td>
+                    <td className="px-5 py-3.5"><div className="h-4 w-28 rounded bg-muted/60" /></td>
+                    <td className="px-5 py-3.5"><div className="h-4 w-16 rounded bg-muted/60" /></td>
+                    <td className="px-5 py-3.5"><div className="h-6 w-24 rounded-full bg-muted/60" /></td>
+                    <td className="px-5 py-3.5"><div className="h-6 w-24 rounded-full bg-muted/60" /></td>
+                    <td className="px-5 py-3.5 text-right"><div className="h-8 w-8 rounded-sm bg-muted/60 ml-auto" /></td>
                   </tr>
-                </thead>
-                <tbody>
-                  {[1, 2, 3, 4, 5].map((i) => (
-                    <tr key={i} className="border-b border-border/40">
-                      <td className="px-6 py-4">
-                        <div className="h-4 w-24 animate-pulse rounded bg-muted/60" />
-                      </td>
-                      <td className="px-6 py-4">
-                        <div className="flex flex-col gap-2">
-                          <div className="h-4 w-32 animate-pulse rounded bg-muted/60" />
-                          <div className="h-3 w-40 animate-pulse rounded bg-muted/40" />
-                        </div>
-                      </td>
-                      <td className="px-6 py-4">
-                        <div className="h-4 w-28 animate-pulse rounded bg-muted/60" />
-                      </td>
-                      <td className="px-6 py-4">
-                        <div className="h-4 w-16 animate-pulse rounded bg-muted/60" />
-                      </td>
-                      <td className="px-6 py-4">
-                        <div className="h-6 w-24 animate-pulse rounded-full bg-muted/60" />
-                      </td>
-                      <td className="px-6 py-4">
-                        <div className="h-6 w-24 animate-pulse rounded-full bg-muted/60" />
-                      </td>
-                      <td className="px-6 py-4 text-right">
-                        <div className="h-8 w-8 animate-pulse rounded-sm bg-muted/60 ml-auto" />
-                      </td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
-          </div>
-        ) : isError ? (
-          <div className="flex h-64 items-center justify-center text-rose-500">
-            Failed to load bookings.
-          </div>
-        ) : bookings.length === 0 ? (
-          <div className="flex h-64 flex-col items-center justify-center gap-3 text-muted-foreground">
-            <Ban className="h-8 w-8 opacity-40" />
-            <p>No bookings found matching current filters.</p>
-          </div>
-        ) : (
-          <>
-            <div className="overflow-x-auto">
-              <table className="w-full overflow-hidden text-left text-sm whitespace-nowrap">
-                <thead className="border-b border-border/60 bg-muted/40 text-xs text-muted-foreground uppercase">
-                  <tr>
-                    <th className="px-6 py-4 font-semibold tracking-wider">Booking ID</th>
-                    <th className="px-6 py-4 font-semibold tracking-wider">Traveler</th>
-                    <th className="px-6 py-4 font-semibold tracking-wider">Dates</th>
-                    <th className="px-6 py-4 font-semibold tracking-wider">Confirmed Total</th>
-                    <th className="px-6 py-4 font-semibold tracking-wider">Booking Status</th>
-                    <th className="px-6 py-4 font-semibold tracking-wider">Payment Status</th>
-                    <th className="px-6 py-4 text-right font-semibold tracking-wider">Actions</th>
-                  </tr>
-                </thead>
-                <tbody>
+                ))
+              ) : isError ? (
+                <tr>
+                  <td colSpan={7} className="px-5 py-12 text-center text-rose-500">
+                    Failed to load bookings.
+                  </td>
+                </tr>
+              ) : bookings.length === 0 ? (
+                <tr>
+                  <td colSpan={7} className="px-5 py-12 text-center text-muted-foreground">
+                    <div className="flex flex-col items-center justify-center gap-2">
+                      <Ban className="h-8 w-8 text-muted-foreground/40" />
+                      <p className="text-sm font-medium text-foreground">No bookings found</p>
+                      <p className="text-xs text-muted-foreground">No bookings found matching current filters.</p>
+                    </div>
+                  </td>
+                </tr>
+              ) : (
+                <>
                   {bookings.map((booking, idx) => {
                     const isPreApproval =
                       booking.bookingStatus === "REQUEST_SUBMITTED" ||
@@ -404,9 +379,9 @@ export default function BookingTable() {
                         animate={{ opacity: 1, y: 0 }}
                         transition={{ delay: idx * 0.04, duration: 0.25 }}
                         key={booking.id}
-                        className="group border-b border-border/40 transition-colors last:border-0 hover:bg-muted/30"
+                        className="group transition-colors hover:bg-muted/30"
                       >
-                        <td className="px-6 py-4 font-mono text-xs font-semibold text-primary">
+                        <td className="px-5 py-3.5 font-mono text-xs font-semibold text-primary">
                           <button
                             type="button"
                             onClick={() => setSelectedBooking(booking)}
@@ -415,9 +390,9 @@ export default function BookingTable() {
                             {booking.bookingNumber}
                           </button>
                         </td>
-                        <td className="px-6 py-4">
+                        <td className="px-5 py-3.5">
                           <div className="flex flex-col">
-                            <span className="font-medium text-foreground">
+                            <span className="font-medium text-sm text-foreground">
                               {booking.travelerFirstName} {booking.travelerLastName}
                             </span>
                             <span className="text-xs text-muted-foreground">
@@ -425,15 +400,15 @@ export default function BookingTable() {
                             </span>
                           </div>
                         </td>
-                        <td className="px-6 py-4 text-muted-foreground">
+                        <td className="px-5 py-3.5 text-muted-foreground">
                           <div className="flex flex-col">
-                            <span className="text-foreground">{formatDate(booking.travelArrivalDate)}</span>
+                            <span className="text-foreground text-sm">{formatDate(booking.travelArrivalDate)}</span>
                             <span className="text-xs opacity-70">
                               to {formatDate(booking.travelDepartureDate)}
                             </span>
                           </div>
                         </td>
-                        <td className="px-6 py-4 font-semibold font-mono">
+                        <td className="px-5 py-3.5 font-semibold font-mono text-sm">
                           {booking.confirmedTotal ? (
                             <>
                               {booking.currency} {Number(booking.confirmedTotal).toLocaleString(undefined, { minimumFractionDigits: 2 })}
@@ -442,27 +417,27 @@ export default function BookingTable() {
                             <span className="text-muted-foreground italic text-xs font-normal">Pending Offer</span>
                           )}
                         </td>
-                        <td className="px-6 py-4">
+                        <td className="px-5 py-3.5">
                           <span
                             className={cn(
-                              "inline-flex items-center rounded-full border px-2.5 py-0.5 text-[10px] font-bold uppercase tracking-wider",
+                              "inline-flex items-center rounded-full border px-2.5 py-0.5 text-xs font-bold uppercase tracking-wider",
                               getBookingStatusColor(booking.bookingStatus)
                             )}
                           >
                             {formatStatusLabel(booking.bookingStatus)}
                           </span>
                         </td>
-                        <td className="px-6 py-4">
+                        <td className="px-5 py-3.5">
                           <span
                             className={cn(
-                              "inline-flex items-center rounded-full border px-2.5 py-0.5 text-[10px] font-bold uppercase tracking-wider",
+                              "inline-flex items-center rounded-full border px-2.5 py-0.5 text-xs font-bold uppercase tracking-wider",
                               getPaymentStatusColor(booking.paymentStatus)
                             )}
                           >
                             {formatStatusLabel(booking.paymentStatus)}
                           </span>
                         </td>
-                        <td className="px-6 py-4 text-right">
+                        <td className="px-5 py-3.5 text-right whitespace-nowrap">
                           <div className="inline-flex items-center gap-1">
                             {/* Quick Action: Approve */}
                             {isPreApproval && (
@@ -494,7 +469,7 @@ export default function BookingTable() {
                             <button
                               type="button"
                               onClick={() => setSelectedBooking(booking)}
-                              className="cursor-pointer rounded-lg p-1.5 text-muted-foreground hover:bg-muted hover:text-foreground transition-colors"
+                              className="cursor-pointer rounded-sm p-1.5 text-muted-foreground hover:bg-muted hover:text-foreground transition-colors"
                               title="View Full Details"
                             >
                               <Eye className="h-4 w-4" />
@@ -508,45 +483,46 @@ export default function BookingTable() {
                   {/* Subtle inline skeleton row during background fetch */}
                   {Boolean(isLoadingMore || (isFetching && currentPage > 1)) && (
                     <tr className="animate-pulse bg-muted/20 border-b border-border/40">
-                      <td className="px-6 py-4"><div className="h-4 w-20 rounded bg-muted/60" /></td>
-                      <td className="px-6 py-4">
+                      <td className="px-5 py-3.5"><div className="h-4 w-20 rounded bg-muted/60" /></td>
+                      <td className="px-5 py-3.5">
                         <div className="flex flex-col gap-1.5">
                           <div className="h-4 w-28 rounded bg-muted/60" />
                           <div className="h-3 w-36 rounded bg-muted/40" />
                         </div>
                       </td>
-                      <td className="px-6 py-4"><div className="h-4 w-24 rounded bg-muted/60" /></td>
-                      <td className="px-6 py-4"><div className="h-4 w-16 rounded bg-muted/60" /></td>
-                      <td className="px-6 py-4"><div className="h-6 w-20 rounded-full bg-muted/60" /></td>
-                      <td className="px-6 py-4"><div className="h-6 w-20 rounded-full bg-muted/60" /></td>
-                      <td className="px-6 py-4 text-right"><div className="h-8 w-8 rounded-sm bg-muted/60 ml-auto" /></td>
+                      <td className="px-5 py-3.5"><div className="h-4 w-24 rounded bg-muted/60" /></td>
+                      <td className="px-5 py-3.5"><div className="h-4 w-16 rounded bg-muted/60" /></td>
+                      <td className="px-5 py-3.5"><div className="h-6 w-20 rounded-full bg-muted/60" /></td>
+                      <td className="px-5 py-3.5"><div className="h-6 w-20 rounded-full bg-muted/60" /></td>
+                      <td className="px-5 py-3.5 text-right"><div className="h-8 w-8 rounded-sm bg-muted/60 ml-auto" /></td>
                     </tr>
                   )}
-                </tbody>
-              </table>
-            </div>
-
-            {totalCount > 0 && (
-              <Pagination
-                mode={mode}
-                currentPage={currentPage}
-                totalPages={totalPages}
-                totalItems={data?.meta?.total ?? totalCount}
-                pageSize={effectiveLimit}
-                pageSizeOptions={pageSizeOptions}
-                onPageChange={setCurrentPage}
-                onPageSizeChange={setTargetItems}
-                hasMore={hasMore}
-                isLoadingMore={isLoadingMore || (isFetching && currentPage > 1)}
-                onLoadMore={handleLoadMore}
-                loadedCount={bookings.length}
-                fixed={false}
-                isTable
-              />
-            )}
-          </>
-        )}
+                </>
+              )}
+            </tbody>
+          </table>
+        </div>
       </div>
+
+      {/* Universal Pagination */}
+      {totalCount > 0 && (
+        <Pagination
+          mode={mode}
+          currentPage={currentPage}
+          totalPages={totalPages}
+          totalItems={data?.meta?.total ?? totalCount}
+          pageSize={effectiveLimit}
+          pageSizeOptions={pageSizeOptions}
+          onPageChange={setCurrentPage}
+          onPageSizeChange={setTargetItems}
+          hasMore={hasMore}
+          isLoadingMore={isLoadingMore || (isFetching && currentPage > 1)}
+          onLoadMore={handleLoadMore}
+          loadedCount={bookings.length}
+          fixed={false}
+          isTable
+        />
+      )}
 
       {/* Main Details Sheet */}
       <BookingDetailsSheet

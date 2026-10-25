@@ -258,49 +258,53 @@ export default function InquiryPage() {
         </FilterActions>
       </FilterToolbar>
 
-      {/* Table */}
-      <div className="overflow-hidden rounded-md border border-border/60 bg-card/60 shadow-sm backdrop-blur-xl">
+      {/* Canonical Table Container */}
+      <div className="overflow-hidden rounded-md border border-border/60 bg-card/60 shadow-xs backdrop-blur-xl">
         <div className="overflow-x-auto">
-          <table className="w-full text-left text-sm">
-            <thead className="border-b border-border/60 bg-muted/40 text-xs font-semibold uppercase tracking-wider text-muted-foreground">
+          <table className="w-full text-left text-sm border-collapse">
+            <thead className="border-b border-border/60 bg-muted/40 text-xs font-semibold uppercase tracking-wider text-muted-foreground select-none">
               <tr>
-                <th className="px-5 py-3.5">Ref #</th>
-                <th className="px-5 py-3.5">Traveler Name & Email</th>
-                <th className="px-5 py-3.5">Destination & Travel Date</th>
-                <th className="px-5 py-3.5">Travelers & Types</th>
-                <th className="px-5 py-3.5">Status</th>
-                <th className="px-5 py-3.5">Submitted At</th>
-                <th className="px-5 py-3.5 text-right">Actions</th>
+                <th className="px-5 py-3.5 font-semibold">Ref #</th>
+                <th className="px-5 py-3.5 font-semibold">Traveler Name & Email</th>
+                <th className="px-5 py-3.5 font-semibold">Destination & Travel Date</th>
+                <th className="px-5 py-3.5 font-semibold">Travelers & Types</th>
+                <th className="px-5 py-3.5 font-semibold">Status</th>
+                <th className="px-5 py-3.5 font-semibold">Submitted At</th>
+                <th className="px-5 py-3.5 text-right font-semibold">Actions</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-border/40 text-foreground">
               {isInitialLoading ? (
                 Array.from({ length: 5 }).map((_, i) => (
                   <tr key={i} className="animate-pulse">
-                    <td className="px-5 py-4"><div className="h-4 w-20 rounded bg-muted"></div></td>
-                    <td className="px-5 py-4">
+                    <td className="px-5 py-3.5"><div className="h-4 w-20 rounded bg-muted/60"></div></td>
+                    <td className="px-5 py-3.5">
                       <div className="space-y-1.5">
-                        <div className="h-4 w-28 rounded bg-muted"></div>
-                        <div className="h-3 w-36 rounded bg-muted/50"></div>
+                        <div className="h-4 w-28 rounded bg-muted/60"></div>
+                        <div className="h-3 w-36 rounded bg-muted/40"></div>
                       </div>
                     </td>
-                    <td className="px-5 py-4"><div className="h-4 w-28 rounded bg-muted"></div></td>
-                    <td className="px-5 py-4"><div className="h-4 w-20 rounded bg-muted"></div></td>
-                    <td className="px-5 py-4"><div className="h-6 w-20 rounded-full bg-muted"></div></td>
-                    <td className="px-5 py-4"><div className="h-4 w-24 rounded bg-muted"></div></td>
-                    <td className="px-5 py-4 text-right"><div className="ml-auto h-7 w-16 rounded bg-muted"></div></td>
+                    <td className="px-5 py-3.5"><div className="h-4 w-28 rounded bg-muted/60"></div></td>
+                    <td className="px-5 py-3.5"><div className="h-4 w-20 rounded bg-muted/60"></div></td>
+                    <td className="px-5 py-3.5"><div className="h-6 w-20 rounded-full bg-muted/60"></div></td>
+                    <td className="px-5 py-3.5"><div className="h-4 w-24 rounded bg-muted/60"></div></td>
+                    <td className="px-5 py-3.5 text-right"><div className="ml-auto h-7 w-16 rounded bg-muted/60"></div></td>
                   </tr>
                 ))
               ) : isError ? (
                 <tr>
-                  <td colSpan={7} className="py-12 text-center text-rose-500">
+                  <td colSpan={7} className="px-5 py-12 text-center text-rose-500">
                     Failed to load inquiries. Please check your backend connection.
                   </td>
                 </tr>
               ) : inquiries.length === 0 ? (
                 <tr>
-                  <td colSpan={7} className="py-12 text-center text-muted-foreground">
-                    No travel inquiries found. Submissions from "Plan your escape" will appear here.
+                  <td colSpan={7} className="px-5 py-12 text-center text-muted-foreground">
+                    <div className="flex flex-col items-center justify-center gap-2">
+                      <Inbox className="h-8 w-8 text-muted-foreground/40" />
+                      <p className="text-sm font-medium text-foreground">No travel inquiries found</p>
+                      <p className="text-xs text-muted-foreground">Submissions from "Plan your escape" will appear here.</p>
+                    </div>
                   </td>
                 </tr>
               ) : (
@@ -408,27 +412,27 @@ export default function InquiryPage() {
             </tbody>
           </table>
         </div>
-
-        {/* Universal Pagination */}
-        {inquiries.length > 0 && (
-          <Pagination
-            mode={mode}
-            currentPage={currentPage}
-            totalPages={totalPages}
-            totalItems={totalItems}
-            pageSize={effectiveLimit}
-            pageSizeOptions={pageSizeOptions}
-            loadedCount={inquiries.length}
-            hasMore={hasMore}
-            isLoadingMore={isLoadingMore || (isFetching && currentPage > 1)}
-            onLoadMore={handleLoadMore}
-            onPageChange={setCurrentPage}
-            onPageSizeChange={setTargetItems}
-            fixed={false}
-            isTable
-          />
-        )}
       </div>
+
+      {/* Universal Pagination */}
+      {inquiries.length > 0 && (
+        <Pagination
+          mode={mode}
+          currentPage={currentPage}
+          totalPages={totalPages}
+          totalItems={totalItems}
+          pageSize={effectiveLimit}
+          pageSizeOptions={pageSizeOptions}
+          loadedCount={inquiries.length}
+          hasMore={hasMore}
+          isLoadingMore={isLoadingMore || (isFetching && currentPage > 1)}
+          onLoadMore={handleLoadMore}
+          onPageChange={setCurrentPage}
+          onPageSizeChange={setTargetItems}
+          fixed={false}
+          isTable
+        />
+      )}
 
       {/* Inspection Modal */}
       <Dialog open={!!selectedInquiry} onOpenChange={(open) => !open && setSelectedInquiry(null)}>

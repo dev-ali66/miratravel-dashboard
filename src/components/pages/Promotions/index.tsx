@@ -287,25 +287,36 @@ export default function PromotionsPage() {
       </FilterToolbar>
 
       {/* Table */}
-      <div className="overflow-hidden rounded-md border border-border/60 bg-card/60 shadow-sm backdrop-blur-xl">
+      <div className="overflow-hidden rounded-md border border-border/60 bg-card/60 shadow-xs backdrop-blur-xl">
         <div className="overflow-x-auto">
-          <table className="w-full text-left text-sm">
-            <thead className="border-b border-border/60 bg-muted/40 text-xs font-semibold uppercase tracking-wider text-muted-foreground">
+          <table className="w-full text-left text-sm border-collapse">
+            <thead className="border-b border-border/60 bg-muted/40 text-xs font-semibold uppercase tracking-wider text-muted-foreground select-none">
               <tr>
-                <th className="px-5 py-3.5">Voucher Code</th>
-                <th className="px-5 py-3.5">Campaign & Scope</th>
-                <th className="px-5 py-3.5">Discount Rate</th>
-                <th className="px-5 py-3.5">Min. Spend</th>
-                <th className="px-5 py-3.5">Redemptions</th>
-                <th className="px-5 py-3.5">Validity Period</th>
-                <th className="px-5 py-3.5 text-center">Status</th>
-                <th className="px-5 py-3.5 text-right">Actions</th>
+                <th className="px-5 py-3.5 font-semibold">Voucher Code</th>
+                <th className="px-5 py-3.5 font-semibold">Campaign & Scope</th>
+                <th className="px-5 py-3.5 font-semibold">Discount Rate</th>
+                <th className="px-5 py-3.5 font-semibold">Min. Spend</th>
+                <th className="px-5 py-3.5 font-semibold">Redemptions</th>
+                <th className="px-5 py-3.5 font-semibold">Validity Period</th>
+                <th className="px-5 py-3.5 text-center font-semibold">Status</th>
+                <th className="px-5 py-3.5 text-right font-semibold">Actions</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-border/40 text-foreground">
-              {filtered
-                .slice(0, currentPage * pageSize)
-                .map((p) => {
+              {filtered.length === 0 ? (
+                <tr>
+                  <td colSpan={8} className="px-5 py-12 text-center text-muted-foreground">
+                    <div className="flex flex-col items-center justify-center gap-2">
+                      <Tag className="h-8 w-8 text-muted-foreground/40" />
+                      <p className="text-sm font-medium text-foreground">No promotions found</p>
+                      <p className="text-xs text-muted-foreground">Try adjusting search filters or create a new promotional campaign.</p>
+                    </div>
+                  </td>
+                </tr>
+              ) : (
+                filtered
+                  .slice(0, currentPage * pageSize)
+                  .map((p) => {
                   const percentUsed = Math.min(100, Math.round((p.usageCount / p.usageLimit) * 100))
                   return (
                     <tr key={p.id} className="transition-colors hover:bg-muted/30">
@@ -381,7 +392,8 @@ export default function PromotionsPage() {
                       </td>
                     </tr>
                   )
-                })}
+                })
+              )}
             </tbody>
           </table>
         </div>

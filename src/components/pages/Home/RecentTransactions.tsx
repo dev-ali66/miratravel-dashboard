@@ -75,49 +75,49 @@ export default function RecentTransactions({
   return (
     <SlideBottom
       delay={0.3}
-      className={`flex flex-col overflow-hidden rounded-md border border-border bg-card shadow-sm ${className || ""}`}
+      className={`flex flex-col overflow-hidden rounded-md border border-border/60 bg-card/60 shadow-xs backdrop-blur-xl ${className || ""}`}
     >
-      <div className="flex items-center justify-between p-6 pb-4">
+      <div className="flex items-center justify-between p-5 pb-3.5">
         <div>
-          <h3 className="text-lg font-semibold tracking-tight text-foreground">
+          <h3 className="text-base font-semibold tracking-tight text-foreground">
             Recent Transactions
           </h3>
-          <p className="mt-1 text-sm text-muted-foreground">
+          <p className="mt-0.5 text-xs text-muted-foreground">
             Review the latest financial records
           </p>
         </div>
       </div>
 
       <div className="flex-1 overflow-x-auto">
-        <table className="w-full text-left text-sm">
-          <thead className="border-y border-border bg-muted/40 text-xs text-muted-foreground uppercase">
+        <table className="w-full text-left text-sm border-collapse">
+          <thead className="border-b border-border/60 bg-muted/40 text-xs font-semibold uppercase tracking-wider text-muted-foreground select-none">
             <tr>
-              <th className="px-6 py-3 font-medium">Transaction ID</th>
-              <th className="px-6 py-3 font-medium">Date</th>
-              <th className="px-6 py-3 font-medium">Customer</th>
-              <th className="px-6 py-3 text-right font-medium">Amount</th>
-              <th className="px-6 py-3 text-center font-medium">Status</th>
+              <th className="px-5 py-3.5 font-semibold">Transaction ID</th>
+              <th className="px-5 py-3.5 font-semibold">Date</th>
+              <th className="px-5 py-3.5 font-semibold">Customer</th>
+              <th className="px-5 py-3.5 text-right font-semibold">Amount</th>
+              <th className="px-5 py-3.5 text-center font-semibold">Status</th>
             </tr>
           </thead>
-          <tbody className="divide-y divide-border">
+          <tbody className="divide-y divide-border/40 text-foreground">
             {transactions.map((tx) => (
-              <tr key={tx.id} className="transition-colors hover:bg-muted/20">
-                <td className="px-6 py-4 font-medium whitespace-nowrap text-foreground">
+              <tr key={tx.id} className="transition-colors hover:bg-muted/30">
+                <td className="px-5 py-3.5 font-mono text-xs font-semibold text-primary whitespace-nowrap">
                   {tx.id}
                 </td>
-                <td className="px-6 py-4 whitespace-nowrap text-muted-foreground">
+                <td className="px-5 py-3.5 whitespace-nowrap text-sm text-muted-foreground">
                   {tx.date}
                 </td>
-                <td className="px-6 py-4 font-medium text-foreground">
+                <td className="px-5 py-3.5 font-medium text-sm text-foreground">
                   {tx.customer}
                 </td>
-                <td className="px-6 py-4 text-right font-medium text-foreground">
+                <td className="px-5 py-3.5 text-right font-mono font-semibold text-sm text-foreground">
                   {tx.amount}
                 </td>
-                <td className="px-6 py-4">
+                <td className="px-5 py-3.5">
                   <div className="flex justify-center">
                     <span
-                      className={`rounded-full px-2.5 py-1 text-xs font-semibold ${getStatusColor(tx.status)}`}
+                      className={`rounded-full px-2.5 py-0.5 text-xs font-semibold uppercase tracking-wider ${getStatusColor(tx.status)}`}
                     >
                       {tx.status}
                     </span>

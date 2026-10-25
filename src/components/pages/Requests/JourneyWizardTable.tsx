@@ -170,44 +170,63 @@ export default function JourneyWizardTable() {
         </FilterActions>
       </FilterToolbar>
 
-      {/* Table Container */}
-      <div className="min-h-100 overflow-hidden rounded-xl border border-border/60 bg-background/50 backdrop-blur-xl">
-        {isLoading && currentPage === 1 && requestList.length === 0 ? (
-          <div className="p-8 text-center text-xs text-muted-foreground">
-            Loading journey wizard submissions...
-          </div>
-        ) : isError ? (
-          <div className="p-8 text-center text-xs text-destructive">
-            Failed to load journey wizard submissions.
-          </div>
-        ) : requestList.length === 0 ? (
-          <div className="p-12 text-center flex flex-col items-center gap-2">
-            <Compass className="h-10 w-10 text-muted-foreground/40" />
-            <p className="text-sm font-semibold text-foreground">No submissions found</p>
-            <p className="text-xs text-muted-foreground">
-              {searchQuery
-                ? `No submissions match "${searchQuery}".`
-                : selectedStatusFilter
-                  ? `No submissions match status filter "${selectedStatusFilter}".`
-                  : "No journey wizard submissions received yet."}
-            </p>
-          </div>
-        ) : (
-          <>
-            <div className="overflow-x-auto">
-              <table className="w-full text-left text-xs">
-                <thead className="border-b border-border/60 bg-muted/40 text-[11px] text-muted-foreground uppercase tracking-wider">
-                  <tr>
-                    <th className="px-5 py-3.5 font-semibold">Date Received</th>
-                    <th className="px-5 py-3.5 font-semibold">Requester Contact</th>
-                    <th className="px-5 py-3.5 font-semibold">Duration & Budget</th>
-                    <th className="px-5 py-3.5 font-semibold">Journey Types</th>
-                    <th className="px-5 py-3.5 font-semibold">Styles & Pace</th>
-                    <th className="px-5 py-3.5 font-semibold">Status</th>
-                    <th className="px-5 py-3.5 text-right font-semibold">Actions</th>
+      {/* Table Card */}
+      <div className="overflow-hidden rounded-md border border-border/60 bg-card/60 shadow-xs backdrop-blur-xl">
+        <div className="overflow-x-auto">
+          <table className="w-full text-left text-sm border-collapse">
+            <thead className="border-b border-border/60 bg-muted/40 text-xs font-semibold uppercase tracking-wider text-muted-foreground select-none">
+              <tr>
+                <th className="px-5 py-3.5 font-semibold">Date Received</th>
+                <th className="px-5 py-3.5 font-semibold">Requester Contact</th>
+                <th className="px-5 py-3.5 font-semibold">Duration & Budget</th>
+                <th className="px-5 py-3.5 font-semibold">Journey Types</th>
+                <th className="px-5 py-3.5 font-semibold">Styles & Pace</th>
+                <th className="px-5 py-3.5 font-semibold">Status</th>
+                <th className="px-5 py-3.5 text-right font-semibold">Actions</th>
+              </tr>
+            </thead>
+            <tbody className="divide-y divide-border/40 text-foreground">
+              {isLoading && currentPage === 1 && requestList.length === 0 ? (
+                Array.from({ length: 5 }).map((_, i) => (
+                  <tr key={i} className="animate-pulse">
+                    <td className="px-5 py-4"><div className="h-4 w-24 rounded bg-muted/60" /></td>
+                    <td className="px-5 py-4">
+                      <div className="space-y-1.5">
+                        <div className="h-4 w-28 rounded bg-muted/60" />
+                        <div className="h-3 w-36 rounded bg-muted/40" />
+                      </div>
+                    </td>
+                    <td className="px-5 py-4"><div className="h-4 w-20 rounded bg-muted/60" /></td>
+                    <td className="px-5 py-4"><div className="h-4 w-20 rounded bg-muted/60" /></td>
+                    <td className="px-5 py-4"><div className="h-4 w-20 rounded bg-muted/60" /></td>
+                    <td className="px-5 py-4"><div className="h-6 w-16 rounded-full bg-muted/60" /></td>
+                    <td className="px-5 py-4 text-right"><div className="ml-auto h-7 w-20 rounded bg-muted/60" /></td>
                   </tr>
-                </thead>
-                <tbody className="divide-y divide-border/40">
+                ))
+              ) : isError ? (
+                <tr>
+                  <td colSpan={7} className="px-5 py-12 text-center text-rose-500">
+                    Failed to load journey wizard submissions.
+                  </td>
+                </tr>
+              ) : requestList.length === 0 ? (
+                <tr>
+                  <td colSpan={7} className="px-5 py-12 text-center text-muted-foreground">
+                    <div className="flex flex-col items-center justify-center gap-2">
+                      <Compass className="h-8 w-8 text-muted-foreground/40" />
+                      <p className="text-sm font-medium text-foreground">No submissions found</p>
+                      <p className="text-xs text-muted-foreground">
+                        {searchQuery
+                          ? `No submissions match "${searchQuery}".`
+                          : selectedStatusFilter
+                            ? `No submissions match status filter "${selectedStatusFilter}".`
+                            : "No journey wizard submissions received yet."}
+                      </p>
+                    </div>
+                  </td>
+                </tr>
+              ) : (
+                <>
                   {requestList.map((req, idx) => {
                     const formattedDate = new Date(req.createdAt).toLocaleDateString("en-US", {
                       month: "short",
@@ -382,32 +401,32 @@ export default function JourneyWizardTable() {
                       <td className="px-5 py-3.5 text-right"><div className="h-7 w-20 rounded-sm bg-muted/60 ml-auto" /></td>
                     </tr>
                   )}
-                </tbody>
-              </table>
-            </div>
-
-            {/* Universal Pagination */}
-            {totalItems > 0 && (
-              <Pagination
-                mode={mode}
-                currentPage={currentPage}
-                totalPages={totalPages}
-                totalItems={totalItems}
-                pageSize={effectiveLimit}
-                pageSizeOptions={pageSizeOptions}
-                onPageChange={setCurrentPage}
-                onPageSizeChange={setTargetItems}
-                hasMore={hasMore}
-                isLoadingMore={isLoadingMore || (isFetching && currentPage > 1)}
-                onLoadMore={handleLoadMore}
-                loadedCount={requestList.length}
-                fixed={false}
-                isTable
-              />
-            )}
-          </>
-        )}
+                </>
+              )}
+            </tbody>
+          </table>
+        </div>
       </div>
+
+      {/* Universal Pagination */}
+      {totalItems > 0 && (
+        <Pagination
+          mode={mode}
+          currentPage={currentPage}
+          totalPages={totalPages}
+          totalItems={totalItems}
+          pageSize={effectiveLimit}
+          pageSizeOptions={pageSizeOptions}
+          onPageChange={setCurrentPage}
+          onPageSizeChange={setTargetItems}
+          hasMore={hasMore}
+          isLoadingMore={isLoadingMore || (isFetching && currentPage > 1)}
+          onLoadMore={handleLoadMore}
+          loadedCount={requestList.length}
+          fixed={false}
+          isTable
+        />
+      )}
 
       {/* Details Modal */}
       <JourneyWizardDetailsModal

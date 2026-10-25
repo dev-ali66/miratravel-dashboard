@@ -555,50 +555,52 @@ export default function SystemHealthPage() {
       {/* Tab 3: Cron Automation */}
       {activeTab === "CRON" && (
         <div className="space-y-4">
-          <div className="rounded-md border border-border/60 bg-card/60 overflow-hidden shadow-sm backdrop-blur-xl">
-            <table className="w-full text-left text-sm">
-              <thead className="border-b border-border/60 bg-muted/40 text-xs font-semibold uppercase tracking-wider text-muted-foreground">
-                <tr>
-                  <th className="px-5 py-3.5">Scheduled Task</th>
-                  <th className="px-5 py-3.5">Cron Frequency</th>
-                  <th className="px-5 py-3.5">Last Run</th>
-                  <th className="px-5 py-3.5">Next Run</th>
-                  <th className="px-5 py-3.5">Status</th>
-                  <th className="px-5 py-3.5 text-right">Actions</th>
-                </tr>
-              </thead>
-              <tbody className="divide-y divide-border/40 text-foreground text-xs">
-                {cronJobs.map((job) => (
-                  <tr key={job.id} className="transition-colors hover:bg-muted/30">
-                    <td className="px-5 py-3.5">
-                      <div className="flex flex-col">
-                        <span className="font-semibold text-foreground">{job.name}</span>
-                        <span className="text-[11px] text-muted-foreground">{job.description}</span>
-                      </div>
-                    </td>
-                    <td className="px-5 py-3.5 font-mono text-muted-foreground">{job.cronExpression}</td>
-                    <td className="px-5 py-3.5 text-muted-foreground">{new Date(job.lastRun).toLocaleTimeString()}</td>
-                    <td className="px-5 py-3.5 text-muted-foreground">{new Date(job.nextRun).toLocaleTimeString()}</td>
-                    <td className="px-5 py-3.5">
-                      <span className="inline-block rounded bg-emerald-500/10 px-2 py-0.5 text-[11px] font-semibold text-emerald-600 dark:text-emerald-400 border border-emerald-500/20">
-                        {job.status} ({job.lastExecutionDurationMs}ms)
-                      </span>
-                    </td>
-                    <td className="px-5 py-3.5 text-right">
-                      <Button
-                        size="sm"
-                        variant="outline"
-                        onClick={() => handleRunCron(job.key)}
-                        className="h-7 text-xs gap-1"
-                      >
-                        <Play className="h-3 w-3" />
-                        Run Now
-                      </Button>
-                    </td>
+          <div className="overflow-hidden rounded-md border border-border/60 bg-card/60 shadow-xs backdrop-blur-xl">
+            <div className="overflow-x-auto">
+              <table className="w-full text-left text-sm border-collapse">
+                <thead className="border-b border-border/60 bg-muted/40 text-xs font-semibold uppercase tracking-wider text-muted-foreground select-none">
+                  <tr>
+                    <th className="px-5 py-3.5 font-semibold">Scheduled Task</th>
+                    <th className="px-5 py-3.5 font-semibold">Cron Frequency</th>
+                    <th className="px-5 py-3.5 font-semibold">Last Run</th>
+                    <th className="px-5 py-3.5 font-semibold">Next Run</th>
+                    <th className="px-5 py-3.5 font-semibold">Status</th>
+                    <th className="px-5 py-3.5 text-right font-semibold">Actions</th>
                   </tr>
-                ))}
-              </tbody>
-            </table>
+                </thead>
+                <tbody className="divide-y divide-border/40 text-foreground text-xs">
+                  {cronJobs.map((job) => (
+                    <tr key={job.id} className="transition-colors hover:bg-muted/30">
+                      <td className="px-5 py-3.5">
+                        <div className="flex flex-col">
+                          <span className="font-semibold text-foreground">{job.name}</span>
+                          <span className="text-[11px] text-muted-foreground">{job.description}</span>
+                        </div>
+                      </td>
+                      <td className="px-5 py-3.5 font-mono text-muted-foreground">{job.cronExpression}</td>
+                      <td className="px-5 py-3.5 text-muted-foreground">{new Date(job.lastRun).toLocaleTimeString()}</td>
+                      <td className="px-5 py-3.5 text-muted-foreground">{new Date(job.nextRun).toLocaleTimeString()}</td>
+                      <td className="px-5 py-3.5">
+                        <span className="inline-block rounded bg-emerald-500/10 px-2 py-0.5 text-[11px] font-semibold text-emerald-600 dark:text-emerald-400 border border-emerald-500/20">
+                          {job.status} ({job.lastExecutionDurationMs}ms)
+                        </span>
+                      </td>
+                      <td className="px-5 py-3.5 text-right">
+                        <Button
+                          size="sm"
+                          variant="outline"
+                          onClick={() => handleRunCron(job.key)}
+                          className="h-7 text-xs gap-1"
+                        >
+                          <Play className="h-3 w-3" />
+                          Run Now
+                        </Button>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
           </div>
         </div>
       )}
@@ -613,31 +615,32 @@ export default function SystemHealthPage() {
             </Button>
           </div>
 
-          <div className="rounded-md border border-border/60 bg-card/60 overflow-hidden shadow-sm backdrop-blur-xl">
-            <table className="w-full text-left text-sm">
-              <thead className="border-b border-border/60 bg-muted/40 text-xs font-semibold uppercase tracking-wider text-muted-foreground">
-                <tr>
-                  <th className="px-5 py-3.5">Archive Filename</th>
-                  <th className="px-5 py-3.5">Size</th>
-                  <th className="px-5 py-3.5">Snapshot Type</th>
-                  <th className="px-5 py-3.5">Storage Target</th>
-                  <th className="px-5 py-3.5">Status</th>
-                  <th className="px-5 py-3.5 text-right">Created At</th>
-                </tr>
-              </thead>
-              <tbody className="divide-y divide-border/40 text-foreground text-xs">
-                {backups.map((bk) => (
-                  <tr key={bk.id} className="transition-colors hover:bg-muted/30">
-                    <td className="px-5 py-3.5 font-mono font-semibold text-primary">{bk.filename}</td>
-                    <td className="px-5 py-3.5 text-foreground">{bk.sizeMb} MB</td>
-                    <td className="px-5 py-3.5 text-muted-foreground">{bk.type}</td>
-                    <td className="px-5 py-3.5 text-muted-foreground">{bk.destination}</td>
-                    <td className="px-5 py-3.5">
-                      <span className="inline-block rounded bg-emerald-500/10 px-2 py-0.5 text-[11px] font-semibold text-emerald-600 dark:text-emerald-400 border border-emerald-500/20">
-                        {bk.status}
-                      </span>
-                    </td>
-                    <td className="px-5 py-3.5 text-right text-muted-foreground">
+          <div className="overflow-hidden rounded-md border border-border/60 bg-card/60 shadow-xs backdrop-blur-xl">
+            <div className="overflow-x-auto">
+              <table className="w-full text-left text-sm border-collapse">
+                <thead className="border-b border-border/60 bg-muted/40 text-xs font-semibold uppercase tracking-wider text-muted-foreground select-none">
+                  <tr>
+                    <th className="px-5 py-3.5 font-semibold">Archive Filename</th>
+                    <th className="px-5 py-3.5 font-semibold">Size</th>
+                    <th className="px-5 py-3.5 font-semibold">Snapshot Type</th>
+                    <th className="px-5 py-3.5 font-semibold">Storage Target</th>
+                    <th className="px-5 py-3.5 font-semibold">Status</th>
+                    <th className="px-5 py-3.5 text-right font-semibold">Created At</th>
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-border/40 text-foreground text-xs">
+                  {backups.map((bk) => (
+                    <tr key={bk.id} className="transition-colors hover:bg-muted/30">
+                      <td className="px-5 py-3.5 font-mono font-semibold text-primary">{bk.filename}</td>
+                      <td className="px-5 py-3.5 text-foreground">{bk.sizeMb} MB</td>
+                      <td className="px-5 py-3.5 text-muted-foreground">{bk.type}</td>
+                      <td className="px-5 py-3.5 text-muted-foreground">{bk.destination}</td>
+                      <td className="px-5 py-3.5">
+                        <span className="inline-block rounded bg-emerald-500/10 px-2 py-0.5 text-[11px] font-semibold text-emerald-600 dark:text-emerald-400 border border-emerald-500/20">
+                          {bk.status}
+                        </span>
+                      </td>
+                      <td className="px-5 py-3.5 text-right text-muted-foreground">
                       {new Date(bk.createdAt).toLocaleString()}
                     </td>
                   </tr>
@@ -646,7 +649,8 @@ export default function SystemHealthPage() {
             </table>
           </div>
         </div>
-      )}
+      </div>
+    )}
 
       {/* Tab 5: Feature Flags */}
       {activeTab === "FLAGS" && (

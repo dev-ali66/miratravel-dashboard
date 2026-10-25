@@ -439,104 +439,116 @@ export default function AuditLogsPage() {
         </div>
       )}
 
-      {/* Logs Table */}
-      <div className="overflow-hidden rounded-md border border-border/60 bg-card/60 shadow-sm backdrop-blur-xl">
+      {/* Canonical Logs Table Container */}
+      <div className="overflow-hidden rounded-md border border-border/60 bg-card/60 shadow-xs backdrop-blur-xl">
         <div className="overflow-x-auto">
-          <table className="w-full text-left text-sm">
-            <thead className="border-b border-border/60 bg-muted/40 text-xs font-semibold uppercase tracking-wider text-muted-foreground">
+          <table className="w-full text-left text-sm border-collapse">
+            <thead className="border-b border-border/60 bg-muted/40 text-xs font-semibold uppercase tracking-wider text-muted-foreground select-none">
               <tr>
-                <th className="px-5 py-3.5">Timestamp</th>
-                <th className="px-5 py-3.5">Actor</th>
-                <th className="px-5 py-3.5">Action</th>
-                <th className="px-5 py-3.5">Target Entity</th>
-                <th className="px-5 py-3.5">Status</th>
-                <th className="px-5 py-3.5">IP Address</th>
-                <th className="px-5 py-3.5 text-right">Inspection</th>
+                <th className="px-5 py-3.5 font-semibold">Timestamp</th>
+                <th className="px-5 py-3.5 font-semibold">Actor</th>
+                <th className="px-5 py-3.5 font-semibold">Action</th>
+                <th className="px-5 py-3.5 font-semibold">Target Entity</th>
+                <th className="px-5 py-3.5 font-semibold">Status</th>
+                <th className="px-5 py-3.5 font-semibold">IP Address</th>
+                <th className="px-5 py-3.5 text-right font-semibold">Inspection</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-border/40 text-foreground">
-              {filteredLogs
-                .slice(0, currentPage * pageSize)
-                .map((log, idx) => (
-                  <tr key={`${log.id}-${idx}`} className="transition-colors hover:bg-muted/30">
-                    <td className="px-5 py-3.5 text-xs text-muted-foreground whitespace-nowrap">
-                      {formatDate(log.timestamp)}
-                    </td>
-                    <td className="px-5 py-3.5">
-                      <div className="flex flex-col">
-                        <span className="font-semibold text-foreground text-xs">{log.actorName}</span>
-                        <span className="text-[11px] text-muted-foreground">{log.actorEmail}</span>
-                      </div>
-                    </td>
-                    <td className="px-5 py-3.5">
-                      <span className="inline-block rounded-sm border border-border/80 bg-background/80 px-2 py-0.5 text-xs font-mono font-semibold">
-                        {log.action}
-                      </span>
-                    </td>
-                    <td className="px-5 py-3.5 text-xs">
-                      <span className="text-muted-foreground">{log.entityType}:</span>{" "}
-                      <span className="font-semibold text-foreground">{log.entityId}</span>
-                    </td>
-                    <td className="px-5 py-3.5">
-                      {log.status === "SUCCESS" ? (
-                        <span className="inline-flex items-center gap-1 text-xs font-medium text-emerald-600 dark:text-emerald-400">
-                          <CheckCircle2 className="h-3.5 w-3.5" />
-                          Success
+              {filteredLogs.length === 0 ? (
+                <tr>
+                  <td colSpan={7} className="px-5 py-12 text-center text-muted-foreground">
+                    <div className="flex flex-col items-center justify-center gap-2">
+                      <History className="h-8 w-8 text-muted-foreground/40" />
+                      <p className="text-sm font-medium text-foreground">No audit logs found</p>
+                      <p className="text-xs text-muted-foreground">No log entries matched your filter or search query.</p>
+                    </div>
+                  </td>
+                </tr>
+              ) : (
+                filteredLogs
+                  .slice(0, currentPage * pageSize)
+                  .map((log, idx) => (
+                    <tr key={`${log.id}-${idx}`} className="transition-colors hover:bg-muted/30">
+                      <td className="px-5 py-3.5 text-sm text-muted-foreground whitespace-nowrap">
+                        {formatDate(log.timestamp)}
+                      </td>
+                      <td className="px-5 py-3.5">
+                        <div className="flex flex-col">
+                          <span className="font-semibold text-foreground text-sm">{log.actorName}</span>
+                          <span className="text-xs text-muted-foreground">{log.actorEmail}</span>
+                        </div>
+                      </td>
+                      <td className="px-5 py-3.5">
+                        <span className="inline-block rounded-sm border border-border/80 bg-background/80 px-2 py-0.5 text-xs font-mono font-semibold">
+                          {log.action}
                         </span>
-                      ) : log.status === "WARNING" ? (
-                        <span className="inline-flex items-center gap-1 text-xs font-medium text-amber-600 dark:text-amber-400">
-                          <AlertTriangle className="h-3.5 w-3.5" />
-                          Warning
-                        </span>
-                      ) : (
-                        <span className="inline-flex items-center gap-1 text-xs font-medium text-rose-600 dark:text-rose-400">
-                          <ShieldAlert className="h-3.5 w-3.5" />
-                          Failed
-                        </span>
-                      )}
-                    </td>
-                    <td className="px-5 py-3.5 text-xs font-mono text-muted-foreground">
-                      {log.ipAddress}
-                    </td>
-                    <td className="px-5 py-3.5 text-right">
-                      <Button
-                        variant="ghost"
-                        size="sm"
-                        onClick={() => setSelectedLog(log)}
-                        className="h-7 text-xs"
-                      >
-                        <Info className="mr-1 h-3.5 w-3.5" />
-                        Details
-                      </Button>
-                    </td>
-                  </tr>
-                ))}
+                      </td>
+                      <td className="px-5 py-3.5 text-sm">
+                        <span className="text-muted-foreground">{log.entityType}:</span>{" "}
+                        <span className="font-semibold text-foreground">{log.entityId}</span>
+                      </td>
+                      <td className="px-5 py-3.5">
+                        {log.status === "SUCCESS" ? (
+                          <span className="inline-flex items-center gap-1 text-xs font-medium text-emerald-600 dark:text-emerald-400">
+                            <CheckCircle2 className="h-3.5 w-3.5" />
+                            Success
+                          </span>
+                        ) : log.status === "WARNING" ? (
+                          <span className="inline-flex items-center gap-1 text-xs font-medium text-amber-600 dark:text-amber-400">
+                            <AlertTriangle className="h-3.5 w-3.5" />
+                            Warning
+                          </span>
+                        ) : (
+                          <span className="inline-flex items-center gap-1 text-xs font-medium text-rose-600 dark:text-rose-400">
+                            <ShieldAlert className="h-3.5 w-3.5" />
+                            Failed
+                          </span>
+                        )}
+                      </td>
+                      <td className="px-5 py-3.5 text-sm font-mono text-muted-foreground">
+                        {log.ipAddress}
+                      </td>
+                      <td className="px-5 py-3.5 text-right whitespace-nowrap">
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          onClick={() => setSelectedLog(log)}
+                          className="h-7 text-xs"
+                        >
+                          <Info className="mr-1 h-3.5 w-3.5" />
+                          Details
+                        </Button>
+                      </td>
+                    </tr>
+                  ))
+              )}
             </tbody>
           </table>
         </div>
-
-        {/* Universal Pagination */}
-        {filteredLogs.length > 0 && (
-          <Pagination
-            mode="infinite"
-            currentPage={currentPage}
-            totalPages={Math.max(1, Math.ceil(filteredLogs.length / pageSize))}
-            totalItems={filteredLogs.length}
-            pageSize={pageSize}
-            pageSizeOptions={[10, 20, 50, 100]}
-            loadedCount={Math.min(filteredLogs.length, currentPage * pageSize)}
-            hasMore={currentPage * pageSize < filteredLogs.length}
-            onLoadMore={() => setCurrentPage((p) => p + 1)}
-            onPageChange={setCurrentPage}
-            onPageSizeChange={(sz) => {
-              setPageSize(sz)
-              setCurrentPage(1)
-            }}
-            fixed={false}
-            isTable
-          />
-        )}
       </div>
+
+      {/* Universal Pagination */}
+      {filteredLogs.length > 0 && (
+        <Pagination
+          mode="infinite"
+          currentPage={currentPage}
+          totalPages={Math.max(1, Math.ceil(filteredLogs.length / pageSize))}
+          totalItems={filteredLogs.length}
+          pageSize={pageSize}
+          pageSizeOptions={[10, 20, 50, 100]}
+          loadedCount={Math.min(filteredLogs.length, currentPage * pageSize)}
+          hasMore={currentPage * pageSize < filteredLogs.length}
+          onLoadMore={() => setCurrentPage((p) => p + 1)}
+          onPageChange={setCurrentPage}
+          onPageSizeChange={(sz) => {
+            setPageSize(sz)
+            setCurrentPage(1)
+          }}
+          fixed={false}
+          isTable
+        />
+      )}
 
       {/* Detail Dialog */}
       <Dialog open={!!selectedLog} onOpenChange={(open) => !open && setSelectedLog(null)}>
