@@ -8,7 +8,6 @@ import {
   Clock,
   Sparkles,
   RefreshCw,
-  Video,
 } from "lucide-react"
 import { cn } from "@/lib/utils"
 import type { MediaAsset } from "@/services/mediaService"
@@ -208,9 +207,17 @@ export const MediaTrashView: React.FC<MediaTrashViewProps> = ({ assets, isLoadin
                 </div>
 
                 {/* Thumbnail (Greyscale hint) */}
-                <div className="relative aspect-square w-full bg-muted/40 overflow-hidden flex items-center justify-center opacity-80 group-hover:opacity-100 transition-opacity">
+                <div className="relative aspect-square w-full bg-zinc-950 overflow-hidden flex items-center justify-center opacity-80 group-hover:opacity-100 transition-opacity">
                   {isVideo ? (
-                    <Video className="h-10 w-10 text-muted-foreground/60 stroke-[1.2]" />
+                    <video
+                      src={asset.url}
+                      autoPlay
+                      muted
+                      loop
+                      playsInline
+                      preload="metadata"
+                      className="h-full w-full object-cover filter grayscale-30 group-hover:grayscale-0 transition-all"
+                    />
                   ) : (
                     <img
                       src={asset.url}

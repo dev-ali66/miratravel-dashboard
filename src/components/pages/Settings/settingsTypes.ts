@@ -71,8 +71,11 @@ export interface SiteSettingsState {
   siteLogoDark: any
   siteFavicon: any
   navbarLogo: any
+  navbarLogoDark: any
   footerLogo: any
+  footerLogoDark: any
   authLogo: any
+  authLogoDark: any
   loadingVideo: any
 
   // 3. SOCIAL
@@ -120,8 +123,11 @@ export const defaultState: SiteSettingsState = {
   siteLogoDark: emptyImageMultimedia,
   siteFavicon: emptyImageMultimedia,
   navbarLogo: emptyImageMultimedia,
+  navbarLogoDark: emptyImageMultimedia,
   footerLogo: emptyImageMultimedia,
+  footerLogoDark: emptyImageMultimedia,
   authLogo: emptyImageMultimedia,
+  authLogoDark: emptyImageMultimedia,
   loadingVideo: emptyVideoMultimedia,
 
   socialLinks: [],

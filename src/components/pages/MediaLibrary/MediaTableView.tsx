@@ -2,7 +2,7 @@ import React from "react"
 import { Checkbox } from "@/components/ui/checkbox"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
-import { Trash2, ExternalLink, Video, AlertCircle, CheckCircle2 } from "lucide-react"
+import { Trash2, ExternalLink, AlertCircle, CheckCircle2 } from "lucide-react"
 import { cn } from "@/lib/utils"
 import type { MediaAsset } from "@/services/mediaService"
 
@@ -111,9 +111,17 @@ export const MediaTableView: React.FC<MediaTableViewProps> = ({
                   </td>
 
                   <td className="py-2.5 px-3">
-                    <div className="h-10 w-10 rounded-sm border border-border/40 bg-muted/40 overflow-hidden flex items-center justify-center relative">
+                    <div className="h-10 w-10 rounded-sm border border-border/40 bg-zinc-950 overflow-hidden flex items-center justify-center relative">
                       {isVideo ? (
-                        <Video className="h-5 w-5 text-muted-foreground" />
+                        <video
+                          src={asset.url}
+                          autoPlay
+                          muted
+                          loop
+                          playsInline
+                          preload="metadata"
+                          className="h-full w-full object-cover"
+                        />
                       ) : (
                         <img
                           src={asset.url}

@@ -157,7 +157,16 @@ export const MediaInspectorDrawer: React.FC<MediaInspectorDrawerProps> = ({
           {/* High-res Media Preview */}
           <div className="relative rounded-md border border-border/60 bg-muted/40 overflow-hidden flex items-center justify-center min-h-[220px] max-h-[300px]">
             {isVideo ? (
-              <video src={asset.url} controls className="max-h-[300px] w-full object-contain" />
+              <video
+                src={asset.url}
+                controls
+                autoPlay
+                muted
+                loop
+                playsInline
+                preload="auto"
+                className="max-h-[300px] w-full object-contain"
+              />
             ) : (
               <img src={asset.url} alt={asset.title || asset.fileName} className="max-h-[300px] w-full object-contain" />
             )}

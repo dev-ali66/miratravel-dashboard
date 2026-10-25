@@ -65,8 +65,11 @@ export default function SiteSettingsPage() {
         siteLogoDark: normalizeMultimediaField(settingsData.siteLogoDark, "image"),
         siteFavicon: normalizeMultimediaField(settingsData.siteFavicon, "image"),
         navbarLogo: normalizeMultimediaField(settingsData.navbarLogo, "image"),
+        navbarLogoDark: normalizeMultimediaField(settingsData.navbarLogoDark, "image"),
         footerLogo: normalizeMultimediaField(settingsData.footerLogo, "image"),
+        footerLogoDark: normalizeMultimediaField(settingsData.footerLogoDark, "image"),
         authLogo: normalizeMultimediaField(settingsData.authLogo, "image"),
+        authLogoDark: normalizeMultimediaField(settingsData.authLogoDark, "image"),
         loadingVideo: normalizeMultimediaField(settingsData.loadingVideo, "video"),
       }))
     }
@@ -149,8 +152,11 @@ export default function SiteSettingsPage() {
         siteLogoDark: normalizeMultimediaField(settingsData.siteLogoDark, "image"),
         siteFavicon: normalizeMultimediaField(settingsData.siteFavicon, "image"),
         navbarLogo: normalizeMultimediaField(settingsData.navbarLogo, "image"),
+        navbarLogoDark: normalizeMultimediaField(settingsData.navbarLogoDark, "image"),
         footerLogo: normalizeMultimediaField(settingsData.footerLogo, "image"),
+        footerLogoDark: normalizeMultimediaField(settingsData.footerLogoDark, "image"),
         authLogo: normalizeMultimediaField(settingsData.authLogo, "image"),
+        authLogoDark: normalizeMultimediaField(settingsData.authLogoDark, "image"),
         loadingVideo: normalizeMultimediaField(settingsData.loadingVideo, "video"),
       })
     } else {
@@ -189,7 +195,7 @@ export default function SiteSettingsPage() {
             />
             <CompactStatCard
               label="Brand Media"
-              value="8 Assets"
+              value="11 Assets"
               subtext="Logos & loaders"
               icon={ImageIcon}
               iconColor="text-purple-500"

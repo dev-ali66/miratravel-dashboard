@@ -9,6 +9,7 @@ import { Button } from "@/components/ui/button"
 import {
   Image as ImageIcon,
   Video as VideoIcon,
+  Play,
   Check,
   Upload,
   ArrowUpDown,
@@ -558,10 +559,19 @@ export function MediaPickerModal({
                         {/* Thumbnail Container */}
                         <div className="relative aspect-video w-full bg-muted/40 overflow-hidden">
                           {isVideo ? (
-                            <div className="flex h-full w-full items-center justify-center bg-zinc-900 text-white">
-                              <VideoIcon className="h-6 w-6 opacity-80" />
-                              <span className="absolute bottom-1 right-1 rounded bg-black/75 px-1 py-0.2 text-[9px] font-mono text-white">
-                                VIDEO
+                            <div className="relative h-full w-full bg-zinc-950 overflow-hidden flex items-center justify-center">
+                              <video
+                                src={asset.url}
+                                autoPlay
+                                muted
+                                loop
+                                playsInline
+                                preload="auto"
+                                className="h-full w-full object-cover transition-transform duration-300 group-hover:scale-105"
+                              />
+                              <span className="absolute bottom-1 right-1 z-10 flex items-center gap-1 rounded bg-black/75 px-1.5 py-0.5 text-[9px] font-mono text-white pointer-events-none backdrop-blur-xs">
+                                <Play className="h-2 w-2 fill-current" />
+                                <span>VIDEO</span>
                               </span>
                             </div>
                           ) : (

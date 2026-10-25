@@ -3,6 +3,8 @@ import { Link, useNavigate } from "react-router-dom"
 import { useMe } from "@/hooks/auth/useMe"
 import { useUserSessions } from "@/hooks/auth/useUserSessions"
 import { useGetCmsBySlug } from "@/hooks/cms/useGetCmsBySlug"
+import { useGetSettings } from "@/hooks/settings/useSettings"
+import { useTheme } from "@/components/ThemeProvider"
 import { useDevMode } from "@/context/DevModeContext"
 import { UniversalMultimediaPreview } from "../pages/CMS/Home/shared/preview/UniversalMultimediaPreview"
 import { ThemeToggle } from "@/components/ThemeToggle"
@@ -45,9 +47,27 @@ const extractBrand = (cmsResponse: any) => {
   return innerData?.content?.brand || pageObj?.content?.brand || null
 }
 
+const getMediaUrl = (obj: any): string => {
+  if (!obj) return ""
+  if (typeof obj === "string") return obj
+  if (obj.image?.url) return obj.image.url
+  if (obj.video?.url) return obj.video.url
+  if (obj.url) return obj.url
+  if (obj.imageData?.url) return obj.imageData.url
+  return ""
+}
+
 export const NavbarBrandLogo = () => {
+  const { theme } = useTheme()
+  const { data: settingsData } = useGetSettings()
   const { data: navbarCms } = useGetCmsBySlug("navbar")
   const { data: footerCms } = useGetCmsBySlug("footer")
+
+  const isDark =
+    theme === "dark" ||
+    (theme === "system" &&
+      typeof window !== "undefined" &&
+      window.matchMedia("(prefers-color-scheme: dark)").matches)
 
   const navbarBrand = extractBrand(navbarCms)
   const footerBrand = extractBrand(footerCms)
@@ -55,28 +75,34 @@ export const NavbarBrandLogo = () => {
   const navbarMedia = navbarBrand?.navbarBrandMultimedia
   const footerMedia = footerBrand?.footerBrandMultimedia
 
-  const mediaObj =
-    navbarMedia &&
-      (navbarMedia.url ||
-        (navbarMedia as any).image?.url ||
-        (navbarMedia as any).imageData?.url)
-      ? navbarMedia
-      : navbarBrand?.logo
-        ? { type: "image", url: navbarBrand.logo, alt: navbarBrand.alt }
-        : footerMedia &&
-          (footerMedia.url ||
-            (footerMedia as any).image?.url ||
-            (footerMedia as any).imageData?.url)
-          ? footerMedia
-          : footerBrand?.logo
-            ? { type: "image", url: footerBrand.logo, alt: footerBrand.alt }
-            : null
+  // Candidates in priority order based on theme:
+  // Dark mode: navbarLogoDark -> navbarLogo -> siteLogoDark -> siteLogo -> CMS navbarBrand -> CMS footerBrand
+  // Light mode: navbarLogo -> siteLogoLight -> siteLogo -> navbarLogoDark -> CMS navbarBrand -> CMS footerBrand
+  const candidateObjects = isDark
+    ? [
+        settingsData?.navbarLogoDark,
+        settingsData?.navbarLogo,
+        settingsData?.siteLogoDark,
+        settingsData?.siteLogo,
+        navbarMedia,
+        navbarBrand?.logo ? { type: "image", url: navbarBrand.logo, alt: navbarBrand.alt } : null,
+        footerMedia,
+        footerBrand?.logo ? { type: "image", url: footerBrand.logo, alt: footerBrand.alt } : null,
+      ]
+    : [
+        settingsData?.navbarLogo,
+        settingsData?.siteLogoLight,
+        settingsData?.siteLogo,
+        settingsData?.navbarLogoDark,
+        navbarMedia,
+        navbarBrand?.logo ? { type: "image", url: navbarBrand.logo, alt: navbarBrand.alt } : null,
+        footerMedia,
+        footerBrand?.logo ? { type: "image", url: footerBrand.logo, alt: footerBrand.alt } : null,
+      ]
 
-  const brandName = navbarBrand?.name || footerBrand?.name || "MIRA"
-  const mediaUrl =
-    mediaObj?.url ||
-    (mediaObj as any)?.image?.url ||
-    (mediaObj as any)?.imageData?.url
+  const mediaObj = candidateObjects.find((candidate) => Boolean(getMediaUrl(candidate)))
+  const brandName = settingsData?.siteName || navbarBrand?.name || footerBrand?.name || "MIRA"
+  const mediaUrl = getMediaUrl(mediaObj)
 
   if (mediaObj && mediaUrl) {
     const isVideo =

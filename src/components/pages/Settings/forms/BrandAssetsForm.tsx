@@ -28,7 +28,7 @@ export function BrandAssetsForm({ formData, handleChange }: BrandAssetsFormProps
         </p>
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6 pt-2">
-          {/* 1. Navbar Logo */}
+          {/* 1. Navbar Logo (Light / Default) */}
           <div className="space-y-2 p-4 border border-border/60 rounded-md bg-card/40">
             <div className="flex items-center gap-2">
               <ImageIcon className="h-4 w-4 text-primary" />
@@ -37,7 +37,7 @@ export function BrandAssetsForm({ formData, handleChange }: BrandAssetsFormProps
               </label>
             </div>
             <p className="text-[11px] text-muted-foreground">
-              Logo displayed in main website header navigation (default mode: image).
+              Logo displayed in main website header navigation for light backgrounds (default mode: image).
             </p>
             <UniversalMultimediaForm
               value={formData.navbarLogo || emptyImageMultimedia}
@@ -45,7 +45,24 @@ export function BrandAssetsForm({ formData, handleChange }: BrandAssetsFormProps
             />
           </div>
 
-          {/* 2. Footer Logo */}
+          {/* 2. Navbar Logo (Dark Mode) */}
+          <div className="space-y-2 p-4 border border-border/60 rounded-md bg-card/40">
+            <div className="flex items-center gap-2">
+              <ImageIcon className="h-4 w-4 text-primary" />
+              <label className="text-xs font-bold uppercase tracking-wider text-primary">
+                Navbar Logo Dark (`navbarLogoDark`)
+              </label>
+            </div>
+            <p className="text-[11px] text-muted-foreground">
+              Logo displayed in main website header navigation for dark mode / backgrounds (default mode: image).
+            </p>
+            <UniversalMultimediaForm
+              value={formData.navbarLogoDark || emptyImageMultimedia}
+              onChange={(val) => handleChange("navbarLogoDark", val)}
+            />
+          </div>
+
+          {/* 3. Footer Logo (Light / Default) */}
           <div className="space-y-2 p-4 border border-border/60 rounded-md bg-card/40">
             <div className="flex items-center gap-2">
               <ImageIcon className="h-4 w-4 text-primary" />
@@ -54,7 +71,7 @@ export function BrandAssetsForm({ formData, handleChange }: BrandAssetsFormProps
               </label>
             </div>
             <p className="text-[11px] text-muted-foreground">
-              Logo displayed in site footer section (default mode: image).
+              Logo displayed in site footer section for light backgrounds (default mode: image).
             </p>
             <UniversalMultimediaForm
               value={formData.footerLogo || emptyImageMultimedia}
@@ -62,7 +79,24 @@ export function BrandAssetsForm({ formData, handleChange }: BrandAssetsFormProps
             />
           </div>
 
-          {/* 3. Authentication Logo */}
+          {/* 4. Footer Logo (Dark Mode) */}
+          <div className="space-y-2 p-4 border border-border/60 rounded-md bg-card/40">
+            <div className="flex items-center gap-2">
+              <ImageIcon className="h-4 w-4 text-primary" />
+              <label className="text-xs font-bold uppercase tracking-wider text-primary">
+                Footer Logo Dark (`footerLogoDark`)
+              </label>
+            </div>
+            <p className="text-[11px] text-muted-foreground">
+              Logo displayed in site footer section for dark mode / backgrounds (default mode: image).
+            </p>
+            <UniversalMultimediaForm
+              value={formData.footerLogoDark || emptyImageMultimedia}
+              onChange={(val) => handleChange("footerLogoDark", val)}
+            />
+          </div>
+
+          {/* 5. Authentication Logo (Light / Default) */}
           <div className="space-y-2 p-4 border border-border/60 rounded-md bg-card/40">
             <div className="flex items-center gap-2">
               <ImageIcon className="h-4 w-4 text-primary" />
@@ -71,7 +105,7 @@ export function BrandAssetsForm({ formData, handleChange }: BrandAssetsFormProps
               </label>
             </div>
             <p className="text-[11px] text-muted-foreground">
-              Logo displayed on Login, Register & Auth screens (default mode: image).
+              Logo displayed on Login, Register & Auth screens for light backgrounds (default mode: image).
             </p>
             <UniversalMultimediaForm
               value={formData.authLogo || emptyImageMultimedia}
@@ -79,7 +113,24 @@ export function BrandAssetsForm({ formData, handleChange }: BrandAssetsFormProps
             />
           </div>
 
-          {/* 4. Primary Site Logo */}
+          {/* 6. Authentication Logo (Dark Mode) */}
+          <div className="space-y-2 p-4 border border-border/60 rounded-md bg-card/40">
+            <div className="flex items-center gap-2">
+              <ImageIcon className="h-4 w-4 text-primary" />
+              <label className="text-xs font-bold uppercase tracking-wider text-primary">
+                Authentication Logo Dark (`authLogoDark`)
+              </label>
+            </div>
+            <p className="text-[11px] text-muted-foreground">
+              Logo displayed on Login, Register & Auth screens for dark mode / backgrounds (default mode: image).
+            </p>
+            <UniversalMultimediaForm
+              value={formData.authLogoDark || emptyImageMultimedia}
+              onChange={(val) => handleChange("authLogoDark", val)}
+            />
+          </div>
+
+          {/* 7. Primary Site Logo */}
           <div className="space-y-2 p-4 border border-border/60 rounded-md bg-card/40">
             <div className="flex items-center gap-2">
               <ImageIcon className="h-4 w-4 text-primary" />
@@ -96,7 +147,7 @@ export function BrandAssetsForm({ formData, handleChange }: BrandAssetsFormProps
             />
           </div>
 
-          {/* 5. Site Logo (Light Mode) */}
+          {/* 8. Site Logo (Light Mode) */}
           <div className="space-y-2 p-4 border border-border/60 rounded-md bg-card/40">
             <div className="flex items-center gap-2">
               <ImageIcon className="h-4 w-4 text-primary" />
@@ -113,7 +164,7 @@ export function BrandAssetsForm({ formData, handleChange }: BrandAssetsFormProps
             />
           </div>
 
-          {/* 6. Site Logo (Dark Mode) */}
+          {/* 9. Site Logo (Dark Mode) */}
           <div className="space-y-2 p-4 border border-border/60 rounded-md bg-card/40">
             <div className="flex items-center gap-2">
               <ImageIcon className="h-4 w-4 text-primary" />
@@ -130,7 +181,7 @@ export function BrandAssetsForm({ formData, handleChange }: BrandAssetsFormProps
             />
           </div>
 
-          {/* 7. Site Favicon */}
+          {/* 10. Site Favicon */}
           <div className="space-y-2 p-4 border border-border/60 rounded-md bg-card/40">
             <div className="flex items-center gap-2">
               <ImageIcon className="h-4 w-4 text-primary" />
@@ -147,7 +198,7 @@ export function BrandAssetsForm({ formData, handleChange }: BrandAssetsFormProps
             />
           </div>
 
-          {/* 8. Loading Video Asset */}
+          {/* 11. Loading Video Asset */}
           <div className="space-y-2 p-4 border border-border/60 rounded-md bg-card/40">
             <div className="flex items-center gap-2">
               <VideoIcon className="h-4 w-4 text-primary" />

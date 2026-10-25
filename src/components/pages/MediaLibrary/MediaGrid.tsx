@@ -1,7 +1,7 @@
-import React, { useState } from "react"
+import React from "react"
 import { Checkbox } from "@/components/ui/checkbox"
 import { Badge } from "@/components/ui/badge"
-import { Play, Image as ImageIcon, Video, CheckCircle2, AlertCircle } from "lucide-react"
+import { Play, Image as ImageIcon, CheckCircle2, AlertCircle } from "lucide-react"
 import { cn } from "@/lib/utils"
 import type { MediaAsset } from "@/services/mediaService"
 
@@ -42,8 +42,6 @@ export const MediaGrid: React.FC<MediaGridProps> = ({
   onToggleSelectId,
   isLoading,
 }) => {
-  const [hoveredVideoId, setHoveredVideoId] = useState<string | null>(null)
-
   if (isLoading) {
     return (
       <div
@@ -103,8 +101,6 @@ export const MediaGrid: React.FC<MediaGridProps> = ({
           <div
             key={asset.id}
             onClick={() => onSelectAsset(asset)}
-            onMouseEnter={() => isVideo && setHoveredVideoId(asset.id)}
-            onMouseLeave={() => isVideo && setHoveredVideoId(null)}
             className={cn(
               "group relative flex flex-col rounded-md border bg-card/60 backdrop-blur-sm overflow-hidden cursor-pointer transition-all duration-200 select-none hover:shadow-md hover:border-primary/50",
               isSelected
@@ -160,25 +156,21 @@ export const MediaGrid: React.FC<MediaGridProps> = ({
             {/* Visual Thumbnail Area */}
             <div className="relative aspect-square w-full bg-muted/40 overflow-hidden flex items-center justify-center">
               {isVideo ? (
-                hoveredVideoId === asset.id ? (
+                <div className="relative h-full w-full bg-zinc-950 overflow-hidden flex items-center justify-center">
                   <video
                     src={asset.url}
                     autoPlay
                     muted
                     loop
                     playsInline
-                    className="h-full w-full object-cover transition-transform duration-300"
+                    preload="auto"
+                    className="h-full w-full object-cover transition-transform duration-300 group-hover:scale-105"
                   />
-                ) : (
-                  <div className="relative h-full w-full flex items-center justify-center bg-black/5 dark:bg-black/30">
-                    <Video className="h-10 w-10 text-muted-foreground/60 stroke-[1.2]" />
-                    <div className="absolute inset-0 flex items-center justify-center">
-                      <div className="h-9 w-9 rounded-full bg-background/80 backdrop-blur-sm flex items-center justify-center shadow-md text-foreground">
-                        <Play className="h-4 w-4 ml-0.5 fill-current" />
-                      </div>
-                    </div>
+                  <div className="absolute bottom-1.5 right-1.5 z-10 flex items-center gap-1 bg-black/60 backdrop-blur-xs text-white text-[9px] font-semibold px-1.5 py-0.5 rounded-sm pointer-events-none">
+                    <Play className="h-2 w-2 fill-current" />
+                    <span>VIDEO</span>
                   </div>
-                )
+                </div>
               ) : (
                 <img
                   src={asset.url}
