@@ -114,7 +114,7 @@ export const NavbarBrandLogo = () => {
       return (
         <Link
           to="/"
-          className="inline-flex items-center h-full max-h-14 py- transition-opacity hover:opacity-90 shrink-0"
+          className="inline-flex items-center h-full max-h-14 py-1 transition-opacity hover:opacity-90 shrink-0"
         >
           <UniversalMultimediaPreview
             multimedia={mediaObj as any}
@@ -138,7 +138,7 @@ export const NavbarBrandLogo = () => {
     return (
       <Link
         to="/"
-        className="inline-flex items-center h-full max-h-14 py- transition-opacity hover:opacity-90 shrink-0"
+        className="inline-flex items-center h-full max-h-14 py-1 transition-opacity hover:opacity-90 shrink-0"
       >
         <img
           src={mediaUrl}
@@ -153,7 +153,7 @@ export const NavbarBrandLogo = () => {
   return (
     <Link
       to="/"
-      className="inline-flex items-center h-full max-h-14 py- transition-transform hover:scale-[1.02] shrink-0"
+      className="inline-flex items-center h-full max-h-14 py-1 transition-transform hover:scale-[1.02] shrink-0"
     >
       <div className="flex h-11 min-w-[120px] items-center justify-center gap-2 rounded-lg border border-border/80 bg-muted/60 px-3.5 shadow-2xs transition-colors hover:bg-muted">
         <span className="font-serif text-base font-bold tracking-widest text-foreground uppercase">
@@ -234,7 +234,7 @@ export function Navbar({ onMenuClick }: NavbarProps) {
               type="button"
               onClick={toggleDevMode}
               className={cn(
-                "inline-flex items-center gap-1.5 rounded-full px-2.5 py- text-xs font-semibold transition-all cursor-pointer shadow-2xs border select-none",
+                "inline-flex items-center gap-1.5 rounded-full px-2.5 py-0.5 text-xs font-semibold transition-all cursor-pointer shadow-2xs border select-none",
                 isDevMode
                   ? "bg-amber-500/15 text-amber-700 dark:text-amber-300 border-amber-500/40"
                   : "bg-muted/60 text-muted-foreground border-border/60 hover:bg-muted hover:text-foreground"
@@ -262,7 +262,7 @@ export function Navbar({ onMenuClick }: NavbarProps) {
               <DropdownMenuTrigger asChild>
                 <button
                   type="button"
-                  className="flex items-center gap-2.5 rounded-full border border-border/60 bg-card/70 py- pl-1 pr-2.5 transition-all hover:bg-muted/80 hover:border-border focus:outline-none focus:ring-2 focus:ring-primary/20 cursor-pointer shadow-2xs group"
+                  className="flex items-center gap-2.5 rounded-full border border-border/60 bg-card/70 py-0.5 pl-1 pr-2.5 transition-all hover:bg-muted/80 hover:border-border focus:outline-none focus:ring-2 focus:ring-primary/20 cursor-pointer shadow-2xs group"
                 >
                   {/* User Avatar with live status pulse */}
                   <div className="relative h-8 w-8 shrink-0 overflow-hidden rounded-full ring-2 ring-primary/20 group-hover:ring-primary/40 transition-all">
