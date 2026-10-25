@@ -41,7 +41,7 @@ All project documentation has been organized into the `docs/` folder to keep the
 - **Location**: `src/components/pages/CMS/shared/ButtonsField.tsx`
 - **Rule**: Whenever buttons, CTAs, or navigation links are needed in a section, wrap them inside the standard container:
   ```tsx
-  <div className="rounded-md border border-border/50 p-3">
+  <div className="rounded-sm border border-border/50 p-3">
     <p className="mb-3 text-xs font-semibold tracking-wide text-muted-foreground uppercase">
       Buttons
     </p>

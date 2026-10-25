@@ -51,16 +51,16 @@ export function PhilosophyPreview({ section }: PhilosophyPreviewProps) {
         {/* BOTTOM GRID: 3 Columns */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-12 gap-6 lg:gap-8 items-stretch">
           {/* Column 1: Main Portrait Image (lg:col-span-4) */}
-          <div className="lg:col-span-4 relative min-h-[340px] sm:min-h-[400px] rounded-xl overflow-hidden shadow-sm border border-black/5">
+          <div className="lg:col-span-4 relative min-h-[340px] sm:min-h-[400px] rounded-md overflow-hidden shadow-sm border border-black/5">
             {m0 && <UniversalMultimediaPreview multimedia={m0} />}
           </div>
 
           {/* Column 2: Stacked 2 Landscape Images (lg:col-span-4) */}
           <div className="lg:col-span-4 flex flex-col justify-between gap-4">
-            <div className="relative h-[160px] sm:h-[190px] rounded-xl overflow-hidden shadow-sm border border-black/5">
+            <div className="relative h-[160px] sm:h-[190px] rounded-md overflow-hidden shadow-sm border border-black/5">
               {m1 && <UniversalMultimediaPreview multimedia={m1} />}
             </div>
-            <div className="relative h-[160px] sm:h-[190px] rounded-xl overflow-hidden shadow-sm border border-black/5">
+            <div className="relative h-[160px] sm:h-[190px] rounded-md overflow-hidden shadow-sm border border-black/5">
               {m2 && <UniversalMultimediaPreview multimedia={m2} />}
             </div>
           </div>
@@ -83,7 +83,7 @@ export function PhilosophyPreview({ section }: PhilosophyPreviewProps) {
         {extraMedia.length > 0 && (
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6 pt-4 border-t border-black/5">
             {extraMedia.map((mItem: any, idx: number) => (
-              <div key={idx} className="relative h-[200px] rounded-xl overflow-hidden shadow-sm border border-black/5">
+              <div key={idx} className="relative h-[200px] rounded-md overflow-hidden shadow-sm border border-black/5">
                 <UniversalMultimediaPreview multimedia={mItem} />
               </div>
             ))}

@@ -77,7 +77,7 @@ export const MediaTrashView: React.FC<MediaTrashViewProps> = ({ assets, isLoadin
   return (
     <div className="space-y-4 py-2">
       {/* 30-Day Policy Info Banner & Outbox Worker Widget */}
-      <div className="rounded-xl border border-amber-500/30 bg-amber-500/5 p-4 flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
+      <div className="rounded-md border border-amber-500/30 bg-amber-500/5 p-4 flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
         <div className="flex items-start gap-3">
           <div className="p-2 rounded-lg bg-amber-500/10 text-amber-600 dark:text-amber-400 shrink-0 mt-0.5">
             <AlertTriangle className="h-5 w-5" />
@@ -171,12 +171,12 @@ export const MediaTrashView: React.FC<MediaTrashViewProps> = ({ assets, isLoadin
           {Array.from({ length: 12 }).map((_, i) => (
             <div
               key={i}
-              className="rounded-xl border border-border/40 bg-muted/30 aspect-[4/5] animate-pulse"
+              className="rounded-md border border-border/40 bg-muted/30 aspect-[4/5] animate-pulse"
             />
           ))}
         </div>
       ) : assets.length === 0 ? (
-        <div className="flex flex-col items-center justify-center py-20 text-center border-2 border-dashed border-border/60 rounded-2xl bg-muted/10 my-4">
+        <div className="flex flex-col items-center justify-center py-20 text-center border-2 border-dashed border-border/60 rounded-xl bg-muted/10 my-4">
           <div className="h-14 w-14 rounded-full bg-emerald-500/10 text-emerald-600 flex items-center justify-center mb-4">
             <Sparkles className="h-7 w-7 stroke-[1.5]" />
           </div>
@@ -194,7 +194,7 @@ export const MediaTrashView: React.FC<MediaTrashViewProps> = ({ assets, isLoadin
             return (
               <div
                 key={asset.id}
-                className="group relative flex flex-col rounded-xl border border-border/60 bg-card/60 backdrop-blur-sm overflow-hidden shadow-xs hover:border-border transition-all"
+                className="group relative flex flex-col rounded-md border border-border/60 bg-card/60 backdrop-blur-sm overflow-hidden shadow-xs hover:border-border transition-all"
               >
                 {/* Countdown Badge Top Right */}
                 <div className="absolute top-2 right-2 z-20">

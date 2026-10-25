@@ -79,7 +79,7 @@ export function ImageUploader({
           <button
             type="button"
             onClick={handleRemove}
-            className="absolute top-2 right-2 rounded-md bg-background/90 p-2 text-destructive opacity-0 shadow transition-opacity group-hover:opacity-100"
+            className="absolute top-2 right-2 rounded-sm bg-background/90 p-2 text-destructive opacity-0 shadow transition-opacity group-hover:opacity-100"
           >
             <Trash2 className="h-4 w-4" />
           </button>

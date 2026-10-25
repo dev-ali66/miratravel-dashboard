@@ -411,8 +411,8 @@ export function UniversalMultimediaForm(props: UniversalMultimediaFormProps) {
         typeof explicitValue.color === "string"
           ? { color: explicitValue.color }
           : typeof explicitValue.color === "object" && explicitValue.color !== null
-          ? explicitValue.color
-          : explicitValue.colorData || {}
+            ? explicitValue.color
+            : explicitValue.colorData || {}
 
       const resolvedImageUrl =
         explicitValue.image?.url ??
@@ -420,8 +420,8 @@ export function UniversalMultimediaForm(props: UniversalMultimediaFormProps) {
         (typeof explicitValue.url === "string"
           ? explicitValue.url
           : typeof explicitValue.thumbnail === "string"
-          ? explicitValue.thumbnail
-          : "")
+            ? explicitValue.thumbnail
+            : "")
 
       const resolvedVideoUrl =
         explicitValue.video?.url ??
@@ -643,7 +643,7 @@ export function UniversalMultimediaForm(props: UniversalMultimediaFormProps) {
                   type="button"
                   onClick={() => setShow("image")}
                   className={cn(
-                    "flex items-center gap-1.5 rounded-md px-2.5 py-1 text-xs font-medium transition-all cursor-pointer",
+                    "flex items-center gap-1.5 rounded-sm px-2.5 py-1 text-xs font-medium transition-all cursor-pointer",
                     currentVal.show === "image"
                       ? "bg-background text-foreground font-semibold shadow-xs"
                       : "text-muted-foreground hover:text-foreground"
@@ -659,7 +659,7 @@ export function UniversalMultimediaForm(props: UniversalMultimediaFormProps) {
                   type="button"
                   onClick={() => setShow("video")}
                   className={cn(
-                    "flex items-center gap-1.5 rounded-md px-2.5 py-1 text-xs font-medium transition-all cursor-pointer",
+                    "flex items-center gap-1.5 rounded-sm px-2.5 py-1 text-xs font-medium transition-all cursor-pointer",
                     currentVal.show === "video"
                       ? "bg-background text-foreground font-semibold shadow-xs"
                       : "text-muted-foreground hover:text-foreground"
@@ -675,7 +675,7 @@ export function UniversalMultimediaForm(props: UniversalMultimediaFormProps) {
                   type="button"
                   onClick={() => setShow("color")}
                   className={cn(
-                    "flex items-center gap-1.5 rounded-md px-2.5 py-1 text-xs font-medium transition-all cursor-pointer",
+                    "flex items-center gap-1.5 rounded-sm px-2.5 py-1 text-xs font-medium transition-all cursor-pointer",
                     currentVal.show === "color"
                       ? "bg-background text-foreground font-semibold shadow-xs"
                       : "text-muted-foreground hover:text-foreground"

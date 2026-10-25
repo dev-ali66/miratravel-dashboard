@@ -95,7 +95,7 @@ export default function OverviewChart({ className }: { className?: string }) {
   return (
     <SlideBottom
       delay={0.3}
-      className={`rounded-2xl border border-border/60 bg-gradient-to-b from-card/90 via-card/60 to-card/40 p-5 sm:p-6 shadow-xl backdrop-blur-2xl flex flex-col justify-between ${className || ""}`}
+      className={`rounded-xl border border-border/60 bg-gradient-to-b from-card/90 via-card/60 to-card/40 p-5 sm:p-6 shadow-xl backdrop-blur-2xl flex flex-col justify-between ${className || ""}`}
     >
       {/* Top Header & Telemetry Controls */}
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 mb-4">
@@ -116,22 +116,20 @@ export default function OverviewChart({ className }: { className?: string }) {
           <div className="flex items-center rounded-lg border border-border/60 bg-muted/40 p-0.5 text-xs">
             <button
               onClick={() => setChartMode("spline")}
-              className={`flex items-center gap-1 px-2.5 py-1 rounded-md font-medium transition-all ${
-                chartMode === "spline"
-                  ? "bg-card text-foreground shadow-xs font-semibold"
-                  : "text-muted-foreground hover:text-foreground"
-              }`}
+              className={`flex items-center gap-1 px-2.5 py-1 rounded-sm font-medium transition-all ${chartMode === "spline"
+                ? "bg-card text-foreground shadow-xs font-semibold"
+                : "text-muted-foreground hover:text-foreground"
+                }`}
             >
               <Activity className="h-3.5 w-3.5 text-emerald-500" />
               <span>Spline Wave</span>
             </button>
             <button
               onClick={() => setChartMode("bars")}
-              className={`flex items-center gap-1 px-2.5 py-1 rounded-md font-medium transition-all ${
-                chartMode === "bars"
-                  ? "bg-card text-foreground shadow-xs font-semibold"
-                  : "text-muted-foreground hover:text-foreground"
-              }`}
+              className={`flex items-center gap-1 px-2.5 py-1 rounded-sm font-medium transition-all ${chartMode === "bars"
+                ? "bg-card text-foreground shadow-xs font-semibold"
+                : "text-muted-foreground hover:text-foreground"
+                }`}
             >
               <Layers className="h-3.5 w-3.5 text-cyan-500" />
               <span>Histogram</span>
@@ -141,7 +139,7 @@ export default function OverviewChart({ className }: { className?: string }) {
       </div>
 
       {/* High-Tech Metrics Strip */}
-      <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 py-3 px-3.5 mb-4 rounded-xl border border-border/40 bg-muted/30">
+      <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 py-3 px-3.5 mb-4 rounded-md border border-border/40 bg-muted/30">
         <div>
           <span className="text-[10px] font-mono uppercase text-muted-foreground block">
             Annual Gross Run-rate
@@ -296,11 +294,10 @@ export default function OverviewChart({ className }: { className?: string }) {
                 <span
                   key={idx}
                   onMouseEnter={() => setHoveredIdx(idx)}
-                  className={`text-[11px] font-mono transition-colors cursor-pointer ${
-                    hoveredIdx === idx
-                      ? "text-cyan-500 font-bold"
-                      : "text-muted-foreground hover:text-foreground"
-                  }`}
+                  className={`text-[11px] font-mono transition-colors cursor-pointer ${hoveredIdx === idx
+                    ? "text-cyan-500 font-bold"
+                    : "text-muted-foreground hover:text-foreground"
+                    }`}
                 >
                   {p.name}
                 </span>
@@ -323,7 +320,7 @@ export default function OverviewChart({ className }: { className?: string }) {
                 >
                   {/* Tooltip */}
                   {isHovered && (
-                    <div className="pointer-events-none absolute -top-8 z-20 rounded-md bg-foreground px-2 py-0.5 text-[10px] font-mono font-bold text-background shadow-lg whitespace-nowrap animate-fade-in">
+                    <div className="pointer-events-none absolute -top-8 z-20 rounded-sm bg-foreground px-2 py-0.5 text-[10px] font-mono font-bold text-background shadow-lg whitespace-nowrap animate-fade-in">
                       ${item.total.toLocaleString()}
                     </div>
                   )}
@@ -339,18 +336,16 @@ export default function OverviewChart({ className }: { className?: string }) {
                       stiffness: 70,
                       damping: 15,
                     }}
-                    className={`w-full max-w-[34px] rounded-t-lg transition-all duration-200 ${
-                      isHovered
-                        ? "bg-gradient-to-t from-emerald-500 to-cyan-400 shadow-lg shadow-cyan-500/20"
-                        : "bg-gradient-to-t from-emerald-600/50 to-cyan-500/50 group-hover:from-emerald-500 group-hover:to-cyan-400"
-                    }`}
+                    className={`w-full max-w-[34px] rounded-t-lg transition-all duration-200 ${isHovered
+                      ? "bg-gradient-to-t from-emerald-500 to-cyan-400 shadow-lg shadow-cyan-500/20"
+                      : "bg-gradient-to-t from-emerald-600/50 to-cyan-500/50 group-hover:from-emerald-500 group-hover:to-cyan-400"
+                      }`}
                   />
 
                   {/* Month Label */}
                   <span
-                    className={`text-[11px] font-mono transition-colors ${
-                      isHovered ? "text-cyan-500 font-bold" : "text-muted-foreground"
-                    }`}
+                    className={`text-[11px] font-mono transition-colors ${isHovered ? "text-cyan-500 font-bold" : "text-muted-foreground"
+                      }`}
                   >
                     {item.name}
                   </span>

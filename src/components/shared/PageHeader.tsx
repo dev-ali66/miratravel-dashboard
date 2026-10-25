@@ -8,6 +8,7 @@ export interface CompactStatCardProps {
   icon: React.ComponentType<{ className?: string }>
   iconColor?: string
   className?: string
+  onClick?: () => void
 }
 
 /**
@@ -20,11 +21,14 @@ export function CompactStatCard({
   icon: Icon,
   iconColor = "text-primary",
   className,
+  onClick,
 }: CompactStatCardProps) {
   return (
     <div
+      onClick={onClick}
       className={cn(
-        "rounded-xl border border-border/60 bg-card/60 backdrop-blur-xl p-2.5 sm:p-3 shadow-xs flex flex-col justify-between h-[70px] sm:h-[74px] transition-all hover:border-border/90 hover:bg-card/80 min-w-0",
+        "rounded-md border border-border/60 bg-card/60 backdrop-blur-xl p-2.5 sm:p-3 shadow-xs flex flex-col justify-between h-[70px] sm:h-[74px] transition-all hover:border-border/90 hover:bg-card/80 min-w-0 select-none",
+        onClick && "cursor-pointer hover:border-primary/50 hover:shadow-sm active:scale-[0.99]",
         className
       )}
     >
@@ -32,7 +36,7 @@ export function CompactStatCard({
         <span className="text-[10px] sm:text-[11px] font-semibold uppercase tracking-wider text-muted-foreground truncate">
           {label}
         </span>
-        <div className="flex h-5 w-5 shrink-0 items-center justify-center rounded-md bg-muted/40">
+        <div className="flex h-5 w-5 shrink-0 items-center justify-center rounded-sm bg-muted/40">
           <Icon className={cn("h-3 w-3", iconColor)} />
         </div>
       </div>
@@ -87,7 +91,7 @@ export function PageHeader({
     // If it's already a valid React element
     if (React.isValidElement(IconOrNode)) {
       return (
-        <div className="flex h-10 w-10 sm:h-11 sm:w-11 shrink-0 items-center justify-center rounded-xl bg-primary/10 text-primary border border-primary/20 shadow-xs">
+        <div className="flex h-10 w-10 sm:h-11 sm:w-11 shrink-0 items-center justify-center rounded-md bg-primary/10 text-primary border border-primary/20 shadow-xs">
           {IconOrNode}
         </div>
       )
@@ -96,7 +100,7 @@ export function PageHeader({
     // If it's a component reference like a LucideIcon
     const IconComponent = IconOrNode as React.ComponentType<{ className?: string }>
     return (
-      <div className="flex h-10 w-10 sm:h-11 sm:w-11 shrink-0 items-center justify-center rounded-xl bg-primary/10 text-primary border border-primary/20 shadow-xs">
+      <div className="flex h-10 w-10 sm:h-11 sm:w-11 shrink-0 items-center justify-center rounded-md bg-primary/10 text-primary border border-primary/20 shadow-xs">
         <IconComponent className="h-5 w-5 sm:h-5.5 sm:w-5.5" />
       </div>
     )

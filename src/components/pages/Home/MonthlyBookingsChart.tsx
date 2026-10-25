@@ -97,7 +97,7 @@ export default function MonthlyBookingsChart({
   return (
     <SlideBottom
       delay={0.4}
-      className={`rounded-2xl border border-border/60 bg-gradient-to-b from-card/90 via-card/60 to-card/40 p-5 sm:p-6 shadow-xl backdrop-blur-2xl flex flex-col justify-between ${className || ""}`}
+      className={`rounded-xl border border-border/60 bg-gradient-to-b from-card/90 via-card/60 to-card/40 p-5 sm:p-6 shadow-xl backdrop-blur-2xl flex flex-col justify-between ${className || ""}`}
     >
       {/* Top Header */}
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 mb-4">
@@ -120,7 +120,7 @@ export default function MonthlyBookingsChart({
       </div>
 
       {/* Mini Stats Summary */}
-      <div className="grid grid-cols-3 gap-2 py-2.5 px-3 mb-3 rounded-xl border border-border/40 bg-muted/30">
+      <div className="grid grid-cols-3 gap-2 py-2.5 px-3 mb-3 rounded-md border border-border/40 bg-muted/30">
         <div>
           <span className="text-[10px] font-mono uppercase text-muted-foreground block">
             Annual Reservations
@@ -263,11 +263,10 @@ export default function MonthlyBookingsChart({
                 <span
                   key={idx}
                   onMouseEnter={() => setHoveredIdx(idx)}
-                  className={`text-[11px] font-mono transition-colors cursor-pointer ${
-                    hoveredIdx === idx
-                      ? "text-purple-500 font-bold"
-                      : "text-muted-foreground hover:text-foreground"
-                  }`}
+                  className={`text-[11px] font-mono transition-colors cursor-pointer ${hoveredIdx === idx
+                    ? "text-purple-500 font-bold"
+                    : "text-muted-foreground hover:text-foreground"
+                    }`}
                 >
                   {p.name}
                 </span>

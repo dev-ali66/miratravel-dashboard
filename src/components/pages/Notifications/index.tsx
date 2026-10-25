@@ -297,14 +297,14 @@ export default function NotificationsPage() {
             <div className="space-y-4 pt-2 text-xs">
               <div>
                 <span className="font-semibold text-foreground">Email Subject Line:</span>
-                <div className="mt-1 rounded-md bg-muted/50 p-2.5 font-medium text-foreground border border-border">
+                <div className="mt-1 rounded-sm bg-muted/50 p-2.5 font-medium text-foreground border border-border">
                   {selectedPreview.templateSubject}
                 </div>
               </div>
 
               <div>
                 <span className="font-semibold text-foreground">Message Body:</span>
-                <div className="mt-1 rounded-md bg-muted/30 p-3 leading-relaxed text-muted-foreground border border-border">
+                <div className="mt-1 rounded-sm bg-muted/30 p-3 leading-relaxed text-muted-foreground border border-border">
                   {selectedPreview.templateSnippet}
                 </div>
               </div>

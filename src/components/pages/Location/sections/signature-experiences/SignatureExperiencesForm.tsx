@@ -260,7 +260,7 @@ export function SignatureExperiencesForm({
     >
       <div className="flex flex-col gap-6">
         {/* Section Header Settings */}
-        <div className="rounded-xl border border-border/70 bg-card/60 p-4 space-y-4">
+        <div className="rounded-md border border-border/70 bg-card/60 p-4 space-y-4">
           <h4 className="text-xs font-semibold uppercase tracking-wider text-muted-foreground flex items-center gap-2">
             <Sparkles className="h-4 w-4 text-primary" />
             Section Header & Description
@@ -367,7 +367,7 @@ export function SignatureExperiencesForm({
 
             {/* Live Search Results Popover Dropdown */}
             {isSearchOpen && (
-              <div className="absolute left-0 right-0 top-full z-50 mt-1 max-h-60 overflow-y-auto rounded-xl border border-border bg-popover/95 p-1 shadow-lg backdrop-blur-md">
+              <div className="absolute left-0 right-0 top-full z-50 mt-1 max-h-60 overflow-y-auto rounded-md border border-border bg-popover/95 p-1 shadow-lg backdrop-blur-md">
                 {isSearching ? (
                   <div className="flex items-center justify-center py-6 text-xs text-muted-foreground">
                     <Loader2 className="mr-2 h-4 w-4 animate-spin text-primary" />
@@ -392,11 +392,10 @@ export function SignatureExperiencesForm({
                           type="button"
                           disabled={isAlreadyAdded}
                           onClick={() => handleAddLocationFromSearch(loc)}
-                          className={`flex w-full items-center justify-between rounded-lg px-3 py-2 text-left text-xs transition-colors ${
-                            isAlreadyAdded
-                              ? "opacity-50 cursor-not-allowed bg-muted/40"
-                              : "hover:bg-accent/60 cursor-pointer"
-                          }`}
+                          className={`flex w-full items-center justify-between rounded-lg px-3 py-2 text-left text-xs transition-colors ${isAlreadyAdded
+                            ? "opacity-50 cursor-not-allowed bg-muted/40"
+                            : "hover:bg-accent/60 cursor-pointer"
+                            }`}
                         >
                           <div className="flex items-center gap-2.5 min-w-0">
                             <MapPin className="h-3.5 w-3.5 shrink-0 text-primary" />
@@ -430,7 +429,7 @@ export function SignatureExperiencesForm({
           </div>
 
           {items.length === 0 ? (
-            <div className="rounded-xl border border-dashed border-border/80 bg-muted/20 p-8 text-center">
+            <div className="rounded-md border border-dashed border-border/80 bg-muted/20 p-8 text-center">
               <Sparkles className="mx-auto h-8 w-8 text-muted-foreground/60 mb-2" />
               <p className="text-sm font-medium text-muted-foreground">
                 No signature experiences added yet
@@ -463,11 +462,10 @@ export function SignatureExperiencesForm({
                 return (
                   <div
                     key={exp.id || `exp-${index}`}
-                    className={`rounded-xl border transition-all duration-200 ${
-                      isItemOpen
-                        ? "border-primary/50 bg-card shadow-sm"
-                        : "border-border/70 bg-card/60 hover:border-border"
-                    }`}
+                    className={`rounded-md border transition-all duration-200 ${isItemOpen
+                      ? "border-primary/50 bg-card shadow-sm"
+                      : "border-border/70 bg-card/60 hover:border-border"
+                      }`}
                   >
                     {/* Item Header / Accordion Bar */}
                     <div className="flex items-center justify-between p-3 gap-2">
@@ -551,7 +549,7 @@ export function SignatureExperiencesForm({
                               handleUpdateItem(index, "id", e.target.value)
                             }
                             placeholder="e.g. albania"
-                            className="w-full rounded-md border border-input bg-background px-3 py-1.5 text-xs text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-1 focus:ring-primary font-mono"
+                            className="w-full rounded-sm border border-input bg-background px-3 py-1.5 text-xs text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-1 focus:ring-primary font-mono"
                           />
                         </div>
 
@@ -588,14 +586,14 @@ export function SignatureExperiencesForm({
                               ? exp.buttons
                               : exp.button
                                 ? [
-                                    {
-                                      label: exp.button.label || "Explore this experience",
-                                      url: exp.button.url || "#",
-                                      style: exp.button.style,
-                                      backgroundColor: exp.button.backgroundColor,
-                                      textColor: exp.button.textColor,
-                                    },
-                                  ]
+                                  {
+                                    label: exp.button.label || "Explore this experience",
+                                    url: exp.button.url || "#",
+                                    style: exp.button.style,
+                                    backgroundColor: exp.button.backgroundColor,
+                                    textColor: exp.button.textColor,
+                                  },
+                                ]
                                 : typeof exp.linkText === "object" && (exp.linkText as any)?.value
                                   ? [{ label: (exp.linkText as any).value || "Explore", url: (exp.linkText as any).href || exp.href || "#" }]
                                   : typeof exp.linkText === "string"

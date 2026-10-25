@@ -42,8 +42,8 @@ export function ApproveBookingModal({
   const initialTotal = booking?.confirmedTotal
     ? Number(booking.confirmedTotal)
     : booking?.journey?.price
-    ? Number(booking.journey.price)
-    : 3500
+      ? Number(booking.journey.price)
+      : 3500
 
   const [confirmedTotal, setConfirmedTotal] = useState<number>(initialTotal)
   const [currency, setCurrency] = useState<string>(booking?.currency || "EUR")
@@ -289,7 +289,7 @@ export function ApproveBookingModal({
           {/* Rule Countdown Banner */}
           <div
             className={cn(
-              "flex flex-col gap-2 rounded-xl p-4 border text-sm",
+              "flex flex-col gap-2 rounded-md p-4 border text-sm",
               isWithin60Days
                 ? "bg-amber-500/10 border-amber-500/20 text-amber-900 dark:text-amber-200"
                 : "bg-emerald-500/10 border-emerald-500/20 text-emerald-900 dark:text-emerald-200"
@@ -314,8 +314,8 @@ export function ApproveBookingModal({
               {isWithin60Days
                 ? "Since departure is 60 days or less from today, the system automatically mandates 100% Full Payment due immediately (no deposit option)."
                 : "Since departure is more than 60 days away, standard Mira rules apply: 30% Deposit due immediately, and 70% Final Balance due on " +
-                  finalDueDateFormatted +
-                  " (60 days prior to departure)."}
+                finalDueDateFormatted +
+                " (60 days prior to departure)."}
             </p>
           </div>
 
@@ -440,13 +440,13 @@ export function ApproveBookingModal({
                 step="10"
                 value={fixedDepositAmount}
                 onChange={(e) => setFixedDepositAmount(Number(e.target.value))}
-                className="w-full rounded-md border border-border bg-background px-3 py-2 text-sm font-bold font-mono focus:outline-none focus:ring-2 focus:ring-primary/40"
+                className="w-full rounded-sm border border-border bg-background px-3 py-2 text-sm font-bold font-mono focus:outline-none focus:ring-2 focus:ring-primary/40"
               />
             </div>
           )}
 
           {/* Calculated Schedule Preview Table */}
-          <div className="flex flex-col gap-2 rounded-xl border border-border/80 bg-muted/10 p-4">
+          <div className="flex flex-col gap-2 rounded-md border border-border/80 bg-muted/10 p-4">
             <h4 className="text-xs font-bold uppercase tracking-wider text-primary flex items-center gap-1.5">
               <Calendar className="h-3.5 w-3.5" />
               Generated Payment Milestones Breakdown

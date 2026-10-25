@@ -41,8 +41,8 @@ function SelectedLocationBadge({
   const loc = Array.isArray(innerData)
     ? innerData[0]
     : innerData?.items && Array.isArray(innerData.items)
-    ? innerData.items[0]
-    : innerData
+      ? innerData.items[0]
+      : innerData
   const name = loc?.name || fallbackName || (isLoading ? "Loading..." : `ID: ${id.slice(-6)}`)
 
   return (
@@ -260,7 +260,7 @@ export function MultiLocationSelect({
                     type="button"
                     onClick={() => handleToggle(option)}
                     className={cn(
-                      "flex w-full items-center justify-between gap-2 rounded-md px-2.5 py-2 text-left transition-colors cursor-pointer",
+                      "flex w-full items-center justify-between gap-2 rounded-sm px-2.5 py-2 text-left transition-colors cursor-pointer",
                       isSelected
                         ? "bg-primary/10 text-primary font-semibold"
                         : "hover:bg-muted text-foreground"

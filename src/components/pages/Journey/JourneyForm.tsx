@@ -84,7 +84,7 @@ export function JourneyForm({ }: JourneyFormProps) {
   if (isEditMode && isError) {
     return (
       <div className="p-6">
-        <div className="rounded-xl border border-destructive/30 bg-destructive/5 p-4">
+        <div className="rounded-md border border-destructive/30 bg-destructive/5 p-4">
           <p className="text-sm font-medium text-destructive">
             Failed to load journey details.
           </p>

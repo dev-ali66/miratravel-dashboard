@@ -82,7 +82,7 @@ export function FaqPreview({ draft }: ExperiencePreviewSectionProps) {
             {/* Right Column: FAQ Accordions */}
             <div className="flex w-full flex-1 flex-col gap-3.5 md:gap-5 lg:gap-6 xlg:gap-7 xl:gap-8">
               {items.length === 0 ? (
-                <div className="flex w-full flex-col items-center justify-center rounded-xl border border-dashed border-border/80 bg-muted/20 p-8 text-center">
+                <div className="flex w-full flex-col items-center justify-center rounded-md border border-dashed border-border/80 bg-muted/20 p-8 text-center">
                   <HelpCircle className="h-8 w-8 text-muted-foreground/60 mb-2" />
                   <p className="text-xs font-medium text-foreground">
                     No frequently asked questions added yet
@@ -95,11 +95,10 @@ export function FaqPreview({ draft }: ExperiencePreviewSectionProps) {
                   return (
                     <div
                       key={`faq-item-${idx}`}
-                      className={`md:rounded-[14px] rounded-[12px] xl:rounded-[16px] transition-all duration-300 overflow-hidden border border-border/40 ${
-                        isOpen
+                      className={`md:rounded-[14px] rounded-[12px] xl:rounded-[16px] transition-all duration-300 overflow-hidden border border-border/40 ${isOpen
                           ? "bg-accent/10 border-accent/30 shadow-xs"
                           : "bg-card/50 hover:bg-card/80"
-                      }`}
+                        }`}
                     >
                       <button
                         type="button"
@@ -132,11 +131,10 @@ export function FaqPreview({ draft }: ExperiencePreviewSectionProps) {
                               y1="5"
                               x2="12"
                               y2="19"
-                              className={`transition-all duration-300 origin-center ${
-                                isOpen
+                              className={`transition-all duration-300 origin-center ${isOpen
                                   ? "opacity-0 scale-y-0 rotate-90"
                                   : "opacity-100 scale-y-100 rotate-0"
-                              }`}
+                                }`}
                             />
                           </svg>
                         </div>

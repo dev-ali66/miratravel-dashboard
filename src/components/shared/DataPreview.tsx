@@ -106,8 +106,8 @@ export function DataPreview<T>({
     // 2. Error State
     if (isError) {
       return (
-        <div className="rounded-2xl border border-destructive/30 bg-destructive/5 p-8 text-center my-2">
-          <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-xl bg-destructive/10 text-destructive mb-3">
+        <div className="rounded-xl border border-destructive/30 bg-destructive/5 p-8 text-center my-2">
+          <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-md bg-destructive/10 text-destructive mb-3">
             <AlertCircle className="h-6 w-6" />
           </div>
           <h3 className="text-sm font-semibold text-destructive">Failed to load data</h3>
@@ -133,8 +133,8 @@ export function DataPreview<T>({
     if (!items || items.length === 0) {
       if (emptyState) return emptyState
       return (
-        <div className="flex flex-col items-center justify-center rounded-2xl border border-dashed border-border/70 bg-card/40 py-20 px-4 text-center my-2">
-          <div className="mb-3.5 flex h-13 w-13 items-center justify-center rounded-2xl bg-muted/60 text-muted-foreground">
+        <div className="flex flex-col items-center justify-center rounded-xl border border-dashed border-border/70 bg-card/40 py-20 px-4 text-center my-2">
+          <div className="mb-3.5 flex h-13 w-13 items-center justify-center rounded-xl bg-muted/60 text-muted-foreground">
             <EmptyIcon className="h-6 w-6 stroke-[1.6]" />
           </div>
           <h3 className="text-base font-semibold text-foreground tracking-tight">{emptyTitle}</h3>

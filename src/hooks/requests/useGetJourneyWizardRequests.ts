@@ -1,4 +1,4 @@
-import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query"
+import { useQuery, useMutation, useQueryClient, keepPreviousData } from "@tanstack/react-query"
 import { apiPrivate } from "@/lib/api-client"
 
 export type JourneyWizardRequestItem = {
@@ -62,6 +62,7 @@ export function useGetJourneyWizardRequests(
       )
       return res.data
     },
+    placeholderData: keepPreviousData,
   })
 }
 

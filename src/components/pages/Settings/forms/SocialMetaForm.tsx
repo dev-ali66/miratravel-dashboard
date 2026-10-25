@@ -24,7 +24,7 @@ export function SocialMetaForm({ formData, handleChange }: SocialMetaFormProps) 
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
           {/* Open Graph */}
-          <div className="space-y-4 p-5 rounded-xl border border-border/50 bg-muted/10">
+          <div className="space-y-4 p-5 rounded-md border border-border/50 bg-muted/10">
             <h4 className="text-sm font-semibold text-foreground flex items-center gap-2">
               <Globe className="h-4 w-4 text-primary" />
               Open Graph (Facebook, LinkedIn, iMessage)
@@ -60,7 +60,7 @@ export function SocialMetaForm({ formData, handleChange }: SocialMetaFormProps) 
           </div>
 
           {/* Twitter Cards */}
-          <div className="space-y-4 p-5 rounded-xl border border-border/50 bg-muted/10">
+          <div className="space-y-4 p-5 rounded-md border border-border/50 bg-muted/10">
             <h4 className="text-sm font-semibold text-foreground flex items-center gap-2">
               <Share2 className="h-4 w-4 text-primary" />
               Twitter / X Social Card

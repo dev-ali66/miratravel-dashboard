@@ -125,22 +125,22 @@ export function MiraStoriesForm({
         typeof currentItem.title === "object" && currentItem.title !== null
           ? { ...currentItem.title, value: newTitleText }
           : {
-              value: newTitleText,
-              textColor: THEME_COLORS.primary,
-              textOpacity: 1,
-              backgroundColor: null,
-              backgroundOpacity: 1,
-            },
+            value: newTitleText,
+            textColor: THEME_COLORS.primary,
+            textOpacity: 1,
+            backgroundColor: null,
+            backgroundOpacity: 1,
+          },
       subtitle:
         typeof currentItem.subtitle === "object" && currentItem.subtitle !== null
           ? { ...currentItem.subtitle, value: newSubtitleText }
           : {
-              value: newSubtitleText,
-              textColor: THEME_COLORS.sub,
-              textOpacity: 1,
-              backgroundColor: null,
-              backgroundOpacity: 1,
-            },
+            value: newSubtitleText,
+            textColor: THEME_COLORS.sub,
+            textOpacity: 1,
+            backgroundColor: null,
+            backgroundOpacity: 1,
+          },
       button: {
         ...(currentItem.button || {
           label: "Read Story",
@@ -244,7 +244,7 @@ export function MiraStoriesForm({
           </div>
 
           {items.length === 0 ? (
-            <div className="flex flex-col items-center justify-center p-6 border border-dashed border-border/60 rounded-md text-center">
+            <div className="flex flex-col items-center justify-center p-6 border border-dashed border-border/60 rounded-sm text-center">
               <p className="text-xs text-muted-foreground mb-2">
                 No story items added yet.
               </p>
@@ -266,7 +266,7 @@ export function MiraStoriesForm({
                 return (
                   <div
                     key={itemIndex}
-                    className="overflow-hidden rounded-md border border-border/40 bg-card/40"
+                    className="overflow-hidden rounded-sm border border-border/40 bg-card/40"
                   >
                     <div
                       onClick={() => toggleItem(itemIndex)}
@@ -333,7 +333,7 @@ export function MiraStoriesForm({
                               Select from Published Stories
                             </label>
                             <select
-                              className="h-8 w-full rounded-md border border-input bg-background px-2.5 text-xs text-foreground focus:outline-none focus:ring-1 focus:ring-ring"
+                              className="h-8 w-full rounded-sm border border-input bg-background px-2.5 text-xs text-foreground focus:outline-none focus:ring-1 focus:ring-ring"
                               defaultValue=""
                               onChange={(e) => selectStoryForIndex(itemIndex, e.target.value)}
                             >
@@ -372,7 +372,7 @@ export function MiraStoriesForm({
                               item.button
                                 ? [item.button]
                                 : item.url
-                                ? [
+                                  ? [
                                     {
                                       label: "Read Story",
                                       url: item.url,
@@ -389,7 +389,7 @@ export function MiraStoriesForm({
                                       showIcon: true,
                                     },
                                   ]
-                                : []
+                                  : []
                             }
                             onChange={(btns: any[]) => {
                               const updatedBtn = btns[0] || null

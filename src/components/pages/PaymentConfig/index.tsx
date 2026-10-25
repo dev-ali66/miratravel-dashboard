@@ -1,6 +1,5 @@
 import { useState } from "react"
-import { Sliders, Save, CheckCircle2, RotateCcw, DollarSign, Clock } from "lucide-react"
-import { Button } from "@/components/ui/button"
+import { Sliders, Save, CheckCircle2, DollarSign, Clock } from "lucide-react"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Switch } from "@/components/ui/switch"
@@ -10,6 +9,8 @@ import {
   FilterToolbar,
   FilterGroup,
   FilterActions,
+  FilterSegmentButton,
+  FilterResetButton,
 } from "@/components/shared/FilterToolbar"
 import { toast } from "sonner"
 
@@ -102,29 +103,26 @@ export default function PaymentConfigPage() {
       {/* Action Bar */}
       <FilterToolbar>
         <FilterGroup>
-          <div className="flex items-center gap-1.5 text-xs text-muted-foreground font-medium px-1">
-            <DollarSign className="h-3.5 w-3.5 text-primary shrink-0" />
+          <div className="flex items-center gap-2 text-xs text-muted-foreground font-medium px-3.5 h-10">
+            <DollarSign className="h-4 w-4 text-primary shrink-0" />
             <span>Settlement, Deposit & Automated Expiry Policy Rules</span>
           </div>
         </FilterGroup>
 
         <FilterActions>
-          <Button
-            variant="outline"
-            onClick={handleReset}
-            className="h-8 sm:h-8.5 rounded-lg flex items-center gap-1.5 cursor-pointer border-border/70 text-xs px-2.5"
-          >
-            <RotateCcw className="h-3.5 w-3.5" />
-            <span>Reset Defaults</span>
-          </Button>
-          <Button
+          <FilterSegmentButton
             onClick={handleSave}
             disabled={isSaving}
-            className="h-8 sm:h-8.5 rounded-lg flex items-center gap-1.5 shadow-xs cursor-pointer text-xs px-3"
+            className="text-emerald-600 dark:text-emerald-400 font-semibold hover:bg-emerald-500/10"
           >
             <Save className="h-3.5 w-3.5" />
             <span>{isSaving ? "Saving..." : "Save Policy"}</span>
-          </Button>
+          </FilterSegmentButton>
+
+          <FilterResetButton
+            onClick={handleReset}
+            title="Reset Defaults"
+          />
         </FilterActions>
       </FilterToolbar>
 

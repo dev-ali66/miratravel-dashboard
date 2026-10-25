@@ -67,8 +67,8 @@ function SignatureExperienceRow({
     !isStringId && Array.isArray(item?.buttons) && item.buttons.length > 0
       ? item.buttons
       : !isStringId && item?.button
-      ? [item.button]
-      : [
+        ? [item.button]
+        : [
           {
             label: "Explore this experience",
             url: targetUrl,
@@ -141,8 +141,8 @@ export function SignatureExperiencesPreview({
   const items = Array.isArray(rawList)
     ? rawList
     : Array.isArray(rawList?.items)
-    ? rawList.items
-    : []
+      ? rawList.items
+      : []
 
   const headerLabel = signatureExperiences?.label || {
     value: "Signature Experiences",
@@ -216,7 +216,7 @@ export function SignatureExperiencesPreview({
           {/* Experiences List */}
           <ol className="mt-14 @md:mt-[60.9px] @lg:mt-[71px] @lgx:mt-[74.5px] @xlg:mt-[80.6px] @mid:mt-[86.8px] @xl:mt-24 @md:pl-6 flex w-full flex-col">
             {items.length === 0 ? (
-              <div className="mt-4 flex w-full flex-col items-center justify-center rounded-xl border border-dashed border-border/80 bg-muted/20 p-8 text-center">
+              <div className="mt-4 flex w-full flex-col items-center justify-center rounded-md border border-dashed border-border/80 bg-muted/20 p-8 text-center">
                 <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-primary/10 text-primary mb-2">
                   <Sparkles className="h-5 w-5 opacity-80" />
                 </div>

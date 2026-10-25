@@ -54,7 +54,7 @@ export function ExperienceForm() {
   if (isEditMode && isError) {
     return (
       <div className="p-6">
-        <div className="rounded-xl border border-destructive/30 bg-destructive/5 p-4 text-center">
+        <div className="rounded-md border border-destructive/30 bg-destructive/5 p-4 text-center">
           <p className="text-sm font-semibold text-destructive">
             Failed to load experience details.
           </p>

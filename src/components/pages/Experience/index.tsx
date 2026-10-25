@@ -172,7 +172,7 @@ export default function ExperiencePages() {
   const meta = data?.meta
 
   return (
-    <div className="w-full space-y-6 animate-in pt-2 duration-700 fade-in slide-in-from-bottom-4">
+    <div className="w-full space-y-6 pt-2">
       {/* Page Header with 30% title & 70% compact statistics */}
       <PageHeader
         icon={Sparkles}
@@ -215,7 +215,7 @@ export default function ExperiencePages() {
       {/* Filter and Search Bar */}
       <FilterToolbar>
         <FilterGroup>
-          {/* Search Input */}
+          {/* Search Input expands to take all space on left */}
           <FilterSearch
             value={searchInput}
             onChange={(val) => {
@@ -223,9 +223,12 @@ export default function ExperiencePages() {
               setPage(1)
             }}
             placeholder="Search experiences..."
-            width="w-40 sm:w-52 shrink-0"
+            width="w-full flex-1 min-w-[180px]"
           />
+        </FilterGroup>
 
+        {/* Action & Filter Controls on Right */}
+        <FilterActions>
           {/* Primary Type Filter */}
           <FilterSelect
             value={primaryType}
@@ -234,9 +237,9 @@ export default function ExperiencePages() {
               setPage(1)
             }}
             options={EXPERIENCE_TYPES}
-            allLabel="All 8 Experience Types"
+            allLabel="All Experience Types"
             placeholder="Experience Type"
-            width="min-w-[150px] max-w-[170px]"
+            width="min-w-[140px] max-w-[165px]"
           />
 
           {/* Status Filter */}
@@ -266,15 +269,15 @@ export default function ExperiencePages() {
           />
 
           {/* Country Location Filter */}
-          <div className="w-36 sm:w-44 shrink-0">
+          <div className="w-36 sm:w-44 shrink-0 h-10 flex items-center">
             <ParentLocationSelect
               value={countryId}
               filterType="COUNTRY"
               label=""
               noneLabel="All Countries"
               placeholder="Filter by country..."
-              className="space-y-0"
-              triggerClassName="h-8 sm:h-8.5 rounded-lg border-border/70 bg-background/60 dark:bg-background/40 hover:bg-muted/50 text-xs px-2.5 py-1"
+              className="space-y-0 w-full"
+              triggerClassName="h-10 w-full rounded-none border-0 bg-transparent hover:bg-muted/30 text-xs px-3.5 py-1 text-muted-foreground hover:text-foreground font-medium"
               onChange={(id) => {
                 setCountryId(id || null)
                 setPage(1)
@@ -293,28 +296,25 @@ export default function ExperiencePages() {
             icon={Sparkles}
           />
 
-          {/* Reset Filters */}
-          {(searchInput || primaryType || status || currency || countryId || featured !== undefined) && (
-            <FilterResetButton
-              onClick={() => {
-                setSearchInput("")
-                setPrimaryType("")
-                setStatus("")
-                setCurrency("")
-                setCountryId(null)
-                setFeatured(undefined)
-                setPage(1)
-              }}
-            />
-          )}
-        </FilterGroup>
-
-        {/* Action Button */}
-        <FilterActions>
           <FilterCreateButton
             to="/experiences/new"
-            label="Create Experience"
+            label="Experience"
             icon={Plus}
+          />
+
+          {/* Universal Far-Right Refresh Button */}
+          <FilterResetButton
+            onClick={() => {
+              setSearchInput("")
+              setPrimaryType("")
+              setStatus("")
+              setCurrency("")
+              setCountryId(null)
+              setFeatured(undefined)
+              setPage(1)
+              refetch()
+            }}
+            title="Refresh & Reset"
           />
         </FilterActions>
       </FilterToolbar>
@@ -339,7 +339,7 @@ export default function ExperiencePages() {
         emptyAction={
           <Link
             to="/experiences/new"
-            className="mt-4 inline-flex items-center gap-2 rounded-xl bg-primary px-3.5 py-2 text-xs font-semibold text-primary-foreground hover:bg-primary/90 transition-colors"
+            className="mt-4 inline-flex items-center gap-2 rounded-md bg-primary px-3.5 py-2 text-xs font-semibold text-primary-foreground hover:bg-primary/90 transition-colors"
           >
             <Plus className="h-3.5 w-3.5" />
             Create First Experience
@@ -349,235 +349,233 @@ export default function ExperiencePages() {
           const expName = exp.name ? exp.name.trim() : "Untitled Experience"
           const slugPath = exp.slug ? `/${exp.slug.replace(/^\//, "")}` : ""
 
-            // Media data
-            const heroData = exp.hero || {}
-            const heroMultimedia = heroData.backgroundMultimedia || heroData.multimedia
-            const theExpMedia = (exp as any).theExperience?.imageMultimedia
-            const essenceMedia = exp.essence?.imageMultimedia || exp.essence?.multimedia
-            const previewMedia = heroMultimedia || theExpMedia || essenceMedia
-            const hasHeroMedia = Boolean(
-              previewMedia &&
-                ((previewMedia.show === "video" && (previewMedia.video?.url || previewMedia.url)) ||
-                  (previewMedia.show === "image" && (previewMedia.image?.url || previewMedia.url)) ||
-                  (previewMedia.show === "color" && previewMedia.color?.color) ||
-                  previewMedia.url)
-            )
+          // Media data
+          const heroData = exp.hero || {}
+          const heroMultimedia = heroData.backgroundMultimedia || heroData.multimedia
+          const theExpMedia = (exp as any).theExperience?.imageMultimedia
+          const essenceMedia = exp.essence?.imageMultimedia || exp.essence?.multimedia
+          const previewMedia = heroMultimedia || theExpMedia || essenceMedia
+          const hasHeroMedia = Boolean(
+            previewMedia &&
+            ((previewMedia.show === "video" && (previewMedia.video?.url || previewMedia.url)) ||
+              (previewMedia.show === "image" && (previewMedia.image?.url || previewMedia.url)) ||
+              (previewMedia.show === "color" && previewMedia.color?.color) ||
+              previewMedia.url)
+          )
 
-            // Primary Type & Badges
-            const typeConfig = exp.primaryType
-              ? EXPERIENCE_TYPE_CONFIG[exp.primaryType as ExperienceType]
-              : null
-            const typeName = typeConfig?.label || exp.primaryType || "EXPERIENCE"
+          // Primary Type & Badges
+          const typeConfig = exp.primaryType
+            ? EXPERIENCE_TYPE_CONFIG[exp.primaryType as ExperienceType]
+            : null
+          const typeName = typeConfig?.label || exp.primaryType || "EXPERIENCE"
 
-            const locationBadge =
-              (exp.places as any)?.[0]?.name ||
-              (exp as any).place?.name ||
-              (exp.regions as any)?.[0]?.name ||
-              (exp as any).region?.name ||
-              (exp.countries as any)?.[0]?.name ||
-              (exp as any).country?.name
+          const locationBadge =
+            (exp.places as any)?.[0]?.name ||
+            (exp as any).place?.name ||
+            (exp.regions as any)?.[0]?.name ||
+            (exp as any).region?.name ||
+            (exp.countries as any)?.[0]?.name ||
+            (exp as any).country?.name
 
-            const heroLabel = getSafeStringValue(heroData.label, exp.subtitle || "")
-            const heroTitle = getSafeStringValue(heroData.title, "")
-            const heroDesc = getSafeStringValue(heroData.description, exp.subtitle || "")
+          const heroLabel = getSafeStringValue(heroData.label, exp.subtitle || "")
+          const heroTitle = getSafeStringValue(heroData.title, "")
+          const heroDesc = getSafeStringValue(heroData.description, exp.subtitle || "")
 
-            // SEO Metadata
-            const rawMeta = (exp as any).metadata || (exp as any).seo || (exp as any).data?.metadata
-            const seoData = rawMeta?.seo || rawMeta || {}
-            const seoTitle = getSafeStringValue(seoData.title || seoData.metaTitle || seoData.pageTitle, "")
-            const seoDesc = getSafeStringValue(seoData.description || seoData.metaDescription, "")
-            const seoKeywords: string[] = Array.isArray(seoData.keywords)
-              ? seoData.keywords
-              : typeof seoData.keywords === "string"
+          // SEO Metadata
+          const rawMeta = (exp as any).metadata || (exp as any).seo || (exp as any).data?.metadata
+          const seoData = rawMeta?.seo || rawMeta || {}
+          const seoTitle = getSafeStringValue(seoData.title || seoData.metaTitle || seoData.pageTitle, "")
+          const seoDesc = getSafeStringValue(seoData.description || seoData.metaDescription, "")
+          const seoKeywords: string[] = Array.isArray(seoData.keywords)
+            ? seoData.keywords
+            : typeof seoData.keywords === "string"
               ? seoData.keywords.split(",").map((k: string) => k.trim()).filter(Boolean)
               : []
 
-            const isSeoComplete = Boolean(seoTitle && seoDesc)
-            const isSeoPartial = Boolean(seoTitle || seoDesc)
+          const isSeoComplete = Boolean(seoTitle && seoDesc)
+          const isSeoPartial = Boolean(seoTitle || seoDesc)
 
-            return (
-              <div
-                key={`${exp.id ?? "exp"}-${exp.slug ?? index}`}
-                className="group relative flex min-h-[420px] flex-col overflow-hidden rounded-2xl border border-border/70 bg-card shadow-sm transition-all duration-300 hover:-translate-y-1 hover:shadow-xl hover:border-primary/40"
+          return (
+            <div
+              key={`${exp.id ?? "exp"}-${exp.slug ?? index}`}
+              className="group relative flex min-h-[420px] flex-col overflow-hidden rounded-xl border border-border/70 bg-card shadow-sm transition-all duration-300 hover:-translate-y-1 hover:shadow-xl hover:border-primary/40"
+            >
+              {/* Delete Modal Trigger */}
+              <button
+                type="button"
+                onClick={() => openDeleteModal(exp)}
+                className="absolute top-3.5 right-3.5 z-20 rounded-full bg-background/90 p-2 text-muted-foreground opacity-0 shadow-sm backdrop-blur transition-all group-hover:opacity-100 hover:bg-destructive/10 hover:text-destructive focus:opacity-100 cursor-pointer"
+                title="Delete Experience"
               >
-                {/* Delete Modal Trigger */}
-                <button
-                  type="button"
-                  onClick={() => openDeleteModal(exp)}
-                  className="absolute top-3.5 right-3.5 z-20 rounded-full bg-background/90 p-2 text-muted-foreground opacity-0 shadow-sm backdrop-blur transition-all group-hover:opacity-100 hover:bg-destructive/10 hover:text-destructive focus:opacity-100 cursor-pointer"
-                  title="Delete Experience"
-                >
-                  <Trash2 className="h-4 w-4" />
-                </button>
+                <Trash2 className="h-4 w-4" />
+              </button>
 
-                {/* HERO MEDIA & BASIC INFO BANNER */}
-                <div className="relative h-48 overflow-hidden bg-muted">
-                  {hasHeroMedia ? (
-                    <UniversalMultimediaPreview
-                      multimedia={previewMedia ?? undefined}
-                      fallbackAlt={expName}
-                      mode="background"
-                      className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
-                      containerClassName="h-full w-full"
-                    />
-                  ) : (
-                    <div className="flex h-full items-center justify-center bg-primary/5">
-                      <Compass className="h-10 w-10 text-primary/40" />
-                    </div>
-                  )}
+              {/* HERO MEDIA & BASIC INFO BANNER */}
+              <div className="relative h-48 overflow-hidden bg-muted">
+                {hasHeroMedia ? (
+                  <UniversalMultimediaPreview
+                    multimedia={previewMedia ?? undefined}
+                    fallbackAlt={expName}
+                    mode="background"
+                    className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
+                    containerClassName="h-full w-full"
+                  />
+                ) : (
+                  <div className="flex h-full items-center justify-center bg-primary/5">
+                    <Compass className="h-10 w-10 text-primary/40" />
+                  </div>
+                )}
 
-                  {/* Gradient Overlay */}
-                  <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-black/85 via-black/35 to-black/10" />
+                {/* Gradient Overlay */}
+                <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-black/85 via-black/35 to-black/10" />
 
-                  {/* Top Badges: Type, Location & Featured */}
-                  <div className="absolute top-3.5 left-3.5 z-10 flex items-center gap-2 flex-wrap">
-                    <span className="rounded-full bg-background/95 px-2.5 py-0.5 text-[10px] font-bold tracking-wider text-foreground uppercase shadow-sm backdrop-blur">
-                      {typeName}
+                {/* Top Badges: Type, Location & Featured */}
+                <div className="absolute top-3.5 left-3.5 z-10 flex items-center gap-2 flex-wrap">
+                  <span className="rounded-full bg-background/95 px-2.5 py-0.5 text-[10px] font-bold tracking-wider text-foreground uppercase shadow-sm backdrop-blur">
+                    {typeName}
+                  </span>
+                  {locationBadge && (
+                    <span className="rounded-full bg-black/50 px-2.5 py-0.5 text-[10px] font-medium text-white/90 backdrop-blur flex items-center gap-1">
+                      <MapPin className="h-3 w-3 text-primary" />
+                      {locationBadge}
                     </span>
-                    {locationBadge && (
-                      <span className="rounded-full bg-black/50 px-2.5 py-0.5 text-[10px] font-medium text-white/90 backdrop-blur flex items-center gap-1">
-                        <MapPin className="h-3 w-3 text-primary" />
-                        {locationBadge}
-                      </span>
-                    )}
-                    {exp.featured && (
-                      <span className="rounded-full bg-amber-500/90 px-2.5 py-0.5 text-[10px] font-semibold text-white shadow-sm backdrop-blur flex items-center gap-1">
-                        <Sparkles className="h-3 w-3" />
-                        Featured
-                      </span>
-                    )}
-                  </div>
-
-                  {/* Bottom Hero Overlay: Label, Name & Slug */}
-                  <div className="absolute right-3.5 bottom-3.5 left-3.5 z-10 space-y-0.5">
-                    {heroLabel && (
-                      <span className="text-[10px] font-semibold tracking-widest text-primary-foreground/90 uppercase block truncate">
-                        {heroLabel}
-                      </span>
-                    )}
-                    <h3 className="text-xl font-serif font-bold text-white leading-tight truncate">
-                      {expName}
-                    </h3>
-                    {slugPath && (
-                      <p className="text-[11px] font-mono text-white/70 truncate">
-                        {slugPath}
-                      </p>
-                    )}
-                  </div>
+                  )}
+                  {exp.featured && (
+                    <span className="rounded-full bg-amber-500/90 px-2.5 py-0.5 text-[10px] font-semibold text-white shadow-sm backdrop-blur flex items-center gap-1">
+                      <Sparkles className="h-3 w-3" />
+                      Featured
+                    </span>
+                  )}
                 </div>
 
-                {/* CARD BODY: HERO NARRATIVE & SEO GOVERNANCE */}
-                <div className="flex flex-1 flex-col p-4 justify-between gap-4">
-                  {/* HERO NARRATIVE & PRICE */}
-                  <div className="space-y-1.5">
-                    <div className="flex items-center justify-between text-[11px] font-semibold text-muted-foreground uppercase tracking-wider">
-                      <span className="flex items-center gap-1.5">
-                        <Sparkles className="h-3.5 w-3.5 text-primary" />
-                        Hero Summary
+                {/* Bottom Hero Overlay: Label, Name & Slug */}
+                <div className="absolute right-3.5 bottom-3.5 left-3.5 z-10 space-y-0.5">
+                  {heroLabel && (
+                    <span className="text-[10px] font-semibold tracking-widest text-primary-foreground/90 uppercase block truncate">
+                      {heroLabel}
+                    </span>
+                  )}
+                  <h3 className="text-xl font-serif font-bold text-white leading-tight truncate">
+                    {expName}
+                  </h3>
+                  {slugPath && (
+                    <p className="text-[11px] font-mono text-white/70 truncate">
+                      {slugPath}
+                    </p>
+                  )}
+                </div>
+              </div>
+
+              {/* CARD BODY: HERO NARRATIVE & SEO GOVERNANCE */}
+              <div className="flex flex-1 flex-col p-4 justify-between gap-4">
+                {/* HERO NARRATIVE & PRICE */}
+                <div className="space-y-1.5">
+                  <div className="flex items-center justify-between text-[11px] font-semibold text-muted-foreground uppercase tracking-wider">
+                    <span className="flex items-center gap-1.5">
+                      <Sparkles className="h-3.5 w-3.5 text-primary" />
+                      Hero Summary
+                    </span>
+                    {exp.price !== null && exp.price !== undefined ? (
+                      <span className="text-xs font-bold text-foreground font-sans">
+                        {formatCurrencySymbol(exp.currency)}
+                        {Number(exp.price).toLocaleString(undefined, {
+                          minimumFractionDigits: 2,
+                          maximumFractionDigits: 2,
+                        })}
+                        {exp.priceType && (
+                          <span className="text-[10px] font-normal text-muted-foreground ml-1">
+                            ({formatPriceType(exp.priceType)})
+                          </span>
+                        )}
                       </span>
-                      {exp.price !== null && exp.price !== undefined ? (
-                        <span className="text-xs font-bold text-foreground font-sans">
-                          {formatCurrencySymbol(exp.currency)}
-                          {Number(exp.price).toLocaleString(undefined, {
-                            minimumFractionDigits: 2,
-                            maximumFractionDigits: 2,
-                          })}
-                          {exp.priceType && (
-                            <span className="text-[10px] font-normal text-muted-foreground ml-1">
-                              ({formatPriceType(exp.priceType)})
-                            </span>
-                          )}
+                    ) : (
+                      <span className="text-muted-foreground text-[10px] font-normal">
+                        Custom / Inquire
+                      </span>
+                    )}
+                  </div>
+                  <p className="line-clamp-2 text-xs leading-relaxed text-muted-foreground">
+                    {heroDesc || (heroTitle ? heroTitle : `Manage content and experience details for ${expName}.`)}
+                  </p>
+                </div>
+
+                {/* SEO METADATA & STATUS CARD */}
+                <div className="rounded-md border border-border/60 bg-muted/20 p-3 space-y-2">
+                  <div className="flex items-center justify-between">
+                    <span className="text-[11px] font-semibold uppercase tracking-wider text-foreground flex items-center gap-1.5">
+                      <Globe className="h-3.5 w-3.5 text-primary" />
+                      SEO Meta
+                    </span>
+                    <span
+                      className={`inline-flex items-center gap-1 rounded-full px-2 py-0.5 text-[10px] font-medium ${isSeoComplete
+                        ? "bg-emerald-500/10 text-emerald-600 dark:text-emerald-400"
+                        : isSeoPartial
+                          ? "bg-amber-500/10 text-amber-600 dark:text-amber-400"
+                          : "bg-destructive/10 text-destructive"
+                        }`}
+                    >
+                      <span
+                        className={`h-1.5 w-1.5 rounded-full ${isSeoComplete
+                          ? "bg-emerald-500"
+                          : isSeoPartial
+                            ? "bg-amber-500"
+                            : "bg-destructive"
+                          }`}
+                      />
+                      {isSeoComplete
+                        ? "SEO Ready"
+                        : isSeoPartial
+                          ? "SEO Partial"
+                          : "SEO Missing"}
+                    </span>
+                  </div>
+
+                  <p className="text-[11px] font-medium text-foreground truncate" title={seoTitle}>
+                    {seoTitle ? `Meta: "${seoTitle}"` : "No Meta Title set"}
+                  </p>
+
+                  {seoDesc ? (
+                    <p className="line-clamp-1 text-[10px] text-muted-foreground" title={seoDesc}>
+                      {seoDesc}
+                    </p>
+                  ) : (
+                    <p className="text-[10px] text-amber-600/80 italic dark:text-amber-400/80">
+                      Missing meta description
+                    </p>
+                  )}
+
+                  {seoKeywords.length > 0 && (
+                    <div className="flex flex-wrap gap-1 pt-1 border-t border-border/40">
+                      {seoKeywords.slice(0, 3).map((kw: string, i: number) => (
+                        <span
+                          key={i}
+                          className="rounded bg-primary/8 px-1.5 py-0.5 text-[9px] font-medium text-primary"
+                        >
+                          #{kw}
                         </span>
-                      ) : (
-                        <span className="text-muted-foreground text-[10px] font-normal">
-                          Custom / Inquire
+                      ))}
+                      {seoKeywords.length > 3 && (
+                        <span className="rounded bg-muted px-1.5 py-0.5 text-[9px] font-medium text-muted-foreground">
+                          +{seoKeywords.length - 3}
                         </span>
                       )}
                     </div>
-                    <p className="line-clamp-2 text-xs leading-relaxed text-muted-foreground">
-                      {heroDesc || (heroTitle ? heroTitle : `Manage content and experience details for ${expName}.`)}
-                    </p>
-                  </div>
-
-                  {/* SEO METADATA & STATUS CARD */}
-                  <div className="rounded-xl border border-border/60 bg-muted/20 p-3 space-y-2">
-                    <div className="flex items-center justify-between">
-                      <span className="text-[11px] font-semibold uppercase tracking-wider text-foreground flex items-center gap-1.5">
-                        <Globe className="h-3.5 w-3.5 text-primary" />
-                        SEO Meta
-                      </span>
-                      <span
-                        className={`inline-flex items-center gap-1 rounded-full px-2 py-0.5 text-[10px] font-medium ${
-                          isSeoComplete
-                            ? "bg-emerald-500/10 text-emerald-600 dark:text-emerald-400"
-                            : isSeoPartial
-                            ? "bg-amber-500/10 text-amber-600 dark:text-amber-400"
-                            : "bg-destructive/10 text-destructive"
-                        }`}
-                      >
-                        <span
-                          className={`h-1.5 w-1.5 rounded-full ${
-                            isSeoComplete
-                              ? "bg-emerald-500"
-                              : isSeoPartial
-                              ? "bg-amber-500"
-                              : "bg-destructive"
-                          }`}
-                        />
-                        {isSeoComplete
-                          ? "SEO Ready"
-                          : isSeoPartial
-                          ? "SEO Partial"
-                          : "SEO Missing"}
-                      </span>
-                    </div>
-
-                    <p className="text-[11px] font-medium text-foreground truncate" title={seoTitle}>
-                      {seoTitle ? `Meta: "${seoTitle}"` : "No Meta Title set"}
-                    </p>
-
-                    {seoDesc ? (
-                      <p className="line-clamp-1 text-[10px] text-muted-foreground" title={seoDesc}>
-                        {seoDesc}
-                      </p>
-                    ) : (
-                      <p className="text-[10px] text-amber-600/80 italic dark:text-amber-400/80">
-                        Missing meta description
-                      </p>
-                    )}
-
-                    {seoKeywords.length > 0 && (
-                      <div className="flex flex-wrap gap-1 pt-1 border-t border-border/40">
-                        {seoKeywords.slice(0, 3).map((kw: string, i: number) => (
-                          <span
-                            key={i}
-                            className="rounded bg-primary/8 px-1.5 py-0.5 text-[9px] font-medium text-primary"
-                          >
-                            #{kw}
-                          </span>
-                        ))}
-                        {seoKeywords.length > 3 && (
-                          <span className="rounded bg-muted px-1.5 py-0.5 text-[9px] font-medium text-muted-foreground">
-                            +{seoKeywords.length - 3}
-                          </span>
-                        )}
-                      </div>
-                    )}
-                  </div>
-
-                  {/* EDIT BUTTON */}
-                  <Link
-                    to={`/experiences/${exp.id}/${exp.slug || "details"}`}
-                    className="inline-flex items-center justify-between rounded-xl bg-primary/10 px-4 py-2.5 text-xs font-semibold text-primary transition-all hover:bg-primary hover:text-primary-foreground cursor-pointer"
-                  >
-                    <span>Edit {expName}</span>
-                    <span className="transition-transform group-hover:translate-x-1">→</span>
-                  </Link>
+                  )}
                 </div>
+
+                {/* EDIT BUTTON */}
+                <Link
+                  to={`/experiences/${exp.id}/${exp.slug || "details"}`}
+                  className="inline-flex items-center justify-between rounded-md bg-primary/10 px-4 py-2.5 text-xs font-semibold text-primary transition-all hover:bg-primary hover:text-primary-foreground cursor-pointer"
+                >
+                  <span>Edit {expName}</span>
+                  <span className="transition-transform group-hover:translate-x-1">→</span>
+                </Link>
               </div>
-            )
-          }}
-        />
+            </div>
+          )
+        }}
+      />
 
       {/* Universal Smart Pagination & Infinite Scroll Sentinel */}
       {data?.meta && (

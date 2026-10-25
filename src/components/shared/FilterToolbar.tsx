@@ -1,6 +1,6 @@
 import React, { useState } from "react"
 import { Link } from "react-router-dom"
-import { Search, X, ChevronDown, Check, Plus, RotateCcw } from "lucide-react"
+import { Search, X, ChevronDown, Check, Plus, RotateCcw, Download } from "lucide-react"
 import { cn } from "@/lib/utils"
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover"
 
@@ -10,30 +10,33 @@ export interface FilterToolbarProps {
   className?: string
   containerClassName?: string
   children: React.ReactNode
+  /** Sticky offset from top, defaults to 'top-14' (56px) beneath fixed Navbar */
+  topOffset?: string
 }
 
 /**
  * Universal FilterToolbar Container
- * Standardizes search, filters, tabs, and action buttons across all Dashboard pages.
- * Default is non-sticky (sits cleanly beneath PageHeader in natural page flow).
+ * Implements a unified segmented control bar with vertical dividers,
+ * subtle rounded-md corners (slightly curved after square), and transparent frosted glassmorphism.
  */
 export function FilterToolbar({
-  sticky = false,
+  sticky = true,
   className,
   containerClassName,
+  topOffset = "top-14",
   children,
 }: FilterToolbarProps) {
   return (
     <div
       className={cn(
         "w-full transition-all duration-200",
-        sticky && "sticky top-0 z-20 py-1 bg-background/80 backdrop-blur-md",
+        sticky && cn("sticky z-20 pb-2 bg-transparent", topOffset),
         className
       )}
     >
       <div
         className={cn(
-          "flex flex-wrap items-center justify-between gap-1.5 sm:gap-2 rounded-xl border border-border/70 bg-card/60 p-1.5 sm:p-2 backdrop-blur-md shadow-2xs transition-all",
+          "flex flex-wrap items-stretch justify-between rounded-md border border-border/40 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 dark:bg-card/90 dark:supports-[backdrop-filter]:dark:bg-card/60 shadow-2xs transition-all overflow-hidden divide-y sm:divide-y-0 sm:divide-x divide-border/40",
           containerClassName
         )}
       >
@@ -43,7 +46,7 @@ export function FilterToolbar({
   )
 }
 
-/** Left/center group of filter controls (search, selects, toggles) */
+/** Left/center group of segmented filter controls (search, selects, toggles, tabs) */
 export function FilterGroup({
   children,
   className,
@@ -52,13 +55,13 @@ export function FilterGroup({
   className?: string
 }) {
   return (
-    <div className={cn("flex flex-wrap items-center gap-1.5 sm:gap-2 flex-1 min-w-0", className)}>
+    <div className={cn("flex flex-wrap items-stretch flex-1 min-w-0 divide-x divide-border/40 bg-transparent", className)}>
       {children}
     </div>
   )
 }
 
-/** Right-side container for actions (create button, export, refresh, etc.) */
+/** Right-side container for segmented actions (create button, export, refresh, etc.) */
 export function FilterActions({
   children,
   className,
@@ -67,7 +70,7 @@ export function FilterActions({
   className?: string
 }) {
   return (
-    <div className={cn("flex flex-wrap items-center gap-1.5 sm:gap-2 shrink-0 ml-auto", className)}>
+    <div className={cn("flex items-stretch shrink-0 divide-x divide-border/40 ml-auto border-t sm:border-t-0 sm:border-l border-border/40 bg-transparent", className)}>
       {children}
     </div>
   )
@@ -83,39 +86,36 @@ export interface FilterSearchProps {
 }
 
 /**
- * Standardized FilterSearch Input
- * Magnifying glass icon, clear button, compact uniform height.
+ * Standardized FilterSearch Input Segment
+ * Seamless borderless slot with magnifying glass icon, transparent input, and clear button.
  */
 export function FilterSearch({
   value,
   onChange,
   placeholder = "Search...",
   className,
-  width = "w-44 sm:w-56 shrink-0",
+  width = "flex-1 min-w-[170px] sm:min-w-[220px]",
   autoFocus = false,
 }: FilterSearchProps) {
   return (
-    <div className={cn("relative", width, className)}>
-      <Search className="pointer-events-none absolute left-2.5 top-1/2 h-3.5 w-3.5 -translate-y-1/2 text-muted-foreground" />
+    <div className={cn("relative flex items-center h-10 px-3.5", width, className)}>
+      <Search className="pointer-events-none h-4 w-4 shrink-0 text-muted-foreground mr-2.5" />
       <input
         type="text"
         autoFocus={autoFocus}
         value={value}
         onChange={(e) => onChange(e.target.value)}
         placeholder={placeholder}
-        className={cn(
-          "h-8 sm:h-8.5 w-full rounded-lg border border-border/70 bg-background/60 dark:bg-background/40 pl-8 pr-7 text-xs text-foreground placeholder:text-muted-foreground outline-none transition-all",
-          "focus:border-primary focus:ring-1 focus:ring-primary/40 focus:bg-background"
-        )}
+        className="h-full w-full bg-transparent border-0 text-xs text-foreground placeholder:text-muted-foreground/75 outline-none focus:outline-none focus:ring-0 select-text"
       />
       {value && (
         <button
           type="button"
           onClick={() => onChange("")}
-          className="absolute right-2 top-1/2 -translate-y-1/2 rounded-full p-0.5 text-muted-foreground hover:bg-muted hover:text-foreground transition-colors cursor-pointer"
+          className="rounded-full p-1 text-muted-foreground hover:bg-muted/70 hover:text-foreground transition-colors cursor-pointer shrink-0 ml-1"
           title="Clear search"
         >
-          <X className="h-3 w-3" />
+          <X className="h-3.5 w-3.5" />
         </button>
       )}
     </div>
@@ -143,8 +143,8 @@ export interface FilterSelectProps {
 }
 
 /**
- * Universal Styled FilterSelect
- * Replaces crude native browser selects with sleek Popover-based dropdowns.
+ * Universal Segmented FilterSelect Dropdown
+ * Borderless slot with leading icon, center label, and right chevron.
  */
 export function FilterSelect({
   value,
@@ -154,7 +154,7 @@ export function FilterSelect({
   icon: Icon,
   className,
   triggerClassName,
-  width = "min-w-[105px] max-w-[165px]",
+  width = "min-w-[110px] max-w-[170px]",
   allLabel,
   allValue = "",
 }: FilterSelectProps) {
@@ -167,27 +167,34 @@ export function FilterSelect({
     : allLabel || placeholder
 
   return (
-    <div className={cn("relative shrink-0", className)}>
+    <div className={cn("relative shrink-0 flex items-center h-10", className)}>
       <Popover open={open} onOpenChange={setOpen}>
         <PopoverTrigger asChild>
           <button
             type="button"
             className={cn(
-              "h-8 sm:h-8.5 inline-flex items-center justify-between gap-1.5 rounded-lg border px-2.5 py-1 text-xs font-medium transition-all cursor-pointer outline-none select-none",
+              "h-full inline-flex items-center justify-between gap-2 px-3.5 text-xs font-medium transition-all cursor-pointer outline-none select-none hover:bg-muted/30 whitespace-nowrap",
               width,
               isFiltered
-                ? "border-primary/60 bg-primary/10 text-primary font-semibold shadow-2xs"
-                : "border-border/70 bg-background/60 dark:bg-background/40 text-foreground hover:bg-muted/50 hover:border-border",
+                ? "bg-primary/10 text-primary font-semibold"
+                : "text-muted-foreground hover:text-foreground",
               triggerClassName
             )}
           >
-            <div className="flex items-center gap-1.5 truncate">
-              {Icon && <Icon className="h-3.5 w-3.5 shrink-0 text-muted-foreground" />}
+            <div className="flex items-center gap-2 truncate">
+              {Icon && (
+                <Icon
+                  className={cn(
+                    "h-3.5 w-3.5 shrink-0",
+                    isFiltered ? "text-primary" : "text-muted-foreground"
+                  )}
+                />
+              )}
               <span className="truncate">{displayLabel}</span>
             </div>
             <ChevronDown
               className={cn(
-                "h-3 w-3 shrink-0 text-muted-foreground transition-transform duration-200",
+                "h-3 w-3 shrink-0 text-muted-foreground transition-transform duration-200 ml-1.5",
                 open && "rotate-180"
               )}
             />
@@ -196,8 +203,8 @@ export function FilterSelect({
 
         <PopoverContent
           align="start"
-          sideOffset={5}
-          className="z-50 min-w-[160px] max-h-72 overflow-y-auto rounded-xl border border-border bg-popover/95 p-1 backdrop-blur-xl shadow-xl text-xs custom-scrollbar"
+          sideOffset={6}
+          className="z-50 min-w-[170px] max-h-72 overflow-y-auto rounded-md border border-border/70 bg-popover/95 p-1 backdrop-blur-xl shadow-xl text-xs custom-scrollbar"
         >
           {allLabel && (
             <button
@@ -244,7 +251,7 @@ export function FilterSelect({
                 </div>
                 <div className="flex items-center gap-1.5 shrink-0">
                   {opt.count !== undefined && (
-                    <span className="rounded-md bg-muted px-1.5 py-0.5 text-[10px] text-muted-foreground font-normal">
+                    <span className="rounded-sm bg-muted px-1.5 py-0.5 text-[10px] text-muted-foreground font-normal">
                       {opt.count}
                     </span>
                   )}
@@ -268,7 +275,7 @@ export interface FilterToggleProps {
 }
 
 /**
- * FilterToggle Button for boolean filters (e.g. Featured, Active, Verified)
+ * FilterToggle Segmented Slot for boolean filters (e.g. Featured, Active, Verified)
  */
 export function FilterToggle({
   active,
@@ -282,10 +289,10 @@ export function FilterToggle({
       type="button"
       onClick={onToggle}
       className={cn(
-        "h-8 sm:h-8.5 inline-flex items-center gap-1.5 rounded-lg border px-2.5 py-1 text-xs font-medium transition-all cursor-pointer shrink-0 select-none",
+        "h-10 inline-flex items-center gap-1.5 px-3.5 text-xs font-medium transition-all cursor-pointer shrink-0 select-none hover:bg-muted/30 whitespace-nowrap",
         active
-          ? "border-primary bg-primary/10 text-primary font-semibold shadow-2xs"
-          : "border-border/70 bg-background/60 dark:bg-background/40 text-muted-foreground hover:text-foreground hover:bg-muted/50",
+          ? "bg-primary/10 text-primary font-semibold"
+          : "text-muted-foreground hover:text-foreground",
         className
       )}
     >
@@ -312,7 +319,8 @@ export interface FilterTabsProps {
 
 /**
  * FilterTabs Segmented Control
- * Used for route switching or primary mode selection (e.g. Roles vs Permissions)
+ * Full-height (h-10) seamless segmented slots with divider lines,
+ * subtle active background tint, bottom indicator line, and elegant typography.
  */
 export function FilterTabs({
   tabs,
@@ -323,7 +331,7 @@ export function FilterTabs({
   return (
     <div
       className={cn(
-        "inline-flex items-center gap-0.5 rounded-lg border border-border/70 bg-muted/20 p-0.5 backdrop-blur-xl shrink-0 overflow-x-auto",
+        "inline-flex items-center h-10 shrink-0 divide-x divide-border/40 overflow-x-auto scrollbar-none",
         className
       )}
     >
@@ -337,19 +345,28 @@ export function FilterTabs({
             type="button"
             onClick={() => onChange(tabKey)}
             className={cn(
-              "flex items-center gap-1.5 rounded-md px-2.5 sm:px-3 py-1 text-xs font-medium transition-all cursor-pointer select-none whitespace-nowrap",
+              "relative h-10 inline-flex items-center gap-2 px-3.5 text-xs font-medium transition-all duration-150 cursor-pointer select-none whitespace-nowrap outline-none",
               isActive
-                ? "bg-background text-foreground shadow-2xs font-semibold border border-border/60"
-                : "text-muted-foreground hover:text-foreground hover:bg-muted/40"
+                ? "bg-primary/8 text-primary font-semibold dark:bg-primary/15 after:absolute after:bottom-0 after:left-2 after:right-2 after:h-[2px] after:bg-primary after:rounded-full"
+                : "text-muted-foreground hover:text-foreground hover:bg-muted/30"
             )}
           >
-            {Icon && <Icon className="h-3.5 w-3.5 shrink-0" />}
+            {Icon && (
+              <Icon
+                className={cn(
+                  "h-3.5 w-3.5 shrink-0 transition-colors",
+                  isActive ? "text-primary" : "text-muted-foreground"
+                )}
+              />
+            )}
             <span>{tab.label}</span>
             {tab.count !== undefined && (
               <span
                 className={cn(
-                  "rounded-full px-1.5 py-0.2 text-[10px]",
-                  isActive ? "bg-primary/10 text-primary" : "bg-muted text-muted-foreground"
+                  "ml-1 inline-flex items-center justify-center px-1.5 py-0.5 rounded-full text-[10px] font-bold leading-none min-w-[18px]",
+                  isActive
+                    ? "bg-primary/20 text-primary"
+                    : "bg-muted text-muted-foreground"
                 )}
               >
                 {tab.count}
@@ -365,39 +382,124 @@ export function FilterTabs({
 export interface FilterCreateButtonProps {
   to?: string
   onClick?: () => void
-  label: string
+  label?: string
   icon?: React.ComponentType<{ className?: string }>
   className?: string
+  disabled?: boolean
 }
 
 /**
- * Universal Action Button for adding/creating records
+ * Segmented Action Button (e.g. "Create +", "Add New User", "Save")
+ * Styled with brand greenish typography matching theme as requested.
  */
 export function FilterCreateButton({
   to,
   onClick,
-  label,
+  label = "Create",
   icon: Icon = Plus,
   className,
+  disabled,
 }: FilterCreateButtonProps) {
   const commonClasses = cn(
-    "h-8 sm:h-8.5 inline-flex items-center justify-center gap-1.5 rounded-lg bg-primary px-3 py-1 text-xs font-semibold text-primary-foreground shadow-xs hover:bg-primary/90 hover:shadow transition-all cursor-pointer shrink-0 whitespace-nowrap",
+    "h-10 inline-flex items-center justify-center gap-1.5 px-4 text-xs font-semibold text-emerald-600 dark:text-emerald-400 hover:text-emerald-700 dark:hover:text-emerald-300 hover:bg-emerald-500/10 transition-all cursor-pointer shrink-0 whitespace-nowrap select-none",
+    disabled && "opacity-50 pointer-events-none cursor-not-allowed",
     className
   )
 
   if (to) {
     return (
       <Link to={to} className={commonClasses}>
-        <Icon className="h-3.5 w-3.5 shrink-0" />
         <span>{label}</span>
+        <Icon className="h-3.5 w-3.5 shrink-0" />
       </Link>
     )
   }
 
   return (
-    <button type="button" onClick={onClick} className={commonClasses}>
-      <Icon className="h-3.5 w-3.5 shrink-0" />
+    <button type="button" onClick={onClick} disabled={disabled} className={commonClasses}>
       <span>{label}</span>
+      <Icon className="h-3.5 w-3.5 shrink-0" />
+    </button>
+  )
+}
+
+export interface FilterExportButtonProps {
+  onClick?: () => void
+  label?: string
+  icon?: React.ComponentType<{ className?: string }>
+  disabled?: boolean
+  className?: string
+}
+
+/**
+ * Segmented Export / Download CSV Button
+ * No separate floating border, fits directly into the segmented pill-bar.
+ */
+export function FilterExportButton({
+  onClick,
+  label = "Export CSV",
+  icon: Icon = Download,
+  disabled = false,
+  className,
+}: FilterExportButtonProps) {
+  return (
+    <button
+      type="button"
+      onClick={onClick}
+      disabled={disabled}
+      className={cn(
+        "h-10 inline-flex items-center justify-center gap-1.5 px-3.5 text-xs font-medium text-muted-foreground hover:text-foreground hover:bg-muted/30 transition-all cursor-pointer shrink-0 whitespace-nowrap select-none disabled:opacity-50 disabled:cursor-not-allowed",
+        className
+      )}
+    >
+      {Icon && <Icon className="h-3.5 w-3.5 shrink-0" />}
+      <span>{label}</span>
+    </button>
+  )
+}
+
+export interface FilterSegmentButtonProps {
+  onClick?: () => void
+  label?: React.ReactNode
+  icon?: React.ComponentType<{ className?: string }>
+  children?: React.ReactNode
+  active?: boolean
+  disabled?: boolean
+  className?: string
+  title?: string
+}
+
+/**
+ * Generic Segmented Button
+ * Seamless borderless slot inside toolbar with hover state.
+ */
+export function FilterSegmentButton({
+  onClick,
+  label,
+  icon: Icon,
+  children,
+  active = false,
+  disabled = false,
+  className,
+  title,
+}: FilterSegmentButtonProps) {
+  return (
+    <button
+      type="button"
+      onClick={onClick}
+      disabled={disabled}
+      title={title}
+      className={cn(
+        "h-10 inline-flex items-center justify-center gap-1.5 px-3.5 text-xs font-medium transition-all cursor-pointer shrink-0 whitespace-nowrap select-none disabled:opacity-50 disabled:cursor-not-allowed",
+        active
+          ? "bg-primary/10 text-primary font-semibold"
+          : "text-muted-foreground hover:text-foreground hover:bg-muted/30",
+        className
+      )}
+    >
+      {Icon && <Icon className="h-3.5 w-3.5 shrink-0" />}
+      {label && <span>{label}</span>}
+      {children}
     </button>
   )
 }
@@ -410,12 +512,13 @@ export interface FilterResetButtonProps {
 }
 
 /**
- * Reset / Clear all active filters
+ * Circular Refresh / Reset Segment
+ * Matches the '↻' circular arrow button at the far right of the reference image.
  */
 export function FilterResetButton({
   onClick,
-  label = "Reset",
-  title = "Reset all filters",
+  label,
+  title = "Refresh",
   className,
 }: FilterResetButtonProps) {
   return (
@@ -424,12 +527,12 @@ export function FilterResetButton({
       onClick={onClick}
       title={title}
       className={cn(
-        "h-8 sm:h-8.5 inline-flex items-center gap-1 rounded-lg border border-border/70 bg-background/60 dark:bg-background/40 px-2.5 py-1 text-xs font-medium text-muted-foreground hover:text-foreground hover:bg-muted/50 transition-all cursor-pointer shrink-0",
+        "h-10 w-10 inline-flex items-center justify-center text-muted-foreground hover:text-foreground hover:bg-muted/40 transition-all cursor-pointer shrink-0",
         className
       )}
     >
-      <RotateCcw className="h-3 w-3 shrink-0" />
-      <span>{label}</span>
+      <RotateCcw className="h-4 w-4 shrink-0 transition-transform active:-rotate-90 hover:-rotate-45" />
+      {label && <span className="text-xs ml-1.5">{label}</span>}
     </button>
   )
 }

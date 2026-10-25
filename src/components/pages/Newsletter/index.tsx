@@ -1,13 +1,11 @@
 import { useState, useEffect, useCallback } from "react"
 import {
   Send,
-  Download,
   MailCheck,
   TrendingUp,
   Sparkles,
   CheckCircle2,
   Trash2,
-  RefreshCw,
   UserCheck,
   UserX,
   Loader2,
@@ -20,6 +18,7 @@ import {
   FilterSearch,
   FilterSelect,
   FilterActions,
+  FilterExportButton,
   FilterResetButton,
 } from "@/components/shared/FilterToolbar"
 import { Button } from "@/components/ui/button"
@@ -186,16 +185,25 @@ export default function NewsletterPage() {
       {/* Toolbar */}
       <FilterToolbar>
         <FilterGroup>
+          {/* Search expands to take all remaining space on left */}
           <FilterSearch
             value={search}
-            onChange={(val) => setSearch(val)}
+            onChange={(val) => {
+              setSearch(val)
+              setCurrentPage(1)
+            }}
             placeholder="Search email..."
-            width="w-48 sm:w-64 shrink-0"
+            width="w-full flex-1 min-w-[200px]"
           />
+        </FilterGroup>
 
+        <FilterActions>
           <FilterSelect
             value={statusFilter}
-            onChange={(val) => setStatusFilter(val)}
+            onChange={(val) => {
+              setStatusFilter(val)
+              setCurrentPage(1)
+            }}
             options={[
               { label: "Subscribed", value: "SUBSCRIBED" },
               { label: "Unsubscribed", value: "UNSUBSCRIBED" },
@@ -208,7 +216,10 @@ export default function NewsletterPage() {
 
           <FilterSelect
             value={sourceFilter}
-            onChange={(val) => setSourceFilter(val)}
+            onChange={(val) => {
+              setSourceFilter(val)
+              setCurrentPage(1)
+            }}
             options={[
               { label: "Footer Form", value: "FOOTER" },
               { label: "Homepage", value: "HOMEPAGE" },
@@ -221,44 +232,31 @@ export default function NewsletterPage() {
             width="min-w-[110px] max-w-[140px]"
           />
 
-          {(search || statusFilter !== "ALL" || sourceFilter !== "ALL") && (
-            <FilterResetButton
-              onClick={() => {
-                setSearch("")
-                setStatusFilter("ALL")
-                setSourceFilter("ALL")
-              }}
-            />
-          )}
-        </FilterGroup>
-
-        <FilterActions>
-          <Button
-            onClick={fetchSubscribers}
-            variant="outline"
-            size="icon"
-            disabled={loading}
-            title="Refresh list"
-            className="h-8 sm:h-8.5 w-8 sm:w-8.5 rounded-lg cursor-pointer"
-          >
-            <RefreshCw className={cn("h-3.5 w-3.5", loading && "animate-spin")} />
-          </Button>
-
-          <Button
+          {/* Seamless Borderless Export CSV */}
+          <FilterExportButton
             onClick={handleExportCSV}
-            variant="outline"
-            className="h-8 sm:h-8.5 rounded-lg flex items-center gap-1.5 px-2.5 cursor-pointer shadow-2xs text-xs whitespace-nowrap"
-          >
-            <Download className="h-3.5 w-3.5" />
-            <span>Export CSV</span>
-          </Button>
+            label="Export CSV"
+            disabled={filtered.length === 0}
+          />
+
+          {/* Far-Right Universal Refresh Button */}
+          <FilterResetButton
+            onClick={() => {
+              setSearch("")
+              setStatusFilter("ALL")
+              setSourceFilter("ALL")
+              setCurrentPage(1)
+              fetchSubscribers()
+            }}
+            title="Refresh & Reset"
+          />
         </FilterActions>
       </FilterToolbar>
 
       {/* Table */}
-      <div className="overflow-hidden rounded-xl border border-border/60 bg-card/60 shadow-sm backdrop-blur-xl">
+      <div className="overflow-hidden rounded-md border border-border/60 bg-card/60 shadow-sm backdrop-blur-xl">
         <div className="overflow-x-auto">
-          {loading ? (
+          {loading && subscribers.length === 0 ? (
             <div className="flex h-48 items-center justify-center gap-2 text-muted-foreground">
               <Loader2 className="h-5 w-5 animate-spin" />
               <span>Loading subscribers...</span>
@@ -296,7 +294,7 @@ export default function NewsletterPage() {
                       <td className="px-5 py-3.5">
                         <span
                           className={cn(
-                            "inline-block rounded-md border px-2 py-0.5 text-[11px] font-semibold uppercase",
+                            "inline-block rounded-sm border px-2 py-0.5 text-[11px] font-semibold uppercase",
                             statusStyles[s.status] || statusStyles.SUBSCRIBED
                           )}
                         >
@@ -361,24 +359,22 @@ export default function NewsletterPage() {
 
         {/* Universal Pagination */}
         {filtered.length > 0 && (
-          <div className="border-t border-border/60 bg-muted/10 px-5 py-3">
-            <Pagination
-              mode="infinite"
-              currentPage={currentPage}
-              totalPages={Math.max(1, Math.ceil(filtered.length / pageSize))}
-              totalItems={filtered.length}
-              pageSize={pageSize}
-              pageSizeOptions={[10, 20, 50, 100]}
-              loadedCount={Math.min(filtered.length, currentPage * pageSize)}
-              hasMore={currentPage * pageSize < filtered.length}
-              onLoadMore={() => setCurrentPage((p) => p + 1)}
-              onPageChange={setCurrentPage}
-              onPageSizeChange={(sz) => {
-                setPageSize(sz)
-                setCurrentPage(1)
-              }}
-            />
-          </div>
+          <Pagination
+            mode="infinite"
+            currentPage={currentPage}
+            totalPages={Math.max(1, Math.ceil(filtered.length / pageSize))}
+            totalItems={filtered.length}
+            pageSize={pageSize}
+            pageSizeOptions={[10, 20, 50, 100]}
+            loadedCount={Math.min(filtered.length, currentPage * pageSize)}
+            hasMore={currentPage * pageSize < filtered.length}
+            onLoadMore={() => setCurrentPage((p) => p + 1)}
+            onPageChange={setCurrentPage}
+            onPageSizeChange={(sz) => {
+              setPageSize(sz)
+              setCurrentPage(1)
+            }}
+          />
         )}
       </div>
     </div>

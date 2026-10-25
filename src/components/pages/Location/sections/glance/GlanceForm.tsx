@@ -292,9 +292,8 @@ export function GlanceForm({
                     return (
                       <div
                         key={loc.id}
-                        className={`flex items-center justify-between gap-3 p-2.5 transition-colors hover:bg-muted/60 ${
-                          isAlreadyAdded ? "bg-muted/30" : ""
-                        }`}
+                        className={`flex items-center justify-between gap-3 p-2.5 transition-colors hover:bg-muted/60 ${isAlreadyAdded ? "bg-muted/30" : ""
+                          }`}
                       >
                         <div className="flex items-center gap-3 min-w-0">
                           <div className="relative h-10 w-14 shrink-0 overflow-hidden rounded border border-border bg-muted">
@@ -336,11 +335,10 @@ export function GlanceForm({
                           type="button"
                           onClick={() => handleAddLocationFromSearch(loc)}
                           disabled={isAlreadyAdded}
-                          className={`flex shrink-0 items-center gap-1 rounded-md px-2.5 py-1.5 text-xs font-medium transition-colors cursor-pointer ${
-                            isAlreadyAdded
-                              ? "bg-muted text-muted-foreground cursor-not-allowed opacity-60"
-                              : "bg-primary text-primary-foreground hover:opacity-90 shadow-2xs"
-                          }`}
+                          className={`flex shrink-0 items-center gap-1 rounded-sm px-2.5 py-1.5 text-xs font-medium transition-colors cursor-pointer ${isAlreadyAdded
+                            ? "bg-muted text-muted-foreground cursor-not-allowed opacity-60"
+                            : "bg-primary text-primary-foreground hover:opacity-90 shadow-2xs"
+                            }`}
                         >
                           {isAlreadyAdded ? (
                             <>
@@ -365,7 +363,7 @@ export function GlanceForm({
 
         {/* 7. Glance Location IDs List */}
         {itemIds.length === 0 ? (
-          <div className="flex flex-col items-center justify-center rounded-xl border border-dashed border-border/80 bg-muted/20 p-8 text-center">
+          <div className="flex flex-col items-center justify-center rounded-md border border-dashed border-border/80 bg-muted/20 p-8 text-center">
             <ImageIcon className="h-8 w-8 text-muted-foreground/50 mb-2" />
             <p className="text-xs font-medium text-muted-foreground">
               No glance location cards added yet.
@@ -397,14 +395,13 @@ export function GlanceForm({
               return (
                 <div
                   key={`${id}-${idx}`}
-                  className={`flex items-center justify-between gap-3 p-3 rounded-xl border transition-all shadow-2xs ${
-                    isFeatured
-                      ? "border-amber-500/50 bg-amber-500/5 dark:bg-amber-500/10"
-                      : "border-border/70 bg-card hover:border-border"
-                  }`}
+                  className={`flex items-center justify-between gap-3 p-3 rounded-md border transition-all shadow-2xs ${isFeatured
+                    ? "border-amber-500/50 bg-amber-500/5 dark:bg-amber-500/10"
+                    : "border-border/70 bg-card hover:border-border"
+                    }`}
                 >
                   <div className="flex items-center gap-3 min-w-0 flex-1">
-                    <span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-md bg-primary/10 text-primary text-[11px] font-bold">
+                    <span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-sm bg-primary/10 text-primary text-[11px] font-bold">
                       {(idx + 1).toString().padStart(2, "0")}
                     </span>
 

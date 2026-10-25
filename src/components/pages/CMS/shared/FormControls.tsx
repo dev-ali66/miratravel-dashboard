@@ -234,7 +234,7 @@ export function FieldHeader({
               <button
                 type="button"
                 className={cn(
-                  "inline-flex items-center gap-1 rounded-md px-1.5 py-0.5 text-[11px] font-medium transition-colors hover:bg-muted cursor-pointer",
+                  "inline-flex items-center gap-1 rounded-sm px-1.5 py-0.5 text-[11px] font-medium transition-colors hover:bg-muted cursor-pointer",
                   hasCustomStyle
                     ? "bg-primary/10 text-primary border border-primary/30"
                     : "text-muted-foreground hover:text-foreground"

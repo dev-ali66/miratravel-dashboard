@@ -19,9 +19,13 @@ import {
 } from "lucide-react"
 import { Pagination } from "@/components/shared/Pagination"
 import {
+  FilterToolbar,
+  FilterGroup,
   FilterSearch,
   FilterTabs,
   FilterSelect,
+  FilterActions,
+  FilterResetButton,
 } from "@/components/shared/FilterToolbar"
 import { useMediaGallery } from "@/hooks/media/useMediaLibrary"
 import { mediaService, type MediaAsset } from "@/services/mediaService"
@@ -119,7 +123,7 @@ export function MediaPickerModal({
     sortBy,
   })
 
-  const { data: galleryData, isLoading, isFetching } = galleryQuery
+  const { data: galleryData, isLoading, isFetching, refetch } = galleryQuery
 
   const [accumulatedAssets, setAccumulatedAssets] = useState<MediaAsset[]>([])
   const isFetchingMoreRef = useRef<boolean>(false)
@@ -319,8 +323,8 @@ export function MediaPickerModal({
     (mode === "multiple"
       ? "Select Media Assets from Library"
       : allowedTypes?.length === 1 && allowedTypes[0] === "video"
-      ? "Choose Video from Library"
-      : "Choose Image from Library")
+        ? "Choose Video from Library"
+        : "Choose Image from Library")
 
   // First selected item for preview footer
   const firstSelected = useMemo(() => {
@@ -332,12 +336,12 @@ export function MediaPickerModal({
     <Dialog open={isOpen} onOpenChange={(open) => !open && handleClose()}>
       <DialogContent
         showCloseButton={false}
-        className="fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[95vw] max-w-5xl h-[88vh] max-h-[820px] p-0 flex flex-col overflow-hidden bg-background/98 backdrop-blur-2xl border border-border shadow-2xl rounded-2xl z-50 animate-in fade-in-0 zoom-in-95 duration-150"
+        className="fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[95vw] max-w-5xl h-[88vh] max-h-[820px] p-0 flex flex-col overflow-hidden bg-background/98 backdrop-blur-2xl border border-border shadow-2xl rounded-xl z-50 animate-in fade-in-0 zoom-in-95 duration-150"
       >
         {/* Top Header Bar */}
         <DialogHeader className="flex flex-row items-center justify-between px-5 py-3.5 border-b border-border/70 shrink-0 bg-muted/20">
           <div className="flex items-center gap-2.5">
-            <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-primary/10 text-primary">
+            <div className="flex h-9 w-9 items-center justify-center rounded-md bg-primary/10 text-primary">
               <FolderOpen className="h-4.5 w-4.5" />
             </div>
             <div>
@@ -359,7 +363,7 @@ export function MediaPickerModal({
                 type="button"
                 onClick={() => setActiveTab("browse")}
                 className={cn(
-                  "flex items-center gap-1.5 rounded-md px-3 py-1 text-xs font-medium transition-all cursor-pointer",
+                  "flex items-center gap-1.5 rounded-sm px-3 py-1 text-xs font-medium transition-all cursor-pointer",
                   activeTab === "browse"
                     ? "bg-background text-foreground font-semibold shadow-xs"
                     : "text-muted-foreground hover:text-foreground"
@@ -372,7 +376,7 @@ export function MediaPickerModal({
                 type="button"
                 onClick={() => setActiveTab("upload")}
                 className={cn(
-                  "flex items-center gap-1.5 rounded-md px-3 py-1 text-xs font-medium transition-all cursor-pointer",
+                  "flex items-center gap-1.5 rounded-sm px-3 py-1 text-xs font-medium transition-all cursor-pointer",
                   activeTab === "upload"
                     ? "bg-background text-foreground font-semibold shadow-xs"
                     : "text-muted-foreground hover:text-foreground"
@@ -398,19 +402,22 @@ export function MediaPickerModal({
         {/* Tab 1: Browse Library View */}
         {activeTab === "browse" && (
           <div className="flex flex-col flex-1 min-h-0">
-            {/* Filter & Search Bar */}
-            <div className="flex flex-wrap items-center justify-between gap-3 px-4 py-2 border-b border-border/60 bg-muted/10 shrink-0">
-              <FilterSearch
-                value={searchInput}
-                onChange={(val) => {
-                  setSearchInput(val)
-                  setPage(1)
-                }}
-                placeholder="Search file name, title..."
-                width="w-full sm:w-72"
-              />
+            {/* Filter & Search Bar (Sticky at top of modal browse view) */}
+            <FilterToolbar sticky topOffset="top-0" className="px-4 py-1.5 border-b border-border/60 shrink-0">
+              <FilterGroup>
+                {/* Search expands across remaining space on left */}
+                <FilterSearch
+                  value={searchInput}
+                  onChange={(val) => {
+                    setSearchInput(val)
+                    setPage(1)
+                  }}
+                  placeholder="Search file name, title..."
+                  width="w-full flex-1 min-w-[160px]"
+                />
+              </FilterGroup>
 
-              <div className="flex flex-wrap items-center gap-2">
+              <FilterActions>
                 {(!allowedTypes || allowedTypes.length > 1) && (
                   <FilterTabs
                     tabs={[
@@ -440,10 +447,16 @@ export function MediaPickerModal({
                   ]}
                   icon={ArrowUpDown}
                   placeholder="Sort"
-                  width="min-w-[130px]"
+                  width="min-w-[115px] max-w-[135px]"
                 />
-              </div>
-            </div>
+
+                {/* Far-Right Refresh Button */}
+                <FilterResetButton
+                  onClick={refetch}
+                  title="Refresh media"
+                />
+              </FilterActions>
+            </FilterToolbar>
 
             {/* Media Grid Body */}
             <div className="flex-1 overflow-y-auto p-5 min-h-0 bg-muted/5">
@@ -454,7 +467,7 @@ export function MediaPickerModal({
                 </div>
               ) : assets.length === 0 ? (
                 <div className="flex flex-col items-center justify-center h-64 gap-3 text-muted-foreground">
-                  <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-muted/50 border border-border">
+                  <div className="flex h-14 w-14 items-center justify-center rounded-xl bg-muted/50 border border-border">
                     <ImageIcon className="h-7 w-7 text-muted-foreground/60" />
                   </div>
                   <p className="text-sm font-medium text-foreground">No media assets found</p>
@@ -483,7 +496,7 @@ export function MediaPickerModal({
                         onClick={() => handleToggleSelect(asset)}
                         onDoubleClick={() => handleDoubleClick(asset)}
                         className={cn(
-                          "group relative flex flex-col rounded-xl border overflow-hidden cursor-pointer transition-all duration-200 select-none bg-card shadow-2xs hover:shadow-md",
+                          "group relative flex flex-col rounded-md border overflow-hidden cursor-pointer transition-all duration-200 select-none bg-card shadow-2xs hover:shadow-md",
                           isSelected
                             ? "border-primary ring-2 ring-primary/40 bg-primary/5"
                             : "border-border/80 hover:border-border"
@@ -553,6 +566,7 @@ export function MediaPickerModal({
             {meta.total > 0 && (
               <div className="px-5 py-2.5 border-t border-border/50 bg-muted/10 shrink-0">
                 <Pagination
+                  fixed={false}
                   mode="infinite"
                   currentPage={page}
                   totalPages={meta.totalPages}
@@ -587,8 +601,8 @@ export function MediaPickerModal({
                 allowedTypes?.length === 1 && allowedTypes[0] === "video"
                   ? "video/*"
                   : allowedTypes?.length === 1 && allowedTypes[0] === "image"
-                  ? "image/*"
-                  : "image/*,video/*"
+                    ? "image/*"
+                    : "image/*,video/*"
               }
               className="hidden"
               onChange={(e) => e.target.files && handleUploadFiles(e.target.files)}
@@ -606,7 +620,7 @@ export function MediaPickerModal({
               }}
               onClick={() => uploadInputRef.current?.click()}
               className={cn(
-                "flex flex-col items-center justify-center w-full max-w-xl h-80 rounded-2xl border-2 border-dashed border-border/80 bg-background p-8 text-center cursor-pointer transition-all hover:border-primary/60 hover:bg-muted/30 shadow-xs",
+                "flex flex-col items-center justify-center w-full max-w-xl h-80 rounded-xl border-2 border-dashed border-border/80 bg-background p-8 text-center cursor-pointer transition-all hover:border-primary/60 hover:bg-muted/30 shadow-xs",
                 isUploading && "pointer-events-none opacity-60"
               )}
             >
@@ -623,7 +637,7 @@ export function MediaPickerModal({
                 </div>
               ) : (
                 <>
-                  <div className="flex h-16 w-16 items-center justify-center rounded-2xl bg-primary/10 text-primary mb-4">
+                  <div className="flex h-16 w-16 items-center justify-center rounded-xl bg-primary/10 text-primary mb-4">
                     <Upload className="h-8 w-8" />
                   </div>
                   <h3 className="text-base font-semibold text-foreground mb-1">

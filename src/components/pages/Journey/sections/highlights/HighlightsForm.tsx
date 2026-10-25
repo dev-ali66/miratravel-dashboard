@@ -29,8 +29,8 @@ export function HighlightsForm({
   const items = Array.isArray(hlData.items)
     ? hlData.items
     : Array.isArray(hlData.highlightsList)
-    ? hlData.highlightsList
-    : []
+      ? hlData.highlightsList
+      : []
 
   const addItem = () => {
     const newItem = {
@@ -81,7 +81,7 @@ export function HighlightsForm({
             <button
               type="button"
               onClick={addItem}
-              className="inline-flex items-center gap-1.5 rounded-md bg-primary px-3 py-1.5 text-xs font-medium text-primary-foreground hover:opacity-90 cursor-pointer"
+              className="inline-flex items-center gap-1.5 rounded-sm bg-primary px-3 py-1.5 text-xs font-medium text-primary-foreground hover:opacity-90 cursor-pointer"
             >
               <Plus className="h-3.5 w-3.5" />
               Add Highlight

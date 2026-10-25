@@ -87,7 +87,7 @@ export function TravelInsightsPreview({ draft }: LocationPreviewSectionProps) {
                 {/* Articles List */}
                 <div className="flex w-full flex-col mt-2">
                   {articles.length === 0 ? (
-                    <div className="mt-6 flex w-full flex-col items-center justify-center rounded-xl border border-dashed border-neutral-700 bg-neutral-900/40 p-8 text-center backdrop-blur-sm">
+                    <div className="mt-6 flex w-full flex-col items-center justify-center rounded-md border border-dashed border-neutral-700 bg-neutral-900/40 p-8 text-center backdrop-blur-sm">
                       <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-neutral-800 text-neutral-400 mb-2">
                         <BookOpen className="h-5 w-5 opacity-80" />
                       </div>

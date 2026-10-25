@@ -111,16 +111,14 @@ export function GuideSection({
           content={data as Record<string, any>}
           updateSection={(patch) =>
             onFieldChange(
-              `data.${
-                sectionKey === "local-guide" ? "local_guide" : "travel_insights"
+              `data.${sectionKey === "local-guide" ? "local_guide" : "travel_insights"
               }`,
               { ...data, ...patch }
             )
           }
           updateSectionContent={(patch) =>
             onFieldChange(
-              `data.${
-                sectionKey === "local-guide" ? "local_guide" : "travel_insights"
+              `data.${sectionKey === "local-guide" ? "local_guide" : "travel_insights"
               }`,
               { ...data, ...patch }
             )
@@ -130,9 +128,8 @@ export function GuideSection({
           sectionTitle="Main Image"
           imageTitle="Main Image"
           imageLabel="Section main image"
-          imageFieldName={`location${
-            sectionKey === "local-guide" ? "LocalGuide" : "TravelInsights"
-          }MainImage`}
+          imageFieldName={`location${sectionKey === "local-guide" ? "LocalGuide" : "TravelInsights"
+            }MainImage`}
           showImageAltField
         />
 
@@ -141,39 +138,34 @@ export function GuideSection({
           content={data as Record<string, any>}
           updateSection={(patch) =>
             onFieldChange(
-              `data.${
-                sectionKey === "local-guide" ? "local_guide" : "travel_insights"
+              `data.${sectionKey === "local-guide" ? "local_guide" : "travel_insights"
               }`,
               { ...data, ...patch }
             )
           }
           updateSectionContent={(patch) =>
             onFieldChange(
-              `data.${
-                sectionKey === "local-guide" ? "local_guide" : "travel_insights"
+              `data.${sectionKey === "local-guide" ? "local_guide" : "travel_insights"
               }`,
               { ...data, ...patch }
             )
           }
           contentMediaKey="backgroundMultimedia"
           backgroundType={(data as any).backgroundMultimedia?.type}
-          backgroundTypeStyleKey={`location${
-            sectionKey === "local-guide" ? "LocalGuide" : "TravelInsights"
-          }BackgroundTypeStyle`}
+          backgroundTypeStyleKey={`location${sectionKey === "local-guide" ? "LocalGuide" : "TravelInsights"
+            }BackgroundTypeStyle`}
           sectionTitle="Background"
           showColorPicker
           colorLabel="Background color"
           defaultColor={sectionKey === 'local-guide' ? THEME_COLORS.borderLight : THEME_COLORS.sidebarActive}
           imageTitle="Background Image"
           imageLabel="Background image"
-          imageFieldName={`location${
-            sectionKey === "local-guide" ? "LocalGuide" : "TravelInsights"
-          }BackgroundImage`}
+          imageFieldName={`location${sectionKey === "local-guide" ? "LocalGuide" : "TravelInsights"
+            }BackgroundImage`}
           videoTitle="Background Video"
           videoLabel="Background video"
-          videoFieldName={`location${
-            sectionKey === "local-guide" ? "LocalGuide" : "TravelInsights"
-          }BackgroundVideo`}
+          videoFieldName={`location${sectionKey === "local-guide" ? "LocalGuide" : "TravelInsights"
+            }BackgroundVideo`}
           showImageAltField
           showVideoSwitches
         />
@@ -206,7 +198,7 @@ export function GuideSection({
             return (
               <div
                 key={article.id || `article-${index}`}
-                className="overflow-hidden rounded-xl border border-border/60 bg-muted/10 transition-colors"
+                className="overflow-hidden rounded-md border border-border/60 bg-muted/10 transition-colors"
               >
                 <div
                   role="button"
@@ -222,9 +214,8 @@ export function GuideSection({
                 >
                   <div className="flex min-w-0 items-center gap-2.5 sm:gap-3">
                     <div
-                      className={`flex size-6 shrink-0 items-center justify-center rounded-md text-muted-foreground transition-transform duration-200 ${
-                        isOpen ? "rotate-180" : "rotate-0"
-                      }`}
+                      className={`flex size-6 shrink-0 items-center justify-center rounded-sm text-muted-foreground transition-transform duration-200 ${isOpen ? "rotate-180" : "rotate-0"
+                        }`}
                     >
                       <ChevronDown className="h-4 w-4" />
                     </div>
@@ -335,12 +326,12 @@ export function GuideSection({
                           ? [article.button as any]
                           : article.href
                             ? [
-                                {
-                                  label: "Read More",
-                                  url: article.href,
-                                  style: "primary",
-                                },
-                              ]
+                              {
+                                label: "Read More",
+                                url: article.href,
+                                style: "primary",
+                              },
+                            ]
                             : [])
                       }
                       onChange={(buttons) => {

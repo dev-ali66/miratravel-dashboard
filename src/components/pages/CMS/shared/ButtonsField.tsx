@@ -65,10 +65,10 @@ const VARIANT_OPTIONS: Array<{ value: ButtonVariant; label: string; bg: string; 
 
 const ROUNDED_OPTIONS: Array<{ value: ButtonRounded; label: string; classPreview: string }> = [
   { value: "full", label: "Pill / Full Rounded", classPreview: "rounded-full" },
-  { value: "xl", label: "Extra Large (16px)", classPreview: "rounded-2xl" },
-  { value: "lg", label: "Large (12px)", classPreview: "rounded-xl" },
+  { value: "xl", label: "Extra Large (16px)", classPreview: "rounded-xl" },
+  { value: "lg", label: "Large (12px)", classPreview: "rounded-md" },
   { value: "md", label: "Medium (8px)", classPreview: "rounded-lg" },
-  { value: "sm", label: "Small (4px)", classPreview: "rounded-md" },
+  { value: "sm", label: "Small (4px)", classPreview: "rounded-sm" },
   { value: "none", label: "Square / No Radius", classPreview: "rounded-none" },
 ]
 
@@ -144,12 +144,12 @@ export function ButtonsField({
               style: v,
               ...(preset && v !== "custom"
                 ? {
-                    backgroundColor: preset.bg,
-                    textColor: preset.text,
-                    backgroundOpacity: v === "outline" ? 0 : 100,
-                    borderColor: v === "outline" ? THEME_COLORS.white : undefined,
-                    borderWidth: v === "outline" ? "1px" : undefined,
-                  }
+                  backgroundColor: preset.bg,
+                  textColor: preset.text,
+                  backgroundOpacity: v === "outline" ? 0 : 100,
+                  borderColor: v === "outline" ? THEME_COLORS.white : undefined,
+                  borderWidth: v === "outline" ? "1px" : undefined,
+                }
                 : {}),
             })
           }
@@ -164,7 +164,7 @@ export function ButtonsField({
                       type="button"
                       onClick={() => setTab("basic")}
                       className={cn(
-                        "rounded-md px-2.5 py-1 text-xs font-medium transition cursor-pointer",
+                        "rounded-sm px-2.5 py-1 text-xs font-medium transition cursor-pointer",
                         tab === "basic"
                           ? "bg-primary text-primary-foreground font-semibold"
                           : "text-muted-foreground hover:bg-muted hover:text-foreground"
@@ -176,7 +176,7 @@ export function ButtonsField({
                       type="button"
                       onClick={() => setTab("styling")}
                       className={cn(
-                        "flex items-center gap-1 rounded-md px-2.5 py-1 text-xs font-medium transition cursor-pointer",
+                        "flex items-center gap-1 rounded-sm px-2.5 py-1 text-xs font-medium transition cursor-pointer",
                         tab === "styling"
                           ? "bg-primary text-primary-foreground font-semibold"
                           : "text-muted-foreground hover:bg-muted hover:text-foreground"
@@ -203,12 +203,12 @@ export function ButtonsField({
                       item.rounded === "none"
                         ? "rounded-none"
                         : item.rounded === "sm"
-                        ? "rounded-md"
-                        : item.rounded === "md"
-                        ? "rounded-lg"
-                        : item.rounded === "xl"
-                        ? "rounded-2xl"
-                        : "rounded-full"
+                          ? "rounded-sm"
+                          : item.rounded === "md"
+                            ? "rounded-lg"
+                            : item.rounded === "xl"
+                              ? "rounded-xl"
+                              : "rounded-full"
                     )}
                   >
                     <span className="truncate max-w-[90px]">{item.label || "Button"}</span>
@@ -283,7 +283,7 @@ export function ButtonsField({
                         </Select>
                       </div>
 
-                      <div className="col-span-2 flex items-center justify-between rounded-md border border-border/60 p-2 text-xs">
+                      <div className="col-span-2 flex items-center justify-between rounded-sm border border-border/60 p-2 text-xs">
                         <span className="font-medium text-muted-foreground">Show Arrow Icon</span>
                         <input
                           type="checkbox"

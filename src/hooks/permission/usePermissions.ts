@@ -1,4 +1,4 @@
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query"
+import { useMutation, useQuery, useQueryClient, keepPreviousData } from "@tanstack/react-query"
 import { apiPrivate } from "@/lib/api-client"
 import { toast } from "sonner"
 
@@ -33,6 +33,7 @@ export function useGetPermissions(page: number = 1, limit: number = 10) {
       })
       return res.data
     },
+    placeholderData: keepPreviousData,
   })
 }
 

@@ -90,7 +90,7 @@ export function VideoUploader({
               type="button"
               disabled={uploading}
               onClick={() => inputRef.current?.click()}
-              className="rounded-md bg-background px-4 py-2 text-sm font-medium text-foreground shadow"
+              className="rounded-sm bg-background px-4 py-2 text-sm font-medium text-foreground shadow"
             >
               Change Video
             </button>
@@ -99,7 +99,7 @@ export function VideoUploader({
               type="button"
               disabled={uploading}
               onClick={handleRemove}
-              className="rounded-md bg-background p-2 text-destructive shadow"
+              className="rounded-sm bg-background p-2 text-destructive shadow"
             >
               <Trash2 className="h-4 w-4" />
             </button>

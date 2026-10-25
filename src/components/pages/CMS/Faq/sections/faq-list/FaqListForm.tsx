@@ -29,8 +29,8 @@ export function FaqListForm({
   const items = Array.isArray(faqList.items)
     ? faqList.items
     : Array.isArray(faqList.topics)
-    ? faqList.topics
-    : emptyFaqList.items
+      ? faqList.topics
+      : emptyFaqList.items
   const advice = faqList.personalAdvice || emptyFaqList.personalAdvice
 
   const [expandedTopics, setExpandedTopics] = useState<Record<number, boolean>>({ 0: true })
@@ -152,7 +152,7 @@ export function FaqListForm({
             <button
               type="button"
               onClick={handleAddTopic}
-              className="flex items-center gap-1 rounded-md bg-primary/10 px-3 py-1.5 text-xs font-medium text-primary hover:bg-primary/20 transition cursor-pointer"
+              className="flex items-center gap-1 rounded-sm bg-primary/10 px-3 py-1.5 text-xs font-medium text-primary hover:bg-primary/20 transition cursor-pointer"
             >
               <Plus className="h-3.5 w-3.5" />
               Add New Topic
@@ -213,7 +213,7 @@ export function FaqListForm({
                           value={typeof topic.title === "object" ? topic.title.value : topic.title}
                           onChange={(e) => handleUpdateTopic(tIdx, "title", e.target.value)}
                           placeholder="e.g. Planning Your Journey"
-                          className="w-full rounded-md border border-input bg-background px-3 py-1.5 text-xs text-foreground focus:outline-none focus:ring-1 focus:ring-primary"
+                          className="w-full rounded-sm border border-input bg-background px-3 py-1.5 text-xs text-foreground focus:outline-none focus:ring-1 focus:ring-primary"
                         />
                       </div>
 
@@ -224,7 +224,7 @@ export function FaqListForm({
                         <select
                           value={topic.icon || "planning"}
                           onChange={(e) => handleUpdateTopic(tIdx, "icon", e.target.value)}
-                          className="w-full rounded-md border border-input bg-background px-3 py-1.5 text-xs text-foreground focus:outline-none focus:ring-1 focus:ring-primary"
+                          className="w-full rounded-sm border border-input bg-background px-3 py-1.5 text-xs text-foreground focus:outline-none focus:ring-1 focus:ring-primary"
                         >
                           <option value="planning">Planning Icon</option>
                           <option value="accommodation">Accommodation Icon</option>
@@ -244,7 +244,7 @@ export function FaqListForm({
                         value={typeof topic.description === "object" ? topic.description.value : topic.description}
                         onChange={(e) => handleUpdateTopic(tIdx, "description", e.target.value)}
                         placeholder="e.g. Booking process, tailor-made journeys and timing."
-                        className="w-full rounded-md border border-input bg-background px-3 py-1.5 text-xs text-foreground focus:outline-none focus:ring-1 focus:ring-primary"
+                        className="w-full rounded-sm border border-input bg-background px-3 py-1.5 text-xs text-foreground focus:outline-none focus:ring-1 focus:ring-primary"
                       />
                     </div>
 
@@ -267,7 +267,7 @@ export function FaqListForm({
                       {topicQuestions.map((qItem: any, qIdx: number) => (
                         <div
                           key={qItem.id || qIdx}
-                          className="rounded-md border border-border/60 bg-muted/20 p-3 space-y-2"
+                          className="rounded-sm border border-border/60 bg-muted/20 p-3 space-y-2"
                         >
                           <div className="flex items-center justify-between">
                             <span className="text-[11px] font-medium text-muted-foreground">

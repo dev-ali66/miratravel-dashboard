@@ -428,7 +428,7 @@ export function DayByDayItinerary({
                     </div>
 
                     {!hasData ? (
-                        <div className="w-full rounded-2xl border border-dashed border-border p-8 md:p-12 flex flex-col items-center justify-center text-center bg-card/60 text-card-foreground">
+                        <div className="w-full rounded-xl border border-dashed border-border p-8 md:p-12 flex flex-col items-center justify-center text-center bg-card/60 text-card-foreground">
                             <h3 className="text-base md:text-lg font-heading font-semibold text-brand-primary mb-1.5">
                                 Itinerary coming soon
                             </h3>
@@ -466,7 +466,7 @@ export function DayByDayItinerary({
                                 return (
                                     <div
                                         key={chapterKey}
-                                        className="w-full relative bg-card text-card-foreground rounded-2xl border border-border/70 shadow-sm flex flex-col overflow-hidden"
+                                        className="w-full relative bg-card text-card-foreground rounded-xl border border-border/70 shadow-sm flex flex-col overflow-hidden"
                                     >
                                         <button
                                             type="button"

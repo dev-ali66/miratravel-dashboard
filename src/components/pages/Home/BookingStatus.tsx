@@ -49,7 +49,7 @@ export default function BookingStatus({ className }: { className?: string }) {
   return (
     <SlideLeft
       delay={0.5}
-      className={`flex flex-col rounded-xl border border-border/60 bg-card/60 p-6 shadow-sm backdrop-blur-xl ${className || ""}`}
+      className={`flex flex-col rounded-md border border-border/60 bg-card/60 p-6 shadow-sm backdrop-blur-xl ${className || ""}`}
     >
       <div className="mb-2">
         <h3 className="text-lg font-semibold tracking-tight text-foreground">

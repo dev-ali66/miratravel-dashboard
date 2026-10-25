@@ -206,7 +206,7 @@ export function PracticalInfoForm({
           </div>
 
           {items.length === 0 ? (
-            <div className="flex flex-col items-center justify-center rounded-xl border border-dashed border-border p-6 text-center">
+            <div className="flex flex-col items-center justify-center rounded-md border border-dashed border-border p-6 text-center">
               <Sparkles className="h-6 w-6 text-muted-foreground/60 mb-2" />
               <p className="text-xs text-muted-foreground mb-3">
                 No practical guide accordion items added yet. Click above to add visa, currency, etiquette, or transportation tips.
@@ -229,7 +229,7 @@ export function PracticalInfoForm({
                 return (
                   <div
                     key={idx}
-                    className="rounded-xl border border-border/80 bg-card overflow-hidden transition-all shadow-xs"
+                    className="rounded-md border border-border/80 bg-card overflow-hidden transition-all shadow-xs"
                   >
                     {/* Item Card Header */}
                     <div

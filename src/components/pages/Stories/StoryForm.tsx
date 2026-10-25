@@ -78,17 +78,17 @@ export function StoryForm({
           <button
             type="button"
             onClick={handleConsoleLog}
-            className="flex items-center gap-2 rounded-md bg-neutral-100 hover:bg-neutral-200 dark:bg-neutral-800 dark:hover:bg-neutral-700 px-3 py-1.5 text-xs font-medium text-foreground transition-colors cursor-pointer"
+            className="flex items-center gap-2 rounded-sm bg-neutral-100 hover:bg-neutral-200 dark:bg-neutral-800 dark:hover:bg-neutral-700 px-3 py-1.5 text-xs font-medium text-foreground transition-colors cursor-pointer"
           >
             <Terminal className="h-3.5 w-3.5" />
             Console
           </button>
-          
+
           <button
             type="button"
             onClick={handleSave}
             disabled={isSaving}
-            className="flex shrink-0 items-center gap-2 rounded-md bg-primary px-4 py-1.5 text-xs font-medium text-primary-foreground transition hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-50 cursor-pointer"
+            className="flex shrink-0 items-center gap-2 rounded-sm bg-primary px-4 py-1.5 text-xs font-medium text-primary-foreground transition hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-50 cursor-pointer"
           >
             {isSaving ? (
               <Loader2 className="h-3.5 w-3.5 animate-spin" />

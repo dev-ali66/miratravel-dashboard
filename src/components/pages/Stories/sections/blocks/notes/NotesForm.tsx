@@ -121,7 +121,7 @@ export function NotesForm({ block, onChange, index = 0 }: NotesFormProps) {
                 value={item.title || ""}
                 onChange={(e) => updateItem(itemIdx, "title", e.target.value)}
                 placeholder="e.g. Timing & Seasons"
-                className="h-8 rounded-md border border-border bg-background px-3 text-xs text-foreground focus:outline-none focus:ring-1 focus:ring-primary"
+                className="h-8 rounded-sm border border-border bg-background px-3 text-xs text-foreground focus:outline-none focus:ring-1 focus:ring-primary"
               />
             </div>
 
@@ -140,7 +140,7 @@ export function NotesForm({ block, onChange, index = 0 }: NotesFormProps) {
         <button
           type="button"
           onClick={addItem}
-          className="flex items-center justify-center gap-1.5 rounded-md border border-dashed border-amber-500/40 bg-amber-500/5 hover:bg-amber-500/10 py-2.5 text-xs font-medium text-amber-600 cursor-pointer transition shadow-2xs mt-1"
+          className="flex items-center justify-center gap-1.5 rounded-sm border border-dashed border-amber-500/40 bg-amber-500/5 hover:bg-amber-500/10 py-2.5 text-xs font-medium text-amber-600 cursor-pointer transition shadow-2xs mt-1"
         >
           <Plus className="h-4 w-4" /> Add Practical Note Card
         </button>

@@ -68,16 +68,15 @@ export function ProfileAvatarCard({
   }
 
   return (
-    <div className="flex w-full flex-col items-center justify-center rounded-xl border border-border/80 bg-card p-6 sm:p-8 shadow-xs transition-all">
+    <div className="flex w-full flex-col items-center justify-center rounded-md border border-border/80 bg-card p-6 sm:p-8 shadow-xs transition-all">
       {/* Photo Frame */}
       <div className="relative group">
         <label
           htmlFor="profile-avatar-upload"
-          className={`relative flex size-44 sm:size-48 cursor-pointer items-center justify-center rounded-full border-2 border-dashed border-border/80 transition-all duration-300 ${
-            photoFile
+          className={`relative flex size-44 sm:size-48 cursor-pointer items-center justify-center rounded-full border-2 border-dashed border-border/80 transition-all duration-300 ${photoFile
               ? "border-primary ring-4 ring-primary/10"
               : "hover:border-primary/80 hover:ring-4 hover:ring-primary/5"
-          } ${disabled ? "pointer-events-none opacity-60" : ""}`}
+            } ${disabled ? "pointer-events-none opacity-60" : ""}`}
         >
           <div className="relative size-36 sm:size-40 overflow-hidden rounded-full shadow-inner bg-muted">
             {activeImage ? (

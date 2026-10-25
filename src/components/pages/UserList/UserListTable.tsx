@@ -99,7 +99,7 @@ export default function UserListTable() {
     keyExtractor: (u) => u.id,
   })
 
-  const { data, isLoading, isFetching } = useGetUsers(currentPage, effectiveLimit, {
+  const { data, isLoading, isFetching, refetch } = useGetUsers(currentPage, effectiveLimit, {
     search: search || undefined,
     role: roleFilter,
     status: statusFilter,
@@ -185,7 +185,7 @@ export default function UserListTable() {
       {/* Filter and Search Toolbar */}
       <FilterToolbar>
         <FilterGroup>
-          {/* Search */}
+          {/* Search stretches to fill remaining space on the left */}
           <FilterSearch
             value={search}
             onChange={(val) => {
@@ -193,9 +193,11 @@ export default function UserListTable() {
               setCurrentPage(1)
             }}
             placeholder="Search users..."
-            width="w-44 sm:w-56 shrink-0"
+            width="w-full flex-1 min-w-[200px]"
           />
+        </FilterGroup>
 
+        <FilterActions>
           {/* Role Filter */}
           <FilterSelect
             value={roleFilter}
@@ -211,7 +213,7 @@ export default function UserListTable() {
             ]}
             allLabel="All Roles"
             allValue="ALL"
-            placeholder="Role: All"
+            placeholder="All Roles"
             width="min-w-[105px] max-w-[130px]"
           />
 
@@ -231,7 +233,7 @@ export default function UserListTable() {
             ]}
             allLabel="All Statuses"
             allValue="ALL"
-            placeholder="Status: All"
+            placeholder="All Statuses"
             width="min-w-[105px] max-w-[130px]"
           />
 
@@ -248,27 +250,29 @@ export default function UserListTable() {
             ]}
             allLabel="All Verification"
             allValue="ALL"
-            placeholder="Verification: All"
+            placeholder="All Verification"
             width="min-w-[110px] max-w-[140px]"
           />
 
-          {/* Reset Filters */}
-          {(search || roleFilter !== "ALL" || statusFilter !== "ALL" || verifiedFilter !== "ALL") && (
-            <FilterResetButton onClick={handleResetFilters} />
-          )}
-        </FilterGroup>
-
-        <FilterActions>
           <FilterCreateButton
             onClick={() => setIsCreateModalOpen(true)}
-            label="Add New User"
+            label="User"
             icon={UserPlus}
+          />
+
+          {/* Far-Right Refresh Button */}
+          <FilterResetButton
+            onClick={() => {
+              handleResetFilters()
+              refetch?.()
+            }}
+            title="Refresh & Reset"
           />
         </FilterActions>
       </FilterToolbar>
 
       {/* Table Card */}
-      <div className="overflow-hidden rounded-xl border border-border/60 bg-card/60 shadow-sm backdrop-blur-xl">
+      <div className="overflow-hidden rounded-md border border-border/60 bg-card/60 shadow-sm backdrop-blur-xl">
         <div className="overflow-x-auto">
           <table className="w-full text-left text-sm">
             <thead className="border-b border-border/60 bg-muted/40 text-xs font-semibold uppercase tracking-wider text-muted-foreground">
@@ -283,7 +287,7 @@ export default function UserListTable() {
               </tr>
             </thead>
             <tbody className="divide-y divide-border/40 text-foreground">
-              {isLoading ? (
+              {isLoading && currentPage === 1 && currentUsers.length === 0 ? (
                 Array.from({ length: 5 }).map((_, i) => (
                   <tr key={i} className="animate-pulse">
                     <td className="px-5 py-4">
@@ -348,7 +352,7 @@ export default function UserListTable() {
 
                       {/* Role Badge */}
                       <td className="px-5 py-3.5">
-                        <span className={cn("inline-flex items-center gap-1.5 rounded-md border px-2.5 py-1 text-xs font-semibold", roleConfig.bg)}>
+                        <span className={cn("inline-flex items-center gap-1.5 rounded-sm border px-2.5 py-1 text-xs font-semibold", roleConfig.bg)}>
                           <RoleIcon className="h-3 w-3" />
                           {roleUpper}
                         </span>
@@ -464,28 +468,47 @@ export default function UserListTable() {
                   )
                 })
               )}
+
+              {/* Subtle inline skeleton row during background fetch */}
+              {Boolean(isLoadingMore || (isFetching && currentPage > 1)) && (
+                <tr className="animate-pulse bg-muted/20 border-b border-border/40">
+                  <td className="px-5 py-4">
+                    <div className="flex items-center gap-3">
+                      <div className="h-10 w-10 rounded-full bg-muted/60" />
+                      <div className="space-y-1">
+                        <div className="h-4 w-28 rounded bg-muted/60" />
+                        <div className="h-3 w-36 rounded bg-muted/40" />
+                      </div>
+                    </div>
+                  </td>
+                  <td className="px-5 py-4"><div className="h-6 w-16 rounded bg-muted/60" /></td>
+                  <td className="px-5 py-4"><div className="h-6 w-20 rounded bg-muted/60" /></td>
+                  <td className="px-5 py-4"><div className="h-6 w-20 rounded bg-muted/60" /></td>
+                  <td className="px-5 py-4"><div className="h-6 w-12 rounded bg-muted/60" /></td>
+                  <td className="px-5 py-4"><div className="h-4 w-20 rounded bg-muted/60" /></td>
+                  <td className="px-5 py-4 text-right"><div className="ml-auto h-8 w-8 rounded bg-muted/60" /></td>
+                </tr>
+              )}
             </tbody>
           </table>
         </div>
 
         {/* Universal Pagination */}
         {(data?.meta?.total ?? 0) > 0 && (
-          <div className="border-t border-border/60 bg-muted/10 px-5 py-3">
-            <Pagination
-              mode={mode}
-              currentPage={currentPage}
-              totalPages={totalPages}
-              totalItems={data?.meta?.total}
-              pageSize={effectiveLimit}
-              pageSizeOptions={pageSizeOptions}
-              onPageChange={setCurrentPage}
-              onPageSizeChange={setTargetItems}
-              hasMore={hasMore}
-              isLoadingMore={isLoadingMore || (isFetching && currentPage > 1)}
-              onLoadMore={handleLoadMore}
-              loadedCount={currentUsers.length}
-            />
-          </div>
+          <Pagination
+            mode={mode}
+            currentPage={currentPage}
+            totalPages={totalPages}
+            totalItems={data?.meta?.total}
+            pageSize={effectiveLimit}
+            pageSizeOptions={pageSizeOptions}
+            onPageChange={setCurrentPage}
+            onPageSizeChange={setTargetItems}
+            hasMore={hasMore}
+            isLoadingMore={isLoadingMore || (isFetching && currentPage > 1)}
+            onLoadMore={handleLoadMore}
+            loadedCount={currentUsers.length}
+          />
         )}
       </div>
 

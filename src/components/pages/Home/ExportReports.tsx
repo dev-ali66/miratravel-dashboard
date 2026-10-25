@@ -32,7 +32,7 @@ export default function ExportReports({ className }: { className?: string }) {
   return (
     <SlideLeft
       delay={0.4}
-      className={`flex flex-col rounded-xl border border-border bg-card p-6 shadow-sm ${className || ""}`}
+      className={`flex flex-col rounded-md border border-border bg-card p-6 shadow-sm ${className || ""}`}
     >
       <div className="mb-6">
         <h3 className="text-lg font-semibold tracking-tight text-foreground">

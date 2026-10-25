@@ -68,7 +68,7 @@ export default function PermissionsTable({
             type="button"
             onClick={() => setShowCreate(true)}
             className={cn(
-              "inline-flex cursor-pointer items-center gap-2 rounded-xl px-5 py-2.5",
+              "inline-flex cursor-pointer items-center gap-2 rounded-md px-5 py-2.5",
               "bg-primary text-primary-foreground text-sm font-semibold",
               "shadow-lg shadow-primary/20",
               "transition-all duration-200 hover:shadow-xl hover:shadow-primary/30 hover:brightness-110",
@@ -82,9 +82,9 @@ export default function PermissionsTable({
       )}
 
       {/* Table Container */}
-      <div className="min-h-[400px] overflow-hidden rounded-2xl border border-border/60 bg-background/50 backdrop-blur-xl">
+      <div className="min-h-[400px] overflow-hidden rounded-xl border border-border/60 bg-background/50 backdrop-blur-xl">
         {/* Loading */}
-        {isLoading ? (
+        {isLoading && currentPage === 1 && permissions.length === 0 ? (
           <div className="w-full">
             <div className="overflow-x-auto">
               <table className="w-full text-left text-sm">
@@ -124,8 +124,8 @@ export default function PermissionsTable({
                       </td>
                       <td className="px-6 py-4">
                         <div className="flex items-center justify-end gap-2">
-                          <div className="h-8 w-8 animate-pulse rounded-md bg-muted/60" />
-                          <div className="h-8 w-8 animate-pulse rounded-md bg-muted/60" />
+                          <div className="h-8 w-8 animate-pulse rounded-sm bg-muted/60" />
+                          <div className="h-8 w-8 animate-pulse rounded-sm bg-muted/60" />
                         </div>
                       </td>
                     </tr>
@@ -234,28 +234,41 @@ export default function PermissionsTable({
                       </td>
                     </motion.tr>
                   ))}
+
+                  {/* Subtle inline skeleton row during background fetch */}
+                  {Boolean(isLoadingMore || (isFetching && currentPage > 1)) && (
+                    <tr className="animate-pulse bg-muted/20 border-b border-border/40">
+                      <td className="px-6 py-4">
+                        <div className="flex items-center gap-3">
+                          <div className="h-9 w-9 rounded-lg bg-muted/60" />
+                          <div className="h-4 w-28 rounded bg-muted/60" />
+                        </div>
+                      </td>
+                      <td className="px-6 py-4"><div className="h-4 w-24 rounded bg-muted/60" /></td>
+                      <td className="px-6 py-4"><div className="h-6 w-16 rounded-full bg-muted/60" /></td>
+                      <td className="px-6 py-4 text-right"><div className="h-8 w-16 rounded-sm bg-muted/60 ml-auto" /></td>
+                    </tr>
+                  )}
                 </tbody>
               </table>
             </div>
 
             {/* Universal Pagination */}
             {(data?.meta?.total ?? 0) > 0 && (
-              <div className="border-t border-border/60 bg-background/50 p-5 backdrop-blur-xl">
-                <Pagination
-                  mode={mode}
-                  currentPage={currentPage}
-                  totalPages={totalPages}
-                  totalItems={data?.meta?.total}
-                  pageSize={effectiveLimit}
-                  pageSizeOptions={pageSizeOptions}
-                  onPageChange={setCurrentPage}
-                  onPageSizeChange={setTargetItems}
-                  hasMore={hasMore}
-                  isLoadingMore={isLoadingMore || (isFetching && currentPage > 1)}
-                  onLoadMore={handleLoadMore}
-                  loadedCount={permissions.length}
-                />
-              </div>
+              <Pagination
+                mode={mode}
+                currentPage={currentPage}
+                totalPages={totalPages}
+                totalItems={data?.meta?.total}
+                pageSize={effectiveLimit}
+                pageSizeOptions={pageSizeOptions}
+                onPageChange={setCurrentPage}
+                onPageSizeChange={setTargetItems}
+                hasMore={hasMore}
+                isLoadingMore={isLoadingMore || (isFetching && currentPage > 1)}
+                onLoadMore={handleLoadMore}
+                loadedCount={permissions.length}
+              />
             )}
           </>
         )}

@@ -80,9 +80,9 @@ function ExperienceItemRow({
   const formattedPrice =
     expData?.price !== undefined && expData?.price !== null
       ? `${expData.currency || "€"}${Number(expData.price).toLocaleString(undefined, {
-          minimumFractionDigits: 2,
-          maximumFractionDigits: 2,
-        })}`
+        minimumFractionDigits: 2,
+        maximumFractionDigits: 2,
+      })}`
       : null
 
   return (
@@ -95,11 +95,11 @@ function ExperienceItemRow({
 
         {/* Thumbnail (if available) */}
         {imageUrl ? (
-          <div className="relative h-11 w-14 rounded-md overflow-hidden bg-muted shrink-0 border border-border/60">
+          <div className="relative h-11 w-14 rounded-sm overflow-hidden bg-muted shrink-0 border border-border/60">
             <img src={imageUrl} alt={name} className="h-full w-full object-cover" />
           </div>
         ) : (
-          <div className="flex h-11 w-14 items-center justify-center rounded-md bg-muted/60 text-muted-foreground shrink-0 border border-border/40">
+          <div className="flex h-11 w-14 items-center justify-center rounded-sm bg-muted/60 text-muted-foreground shrink-0 border border-border/40">
             <Compass className="h-5 w-5 opacity-40" />
           </div>
         )}
@@ -121,7 +121,7 @@ function ExperienceItemRow({
             {typeConfig && (
               <span
                 className={cn(
-                  "inline-flex items-center rounded-md px-1.5 py-0.2 text-[9px] font-medium border shrink-0",
+                  "inline-flex items-center rounded-sm px-1.5 py-0.2 text-[9px] font-medium border shrink-0",
                   typeConfig.badgeColor
                 )}
               >
@@ -208,10 +208,10 @@ export function AddOnsForm({
   const rawItems: any[] = Array.isArray(rawData)
     ? rawData
     : Array.isArray(rawData?.items)
-    ? rawData.items
-    : Array.isArray(rawData?.experiences)
-    ? rawData.experiences
-    : []
+      ? rawData.items
+      : Array.isArray(rawData?.experiences)
+        ? rawData.experiences
+        : []
 
   const items: string[] = rawItems
     .map((it: any) => (typeof it === "string" ? it : it?.id || it?.experienceId))
@@ -305,7 +305,7 @@ export function AddOnsForm({
                 setIsSearchOpen(true)
               }}
               placeholder="Search experiences by title or type to link..."
-              className="w-full rounded-md border border-input bg-background pl-9 pr-8 py-2 text-xs text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-1 focus:ring-primary shadow-2xs"
+              className="w-full rounded-sm border border-input bg-background pl-9 pr-8 py-2 text-xs text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-1 focus:ring-primary shadow-2xs"
             />
             {searchQuery && (
               <button
@@ -323,7 +323,7 @@ export function AddOnsForm({
 
           {/* Dropdown Results */}
           {isSearchOpen && (
-            <div className="absolute left-0 right-0 top-full z-50 mt-1 max-h-72 overflow-y-auto rounded-md border border-border bg-popover py-1 shadow-lg">
+            <div className="absolute left-0 right-0 top-full z-50 mt-1 max-h-72 overflow-y-auto rounded-sm border border-border bg-popover py-1 shadow-lg">
               {isSearching ? (
                 <div className="flex items-center justify-center p-4 text-xs text-muted-foreground">
                   <Loader2 className="mr-2 h-3.5 w-3.5 animate-spin" />

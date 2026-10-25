@@ -140,7 +140,7 @@ export function ItineraryForm({
     >
       <div className="flex flex-col gap-6">
         {/* SECTION 1: ROUTE MAP HEADER CMS */}
-        <div className="rounded-xl border border-border/60 bg-muted/20 p-4 space-y-4">
+        <div className="rounded-md border border-border/60 bg-muted/20 p-4 space-y-4">
           <div className="flex items-center gap-2 pb-2 border-b border-border/40">
             <MapPin className="h-4 w-4 text-primary" />
             <span className="text-xs font-bold uppercase tracking-wider text-foreground">
@@ -179,7 +179,7 @@ export function ItineraryForm({
         </div>
 
         {/* SECTION 2: DAY-BY-DAY ITINERARY HEADER CMS */}
-        <div className="rounded-xl border border-border/60 bg-muted/20 p-4 space-y-4">
+        <div className="rounded-md border border-border/60 bg-muted/20 p-4 space-y-4">
           <div className="flex items-center gap-2 pb-2 border-b border-border/40">
             <CalendarDays className="h-4 w-4 text-primary" />
             <span className="text-xs font-bold uppercase tracking-wider text-foreground">
@@ -233,7 +233,7 @@ export function ItineraryForm({
             return (
               <div
                 key={cIdx}
-                className="rounded-xl border-2 border-primary/20 bg-card p-4 md:p-5 space-y-4 shadow-sm"
+                className="rounded-md border-2 border-primary/20 bg-card p-4 md:p-5 space-y-4 shadow-sm"
               >
                 {/* Chapter Top Bar (Collapsible Header) */}
                 <div

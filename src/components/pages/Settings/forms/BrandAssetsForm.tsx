@@ -29,7 +29,7 @@ export function BrandAssetsForm({ formData, handleChange }: BrandAssetsFormProps
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6 pt-2">
           {/* 1. Navbar Logo */}
-          <div className="space-y-2 p-4 border border-border/60 rounded-xl bg-card/40">
+          <div className="space-y-2 p-4 border border-border/60 rounded-md bg-card/40">
             <div className="flex items-center gap-2">
               <ImageIcon className="h-4 w-4 text-primary" />
               <label className="text-xs font-bold uppercase tracking-wider text-primary">
@@ -46,7 +46,7 @@ export function BrandAssetsForm({ formData, handleChange }: BrandAssetsFormProps
           </div>
 
           {/* 2. Footer Logo */}
-          <div className="space-y-2 p-4 border border-border/60 rounded-xl bg-card/40">
+          <div className="space-y-2 p-4 border border-border/60 rounded-md bg-card/40">
             <div className="flex items-center gap-2">
               <ImageIcon className="h-4 w-4 text-primary" />
               <label className="text-xs font-bold uppercase tracking-wider text-primary">
@@ -63,7 +63,7 @@ export function BrandAssetsForm({ formData, handleChange }: BrandAssetsFormProps
           </div>
 
           {/* 3. Authentication Logo */}
-          <div className="space-y-2 p-4 border border-border/60 rounded-xl bg-card/40">
+          <div className="space-y-2 p-4 border border-border/60 rounded-md bg-card/40">
             <div className="flex items-center gap-2">
               <ImageIcon className="h-4 w-4 text-primary" />
               <label className="text-xs font-bold uppercase tracking-wider text-primary">
@@ -80,7 +80,7 @@ export function BrandAssetsForm({ formData, handleChange }: BrandAssetsFormProps
           </div>
 
           {/* 4. Primary Site Logo */}
-          <div className="space-y-2 p-4 border border-border/60 rounded-xl bg-card/40">
+          <div className="space-y-2 p-4 border border-border/60 rounded-md bg-card/40">
             <div className="flex items-center gap-2">
               <ImageIcon className="h-4 w-4 text-primary" />
               <label className="text-xs font-bold uppercase tracking-wider text-primary">
@@ -97,7 +97,7 @@ export function BrandAssetsForm({ formData, handleChange }: BrandAssetsFormProps
           </div>
 
           {/* 5. Site Logo (Light Mode) */}
-          <div className="space-y-2 p-4 border border-border/60 rounded-xl bg-card/40">
+          <div className="space-y-2 p-4 border border-border/60 rounded-md bg-card/40">
             <div className="flex items-center gap-2">
               <ImageIcon className="h-4 w-4 text-primary" />
               <label className="text-xs font-bold uppercase tracking-wider text-primary">
@@ -114,7 +114,7 @@ export function BrandAssetsForm({ formData, handleChange }: BrandAssetsFormProps
           </div>
 
           {/* 6. Site Logo (Dark Mode) */}
-          <div className="space-y-2 p-4 border border-border/60 rounded-xl bg-card/40">
+          <div className="space-y-2 p-4 border border-border/60 rounded-md bg-card/40">
             <div className="flex items-center gap-2">
               <ImageIcon className="h-4 w-4 text-primary" />
               <label className="text-xs font-bold uppercase tracking-wider text-primary">
@@ -131,7 +131,7 @@ export function BrandAssetsForm({ formData, handleChange }: BrandAssetsFormProps
           </div>
 
           {/* 7. Site Favicon */}
-          <div className="space-y-2 p-4 border border-border/60 rounded-xl bg-card/40">
+          <div className="space-y-2 p-4 border border-border/60 rounded-md bg-card/40">
             <div className="flex items-center gap-2">
               <ImageIcon className="h-4 w-4 text-primary" />
               <label className="text-xs font-bold uppercase tracking-wider text-primary">
@@ -148,7 +148,7 @@ export function BrandAssetsForm({ formData, handleChange }: BrandAssetsFormProps
           </div>
 
           {/* 8. Loading Video Asset */}
-          <div className="space-y-2 p-4 border border-border/60 rounded-xl bg-card/40">
+          <div className="space-y-2 p-4 border border-border/60 rounded-md bg-card/40">
             <div className="flex items-center gap-2">
               <VideoIcon className="h-4 w-4 text-primary" />
               <label className="text-xs font-bold uppercase tracking-wider text-primary">

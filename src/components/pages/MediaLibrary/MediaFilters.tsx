@@ -6,10 +6,12 @@ import {
   Video,
   Layers,
   ArrowUpDown,
-  RefreshCw,
-  CheckSquare,
+  Sparkles,
+  Trash2,
+  Zap,
+  FileUp,
+  Loader2,
 } from "lucide-react"
-import { Button } from "@/components/ui/button"
 import {
   FilterToolbar,
   FilterGroup,
@@ -17,7 +19,11 @@ import {
   FilterSelect,
   FilterTabs,
   FilterActions,
+  FilterCreateButton,
+  FilterSegmentButton,
+  FilterResetButton,
 } from "@/components/shared/FilterToolbar"
+import { MediaDropzone } from "./MediaDropzone"
 import { cn } from "@/lib/utils"
 import type { MediaGalleryParams } from "@/services/mediaService"
 
@@ -31,6 +37,13 @@ interface MediaFiltersProps {
   isAllSelected?: boolean
   selectedCount?: number
   isFetching?: boolean
+  // Integrated top controls
+  activeTab: "active" | "trash"
+  onTabChange: (tab: "active" | "trash") => void
+  trashCount?: number
+  optimizerCount?: number
+  onOpenOptimizer: () => void
+  onUploadSuccess: () => void
 }
 
 export const MediaFilters: React.FC<MediaFiltersProps> = ({
@@ -39,10 +52,13 @@ export const MediaFilters: React.FC<MediaFiltersProps> = ({
   onParamsChange,
   onViewModeChange,
   onRefresh,
-  onToggleSelectAll,
-  isAllSelected,
-  selectedCount,
   isFetching,
+  activeTab,
+  onTabChange,
+  trashCount,
+  optimizerCount,
+  onOpenOptimizer,
+  onUploadSuccess,
 }) => {
   const currentType = params.type || "all"
   const currentInUse = params.inUse || "all"
@@ -51,34 +67,60 @@ export const MediaFilters: React.FC<MediaFiltersProps> = ({
   return (
     <FilterToolbar>
       <FilterGroup>
-        {/* Instant Search Bar - Always far left */}
+        {/* Instant Search Bar - Always far left, fills available space */}
         <FilterSearch
           value={params.search || ""}
           onChange={(val) => onParamsChange({ search: val, page: 1 })}
-          placeholder="Search by name or title..."
-          width="w-44 sm:w-56 shrink-0"
+          placeholder="Search media by title, filename, extension..."
+          width="w-full flex-1 min-w-[180px]"
         />
+      </FilterGroup>
 
-        {/* Media Type Tabs */}
+      {/* Right side: Integrated controls, segmented seamlessly */}
+      <FilterActions>
+        {/* 1 & 2: Active Library & Trash Bin Tabs */}
         <FilterTabs
           tabs={[
-            { key: "all", label: "All Media", icon: Layers },
-            { key: "image", label: "Images", icon: ImageIcon },
-            { key: "video", label: "Videos", icon: Video },
+            { key: "active", label: "Active Library", icon: Sparkles },
+            {
+              key: "trash",
+              label: "Trash",
+              icon: Trash2,
+              count: trashCount && trashCount > 0 ? trashCount : undefined,
+            },
           ]}
-          activeTab={currentType}
-          onChange={(key) => onParamsChange({ type: key as any, page: 1 })}
+          activeTab={activeTab}
+          onChange={(key) => onTabChange(key as "active" | "trash")}
         />
 
-        {/* Housekeeping Usage Filter */}
-        <FilterTabs
-          tabs={[
-            { key: "all", label: "All" },
-            { key: "true", label: "In Use" },
-            { key: "false", label: "Unused" },
+        {/* Media Type Dropdown */}
+        <FilterSelect
+          value={currentType}
+          onChange={(val) => onParamsChange({ type: val as any, page: 1 })}
+          options={[
+            { label: "All Media", value: "all", icon: Layers },
+            { label: "Images", value: "image", icon: ImageIcon },
+            { label: "Videos", value: "video", icon: Video },
           ]}
-          activeTab={currentInUse}
-          onChange={(key) => onParamsChange({ inUse: key as any, page: 1 })}
+          allLabel="All Media"
+          allValue="all"
+          placeholder="Type"
+          width="min-w-[105px] max-w-[130px]"
+        />
+
+        {/* Usage Filter Dropdown */}
+        <FilterSelect
+          value={currentInUse}
+          onChange={(val) => onParamsChange({ inUse: val as any, page: 1 })}
+          options={[
+            { label: "All Assets", value: "all" },
+            { label: "In Use", value: "true" },
+            { label: "Unused", value: "false" },
+          ]}
+          allLabel="All Assets"
+          allValue="all"
+          placeholder="Usage"
+          width="min-w-[100px] max-w-[125px]"
         />
 
         {/* Sort Dropdown */}
@@ -94,71 +136,74 @@ export const MediaFilters: React.FC<MediaFiltersProps> = ({
           ]}
           icon={ArrowUpDown}
           placeholder="Sort"
-          width="min-w-[115px] max-w-[135px]"
+          width="min-w-[110px] max-w-[135px]"
         />
-      </FilterGroup>
 
-      {/* Right: Actions, Refresh & View Mode Switcher */}
-      <FilterActions>
-        {/* Refresh Button */}
-        <Button
-          variant="outline"
-          size="icon"
-          onClick={onRefresh}
-          className="h-8 sm:h-8.5 w-8 sm:w-8.5 rounded-lg border-border/70 cursor-pointer"
-          title="Refresh library"
+        {/* 3: Optimize Storage Segment */}
+        <FilterSegmentButton
+          onClick={onOpenOptimizer}
+          title="Scan and consolidate duplicate files into single masters"
+          className="text-amber-600 dark:text-amber-400 font-medium hover:bg-amber-500/10"
         >
-          <RefreshCw className={cn("h-3.5 w-3.5", isFetching && "animate-spin text-primary")} />
-        </Button>
-
-        {/* Select All Quick Button */}
-        {onToggleSelectAll && (
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={onToggleSelectAll}
-            className={cn(
-              "h-8 sm:h-8.5 rounded-lg text-xs gap-1.5 border-border/70 bg-background/60 dark:bg-background/40 hover:bg-muted/50 px-2.5 transition-all cursor-pointer",
-              isAllSelected && "border-primary/50 bg-primary/10 text-primary font-medium"
-            )}
-            title={isAllSelected ? "Deselect all files" : "Select all files on page"}
-          >
-            <CheckSquare className="h-3.5 w-3.5 text-primary" />
-            <span className="hidden sm:inline">
-              {isAllSelected ? "Deselect All" : selectedCount ? `Select All (${selectedCount})` : "Select All"}
+          <Zap className="h-3.5 w-3.5 text-amber-500" />
+          <span>Optimize</span>
+          {(optimizerCount ?? 0) > 0 && (
+            <span className="ml-1 bg-amber-500/20 text-amber-800 dark:text-amber-200 text-[10px] px-1.5 py-0.2 rounded-full font-bold">
+              {optimizerCount}
             </span>
-          </Button>
-        )}
+          )}
+        </FilterSegmentButton>
+
+        {/* 4: Upload Media Segment (Brand greenish text) */}
+        <MediaDropzone
+          onUploadSuccess={onUploadSuccess}
+          customTrigger={(triggerUpload, isUploading) => (
+            <FilterCreateButton
+              onClick={triggerUpload}
+              label={isUploading ? "Uploading..." : "Upload Media"}
+              icon={isUploading ? Loader2 : FileUp}
+            />
+          )}
+        />
 
         {/* View Mode Switcher (Grid vs Table) */}
-        <div className="inline-flex items-center rounded-lg border border-border/70 bg-muted/20 p-0.5">
-          <button
-            type="button"
-            onClick={() => onViewModeChange("grid")}
-            className={cn(
-              "p-1 rounded-md transition-all cursor-pointer",
-              viewMode === "grid"
-                ? "bg-background text-foreground shadow-2xs font-semibold"
-                : "text-muted-foreground hover:text-foreground"
-            )}
-            title="Grid view"
-          >
-            <LayoutGrid className="h-3.5 w-3.5" />
-          </button>
-          <button
-            type="button"
-            onClick={() => onViewModeChange("table")}
-            className={cn(
-              "p-1 rounded-md transition-all cursor-pointer",
-              viewMode === "table"
-                ? "bg-background text-foreground shadow-2xs font-semibold"
-                : "text-muted-foreground hover:text-foreground"
-            )}
-            title="Table view"
-          >
-            <List className="h-3.5 w-3.5" />
-          </button>
+        <div className="flex items-center px-2">
+          <div className="inline-flex items-center rounded-lg bg-muted/40 p-0.5">
+            <button
+              type="button"
+              onClick={() => onViewModeChange("grid")}
+              className={cn(
+                "p-1 rounded-sm transition-all cursor-pointer",
+                viewMode === "grid"
+                  ? "bg-background text-foreground shadow-xs font-semibold"
+                  : "text-muted-foreground hover:text-foreground"
+              )}
+              title="Grid view"
+            >
+              <LayoutGrid className="h-3.5 w-3.5" />
+            </button>
+            <button
+              type="button"
+              onClick={() => onViewModeChange("table")}
+              className={cn(
+                "p-1 rounded-sm transition-all cursor-pointer",
+                viewMode === "table"
+                  ? "bg-background text-foreground shadow-xs font-semibold"
+                  : "text-muted-foreground hover:text-foreground"
+              )}
+              title="Table view"
+            >
+              <List className="h-3.5 w-3.5" />
+            </button>
+          </div>
         </div>
+
+        {/* Universal Far-Right Refresh Button */}
+        <FilterResetButton
+          onClick={onRefresh}
+          title="Refresh media library"
+          className={cn(isFetching && "animate-spin text-primary")}
+        />
       </FilterActions>
     </FilterToolbar>
   )

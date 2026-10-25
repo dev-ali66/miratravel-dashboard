@@ -77,18 +77,16 @@ export function SearchableCountryDropdown({
   return (
     <div
       ref={containerRef}
-      className={`relative w-full min-w-0 transition-all ${
-        disabled ? "opacity-60 pointer-events-none" : ""
-      }`}
+      className={`relative w-full min-w-0 transition-all ${disabled ? "opacity-60 pointer-events-none" : ""
+        }`}
     >
       <div
-        className={`relative h-[52px] sm:h-[54px] w-full rounded-lg border transition-all ${
-          error
+        className={`relative h-[52px] sm:h-[54px] w-full rounded-lg border transition-all ${error
             ? "border-destructive focus-within:border-destructive shadow-xs"
             : isOpen
-            ? "border-primary ring-2 ring-primary/10 shadow-xs"
-            : "border-border/80 hover:border-foreground/40 focus-within:border-primary"
-        } bg-background`}
+              ? "border-primary ring-2 ring-primary/10 shadow-xs"
+              : "border-border/80 hover:border-foreground/40 focus-within:border-primary"
+          } bg-background`}
       >
         <label className="pointer-events-none absolute -top-2.5 left-3.5 bg-background px-1.5 text-[11px] font-medium tracking-tight text-muted-foreground z-10 rounded">
           {label}
@@ -147,7 +145,7 @@ export function SearchableCountryDropdown({
             animate={{ opacity: 1, y: 0, scale: 1 }}
             exit={{ opacity: 0, y: 4, scale: 0.98 }}
             transition={{ duration: 0.15, ease: "easeOut" }}
-            className="absolute left-0 right-0 top-[calc(100%+4px)] z-50 overflow-hidden rounded-xl border border-border/80 bg-popover text-popover-foreground shadow-xl backdrop-blur-md"
+            className="absolute left-0 right-0 top-[calc(100%+4px)] z-50 overflow-hidden rounded-md border border-border/80 bg-popover text-popover-foreground shadow-xl backdrop-blur-md"
           >
             {/* Search Input Bar */}
             <div className="relative border-b border-border/60 p-2.5 bg-muted/30">
@@ -190,11 +188,10 @@ export function SearchableCountryDropdown({
                       key={item.code}
                       type="button"
                       onClick={() => handleSelect(item.name)}
-                      className={`flex w-full items-center justify-between gap-3 rounded-lg px-3 py-2 text-xs transition-colors cursor-pointer text-left ${
-                        isSelected
+                      className={`flex w-full items-center justify-between gap-3 rounded-lg px-3 py-2 text-xs transition-colors cursor-pointer text-left ${isSelected
                           ? "bg-primary text-primary-foreground font-semibold"
                           : "hover:bg-muted text-foreground"
-                      }`}
+                        }`}
                     >
                       <div className="flex items-center gap-2.5 truncate">
                         <span className="text-base leading-none shrink-0">
@@ -202,11 +199,10 @@ export function SearchableCountryDropdown({
                         </span>
                         <span className="truncate">{item.name}</span>
                         <span
-                          className={`text-[10px] uppercase font-mono ${
-                            isSelected
+                          className={`text-[10px] uppercase font-mono ${isSelected
                               ? "text-primary-foreground/80"
                               : "text-muted-foreground"
-                          }`}
+                            }`}
                         >
                           {item.code}
                         </span>

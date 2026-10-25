@@ -91,7 +91,7 @@ export function PracticalNotesForm({
             <button
               type="button"
               onClick={addItem}
-              className="flex items-center gap-1 rounded-md bg-primary/10 hover:bg-primary/20 text-primary px-2.5 py-1 text-xs font-medium transition cursor-pointer"
+              className="flex items-center gap-1 rounded-sm bg-primary/10 hover:bg-primary/20 text-primary px-2.5 py-1 text-xs font-medium transition cursor-pointer"
             >
               <Plus className="h-3.5 w-3.5" />
               Add Note Card

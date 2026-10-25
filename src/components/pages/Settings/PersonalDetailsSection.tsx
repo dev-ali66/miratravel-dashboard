@@ -50,11 +50,11 @@ export function PersonalDetailsSection({
   onSubmit,
 }: PersonalDetailsSectionProps) {
   return (
-    <div className="w-full rounded-2xl border border-border/80 bg-card p-5 sm:p-7 shadow-xs">
+    <div className="w-full rounded-xl border border-border/80 bg-card p-5 sm:p-7 shadow-xs">
       {/* Section Header */}
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 border-b border-border/60 pb-5">
         <div className="flex items-center gap-3">
-          <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-primary/10 text-primary">
+          <div className="flex h-10 w-10 items-center justify-center rounded-md bg-primary/10 text-primary">
             <User className="h-5 w-5" />
           </div>
           <div>
@@ -95,11 +95,10 @@ export function PersonalDetailsSection({
             {/* First Name */}
             <div className="flex flex-col gap-1">
               <div
-                className={`relative h-[52px] sm:h-[54px] w-full rounded-lg border transition-all ${
-                  errors.firstName
-                    ? "border-destructive focus-within:border-destructive ring-2 ring-destructive/10"
-                    : "border-border/80 hover:border-foreground/40 focus-within:border-primary focus-within:ring-2 focus-within:ring-primary/10"
-                } bg-background`}
+                className={`relative h-[52px] sm:h-[54px] w-full rounded-lg border transition-all ${errors.firstName
+                  ? "border-destructive focus-within:border-destructive ring-2 ring-destructive/10"
+                  : "border-border/80 hover:border-foreground/40 focus-within:border-primary focus-within:ring-2 focus-within:ring-primary/10"
+                  } bg-background`}
               >
                 <label className="pointer-events-none absolute -top-2.5 left-3.5 bg-background px-1.5 text-[11px] font-medium tracking-tight text-muted-foreground z-10 rounded">
                   First Name <span className="text-destructive">*</span>
@@ -121,11 +120,10 @@ export function PersonalDetailsSection({
             {/* Last Name */}
             <div className="flex flex-col gap-1">
               <div
-                className={`relative h-[52px] sm:h-[54px] w-full rounded-lg border transition-all ${
-                  errors.lastName
-                    ? "border-destructive focus-within:border-destructive ring-2 ring-destructive/10"
-                    : "border-border/80 hover:border-foreground/40 focus-within:border-primary focus-within:ring-2 focus-within:ring-primary/10"
-                } bg-background`}
+                className={`relative h-[52px] sm:h-[54px] w-full rounded-lg border transition-all ${errors.lastName
+                  ? "border-destructive focus-within:border-destructive ring-2 ring-destructive/10"
+                  : "border-border/80 hover:border-foreground/40 focus-within:border-primary focus-within:ring-2 focus-within:ring-primary/10"
+                  } bg-background`}
               >
                 <label className="pointer-events-none absolute -top-2.5 left-3.5 bg-background px-1.5 text-[11px] font-medium tracking-tight text-muted-foreground z-10 rounded">
                   Last Name <span className="text-destructive">*</span>
@@ -168,11 +166,10 @@ export function PersonalDetailsSection({
             {/* Phone Number */}
             <div className="flex flex-col gap-1">
               <div
-                className={`relative h-[52px] sm:h-[54px] w-full rounded-lg border transition-all ${
-                  errors.phone
-                    ? "border-destructive focus-within:border-destructive"
-                    : "border-border/80 hover:border-foreground/40 focus-within:border-primary focus-within:ring-2 focus-within:ring-primary/10"
-                } bg-background`}
+                className={`relative h-[52px] sm:h-[54px] w-full rounded-lg border transition-all ${errors.phone
+                  ? "border-destructive focus-within:border-destructive"
+                  : "border-border/80 hover:border-foreground/40 focus-within:border-primary focus-within:ring-2 focus-within:ring-primary/10"
+                  } bg-background`}
               >
                 <label className="pointer-events-none absolute -top-2.5 left-3.5 bg-background px-1.5 text-[11px] font-medium tracking-tight text-muted-foreground z-10 rounded">
                   Phone Number
@@ -194,11 +191,10 @@ export function PersonalDetailsSection({
             {/* Address (Full Span across 2 cols) */}
             <div className="sm:col-span-2 flex flex-col gap-1">
               <div
-                className={`relative h-[52px] sm:h-[54px] w-full rounded-lg border transition-all ${
-                  errors.address
-                    ? "border-destructive focus-within:border-destructive"
-                    : "border-border/80 hover:border-foreground/40 focus-within:border-primary focus-within:ring-2 focus-within:ring-primary/10"
-                } bg-background`}
+                className={`relative h-[52px] sm:h-[54px] w-full rounded-lg border transition-all ${errors.address
+                  ? "border-destructive focus-within:border-destructive"
+                  : "border-border/80 hover:border-foreground/40 focus-within:border-primary focus-within:ring-2 focus-within:ring-primary/10"
+                  } bg-background`}
               >
                 <label className="pointer-events-none absolute -top-2.5 left-3.5 bg-background px-1.5 text-[11px] font-medium tracking-tight text-muted-foreground z-10 rounded">
                   Street Address
@@ -231,11 +227,10 @@ export function PersonalDetailsSection({
             {/* State / Region */}
             <div className="flex flex-col gap-1">
               <div
-                className={`relative h-[52px] sm:h-[54px] w-full rounded-lg border transition-all ${
-                  errors.state
-                    ? "border-destructive focus-within:border-destructive"
-                    : "border-border/80 hover:border-foreground/40 focus-within:border-primary focus-within:ring-2 focus-within:ring-primary/10"
-                } bg-background`}
+                className={`relative h-[52px] sm:h-[54px] w-full rounded-lg border transition-all ${errors.state
+                  ? "border-destructive focus-within:border-destructive"
+                  : "border-border/80 hover:border-foreground/40 focus-within:border-primary focus-within:ring-2 focus-within:ring-primary/10"
+                  } bg-background`}
               >
                 <label className="pointer-events-none absolute -top-2.5 left-3.5 bg-background px-1.5 text-[11px] font-medium tracking-tight text-muted-foreground z-10 rounded">
                   State / Region
@@ -257,11 +252,10 @@ export function PersonalDetailsSection({
             {/* City */}
             <div className="flex flex-col gap-1">
               <div
-                className={`relative h-[52px] sm:h-[54px] w-full rounded-lg border transition-all ${
-                  errors.city
-                    ? "border-destructive focus-within:border-destructive"
-                    : "border-border/80 hover:border-foreground/40 focus-within:border-primary focus-within:ring-2 focus-within:ring-primary/10"
-                } bg-background`}
+                className={`relative h-[52px] sm:h-[54px] w-full rounded-lg border transition-all ${errors.city
+                  ? "border-destructive focus-within:border-destructive"
+                  : "border-border/80 hover:border-foreground/40 focus-within:border-primary focus-within:ring-2 focus-within:ring-primary/10"
+                  } bg-background`}
               >
                 <label className="pointer-events-none absolute -top-2.5 left-3.5 bg-background px-1.5 text-[11px] font-medium tracking-tight text-muted-foreground z-10 rounded">
                   City
@@ -283,11 +277,10 @@ export function PersonalDetailsSection({
             {/* Zip Code */}
             <div className="flex flex-col gap-1">
               <div
-                className={`relative h-[52px] sm:h-[54px] w-full rounded-lg border transition-all ${
-                  errors.zip
-                    ? "border-destructive focus-within:border-destructive"
-                    : "border-border/80 hover:border-foreground/40 focus-within:border-primary focus-within:ring-2 focus-within:ring-primary/10"
-                } bg-background`}
+                className={`relative h-[52px] sm:h-[54px] w-full rounded-lg border transition-all ${errors.zip
+                  ? "border-destructive focus-within:border-destructive"
+                  : "border-border/80 hover:border-foreground/40 focus-within:border-primary focus-within:ring-2 focus-within:ring-primary/10"
+                  } bg-background`}
               >
                 <label className="pointer-events-none absolute -top-2.5 left-3.5 bg-background px-1.5 text-[11px] font-medium tracking-tight text-muted-foreground z-10 rounded">
                   Postal / Zip Code
@@ -320,11 +313,10 @@ export function PersonalDetailsSection({
             {/* Date of Birth */}
             <div className="flex flex-col gap-1">
               <div
-                className={`relative h-[52px] sm:h-[54px] w-full rounded-lg border transition-all ${
-                  errors.dateOfBirth
-                    ? "border-destructive focus-within:border-destructive"
-                    : "border-border/80 hover:border-foreground/40 focus-within:border-primary focus-within:ring-2 focus-within:ring-primary/10"
-                } bg-background`}
+                className={`relative h-[52px] sm:h-[54px] w-full rounded-lg border transition-all ${errors.dateOfBirth
+                  ? "border-destructive focus-within:border-destructive"
+                  : "border-border/80 hover:border-foreground/40 focus-within:border-primary focus-within:ring-2 focus-within:ring-primary/10"
+                  } bg-background`}
               >
                 <label className="pointer-events-none absolute -top-2.5 left-3.5 bg-background px-1.5 text-[11px] font-medium tracking-tight text-muted-foreground z-10 rounded">
                   Date of Birth
@@ -345,11 +337,10 @@ export function PersonalDetailsSection({
             {/* About / Bio (Full Row) */}
             <div className="sm:col-span-2 flex flex-col gap-1">
               <div
-                className={`relative w-full rounded-lg border transition-all ${
-                  errors.about
-                    ? "border-destructive focus-within:border-destructive"
-                    : "border-border/80 hover:border-foreground/40 focus-within:border-primary focus-within:ring-2 focus-within:ring-primary/10"
-                } bg-background`}
+                className={`relative w-full rounded-lg border transition-all ${errors.about
+                  ? "border-destructive focus-within:border-destructive"
+                  : "border-border/80 hover:border-foreground/40 focus-within:border-primary focus-within:ring-2 focus-within:ring-primary/10"
+                  } bg-background`}
               >
                 <label className="pointer-events-none absolute -top-2.5 left-3.5 bg-background px-1.5 text-[11px] font-medium tracking-tight text-muted-foreground z-10 rounded">
                   About / Bio
@@ -374,7 +365,7 @@ export function PersonalDetailsSection({
           </div>
 
           {/* Security Notice Callout */}
-          <div className="flex items-start gap-3 rounded-xl border border-primary/20 bg-primary/5 p-4 text-xs text-foreground/80 leading-relaxed">
+          <div className="flex items-start gap-3 rounded-md border border-primary/20 bg-primary/5 p-4 text-xs text-foreground/80 leading-relaxed">
             <ShieldCheck className="h-5 w-5 shrink-0 text-primary mt-0.5" />
             <div>
               <span className="font-semibold text-foreground">

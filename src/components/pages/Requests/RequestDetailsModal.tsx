@@ -63,7 +63,7 @@ export default function RequestDetailsModal({
               </div>
             </div>
 
-            <div className="grid grid-cols-2 gap-x-4 gap-y-5 rounded-xl border border-border/40 bg-muted/20 p-4 text-sm">
+            <div className="grid grid-cols-2 gap-x-4 gap-y-5 rounded-md border border-border/40 bg-muted/20 p-4 text-sm">
               <div className="flex flex-col gap-1">
                 <span className="text-xs font-semibold tracking-wider text-muted-foreground uppercase">
                   Skill Level
@@ -72,7 +72,7 @@ export default function RequestDetailsModal({
                   {Array.isArray(selectedUser.instructorInfo?.skill)
                     ? selectedUser.instructorInfo.skill.join(", ").toLowerCase()
                     : selectedUser.instructorInfo?.skill?.toLowerCase() ||
-                      "N/A"}
+                    "N/A"}
                 </span>
               </div>
               <div className="flex flex-col gap-1">
@@ -90,10 +90,10 @@ export default function RequestDetailsModal({
                 <span className="font-medium text-foreground capitalize">
                   {Array.isArray(selectedUser.instructorInfo?.preferredTime)
                     ? selectedUser.instructorInfo.preferredTime
-                        .join(", ")
-                        .toLowerCase()
+                      .join(", ")
+                      .toLowerCase()
                     : selectedUser.instructorInfo?.preferredTime?.toLowerCase() ||
-                      "N/A"}
+                    "N/A"}
                 </span>
               </div>
               <div className="flex flex-col gap-1">
@@ -133,7 +133,7 @@ export default function RequestDetailsModal({
 
             <div className="mt-4 flex justify-end gap-3 border-t border-border/40 pt-4">
               <button
-                className="flex items-center gap-2 rounded-xl bg-rose-500/10 px-4 py-2 text-sm font-medium text-rose-500 transition-colors hover:bg-rose-500/20 active:scale-95 disabled:opacity-50"
+                className="flex items-center gap-2 rounded-md bg-rose-500/10 px-4 py-2 text-sm font-medium text-rose-500 transition-colors hover:bg-rose-500/20 active:scale-95 disabled:opacity-50"
                 disabled={isUpdating}
                 onClick={() => {
                   updateStatus({
@@ -152,7 +152,7 @@ export default function RequestDetailsModal({
                 Reject
               </button>
               <button
-                className="flex items-center gap-2 rounded-xl bg-primary px-4 py-2 text-sm font-medium text-primary-foreground shadow-sm shadow-primary/20 transition-colors hover:bg-primary/90 active:scale-95 disabled:opacity-50"
+                className="flex items-center gap-2 rounded-md bg-primary px-4 py-2 text-sm font-medium text-primary-foreground shadow-sm shadow-primary/20 transition-colors hover:bg-primary/90 active:scale-95 disabled:opacity-50"
                 disabled={isUpdating || selectedUser.isVerified}
                 onClick={() => {
                   updateStatus({

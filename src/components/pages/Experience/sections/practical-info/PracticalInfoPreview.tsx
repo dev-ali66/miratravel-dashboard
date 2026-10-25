@@ -44,7 +44,7 @@ export function PracticalInfoPreview({ draft }: ExperiencePreviewSectionProps) {
           {items.map((it, idx) => {
             const Icon = it.icon
             return (
-              <div key={idx} className="flex flex-col gap-2 p-4 rounded-xl bg-card border border-border/60 shadow-xs">
+              <div key={idx} className="flex flex-col gap-2 p-4 rounded-md bg-card border border-border/60 shadow-xs">
                 <div className="flex items-center gap-2 text-accent">
                   <Icon className="h-4 w-4 shrink-0" />
                   <span className="text-xs uppercase tracking-wider font-semibold">
@@ -62,7 +62,7 @@ export function PracticalInfoPreview({ draft }: ExperiencePreviewSectionProps) {
         </div>
 
         {practical.locationNotes?.value && (
-          <div className="flex items-start gap-3 p-4 rounded-xl bg-muted/30 border border-border/50 text-sm">
+          <div className="flex items-start gap-3 p-4 rounded-md bg-muted/30 border border-border/50 text-sm">
             <MapPin className="h-4 w-4 text-accent shrink-0 mt-0.5" />
             <div className="flex flex-col gap-0.5">
               <span className="text-xs font-semibold text-foreground uppercase tracking-wider">

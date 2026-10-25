@@ -73,7 +73,7 @@ export function RelatedJourneysForm({
           </span>
 
           {selectedJourneys.length === 0 ? (
-            <div className="rounded-xl border border-dashed border-border/80 p-6 text-center text-xs text-muted-foreground">
+            <div className="rounded-md border border-dashed border-border/80 p-6 text-center text-xs text-muted-foreground">
               No journeys linked yet. Search below to connect Journeys to this experience.
             </div>
           ) : (
@@ -124,7 +124,7 @@ export function RelatedJourneysForm({
         </div>
 
         {/* Live Search Picker */}
-        <div className="rounded-xl border border-border/70 bg-muted/15 p-3.5 flex flex-col gap-3">
+        <div className="rounded-md border border-border/70 bg-muted/15 p-3.5 flex flex-col gap-3">
           <div className="flex items-center gap-2 rounded-lg border border-border/80 bg-background px-3 py-1.5 shadow-2xs">
             <Search className="h-4 w-4 text-muted-foreground shrink-0" />
             <input

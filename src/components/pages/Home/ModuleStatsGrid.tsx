@@ -104,14 +104,14 @@ function CompactModuleCard({
   return (
     <div
       onClick={() => navigate(route)}
-      className="group relative flex flex-col justify-between h-[64px] rounded-xl border border-border/70 bg-card/85 backdrop-blur-md px-3 py-2 transition-all duration-200 hover:border-primary/50 hover:bg-card hover:shadow-xs cursor-pointer active:scale-[0.99] overflow-hidden"
+      className="group relative flex flex-col justify-between h-[64px] rounded-md border border-border/70 bg-card/85 backdrop-blur-md px-3 py-2 transition-all duration-200 hover:border-primary/50 hover:bg-card hover:shadow-xs cursor-pointer active:scale-[0.99] overflow-hidden"
     >
       {/* Top Row: Icon, Title & Live Metric */}
       <div className="flex items-center justify-between gap-1.5 min-w-0">
         <div className="flex items-center gap-2 min-w-0">
           <div
             className={cn(
-              "flex h-6 w-6 shrink-0 items-center justify-center rounded-md border shadow-2xs transition-colors",
+              "flex h-6 w-6 shrink-0 items-center justify-center rounded-sm border shadow-2xs transition-colors",
               variant === "accent"
                 ? "bg-accent/10 border-accent/20 text-accent group-hover:bg-accent group-hover:text-accent-foreground group-hover:border-accent"
                 : "bg-primary/10 border-primary/20 text-primary group-hover:bg-primary group-hover:text-primary-foreground group-hover:border-primary"

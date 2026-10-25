@@ -33,7 +33,7 @@ export function StoriesCmsMiraStoriesPreview({ draft }: StoriesCmsPreviewSection
 
       <div className="relative z-10 container mx-auto px-4 sm:px-6 lg:px-8 flex flex-col lg:flex-row items-center justify-between gap-10 lg:gap-16 max-w-7xl">
         {/* Left Side Multimedia Card */}
-        <div className="w-full lg:w-1/2 aspect-[4/3] max-h-[500px] overflow-hidden rounded-xl shadow-md shrink-0">
+        <div className="w-full lg:w-1/2 aspect-[4/3] max-h-[500px] overflow-hidden rounded-md shadow-md shrink-0">
           <UniversalMultimediaPreview
             multimedia={leftSideMultimedia}
             fallbackAlt="Mira Stories editorial"
@@ -77,47 +77,47 @@ export function StoriesCmsMiraStoriesPreview({ draft }: StoriesCmsPreviewSection
           <div className="flex w-full flex-col gap-5 mt-8 border-t border-border/50 pt-6">
             {items.length > 0
               ? items.map((item: any, index: number) => (
-                  <a
-                    key={index}
-                    href={item.button?.url || item.url || "#"}
-                    className="group flex items-start gap-4 transition-opacity hover:opacity-80"
-                  >
-                    <span className="mt-0.5 text-sm font-semibold tracking-wider text-gold-muted">
-                      {String(index + 1).padStart(2, "0")}
-                    </span>
+                <a
+                  key={index}
+                  href={item.button?.url || item.url || "#"}
+                  className="group flex items-start gap-4 transition-opacity hover:opacity-80"
+                >
+                  <span className="mt-0.5 text-sm font-semibold tracking-wider text-gold-muted">
+                    {String(index + 1).padStart(2, "0")}
+                  </span>
 
-                    <div className="flex flex-col gap-1">
-                      <DynamicStyledTextPreview
-                        as="h3"
-                        data={item.title}
-                        fallbackColor={THEME_COLORS.primary}
-                        className="font-heading text-lg md:text-xl font-medium text-brand-primary group-hover:text-accent transition-colors"
-                      />
+                  <div className="flex flex-col gap-1">
+                    <DynamicStyledTextPreview
+                      as="h3"
+                      data={item.title}
+                      fallbackColor={THEME_COLORS.primary}
+                      className="font-heading text-lg md:text-xl font-medium text-brand-primary group-hover:text-accent transition-colors"
+                    />
 
-                      <DynamicStyledTextPreview
-                        as="p"
-                        data={item.subtitle}
-                        fallbackColor={THEME_COLORS.sub}
-                        className="text-xs md:text-sm font-normal text-sub"
-                      />
-                    </div>
-                  </a>
-                ))
-              : [1, 2].map((item) => (
-                  <div key={item} className="flex items-start gap-4">
-                    <span className="mt-0.5 text-sm font-semibold tracking-wider text-gold-muted">
-                      {String(item).padStart(2, "0")}
-                    </span>
-                    <div className="flex flex-col gap-1">
-                      <h3 className="font-heading text-lg font-medium text-brand-primary">
-                        Sample Story Title
-                      </h3>
-                      <p className="text-xs text-sub">
-                        Sample story subtitle description...
-                      </p>
-                    </div>
+                    <DynamicStyledTextPreview
+                      as="p"
+                      data={item.subtitle}
+                      fallbackColor={THEME_COLORS.sub}
+                      className="text-xs md:text-sm font-normal text-sub"
+                    />
                   </div>
-                ))}
+                </a>
+              ))
+              : [1, 2].map((item) => (
+                <div key={item} className="flex items-start gap-4">
+                  <span className="mt-0.5 text-sm font-semibold tracking-wider text-gold-muted">
+                    {String(item).padStart(2, "0")}
+                  </span>
+                  <div className="flex flex-col gap-1">
+                    <h3 className="font-heading text-lg font-medium text-brand-primary">
+                      Sample Story Title
+                    </h3>
+                    <p className="text-xs text-sub">
+                      Sample story subtitle description...
+                    </p>
+                  </div>
+                </div>
+              ))}
           </div>
 
           {/* CTA Buttons */}

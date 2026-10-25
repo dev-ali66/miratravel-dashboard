@@ -27,7 +27,7 @@ export function TermsOfServiceTabs({
         </span>
       </div>
 
-      <div className="flex flex-wrap gap-2.5 rounded-2xl border border-border/40 bg-muted/20 p-2">
+      <div className="flex flex-wrap gap-2.5 rounded-xl border border-border/40 bg-muted/20 p-2">
         {parts.map((part) => {
           const isActive = activeTab === part.id
           return (
@@ -36,7 +36,7 @@ export function TermsOfServiceTabs({
               type="button"
               onClick={() => setActiveTab(part.id)}
               className={cn(
-                "group relative flex min-w-[120px] max-w-[200px] flex-1 cursor-pointer flex-col overflow-hidden rounded-xl p-3 text-left transition-all",
+                "group relative flex min-w-[120px] max-w-[200px] flex-1 cursor-pointer flex-col overflow-hidden rounded-md p-3 text-left transition-all",
                 isActive
                   ? "bg-background font-medium text-foreground shadow-sm ring-1 ring-border"
                   : "text-muted-foreground hover:bg-background/50 hover:text-foreground"
@@ -62,7 +62,7 @@ export function TermsOfServiceTabs({
         <button
           type="button"
           onClick={onAddSection}
-          className="flex min-w-[100px] items-center justify-center gap-1.5 rounded-xl border border-dashed border-border/70 p-3 text-xs font-medium text-muted-foreground transition hover:border-primary hover:bg-background/50 hover:text-primary cursor-pointer"
+          className="flex min-w-[100px] items-center justify-center gap-1.5 rounded-md border border-dashed border-border/70 p-3 text-xs font-medium text-muted-foreground transition hover:border-primary hover:bg-background/50 hover:text-primary cursor-pointer"
         >
           <Plus className="h-4 w-4" />
           <span>New Part</span>

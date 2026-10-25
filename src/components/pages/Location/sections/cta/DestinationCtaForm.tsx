@@ -63,7 +63,7 @@ export function DestinationCtaForm({
     Array.isArray(ctaData.buttons) && ctaData.buttons.length > 0
       ? ctaData.buttons
       : ctaData.button
-      ? [
+        ? [
           {
             label: ctaData.button?.label || ctaData.buttonText || "Plan a tailor-made journey",
             url: ctaData.button?.url || ctaData.buttonUrl || "/contact",
@@ -73,7 +73,7 @@ export function DestinationCtaForm({
             textColor: ctaData.button?.textColor || THEME_COLORS.white,
           },
         ]
-      : [
+        : [
           {
             label: "Plan a tailor-made journey",
             url: "/contact",
@@ -93,7 +93,7 @@ export function DestinationCtaForm({
     >
       <div className="flex flex-col gap-6">
         {/* Section Header & Narrative */}
-        <div className="rounded-xl border border-border/70 bg-card/60 p-4 space-y-4">
+        <div className="rounded-md border border-border/70 bg-card/60 p-4 space-y-4">
           <h4 className="text-xs font-semibold uppercase tracking-wider text-muted-foreground flex items-center gap-2">
             <Sparkles className="h-4 w-4 text-primary" />
             Headline & Subtitle
@@ -122,7 +122,7 @@ export function DestinationCtaForm({
         </div>
 
         {/* Action Button Controls */}
-        <div className="rounded-xl border border-border/70 bg-card/60 p-4">
+        <div className="rounded-md border border-border/70 bg-card/60 p-4">
           <ButtonsField
             label="Action Buttons (CTA)"
             fieldName="cta.buttons"

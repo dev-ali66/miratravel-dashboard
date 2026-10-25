@@ -57,10 +57,10 @@ export function PeoplePreview({ section }: PeoplePreviewProps) {
   const peopleList = Array.isArray(section.members)
     ? section.members
     : Array.isArray(section.people)
-    ? section.people
-    : Array.isArray(section.items)
-    ? section.items
-    : []
+      ? section.people
+      : Array.isArray(section.items)
+        ? section.items
+        : []
 
   return (
     <section className="relative w-full overflow-hidden py-16 lg:py-24 bg-surface-sand">
@@ -79,7 +79,7 @@ export function PeoplePreview({ section }: PeoplePreviewProps) {
             return (
               <div
                 key={idx}
-                className={`absolute ${style} overflow-hidden rounded-md shadow-md group transition-transform duration-300 hover:scale-105 hover:z-20`}
+                className={`absolute ${style} overflow-hidden rounded-sm shadow-md group transition-transform duration-300 hover:scale-105 hover:z-20`}
               >
                 <UniversalMultimediaPreview multimedia={person.multimedia} />
 
@@ -153,7 +153,7 @@ export function PeoplePreview({ section }: PeoplePreviewProps) {
               return (
                 <div
                   key={idx}
-                  className="bg-card text-card-foreground rounded-xl p-4 border border-border/70 shadow-sm flex flex-col space-y-3"
+                  className="bg-card text-card-foreground rounded-md p-4 border border-border/70 shadow-sm flex flex-col space-y-3"
                 >
                   <div className="relative aspect-square w-full rounded-lg overflow-hidden bg-muted">
                     <UniversalMultimediaPreview multimedia={person.multimedia} />

@@ -19,8 +19,8 @@ export function SpotlightCardForm({
   const rawItems = Array.isArray(block.items)
     ? block.items
     : block.multimedia
-    ? [block.multimedia]
-    : []
+      ? [block.multimedia]
+      : []
 
   const updateItem = (itemIdx: number, val: any) => {
     const next = [...rawItems]
@@ -74,11 +74,10 @@ export function SpotlightCardForm({
           <button
             type="button"
             onClick={() => onChange({ mediaPosition: "left" })}
-            className={`inline-flex items-center gap-1 px-2.5 py-1 text-xs font-medium rounded-md transition cursor-pointer ${
-              mediaPosition === "left"
+            className={`inline-flex items-center gap-1 px-2.5 py-1 text-xs font-medium rounded-sm transition cursor-pointer ${mediaPosition === "left"
                 ? "bg-background text-foreground shadow-xs font-semibold"
                 : "text-muted-foreground hover:text-foreground"
-            }`}
+              }`}
           >
             <AlignLeft className="w-3.5 h-3.5" />
             Media Left
@@ -86,11 +85,10 @@ export function SpotlightCardForm({
           <button
             type="button"
             onClick={() => onChange({ mediaPosition: "right" })}
-            className={`inline-flex items-center gap-1 px-2.5 py-1 text-xs font-medium rounded-md transition cursor-pointer ${
-              mediaPosition === "right"
+            className={`inline-flex items-center gap-1 px-2.5 py-1 text-xs font-medium rounded-sm transition cursor-pointer ${mediaPosition === "right"
                 ? "bg-background text-foreground shadow-xs font-semibold"
                 : "text-muted-foreground hover:text-foreground"
-            }`}
+              }`}
           >
             <AlignRight className="w-3.5 h-3.5" />
             Media Right
@@ -155,7 +153,7 @@ export function SpotlightCardForm({
         <button
           type="button"
           onClick={addItem}
-          className="flex items-center justify-center gap-1.5 rounded-md border border-dashed border-purple-500/40 bg-purple-500/5 hover:bg-purple-500/10 py-2.5 text-xs font-medium text-purple-600 cursor-pointer transition shadow-2xs"
+          className="flex items-center justify-center gap-1.5 rounded-sm border border-dashed border-purple-500/40 bg-purple-500/5 hover:bg-purple-500/10 py-2.5 text-xs font-medium text-purple-600 cursor-pointer transition shadow-2xs"
         >
           <Plus className="h-4 w-4" /> Add Spotlight Media
         </button>

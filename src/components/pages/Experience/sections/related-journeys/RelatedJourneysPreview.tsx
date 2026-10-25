@@ -34,7 +34,7 @@ export function RelatedJourneysPreview({ draft }: ExperiencePreviewSectionProps)
             return (
               <div
                 key={j.id}
-                className="group flex flex-col rounded-xl overflow-hidden bg-card text-card-foreground border border-border/60 shadow-xs hover:shadow-md transition-all"
+                className="group flex flex-col rounded-md overflow-hidden bg-card text-card-foreground border border-border/60 shadow-xs hover:shadow-md transition-all"
               >
                 <div className="relative h-44 w-full overflow-hidden bg-muted">
                   {thumb ? (

@@ -17,7 +17,7 @@ export default function ConversionRate({ className }: { className?: string }) {
   return (
     <SlideBottom
       delay={0.3}
-      className={`rounded-xl border border-border bg-card p-6 shadow-sm ${className || ""}`}
+      className={`rounded-md border border-border bg-card p-6 shadow-sm ${className || ""}`}
     >
       <div className="mb-6">
         <h3 className="text-lg font-semibold tracking-tight text-foreground">
@@ -48,7 +48,7 @@ export default function ConversionRate({ className }: { className?: string }) {
             className="group relative z-10 flex h-full w-full flex-col items-center justify-end gap-2"
           >
             {/* Tooltip */}
-            <div className="pointer-events-none absolute -top-10 hidden rounded-md bg-foreground px-2 py-1 text-xs font-medium whitespace-nowrap text-background opacity-0 shadow-lg transition-opacity group-hover:block group-hover:opacity-100">
+            <div className="pointer-events-none absolute -top-10 hidden rounded-sm bg-foreground px-2 py-1 text-xs font-medium whitespace-nowrap text-background opacity-0 shadow-lg transition-opacity group-hover:block group-hover:opacity-100">
               Day {item.day}: {item.rate}%
             </div>
 

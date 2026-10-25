@@ -80,7 +80,7 @@ export default function SignIn() {
         >
           <div className="space-y-2 text-center lg:text-left">
             <div className="mb-6 flex justify-center lg:hidden">
-              <div className="flex size-12 items-center justify-center rounded-xl bg-primary shadow-lg shadow-primary/20">
+              <div className="flex size-12 items-center justify-center rounded-md bg-primary shadow-lg shadow-primary/20">
                 <LayoutDashboard className="size-6 text-primary-foreground" />
               </div>
             </div>

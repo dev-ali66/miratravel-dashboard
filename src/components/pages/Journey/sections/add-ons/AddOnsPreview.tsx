@@ -52,9 +52,9 @@ function AddOnExperienceItemRow({
   const formattedPrice =
     exp?.price !== undefined && exp?.price !== null
       ? `${exp.currency || "€"}${Number(exp.price).toLocaleString(undefined, {
-          minimumFractionDigits: 2,
-          maximumFractionDigits: 2,
-        })}`
+        minimumFractionDigits: 2,
+        maximumFractionDigits: 2,
+      })}`
       : ""
 
   const typeConfig = exp?.primaryType
@@ -86,9 +86,8 @@ function AddOnExperienceItemRow({
 
   return (
     <div
-      className={`w-full rounded-[8px] md:rounded-[10px] lg:rounded-[11px] lgx:rounded-[12px] xlg:rounded-[13px] mid:rounded-[14px] xl:rounded-[14px] 2xl:rounded-[16px] border overflow-hidden bg-card text-card-foreground shadow-xs transition-colors duration-200 ${
-        isExpanded ? "border-border shadow-sm" : "border-border/70 hover:border-border"
-      }`}
+      className={`w-full rounded-[8px] md:rounded-[10px] lg:rounded-[11px] lgx:rounded-[12px] xlg:rounded-[13px] mid:rounded-[14px] xl:rounded-[14px] 2xl:rounded-[16px] border overflow-hidden bg-card text-card-foreground shadow-xs transition-colors duration-200 ${isExpanded ? "border-border shadow-sm" : "border-border/70 hover:border-border"
+        }`}
     >
       {/* Clickable Header Row */}
       <button
@@ -148,9 +147,8 @@ function AddOnExperienceItemRow({
 
         {/* Expand/Collapse Chevron */}
         <div
-          className={`size-4 md:size-[18px] lg:size-5 shrink-0 text-muted-foreground ml-2 md:ml-4 transition-transform duration-300 ${
-            isExpanded ? "rotate-180" : ""
-          }`}
+          className={`size-4 md:size-[18px] lg:size-5 shrink-0 text-muted-foreground ml-2 md:ml-4 transition-transform duration-300 ${isExpanded ? "rotate-180" : ""
+            }`}
         >
           <svg
             xmlns="http://www.w3.org/2000/svg"
@@ -189,9 +187,8 @@ function AddOnExperienceItemRow({
                 <button
                   type="button"
                   onClick={onToggleAdd}
-                  className={`flex h-[42px] w-[260px] max-w-full items-center justify-center rounded px-4 py-2 text-xs font-semibold text-primary-foreground transition-colors duration-200 cursor-pointer ${
-                    isAdded ? "bg-emerald-700 hover:bg-emerald-800" : "bg-primary hover:bg-primary/90"
-                  }`}
+                  className={`flex h-[42px] w-[260px] max-w-full items-center justify-center rounded px-4 py-2 text-xs font-semibold text-primary-foreground transition-colors duration-200 cursor-pointer ${isAdded ? "bg-emerald-700 hover:bg-emerald-800" : "bg-primary hover:bg-primary/90"
+                    }`}
                 >
                   {isAdded ? "Added to Trip ✓" : "Add this experience to trip"}
                 </button>
@@ -218,13 +215,13 @@ export function AddOnsPreview({ addOns, draft }: { addOns?: any; draft?: any }) 
 
   const expIds: string[] = Array.isArray(rawData)
     ? rawData
-        .map((it: any) => (typeof it === "string" ? it : it?.id || it?.experienceId))
-        .filter((id: any): id is string => typeof id === "string" && Boolean(id.trim()))
+      .map((it: any) => (typeof it === "string" ? it : it?.id || it?.experienceId))
+      .filter((id: any): id is string => typeof id === "string" && Boolean(id.trim()))
     : Array.isArray(rawData?.items)
-    ? rawData.items
+      ? rawData.items
         .map((it: any) => (typeof it === "string" ? it : it?.id || it?.experienceId))
         .filter((id: any): id is string => typeof id === "string" && Boolean(id.trim()))
-    : []
+      : []
 
   const [expandedId, setExpandedId] = useState<string | null>(null)
   const [addedItems, setAddedItems] = useState<Record<string, boolean>>({})
@@ -259,7 +256,7 @@ export function AddOnsPreview({ addOns, draft }: { addOns?: any; draft?: any }) 
 
           {/* Add-on Experiences Accordion List */}
           {expIds.length === 0 ? (
-            <div className="rounded-xl border border-dashed border-border/80 bg-muted/15 p-10 text-center">
+            <div className="rounded-md border border-dashed border-border/80 bg-muted/15 p-10 text-center">
               <Compass className="h-10 w-10 text-muted-foreground/40 mx-auto mb-2" />
               <p className="text-sm font-semibold text-foreground">
                 No optional experiences linked yet

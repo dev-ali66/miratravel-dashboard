@@ -51,7 +51,7 @@ export function SocialLinksForm({
         </div>
 
         {!formData.socialLinks || formData.socialLinks.length === 0 ? (
-          <div className="flex flex-col items-center justify-center py-12 px-4 border border-dashed border-border/70 rounded-xl bg-muted/20 text-center">
+          <div className="flex flex-col items-center justify-center py-12 px-4 border border-dashed border-border/70 rounded-md bg-muted/20 text-center">
             <Share2 className="h-10 w-10 text-muted-foreground/50 mb-3" />
             <h4 className="text-sm font-semibold text-foreground">No Social Channels Added</h4>
             <p className="text-xs text-muted-foreground mt-1 max-w-sm">
@@ -72,7 +72,7 @@ export function SocialLinksForm({
             {formData.socialLinks.map((item, index) => (
               <div
                 key={item.id || index}
-                className="p-5 border border-border/60 rounded-xl bg-card/80 space-y-4 shadow-2xs transition-all hover:border-border"
+                className="p-5 border border-border/60 rounded-md bg-card/80 space-y-4 shadow-2xs transition-all hover:border-border"
               >
                 <div className="flex items-center justify-between border-b border-border/40 pb-3">
                   <div className="flex items-center gap-2.5">
@@ -111,7 +111,7 @@ export function SocialLinksForm({
                               handleUpdateSocialLink(index, "title", e.target.value)
                             }
                           }}
-                          className="w-full h-9 rounded-md border border-input bg-transparent px-3 py-1 text-xs font-medium shadow-2xs transition-colors focus:outline-none focus:ring-1 focus:ring-ring cursor-pointer"
+                          className="w-full h-9 rounded-sm border border-input bg-transparent px-3 py-1 text-xs font-medium shadow-2xs transition-colors focus:outline-none focus:ring-1 focus:ring-ring cursor-pointer"
                         >
                           {POPULAR_PLATFORMS.map((p) => (
                             <option key={p} value={p}>

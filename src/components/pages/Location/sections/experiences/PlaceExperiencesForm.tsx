@@ -107,7 +107,7 @@ function ExperienceItemRow({
             {typeConfig && (
               <span
                 className={cn(
-                  "inline-flex items-center rounded-md px-1.5 py-0.2 text-[9px] font-medium border shrink-0",
+                  "inline-flex items-center rounded-sm px-1.5 py-0.2 text-[9px] font-medium border shrink-0",
                   typeConfig.badgeColor
                 )}
               >
@@ -193,10 +193,10 @@ export function PlaceExperiencesForm({
   const rawItems: any[] = Array.isArray(rawData)
     ? rawData
     : Array.isArray(rawData?.items)
-    ? rawData.items
-    : Array.isArray(rawData?.cards)
-    ? rawData.cards
-    : []
+      ? rawData.items
+      : Array.isArray(rawData?.cards)
+        ? rawData.cards
+        : []
 
   const items: string[] = rawItems
     .map((it: any) => (typeof it === "string" ? it : it?.id || it?.experienceId))
@@ -293,7 +293,7 @@ export function PlaceExperiencesForm({
                 setIsSearchOpen(true)
               }}
               placeholder="Search experiences by title or type to link..."
-              className="w-full rounded-md border border-input bg-background pl-9 pr-8 py-2 text-xs text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-1 focus:ring-primary"
+              className="w-full rounded-sm border border-input bg-background pl-9 pr-8 py-2 text-xs text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-1 focus:ring-primary"
             />
             {searchQuery && (
               <button
@@ -311,7 +311,7 @@ export function PlaceExperiencesForm({
 
           {/* Dropdown Results */}
           {isSearchOpen && (
-            <div className="absolute left-0 right-0 top-full z-50 mt-1 max-h-72 overflow-y-auto rounded-md border border-border bg-popover py-1 shadow-lg">
+            <div className="absolute left-0 right-0 top-full z-50 mt-1 max-h-72 overflow-y-auto rounded-sm border border-border bg-popover py-1 shadow-lg">
               {isSearching ? (
                 <div className="flex items-center justify-center p-4 text-xs text-muted-foreground">
                   <Loader2 className="mr-2 h-3.5 w-3.5 animate-spin" />
@@ -392,7 +392,7 @@ export function PlaceExperiencesForm({
         </div>
 
         {/* Connected Experience Items List */}
-        <div className="flex flex-col gap-3 rounded-xl border border-border/70 p-4 bg-muted/20">
+        <div className="flex flex-col gap-3 rounded-md border border-border/70 p-4 bg-muted/20">
           <div className="flex items-center justify-between gap-2 border-b border-border/60 pb-2">
             <div className="flex items-center gap-2">
               <Sparkles className="h-4 w-4 text-primary" />

@@ -42,7 +42,7 @@ export function LogoutModal({ open, onClose }: LogoutModalProps) {
         if (!isOpen && !isPending) onClose()
       }}
     >
-      <DialogContent className="max-w-md rounded-2xl p-6 sm:p-7 shadow-2xl border-border/80 bg-card">
+      <DialogContent className="max-w-md rounded-xl p-6 sm:p-7 shadow-2xl border-border/80 bg-card">
         <DialogHeader className="text-left space-y-1.5">
           <DialogTitle className="text-lg font-bold text-foreground">
             Sign Out of Your Account
@@ -57,18 +57,16 @@ export function LogoutModal({ open, onClose }: LogoutModalProps) {
           {/* Option 1: This Device */}
           <div
             onClick={() => setLogoutScope("this")}
-            className={`group relative flex items-start gap-3.5 rounded-xl border p-3.5 cursor-pointer transition-all ${
-              logoutScope === "this"
-                ? "border-primary bg-primary/5 shadow-xs ring-1 ring-primary/30"
-                : "border-border/70 hover:border-border hover:bg-muted/40"
-            }`}
+            className={`group relative flex items-start gap-3.5 rounded-md border p-3.5 cursor-pointer transition-all ${logoutScope === "this"
+              ? "border-primary bg-primary/5 shadow-xs ring-1 ring-primary/30"
+              : "border-border/70 hover:border-border hover:bg-muted/40"
+              }`}
           >
             <div
-              className={`mt-0.5 flex h-9 w-9 shrink-0 items-center justify-center rounded-lg transition-colors ${
-                logoutScope === "this"
-                  ? "bg-primary text-primary-foreground"
-                  : "bg-muted text-muted-foreground group-hover:text-foreground"
-              }`}
+              className={`mt-0.5 flex h-9 w-9 shrink-0 items-center justify-center rounded-lg transition-colors ${logoutScope === "this"
+                ? "bg-primary text-primary-foreground"
+                : "bg-muted text-muted-foreground group-hover:text-foreground"
+                }`}
             >
               <Laptop className="h-5 w-5" />
             </div>
@@ -91,18 +89,16 @@ export function LogoutModal({ open, onClose }: LogoutModalProps) {
           {/* Option 2: All Devices */}
           <div
             onClick={() => setLogoutScope("all")}
-            className={`group relative flex items-start gap-3.5 rounded-xl border p-3.5 cursor-pointer transition-all ${
-              logoutScope === "all"
-                ? "border-destructive bg-destructive/5 shadow-xs ring-1 ring-destructive/30"
-                : "border-border/70 hover:border-border hover:bg-muted/40"
-            }`}
+            className={`group relative flex items-start gap-3.5 rounded-md border p-3.5 cursor-pointer transition-all ${logoutScope === "all"
+              ? "border-destructive bg-destructive/5 shadow-xs ring-1 ring-destructive/30"
+              : "border-border/70 hover:border-border hover:bg-muted/40"
+              }`}
           >
             <div
-              className={`mt-0.5 flex h-9 w-9 shrink-0 items-center justify-center rounded-lg transition-colors ${
-                logoutScope === "all"
-                  ? "bg-destructive text-destructive-foreground"
-                  : "bg-muted text-muted-foreground group-hover:text-foreground"
-              }`}
+              className={`mt-0.5 flex h-9 w-9 shrink-0 items-center justify-center rounded-lg transition-colors ${logoutScope === "all"
+                ? "bg-destructive text-destructive-foreground"
+                : "bg-muted text-muted-foreground group-hover:text-foreground"
+                }`}
             >
               <ShieldAlert className="h-5 w-5" />
             </div>

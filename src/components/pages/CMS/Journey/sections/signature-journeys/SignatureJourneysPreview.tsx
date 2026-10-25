@@ -87,7 +87,7 @@ export function SignatureJourneysPreview({ draft }: JourneyPreviewSectionProps) 
           {mockJourneys.map((j, idx) => (
             <div
               key={idx}
-              className="group overflow-hidden rounded-2xl border border-border/50 bg-card shadow-sm transition-all duration-300 hover:shadow-xl hover:-translate-y-1"
+              className="group overflow-hidden rounded-xl border border-border/50 bg-card shadow-sm transition-all duration-300 hover:shadow-xl hover:-translate-y-1"
             >
               <div className="relative h-60 w-full overflow-hidden bg-muted">
                 <img

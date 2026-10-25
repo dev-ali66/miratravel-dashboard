@@ -206,7 +206,7 @@ export function StoryCategoriesField({
               setIsOpen(true)
             }}
             placeholder="Search or add category..."
-            className="h-8 w-full rounded-md border border-border bg-background pl-8 pr-8 text-xs text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-1 focus:ring-primary"
+            className="h-8 w-full rounded-sm border border-border bg-background pl-8 pr-8 text-xs text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-1 focus:ring-primary"
           />
           {search && (
             <button
@@ -221,14 +221,14 @@ export function StoryCategoriesField({
 
         {/* Dropdown Popover Container */}
         {isOpen && (
-          <div className="absolute left-0 right-0 top-full z-50 mt-1 max-h-56 overflow-y-auto rounded-md border border-border bg-popover p-1.5 shadow-lg text-popover-foreground flex flex-col gap-1">
+          <div className="absolute left-0 right-0 top-full z-50 mt-1 max-h-56 overflow-y-auto rounded-sm border border-border bg-popover p-1.5 shadow-lg text-popover-foreground flex flex-col gap-1">
             {/* Create New Category Button */}
             {search.trim().length > 0 && !hasExactMatch && (
               <button
                 type="button"
                 onClick={handleCreateCategory}
                 disabled={isCreating}
-                className="flex items-center justify-between rounded-md border border-dashed border-primary/50 bg-primary/5 hover:bg-primary/10 px-2.5 py-1.5 text-xs font-medium text-primary transition cursor-pointer disabled:opacity-50"
+                className="flex items-center justify-between rounded-sm border border-dashed border-primary/50 bg-primary/5 hover:bg-primary/10 px-2.5 py-1.5 text-xs font-medium text-primary transition cursor-pointer disabled:opacity-50"
               >
                 <span className="flex items-center gap-1.5 truncate">
                   <Plus className="h-3.5 w-3.5 shrink-0" />
@@ -249,8 +249,8 @@ export function StoryCategoriesField({
                 {search
                   ? "No matching unselected categories found."
                   : selectedCategories.length > 0 && categories.length === selectedCategories.length
-                  ? "All categories selected."
-                  : "No categories available."}
+                    ? "All categories selected."
+                    : "No categories available."}
               </p>
             ) : (
               availableCategories.map((cat) => {
@@ -260,7 +260,7 @@ export function StoryCategoriesField({
                   <div
                     key={cat.id}
                     onClick={() => handleSelectCategory(cat.name)}
-                    className="flex items-center justify-between rounded-md px-2.5 py-1.5 text-xs transition cursor-pointer select-none hover:bg-accent hover:text-accent-foreground text-foreground"
+                    className="flex items-center justify-between rounded-sm px-2.5 py-1.5 text-xs transition cursor-pointer select-none hover:bg-accent hover:text-accent-foreground text-foreground"
                   >
                     <div className="flex items-center gap-2 min-w-0 flex-1 mr-2">
                       <Plus className="h-3.5 w-3.5 text-muted-foreground shrink-0" />

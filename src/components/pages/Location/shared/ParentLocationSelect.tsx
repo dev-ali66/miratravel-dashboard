@@ -189,7 +189,7 @@ export function ParentLocationSelect({
               type="button"
               onClick={handleClear}
               className={cn(
-                "flex w-full items-center justify-between rounded-md px-2.5 py-2 text-left text-xs transition-colors hover:bg-muted/70 cursor-pointer",
+                "flex w-full items-center justify-between rounded-sm px-2.5 py-2 text-left text-xs transition-colors hover:bg-muted/70 cursor-pointer",
                 !value && "bg-primary/10 font-semibold text-primary"
               )}
             >
@@ -226,7 +226,7 @@ export function ParentLocationSelect({
                     type="button"
                     onClick={() => handleSelect(option)}
                     className={cn(
-                      "flex w-full items-center justify-between gap-2.5 rounded-md p-2 text-left text-xs transition-colors hover:bg-muted/70 cursor-pointer",
+                      "flex w-full items-center justify-between gap-2.5 rounded-sm p-2 text-left text-xs transition-colors hover:bg-muted/70 cursor-pointer",
                       isSelected && "bg-primary/10 font-semibold text-primary"
                     )}
                   >

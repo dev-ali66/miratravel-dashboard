@@ -32,14 +32,14 @@ export function RegionalKnowledgePreview({ section }: RegionalKnowledgePreviewPr
               <DynamicStyledTextPreview as="div" data={section.description} fallbackColor={THEME_COLORS.sub} />
             </div>
 
-            <div className="relative w-full aspect-[16/9] lg:aspect-[1106/480] overflow-hidden rounded-md shadow-sm">
+            <div className="relative w-full aspect-[16/9] lg:aspect-[1106/480] overflow-hidden rounded-sm shadow-sm">
               <UniversalMultimediaPreview multimedia={section.multimedia1} />
             </div>
           </div>
 
           {/* Right Column: Top Image + Bordered Detailed Editorial Text */}
           <div className="lg:col-span-5 flex flex-col items-start w-full pt-0 lg:pt-14 xl:pt-16">
-            <div className="relative w-full aspect-[16/9] lg:aspect-[533/288] overflow-hidden rounded-md shadow-sm mb-6 xl:mb-8">
+            <div className="relative w-full aspect-[16/9] lg:aspect-[533/288] overflow-hidden rounded-sm shadow-sm mb-6 xl:mb-8">
               <UniversalMultimediaPreview multimedia={section.multimedia2} />
             </div>
 

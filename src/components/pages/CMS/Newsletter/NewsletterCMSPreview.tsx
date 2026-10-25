@@ -15,22 +15,20 @@ export function NewsletterCMSPreview() {
         <button
           type="button"
           onClick={() => setActiveTab("subscribe")}
-          className={`px-3 py-1.5 rounded-md transition cursor-pointer ${
-            activeTab === "subscribe"
+          className={`px-3 py-1.5 rounded-sm transition cursor-pointer ${activeTab === "subscribe"
               ? "bg-primary text-primary-foreground font-semibold"
               : "bg-muted/50 hover:bg-muted text-muted-foreground"
-          }`}
+            }`}
         >
           Subscribe Layout
         </button>
         <button
           type="button"
           onClick={() => setActiveTab("unsubscribe")}
-          className={`px-3 py-1.5 rounded-md transition cursor-pointer ${
-            activeTab === "unsubscribe"
+          className={`px-3 py-1.5 rounded-sm transition cursor-pointer ${activeTab === "unsubscribe"
               ? "bg-primary text-primary-foreground font-semibold"
               : "bg-muted/50 hover:bg-muted text-muted-foreground"
-          }`}
+            }`}
         >
           Unsubscribe Layout
         </button>

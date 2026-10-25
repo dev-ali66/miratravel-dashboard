@@ -14,8 +14,8 @@ export function ImageBlockForm({ block, onChange, index = 0 }: ImageBlockFormPro
   const rawItems = Array.isArray(block.items)
     ? block.items
     : block.multimedia
-    ? [block.multimedia]
-    : []
+      ? [block.multimedia]
+      : []
 
   const updateItem = (itemIdx: number, val: any) => {
     const next = [...rawItems]
@@ -125,7 +125,7 @@ export function ImageBlockForm({ block, onChange, index = 0 }: ImageBlockFormPro
         <button
           type="button"
           onClick={addItem}
-          className="flex items-center justify-center gap-1.5 rounded-md border border-dashed border-primary/40 bg-primary/5 hover:bg-primary/10 py-2 text-xs font-medium text-primary cursor-pointer transition shadow-2xs"
+          className="flex items-center justify-center gap-1.5 rounded-sm border border-dashed border-primary/40 bg-primary/5 hover:bg-primary/10 py-2 text-xs font-medium text-primary cursor-pointer transition shadow-2xs"
         >
           <Plus className="h-4 w-4" /> Add Image
         </button>

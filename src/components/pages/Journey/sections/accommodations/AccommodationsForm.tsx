@@ -188,7 +188,7 @@ export function AccommodationsForm({
       <div className="flex flex-col gap-5">
 
         {/* PART 1: ACCOMMODATION PHILOSOPHY */}
-        <div className="rounded-xl border border-border/70 bg-card overflow-hidden shadow-2xs">
+        <div className="rounded-md border border-border/70 bg-card overflow-hidden shadow-2xs">
           <button
             type="button"
             onClick={() => togglePart("part1")}
@@ -327,7 +327,7 @@ export function AccommodationsForm({
         </div>
 
         {/* PART 2: DESTINATION BY DESTINATION STAYS */}
-        <div className="rounded-xl border border-border/70 bg-card overflow-hidden shadow-2xs">
+        <div className="rounded-md border border-border/70 bg-card overflow-hidden shadow-2xs">
           <button
             type="button"
             onClick={() => togglePart("part2")}
@@ -399,7 +399,7 @@ export function AccommodationsForm({
                   return (
                     <div
                       key={idx}
-                      className="rounded-xl border border-border/70 bg-muted/20 overflow-hidden shadow-2xs"
+                      className="rounded-md border border-border/70 bg-muted/20 overflow-hidden shadow-2xs"
                     >
                       <div
                         onClick={() => setOpenStay(isStayOpen ? null : idx)}
@@ -509,7 +509,7 @@ export function AccommodationsForm({
         </div>
 
         {/* PART 3: STANDARDS / WHAT YOU CAN EXPECT */}
-        <div className="rounded-xl border border-border/70 bg-card overflow-hidden shadow-2xs">
+        <div className="rounded-md border border-border/70 bg-card overflow-hidden shadow-2xs">
           <button
             type="button"
             onClick={() => togglePart("part3")}
@@ -602,7 +602,7 @@ export function AccommodationsForm({
         </div>
 
         {/* PART 4: VISUAL REFERENCE & STYLE EXAMPLES */}
-        <div className="rounded-xl border border-border/70 bg-card overflow-hidden shadow-2xs">
+        <div className="rounded-md border border-border/70 bg-card overflow-hidden shadow-2xs">
           <button
             type="button"
             onClick={() => togglePart("part4")}

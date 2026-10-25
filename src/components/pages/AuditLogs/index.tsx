@@ -6,7 +6,6 @@ import {
   ShieldCheck,
   CheckCircle2,
   AlertTriangle,
-  Download,
   Info,
   Lock,
   Terminal,
@@ -29,6 +28,9 @@ import {
   FilterGroup,
   FilterSearch,
   FilterSelect,
+  FilterActions,
+  FilterSegmentButton,
+  FilterExportButton,
   FilterResetButton,
 } from "@/components/shared/FilterToolbar"
 import { useAuditSocket, type LiveAuditLog } from "@/hooks/audit/useAuditSocket"
@@ -160,6 +162,16 @@ export default function AuditLogsPage() {
     })
   }
 
+  const handleExportLogs = () => {
+    const jsonStr = JSON.stringify(allLogs, null, 2)
+    const blob = new Blob([jsonStr], { type: "application/json" })
+    const url = URL.createObjectURL(blob)
+    const a = document.createElement("a")
+    a.href = url
+    a.download = `audit-logs-${new Date().toISOString().slice(0, 10)}.json`
+    a.click()
+  }
+
   const handleSimulateEvent = async () => {
     setIsSimulating(true)
     try {
@@ -197,7 +209,7 @@ export default function AuditLogsPage() {
       const chosen = sampleEvents[Math.floor(Math.random() * sampleEvents.length)]
       const baseUrl = (import.meta.env.VITE_API_URL || "http://localhost:5010/api/v1").replace(/\/+$/, '')
       const auditSimulateUrl = baseUrl.endsWith('/api/v1') ? `${baseUrl}/audit/simulate` : `${baseUrl}/api/v1/audit/simulate`
-      
+
       await axios.post(auditSimulateUrl, chosen, {
         headers: {
           Authorization: `Bearer ${localStorage.getItem("accessToken") || ""}`,
@@ -258,64 +270,106 @@ export default function AuditLogsPage() {
         }
       />
 
-      {/* Stream Status & Actions Bar */}
-      <div className="flex flex-wrap items-center justify-between gap-2 rounded-xl border border-border/60 bg-card/60 p-1.5 sm:p-2 backdrop-blur-md">
-        <div
-          className={`inline-flex items-center gap-1.5 rounded-full px-2.5 py-1 text-xs font-semibold ${
-            isConnected
-              ? "bg-emerald-500/10 text-emerald-600 border border-emerald-500/20 dark:text-emerald-400"
-              : "bg-amber-500/10 text-amber-600 border border-amber-500/20 dark:text-amber-400"
-          }`}
-        >
-          <Radio className={`size-3.5 ${isConnected ? "animate-pulse text-emerald-500" : "text-amber-500"}`} />
-          <span>{isConnected ? "🟢 Live Audit Stream" : "🟡 Connecting..."}</span>
-        </div>
-
-        <div className="flex flex-wrap items-center gap-1.5 sm:gap-2">
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={() => setShowTerminal(!showTerminal)}
-            className="gap-1.5 text-xs h-8 sm:h-8.5 rounded-lg px-2.5"
-          >
-            <Terminal className="size-3.5" />
-            <span>{showTerminal ? "Hide Live Terminal" : "Show Live Terminal"}</span>
-          </Button>
-
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={handleSimulateEvent}
-            disabled={isSimulating}
-            className="gap-1.5 text-xs h-8 sm:h-8.5 rounded-lg px-2.5 bg-primary/5 hover:bg-primary/10 border-primary/20 text-primary"
-          >
-            <Sparkles className="size-3.5" />
-            <span>{isSimulating ? "Dispatching..." : "Simulate Event"}</span>
-          </Button>
-
-          <Button
-            variant="outline"
-            size="sm"
-            className="flex items-center gap-1.5 text-xs h-8 sm:h-8.5 rounded-lg px-2.5"
-            onClick={() => {
-              const jsonStr = JSON.stringify(allLogs, null, 2)
-              const blob = new Blob([jsonStr], { type: "application/json" })
-              const url = URL.createObjectURL(blob)
-              const a = document.createElement("a")
-              a.href = url
-              a.download = `audit-logs-${new Date().toISOString().slice(0, 10)}.json`
-              a.click()
+      {/* Unified Segmented Filter Toolbar */}
+      <FilterToolbar>
+        <FilterGroup>
+          {/* Search expands to take all remaining space on left */}
+          <FilterSearch
+            value={search}
+            onChange={(val) => {
+              setSearch(val)
+              setCurrentPage(1)
             }}
-          >
-            <Download className="h-3.5 w-3.5" />
-            <span>Export Logs</span>
-          </Button>
-        </div>
-      </div>
+            placeholder="Search by actor, action, ID..."
+            width="w-full flex-1 min-w-[180px]"
+          />
+        </FilterGroup>
+
+        <FilterActions>
+          {/* Live Socket Status Indicator */}
+          <div className="h-10 px-3 flex items-center gap-2 text-xs font-semibold select-none whitespace-nowrap">
+            <Radio className={`size-3.5 ${isConnected ? "animate-pulse text-emerald-500" : "text-amber-500"}`} />
+            <span className={isConnected ? "text-emerald-600 dark:text-emerald-400" : "text-amber-600 dark:text-amber-400"}>
+              {isConnected ? "Live Stream" : "Connecting..."}
+            </span>
+          </div>
+
+          {/* Toggle Live Terminal */}
+          <FilterSegmentButton
+            onClick={() => setShowTerminal(!showTerminal)}
+            label={showTerminal ? "Hide Terminal" : "Live Terminal"}
+            icon={Terminal}
+          />
+
+          {/* Simulate Event Button */}
+          <FilterSegmentButton
+            onClick={handleSimulateEvent}
+            label={isSimulating ? "Dispatching..." : "Simulate Event"}
+            icon={Sparkles}
+            disabled={isSimulating}
+          />
+
+          {/* Action Filter */}
+          <FilterSelect
+            value={actionFilter}
+            onChange={(val) => {
+              setActionFilter(val)
+              setCurrentPage(1)
+            }}
+            options={[
+              { label: "Booking Actions", value: "BOOKING" },
+              { label: "Payment Actions", value: "PAYMENT" },
+              { label: "Authentication", value: "AUTH" },
+              { label: "Editorial / Stories", value: "STORY" },
+              { label: "User Management", value: "USER" },
+            ]}
+            allLabel="All Actions"
+            allValue="ALL"
+            placeholder="Action: All"
+            width="min-w-[125px] max-w-[150px]"
+          />
+
+          {/* Status Filter */}
+          <FilterSelect
+            value={statusFilter}
+            onChange={(val) => {
+              setStatusFilter(val)
+              setCurrentPage(1)
+            }}
+            options={[
+              { label: "Success", value: "SUCCESS" },
+              { label: "Warning", value: "WARNING" },
+              { label: "Failed", value: "FAILED" },
+            ]}
+            allLabel="All Statuses"
+            allValue="ALL"
+            placeholder="Status: All"
+            width="min-w-[110px] max-w-[130px]"
+          />
+
+          {/* Borderless Segmented Export Logs Button */}
+          <FilterExportButton
+            onClick={handleExportLogs}
+            label="Export Logs"
+            disabled={allLogs.length === 0}
+          />
+
+          {/* Universal Far-Right Refresh Button */}
+          <FilterResetButton
+            onClick={() => {
+              setSearch("")
+              setActionFilter("ALL")
+              setStatusFilter("ALL")
+              setCurrentPage(1)
+            }}
+            title="Refresh & Reset"
+          />
+        </FilterActions>
+      </FilterToolbar>
 
       {/* Live Socket Audit Terminal Console */}
       {showTerminal && (
-        <div className="rounded-xl border border-zinc-800 bg-zinc-950 text-zinc-200 shadow-xl overflow-hidden font-mono text-xs">
+        <div className="rounded-md border border-zinc-800 bg-zinc-950 text-zinc-200 shadow-xl overflow-hidden font-mono text-xs">
           <div className="flex items-center justify-between border-b border-zinc-800 bg-zinc-900 px-4 py-2.5">
             <div className="flex items-center gap-2">
               <div className="flex gap-1.5">
@@ -360,19 +414,18 @@ export default function AuditLogsPage() {
                       log.status === "FAILED"
                         ? THEME_COLORS.error
                         : log.status === "WARNING"
-                        ? THEME_COLORS.warning
-                        : THEME_COLORS.success,
+                          ? THEME_COLORS.warning
+                          : THEME_COLORS.success,
                   }}
                 >
                   <span className="text-zinc-500 shrink-0">[{new Date(log.timestamp).toLocaleTimeString()}]</span>
                   <span
-                    className={`font-bold px-1 rounded text-[10px] uppercase shrink-0 ${
-                      log.status === "FAILED"
-                        ? "bg-rose-950/80 text-rose-400 border border-rose-800/40"
-                        : log.status === "WARNING"
+                    className={`font-bold px-1 rounded text-[10px] uppercase shrink-0 ${log.status === "FAILED"
+                      ? "bg-rose-950/80 text-rose-400 border border-rose-800/40"
+                      : log.status === "WARNING"
                         ? "bg-amber-950/80 text-amber-400 border border-amber-800/40"
                         : "bg-emerald-950/80 text-emerald-400 border border-emerald-800/40"
-                    }`}
+                      }`}
                   >
                     {log.action}
                   </span>
@@ -386,62 +439,8 @@ export default function AuditLogsPage() {
         </div>
       )}
 
-
-
-      {/* Filter Toolbar */}
-      <FilterToolbar>
-        <FilterGroup>
-          <FilterSearch
-            value={search}
-            onChange={(val) => setSearch(val)}
-            placeholder="Search by actor, action, ID..."
-            width="w-48 sm:w-64 shrink-0"
-          />
-
-          <FilterSelect
-            value={actionFilter}
-            onChange={(val) => setActionFilter(val)}
-            options={[
-              { label: "Booking Actions", value: "BOOKING" },
-              { label: "Payment Actions", value: "PAYMENT" },
-              { label: "Authentication", value: "AUTH" },
-              { label: "Editorial / Stories", value: "STORY" },
-              { label: "User Management", value: "USER" },
-            ]}
-            allLabel="All Actions"
-            allValue="ALL"
-            placeholder="Action: All"
-            width="min-w-[125px] max-w-[150px]"
-          />
-
-          <FilterSelect
-            value={statusFilter}
-            onChange={(val) => setStatusFilter(val)}
-            options={[
-              { label: "Success", value: "SUCCESS" },
-              { label: "Warning", value: "WARNING" },
-              { label: "Failed", value: "FAILED" },
-            ]}
-            allLabel="All Statuses"
-            allValue="ALL"
-            placeholder="Status: All"
-            width="min-w-[110px] max-w-[130px]"
-          />
-
-          {(search || actionFilter !== "ALL" || statusFilter !== "ALL") && (
-            <FilterResetButton
-              onClick={() => {
-                setSearch("")
-                setActionFilter("ALL")
-                setStatusFilter("ALL")
-              }}
-            />
-          )}
-        </FilterGroup>
-      </FilterToolbar>
-
       {/* Logs Table */}
-      <div className="overflow-hidden rounded-xl border border-border/60 bg-card/60 shadow-sm backdrop-blur-xl">
+      <div className="overflow-hidden rounded-md border border-border/60 bg-card/60 shadow-sm backdrop-blur-xl">
         <div className="overflow-x-auto">
           <table className="w-full text-left text-sm">
             <thead className="border-b border-border/60 bg-muted/40 text-xs font-semibold uppercase tracking-wider text-muted-foreground">
@@ -459,83 +458,81 @@ export default function AuditLogsPage() {
               {filteredLogs
                 .slice(0, currentPage * pageSize)
                 .map((log) => (
-                <tr key={log.id} className="transition-colors hover:bg-muted/30">
-                  <td className="px-5 py-3.5 text-xs text-muted-foreground whitespace-nowrap">
-                    {formatDate(log.timestamp)}
-                  </td>
-                  <td className="px-5 py-3.5">
-                    <div className="flex flex-col">
-                      <span className="font-semibold text-foreground text-xs">{log.actorName}</span>
-                      <span className="text-[11px] text-muted-foreground">{log.actorEmail}</span>
-                    </div>
-                  </td>
-                  <td className="px-5 py-3.5">
-                    <span className="inline-block rounded-md border border-border/80 bg-background/80 px-2 py-0.5 text-xs font-mono font-semibold">
-                      {log.action}
-                    </span>
-                  </td>
-                  <td className="px-5 py-3.5 text-xs">
-                    <span className="text-muted-foreground">{log.entityType}:</span>{" "}
-                    <span className="font-semibold text-foreground">{log.entityId}</span>
-                  </td>
-                  <td className="px-5 py-3.5">
-                    {log.status === "SUCCESS" ? (
-                      <span className="inline-flex items-center gap-1 text-xs font-medium text-emerald-600 dark:text-emerald-400">
-                        <CheckCircle2 className="h-3.5 w-3.5" />
-                        Success
+                  <tr key={log.id} className="transition-colors hover:bg-muted/30">
+                    <td className="px-5 py-3.5 text-xs text-muted-foreground whitespace-nowrap">
+                      {formatDate(log.timestamp)}
+                    </td>
+                    <td className="px-5 py-3.5">
+                      <div className="flex flex-col">
+                        <span className="font-semibold text-foreground text-xs">{log.actorName}</span>
+                        <span className="text-[11px] text-muted-foreground">{log.actorEmail}</span>
+                      </div>
+                    </td>
+                    <td className="px-5 py-3.5">
+                      <span className="inline-block rounded-sm border border-border/80 bg-background/80 px-2 py-0.5 text-xs font-mono font-semibold">
+                        {log.action}
                       </span>
-                    ) : log.status === "WARNING" ? (
-                      <span className="inline-flex items-center gap-1 text-xs font-medium text-amber-600 dark:text-amber-400">
-                        <AlertTriangle className="h-3.5 w-3.5" />
-                        Warning
-                      </span>
-                    ) : (
-                      <span className="inline-flex items-center gap-1 text-xs font-medium text-rose-600 dark:text-rose-400">
-                        <ShieldAlert className="h-3.5 w-3.5" />
-                        Failed
-                      </span>
-                    )}
-                  </td>
-                  <td className="px-5 py-3.5 text-xs font-mono text-muted-foreground">
-                    {log.ipAddress}
-                  </td>
-                  <td className="px-5 py-3.5 text-right">
-                    <Button
-                      variant="ghost"
-                      size="sm"
-                      onClick={() => setSelectedLog(log)}
-                      className="h-7 text-xs"
-                    >
-                      <Info className="mr-1 h-3.5 w-3.5" />
-                      Details
-                    </Button>
-                  </td>
-                </tr>
-              ))}
+                    </td>
+                    <td className="px-5 py-3.5 text-xs">
+                      <span className="text-muted-foreground">{log.entityType}:</span>{" "}
+                      <span className="font-semibold text-foreground">{log.entityId}</span>
+                    </td>
+                    <td className="px-5 py-3.5">
+                      {log.status === "SUCCESS" ? (
+                        <span className="inline-flex items-center gap-1 text-xs font-medium text-emerald-600 dark:text-emerald-400">
+                          <CheckCircle2 className="h-3.5 w-3.5" />
+                          Success
+                        </span>
+                      ) : log.status === "WARNING" ? (
+                        <span className="inline-flex items-center gap-1 text-xs font-medium text-amber-600 dark:text-amber-400">
+                          <AlertTriangle className="h-3.5 w-3.5" />
+                          Warning
+                        </span>
+                      ) : (
+                        <span className="inline-flex items-center gap-1 text-xs font-medium text-rose-600 dark:text-rose-400">
+                          <ShieldAlert className="h-3.5 w-3.5" />
+                          Failed
+                        </span>
+                      )}
+                    </td>
+                    <td className="px-5 py-3.5 text-xs font-mono text-muted-foreground">
+                      {log.ipAddress}
+                    </td>
+                    <td className="px-5 py-3.5 text-right">
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        onClick={() => setSelectedLog(log)}
+                        className="h-7 text-xs"
+                      >
+                        <Info className="mr-1 h-3.5 w-3.5" />
+                        Details
+                      </Button>
+                    </td>
+                  </tr>
+                ))}
             </tbody>
           </table>
         </div>
 
         {/* Universal Pagination */}
         {filteredLogs.length > 0 && (
-          <div className="border-t border-border/60 bg-muted/10 px-5 py-3">
-            <Pagination
-              mode="infinite"
-              currentPage={currentPage}
-              totalPages={Math.max(1, Math.ceil(filteredLogs.length / pageSize))}
-              totalItems={filteredLogs.length}
-              pageSize={pageSize}
-              pageSizeOptions={[10, 20, 50, 100]}
-              loadedCount={Math.min(filteredLogs.length, currentPage * pageSize)}
-              hasMore={currentPage * pageSize < filteredLogs.length}
-              onLoadMore={() => setCurrentPage((p) => p + 1)}
-              onPageChange={setCurrentPage}
-              onPageSizeChange={(sz) => {
-                setPageSize(sz)
-                setCurrentPage(1)
-              }}
-            />
-          </div>
+          <Pagination
+            mode="infinite"
+            currentPage={currentPage}
+            totalPages={Math.max(1, Math.ceil(filteredLogs.length / pageSize))}
+            totalItems={filteredLogs.length}
+            pageSize={pageSize}
+            pageSizeOptions={[10, 20, 50, 100]}
+            loadedCount={Math.min(filteredLogs.length, currentPage * pageSize)}
+            hasMore={currentPage * pageSize < filteredLogs.length}
+            onLoadMore={() => setCurrentPage((p) => p + 1)}
+            onPageChange={setCurrentPage}
+            onPageSizeChange={(sz) => {
+              setPageSize(sz)
+              setCurrentPage(1)
+            }}
+          />
         )}
       </div>
 
@@ -564,7 +561,7 @@ export default function AuditLogsPage() {
 
               <div>
                 <span className="font-semibold text-foreground">Event Payload Description:</span>
-                <p className="mt-1 rounded-md bg-background p-2.5 border border-border text-muted-foreground">
+                <p className="mt-1 rounded-sm bg-background p-2.5 border border-border text-muted-foreground">
                   {selectedLog.details}
                 </p>
               </div>

@@ -31,12 +31,12 @@ export function ImageShowPreview({
     fit === "contain"
       ? "object-contain"
       : fit === "fill"
-      ? "object-fill"
-      : fit === "none"
-      ? "object-none"
-      : fit === "scale-down"
-      ? "object-scale-down"
-      : "object-cover"
+        ? "object-fill"
+        : fit === "none"
+          ? "object-none"
+          : fit === "scale-down"
+            ? "object-scale-down"
+            : "object-cover"
 
   const hasRatio = Boolean(mode !== "background" && aspectRatio && aspectRatio !== "auto")
   const ratioVal = hasRatio && aspectRatio ? aspectRatio.replace(":", "/") : undefined
@@ -68,7 +68,7 @@ export function ImageShowPreview({
       ) : (
         <div
           className={cn(
-            "group relative flex h-full w-full min-h-[140px] flex-1 flex-col items-center justify-center gap-2.5 rounded-xl border-2 border-dashed border-emerald-500/30 bg-stone-100/90 dark:bg-stone-800/90 p-5 text-center select-none shadow-2xs overflow-hidden",
+            "group relative flex h-full w-full min-h-[140px] flex-1 flex-col items-center justify-center gap-2.5 rounded-md border-2 border-dashed border-emerald-500/30 bg-stone-100/90 dark:bg-stone-800/90 p-5 text-center select-none shadow-2xs overflow-hidden",
             mode === "background" && "rounded-none border-0 bg-neutral-900/80"
           )}
         >
@@ -77,7 +77,7 @@ export function ImageShowPreview({
           <div className="pointer-events-none absolute -bottom-12 -right-12 h-32 w-32 rounded-full bg-stone-500/10 blur-2xl" />
 
           {/* Icon Badge */}
-          <div className="relative flex h-11 w-11 items-center justify-center rounded-xl bg-white dark:bg-stone-900 shadow-sm border border-emerald-500/20 text-emerald-600 shrink-0">
+          <div className="relative flex h-11 w-11 items-center justify-center rounded-md bg-white dark:bg-stone-900 shadow-sm border border-emerald-500/20 text-emerald-600 shrink-0">
             <ImageIcon className="h-5 w-5" />
           </div>
 

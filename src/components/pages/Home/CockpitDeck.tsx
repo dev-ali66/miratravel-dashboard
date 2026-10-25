@@ -163,7 +163,7 @@ export default function CockpitDeck() {
       {/* ========================================================================= */}
       <div className="grid gap-2 grid-cols-1 lg:grid-cols-3 w-full">
         {/* CARD 1: Dynamic Revenue & Booking Trajectory Spline Wave */}
-        <div className="flex flex-col justify-between rounded-xl border border-border/70 bg-card/90 backdrop-blur-md p-3 sm:p-3.5 shadow-xs h-[238px] overflow-hidden">
+        <div className="flex flex-col justify-between rounded-md border border-border/70 bg-card/90 backdrop-blur-md p-3 sm:p-3.5 shadow-xs h-[238px] overflow-hidden">
           {/* Top Control Bar */}
           <div className="flex items-center justify-between gap-2 pb-1.5 border-b border-border/40">
             <div className="flex items-center gap-2 min-w-0">
@@ -178,7 +178,7 @@ export default function CockpitDeck() {
               <button
                 onClick={() => setChartMode("revenue")}
                 className={cn(
-                  "flex items-center gap-1.5 px-2 py-0.5 rounded-md text-[10px] font-mono transition-all",
+                  "flex items-center gap-1.5 px-2 py-0.5 rounded-sm text-[10px] font-mono transition-all",
                   chartMode === "revenue"
                     ? "bg-chart-4 text-white font-bold shadow-2xs"
                     : "text-muted-foreground hover:text-foreground hover:bg-muted/50"
@@ -190,7 +190,7 @@ export default function CockpitDeck() {
               <button
                 onClick={() => setChartMode("bookings")}
                 className={cn(
-                  "flex items-center gap-1.5 px-2 py-0.5 rounded-md text-[10px] font-mono transition-all",
+                  "flex items-center gap-1.5 px-2 py-0.5 rounded-sm text-[10px] font-mono transition-all",
                   chartMode === "bookings"
                     ? "bg-chart-5 text-white font-bold shadow-2xs"
                     : "text-muted-foreground hover:text-foreground hover:bg-muted/50"
@@ -307,7 +307,7 @@ export default function CockpitDeck() {
 
         {/* CARD 2: Infrastructure & Real-Time Telemetry */}
         {/* CARD 2: VPS & PM2 Infrastructure Telemetry */}
-        <div className="flex flex-col justify-between rounded-xl border border-border/70 bg-card/90 backdrop-blur-md p-3 sm:p-3.5 shadow-xs h-[238px] overflow-hidden">
+        <div className="flex flex-col justify-between rounded-md border border-border/70 bg-card/90 backdrop-blur-md p-3 sm:p-3.5 shadow-xs h-[238px] overflow-hidden">
           {/* Top Control Bar */}
           <div className="flex items-center justify-between gap-2 pb-1.5 border-b border-border/40">
             <div className="flex items-center gap-2 min-w-0">
@@ -353,7 +353,7 @@ export default function CockpitDeck() {
                   />
                 </div>
               </div>
-              <div className="h-6 w-6 rounded-md bg-chart-4/15 border border-chart-4/30 flex items-center justify-center shrink-0">
+              <div className="h-6 w-6 rounded-sm bg-chart-4/15 border border-chart-4/30 flex items-center justify-center shrink-0">
                 <Cpu className="h-3.5 w-3.5 text-chart-4" />
               </div>
             </div>
@@ -378,7 +378,7 @@ export default function CockpitDeck() {
                   />
                 </div>
               </div>
-              <div className="h-6 w-6 rounded-md bg-chart-5/15 border border-chart-5/30 flex items-center justify-center shrink-0">
+              <div className="h-6 w-6 rounded-sm bg-chart-5/15 border border-chart-5/30 flex items-center justify-center shrink-0">
                 <Wifi className="h-3.5 w-3.5 text-chart-5" />
               </div>
             </div>
@@ -436,7 +436,7 @@ export default function CockpitDeck() {
         </div>
 
         {/* CARD 3: Global Geographic Intelligence */}
-        <div className="flex flex-col justify-between rounded-xl border border-border/70 bg-card/90 backdrop-blur-md p-3 sm:p-3.5 shadow-xs h-[238px] overflow-hidden">
+        <div className="flex flex-col justify-between rounded-md border border-border/70 bg-card/90 backdrop-blur-md p-3 sm:p-3.5 shadow-xs h-[238px] overflow-hidden">
           {/* Top Control Bar */}
           <div className="flex items-center justify-between gap-2 pb-1.5 border-b border-border/40">
             <div className="flex items-center gap-2 min-w-0">
@@ -531,7 +531,7 @@ export default function CockpitDeck() {
       {/* ========================================================================= */}
       <div className="grid gap-2 grid-cols-1 lg:grid-cols-2 w-full">
         {/* CARD 4 (50% WIDE): Booking Pipeline & Live Expeditions Ledger */}
-        <div className="flex flex-col justify-between rounded-xl border border-border/70 bg-card/90 backdrop-blur-md p-3 sm:p-3.5 shadow-xs h-[238px] overflow-hidden">
+        <div className="flex flex-col justify-between rounded-md border border-border/70 bg-card/90 backdrop-blur-md p-3 sm:p-3.5 shadow-xs h-[238px] overflow-hidden">
           {/* Top Control Bar */}
           <div className="flex items-center justify-between gap-2 pb-1.5 border-b border-border/40">
             <div className="flex items-center gap-2 min-w-0">
@@ -622,7 +622,7 @@ export default function CockpitDeck() {
                   <div
                     key={b.id}
                     onClick={() => navigate("/bookings")}
-                    className="flex items-center justify-between px-2 py-1 rounded-md border border-border/50 bg-muted/25 hover:bg-muted/50 transition-colors cursor-pointer h-[38px] shrink-0"
+                    className="flex items-center justify-between px-2 py-1 rounded-sm border border-border/50 bg-muted/25 hover:bg-muted/50 transition-colors cursor-pointer h-[38px] shrink-0"
                   >
                     <div className="min-w-0 pr-1 flex flex-col justify-center">
                       <span className="font-bold text-foreground text-[11px] leading-tight truncate">
@@ -659,7 +659,7 @@ export default function CockpitDeck() {
         </div>
 
         {/* CARD 5 (50% WIDE): Leads, Content & Community Ecosystem */}
-        <div className="flex flex-col justify-between rounded-xl border border-border/70 bg-card/90 backdrop-blur-md p-3 sm:p-3.5 shadow-xs h-[238px] overflow-hidden">
+        <div className="flex flex-col justify-between rounded-md border border-border/70 bg-card/90 backdrop-blur-md p-3 sm:p-3.5 shadow-xs h-[238px] overflow-hidden">
           {/* Top Control Bar */}
           <div className="flex items-center justify-between gap-2 pb-1.5 border-b border-border/40">
             <div className="flex items-center gap-2 min-w-0">
@@ -681,7 +681,7 @@ export default function CockpitDeck() {
               className="group p-2 rounded-lg border border-chart-5/20 bg-chart-5/5 hover:border-chart-5/50 hover:bg-card transition-all cursor-pointer"
             >
               <div className="flex items-center justify-between gap-2 mb-1">
-                <div className="h-6 w-6 rounded-md bg-chart-5/15 border border-chart-5/30 flex items-center justify-center text-chart-5 group-hover:bg-chart-5 group-hover:text-white transition-colors">
+                <div className="h-6 w-6 rounded-sm bg-chart-5/15 border border-chart-5/30 flex items-center justify-center text-chart-5 group-hover:bg-chart-5 group-hover:text-white transition-colors">
                   <Compass className="h-3.5 w-3.5" />
                 </div>
                 <ArrowUpRight className="h-3 w-3 text-muted-foreground/60 group-hover:text-chart-5 transition-colors" />
@@ -700,7 +700,7 @@ export default function CockpitDeck() {
               className="group p-2 rounded-lg border border-chart-2/20 bg-chart-2/5 hover:border-chart-2/50 hover:bg-card transition-all cursor-pointer"
             >
               <div className="flex items-center justify-between gap-2 mb-1">
-                <div className="h-6 w-6 rounded-md bg-chart-2/15 border border-chart-2/30 flex items-center justify-center text-chart-2 group-hover:bg-chart-2 group-hover:text-white transition-colors">
+                <div className="h-6 w-6 rounded-sm bg-chart-2/15 border border-chart-2/30 flex items-center justify-center text-chart-2 group-hover:bg-chart-2 group-hover:text-white transition-colors">
                   <MessageSquare className="h-3.5 w-3.5" />
                 </div>
                 <ArrowUpRight className="h-3 w-3 text-muted-foreground/60 group-hover:text-chart-2 transition-colors" />
@@ -719,7 +719,7 @@ export default function CockpitDeck() {
               className="group p-2 rounded-lg border border-chart-3/20 bg-chart-3/5 hover:border-chart-3/50 hover:bg-card transition-all cursor-pointer"
             >
               <div className="flex items-center justify-between gap-2 mb-1">
-                <div className="h-6 w-6 rounded-md bg-chart-3/15 border border-chart-3/30 flex items-center justify-center text-chart-3 group-hover:bg-chart-3 group-hover:text-white transition-colors">
+                <div className="h-6 w-6 rounded-sm bg-chart-3/15 border border-chart-3/30 flex items-center justify-center text-chart-3 group-hover:bg-chart-3 group-hover:text-white transition-colors">
                   <Sparkles className="h-3.5 w-3.5" />
                 </div>
                 <ArrowUpRight className="h-3 w-3 text-muted-foreground/60 group-hover:text-chart-3 transition-colors" />
@@ -738,7 +738,7 @@ export default function CockpitDeck() {
               className="group p-2 rounded-lg border border-chart-4/20 bg-chart-4/5 hover:border-chart-4/50 hover:bg-card transition-all cursor-pointer"
             >
               <div className="flex items-center justify-between gap-2 mb-1">
-                <div className="h-6 w-6 rounded-md bg-chart-4/15 border border-chart-4/30 flex items-center justify-center text-chart-4 group-hover:bg-chart-4 group-hover:text-white transition-colors">
+                <div className="h-6 w-6 rounded-sm bg-chart-4/15 border border-chart-4/30 flex items-center justify-center text-chart-4 group-hover:bg-chart-4 group-hover:text-white transition-colors">
                   <BookOpen className="h-3.5 w-3.5" />
                 </div>
                 <ArrowUpRight className="h-3 w-3 text-muted-foreground/60 group-hover:text-chart-4 transition-colors" />
@@ -757,7 +757,7 @@ export default function CockpitDeck() {
               className="group p-2 rounded-lg border border-chart-5/20 bg-chart-5/5 hover:border-chart-5/50 hover:bg-card transition-all cursor-pointer"
             >
               <div className="flex items-center justify-between gap-2 mb-1">
-                <div className="h-6 w-6 rounded-md bg-chart-5/15 border border-chart-5/30 flex items-center justify-center text-chart-5 group-hover:bg-chart-5 group-hover:text-white transition-colors">
+                <div className="h-6 w-6 rounded-sm bg-chart-5/15 border border-chart-5/30 flex items-center justify-center text-chart-5 group-hover:bg-chart-5 group-hover:text-white transition-colors">
                   <Mail className="h-3.5 w-3.5" />
                 </div>
                 <ArrowUpRight className="h-3 w-3 text-muted-foreground/60 group-hover:text-chart-5 transition-colors" />
@@ -776,7 +776,7 @@ export default function CockpitDeck() {
               className="group p-2 rounded-lg border border-chart-2/20 bg-chart-2/5 hover:border-chart-2/50 hover:bg-card transition-all cursor-pointer"
             >
               <div className="flex items-center justify-between gap-2 mb-1">
-                <div className="h-6 w-6 rounded-md bg-chart-2/15 border border-chart-2/30 flex items-center justify-center text-chart-2 group-hover:bg-chart-2 group-hover:text-white transition-colors">
+                <div className="h-6 w-6 rounded-sm bg-chart-2/15 border border-chart-2/30 flex items-center justify-center text-chart-2 group-hover:bg-chart-2 group-hover:text-white transition-colors">
                   <FolderOpen className="h-3.5 w-3.5" />
                 </div>
                 <ArrowUpRight className="h-3 w-3 text-muted-foreground/60 group-hover:text-chart-2 transition-colors" />

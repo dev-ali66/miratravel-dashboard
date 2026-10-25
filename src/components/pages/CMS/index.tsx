@@ -8,11 +8,12 @@ import {
   FilterToolbar,
   FilterGroup,
   FilterSearch,
+  FilterActions,
   FilterResetButton,
 } from "@/components/shared/FilterToolbar"
 
 export default function CMSPage() {
-  const { data, isLoading } = useGetPages()
+  const { data, isLoading, refetch } = useGetPages()
 
   const fetchedPages = data?.data ?? []
 
@@ -73,7 +74,7 @@ export default function CMSPage() {
   })
 
   return (
-    <div className="w-full space-y-6 animate-in pt-2 duration-700 fade-in slide-in-from-bottom-4">
+    <div className="w-full space-y-6 animate-in pt-2 duration-500 fade-in">
       <PageHeader
         icon={FileText}
         title="Content Management"
@@ -114,24 +115,31 @@ export default function CMSPage() {
 
       <FilterToolbar>
         <FilterGroup>
+          {/* Search expands to take all space on left */}
           <FilterSearch
             value={search}
             onChange={setSearch}
             placeholder="Search CMS pages..."
+            width="w-full flex-1 min-w-[200px]"
           />
-          {search && (
-            <FilterResetButton
-              label="Reset"
-              onClick={() => setSearch("")}
-            />
-          )}
         </FilterGroup>
+
+        <FilterActions>
+          {/* Universal Far-Right Refresh Button */}
+          <FilterResetButton
+            onClick={() => {
+              setSearch("")
+              refetch?.()
+            }}
+            title="Refresh & Reset"
+          />
+        </FilterActions>
       </FilterToolbar>
 
       {isLoading ? (
         <MiraLoader text="Loading CMS pages..." className="py-12 min-h-[300px]" />
       ) : filteredPages.length === 0 ? (
-        <div className="rounded-xl border border-border/60 bg-card p-12 text-center text-muted-foreground">
+        <div className="rounded-md border border-border/60 bg-card p-12 text-center text-muted-foreground">
           No CMS pages match "{search}".
         </div>
       ) : (
@@ -139,7 +147,7 @@ export default function CMSPage() {
           {filteredPages.map((page) => (
             <div
               key={page.slug}
-              className="group relative flex flex-col gap-2 justify-between overflow-hidden rounded-xl border border-border/60 bg-card p-6 shadow-sm transition-all hover:shadow-md"
+              className="group relative flex flex-col gap-2 justify-between overflow-hidden rounded-md border border-border/60 bg-card p-6 shadow-sm transition-all hover:shadow-md"
             >
               <div>
                 <h3 className=" text-[14px] font-bold text-foreground capitalize">

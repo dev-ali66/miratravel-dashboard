@@ -185,7 +185,7 @@ export function CharacterForm({
     >
       <div className="flex flex-col gap-6">
         {/* Section Header Settings */}
-        <div className="rounded-xl border border-border/70 bg-card/60 p-4 space-y-4">
+        <div className="rounded-md border border-border/70 bg-card/60 p-4 space-y-4">
           <h4 className="text-xs font-semibold uppercase tracking-wider text-muted-foreground flex items-center gap-2">
             <Sparkles className="h-4 w-4 text-primary" />
             Section Header & Narrative
@@ -265,7 +265,7 @@ export function CharacterForm({
             return (
               <div
                 key={item.id || index}
-                className="rounded-xl border border-border/80 bg-background transition-all hover:border-border"
+                className="rounded-md border border-border/80 bg-background transition-all hover:border-border"
               >
                 {/* Item Accordion Header */}
                 <div className="flex items-center justify-between px-4 py-3 bg-muted/20 rounded-t-xl">
@@ -308,9 +308,8 @@ export function CharacterForm({
                       className="p-1 text-muted-foreground hover:text-foreground cursor-pointer"
                     >
                       <ChevronDown
-                        className={`h-4 w-4 transition-transform duration-200 ${
-                          isItemOpen ? "rotate-180" : ""
-                        }`}
+                        className={`h-4 w-4 transition-transform duration-200 ${isItemOpen ? "rotate-180" : ""
+                          }`}
                       />
                     </button>
 
@@ -397,8 +396,8 @@ export function CharacterForm({
                           Array.isArray(item.buttons) && item.buttons.length > 0
                             ? item.buttons
                             : item.href || item.linkText
-                            ? [{ label: item.linkText || "Read More", url: item.href || "#", variant: "primary" }]
-                            : []
+                              ? [{ label: item.linkText || "Read More", url: item.href || "#", variant: "primary" }]
+                              : []
                         }
                         onChange={(newButtons) => updateItem(index, "buttons", newButtons)}
                       />
@@ -423,7 +422,7 @@ export function CharacterForm({
           <button
             type="button"
             onClick={addItem}
-            className="flex items-center justify-center gap-2 rounded-xl border border-dashed border-border/80 bg-muted/10 p-3 text-xs font-medium text-muted-foreground transition-colors hover:border-primary/50 hover:bg-muted/30 hover:text-primary cursor-pointer mt-1"
+            className="flex items-center justify-center gap-2 rounded-md border border-dashed border-border/80 bg-muted/10 p-3 text-xs font-medium text-muted-foreground transition-colors hover:border-primary/50 hover:bg-muted/30 hover:text-primary cursor-pointer mt-1"
           >
             <Plus className="h-4 w-4" />
             Add Character Pillar Item
@@ -431,7 +430,7 @@ export function CharacterForm({
         </div>
 
         {/* Background Multimedia */}
-        <div className="rounded-xl border border-border/70 bg-card/60 p-4 space-y-3 pt-4">
+        <div className="rounded-md border border-border/70 bg-card/60 p-4 space-y-3 pt-4">
           <h4 className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
             Section Background Multimedia
           </h4>

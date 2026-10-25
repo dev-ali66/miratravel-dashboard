@@ -31,7 +31,7 @@ export function HighlightsPreview({ draft }: ExperiencePreviewSectionProps) {
           {highlights.items.map((item, index) => (
             <div
               key={item.id || index}
-              className="flex flex-col bg-card text-card-foreground rounded-xl p-6 lg:p-7 shadow-xs border border-border/60 hover:shadow-md transition-shadow relative overflow-hidden"
+              className="flex flex-col bg-card text-card-foreground rounded-md p-6 lg:p-7 shadow-xs border border-border/60 hover:shadow-md transition-shadow relative overflow-hidden"
             >
               <div className="text-[11px] font-bold uppercase tracking-wider text-accent mb-3">
                 {item.badge || `Highlight 0${index + 1}`}

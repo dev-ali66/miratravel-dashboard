@@ -186,7 +186,7 @@
 //       </div>
 
 //       {/* Toolbar */}
-//       <div className="flex flex-col gap-3 rounded-xl border border-border/60 bg-card/60 p-4 backdrop-blur-xl md:flex-row md:items-center md:justify-between">
+//       <div className="flex flex-col gap-3 rounded-md border border-border/60 bg-card/60 p-4 backdrop-blur-xl md:flex-row md:items-center md:justify-between">
 //         <div className="relative flex-1 min-w-[240px]">
 //           <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
 //           <Input
@@ -227,7 +227,7 @@
 //       </div>
 
 //       {/* Table */}
-//       <div className="overflow-hidden rounded-xl border border-border/60 bg-card/60 shadow-sm backdrop-blur-xl">
+//       <div className="overflow-hidden rounded-md border border-border/60 bg-card/60 shadow-sm backdrop-blur-xl">
 //         <div className="overflow-x-auto">
 //           <table className="w-full text-left text-sm">
 //             <thead className="border-b border-border/60 bg-muted/40 text-xs font-semibold uppercase tracking-wider text-muted-foreground">
@@ -435,7 +435,7 @@
 //                   </span>
 //                   <div className="flex flex-wrap gap-1.5">
 //                     {selectedInquiry.journeyTypes.map((t, i) => (
-//                       <span key={i} className="rounded-md border border-primary/30 bg-primary/10 px-2.5 py-1 text-xs font-medium text-primary">
+//                       <span key={i} className="rounded-sm border border-primary/30 bg-primary/10 px-2.5 py-1 text-xs font-medium text-primary">
 //                         {t}
 //                       </span>
 //                     ))}

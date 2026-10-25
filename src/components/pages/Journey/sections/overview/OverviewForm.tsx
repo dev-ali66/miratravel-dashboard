@@ -160,7 +160,7 @@ export function OverviewForm({
         {/* ========================================================================= */}
         {/* SUB-SECTION 1: WHY WE DESIGNED THIS JOURNEY                              */}
         {/* ========================================================================= */}
-        <div className="rounded-xl border border-border/70 bg-card overflow-hidden shadow-xs">
+        <div className="rounded-md border border-border/70 bg-card overflow-hidden shadow-xs">
           <div
             onClick={() => toggleSub(0)}
             className="flex items-center justify-between px-4 py-3 bg-muted/40 hover:bg-muted/70 cursor-pointer border-b border-border/40 transition-colors select-none"
@@ -226,7 +226,7 @@ export function OverviewForm({
         {/* ========================================================================= */}
         {/* SUB-SECTION 2: JOURNEY OVERVIEW                                           */}
         {/* ========================================================================= */}
-        <div className="rounded-xl border border-border/70 bg-card overflow-hidden shadow-xs">
+        <div className="rounded-md border border-border/70 bg-card overflow-hidden shadow-xs">
           <div
             onClick={() => toggleSub(1)}
             className="flex items-center justify-between px-4 py-3 bg-muted/40 hover:bg-muted/70 cursor-pointer border-b border-border/40 transition-colors select-none"
@@ -272,7 +272,7 @@ export function OverviewForm({
         {/* ========================================================================= */}
         {/* SUB-SECTION 3: HIGHLIGHTS                                                 */}
         {/* ========================================================================= */}
-        <div className="rounded-xl border border-border/70 bg-card overflow-hidden shadow-xs">
+        <div className="rounded-md border border-border/70 bg-card overflow-hidden shadow-xs">
           <div
             onClick={() => toggleSub(2)}
             className="flex items-center justify-between px-4 py-3 bg-muted/40 hover:bg-muted/70 cursor-pointer border-b border-border/40 transition-colors select-none"
@@ -359,7 +359,7 @@ export function OverviewForm({
         {/* ========================================================================= */}
         {/* SUB-SECTION 4: VISUAL REFERENCE                                           */}
         {/* ========================================================================= */}
-        <div className="rounded-xl border border-border/70 bg-card overflow-hidden shadow-xs">
+        <div className="rounded-md border border-border/70 bg-card overflow-hidden shadow-xs">
           <div
             onClick={() => toggleSub(3)}
             className="flex items-center justify-between px-4 py-3 bg-muted/40 hover:bg-muted/70 cursor-pointer border-b border-border/40 transition-colors select-none"
@@ -485,7 +485,7 @@ export function OverviewForm({
         {/* ========================================================================= */}
         {/* SUB-SECTION 5: IS THIS JOURNEY FOR YOU?                                  */}
         {/* ========================================================================= */}
-        <div className="rounded-xl border border-border/70 bg-card overflow-hidden shadow-xs">
+        <div className="rounded-md border border-border/70 bg-card overflow-hidden shadow-xs">
           <div
             onClick={() => toggleSub(4)}
             className="flex items-center justify-between px-4 py-3 bg-muted/40 hover:bg-muted/70 cursor-pointer border-b border-border/40 transition-colors select-none"

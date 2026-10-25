@@ -8,13 +8,12 @@ export function GuidancePreview({ block }: { block: any }) {
 
   return (
     <div
-      className={`w-full py-6 flex flex-col gap-8 items-start ${
-        isRight ? "md:flex-row-reverse" : "md:flex-row"
-      }`}
+      className={`w-full py-6 flex flex-col gap-8 items-start ${isRight ? "md:flex-row-reverse" : "md:flex-row"
+        }`}
     >
       {/* Media Side */}
       <div className="w-full md:w-5/12 shrink-0">
-        <div className="w-full overflow-hidden rounded-xl aspect-[4/3] border border-stone-200/70 shadow-2xs">
+        <div className="w-full overflow-hidden rounded-md aspect-[4/3] border border-stone-200/70 shadow-2xs">
           <UniversalMultimediaPreview
             multimedia={block.multimedia}
             mode="inline"
@@ -63,7 +62,7 @@ export function GuidancePreview({ block }: { block: any }) {
 
         {/* Local Knowledge Box */}
         {(block.knowledgeTitle?.value || block.knowledgeContent?.value) && (
-          <div className="rounded-xl bg-stone-100/90 dark:bg-stone-800/60 p-4 border border-stone-200/60 dark:border-stone-700/50 flex flex-col gap-2 mt-1">
+          <div className="rounded-md bg-stone-100/90 dark:bg-stone-800/60 p-4 border border-stone-200/60 dark:border-stone-700/50 flex flex-col gap-2 mt-1">
             <div className="flex items-center gap-1.5 text-[11px] font-bold tracking-wider text-stone-800 dark:text-stone-200 uppercase">
               <Compass className="h-3.5 w-3.5 text-gold shrink-0" />
               <DynamicStyledTextPreview data={block.knowledgeTitle} />

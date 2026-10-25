@@ -18,7 +18,7 @@ export default function UserDemographics({
   return (
     <SlideBottom
       delay={0.5}
-      className={`flex flex-col rounded-xl border border-border bg-card p-6 shadow-sm ${className || ""}`}
+      className={`flex flex-col rounded-md border border-border bg-card p-6 shadow-sm ${className || ""}`}
     >
       <div className="mb-6 flex items-center justify-between">
         <div>
@@ -50,7 +50,7 @@ export default function UserDemographics({
               className={`h-full ${demo.color} group relative border-r border-background/20 last:border-0`}
             >
               {/* Tooltip for small segments */}
-              <div className="pointer-events-none absolute -top-10 left-1/2 z-10 hidden -translate-x-1/2 rounded-md bg-foreground px-2 py-1 text-xs font-medium whitespace-nowrap text-background opacity-0 shadow-lg transition-opacity group-hover:block group-hover:opacity-100">
+              <div className="pointer-events-none absolute -top-10 left-1/2 z-10 hidden -translate-x-1/2 rounded-sm bg-foreground px-2 py-1 text-xs font-medium whitespace-nowrap text-background opacity-0 shadow-lg transition-opacity group-hover:block group-hover:opacity-100">
                 {demo.group}: {demo.value}%
               </div>
             </motion.div>

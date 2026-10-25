@@ -21,7 +21,7 @@ export function StandardPreview({ section }: StandardPreviewProps) {
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 xl:gap-12 items-center">
           {/* Left Column: Featured Photo */}
           <div className="lg:col-span-6 w-full">
-            <div className="relative w-full aspect-[4/3] sm:aspect-[16/11] lg:aspect-[820/778] overflow-hidden rounded-md shadow-sm">
+            <div className="relative w-full aspect-[4/3] sm:aspect-[16/11] lg:aspect-[820/778] overflow-hidden rounded-sm shadow-sm">
               <UniversalMultimediaPreview multimedia={section.multimedia} />
             </div>
           </div>

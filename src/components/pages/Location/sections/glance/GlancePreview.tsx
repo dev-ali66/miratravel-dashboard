@@ -161,7 +161,7 @@ export function GlancePreview({ draft }: LocationPreviewSectionProps) {
 
         {/* Cards Media Grid or Empty State Placeholder Banner */}
         {dynamicItems.length === 0 ? (
-          <div className="flex flex-col items-center justify-center rounded-xl border-2 border-dashed border-primary/30 bg-muted/20 p-10 text-center min-h-[220px]">
+          <div className="flex flex-col items-center justify-center rounded-md border-2 border-dashed border-primary/30 bg-muted/20 p-10 text-center min-h-[220px]">
             <div className="flex h-10 w-10 items-center justify-center rounded-full bg-primary/10 text-primary mb-2.5">
               <Layers className="h-5 w-5" />
             </div>
@@ -177,9 +177,8 @@ export function GlancePreview({ draft }: LocationPreviewSectionProps) {
             {/* Left Featured Card (#1 in Array - col-span-7 or col-span-12 if alone) */}
             {featured && (
               <div
-                className={`${
-                  subItems.length > 0 ? "lg:col-span-7" : "lg:col-span-12"
-                } relative min-h-[360px] md:min-h-[460px] w-full overflow-hidden rounded-sm group cursor-pointer`}
+                className={`${subItems.length > 0 ? "lg:col-span-7" : "lg:col-span-12"
+                  } relative min-h-[360px] md:min-h-[460px] w-full overflow-hidden rounded-sm group cursor-pointer`}
               >
                 <UniversalMultimediaPreview
                   multimedia={featured.multimedia || featured.imageMultimedia}

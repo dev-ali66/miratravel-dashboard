@@ -112,11 +112,11 @@ export function RegionExperiencesForm({
     const mediaToUse = heroMedia
       ? structuredClone(heroMedia)
       : {
-          show: imgUrl ? "image" : "color",
-          color: { color: THEME_COLORS.white, opacity: 100, width: "100%", height: "100%", aspectRatio: "auto" },
-          image: { url: imgUrl, alt: loc.name, opacity: 100, overlayColor: THEME_COLORS.overlayBlack, overlayOpacity: 0, width: "100%", height: "100%", aspectRatio: "auto", fit: "cover" },
-          video: { url: "", alt: loc.name, opacity: 100, overlayColor: THEME_COLORS.overlayBlack, overlayOpacity: 0, autoplay: true, loop: true, muted: true, width: "100%", height: "auto", aspectRatio: "auto", fit: "cover" },
-        }
+        show: imgUrl ? "image" : "color",
+        color: { color: THEME_COLORS.white, opacity: 100, width: "100%", height: "100%", aspectRatio: "auto" },
+        image: { url: imgUrl, alt: loc.name, opacity: 100, overlayColor: THEME_COLORS.overlayBlack, overlayOpacity: 0, width: "100%", height: "100%", aspectRatio: "auto", fit: "cover" },
+        video: { url: "", alt: loc.name, opacity: 100, overlayColor: THEME_COLORS.overlayBlack, overlayOpacity: 0, autoplay: true, loop: true, muted: true, width: "100%", height: "auto", aspectRatio: "auto", fit: "cover" },
+      }
 
     const newItem: RegionExperienceItemData = {
       id: loc.id || loc.slug,
@@ -175,11 +175,11 @@ export function RegionExperiencesForm({
       const mediaToUse = heroMedia
         ? structuredClone(heroMedia)
         : {
-            show: imgUrl ? "image" : "color",
-            color: { color: THEME_COLORS.white, opacity: 100, width: "100%", height: "100%", aspectRatio: "auto" },
-            image: { url: imgUrl, alt: child.name, opacity: 100, overlayColor: THEME_COLORS.overlayBlack, overlayOpacity: 0, width: "100%", height: "100%", aspectRatio: "auto", fit: "cover" },
-            video: { url: "", alt: child.name, opacity: 100, overlayColor: THEME_COLORS.overlayBlack, overlayOpacity: 0, autoplay: true, loop: true, muted: true, width: "100%", height: "auto", aspectRatio: "auto", fit: "cover" },
-          }
+          show: imgUrl ? "image" : "color",
+          color: { color: THEME_COLORS.white, opacity: 100, width: "100%", height: "100%", aspectRatio: "auto" },
+          image: { url: imgUrl, alt: child.name, opacity: 100, overlayColor: THEME_COLORS.overlayBlack, overlayOpacity: 0, width: "100%", height: "100%", aspectRatio: "auto", fit: "cover" },
+          video: { url: "", alt: child.name, opacity: 100, overlayColor: THEME_COLORS.overlayBlack, overlayOpacity: 0, autoplay: true, loop: true, muted: true, width: "100%", height: "auto", aspectRatio: "auto", fit: "cover" },
+        }
 
       return {
         id: child.id,
@@ -387,9 +387,8 @@ export function RegionExperiencesForm({
                     return (
                       <div
                         key={loc.id}
-                        className={`flex items-center justify-between gap-3 p-2.5 transition-colors hover:bg-muted/60 ${
-                          isAlreadyAdded ? "bg-muted/30" : ""
-                        }`}
+                        className={`flex items-center justify-between gap-3 p-2.5 transition-colors hover:bg-muted/60 ${isAlreadyAdded ? "bg-muted/30" : ""
+                          }`}
                       >
                         <div className="flex items-center gap-3 min-w-0">
                           <div className="relative h-10 w-14 shrink-0 overflow-hidden rounded border border-border bg-muted">
@@ -425,11 +424,10 @@ export function RegionExperiencesForm({
                           type="button"
                           onClick={() => handleAddLocationFromSearch(loc)}
                           disabled={isAlreadyAdded}
-                          className={`flex shrink-0 items-center gap-1 rounded-md px-2.5 py-1.5 text-xs font-medium transition-colors cursor-pointer ${
-                            isAlreadyAdded
-                              ? "bg-muted text-muted-foreground cursor-not-allowed opacity-60"
-                              : "bg-primary text-primary-foreground hover:opacity-90 shadow-2xs"
-                          }`}
+                          className={`flex shrink-0 items-center gap-1 rounded-sm px-2.5 py-1.5 text-xs font-medium transition-colors cursor-pointer ${isAlreadyAdded
+                            ? "bg-muted text-muted-foreground cursor-not-allowed opacity-60"
+                            : "bg-primary text-primary-foreground hover:opacity-90 shadow-2xs"
+                            }`}
                         >
                           {isAlreadyAdded ? (
                             <>
@@ -454,7 +452,7 @@ export function RegionExperiencesForm({
 
         {/* 7. Region Cards List */}
         {items.length === 0 ? (
-          <div className="flex flex-col items-center justify-center rounded-xl border border-dashed border-border/80 bg-muted/20 p-8 text-center">
+          <div className="flex flex-col items-center justify-center rounded-md border border-dashed border-border/80 bg-muted/20 p-8 text-center">
             <ImageIcon className="h-8 w-8 text-muted-foreground/50 mb-2" />
             <p className="text-xs font-medium text-muted-foreground">
               No region cards added yet.
@@ -479,8 +477,8 @@ export function RegionExperiencesForm({
                 typeof item.tag === "object"
                   ? (item.tag as any)?.value || ""
                   : typeof item.tag === "string"
-                  ? item.tag
-                  : ""
+                    ? item.tag
+                    : ""
 
               const previewImg =
                 item.imageMultimedia?.image?.url || ""
@@ -488,7 +486,7 @@ export function RegionExperiencesForm({
               return (
                 <div
                   key={item.id || idx}
-                  className="rounded-xl border border-border/70 bg-card overflow-hidden transition-all shadow-2xs"
+                  className="rounded-md border border-border/70 bg-card overflow-hidden transition-all shadow-2xs"
                 >
                   {/* Item Header Bar */}
                   <div
@@ -498,7 +496,7 @@ export function RegionExperiencesForm({
                     className="flex items-center justify-between p-3 bg-muted/30 hover:bg-muted/50 transition-colors cursor-pointer"
                   >
                     <div className="flex items-center gap-3 min-w-0 flex-1">
-                      <span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-md bg-primary/10 text-primary text-[11px] font-bold">
+                      <span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-sm bg-primary/10 text-primary text-[11px] font-bold">
                         {(idx + 1).toString().padStart(2, "0")}
                       </span>
 
@@ -643,8 +641,8 @@ export function RegionExperiencesForm({
                             Array.isArray(item.buttons) && item.buttons.length > 0
                               ? item.buttons
                               : item.button
-                              ? [item.button]
-                              : [
+                                ? [item.button]
+                                : [
                                   {
                                     label: `Explore ${itemTitle}`,
                                     url: `/destinations/${item.id}`,

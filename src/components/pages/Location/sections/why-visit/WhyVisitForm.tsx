@@ -122,7 +122,7 @@ export function WhyVisitForm({
                     onChange={(e) => handleUpdateParagraph(idx, e.target.value)}
                     placeholder={`Paragraph ${idx + 1}...`}
                     rows={3}
-                    className="flex-1 rounded-md border border-input bg-background px-3 py-2 text-xs text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-1 focus:ring-primary"
+                    className="flex-1 rounded-sm border border-input bg-background px-3 py-2 text-xs text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-1 focus:ring-primary"
                   />
 
                   <button
@@ -178,12 +178,12 @@ export function WhyVisitForm({
                 }
               }}
               placeholder="Add a new tag (e.g. Beaches, Hiking)..."
-              className="flex-1 rounded-md border border-input bg-background px-3 py-1.5 text-xs text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-1 focus:ring-primary"
+              className="flex-1 rounded-sm border border-input bg-background px-3 py-1.5 text-xs text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-1 focus:ring-primary"
             />
             <button
               type="button"
               onClick={handleAddTag}
-              className="flex items-center gap-1 rounded-md bg-primary px-3 py-1.5 text-xs font-medium text-primary-foreground hover:opacity-90 cursor-pointer"
+              className="flex items-center gap-1 rounded-sm bg-primary px-3 py-1.5 text-xs font-medium text-primary-foreground hover:opacity-90 cursor-pointer"
             >
               <Plus className="h-3.5 w-3.5" />
               Add

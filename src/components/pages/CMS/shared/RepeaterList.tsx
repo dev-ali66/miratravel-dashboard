@@ -77,7 +77,7 @@ export function RepeaterList<T>({
     const target = index + direction
     if (target < 0 || target >= safeItems.length) return
     const next = [...safeItems]
-    ;[next[index], next[target]] = [next[target], next[index]]
+      ;[next[index], next[target]] = [next[target], next[index]]
 
     setExpandedIndexes((prev) => {
       const newExpanded = { ...prev }
@@ -103,7 +103,7 @@ export function RepeaterList<T>({
   return (
     <div className={cn("flex flex-col gap-3", className)}>
       {safeItems.length === 0 && (
-        <p className="rounded-md border border-dashed border-border/60 px-3 py-4 text-center text-xs text-muted-foreground">
+        <p className="rounded-sm border border-dashed border-border/60 px-3 py-4 text-center text-xs text-muted-foreground">
           {emptyLabel}
         </p>
       )}

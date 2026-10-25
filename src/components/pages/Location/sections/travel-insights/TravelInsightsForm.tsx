@@ -158,7 +158,7 @@ export function TravelInsightsForm({
     >
       <div className="flex flex-col gap-6">
         {/* Section Header Settings */}
-        <div className="rounded-xl border border-border/70 bg-card/60 p-4 space-y-4">
+        <div className="rounded-md border border-border/70 bg-card/60 p-4 space-y-4">
           <h4 className="text-xs font-semibold uppercase tracking-wider text-muted-foreground flex items-center gap-2">
             <BookOpen className="h-4 w-4 text-primary" />
             Section Headers & Typography
@@ -206,12 +206,12 @@ export function TravelInsightsForm({
             travelInsight.featuredMultimedia ||
             (travelInsight.featuredImage
               ? {
-                  show: "image",
-                  image: {
-                    url: travelInsight.featuredImage,
-                    alt: travelInsight.featuredImageAlt || "Featured Article",
-                  },
-                }
+                show: "image",
+                image: {
+                  url: travelInsight.featuredImage,
+                  alt: travelInsight.featuredImageAlt || "Featured Article",
+                },
+              }
               : null)
           }
           onChange={(multimedia) => {
@@ -256,7 +256,7 @@ export function TravelInsightsForm({
           </div>
 
           {articles.length === 0 ? (
-            <div className="rounded-xl border border-dashed border-border/80 bg-muted/20 p-8 text-center">
+            <div className="rounded-md border border-dashed border-border/80 bg-muted/20 p-8 text-center">
               <BookOpen className="mx-auto h-8 w-8 text-muted-foreground/60 mb-2" />
               <p className="text-sm font-medium text-muted-foreground">
                 No guide articles added yet
@@ -297,11 +297,10 @@ export function TravelInsightsForm({
                 return (
                   <div
                     key={`article-${index}`}
-                    className={`rounded-xl border transition-all duration-200 ${
-                      isItemOpen
+                    className={`rounded-md border transition-all duration-200 ${isItemOpen
                         ? "border-primary/50 bg-card shadow-sm"
                         : "border-border/70 bg-card/60 hover:border-border"
-                    }`}
+                      }`}
                   >
                     {/* Item Header / Accordion Bar */}
                     <div className="flex items-center justify-between p-3 gap-2">
@@ -421,14 +420,14 @@ export function TravelInsightsForm({
                               ? article.buttons
                               : article.button
                                 ? [
-                                    {
-                                      label: article.button.label || "Read Article",
-                                      url: article.button.url || article.href || "#",
-                                      style: article.button.style,
-                                      backgroundColor: article.button.backgroundColor,
-                                      textColor: article.button.textColor,
-                                    },
-                                  ]
+                                  {
+                                    label: article.button.label || "Read Article",
+                                    url: article.button.url || article.href || "#",
+                                    style: article.button.style,
+                                    backgroundColor: article.button.backgroundColor,
+                                    textColor: article.button.textColor,
+                                  },
+                                ]
                                 : article.href
                                   ? [{ label: "Read Article", url: article.href || "#" }]
                                   : [{ label: "Read Article", url: "#" }]
@@ -449,12 +448,12 @@ export function TravelInsightsForm({
                             article.thumbnailMultimedia ||
                             (article.thumbnail
                               ? {
-                                  show: "image",
-                                  image: {
-                                    url: article.thumbnail,
-                                    alt: "Article thumbnail",
-                                  },
-                                }
+                                show: "image",
+                                image: {
+                                  url: article.thumbnail,
+                                  alt: "Article thumbnail",
+                                },
+                              }
                               : null)
                           }
                           onChange={(multimedia) => {

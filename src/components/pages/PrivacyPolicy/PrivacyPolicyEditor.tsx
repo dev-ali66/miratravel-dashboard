@@ -29,7 +29,7 @@ export function PrivacyPolicyEditor({
 }: PrivacyPolicyEditorProps) {
   if (!currentPart) {
     return (
-      <div className="flex flex-col items-center justify-center rounded-2xl border border-dashed border-border/80 bg-background/50 py-16 text-center shadow-sm">
+      <div className="flex flex-col items-center justify-center rounded-xl border border-dashed border-border/80 bg-background/50 py-16 text-center shadow-sm">
         <h3 className="text-lg font-bold text-foreground">No Section Selected</h3>
         <p className="mt-1 max-w-sm text-xs text-muted-foreground">
           There are currently no sections in this Privacy Policy document or no section is selected.
@@ -37,7 +37,7 @@ export function PrivacyPolicyEditor({
         <button
           type="button"
           onClick={onAddPart}
-          className="mt-4 inline-flex items-center gap-2 rounded-xl bg-primary px-5 py-2.5 text-xs font-semibold text-primary-foreground shadow-sm transition-all hover:bg-primary/90"
+          className="mt-4 inline-flex items-center gap-2 rounded-md bg-primary px-5 py-2.5 text-xs font-semibold text-primary-foreground shadow-sm transition-all hover:bg-primary/90"
         >
           <Plus className="h-4 w-4" />
           Add First Section
@@ -47,12 +47,12 @@ export function PrivacyPolicyEditor({
   }
 
   return (
-    <div className="space-y-6 overflow-hidden rounded-2xl border border-border/60 bg-background/50 p-6 shadow-sm backdrop-blur-xl">
+    <div className="space-y-6 overflow-hidden rounded-xl border border-border/60 bg-background/50 p-6 shadow-sm backdrop-blur-xl">
       {/* Title & Action Controls */}
       <div className="flex flex-col gap-4 border-b border-border/40 pb-5">
         <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
           <div className="flex items-center gap-2">
-            <span className="rounded-md bg-primary/10 px-2.5 py-1 text-xs font-bold text-primary">
+            <span className="rounded-sm bg-primary/10 px-2.5 py-1 text-xs font-bold text-primary">
               Section {partIndex + 1} of {totalParts}
             </span>
           </div>

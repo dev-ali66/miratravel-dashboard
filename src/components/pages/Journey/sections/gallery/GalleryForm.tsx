@@ -176,7 +176,7 @@ export function GalleryForm({
           {items.map((item: any, idx: number) => (
             <div
               key={idx}
-              className="rounded-xl border border-border/70 bg-card p-4 space-y-4 relative shadow-xs"
+              className="rounded-md border border-border/70 bg-card p-4 space-y-4 relative shadow-xs"
             >
               <div className="flex items-center justify-between pb-2 border-b border-border/40">
                 <span className="text-xs font-bold text-primary uppercase tracking-wider">

@@ -53,12 +53,12 @@ export function ImageUploadField({
     fit === "cover"
       ? "object-cover"
       : fit === "fill"
-      ? "object-fill"
-      : fit === "none"
-      ? "object-none"
-      : fit === "scale-down"
-      ? "object-scale-down"
-      : "object-contain"
+        ? "object-fill"
+        : fit === "none"
+          ? "object-none"
+          : fit === "scale-down"
+            ? "object-scale-down"
+            : "object-contain"
   const { mutate: uploadImage, isPending: isMutationPending } = useImageUpload()
   const isCurrentlyUploading = isMutationPending || localUploading
 
@@ -190,7 +190,7 @@ export function ImageUploadField({
               e.stopPropagation()
               setIsPickerOpen(true)
             }}
-            className="h-6 text-[11px] font-medium gap-1 px-2 text-primary hover:text-primary hover:bg-primary/10 rounded-md cursor-pointer"
+            className="h-6 text-[11px] font-medium gap-1 px-2 text-primary hover:text-primary hover:bg-primary/10 rounded-sm cursor-pointer"
           >
             <FolderOpen className="h-3.5 w-3.5" />
             Choose from Library
@@ -200,7 +200,7 @@ export function ImageUploadField({
 
       <div
         className={cn(
-          "relative flex h-45 w-full cursor-pointer items-center justify-center rounded-xl border-2 border-dashed border-border p-2 transition-colors hover:bg-muted/50",
+          "relative flex h-45 w-full cursor-pointer items-center justify-center rounded-md border-2 border-dashed border-border p-2 transition-colors hover:bg-muted/50",
           isCurrentlyUploading && "pointer-events-none opacity-95 border-primary/50 bg-primary/5"
         )}
         onClick={() => fileInputRef.current?.click()}

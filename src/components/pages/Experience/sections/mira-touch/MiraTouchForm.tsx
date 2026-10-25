@@ -107,7 +107,7 @@ export function MiraTouchForm({
             <button
               type="button"
               onClick={handleAddItem}
-              className="inline-flex items-center gap-1 rounded-md bg-primary/10 px-2.5 py-1 text-xs font-semibold text-primary hover:bg-primary/20 transition-colors cursor-pointer"
+              className="inline-flex items-center gap-1 rounded-sm bg-primary/10 px-2.5 py-1 text-xs font-semibold text-primary hover:bg-primary/20 transition-colors cursor-pointer"
             >
               <Plus className="h-3.5 w-3.5" />
               Add Touch
@@ -118,7 +118,7 @@ export function MiraTouchForm({
             {items.map((item, idx) => (
               <div
                 key={idx}
-                className="flex flex-col gap-3 rounded-xl border border-border/70 bg-card p-3.5 shadow-2xs relative"
+                className="flex flex-col gap-3 rounded-md border border-border/70 bg-card p-3.5 shadow-2xs relative"
               >
                 <div className="flex items-center justify-between border-b border-border/50 pb-2">
                   <span className="text-xs font-bold uppercase tracking-wider text-primary">

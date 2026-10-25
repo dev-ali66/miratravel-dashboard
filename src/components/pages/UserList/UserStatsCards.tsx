@@ -65,7 +65,7 @@ export default function UserStatsCards({ stats, isLoading }: UserStatsCardsProps
                   )}
                 </span>
               </div>
-              <div className={`flex h-11 w-11 items-center justify-center rounded-xl border ${card.bg} ${card.border} ${card.color}`}>
+              <div className={`flex h-11 w-11 items-center justify-center rounded-md border ${card.bg} ${card.border} ${card.color}`}>
                 <Icon className="h-5 w-5" />
               </div>
             </CardContent>

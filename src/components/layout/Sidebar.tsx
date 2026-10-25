@@ -296,7 +296,7 @@ const CMSDropdown = ({
                   key={item.href}
                   to={item.href}
                   className={cn(
-                    "group flex items-center gap-3 rounded-md px-3 py-2.5 text-sm transition-all duration-200",
+                    "group flex items-center gap-3 rounded-sm px-3 py-2.5 text-sm transition-all duration-200",
                     isActive
                       ? "bg-primary/10 font-medium text-primary"
                       : "text-muted-foreground hover:bg-muted/50 hover:text-foreground"
@@ -365,7 +365,7 @@ export default function Sidebar({
   return (
     <aside
       className={cn(
-        "fixed top-16 bottom-0 left-0 z-40 w-[280px] flex-col border-r border-dashed border-border bg-background/95 backdrop-blur-xl supports-[backdrop-filter]:bg-background/60 py-6 px-4 transition-transform duration-300 ease-in-out md:translate-x-0 overflow-y-auto hidden md:flex",
+        "fixed top-14 bottom-0 left-0 z-40 w-[280px] flex-col border-r border-dashed border-border bg-background/95 backdrop-blur-xl supports-[backdrop-filter]:bg-background/60 py-6 px-4 transition-transform duration-300 ease-in-out md:translate-x-0 overflow-y-auto hidden md:flex",
         isMobileOpen ? "translate-x-0 flex" : "-translate-x-full"
       )}
     >

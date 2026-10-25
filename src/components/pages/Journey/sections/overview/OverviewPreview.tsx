@@ -143,7 +143,7 @@ export function OverviewPreview({ overview, draft }: { overview?: any; draft?: a
               {vsItems.map((media: any, idx: number) => (
                 <div
                   key={idx}
-                  className="rounded-xl overflow-hidden border border-border/50 shadow-xs h-48 sm:h-56 relative bg-muted/20"
+                  className="rounded-md overflow-hidden border border-border/50 shadow-xs h-48 sm:h-56 relative bg-muted/20"
                 >
                   <UniversalMultimediaPreview multimedia={media} className="h-full w-full object-cover" />
                 </div>

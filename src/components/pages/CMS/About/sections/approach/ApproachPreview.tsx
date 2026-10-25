@@ -29,7 +29,7 @@ export function ApproachPreview({ section }: ApproachPreviewProps) {
 
       <div className="relative z-10 max-w-[1240px] mx-auto">
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-12 gap-8 lg:gap-10 items-start">
-          
+
           {/* COLUMN 1 (LEFT): Eyebrow, Title & Tall Portrait Media (lg:col-span-4) */}
           <div className="lg:col-span-4 space-y-6">
             <div className="space-y-2.5">
@@ -42,7 +42,7 @@ export function ApproachPreview({ section }: ApproachPreviewProps) {
               </h2>
             </div>
 
-            <div className="relative h-[360px] sm:h-[420px] w-full rounded-xl overflow-hidden shadow-sm border border-black/5">
+            <div className="relative h-[360px] sm:h-[420px] w-full rounded-md overflow-hidden shadow-sm border border-black/5">
               <UniversalMultimediaPreview multimedia={section.leftMultimedia} />
             </div>
           </div>
@@ -55,7 +55,7 @@ export function ApproachPreview({ section }: ApproachPreviewProps) {
           {/* COLUMN 3 (RIGHT): Top Media, MIRA Badge & Highlight Quote (lg:col-span-4) */}
           <div className="lg:col-span-4 space-y-6 lg:pt-0">
             <div className="relative">
-              <div className="relative h-[280px] sm:h-[340px] w-full rounded-xl overflow-hidden shadow-sm border border-black/5">
+              <div className="relative h-[280px] sm:h-[340px] w-full rounded-md overflow-hidden shadow-sm border border-black/5">
                 <UniversalMultimediaPreview multimedia={section.rightMultimedia} />
               </div>
 

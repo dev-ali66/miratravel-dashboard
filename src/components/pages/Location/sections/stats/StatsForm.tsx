@@ -183,7 +183,7 @@ export function StatsForm({
             <button
               type="button"
               onClick={addFactItem}
-              className="flex items-center gap-1 rounded-md bg-primary/10 px-2.5 py-1 text-xs font-medium text-primary hover:bg-primary/20 cursor-pointer"
+              className="flex items-center gap-1 rounded-sm bg-primary/10 px-2.5 py-1 text-xs font-medium text-primary hover:bg-primary/20 cursor-pointer"
             >
               <Plus className="h-3.5 w-3.5" />
               Add Stat Fact

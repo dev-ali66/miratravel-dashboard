@@ -32,8 +32,8 @@ export function StayForm({
   const items = Array.isArray(section.items)
     ? section.items
     : Array.isArray(section.sentences)
-    ? section.sentences
-    : []
+      ? section.sentences
+      : []
 
   const [openItems, setOpenItems] = useState<Record<number, boolean>>({})
 
@@ -126,7 +126,7 @@ export function StayForm({
               return (
                 <div
                   key={sIdx}
-                  className="rounded-md border border-border/80 bg-background overflow-hidden transition hover:border-border"
+                  className="rounded-sm border border-border/80 bg-background overflow-hidden transition hover:border-border"
                 >
                   <div
                     className="flex items-center justify-between p-2.5 bg-muted/40 cursor-pointer select-none hover:bg-muted/60 transition-colors"
@@ -193,7 +193,7 @@ export function StayForm({
           <button
             type="button"
             onClick={addItem}
-            className="flex w-full items-center justify-center gap-1.5 rounded-md border border-dashed border-border/80 bg-background/50 py-2 text-xs font-medium text-muted-foreground transition hover:border-primary hover:bg-primary/5 hover:text-primary cursor-pointer"
+            className="flex w-full items-center justify-center gap-1.5 rounded-sm border border-dashed border-border/80 bg-background/50 py-2 text-xs font-medium text-muted-foreground transition hover:border-primary hover:bg-primary/5 hover:text-primary cursor-pointer"
           >
             <Plus className="h-3.5 w-3.5" />
             Add Poetic Item

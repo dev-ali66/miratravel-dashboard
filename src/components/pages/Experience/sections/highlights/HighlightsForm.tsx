@@ -99,7 +99,7 @@ export function HighlightsForm({
             <button
               type="button"
               onClick={handleAddItem}
-              className="inline-flex items-center gap-1 rounded-md bg-primary/10 px-2.5 py-1 text-xs font-semibold text-primary hover:bg-primary/20 transition-colors cursor-pointer"
+              className="inline-flex items-center gap-1 rounded-sm bg-primary/10 px-2.5 py-1 text-xs font-semibold text-primary hover:bg-primary/20 transition-colors cursor-pointer"
             >
               <Plus className="h-3.5 w-3.5" />
               Add Highlight
@@ -110,7 +110,7 @@ export function HighlightsForm({
             {items.map((item, idx) => (
               <div
                 key={item.id || idx}
-                className="flex flex-col gap-3 rounded-xl border border-border/70 bg-card p-3.5 relative shadow-2xs"
+                className="flex flex-col gap-3 rounded-md border border-border/70 bg-card p-3.5 relative shadow-2xs"
               >
                 <div className="flex items-center justify-between border-b border-border/50 pb-2">
                   <div className="flex items-center gap-2">

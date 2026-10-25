@@ -66,7 +66,7 @@ export const MediaTableView: React.FC<MediaTableViewProps> = ({
   }
 
   return (
-    <div className="rounded-xl border border-border/60 bg-card/60 backdrop-blur-sm overflow-hidden shadow-xs">
+    <div className="rounded-md border border-border/60 bg-card/60 backdrop-blur-sm overflow-hidden shadow-xs">
       <div className="overflow-x-auto">
         <table className="w-full text-left text-xs border-collapse">
           <thead>
@@ -111,7 +111,7 @@ export const MediaTableView: React.FC<MediaTableViewProps> = ({
                   </td>
 
                   <td className="py-2.5 px-3">
-                    <div className="h-10 w-10 rounded-md border border-border/40 bg-muted/40 overflow-hidden flex items-center justify-center relative">
+                    <div className="h-10 w-10 rounded-sm border border-border/40 bg-muted/40 overflow-hidden flex items-center justify-center relative">
                       {isVideo ? (
                         <Video className="h-5 w-5 text-muted-foreground" />
                       ) : (

@@ -61,7 +61,7 @@ export function TheExperiencePreview({ draft }: ExperiencePreviewSectionProps) {
 
           <div className="lg:col-span-5">
             {theExp.imageMultimedia && (
-              <div className="relative rounded-2xl overflow-hidden shadow-xl aspect-4/5 border border-border/60 bg-muted">
+              <div className="relative rounded-xl overflow-hidden shadow-xl aspect-4/5 border border-border/60 bg-muted">
                 <UniversalMultimediaPreview
                   multimedia={theExp.imageMultimedia}
                   mode="inline"

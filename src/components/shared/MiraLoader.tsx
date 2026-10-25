@@ -88,7 +88,7 @@ export default function MiraLoader({
     <div
       className={cn(
         "flex flex-col items-center justify-center p-6 text-center select-none",
-        showBg && "bg-loader-bg/60 backdrop-blur-xs rounded-xl border border-loader-border/60",
+        showBg && "bg-loader-bg/60 backdrop-blur-xs rounded-md border border-loader-border/60",
         className
       )}
     >

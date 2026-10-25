@@ -176,9 +176,8 @@ export function BlocksForm({
                 {/* Collapsible Block Header Bar */}
                 <div
                   onClick={() => toggleBlockAccordion(idx)}
-                  className={`flex items-center justify-between p-3 select-none transition-colors cursor-pointer ${
-                    isBlockOpen ? "bg-muted/30 border-b border-border/50" : "hover:bg-muted/20"
-                  }`}
+                  className={`flex items-center justify-between p-3 select-none transition-colors cursor-pointer ${isBlockOpen ? "bg-muted/30 border-b border-border/50" : "hover:bg-muted/20"
+                    }`}
                 >
                   <div className="flex items-center gap-2.5 min-w-0">
                     <span className="flex h-5 w-5 shrink-0 items-center justify-center rounded bg-primary/10 text-xs font-semibold text-primary">
@@ -238,9 +237,8 @@ export function BlocksForm({
                       title={isBlockOpen ? "Collapse block" : "Expand block"}
                     >
                       <ChevronDown
-                        className={`h-4 w-4 transition-transform duration-200 ${
-                          isBlockOpen ? "rotate-180 text-foreground" : "rotate-0 text-muted-foreground"
-                        }`}
+                        className={`h-4 w-4 transition-transform duration-200 ${isBlockOpen ? "rotate-180 text-foreground" : "rotate-0 text-muted-foreground"
+                          }`}
                       />
                     </button>
                   </div>
@@ -255,7 +253,7 @@ export function BlocksForm({
                       <select
                         value={blockType}
                         onChange={(e) => updateBlockAt(idx, { type: e.target.value })}
-                        className="h-8 rounded-md border border-border bg-background px-2.5 text-xs text-foreground focus:outline-none focus:ring-1 focus:ring-primary cursor-pointer"
+                        className="h-8 rounded-sm border border-border bg-background px-2.5 text-xs text-foreground focus:outline-none focus:ring-1 focus:ring-primary cursor-pointer"
                       >
                         <option value="paragraph">Paragraph / Text Body</option>
                         <option value="quote">Pullquote / Quote Callout</option>
@@ -330,7 +328,7 @@ export function BlocksForm({
           <button
             type="button"
             onClick={() => addBlock("paragraph")}
-            className="flex items-center gap-1.5 rounded-md bg-secondary hover:bg-secondary/80 px-3 py-1.5 text-xs font-medium text-secondary-foreground transition cursor-pointer"
+            className="flex items-center gap-1.5 rounded-sm bg-secondary hover:bg-secondary/80 px-3 py-1.5 text-xs font-medium text-secondary-foreground transition cursor-pointer"
           >
             <Plus className="h-3.5 w-3.5" />
             Paragraph
@@ -338,7 +336,7 @@ export function BlocksForm({
           <button
             type="button"
             onClick={() => addBlock("quote")}
-            className="flex items-center gap-1.5 rounded-md bg-secondary hover:bg-secondary/80 px-3 py-1.5 text-xs font-medium text-secondary-foreground transition cursor-pointer"
+            className="flex items-center gap-1.5 rounded-sm bg-secondary hover:bg-secondary/80 px-3 py-1.5 text-xs font-medium text-secondary-foreground transition cursor-pointer"
           >
             <Plus className="h-3.5 w-3.5" />
             Quote
@@ -346,7 +344,7 @@ export function BlocksForm({
           <button
             type="button"
             onClick={() => addBlock("image")}
-            className="flex items-center gap-1.5 rounded-md bg-secondary hover:bg-secondary/80 px-3 py-1.5 text-xs font-medium text-secondary-foreground transition cursor-pointer"
+            className="flex items-center gap-1.5 rounded-sm bg-secondary hover:bg-secondary/80 px-3 py-1.5 text-xs font-medium text-secondary-foreground transition cursor-pointer"
           >
             <Plus className="h-3.5 w-3.5" />
             Featured Image
@@ -354,7 +352,7 @@ export function BlocksForm({
           <button
             type="button"
             onClick={() => addBlock("video")}
-            className="flex items-center gap-1.5 rounded-md bg-secondary hover:bg-secondary/80 px-3 py-1.5 text-xs font-medium text-secondary-foreground transition cursor-pointer"
+            className="flex items-center gap-1.5 rounded-sm bg-secondary hover:bg-secondary/80 px-3 py-1.5 text-xs font-medium text-secondary-foreground transition cursor-pointer"
           >
             <Plus className="h-3.5 w-3.5" />
             Featured Video
@@ -362,7 +360,7 @@ export function BlocksForm({
           <button
             type="button"
             onClick={() => addBlock("spotlight")}
-            className="flex items-center gap-1.5 rounded-md bg-secondary hover:bg-secondary/80 px-3 py-1.5 text-xs font-medium text-secondary-foreground transition cursor-pointer"
+            className="flex items-center gap-1.5 rounded-sm bg-secondary hover:bg-secondary/80 px-3 py-1.5 text-xs font-medium text-secondary-foreground transition cursor-pointer"
           >
             <Plus className="h-3.5 w-3.5" />
             Spotlight Card
@@ -370,7 +368,7 @@ export function BlocksForm({
           <button
             type="button"
             onClick={() => addBlock("guidance")}
-            className="flex items-center gap-1.5 rounded-md bg-secondary hover:bg-secondary/80 px-3 py-1.5 text-xs font-medium text-secondary-foreground transition cursor-pointer"
+            className="flex items-center gap-1.5 rounded-sm bg-secondary hover:bg-secondary/80 px-3 py-1.5 text-xs font-medium text-secondary-foreground transition cursor-pointer"
           >
             <Plus className="h-3.5 w-3.5" />
             Guidance Guide
@@ -378,7 +376,7 @@ export function BlocksForm({
           <button
             type="button"
             onClick={() => addBlock("notes")}
-            className="flex items-center gap-1.5 rounded-md bg-secondary hover:bg-secondary/80 px-3 py-1.5 text-xs font-medium text-secondary-foreground transition cursor-pointer"
+            className="flex items-center gap-1.5 rounded-sm bg-secondary hover:bg-secondary/80 px-3 py-1.5 text-xs font-medium text-secondary-foreground transition cursor-pointer"
           >
             <Plus className="h-3.5 w-3.5" />
             Practical Notes

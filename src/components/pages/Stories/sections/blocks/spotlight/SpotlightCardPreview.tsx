@@ -8,15 +8,14 @@ export function SpotlightCardPreview({ block }: { block: any }) {
 
   return (
     <div
-      className={`w-full py-4 flex flex-col gap-8 items-center ${
-        isRight ? "md:flex-row-reverse" : "md:flex-row"
-      }`}
+      className={`w-full py-4 flex flex-col gap-8 items-center ${isRight ? "md:flex-row-reverse" : "md:flex-row"
+        }`}
     >
       <div className="w-full md:w-1/2 flex flex-col gap-3 shrink-0">
         {isMultiple ? (
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 w-full">
             {items.map((item: any, itemIdx: number) => (
-              <div key={itemIdx} className="overflow-hidden rounded-xl aspect-[4/3] w-full border border-stone-200">
+              <div key={itemIdx} className="overflow-hidden rounded-md aspect-[4/3] w-full border border-stone-200">
                 <UniversalMultimediaPreview
                   multimedia={item}
                   mode="inline"
@@ -26,7 +25,7 @@ export function SpotlightCardPreview({ block }: { block: any }) {
             ))}
           </div>
         ) : (
-          <div className="w-full overflow-hidden rounded-xl aspect-[4/3] border border-stone-200">
+          <div className="w-full overflow-hidden rounded-md aspect-[4/3] border border-stone-200">
             <UniversalMultimediaPreview
               multimedia={block.multimedia}
               mode="inline"

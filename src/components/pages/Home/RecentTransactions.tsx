@@ -75,7 +75,7 @@ export default function RecentTransactions({
   return (
     <SlideBottom
       delay={0.3}
-      className={`flex flex-col overflow-hidden rounded-xl border border-border bg-card shadow-sm ${className || ""}`}
+      className={`flex flex-col overflow-hidden rounded-md border border-border bg-card shadow-sm ${className || ""}`}
     >
       <div className="flex items-center justify-between p-6 pb-4">
         <div>

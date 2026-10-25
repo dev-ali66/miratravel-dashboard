@@ -139,7 +139,7 @@ export default function BookingDetailsSheet({
               <DialogTitle className="flex flex-col gap-1 text-xl font-bold">
                 <div className="flex items-center gap-2">
                   <span>Booking {booking.bookingNumber}</span>
-                  <span className="text-xs font-mono font-normal px-2.5 py-0.5 rounded-md bg-muted text-muted-foreground border border-border">
+                  <span className="text-xs font-mono font-normal px-2.5 py-0.5 rounded-sm bg-muted text-muted-foreground border border-border">
                     {booking.currency}
                   </span>
                 </div>
@@ -166,7 +166,7 @@ export default function BookingDetailsSheet({
               {/* Traveler & Logistics Cards */}
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 {/* Traveler Card */}
-                <div className="flex flex-col gap-3 rounded-xl border border-border/60 bg-muted/10 p-4">
+                <div className="flex flex-col gap-3 rounded-md border border-border/60 bg-muted/10 p-4">
                   <h3 className="flex items-center gap-1.5 text-xs font-bold uppercase tracking-wider text-primary">
                     <User className="h-3.5 w-3.5" />
                     Traveler Information
@@ -196,7 +196,7 @@ export default function BookingDetailsSheet({
                 </div>
 
                 {/* Logistics Card */}
-                <div className="flex flex-col gap-3 rounded-xl border border-border/60 bg-muted/10 p-4">
+                <div className="flex flex-col gap-3 rounded-md border border-border/60 bg-muted/10 p-4">
                   <h3 className="flex items-center gap-1.5 text-xs font-bold uppercase tracking-wider text-primary">
                     <PlaneTakeoff className="h-3.5 w-3.5" />
                     Trip Logistics
@@ -233,7 +233,7 @@ export default function BookingDetailsSheet({
               </div>
 
               {/* Payment Schedule Milestones Timeline (Spec §7, §10, §11) */}
-              <div className="flex flex-col gap-3 rounded-xl border border-border/80 bg-muted/10 p-4">
+              <div className="flex flex-col gap-3 rounded-md border border-border/80 bg-muted/10 p-4">
                 <div className="flex items-center justify-between border-b border-border/60 pb-2.5">
                   <h3 className="flex items-center gap-1.5 text-xs font-bold uppercase tracking-wider text-primary">
                     <Layers className="h-3.5 w-3.5" />
@@ -301,7 +301,7 @@ export default function BookingDetailsSheet({
                           <button
                             type="button"
                             onClick={() => copyPaymentLink(item.id, item.label)}
-                            className="p-1.5 rounded-md hover:bg-muted text-muted-foreground hover:text-primary transition-colors cursor-pointer"
+                            className="p-1.5 rounded-sm hover:bg-muted text-muted-foreground hover:text-primary transition-colors cursor-pointer"
                             title="Copy Direct Checkout Link"
                           >
                             <Copy className="h-3.5 w-3.5" />
@@ -314,7 +314,7 @@ export default function BookingDetailsSheet({
               </div>
 
               {/* Payment Records / Transaction Audit History */}
-              <div className="flex flex-col gap-3 rounded-xl border border-border/80 bg-muted/10 p-4">
+              <div className="flex flex-col gap-3 rounded-md border border-border/80 bg-muted/10 p-4">
                 <div className="flex items-center justify-between border-b border-border/60 pb-2.5">
                   <h3 className="flex items-center gap-1.5 text-xs font-bold uppercase tracking-wider text-primary">
                     <History className="h-3.5 w-3.5" />
@@ -392,7 +392,7 @@ export default function BookingDetailsSheet({
             {/* Right Column: Financials & Admin Action Panel */}
             <div className="flex flex-col gap-4">
               {/* Financial Summary */}
-              <div className="flex flex-col gap-3 rounded-xl border border-border/60 bg-muted/10 p-4">
+              <div className="flex flex-col gap-3 rounded-md border border-border/60 bg-muted/10 p-4">
                 <h3 className="flex items-center gap-1.5 text-xs font-bold uppercase tracking-wider text-primary">
                   <CreditCard className="h-3.5 w-3.5" />
                   Financial Summary
@@ -425,7 +425,7 @@ export default function BookingDetailsSheet({
               </div>
 
               {/* Admin Actions Panel */}
-              <div className="flex flex-col gap-3 rounded-xl border border-border/60 bg-muted/10 p-4">
+              <div className="flex flex-col gap-3 rounded-md border border-border/60 bg-muted/10 p-4">
                 <h3 className="text-xs font-bold uppercase tracking-wider text-muted-foreground">
                   Admin Actions
                 </h3>
@@ -434,26 +434,26 @@ export default function BookingDetailsSheet({
                   {/* Approve Booking (Request Submitted / Under Review) */}
                   {(booking.bookingStatus === "REQUEST_SUBMITTED" ||
                     booking.bookingStatus === "UNDER_REVIEW") && (
-                    <>
-                      <Button
-                        type="button"
-                        onClick={() => setShowApproveModal(true)}
-                        className="w-full gap-2 bg-emerald-600 hover:bg-emerald-700 text-white cursor-pointer text-xs"
-                      >
-                        <Check className="h-3.5 w-3.5" />
-                        Approve & Send Offer
-                      </Button>
-                      <Button
-                        type="button"
-                        variant="outline"
-                        onClick={() => setActionReasonModal({ isOpen: true, mode: "reject" })}
-                        className="w-full gap-2 text-rose-600 hover:text-rose-700 hover:bg-rose-500/10 border-rose-500/20 cursor-pointer text-xs"
-                      >
-                        <X className="h-3.5 w-3.5" />
-                        Reject Request
-                      </Button>
-                    </>
-                  )}
+                      <>
+                        <Button
+                          type="button"
+                          onClick={() => setShowApproveModal(true)}
+                          className="w-full gap-2 bg-emerald-600 hover:bg-emerald-700 text-white cursor-pointer text-xs"
+                        >
+                          <Check className="h-3.5 w-3.5" />
+                          Approve & Send Offer
+                        </Button>
+                        <Button
+                          type="button"
+                          variant="outline"
+                          onClick={() => setActionReasonModal({ isOpen: true, mode: "reject" })}
+                          className="w-full gap-2 text-rose-600 hover:text-rose-700 hover:bg-rose-500/10 border-rose-500/20 cursor-pointer text-xs"
+                        >
+                          <X className="h-3.5 w-3.5" />
+                          Reject Request
+                        </Button>
+                      </>
+                    )}
 
                   {/* Record Payment Button */}
                   {booking.bookingStatus !== "REQUEST_SUBMITTED" &&

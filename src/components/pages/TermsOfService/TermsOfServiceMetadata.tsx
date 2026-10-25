@@ -15,7 +15,7 @@ export function TermsOfServiceMetadata({
   setLastUpdated,
 }: TermsOfServiceMetadataProps) {
   return (
-    <div className="mb-6 grid grid-cols-1 gap-4 rounded-2xl border border-border/60 bg-background/50 p-5 shadow-sm backdrop-blur-xl sm:grid-cols-2">
+    <div className="mb-6 grid grid-cols-1 gap-4 rounded-xl border border-border/60 bg-background/50 p-5 shadow-sm backdrop-blur-xl sm:grid-cols-2">
       <div className="space-y-1.5">
         <Label className="text-xs font-semibold tracking-wider text-muted-foreground uppercase">
           Effective Date

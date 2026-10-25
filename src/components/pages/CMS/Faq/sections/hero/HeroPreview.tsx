@@ -131,7 +131,7 @@ export function HeroPreview({ section }: HeroPreviewProps) {
           </div>
 
           {/* Right Column: Panoramic Visual Image with Compass Rose Watermark */}
-          <div className="w-full lg:flex-1 min-h-[280px] md:min-h-[380px] xlg:h-[420px] xl:h-[438px] relative overflow-hidden group rounded-xl">
+          <div className="w-full lg:flex-1 min-h-[280px] md:min-h-[380px] xlg:h-[420px] xl:h-[438px] relative overflow-hidden group rounded-md">
             <UniversalMultimediaPreview
               multimedia={hero.imageMultimedia}
               fallbackAlt="Travel guidance and frequently asked questions"

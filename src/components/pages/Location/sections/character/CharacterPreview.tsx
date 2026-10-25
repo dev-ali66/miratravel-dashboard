@@ -51,7 +51,7 @@ export function CharacterPreview({ draft }: LocationPreviewSectionProps) {
 
           {/* Pillars Grid or Admin Empty State Notice */}
           {items.length === 0 ? (
-            <div className="w-full flex flex-col items-center justify-center rounded-xl border-2 border-dashed border-primary/30 bg-muted/20 p-10 text-center min-h-[200px]">
+            <div className="w-full flex flex-col items-center justify-center rounded-md border-2 border-dashed border-primary/30 bg-muted/20 p-10 text-center min-h-[200px]">
               <div className="flex h-10 w-10 items-center justify-center rounded-full bg-accent/10 text-accent mb-2.5">
                 <Sparkles className="h-5 w-5" />
               </div>
@@ -69,10 +69,10 @@ export function CharacterPreview({ draft }: LocationPreviewSectionProps) {
                   Array.isArray(item.buttons) && item.buttons.length > 0
                     ? item.buttons
                     : item.button
-                    ? [item.button]
-                    : item.href || item.linkText
-                    ? [{ label: item.linkText || "Read More", url: item.href || "#", variant: "link" }]
-                    : []
+                      ? [item.button]
+                      : item.href || item.linkText
+                        ? [{ label: item.linkText || "Read More", url: item.href || "#", variant: "link" }]
+                        : []
 
                 return (
                   <div

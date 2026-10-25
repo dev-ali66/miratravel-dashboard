@@ -9,6 +9,7 @@ import {
   FilterGroup,
   FilterSearch,
   FilterTabs,
+  FilterActions,
   FilterResetButton,
 } from "@/components/shared/FilterToolbar"
 import {
@@ -46,7 +47,7 @@ export default function JourneyWizardTable() {
     keyExtractor: (r) => r.id,
   })
 
-  const { data, isLoading, isFetching, isError } = useGetJourneyWizardRequests(
+  const { data, isLoading, isFetching, isError, refetch } = useGetJourneyWizardRequests(
     currentPage,
     effectiveLimit,
     selectedStatusFilter || undefined,
@@ -84,7 +85,7 @@ export default function JourneyWizardTable() {
   const closedCount = requestList.filter((r) => r.status === "CLOSED").length
 
   return (
-    <div className="w-full space-y-6 animate-in pt-2 duration-700 fade-in slide-in-from-bottom-4">
+    <div className="w-full space-y-6 pt-2">
       {/* Universal Page Header with 30% title & 70% compact statistics */}
       <PageHeader
         icon={Compass}
@@ -127,6 +128,7 @@ export default function JourneyWizardTable() {
       {/* Controls Bar */}
       <FilterToolbar>
         <FilterGroup>
+          {/* Search expands to take all remaining space on left */}
           <FilterSearch
             value={searchQuery}
             onChange={(val) => {
@@ -134,9 +136,12 @@ export default function JourneyWizardTable() {
               setCurrentPage(1)
             }}
             placeholder="Search by name, email, phone..."
-            width="w-44 sm:w-60 shrink-0"
+            width="w-full flex-1 min-w-[200px]"
           />
+        </FilterGroup>
 
+        <FilterActions>
+          {/* Status Tabs aligned to right */}
           <FilterTabs
             tabs={[
               { key: "", label: "All Requests" },
@@ -152,21 +157,22 @@ export default function JourneyWizardTable() {
             }}
           />
 
-          {(searchQuery || selectedStatusFilter !== "") && (
-            <FilterResetButton
-              onClick={() => {
-                setSearchQuery("")
-                setSelectedStatusFilter("")
-                setCurrentPage(1)
-              }}
-            />
-          )}
-        </FilterGroup>
+          {/* Far-Right Refresh Button */}
+          <FilterResetButton
+            onClick={() => {
+              setSearchQuery("")
+              setSelectedStatusFilter("")
+              setCurrentPage(1)
+              refetch?.()
+            }}
+            title="Refresh & Reset"
+          />
+        </FilterActions>
       </FilterToolbar>
 
       {/* Table Container */}
-      <div className="min-h-100 overflow-hidden rounded-2xl border border-border/60 bg-background/50 backdrop-blur-xl">
-        {isLoading ? (
+      <div className="min-h-100 overflow-hidden rounded-xl border border-border/60 bg-background/50 backdrop-blur-xl">
+        {isLoading && currentPage === 1 && requestList.length === 0 ? (
           <div className="p-8 text-center text-xs text-muted-foreground">
             Loading journey wizard submissions...
           </div>
@@ -182,8 +188,8 @@ export default function JourneyWizardTable() {
               {searchQuery
                 ? `No submissions match "${searchQuery}".`
                 : selectedStatusFilter
-                ? `No submissions match status filter "${selectedStatusFilter}".`
-                : "No journey wizard submissions received yet."}
+                  ? `No submissions match status filter "${selectedStatusFilter}".`
+                  : "No journey wizard submissions received yet."}
             </p>
           </div>
         ) : (
@@ -308,15 +314,14 @@ export default function JourneyWizardTable() {
                         {/* Status */}
                         <td className="px-5 py-3.5 whitespace-nowrap">
                           <span
-                            className={`rounded-full px-2.5 py-0.5 text-[11px] font-semibold uppercase tracking-wider ${
-                              req.status === "NEW"
-                                ? "bg-amber-500/10 text-amber-600 border border-amber-500/20"
-                                : req.status === "CONTACTED"
+                            className={`rounded-full px-2.5 py-0.5 text-[11px] font-semibold uppercase tracking-wider ${req.status === "NEW"
+                              ? "bg-amber-500/10 text-amber-600 border border-amber-500/20"
+                              : req.status === "CONTACTED"
                                 ? "bg-blue-500/10 text-blue-600 border border-blue-500/20"
                                 : req.status === "IN_PROGRESS"
-                                ? "bg-purple-500/10 text-purple-600 border border-purple-500/20"
-                                : "bg-emerald-500/10 text-emerald-600 border border-emerald-500/20"
-                            }`}
+                                  ? "bg-purple-500/10 text-purple-600 border border-purple-500/20"
+                                  : "bg-emerald-500/10 text-emerald-600 border border-emerald-500/20"
+                              }`}
                           >
                             {req.status}
                           </span>
@@ -328,7 +333,7 @@ export default function JourneyWizardTable() {
                             <button
                               type="button"
                               onClick={() => setSelectedRequest(req)}
-                              className="rounded-md border border-border bg-background p-1.5 text-muted-foreground hover:text-foreground hover:bg-muted transition-colors cursor-pointer"
+                              className="rounded-sm border border-border bg-background p-1.5 text-muted-foreground hover:text-foreground hover:bg-muted transition-colors cursor-pointer"
                               title="View Details"
                             >
                               <Eye className="h-3.5 w-3.5 text-primary" />
@@ -339,7 +344,7 @@ export default function JourneyWizardTable() {
                                 type="button"
                                 disabled={isUpdating}
                                 onClick={() => updateStatus({ id: req.id, status: "CLOSED" })}
-                                className="rounded-md border border-emerald-500/30 bg-emerald-500/10 p-1.5 text-emerald-600 hover:bg-emerald-500/20 transition-colors cursor-pointer"
+                                className="rounded-sm border border-emerald-500/30 bg-emerald-500/10 p-1.5 text-emerald-600 hover:bg-emerald-500/20 transition-colors cursor-pointer"
                                 title="Mark as Closed"
                               >
                                 <CheckCircle2 className="h-3.5 w-3.5" />
@@ -349,7 +354,7 @@ export default function JourneyWizardTable() {
                             <button
                               type="button"
                               onClick={(e) => handleDelete(req.id, e)}
-                              className="rounded-md border border-destructive/30 bg-destructive/10 p-1.5 text-destructive hover:bg-destructive/20 transition-colors cursor-pointer"
+                              className="rounded-sm border border-destructive/30 bg-destructive/10 p-1.5 text-destructive hover:bg-destructive/20 transition-colors cursor-pointer"
                               title="Delete Submission"
                             >
                               <Trash2 className="h-3.5 w-3.5" />
@@ -359,28 +364,44 @@ export default function JourneyWizardTable() {
                       </motion.tr>
                     )
                   })}
+
+                  {/* Subtle inline skeleton row during background fetch */}
+                  {Boolean(isLoadingMore || (isFetching && currentPage > 1)) && (
+                    <tr className="animate-pulse bg-muted/20 border-b border-border/40">
+                      <td className="px-5 py-3.5"><div className="h-3.5 w-24 rounded bg-muted/60" /></td>
+                      <td className="px-5 py-3.5">
+                        <div className="flex flex-col gap-1">
+                          <div className="h-3.5 w-28 rounded bg-muted/60" />
+                          <div className="h-3 w-36 rounded bg-muted/40" />
+                        </div>
+                      </td>
+                      <td className="px-5 py-3.5"><div className="h-3.5 w-20 rounded bg-muted/60" /></td>
+                      <td className="px-5 py-3.5"><div className="h-3.5 w-16 rounded bg-muted/60" /></td>
+                      <td className="px-5 py-3.5"><div className="h-3.5 w-20 rounded bg-muted/60" /></td>
+                      <td className="px-5 py-3.5"><div className="h-5 w-16 rounded-full bg-muted/60" /></td>
+                      <td className="px-5 py-3.5 text-right"><div className="h-7 w-20 rounded-sm bg-muted/60 ml-auto" /></td>
+                    </tr>
+                  )}
                 </tbody>
               </table>
             </div>
 
             {/* Universal Pagination */}
             {totalItems > 0 && (
-              <div className="border-t border-border/60 bg-background/50 p-4">
-                <Pagination
-                  mode={mode}
-                  currentPage={currentPage}
-                  totalPages={totalPages}
-                  totalItems={totalItems}
-                  pageSize={effectiveLimit}
-                  pageSizeOptions={pageSizeOptions}
-                  onPageChange={setCurrentPage}
-                  onPageSizeChange={setTargetItems}
-                  hasMore={hasMore}
-                  isLoadingMore={isLoadingMore || (isFetching && currentPage > 1)}
-                  onLoadMore={handleLoadMore}
-                  loadedCount={requestList.length}
-                />
-              </div>
+              <Pagination
+                mode={mode}
+                currentPage={currentPage}
+                totalPages={totalPages}
+                totalItems={totalItems}
+                pageSize={effectiveLimit}
+                pageSizeOptions={pageSizeOptions}
+                onPageChange={setCurrentPage}
+                onPageSizeChange={setTargetItems}
+                hasMore={hasMore}
+                isLoadingMore={isLoadingMore || (isFetching && currentPage > 1)}
+                onLoadMore={handleLoadMore}
+                loadedCount={requestList.length}
+              />
             )}
           </>
         )}

@@ -88,7 +88,7 @@ export default function JourneyWizardDetailsModal({
           initial={{ opacity: 0, scale: 0.95, y: 10 }}
           animate={{ opacity: 1, scale: 1, y: 0 }}
           exit={{ opacity: 0, scale: 0.95, y: 10 }}
-          className="relative w-full max-w-2xl max-h-[90vh] overflow-y-auto rounded-2xl border border-border bg-card p-6 shadow-2xl text-card-foreground"
+          className="relative w-full max-w-2xl max-h-[90vh] overflow-y-auto rounded-xl border border-border bg-card p-6 shadow-2xl text-card-foreground"
         >
           {/* Close button */}
           <button
@@ -101,7 +101,7 @@ export default function JourneyWizardDetailsModal({
 
           {/* Modal Header */}
           <div className="flex items-start gap-3 border-b border-border/60 pb-4 pr-8">
-            <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-primary/10 text-primary">
+            <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-md bg-primary/10 text-primary">
               <Compass className="h-6 w-6" />
             </div>
             <div>
@@ -110,15 +110,14 @@ export default function JourneyWizardDetailsModal({
                   Journey Planner Request
                 </h3>
                 <span
-                  className={`rounded-full px-2.5 py-0.5 text-xs font-semibold ${
-                    request.status === "NEW"
-                      ? "bg-amber-500/10 text-amber-600 border border-amber-500/20"
-                      : request.status === "CONTACTED"
+                  className={`rounded-full px-2.5 py-0.5 text-xs font-semibold ${request.status === "NEW"
+                    ? "bg-amber-500/10 text-amber-600 border border-amber-500/20"
+                    : request.status === "CONTACTED"
                       ? "bg-blue-500/10 text-blue-600 border border-blue-500/20"
                       : request.status === "IN_PROGRESS"
-                      ? "bg-purple-500/10 text-purple-600 border border-purple-500/20"
-                      : "bg-emerald-500/10 text-emerald-600 border border-emerald-500/20"
-                  }`}
+                        ? "bg-purple-500/10 text-purple-600 border border-purple-500/20"
+                        : "bg-emerald-500/10 text-emerald-600 border border-emerald-500/20"
+                    }`}
                 >
                   {request.status}
                 </span>
@@ -132,7 +131,7 @@ export default function JourneyWizardDetailsModal({
           {/* Modal Content Grid */}
           <div className="mt-5 flex flex-col gap-5 text-xs">
             {/* Explorer / Requester Contact Details Card */}
-            <div className="rounded-xl border border-primary/20 bg-primary/5 p-4 space-y-3">
+            <div className="rounded-md border border-primary/20 bg-primary/5 p-4 space-y-3">
               <span className="font-bold text-foreground uppercase tracking-wider text-[11px] block flex items-center gap-1.5">
                 <User className="h-3.5 w-3.5 text-primary" /> Requester Explorer Contact Details
               </span>
@@ -206,7 +205,7 @@ export default function JourneyWizardDetailsModal({
                   <span className="text-[10px] font-semibold text-muted-foreground uppercase flex items-center gap-1">
                     <MessageSquare className="h-3 w-3 text-amber-500" /> Explorer Custom Requests / Initial Message:
                   </span>
-                  <p className="text-xs text-foreground leading-relaxed mt-1 font-medium bg-background/80 p-2.5 rounded-md border border-border/40 whitespace-pre-wrap">
+                  <p className="text-xs text-foreground leading-relaxed mt-1 font-medium bg-background/80 p-2.5 rounded-sm border border-border/40 whitespace-pre-wrap">
                     {request.notes}
                   </p>
                 </div>
@@ -216,7 +215,7 @@ export default function JourneyWizardDetailsModal({
             {/* Quick Metrics */}
 
             <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
-              <div className="rounded-xl border border-border/60 bg-muted/20 p-3 flex flex-col gap-1">
+              <div className="rounded-md border border-border/60 bg-muted/20 p-3 flex flex-col gap-1">
                 <span className="text-[11px] text-muted-foreground flex items-center gap-1">
                   <Calendar className="h-3.5 w-3.5 text-primary" /> Duration
                 </span>
@@ -225,7 +224,7 @@ export default function JourneyWizardDetailsModal({
                 </span>
               </div>
 
-              <div className="rounded-xl border border-border/60 bg-muted/20 p-3 flex flex-col gap-1">
+              <div className="rounded-md border border-border/60 bg-muted/20 p-3 flex flex-col gap-1">
                 <span className="text-[11px] text-muted-foreground flex items-center gap-1">
                   <Euro className="h-3.5 w-3.5 text-emerald-500" /> Budget
                 </span>
@@ -234,7 +233,7 @@ export default function JourneyWizardDetailsModal({
                 </span>
               </div>
 
-              <div className="rounded-xl border border-border/60 bg-muted/20 p-3 flex flex-col gap-1">
+              <div className="rounded-md border border-border/60 bg-muted/20 p-3 flex flex-col gap-1">
                 <span className="text-[11px] text-muted-foreground flex items-center gap-1">
                   <Gauge className="h-3.5 w-3.5 text-amber-500" /> Pace
                 </span>
@@ -243,7 +242,7 @@ export default function JourneyWizardDetailsModal({
                 </span>
               </div>
 
-              <div className="rounded-xl border border-border/60 bg-muted/20 p-3 flex flex-col gap-1">
+              <div className="rounded-md border border-border/60 bg-muted/20 p-3 flex flex-col gap-1">
                 <span className="text-[11px] text-muted-foreground flex items-center gap-1">
                   <Sparkles className="h-3.5 w-3.5 text-purple-500" /> Comfort
                 </span>
@@ -254,7 +253,7 @@ export default function JourneyWizardDetailsModal({
             </div>
 
             {/* Detailed Selection Categories */}
-            <div className="flex flex-col gap-4 rounded-xl border border-border/60 bg-muted/10 p-4">
+            <div className="flex flex-col gap-4 rounded-md border border-border/60 bg-muted/10 p-4">
               {/* Journey Types */}
               <div>
                 <span className="font-semibold text-foreground block mb-1.5 uppercase text-[10px] tracking-wider text-muted-foreground">
@@ -265,7 +264,7 @@ export default function JourneyWizardDetailsModal({
                     {request.journeyTypes.map((type) => (
                       <span
                         key={type}
-                        className="rounded-md bg-primary/10 text-primary border border-primary/20 px-2.5 py-1 font-medium"
+                        className="rounded-sm bg-primary/10 text-primary border border-primary/20 px-2.5 py-1 font-medium"
                       >
                         {type}
                       </span>
@@ -286,7 +285,7 @@ export default function JourneyWizardDetailsModal({
                     {request.travelStyles.map((style) => (
                       <span
                         key={style}
-                        className="rounded-md bg-secondary/60 text-foreground border border-border px-2.5 py-1 font-medium"
+                        className="rounded-sm bg-secondary/60 text-foreground border border-border px-2.5 py-1 font-medium"
                       >
                         {style}
                       </span>
@@ -307,7 +306,7 @@ export default function JourneyWizardDetailsModal({
                     {request.perfectFor.map((item) => (
                       <span
                         key={item}
-                        className="rounded-md bg-amber-500/10 text-amber-700 dark:text-amber-400 border border-amber-500/20 px-2.5 py-1 font-medium flex items-center gap-1"
+                        className="rounded-sm bg-amber-500/10 text-amber-700 dark:text-amber-400 border border-amber-500/20 px-2.5 py-1 font-medium flex items-center gap-1"
                       >
                         <Users className="h-3 w-3" /> {item}
                       </span>

@@ -148,11 +148,11 @@ export function PasswordSecuritySection({
   }
 
   return (
-    <div className="w-full rounded-2xl border border-border/80 bg-card p-5 sm:p-7 shadow-xs">
+    <div className="w-full rounded-xl border border-border/80 bg-card p-5 sm:p-7 shadow-xs">
       {/* Section Header */}
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 border-b border-border/60 pb-5">
         <div className="flex items-center gap-3">
-          <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-amber-500/10 text-amber-500">
+          <div className="flex h-10 w-10 items-center justify-center rounded-md bg-amber-500/10 text-amber-500">
             <KeyRound className="h-5 w-5" />
           </div>
           <div>
@@ -176,11 +176,10 @@ export function PasswordSecuritySection({
           {/* Old Password */}
           <div className="flex flex-col gap-1">
             <div
-              className={`relative h-[52px] sm:h-[54px] w-full rounded-lg border transition-all ${
-                errors.oldPassword
-                  ? "border-destructive focus-within:border-destructive ring-2 ring-destructive/10"
-                  : "border-border/80 hover:border-foreground/40 focus-within:border-primary focus-within:ring-2 focus-within:ring-primary/10"
-              } bg-background`}
+              className={`relative h-[52px] sm:h-[54px] w-full rounded-lg border transition-all ${errors.oldPassword
+                ? "border-destructive focus-within:border-destructive ring-2 ring-destructive/10"
+                : "border-border/80 hover:border-foreground/40 focus-within:border-primary focus-within:ring-2 focus-within:ring-primary/10"
+                } bg-background`}
             >
               <label className="pointer-events-none absolute -top-2.5 left-3.5 bg-background px-1.5 text-[11px] font-medium tracking-tight text-muted-foreground z-10 rounded">
                 Old Password <span className="text-destructive">*</span>
@@ -215,11 +214,10 @@ export function PasswordSecuritySection({
           {/* New Password */}
           <div className="flex flex-col gap-1">
             <div
-              className={`relative h-[52px] sm:h-[54px] w-full rounded-lg border transition-all ${
-                errors.newPassword
-                  ? "border-destructive focus-within:border-destructive ring-2 ring-destructive/10"
-                  : "border-border/80 hover:border-foreground/40 focus-within:border-primary focus-within:ring-2 focus-within:ring-primary/10"
-              } bg-background`}
+              className={`relative h-[52px] sm:h-[54px] w-full rounded-lg border transition-all ${errors.newPassword
+                ? "border-destructive focus-within:border-destructive ring-2 ring-destructive/10"
+                : "border-border/80 hover:border-foreground/40 focus-within:border-primary focus-within:ring-2 focus-within:ring-primary/10"
+                } bg-background`}
             >
               <label className="pointer-events-none absolute -top-2.5 left-3.5 bg-background px-1.5 text-[11px] font-medium tracking-tight text-muted-foreground z-10 rounded">
                 New Password <span className="text-destructive">*</span>
@@ -254,11 +252,10 @@ export function PasswordSecuritySection({
           {/* Confirm New Password */}
           <div className="flex flex-col gap-1">
             <div
-              className={`relative h-[52px] sm:h-[54px] w-full rounded-lg border transition-all ${
-                errors.confirmPassword
-                  ? "border-destructive focus-within:border-destructive ring-2 ring-destructive/10"
-                  : "border-border/80 hover:border-foreground/40 focus-within:border-primary focus-within:ring-2 focus-within:ring-primary/10"
-              } bg-background`}
+              className={`relative h-[52px] sm:h-[54px] w-full rounded-lg border transition-all ${errors.confirmPassword
+                ? "border-destructive focus-within:border-destructive ring-2 ring-destructive/10"
+                : "border-border/80 hover:border-foreground/40 focus-within:border-primary focus-within:ring-2 focus-within:ring-primary/10"
+                } bg-background`}
             >
               <label className="pointer-events-none absolute -top-2.5 left-3.5 bg-background px-1.5 text-[11px] font-medium tracking-tight text-muted-foreground z-10 rounded">
                 Confirm New Password <span className="text-destructive">*</span>
@@ -295,14 +292,14 @@ export function PasswordSecuritySection({
 
         {/* Password Strength Checklist & Bar */}
         {form.newPassword.length > 0 && (
-          <div className="rounded-xl border border-border/60 bg-muted/20 p-4 transition-all">
+          <div className="rounded-md border border-border/60 bg-muted/20 p-4 transition-all">
             <PasswordRules password={form.newPassword} />
           </div>
         )}
 
         {/* Rate limit warning banner when active */}
         {cooldown > 0 && (
-          <div className="flex items-center gap-2.5 rounded-xl border border-amber-500/30 bg-amber-500/10 p-3.5 text-xs text-amber-800 dark:text-amber-300">
+          <div className="flex items-center gap-2.5 rounded-md border border-amber-500/30 bg-amber-500/10 p-3.5 text-xs text-amber-800 dark:text-amber-300">
             <AlertCircle className="h-4 w-4 shrink-0 text-amber-500" />
             <div className="flex-1">
               <span className="font-semibold">Security Rate Limit Active:</span>{" "}
@@ -356,7 +353,7 @@ export function PasswordSecuritySection({
 
         {/* Security & Sessions Quick Card */}
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-4 border-t border-border/60">
-          <div className="flex items-center justify-between rounded-xl border border-border/70 bg-muted/20 p-4">
+          <div className="flex items-center justify-between rounded-md border border-border/70 bg-muted/20 p-4">
             <div className="flex items-center gap-3">
               <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-primary/10 text-primary">
                 <Smartphone className="h-4 w-4" />
@@ -383,7 +380,7 @@ export function PasswordSecuritySection({
             )}
           </div>
 
-          <div className="flex items-center justify-between rounded-xl border border-border/70 bg-muted/20 p-4">
+          <div className="flex items-center justify-between rounded-md border border-border/70 bg-muted/20 p-4">
             <div className="flex items-center gap-3">
               <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-emerald-500/10 text-emerald-600 dark:text-emerald-400">
                 <History className="h-4 w-4" />

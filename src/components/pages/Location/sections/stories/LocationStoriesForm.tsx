@@ -114,7 +114,7 @@ export function LocationStoriesForm({
     >
       <div className="flex flex-col gap-6">
         {/* Header & Typography Controls */}
-        <div className="rounded-xl border border-border/70 bg-card/60 p-4 space-y-4">
+        <div className="rounded-md border border-border/70 bg-card/60 p-4 space-y-4">
           <h4 className="text-xs font-semibold uppercase tracking-wider text-muted-foreground flex items-center gap-2">
             <BookOpen className="h-4 w-4 text-primary" />
             Section Headers & Narrative
@@ -175,7 +175,7 @@ export function LocationStoriesForm({
             return (
               <div
                 key={index}
-                className="rounded-xl border border-border/80 bg-background transition-all hover:border-border"
+                className="rounded-md border border-border/80 bg-background transition-all hover:border-border"
               >
                 {/* Item Accordion Header */}
                 <div className="flex items-center justify-between px-4 py-3 bg-muted/20 rounded-t-xl">
@@ -215,9 +215,8 @@ export function LocationStoriesForm({
                       className="p-1 text-muted-foreground hover:text-foreground cursor-pointer"
                     >
                       <ChevronDown
-                        className={`h-4 w-4 transition-transform duration-200 ${
-                          isItemOpen ? "rotate-180" : ""
-                        }`}
+                        className={`h-4 w-4 transition-transform duration-200 ${isItemOpen ? "rotate-180" : ""
+                          }`}
                       />
                     </button>
 
@@ -286,7 +285,7 @@ export function LocationStoriesForm({
           <button
             type="button"
             onClick={addItem}
-            className="flex items-center justify-center gap-2 rounded-xl border border-dashed border-border/80 bg-muted/10 p-3 text-xs font-medium text-muted-foreground transition-colors hover:border-primary/50 hover:bg-muted/30 hover:text-primary cursor-pointer mt-1"
+            className="flex items-center justify-center gap-2 rounded-md border border-dashed border-border/80 bg-muted/10 p-3 text-xs font-medium text-muted-foreground transition-colors hover:border-primary/50 hover:bg-muted/30 hover:text-primary cursor-pointer mt-1"
           >
             <Plus className="h-4 w-4" />
             Add Story Item
@@ -294,7 +293,7 @@ export function LocationStoriesForm({
         </div>
 
         {/* Reusable Action Buttons */}
-        <div className="rounded-xl border border-border/70 bg-card/60 p-4">
+        <div className="rounded-md border border-border/70 bg-card/60 p-4">
           <ButtonsField
             label="Section Action Buttons"
             fieldName="stories.buttons"

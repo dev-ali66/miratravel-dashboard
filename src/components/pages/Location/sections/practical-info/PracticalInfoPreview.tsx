@@ -90,7 +90,7 @@ export function PracticalInfoPreview({ draft }: LocationPreviewSectionProps) {
             {/* Right Column: Accordion List or Admin Empty State */}
             <div className="w-full lg:flex-1 lg:max-w-[780px] flex flex-col">
               {items.length === 0 ? (
-                <div className="w-full flex flex-col items-center justify-center rounded-xl border-2 border-dashed border-primary/30 bg-muted/20 p-10 text-center min-h-[220px]">
+                <div className="w-full flex flex-col items-center justify-center rounded-md border-2 border-dashed border-primary/30 bg-muted/20 p-10 text-center min-h-[220px]">
                   <div className="flex h-10 w-10 items-center justify-center rounded-full bg-accent/10 text-accent mb-2.5">
                     <Sparkles className="h-5 w-5" />
                   </div>
@@ -126,9 +126,8 @@ export function PracticalInfoPreview({ draft }: LocationPreviewSectionProps) {
                         {/* Chevron Indicator */}
                         <div className="relative size-6 shrink-0 flex items-center justify-center text-subtitle group-hover:text-accent transition-colors duration-300">
                           <ChevronDown
-                            className={`size-4 transition-transform duration-300 ease-out ${
-                              isOpen ? "rotate-180 text-accent" : "rotate-0"
-                            }`}
+                            className={`size-4 transition-transform duration-300 ease-out ${isOpen ? "rotate-180 text-accent" : "rotate-0"
+                              }`}
                           />
                         </div>
                       </button>

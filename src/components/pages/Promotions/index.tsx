@@ -239,16 +239,25 @@ export default function PromotionsPage() {
       {/* Toolbar */}
       <FilterToolbar>
         <FilterGroup>
+          {/* Search expands to take all remaining space on left */}
           <FilterSearch
             value={search}
-            onChange={(val) => setSearch(val)}
+            onChange={(val) => {
+              setSearch(val)
+              setCurrentPage(1)
+            }}
             placeholder="Search vouchers, campaigns..."
-            width="w-48 sm:w-64 shrink-0"
+            width="w-full flex-1 min-w-[200px]"
           />
+        </FilterGroup>
 
+        <FilterActions>
           <FilterSelect
             value={statusFilter}
-            onChange={(val) => setStatusFilter(val)}
+            onChange={(val) => {
+              setStatusFilter(val)
+              setCurrentPage(1)
+            }}
             options={[
               { label: "Active Only", value: "ACTIVE" },
               { label: "Inactive / Expired", value: "INACTIVE" },
@@ -259,27 +268,26 @@ export default function PromotionsPage() {
             width="min-w-[125px] max-w-[155px]"
           />
 
-          {(search || statusFilter !== "ALL") && (
-            <FilterResetButton
-              onClick={() => {
-                setSearch("")
-                setStatusFilter("ALL")
-              }}
-            />
-          )}
-        </FilterGroup>
-
-        <FilterActions>
           <FilterCreateButton
             onClick={() => setIsCreateOpen(true)}
             label="Create Voucher"
             icon={Plus}
           />
+
+          {/* Universal Far-Right Refresh Button */}
+          <FilterResetButton
+            onClick={() => {
+              setSearch("")
+              setStatusFilter("ALL")
+              setCurrentPage(1)
+            }}
+            title="Refresh & Reset"
+          />
         </FilterActions>
       </FilterToolbar>
 
       {/* Table */}
-      <div className="overflow-hidden rounded-xl border border-border/60 bg-card/60 shadow-sm backdrop-blur-xl">
+      <div className="overflow-hidden rounded-md border border-border/60 bg-card/60 shadow-sm backdrop-blur-xl">
         <div className="overflow-x-auto">
           <table className="w-full text-left text-sm">
             <thead className="border-b border-border/60 bg-muted/40 text-xs font-semibold uppercase tracking-wider text-muted-foreground">
@@ -298,106 +306,104 @@ export default function PromotionsPage() {
               {filtered
                 .slice(0, currentPage * pageSize)
                 .map((p) => {
-                const percentUsed = Math.min(100, Math.round((p.usageCount / p.usageLimit) * 100))
-                return (
-                  <tr key={p.id} className="transition-colors hover:bg-muted/30">
-                    <td className="px-5 py-3.5">
-                      <div className="flex items-center gap-2">
-                        <span className="font-mono text-xs font-bold tracking-wider rounded bg-primary/10 px-2 py-1 text-primary">
-                          {p.code}
-                        </span>
-                        <Button
-                          variant="ghost"
-                          size="icon"
-                          className="h-6 w-6 text-muted-foreground hover:text-foreground"
-                          onClick={() => handleCopy(p.code)}
-                        >
-                          {copiedCode === p.code ? (
-                            <Check className="h-3 w-3 text-emerald-500" />
-                          ) : (
-                            <Copy className="h-3 w-3" />
-                          )}
-                        </Button>
-                      </div>
-                    </td>
-                    <td className="px-5 py-3.5">
-                      <div className="flex flex-col">
-                        <span className="text-xs font-semibold text-foreground">{p.description}</span>
-                        <span className="text-[11px] text-muted-foreground">{p.applicableTo}</span>
-                      </div>
-                    </td>
-                    <td className="px-5 py-3.5">
-                      <span className="font-semibold text-xs text-foreground">
-                        {p.type === "PERCENTAGE" ? `${p.discountValue}% OFF` : `$${p.discountValue.toLocaleString()} OFF`}
-                      </span>
-                    </td>
-                    <td className="px-5 py-3.5 text-xs text-muted-foreground">
-                      ${p.minBookingValue.toLocaleString()}
-                    </td>
-                    <td className="px-5 py-3.5">
-                      <div className="flex flex-col gap-1 text-xs">
-                        <span className="font-semibold text-foreground">
-                          {p.usageCount} / {p.usageLimit} ({percentUsed}%)
-                        </span>
-                        <div className="h-1.5 w-24 overflow-hidden rounded-full bg-muted">
-                          <div
-                            className={cn(
-                              "h-full rounded-full",
-                              percentUsed > 80 ? "bg-amber-500" : "bg-primary"
+                  const percentUsed = Math.min(100, Math.round((p.usageCount / p.usageLimit) * 100))
+                  return (
+                    <tr key={p.id} className="transition-colors hover:bg-muted/30">
+                      <td className="px-5 py-3.5">
+                        <div className="flex items-center gap-2">
+                          <span className="font-mono text-xs font-bold tracking-wider rounded bg-primary/10 px-2 py-1 text-primary">
+                            {p.code}
+                          </span>
+                          <Button
+                            variant="ghost"
+                            size="icon"
+                            className="h-6 w-6 text-muted-foreground hover:text-foreground"
+                            onClick={() => handleCopy(p.code)}
+                          >
+                            {copiedCode === p.code ? (
+                              <Check className="h-3 w-3 text-emerald-500" />
+                            ) : (
+                              <Copy className="h-3 w-3" />
                             )}
-                            style={{ width: `${percentUsed}%` }}
-                          />
+                          </Button>
                         </div>
-                      </div>
-                    </td>
-                    <td className="px-5 py-3.5 text-xs text-muted-foreground">
-                      {p.validFrom} to {p.validTo}
-                    </td>
-                    <td className="px-5 py-3.5 text-center">
-                      <span
-                        className={cn(
-                          "inline-block rounded-md border px-2 py-0.5 text-[11px] font-semibold uppercase",
-                          p.isActive
-                            ? "border-emerald-500/20 bg-emerald-500/10 text-emerald-600 dark:text-emerald-400"
-                            : "border-zinc-500/20 bg-zinc-500/10 text-zinc-500"
-                        )}
-                      >
-                        {p.isActive ? "Active" : "Inactive"}
-                      </span>
-                    </td>
-                    <td className="px-5 py-3.5 text-right">
-                      <Switch
-                        checked={p.isActive}
-                        onCheckedChange={() => handleToggleActive(p.id)}
-                      />
-                    </td>
-                  </tr>
-                )
-              })}
+                      </td>
+                      <td className="px-5 py-3.5">
+                        <div className="flex flex-col">
+                          <span className="text-xs font-semibold text-foreground">{p.description}</span>
+                          <span className="text-[11px] text-muted-foreground">{p.applicableTo}</span>
+                        </div>
+                      </td>
+                      <td className="px-5 py-3.5">
+                        <span className="font-semibold text-xs text-foreground">
+                          {p.type === "PERCENTAGE" ? `${p.discountValue}% OFF` : `$${p.discountValue.toLocaleString()} OFF`}
+                        </span>
+                      </td>
+                      <td className="px-5 py-3.5 text-xs text-muted-foreground">
+                        ${p.minBookingValue.toLocaleString()}
+                      </td>
+                      <td className="px-5 py-3.5">
+                        <div className="flex flex-col gap-1 text-xs">
+                          <span className="font-semibold text-foreground">
+                            {p.usageCount} / {p.usageLimit} ({percentUsed}%)
+                          </span>
+                          <div className="h-1.5 w-24 overflow-hidden rounded-full bg-muted">
+                            <div
+                              className={cn(
+                                "h-full rounded-full",
+                                percentUsed > 80 ? "bg-amber-500" : "bg-primary"
+                              )}
+                              style={{ width: `${percentUsed}%` }}
+                            />
+                          </div>
+                        </div>
+                      </td>
+                      <td className="px-5 py-3.5 text-xs text-muted-foreground">
+                        {p.validFrom} to {p.validTo}
+                      </td>
+                      <td className="px-5 py-3.5 text-center">
+                        <span
+                          className={cn(
+                            "inline-block rounded-sm border px-2 py-0.5 text-[11px] font-semibold uppercase",
+                            p.isActive
+                              ? "border-emerald-500/20 bg-emerald-500/10 text-emerald-600 dark:text-emerald-400"
+                              : "border-zinc-500/20 bg-zinc-500/10 text-zinc-500"
+                          )}
+                        >
+                          {p.isActive ? "Active" : "Inactive"}
+                        </span>
+                      </td>
+                      <td className="px-5 py-3.5 text-right">
+                        <Switch
+                          checked={p.isActive}
+                          onCheckedChange={() => handleToggleActive(p.id)}
+                        />
+                      </td>
+                    </tr>
+                  )
+                })}
             </tbody>
           </table>
         </div>
 
         {/* Universal Pagination */}
         {filtered.length > 0 && (
-          <div className="border-t border-border/60 bg-muted/10 px-5 py-3">
-            <Pagination
-              mode="infinite"
-              currentPage={currentPage}
-              totalPages={Math.max(1, Math.ceil(filtered.length / pageSize))}
-              totalItems={filtered.length}
-              pageSize={pageSize}
-              pageSizeOptions={[10, 20, 50, 100]}
-              loadedCount={Math.min(filtered.length, currentPage * pageSize)}
-              hasMore={currentPage * pageSize < filtered.length}
-              onLoadMore={() => setCurrentPage((p) => p + 1)}
-              onPageChange={setCurrentPage}
-              onPageSizeChange={(sz) => {
-                setPageSize(sz)
-                setCurrentPage(1)
-              }}
-            />
-          </div>
+          <Pagination
+            mode="infinite"
+            currentPage={currentPage}
+            totalPages={Math.max(1, Math.ceil(filtered.length / pageSize))}
+            totalItems={filtered.length}
+            pageSize={pageSize}
+            pageSizeOptions={[10, 20, 50, 100]}
+            loadedCount={Math.min(filtered.length, currentPage * pageSize)}
+            hasMore={currentPage * pageSize < filtered.length}
+            onLoadMore={() => setCurrentPage((p) => p + 1)}
+            onPageChange={setCurrentPage}
+            onPageSizeChange={(sz) => {
+              setPageSize(sz)
+              setCurrentPage(1)
+            }}
+          />
         )}
       </div>
 

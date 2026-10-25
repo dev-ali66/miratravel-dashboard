@@ -1,18 +1,15 @@
-import { useState, useEffect, useCallback } from "react"
+import { useState, useEffect } from "react"
 import {
   Inbox,
   Eye,
   Trash2,
-  RefreshCw,
   Calendar,
   Mail,
   Phone,
   User,
-  MapPin,
-  Compass,
   Users,
-  CheckCircle2,
   Clock,
+  CheckCircle2,
 } from "lucide-react"
 import { Pagination } from "@/components/shared/Pagination"
 import { PageHeader, CompactStatCard } from "@/components/shared/PageHeader"
@@ -22,6 +19,7 @@ import {
   FilterSearch,
   FilterSelect,
   FilterActions,
+  FilterExportButton,
   FilterResetButton,
 } from "@/components/shared/FilterToolbar"
 import { Button } from "@/components/ui/button"
@@ -40,22 +38,13 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog"
 import { cn } from "@/lib/utils"
-
-export interface InquiryItem {
-  id: string
-  inquiryNumber: string
-  fullName: string
-  email: string
-  phone?: string
-  destination?: string
-  travelDate?: string
-  travelers?: string
-  journeyTypes: string[]
-  message?: string
-  status: "NEW" | "IN_REVIEW" | "CONTACTED" | "CLOSED"
-  adminNotes?: string
-  createdAt: string
-}
+import { useListingPagination } from "@/hooks/ui/useListingPagination"
+import {
+  useGetInquiries,
+  useUpdateInquiryStatus,
+  useDeleteInquiry,
+  type InquiryItem,
+} from "@/hooks/inquiry/useInquiries"
 
 const statusStyles: Record<string, string> = {
   NEW: "bg-blue-500/10 text-blue-600 dark:text-blue-400 border-blue-500/20",
@@ -64,89 +53,114 @@ const statusStyles: Record<string, string> = {
   CLOSED: "bg-zinc-500/10 text-zinc-500 border-zinc-500/20",
 }
 
-const API_BASE = "http://localhost:5010/api/v1/inquiry"
-
 export default function InquiryPage() {
-  const [inquiries, setInquiries] = useState<InquiryItem[]>([])
-  const [loading, setLoading] = useState<boolean>(true)
   const [search, setSearch] = useState("")
   const [statusFilter, setStatusFilter] = useState("ALL")
   const [selectedInquiry, setSelectedInquiry] = useState<InquiryItem | null>(null)
-  const [isUpdating, setIsUpdating] = useState(false)
-  const [currentPage, setCurrentPage] = useState(1)
-  const [pageSize, setPageSize] = useState(10)
 
-  const fetchInquiries = useCallback(async () => {
-    setLoading(true)
-    try {
-      const params = new URLSearchParams()
-      if (search) params.append("search", search)
-      if (statusFilter !== "ALL") params.append("status", statusFilter)
+  const filterKey = `${search}-${statusFilter}`
 
-      const res = await fetch(`${API_BASE}?${params.toString()}`)
-      const json = await res.json()
-      if (json.success && Array.isArray(json.data)) {
-        setInquiries(json.data)
-        setCurrentPage(1)
-      } else {
-        setInquiries([])
-      }
-    } catch (err) {
-      console.error("Failed to fetch inquiries:", err)
-      setInquiries([])
-    } finally {
-      setLoading(false)
-    }
-  }, [search, statusFilter])
+  const {
+    mode,
+    currentPage,
+    setCurrentPage,
+    setTargetItems,
+    effectiveLimit,
+    pageSizeOptions,
+    displayItems: inquiries,
+    hasMore,
+    isLoadingMore,
+    handleLoadMore,
+    setIncomingData,
+  } = useListingPagination<InquiryItem>({
+    mode: "infinite",
+    initialTargetItems: 10,
+    isGrid: false,
+    filterKey,
+    keyExtractor: (i) => i.id,
+  })
+
+  const { data, isLoading, isFetching, isError, refetch } = useGetInquiries({
+    page: currentPage,
+    limit: effectiveLimit,
+    search: search.trim() || undefined,
+    status: statusFilter !== "ALL" ? statusFilter : undefined,
+  })
+
+  const updateMutation = useUpdateInquiryStatus()
+  const deleteMutation = useDeleteInquiry()
 
   useEffect(() => {
-    fetchInquiries()
-  }, [fetchInquiries])
+    if (data?.data) {
+      setIncomingData(data.data, data.meta?.total)
+    }
+  }, [data, setIncomingData])
 
-  const handleStatusChange = async (inquiryId: string, newStatus: string) => {
-    setIsUpdating(true)
-    try {
-      const res = await fetch(`${API_BASE}/${inquiryId}`, {
-        method: "PATCH",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ status: newStatus }),
-      })
-      const json = await res.json()
-      if (json.success) {
-        setInquiries((prev) =>
-          prev.map((item) => (item.id === inquiryId ? { ...item, status: newStatus as any } : item))
-        )
-        if (selectedInquiry?.id === inquiryId) {
-          setSelectedInquiry((prev) => (prev ? { ...prev, status: newStatus as any } : null))
-        }
-      }
-    } catch (err) {
-      console.error("Failed to update inquiry status:", err)
-    } finally {
-      setIsUpdating(false)
+  const totalItems = data?.meta?.total ?? inquiries.length
+  const totalPages = data?.meta?.totalPages ?? Math.max(1, Math.ceil(totalItems / effectiveLimit))
+
+  const handleExportCSV = () => {
+    if (!inquiries.length) return
+    const headers = [
+      "Inquiry Number",
+      "Full Name",
+      "Email",
+      "Phone",
+      "Destination",
+      "Travel Date",
+      "Travelers",
+      "Status",
+      "Message",
+      "Created At",
+    ]
+    const rows = inquiries.map((i) => [
+      i.inquiryNumber || i.id,
+      `"${i.fullName || ""}"`,
+      i.email || "",
+      i.phone || "",
+      `"${i.destination || ""}"`,
+      `"${i.travelDate || ""}"`,
+      `"${i.travelers || ""}"`,
+      i.status,
+      `"${(i.message || "").replace(/"/g, '""')}"`,
+      i.createdAt ? new Date(i.createdAt).toISOString() : "",
+    ])
+
+    const csvContent =
+      "data:text/csv;charset=utf-8," +
+      [headers.join(","), ...rows.map((e) => e.join(","))].join("\n")
+    const encodedUri = encodeURI(csvContent)
+    const link = document.createElement("a")
+    link.setAttribute("href", encodedUri)
+    link.setAttribute(
+      "download",
+      `mira_inquiries_export_${new Date().toISOString().split("T")[0]}.csv`
+    )
+    document.body.appendChild(link)
+    link.click()
+    document.body.removeChild(link)
+  }
+
+  const handleStatusChange = (inquiryId: string, newStatus: string) => {
+    updateMutation.mutate({ id: inquiryId, status: newStatus })
+    if (selectedInquiry?.id === inquiryId) {
+      setSelectedInquiry((prev) => (prev ? { ...prev, status: newStatus as any } : null))
     }
   }
 
-  const handleDelete = async (inquiryId: string) => {
+  const handleDelete = (inquiryId: string) => {
     if (!window.confirm("Are you sure you want to delete this inquiry?")) return
-    try {
-      const res = await fetch(`${API_BASE}/${inquiryId}`, {
-        method: "DELETE",
-      })
-      const json = await res.json()
-      if (json.success) {
-        setInquiries((prev) => prev.filter((item) => item.id !== inquiryId))
-        if (selectedInquiry?.id === inquiryId) setSelectedInquiry(null)
-      }
-    } catch (err) {
-      console.error("Failed to delete inquiry:", err)
-    }
+    deleteMutation.mutate(inquiryId)
+    if (selectedInquiry?.id === inquiryId) setSelectedInquiry(null)
   }
 
   const newCount = inquiries.filter((i) => i.status === "NEW").length
   const inReviewCount = inquiries.filter((i) => i.status === "IN_REVIEW").length
   const contactedCount = inquiries.filter((i) => i.status === "CONTACTED").length
   const closedCount = inquiries.filter((i) => i.status === "CLOSED").length
+
+  // Only consider loading on initial batch 1 when no items are present yet
+  const isInitialLoading = isLoading && currentPage === 1 && inquiries.length === 0
 
   return (
     <div className="w-full space-y-6 pt-2">
@@ -180,8 +194,8 @@ export default function InquiryPage() {
             />
             <CompactStatCard
               label="Closed"
-              value={`${closedCount} Total`}
-              subtext="Archived inquiries"
+              value={`${closedCount} Resolved`}
+              subtext="Archived records"
               icon={CheckCircle2}
               iconColor="text-emerald-500"
             />
@@ -189,57 +203,63 @@ export default function InquiryPage() {
         }
       />
 
-      {/* Toolbar */}
+      {/* Filter & Search Toolbar */}
       <FilterToolbar>
         <FilterGroup>
+          {/* Search expands to take all remaining space on left */}
           <FilterSearch
             value={search}
-            onChange={(val) => setSearch(val)}
-            placeholder="Search inquiries..."
-            width="w-48 sm:w-64 shrink-0"
+            onChange={(val) => {
+              setSearch(val)
+              setCurrentPage(1)
+            }}
+            placeholder="Search by name, email, ref #..."
+            width="w-full flex-1 min-w-[200px]"
           />
+        </FilterGroup>
 
+        <FilterActions>
+          {/* Status Filter */}
           <FilterSelect
             value={statusFilter}
-            onChange={(val) => setStatusFilter(val)}
+            onChange={(val) => {
+              setStatusFilter(val)
+              setCurrentPage(1)
+            }}
             options={[
-              { label: "New", value: "NEW" },
+              { label: "New Leads", value: "NEW" },
               { label: "In Review", value: "IN_REVIEW" },
               { label: "Contacted", value: "CONTACTED" },
               { label: "Closed", value: "CLOSED" },
             ]}
-            allLabel="All Statuses"
+            allLabel="All Inquiries"
             allValue="ALL"
-            placeholder="Status: All"
-            width="min-w-[110px] max-w-[140px]"
+            placeholder="Filter Status"
+            width="min-w-[130px] max-w-[160px]"
           />
 
-          {(search || statusFilter !== "ALL") && (
-            <FilterResetButton
-              onClick={() => {
-                setSearch("")
-                setStatusFilter("ALL")
-              }}
-            />
-          )}
-        </FilterGroup>
+          {/* Download CSV Button */}
+          <FilterExportButton
+            onClick={handleExportCSV}
+            label="Download CSV"
+            disabled={inquiries.length === 0}
+          />
 
-        <FilterActions>
-          <Button
-            variant="outline"
-            size="icon"
-            onClick={fetchInquiries}
-            disabled={loading}
-            title="Refresh Inquiries"
-            className="h-8 sm:h-8.5 w-8 sm:w-8.5 rounded-lg cursor-pointer"
-          >
-            <RefreshCw className={cn("h-3.5 w-3.5", loading && "animate-spin")} />
-          </Button>
+          {/* Universal Far-Right Refresh Button */}
+          <FilterResetButton
+            onClick={() => {
+              setSearch("")
+              setStatusFilter("ALL")
+              setCurrentPage(1)
+              refetch?.()
+            }}
+            title="Refresh & Reset"
+          />
         </FilterActions>
       </FilterToolbar>
 
       {/* Table */}
-      <div className="overflow-hidden rounded-xl border border-border/60 bg-card/60 shadow-sm backdrop-blur-xl">
+      <div className="overflow-hidden rounded-md border border-border/60 bg-card/60 shadow-sm backdrop-blur-xl">
         <div className="overflow-x-auto">
           <table className="w-full text-left text-sm">
             <thead className="border-b border-border/60 bg-muted/40 text-xs font-semibold uppercase tracking-wider text-muted-foreground">
@@ -254,10 +274,27 @@ export default function InquiryPage() {
               </tr>
             </thead>
             <tbody className="divide-y divide-border/40 text-foreground">
-              {loading ? (
+              {isInitialLoading ? (
+                Array.from({ length: 5 }).map((_, i) => (
+                  <tr key={i} className="animate-pulse">
+                    <td className="px-5 py-4"><div className="h-4 w-20 rounded bg-muted"></div></td>
+                    <td className="px-5 py-4">
+                      <div className="space-y-1.5">
+                        <div className="h-4 w-28 rounded bg-muted"></div>
+                        <div className="h-3 w-36 rounded bg-muted/50"></div>
+                      </div>
+                    </td>
+                    <td className="px-5 py-4"><div className="h-4 w-28 rounded bg-muted"></div></td>
+                    <td className="px-5 py-4"><div className="h-4 w-20 rounded bg-muted"></div></td>
+                    <td className="px-5 py-4"><div className="h-6 w-20 rounded-full bg-muted"></div></td>
+                    <td className="px-5 py-4"><div className="h-4 w-24 rounded bg-muted"></div></td>
+                    <td className="px-5 py-4 text-right"><div className="ml-auto h-7 w-16 rounded bg-muted"></div></td>
+                  </tr>
+                ))
+              ) : isError ? (
                 <tr>
-                  <td colSpan={7} className="py-12 text-center text-muted-foreground">
-                    Loading travel inquiries...
+                  <td colSpan={7} className="py-12 text-center text-rose-500">
+                    Failed to load inquiries. Please check your backend connection.
                   </td>
                 </tr>
               ) : inquiries.length === 0 ? (
@@ -267,9 +304,8 @@ export default function InquiryPage() {
                   </td>
                 </tr>
               ) : (
-                inquiries
-                  .slice(0, currentPage * pageSize)
-                  .map((inquiry) => (
+                <>
+                  {inquiries.map((inquiry) => (
                     <tr key={inquiry.id} className="transition-colors hover:bg-muted/30">
                       <td className="px-5 py-3.5 font-mono text-xs font-semibold">
                         {inquiry.inquiryNumber || `INQ-${inquiry.id.slice(-6)}`}
@@ -305,7 +341,7 @@ export default function InquiryPage() {
                         <Select
                           value={inquiry.status}
                           onValueChange={(val) => handleStatusChange(inquiry.id, val)}
-                          disabled={isUpdating}
+                          disabled={updateMutation.isPending}
                         >
                           <SelectTrigger className={cn("h-7 w-[120px] text-xs font-semibold uppercase border px-2 py-0.5", statusStyles[inquiry.status])}>
                             <SelectValue />
@@ -339,6 +375,7 @@ export default function InquiryPage() {
                           <Button
                             variant="ghost"
                             size="icon"
+                            disabled={deleteMutation.isPending}
                             onClick={() => handleDelete(inquiry.id)}
                             className="h-7 w-7 text-destructive hover:bg-destructive/10"
                           >
@@ -347,7 +384,26 @@ export default function InquiryPage() {
                         </div>
                       </td>
                     </tr>
-                  ))
+                  ))}
+
+                  {/* Subtle inline skeleton row when fetching next batch (Zero height collapse!) */}
+                  {Boolean(isLoadingMore || (isFetching && currentPage > 1)) && (
+                    <tr className="animate-pulse bg-muted/20">
+                      <td className="px-5 py-3"><div className="h-3.5 w-16 rounded bg-muted/60"></div></td>
+                      <td className="px-5 py-3">
+                        <div className="space-y-1">
+                          <div className="h-3.5 w-24 rounded bg-muted/60"></div>
+                          <div className="h-3 w-32 rounded bg-muted/40"></div>
+                        </div>
+                      </td>
+                      <td className="px-5 py-3"><div className="h-3.5 w-20 rounded bg-muted/60"></div></td>
+                      <td className="px-5 py-3"><div className="h-3.5 w-16 rounded bg-muted/60"></div></td>
+                      <td className="px-5 py-3"><div className="h-5 w-16 rounded-full bg-muted/60"></div></td>
+                      <td className="px-5 py-3"><div className="h-3.5 w-20 rounded bg-muted/60"></div></td>
+                      <td className="px-5 py-3 text-right"><div className="ml-auto h-6 w-12 rounded bg-muted/60"></div></td>
+                    </tr>
+                  )}
+                </>
               )}
             </tbody>
           </table>
@@ -355,24 +411,20 @@ export default function InquiryPage() {
 
         {/* Universal Pagination */}
         {inquiries.length > 0 && (
-          <div className="border-t border-border/60 bg-muted/10 px-5 py-3">
-            <Pagination
-              mode="infinite"
-              currentPage={currentPage}
-              totalPages={Math.max(1, Math.ceil(inquiries.length / pageSize))}
-              totalItems={inquiries.length}
-              pageSize={pageSize}
-              pageSizeOptions={[10, 20, 50, 100]}
-              loadedCount={Math.min(inquiries.length, currentPage * pageSize)}
-              hasMore={currentPage * pageSize < inquiries.length}
-              onLoadMore={() => setCurrentPage((p) => p + 1)}
-              onPageChange={setCurrentPage}
-              onPageSizeChange={(sz) => {
-                setPageSize(sz)
-                setCurrentPage(1)
-              }}
-            />
-          </div>
+          <Pagination
+            mode={mode}
+            currentPage={currentPage}
+            totalPages={totalPages}
+            totalItems={totalItems}
+            pageSize={effectiveLimit}
+            pageSizeOptions={pageSizeOptions}
+            loadedCount={inquiries.length}
+            hasMore={hasMore}
+            isLoadingMore={isLoadingMore || (isFetching && currentPage > 1)}
+            onLoadMore={handleLoadMore}
+            onPageChange={setCurrentPage}
+            onPageSizeChange={setTargetItems}
+          />
         )}
       </div>
 
@@ -410,83 +462,72 @@ export default function InquiryPage() {
                   </div>
                 </div>
 
-                <div className="flex items-center gap-2">
-                  <Phone className="h-4 w-4 text-muted-foreground" />
-                  <div>
-                    <span className="block font-semibold text-foreground">Phone Number</span>
-                    <span>{selectedInquiry.phone || "Not provided"}</span>
+                {selectedInquiry.phone && (
+                  <div className="flex items-center gap-2">
+                    <Phone className="h-4 w-4 text-muted-foreground" />
+                    <div>
+                      <span className="block font-semibold text-foreground">Phone Number</span>
+                      <span>{selectedInquiry.phone}</span>
+                    </div>
                   </div>
-                </div>
-
-                <div className="flex items-center gap-2">
-                  <MapPin className="h-4 w-4 text-muted-foreground" />
-                  <div>
-                    <span className="block font-semibold text-foreground">Destination</span>
-                    <span>{selectedInquiry.destination || "Not specified"}</span>
-                  </div>
-                </div>
+                )}
 
                 <div className="flex items-center gap-2">
                   <Calendar className="h-4 w-4 text-muted-foreground" />
                   <div>
-                    <span className="block font-semibold text-foreground">Approximate Travel Date</span>
-                    <span>{selectedInquiry.travelDate || "Flexible"}</span>
-                  </div>
-                </div>
-
-                <div className="flex items-center gap-2">
-                  <Users className="h-4 w-4 text-muted-foreground" />
-                  <div>
-                    <span className="block font-semibold text-foreground">Number of Travelers</span>
-                    <span>{selectedInquiry.travelers || "Not specified"}</span>
+                    <span className="block font-semibold text-foreground">Estimated Travel Date</span>
+                    <span>{selectedInquiry.travelDate || "Date TBD"}</span>
                   </div>
                 </div>
               </div>
 
-              {selectedInquiry.journeyTypes && selectedInquiry.journeyTypes.length > 0 && (
-                <div>
-                  <span className="flex items-center gap-1.5 font-semibold text-foreground mb-1.5">
-                    <Compass className="h-4 w-4 text-primary" />
-                    Journey Types Selected:
-                  </span>
-                  <div className="flex flex-wrap gap-1.5">
-                    {selectedInquiry.journeyTypes.map((t, i) => (
-                      <span key={i} className="rounded-md border border-primary/30 bg-primary/10 px-2.5 py-1 text-xs font-medium text-primary">
-                        {t}
-                      </span>
-                    ))}
+              <div className="space-y-2 rounded-lg border border-border/60 bg-card p-3.5">
+                <div className="flex items-center justify-between">
+                  <span className="font-semibold text-foreground">Destination:</span>
+                  <span className="font-medium text-primary">{selectedInquiry.destination || "Not specified"}</span>
+                </div>
+                <div className="flex items-center justify-between">
+                  <span className="font-semibold text-foreground">Party Size:</span>
+                  <span>{selectedInquiry.travelers ? `${selectedInquiry.travelers} Guests` : "TBD"}</span>
+                </div>
+                {selectedInquiry.journeyTypes && selectedInquiry.journeyTypes.length > 0 && (
+                  <div>
+                    <span className="block font-semibold text-foreground mb-1">Preferred Journey Types:</span>
+                    <div className="flex flex-wrap gap-1">
+                      {selectedInquiry.journeyTypes.map((type, idx) => (
+                        <span key={idx} className="rounded-sm border border-primary/20 bg-primary/10 px-2 py-0.5 text-[11px] font-medium text-primary">
+                          {type}
+                        </span>
+                      ))}
+                    </div>
                   </div>
+                )}
+              </div>
+
+              {selectedInquiry.message && (
+                <div className="rounded-lg border border-border/60 bg-muted/20 p-3.5 space-y-1">
+                  <span className="block font-semibold text-foreground">Vision & Special Requests:</span>
+                  <p className="text-muted-foreground leading-relaxed whitespace-pre-wrap">{selectedInquiry.message}</p>
                 </div>
               )}
 
-              <div>
-                <span className="font-semibold text-foreground">Vision / Detailed Description:</span>
-                <p className="mt-1 rounded-lg bg-background p-3 border border-border text-foreground leading-relaxed whitespace-pre-wrap">
-                  {selectedInquiry.message || "No detailed message provided."}
-                </p>
-              </div>
-
-              <div className="flex items-center justify-between pt-2 border-t border-border">
-                <span className="text-muted-foreground">
-                  Submitted: {new Date(selectedInquiry.createdAt).toLocaleString()}
-                </span>
-                <div className="flex items-center gap-2">
-                  <span className="font-medium text-foreground">Status:</span>
-                  <Select
-                    value={selectedInquiry.status}
-                    onValueChange={(val) => handleStatusChange(selectedInquiry.id, val)}
-                  >
-                    <SelectTrigger className="h-8 w-[130px]">
-                      <SelectValue />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="NEW">New</SelectItem>
-                      <SelectItem value="IN_REVIEW">In Review</SelectItem>
-                      <SelectItem value="CONTACTED">Contacted</SelectItem>
-                      <SelectItem value="CLOSED">Closed</SelectItem>
-                    </SelectContent>
-                  </Select>
-                </div>
+              <div className="flex items-center justify-between pt-2 border-t border-border/60">
+                <span className="text-muted-foreground">Change Status:</span>
+                <Select
+                  value={selectedInquiry.status}
+                  onValueChange={(val) => handleStatusChange(selectedInquiry.id, val)}
+                  disabled={updateMutation.isPending}
+                >
+                  <SelectTrigger className={cn("h-8 w-[140px] text-xs font-semibold uppercase border px-2.5", statusStyles[selectedInquiry.status])}>
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="NEW">New</SelectItem>
+                    <SelectItem value="IN_REVIEW">In Review</SelectItem>
+                    <SelectItem value="CONTACTED">Contacted</SelectItem>
+                    <SelectItem value="CLOSED">Closed</SelectItem>
+                  </SelectContent>
+                </Select>
               </div>
             </div>
           )}

@@ -108,7 +108,7 @@ export function InquiryPreviewSection({ section }: { section?: any }) {
         </div>
 
         {/* Right Column: Featured Multimedia */}
-        <div className="lg:col-span-5 relative flex flex-col min-h-[460px] h-full w-full rounded-md overflow-hidden shadow-sm bg-card border border-border/60">
+        <div className="lg:col-span-5 relative flex flex-col min-h-[460px] h-full w-full rounded-sm overflow-hidden shadow-sm bg-card border border-border/60">
           <UniversalMultimediaPreview
             multimedia={multimedia}
             className="h-full w-full object-cover"

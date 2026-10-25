@@ -28,9 +28,8 @@ export function BookingModal({
 
   if (!isOpen) return null
 
-  const formattedPrice = `${currency === "EUR" ? "€" : currency === "USD" ? "$" : currency || "€"}${
-    typeof price === "number" ? price.toLocaleString() : price || "3,195"
-  }`
+  const formattedPrice = `${currency === "EUR" ? "€" : currency === "USD" ? "$" : currency || "€"}${typeof price === "number" ? price.toLocaleString() : price || "3,195"
+    }`
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault()
@@ -45,7 +44,7 @@ export function BookingModal({
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm p-3 sm:p-4 md:p-6 overflow-y-auto">
       <div
-        className="relative w-full max-w-2xl bg-card rounded-xl border border-border shadow-2xl overflow-hidden flex flex-col max-h-[92vh] my-auto animate-in fade-in zoom-in-95 duration-200"
+        className="relative w-full max-w-2xl bg-card rounded-md border border-border shadow-2xl overflow-hidden flex flex-col max-h-[92vh] my-auto animate-in fade-in zoom-in-95 duration-200"
         onClick={(e) => e.stopPropagation()}
       >
         {/* Header */}
@@ -89,7 +88,7 @@ export function BookingModal({
               <button
                 type="button"
                 onClick={handleResetAndClose}
-                className="mt-4 rounded-md bg-brand-primary px-6 py-2.5 text-xs sm:text-sm font-semibold text-white uppercase tracking-wider hover:bg-primary-hover transition-colors cursor-pointer"
+                className="mt-4 rounded-sm bg-brand-primary px-6 py-2.5 text-xs sm:text-sm font-semibold text-white uppercase tracking-wider hover:bg-primary-hover transition-colors cursor-pointer"
               >
                 Close Window
               </button>
@@ -127,7 +126,7 @@ export function BookingModal({
                     placeholder="e.g. Eleanor Vance"
                     value={formData.name}
                     onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                    className="w-full rounded-md border border-border bg-background px-3 py-2 text-xs sm:text-sm text-foreground placeholder:text-muted-foreground focus:border-accent focus:outline-none"
+                    className="w-full rounded-sm border border-border bg-background px-3 py-2 text-xs sm:text-sm text-foreground placeholder:text-muted-foreground focus:border-accent focus:outline-none"
                   />
                 </div>
 
@@ -141,7 +140,7 @@ export function BookingModal({
                     placeholder="e.g. eleanor@example.com"
                     value={formData.email}
                     onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-                    className="w-full rounded-md border border-border bg-background px-3 py-2 text-xs sm:text-sm text-foreground placeholder:text-muted-foreground focus:border-accent focus:outline-none"
+                    className="w-full rounded-sm border border-border bg-background px-3 py-2 text-xs sm:text-sm text-foreground placeholder:text-muted-foreground focus:border-accent focus:outline-none"
                   />
                 </div>
 
@@ -154,7 +153,7 @@ export function BookingModal({
                     placeholder="+1 (555) 000-0000"
                     value={formData.phone}
                     onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
-                    className="w-full rounded-md border border-border bg-background px-3 py-2 text-xs sm:text-sm text-foreground placeholder:text-muted-foreground focus:border-accent focus:outline-none"
+                    className="w-full rounded-sm border border-border bg-background px-3 py-2 text-xs sm:text-sm text-foreground placeholder:text-muted-foreground focus:border-accent focus:outline-none"
                   />
                 </div>
 
@@ -166,7 +165,7 @@ export function BookingModal({
                     type="date"
                     value={formData.travelDate}
                     onChange={(e) => setFormData({ ...formData, travelDate: e.target.value })}
-                    className="w-full rounded-md border border-border bg-background px-3 py-2 text-xs sm:text-sm focus:border-accent focus:outline-none text-foreground"
+                    className="w-full rounded-sm border border-border bg-background px-3 py-2 text-xs sm:text-sm focus:border-accent focus:outline-none text-foreground"
                   />
                 </div>
 
@@ -177,7 +176,7 @@ export function BookingModal({
                   <select
                     value={formData.guests}
                     onChange={(e) => setFormData({ ...formData, guests: e.target.value })}
-                    className="w-full rounded-md border border-border bg-background px-3 py-2 text-xs sm:text-sm focus:border-accent focus:outline-none text-foreground"
+                    className="w-full rounded-sm border border-border bg-background px-3 py-2 text-xs sm:text-sm focus:border-accent focus:outline-none text-foreground"
                   >
                     <option value="1 Guest">1 Guest (Solo Travel)</option>
                     <option value="2 Guests">2 Guests (Couple / Pair)</option>
@@ -195,7 +194,7 @@ export function BookingModal({
                     placeholder="Mention any dietary needs, preferred room types, or extra activities..."
                     value={formData.notes}
                     onChange={(e) => setFormData({ ...formData, notes: e.target.value })}
-                    className="w-full rounded-md border border-border bg-background px-3 py-2 text-xs sm:text-sm text-foreground placeholder:text-muted-foreground focus:border-accent focus:outline-none"
+                    className="w-full rounded-sm border border-border bg-background px-3 py-2 text-xs sm:text-sm text-foreground placeholder:text-muted-foreground focus:border-accent focus:outline-none"
                   />
                 </div>
               </div>
@@ -205,13 +204,13 @@ export function BookingModal({
                 <button
                   type="button"
                   onClick={handleResetAndClose}
-                  className="rounded-md border border-border bg-card px-4 py-2.5 text-xs sm:text-sm font-semibold text-foreground hover:bg-muted transition-colors cursor-pointer"
+                  className="rounded-sm border border-border bg-card px-4 py-2.5 text-xs sm:text-sm font-semibold text-foreground hover:bg-muted transition-colors cursor-pointer"
                 >
                   Cancel
                 </button>
                 <button
                   type="submit"
-                  className="flex items-center justify-center gap-2 rounded-md bg-brand-primary px-6 py-2.5 text-xs sm:text-sm font-semibold text-white uppercase tracking-wider hover:bg-primary-hover transition-colors cursor-pointer shadow-sm"
+                  className="flex items-center justify-center gap-2 rounded-sm bg-brand-primary px-6 py-2.5 text-xs sm:text-sm font-semibold text-white uppercase tracking-wider hover:bg-primary-hover transition-colors cursor-pointer shadow-sm"
                 >
                   <Send className="size-4" />
                   Submit Request

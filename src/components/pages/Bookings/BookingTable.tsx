@@ -6,7 +6,6 @@ import {
   Clock,
   DollarSign,
   Layers,
-  Download,
   CreditCard,
   Ban,
   CalendarDays,
@@ -21,6 +20,7 @@ import {
   FilterSearch,
   FilterSelect,
   FilterActions,
+  FilterExportButton,
   FilterResetButton,
 } from "@/components/shared/FilterToolbar"
 import {
@@ -65,7 +65,7 @@ export default function BookingTable() {
     keyExtractor: (b) => b.id,
   })
 
-  const { data, isLoading, isFetching, isError } = useGetBookings({
+  const { data, isLoading, isFetching, isError, refetch } = useGetBookings({
     page: currentPage,
     limit: effectiveLimit,
     search: searchInput.trim() || undefined,
@@ -198,7 +198,7 @@ export default function BookingTable() {
   }
 
   return (
-    <div className="w-full space-y-6 animate-in pt-2 duration-700 fade-in slide-in-from-bottom-4">
+    <div className="w-full space-y-6 pt-2">
       {/* Universal Page Header with 30% title & 70% compact statistics */}
       <PageHeader
         icon={CalendarDays}
@@ -241,7 +241,7 @@ export default function BookingTable() {
       {/* Filter & Search Toolbar */}
       <FilterToolbar>
         <FilterGroup>
-          {/* Search */}
+          {/* Search expands to take all remaining space on the left */}
           <FilterSearch
             value={searchInput}
             onChange={(val) => {
@@ -249,9 +249,11 @@ export default function BookingTable() {
               setCurrentPage(1)
             }}
             placeholder="Search booking #, traveler, email..."
-            width="w-48 sm:w-64 shrink-0"
+            width="w-full flex-1 min-w-[200px]"
           />
+        </FilterGroup>
 
+        <FilterActions>
           {/* Booking Status Dropdown */}
           <FilterSelect
             value={selectedBookingStatus}
@@ -298,35 +300,27 @@ export default function BookingTable() {
             width="min-w-[130px] max-w-[160px]"
           />
 
-          {(searchInput || selectedBookingStatus !== "ALL" || selectedPaymentStatus !== "ALL") && (
-            <FilterResetButton
-              onClick={() => {
-                setSearchInput("")
-                setSelectedBookingStatus("ALL")
-                setSelectedPaymentStatus("ALL")
-                setCurrentPage(1)
-              }}
-            />
-          )}
-        </FilterGroup>
+          {/* Borderless Segmented Export CSV Button */}
+          <FilterExportButton onClick={handleExportCSV} label="Export CSV" />
 
-        <FilterActions>
-          <button
-            type="button"
-            onClick={handleExportCSV}
-            className="h-8 sm:h-8.5 inline-flex cursor-pointer items-center gap-1.5 rounded-lg border border-border/70 bg-background/60 dark:bg-background/40 px-2.5 py-1 text-xs font-semibold text-foreground hover:bg-muted/50 transition-all shadow-2xs whitespace-nowrap"
-            title="Export CSV"
-          >
-            <Download className="h-3.5 w-3.5" />
-            <span>Export CSV</span>
-          </button>
+          {/* Universal Far-Right Refresh Button */}
+          <FilterResetButton
+            onClick={() => {
+              setSearchInput("")
+              setSelectedBookingStatus("ALL")
+              setSelectedPaymentStatus("ALL")
+              setCurrentPage(1)
+              refetch?.()
+            }}
+            title="Refresh & Reset"
+          />
         </FilterActions>
       </FilterToolbar>
 
       {/* Booking Table Container */}
-      <div className="min-h-[400px] overflow-hidden rounded-2xl border border-border/60 bg-background/50 backdrop-blur-xl">
-        {/* Loading State */}
-        {isLoading ? (
+      <div className="min-h-[400px] overflow-hidden rounded-xl border border-border/60 bg-background/50 backdrop-blur-xl">
+        {/* Loading State - only unmount on initial load when no items are present */}
+        {isLoading && currentPage === 1 && bookings.length === 0 ? (
           <div className="w-full">
             <div className="overflow-x-auto">
               <table className="w-full text-left text-sm">
@@ -366,7 +360,7 @@ export default function BookingTable() {
                         <div className="h-6 w-24 animate-pulse rounded-full bg-muted/60" />
                       </td>
                       <td className="px-6 py-4 text-right">
-                        <div className="h-8 w-8 animate-pulse rounded-md bg-muted/60 ml-auto" />
+                        <div className="h-8 w-8 animate-pulse rounded-sm bg-muted/60 ml-auto" />
                       </td>
                     </tr>
                   ))}
@@ -510,27 +504,43 @@ export default function BookingTable() {
                       </motion.tr>
                     )
                   })}
+
+                  {/* Subtle inline skeleton row during background fetch */}
+                  {Boolean(isLoadingMore || (isFetching && currentPage > 1)) && (
+                    <tr className="animate-pulse bg-muted/20 border-b border-border/40">
+                      <td className="px-6 py-4"><div className="h-4 w-20 rounded bg-muted/60" /></td>
+                      <td className="px-6 py-4">
+                        <div className="flex flex-col gap-1.5">
+                          <div className="h-4 w-28 rounded bg-muted/60" />
+                          <div className="h-3 w-36 rounded bg-muted/40" />
+                        </div>
+                      </td>
+                      <td className="px-6 py-4"><div className="h-4 w-24 rounded bg-muted/60" /></td>
+                      <td className="px-6 py-4"><div className="h-4 w-16 rounded bg-muted/60" /></td>
+                      <td className="px-6 py-4"><div className="h-6 w-20 rounded-full bg-muted/60" /></td>
+                      <td className="px-6 py-4"><div className="h-6 w-20 rounded-full bg-muted/60" /></td>
+                      <td className="px-6 py-4 text-right"><div className="h-8 w-8 rounded-sm bg-muted/60 ml-auto" /></td>
+                    </tr>
+                  )}
                 </tbody>
               </table>
             </div>
 
             {totalCount > 0 && (
-              <div className="border-t border-border/60 bg-background/50 p-5 backdrop-blur-xl">
-                <Pagination
-                  mode={mode}
-                  currentPage={currentPage}
-                  totalPages={totalPages}
-                  totalItems={data?.meta?.total ?? totalCount}
-                  pageSize={effectiveLimit}
-                  pageSizeOptions={pageSizeOptions}
-                  onPageChange={setCurrentPage}
-                  onPageSizeChange={setTargetItems}
-                  hasMore={hasMore}
-                  isLoadingMore={isLoadingMore || (isFetching && currentPage > 1)}
-                  onLoadMore={handleLoadMore}
-                  loadedCount={bookings.length}
-                />
-              </div>
+              <Pagination
+                mode={mode}
+                currentPage={currentPage}
+                totalPages={totalPages}
+                totalItems={data?.meta?.total ?? totalCount}
+                pageSize={effectiveLimit}
+                pageSizeOptions={pageSizeOptions}
+                onPageChange={setCurrentPage}
+                onPageSizeChange={setTargetItems}
+                hasMore={hasMore}
+                isLoadingMore={isLoadingMore || (isFetching && currentPage > 1)}
+                onLoadMore={handleLoadMore}
+                loadedCount={bookings.length}
+              />
             )}
           </>
         )}

@@ -9,6 +9,7 @@ import {
   FilterTabs,
   FilterActions,
   FilterCreateButton,
+  FilterResetButton,
 } from "@/components/shared/FilterToolbar"
 import { useGetRoles } from "@/hooks/role/useRoles"
 import { useGetPermissions } from "@/hooks/permission/usePermissions"
@@ -20,14 +21,14 @@ export default function IAMPage() {
   const [showCreateRoleModal, setShowCreateRoleModal] = useState(false)
   const [showCreatePermModal, setShowCreatePermModal] = useState(false)
 
-  const { data: rolesData } = useGetRoles(1, 100)
-  const { data: permsData } = useGetPermissions(1, 100)
+  const { data: rolesData, refetch: refetchRoles } = useGetRoles(1, 100)
+  const { data: permsData, refetch: refetchPerms } = useGetPermissions(1, 100)
 
   const totalRoles = rolesData?.meta?.total ?? rolesData?.data?.length ?? 0
   const totalPerms = permsData?.meta?.total ?? permsData?.data?.length ?? 0
 
   return (
-    <div className="w-full space-y-6 animate-in pt-2 duration-700 fade-in slide-in-from-bottom-4">
+    <div className="w-full space-y-6 animate-in pt-2 duration-500 fade-in">
       {/* Header with 30% title & 70% compact statistics */}
       <PageHeader
         icon={ShieldCheck}
@@ -94,6 +95,14 @@ export default function IAMPage() {
               icon={Plus}
             />
           )}
+
+          <FilterResetButton
+            onClick={() => {
+              if (activeTab === "roles") refetchRoles?.()
+              else refetchPerms?.()
+            }}
+            title="Refresh"
+          />
         </FilterActions>
       </FilterToolbar>
 

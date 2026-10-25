@@ -150,7 +150,7 @@ export default function RoleFormModal({
                 No permissions available.
               </p>
             ) : (
-              <div className="flex flex-col md:flex-row h-[320px] rounded-xl border border-border/50 bg-muted/10 overflow-hidden">
+              <div className="flex flex-col md:flex-row h-[320px] rounded-md border border-border/50 bg-muted/10 overflow-hidden">
                 {/* Left Sidebar: Resources */}
                 <div className="w-full md:w-1/3 border-b md:border-b-0 md:border-r border-border/30 bg-muted/20 overflow-y-auto">
                   {resourceNames.map((res) => (
@@ -179,7 +179,7 @@ export default function RoleFormModal({
                           {activeResource} Permissions
                         </span>
                       </div>
-                      
+
                       {groupedPermissions[activeResource].map((perm) => {
                         const isChecked = selectedPermissions.includes(perm.id)
                         const label = getPermLabel(perm)
@@ -197,7 +197,7 @@ export default function RoleFormModal({
                           >
                             <div
                               className={cn(
-                                "flex h-5 w-5 shrink-0 items-center justify-center rounded-md border-2 transition-all duration-200",
+                                "flex h-5 w-5 shrink-0 items-center justify-center rounded-sm border-2 transition-all duration-200",
                                 isChecked
                                   ? "border-primary bg-primary text-primary-foreground"
                                   : "border-border/60 bg-background"

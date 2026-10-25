@@ -12,20 +12,16 @@ import { MediaTableView } from "./MediaTableView"
 import { MediaFilters } from "./MediaFilters"
 import { MediaInspectorDrawer } from "./MediaInspectorDrawer"
 import { MediaBulkActionBar } from "./MediaBulkActionBar"
-import { MediaDropzone } from "./MediaDropzone"
 import { MediaTrashView } from "./MediaTrashView"
 import { StorageOptimizerModal } from "./StorageOptimizerModal"
 import { Pagination } from "@/components/shared/Pagination"
 import { useListingPagination } from "@/hooks/ui/useListingPagination"
 import { PageHeader, CompactStatCard } from "@/components/shared/PageHeader"
-import { Button } from "@/components/ui/button"
 import {
   Image as ImageIcon,
   HardDrive,
   Trash2,
   Layers,
-  Sparkles,
-  Zap,
 } from "lucide-react"
 import { cn } from "@/lib/utils"
 import type { MediaAsset, MediaGalleryParams } from "@/services/mediaService"
@@ -33,21 +29,16 @@ import type { MediaAsset, MediaGalleryParams } from "@/services/mediaService"
 export const MediaLibraryPage: React.FC = () => {
   const [searchParams, setSearchParams] = useSearchParams()
 
-  // Tab State: 'active' | 'trash'
-  const [activeTab, setActiveTab] = useState<"active" | "trash">(
-    () => (searchParams.get("tab") as "active" | "trash") || "active"
-  )
-  const [viewMode, setViewMode] = useState<"grid" | "table">(
-    () => (searchParams.get("view") as "grid" | "table") || "grid"
-  )
+  // Tab State & View Mode derived directly from searchParams (Single Source of Truth)
+  const activeTab: "active" | "trash" = searchParams.get("tab") === "trash" ? "trash" : "active"
+  const viewMode: "grid" | "table" = searchParams.get("view") === "table" ? "table" : "grid"
 
-  // Filter params (without manual page/limit coupling)
+  // Filter params (search, type, inUse, sortBy)
   const [params, setParams] = useState<Omit<MediaGalleryParams, "page" | "limit">>({
     search: searchParams.get("search") || "",
     type: (searchParams.get("type") as any) || "all",
     inUse: (searchParams.get("inUse") as any) || "all",
     sortBy: (searchParams.get("sortBy") as any) || "newest",
-    status: searchParams.get("tab") === "trash" ? "IN_TRASH" : "ACTIVE",
   })
 
   // Selection & Inspector state
@@ -111,53 +102,59 @@ export const MediaLibraryPage: React.FC = () => {
   const softDeleteMutation = useSoftDeleteMedia()
   const bulkSoftDeleteMutation = useBulkSoftDelete()
 
-  // Sync browser Back/Forward navigation into state
-  useEffect(() => {
-    const urlTab = (searchParams.get("tab") as "active" | "trash") || "active"
-    if (urlTab !== activeTab) {
-      setActiveTab(urlTab)
-      setCurrentPage(1)
-      setParams((prev) => ({
-        ...prev,
-        status: urlTab === "trash" ? "IN_TRASH" : "ACTIVE",
-      }))
-    }
-    const urlView = (searchParams.get("view") as "grid" | "table") || "grid"
-    if (urlView !== viewMode) {
-      setViewMode(urlView)
-    }
-  }, [searchParams, activeTab, viewMode, setCurrentPage])
-
-  // Sync filters, activeTab, and viewMode to URL cleanly (never spam page number into URL in infinite mode)
-  useEffect(() => {
-    const q = new URLSearchParams()
-    if (activeTab === "trash") q.set("tab", "trash")
-    if (viewMode !== "grid") q.set("view", viewMode)
-    if (params.search) q.set("search", params.search)
-    if (params.type && params.type !== "all") q.set("type", params.type)
-    if (params.inUse && params.inUse !== "all") q.set("inUse", params.inUse)
-    if (params.sortBy && params.sortBy !== "newest") q.set("sortBy", params.sortBy)
-
-    const currentStr = searchParams.toString()
-    const nextStr = q.toString()
-    if (currentStr !== nextStr) {
-      setSearchParams(q, { replace: true })
-    }
-  }, [params.search, params.type, params.inUse, params.sortBy, activeTab, viewMode, searchParams, setSearchParams])
-
+  // Clean tab change: updates searchParams directly, no conflicting effects or blinking loops
   const handleTabChange = (newTab: "active" | "trash") => {
     setSelectedIds([])
     setSelectedAsset(null)
-    setActiveTab(newTab)
     setCurrentPage(1)
-    setParams((prev) => ({
-      ...prev,
-      status: newTab === "trash" ? "IN_TRASH" : "ACTIVE",
-    }))
+    setSearchParams(
+      (prev) => {
+        const next = new URLSearchParams(prev)
+        if (newTab === "trash") {
+          next.set("tab", "trash")
+        } else {
+          next.delete("tab")
+        }
+        return next
+      },
+      { replace: true }
+    )
   }
 
+  // Clean view mode change: updates searchParams directly
   const handleViewModeChange = (mode: "grid" | "table") => {
-    setViewMode(mode)
+    setSearchParams(
+      (prev) => {
+        const next = new URLSearchParams(prev)
+        if (mode === "table") {
+          next.set("view", "table")
+        } else {
+          next.delete("view")
+        }
+        return next
+      },
+      { replace: true }
+    )
+  }
+
+  // Filter params change: updates internal state and URL parameters cleanly
+  const handleParamsChange = (newP: Partial<MediaGalleryParams>) => {
+    if (newP.page) setCurrentPage(newP.page)
+    setParams((prev) => {
+      const updated = { ...prev, ...newP }
+      setSearchParams(
+        (prevSp) => {
+          const next = new URLSearchParams(prevSp)
+          if (updated.search) next.set("search", updated.search); else next.delete("search")
+          if (updated.type && updated.type !== "all") next.set("type", updated.type); else next.delete("type")
+          if (updated.inUse && updated.inUse !== "all") next.set("inUse", updated.inUse); else next.delete("inUse")
+          if (updated.sortBy && updated.sortBy !== "newest") next.set("sortBy", updated.sortBy); else next.delete("sortBy")
+          return next
+        },
+        { replace: true }
+      )
+      return updated
+    })
   }
 
   const handleToggleSelectId = (id: string, _e?: React.MouseEvent) => {
@@ -184,7 +181,7 @@ export const MediaLibraryPage: React.FC = () => {
   return (
     <div
       className={cn(
-        "space-y-6 pb-20 transition-all duration-300",
+        "space-y-6 transition-all duration-300",
         selectedAsset && "lg:pr-[390px] xl:pr-[430px]"
       )}
     >
@@ -223,99 +220,35 @@ export const MediaLibraryPage: React.FC = () => {
               icon={Trash2}
               iconColor="text-amber-500"
               className="cursor-pointer"
+              onClick={() => handleTabChange("trash")}
             />
           </div>
         }
       />
 
-      {/* Main Tabs (Active Library vs Trash Bin) */}
-      <div className="flex flex-wrap items-center justify-between gap-2 border-b border-border/60 pb-1.5">
-        <div className="flex items-center gap-1">
-          <button
-            type="button"
-            onClick={() => handleTabChange("active")}
-            className={cn(
-              "px-3 py-1.5 text-xs font-semibold rounded-lg transition-all flex items-center gap-1.5 cursor-pointer",
-              activeTab === "active"
-                ? "bg-primary text-primary-foreground shadow-xs"
-                : "text-muted-foreground hover:text-foreground hover:bg-muted/40"
-            )}
-          >
-            <Sparkles className="h-3.5 w-3.5" />
-            Active Library
-          </button>
-
-          <button
-            type="button"
-            onClick={() => handleTabChange("trash")}
-            className={cn(
-              "px-3 py-1.5 text-xs font-semibold rounded-lg transition-all flex items-center gap-1.5 cursor-pointer",
-              activeTab === "trash"
-                ? "bg-amber-600 text-white shadow-xs"
-                : "text-muted-foreground hover:text-foreground hover:bg-muted/40"
-            )}
-          >
-            <Trash2 className="h-3.5 w-3.5" />
-            Trash Bin
-            {(stats?.trashCount ?? 0) > 0 ? (
-              <span
-                className={cn(
-                  "text-[10px] px-1.5 py-0 rounded-full font-bold",
-                  activeTab === "trash"
-                    ? "bg-white/20 text-white"
-                    : "bg-amber-500/20 text-amber-800 dark:text-amber-200"
-                )}
-              >
-                {stats?.trashCount}
-              </span>
-            ) : null}
-          </button>
-        </div>
-
-        <div className="flex items-center gap-2">
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={() => setIsOptimizerOpen(true)}
-            className="text-xs h-8 sm:h-8.5 gap-1.5 border-emerald-500/40 text-emerald-700 dark:text-emerald-400 hover:bg-emerald-500/10 hover:border-emerald-500/60 transition-all font-medium rounded-lg px-2.5"
-            title="Scan and consolidate duplicate files into single masters"
-          >
-            <Zap className="h-3.5 w-3.5 text-amber-500 fill-amber-500/40" />
-            Optimize Storage
-            {(optimizerScan?.totalDuplicateGroups ?? 0) > 0 && (
-              <span className="ml-0.5 bg-amber-500/20 text-amber-800 dark:text-amber-200 text-[10px] px-1.5 py-0.5 rounded-full font-bold">
-                {optimizerScan?.totalDuplicateGroups}
-              </span>
-            )}
-          </Button>
-
-          <MediaDropzone
-            onUploadSuccess={() => {
-              refetchGallery()
-              refetchStats()
-              refetchOptimizer()
-            }}
-          />
-        </div>
-      </div>
+      {/* Unified Segmented Media Toolbar (Includes Search, Tabs, Types, Optimizer, Upload & Refresh) */}
+      <MediaFilters
+        params={{ ...params, page: currentPage, limit: effectiveLimit }}
+        viewMode={viewMode}
+        onParamsChange={handleParamsChange}
+        onViewModeChange={handleViewModeChange}
+        onRefresh={handleRefresh}
+        isFetching={isFetching}
+        activeTab={activeTab}
+        onTabChange={handleTabChange}
+        trashCount={stats?.trashCount}
+        optimizerCount={optimizerScan?.totalDuplicateGroups}
+        onOpenOptimizer={() => setIsOptimizerOpen(true)}
+        onUploadSuccess={() => {
+          refetchGallery()
+          refetchStats()
+          refetchOptimizer()
+        }}
+      />
 
       {/* Tab 1: Active Library */}
       {activeTab === "active" && (
         <div className="space-y-4">
-          <MediaFilters
-            params={{ ...params, page: currentPage, limit: effectiveLimit }}
-            viewMode={viewMode}
-            onParamsChange={(newP) => {
-              if (newP.page) setCurrentPage(newP.page)
-              setParams((prev) => ({ ...prev, ...newP }))
-            }}
-            onViewModeChange={handleViewModeChange}
-            onRefresh={handleRefresh}
-            onToggleSelectAll={handleToggleSelectAll}
-            isAllSelected={assets.length > 0 && assets.every((a) => selectedIds.includes(a.id))}
-            selectedCount={selectedIds.length}
-            isFetching={isFetching}
-          />
 
           {viewMode === "grid" ? (
             <div ref={gridRef}>

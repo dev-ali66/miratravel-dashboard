@@ -30,7 +30,7 @@ export function TermsOfServiceEditor({
 }: TermsOfServiceEditorProps) {
   if (!currentPart) {
     return (
-      <div className="flex flex-col items-center justify-center py-16 px-4 border border-dashed border-border/70 rounded-2xl bg-background/50 text-center backdrop-blur-xl">
+      <div className="flex flex-col items-center justify-center py-16 px-4 border border-dashed border-border/70 rounded-xl bg-background/50 text-center backdrop-blur-xl">
         <FileText className="h-12 w-12 text-muted-foreground/50 mb-3" />
         <h3 className="text-base font-bold text-foreground">No Document Sections Configured</h3>
         <p className="text-xs text-muted-foreground mt-1 max-w-sm">
@@ -49,7 +49,7 @@ export function TermsOfServiceEditor({
   }
 
   return (
-    <div className="space-y-5 overflow-hidden rounded-2xl border border-border/60 bg-background/50 p-6 shadow-sm backdrop-blur-xl">
+    <div className="space-y-5 overflow-hidden rounded-xl border border-border/60 bg-background/50 p-6 shadow-sm backdrop-blur-xl">
       {/* Top Header & Actions */}
       <div className="flex flex-col justify-between gap-4 border-b border-border/40 pb-4 sm:flex-row sm:items-center">
         <div>

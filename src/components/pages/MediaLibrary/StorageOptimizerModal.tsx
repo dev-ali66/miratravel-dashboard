@@ -80,7 +80,7 @@ export const StorageOptimizerModal: React.FC<StorageOptimizerModalProps> = ({
         <DialogHeader className="p-5 border-b border-border/60 bg-muted/20 shrink-0">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-2.5">
-              <div className="h-9 w-9 rounded-xl bg-amber-500/10 text-amber-600 dark:text-amber-400 flex items-center justify-center shrink-0">
+              <div className="h-9 w-9 rounded-md bg-amber-500/10 text-amber-600 dark:text-amber-400 flex items-center justify-center shrink-0">
                 <Zap className="h-5 w-5 fill-amber-500/30" />
               </div>
               <div>
@@ -130,7 +130,7 @@ export const StorageOptimizerModal: React.FC<StorageOptimizerModalProps> = ({
 
               {/* Metrics Highlights */}
               <div className="grid grid-cols-3 gap-3.5 max-w-lg mx-auto pt-2">
-                <div className="p-3.5 rounded-xl border border-border/60 bg-muted/30 text-center">
+                <div className="p-3.5 rounded-md border border-border/60 bg-muted/30 text-center">
                   <span className="text-[11px] font-medium text-muted-foreground block">
                     References Migrated
                   </span>
@@ -138,7 +138,7 @@ export const StorageOptimizerModal: React.FC<StorageOptimizerModalProps> = ({
                     {completedResult.referencesMigrated}
                   </span>
                 </div>
-                <div className="p-3.5 rounded-xl border border-border/60 bg-muted/30 text-center">
+                <div className="p-3.5 rounded-md border border-border/60 bg-muted/30 text-center">
                   <span className="text-[11px] font-medium text-muted-foreground block">
                     Moved to Trash
                   </span>
@@ -146,7 +146,7 @@ export const StorageOptimizerModal: React.FC<StorageOptimizerModalProps> = ({
                     {completedResult.assetsMovedToTrash}
                   </span>
                 </div>
-                <div className="p-3.5 rounded-xl border border-border/60 bg-muted/30 text-center">
+                <div className="p-3.5 rounded-md border border-border/60 bg-muted/30 text-center">
                   <span className="text-[11px] font-medium text-muted-foreground block">
                     Storage Reclaimed
                   </span>
@@ -156,7 +156,7 @@ export const StorageOptimizerModal: React.FC<StorageOptimizerModalProps> = ({
                 </div>
               </div>
 
-              <div className="rounded-xl border border-amber-500/30 bg-amber-500/5 p-3.5 max-w-lg mx-auto flex items-start gap-2.5 text-left text-xs text-muted-foreground">
+              <div className="rounded-md border border-amber-500/30 bg-amber-500/5 p-3.5 max-w-lg mx-auto flex items-start gap-2.5 text-left text-xs text-muted-foreground">
                 <Info className="h-4 w-4 text-amber-600 shrink-0 mt-0.5" />
                 <span>
                   The {completedResult.assetsMovedToTrash} unlinked duplicate files are safely retained in the <strong>Trash Bin</strong> with a 30-day grace period. You can review or restore them at any time from the Trash tab.
@@ -187,7 +187,7 @@ export const StorageOptimizerModal: React.FC<StorageOptimizerModalProps> = ({
           {!isScanning && !completedResult && hasDuplicates && (
             <>
               {/* Savings Overview Banner */}
-              <div className="rounded-xl border border-emerald-500/30 bg-emerald-500/5 p-4 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
+              <div className="rounded-md border border-emerald-500/30 bg-emerald-500/5 p-4 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
                 <div className="flex items-center gap-3">
                   <div className="p-2.5 rounded-lg bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 shrink-0">
                     <HardDrive className="h-5 w-5" />
@@ -222,7 +222,7 @@ export const StorageOptimizerModal: React.FC<StorageOptimizerModalProps> = ({
                   return (
                     <div
                       key={group.hash}
-                      className="rounded-xl border border-border/70 bg-card overflow-hidden shadow-xs space-y-3 p-4"
+                      className="rounded-md border border-border/70 bg-card overflow-hidden shadow-xs space-y-3 p-4"
                     >
                       {/* Group Header */}
                       <div className="flex items-center justify-between border-b border-border/40 pb-2.5">
@@ -260,7 +260,7 @@ export const StorageOptimizerModal: React.FC<StorageOptimizerModalProps> = ({
                             <img
                               src={masterAsset.url}
                               alt={masterAsset.fileName}
-                              className="h-16 w-16 rounded-md object-cover border border-border/60 shrink-0 bg-muted"
+                              className="h-16 w-16 rounded-sm object-cover border border-border/60 shrink-0 bg-muted"
                             />
                             <div className="truncate flex-1">
                               <p className="text-xs font-medium text-foreground truncate" title={masterAsset.fileName}>

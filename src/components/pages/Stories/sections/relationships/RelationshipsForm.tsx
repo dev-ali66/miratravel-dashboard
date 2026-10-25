@@ -243,20 +243,20 @@ export function RelationshipsForm({
   const locationIds: string[] = Array.isArray(draft.locations) && draft.locations.length > 0
     ? draft.locations.map((l: any) => (typeof l === "string" ? l : l?.id)).filter(Boolean)
     : Array.isArray(draft.locationIds)
-    ? draft.locationIds
-    : []
+      ? draft.locationIds
+      : []
 
   const journeyIds: string[] = Array.isArray(draft.journeys) && draft.journeys.length > 0
     ? draft.journeys.map((j: any) => (typeof j === "string" ? j : j?.id)).filter(Boolean)
     : Array.isArray(draft.journeyIds)
-    ? draft.journeyIds
-    : []
+      ? draft.journeyIds
+      : []
 
   const manualRelatedStoryIds: string[] = Array.isArray(draft.manualRelatedStories) && draft.manualRelatedStories.length > 0
     ? draft.manualRelatedStories.map((s: any) => (typeof s === "string" ? s : s?.id)).filter(Boolean)
     : Array.isArray(draft.manualRelatedStoryIds)
-    ? draft.manualRelatedStoryIds
-    : []
+      ? draft.manualRelatedStoryIds
+      : []
 
   // --- LOCATION SEARCH STATE ---
   const [locSearchQuery, setLocSearchQuery] = useState("")
@@ -389,7 +389,7 @@ export function RelationshipsForm({
       <div className="flex flex-col gap-6">
 
         {/* 1. LOCATION IDs SEARCH & LINK */}
-        <div className="rounded-xl border border-border/70 bg-card/60 p-4 space-y-3">
+        <div className="rounded-md border border-border/70 bg-card/60 p-4 space-y-3">
           <div className="flex items-center justify-between">
             <label className="text-xs font-semibold uppercase tracking-wider text-muted-foreground flex items-center gap-2">
               <MapPin className="h-4 w-4 text-primary" />
@@ -443,11 +443,10 @@ export function RelationshipsForm({
                         <div
                           key={loc.id}
                           onClick={() => handleAddLocation(loc.id)}
-                          className={`flex items-center justify-between rounded-md p-2 text-xs transition-colors cursor-pointer ${
-                            isSelected
-                              ? "bg-primary/10 font-medium text-primary"
-                              : "hover:bg-muted text-foreground"
-                          }`}
+                          className={`flex items-center justify-between rounded-sm p-2 text-xs transition-colors cursor-pointer ${isSelected
+                            ? "bg-primary/10 font-medium text-primary"
+                            : "hover:bg-muted text-foreground"
+                            }`}
                         >
                           <div className="flex flex-col min-w-0">
                             <span className="truncate font-semibold">{loc.name}</span>
@@ -491,7 +490,7 @@ export function RelationshipsForm({
         </div>
 
         {/* 2. JOURNEY IDs SEARCH & LINK */}
-        <div className="rounded-xl border border-border/70 bg-card/60 p-4 space-y-3">
+        <div className="rounded-md border border-border/70 bg-card/60 p-4 space-y-3">
           <div className="flex items-center justify-between">
             <label className="text-xs font-semibold uppercase tracking-wider text-muted-foreground flex items-center gap-2">
               <Compass className="h-4 w-4 text-emerald-600 dark:text-emerald-400" />
@@ -545,11 +544,10 @@ export function RelationshipsForm({
                         <div
                           key={j.id}
                           onClick={() => handleAddJourney(j.id)}
-                          className={`flex items-center justify-between rounded-md p-2 text-xs transition-colors cursor-pointer ${
-                            isSelected
-                              ? "bg-emerald-500/10 font-medium text-emerald-600 dark:text-emerald-400"
-                              : "hover:bg-muted text-foreground"
-                          }`}
+                          className={`flex items-center justify-between rounded-sm p-2 text-xs transition-colors cursor-pointer ${isSelected
+                            ? "bg-emerald-500/10 font-medium text-emerald-600 dark:text-emerald-400"
+                            : "hover:bg-muted text-foreground"
+                            }`}
                         >
                           <div className="flex flex-col min-w-0">
                             <span className="truncate font-semibold">{j.title || "Untitled Journey"}</span>
@@ -593,7 +591,7 @@ export function RelationshipsForm({
         </div>
 
         {/* 3. RELATED STORY IDs SEARCH & LINK */}
-        <div className="rounded-xl border border-border/70 bg-card/60 p-4 space-y-3">
+        <div className="rounded-md border border-border/70 bg-card/60 p-4 space-y-3">
           <div className="flex items-center justify-between">
             <label className="text-xs font-semibold uppercase tracking-wider text-muted-foreground flex items-center gap-2">
               <BookOpen className="h-4 w-4 text-indigo-600 dark:text-indigo-400" />
@@ -647,11 +645,10 @@ export function RelationshipsForm({
                         <div
                           key={s.id}
                           onClick={() => handleAddStory(s.id)}
-                          className={`flex items-center justify-between rounded-md p-2 text-xs transition-colors cursor-pointer ${
-                            isSelected
-                              ? "bg-indigo-500/10 font-medium text-indigo-600 dark:text-indigo-400"
-                              : "hover:bg-muted text-foreground"
-                          }`}
+                          className={`flex items-center justify-between rounded-sm p-2 text-xs transition-colors cursor-pointer ${isSelected
+                            ? "bg-indigo-500/10 font-medium text-indigo-600 dark:text-indigo-400"
+                            : "hover:bg-muted text-foreground"
+                            }`}
                         >
                           <div className="flex flex-col min-w-0">
                             <span className="truncate font-semibold">{s.title || "Untitled Story"}</span>

@@ -226,7 +226,7 @@ export default function SettingsPage() {
   }
 
   return (
-    <div className="w-full space-y-6 pt-2 pb-16">
+    <div className="w-full space-y-6 pt-2">
       {/* Clean Page Title & Subtitle (Exact frontend parity) */}
       <div className="flex flex-col gap-1">
         <h1 className="text-2xl sm:text-3xl font-bold tracking-tight text-foreground font-heading">

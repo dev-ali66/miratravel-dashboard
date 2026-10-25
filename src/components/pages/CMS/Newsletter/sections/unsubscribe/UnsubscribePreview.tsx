@@ -28,7 +28,7 @@ export function UnsubscribePreview({ draft }: UnsubscribePreviewProps) {
         <div className="flex flex-col lg:flex-row items-center justify-center gap-8 lg:gap-14 w-full">
           {/* Left Media Column */}
           <div className="w-full lg:w-[480px] xl:w-[580px] shrink-0 flex flex-col justify-start items-start">
-            <div className="relative w-full aspect-[665/581] max-h-[500px] overflow-hidden rounded-md bg-muted flex items-center justify-center border border-border/40">
+            <div className="relative w-full aspect-[665/581] max-h-[500px] overflow-hidden rounded-sm bg-muted flex items-center justify-center border border-border/40">
               {mediaUrl ? (
                 <img
                   src={mediaUrl}
@@ -83,9 +83,9 @@ export function UnsubscribePreview({ draft }: UnsubscribePreviewProps) {
             >
               {isUnsubscribed
                 ? unsubscribe.unsubscribedSubtitle?.value ||
-                  "You have been removed from our dispatch list."
+                "You have been removed from our dispatch list."
                 : unsubscribe.subtitle?.value ||
-                  "If our travel dispatches no longer inspire your adventures..."}
+                "If our travel dispatches no longer inspire your adventures..."}
             </p>
 
             <div className="w-full h-px border-t border-border/40 my-4" />
@@ -134,11 +134,10 @@ export function UnsubscribePreview({ draft }: UnsubscribePreviewProps) {
                           key={reason}
                           type="button"
                           onClick={() => setSelectedReason(isSelected ? "" : reason)}
-                          className={`px-3 py-1.5 rounded-sm text-xs transition-all border ${
-                            isSelected
+                          className={`px-3 py-1.5 rounded-sm text-xs transition-all border ${isSelected
                               ? "bg-primary text-primary-foreground border-primary"
                               : "bg-muted/40 hover:bg-muted text-foreground border-border/50"
-                          }`}
+                            }`}
                         >
                           {reason}
                         </button>

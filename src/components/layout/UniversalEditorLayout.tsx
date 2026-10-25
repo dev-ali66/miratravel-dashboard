@@ -445,7 +445,7 @@ export function UniversalEditorLayout({
             <button
               type="button"
               onClick={() => setIsSidebarCollapsed((prev) => !prev)}
-              className="hidden md:flex items-center justify-center rounded-md p-1.5 text-muted-foreground hover:bg-muted hover:text-foreground transition-colors cursor-pointer border border-border/50"
+              className="hidden md:flex items-center justify-center rounded-sm p-1.5 text-muted-foreground hover:bg-muted hover:text-foreground transition-colors cursor-pointer border border-border/50"
               title={isSidebarCollapsed ? "Show Form Sidebar" : "Hide Form Sidebar (Expand Preview)"}
             >
               {isSidebarCollapsed ? (
@@ -461,7 +461,7 @@ export function UniversalEditorLayout({
         {sidebarContent && previewContent && (
           <div className="hidden lg:flex items-center gap-1.5 rounded-lg border border-border/60 bg-muted/40 p-1">
             {/* 1. Quick Category Buttons Side-by-Side in Strict Order: Fluid, Full HD, Desktop (Default), Laptop, Tablet, Mobile */}
-            <div className="flex items-center gap-0.5 rounded-md border border-border/50 bg-background/80 p-0.5 shadow-2xs">
+            <div className="flex items-center gap-0.5 rounded-sm border border-border/50 bg-background/80 p-0.5 shadow-2xs">
               {/* Fluid */}
               <button
                 type="button"
@@ -560,7 +560,7 @@ export function UniversalEditorLayout({
             </div>
 
             {/* 2. Specific Device Models Dropdown in Matching Strict Order */}
-            <div className="flex items-center gap-1 rounded-md border border-border/60 bg-background px-2 py-1 shadow-2xs">
+            <div className="flex items-center gap-1 rounded-sm border border-border/60 bg-background px-2 py-1 shadow-2xs">
               <select
                 value={selectedDeviceId}
                 onChange={(e) => handleDeviceChange(e.target.value)}
@@ -596,7 +596,7 @@ export function UniversalEditorLayout({
             </div>
 
             {/* 3. Manual Resolution Input Boxes (Width × Height) */}
-            <div className="flex items-center gap-1 rounded-md border border-border/60 bg-background px-1.5 py-0.5 shadow-2xs">
+            <div className="flex items-center gap-1 rounded-sm border border-border/60 bg-background px-1.5 py-0.5 shadow-2xs">
               <span className="text-[10px] font-bold text-muted-foreground">W:</span>
               <input
                 type="text"
@@ -627,7 +627,7 @@ export function UniversalEditorLayout({
                 type="button"
                 onClick={() => setIsLandscape((prev) => !prev)}
                 className={cn(
-                  "flex items-center gap-1 rounded-md px-2 py-1 text-xs font-semibold transition-all cursor-pointer",
+                  "flex items-center gap-1 rounded-sm px-2 py-1 text-xs font-semibold transition-all cursor-pointer",
                   isLandscape
                     ? "bg-primary text-primary-foreground shadow-2xs"
                     : "text-muted-foreground hover:bg-muted hover:text-foreground border border-border/40"
@@ -666,7 +666,7 @@ export function UniversalEditorLayout({
               type="button"
               onClick={toggleDevMode}
               className={cn(
-                "inline-flex items-center gap-1.5 rounded-md px-2 py-1 text-xs font-semibold transition-all cursor-pointer border select-none shrink-0",
+                "inline-flex items-center gap-1.5 rounded-sm px-2 py-1 text-xs font-semibold transition-all cursor-pointer border select-none shrink-0",
                 isDevMode
                   ? "bg-amber-500/15 text-amber-700 dark:text-amber-300 border-amber-500/40"
                   : "bg-background text-muted-foreground border-border/60 hover:bg-muted hover:text-foreground"
@@ -696,7 +696,7 @@ export function UniversalEditorLayout({
               type="button"
               onClick={() => handleMobileTabSwitch("form")}
               className={cn(
-                "flex items-center gap-1.5 rounded-md px-2.5 py-1 text-xs font-semibold transition-all cursor-pointer",
+                "flex items-center gap-1.5 rounded-sm px-2.5 py-1 text-xs font-semibold transition-all cursor-pointer",
                 mobileViewMode === "form"
                   ? "bg-background text-foreground shadow-2xs font-bold"
                   : "text-muted-foreground hover:text-foreground"
@@ -709,7 +709,7 @@ export function UniversalEditorLayout({
               type="button"
               onClick={() => handleMobileTabSwitch("preview")}
               className={cn(
-                "flex items-center gap-1.5 rounded-md px-2.5 py-1 text-xs font-semibold transition-all cursor-pointer",
+                "flex items-center gap-1.5 rounded-sm px-2.5 py-1 text-xs font-semibold transition-all cursor-pointer",
                 mobileViewMode === "preview"
                   ? "bg-primary text-primary-foreground shadow-2xs font-bold"
                   : "text-muted-foreground hover:text-foreground"
@@ -866,7 +866,7 @@ export function UniversalEditorLayout({
                     type="button"
                     onClick={toggleDevMode}
                     className={cn(
-                      "inline-flex items-center gap-1 rounded-md px-2 py-1 text-xs font-semibold transition-all cursor-pointer border select-none shrink-0",
+                      "inline-flex items-center gap-1 rounded-sm px-2 py-1 text-xs font-semibold transition-all cursor-pointer border select-none shrink-0",
                       isDevMode
                         ? "bg-amber-500/15 text-amber-700 dark:text-amber-300 border-amber-500/40"
                         : "bg-background text-muted-foreground border-border/60 hover:bg-muted hover:text-foreground"
@@ -922,10 +922,10 @@ export function UniversalEditorLayout({
                     }}
                     className={cn(
                       "bg-background shadow-xl custom-scrollbar overflow-y-auto overflow-x-hidden block",
-                      isFluid && "w-full h-full rounded-xl border border-border/60",
+                      isFluid && "w-full h-full rounded-md border border-border/60",
                       !isFluid && activeDevice?.frameType === "phone" && "shrink-0 rounded-[44px] border-[10px] border-slate-900 dark:border-slate-800 shadow-2xl ring-1 ring-slate-950/30",
                       !isFluid && activeDevice?.frameType === "tablet" && "shrink-0 rounded-[28px] border-[8px] border-slate-900 dark:border-slate-800 shadow-2xl ring-1 ring-slate-950/30",
-                      !isFluid && (activeDevice?.frameType === "screen" || selectedDeviceId === "custom") && "shrink-0 rounded-xl border border-border/80 shadow-2xl"
+                      !isFluid && (activeDevice?.frameType === "screen" || selectedDeviceId === "custom") && "shrink-0 rounded-md border border-border/80 shadow-2xl"
                     )}
                   >
                     {useWorkspaceScale ? (

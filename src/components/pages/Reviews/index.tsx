@@ -18,6 +18,7 @@ import {
   FilterGroup,
   FilterSearch,
   FilterSelect,
+  FilterActions,
   FilterResetButton,
 } from "@/components/shared/FilterToolbar"
 import { cn } from "@/lib/utils"
@@ -200,16 +201,25 @@ export default function ReviewsPage() {
       {/* Toolbar */}
       <FilterToolbar>
         <FilterGroup>
+          {/* Search expands to take all remaining space on left */}
           <FilterSearch
             value={search}
-            onChange={(val) => setSearch(val)}
+            onChange={(val) => {
+              setSearch(val)
+              setCurrentPage(1)
+            }}
             placeholder="Search reviews..."
-            width="w-48 sm:w-64 shrink-0"
+            width="w-full flex-1 min-w-[200px]"
           />
+        </FilterGroup>
 
+        <FilterActions>
           <FilterSelect
             value={statusFilter}
-            onChange={(val) => setStatusFilter(val)}
+            onChange={(val) => {
+              setStatusFilter(val)
+              setCurrentPage(1)
+            }}
             options={[
               { label: "Published", value: "PUBLISHED" },
               { label: "Pending", value: "PENDING_MODERATION" },
@@ -223,7 +233,10 @@ export default function ReviewsPage() {
 
           <FilterSelect
             value={ratingFilter}
-            onChange={(val) => setRatingFilter(val)}
+            onChange={(val) => {
+              setRatingFilter(val)
+              setCurrentPage(1)
+            }}
             options={[
               { label: "5 Stars", value: "5", icon: Star },
               { label: "4 Stars", value: "4", icon: Star },
@@ -237,16 +250,17 @@ export default function ReviewsPage() {
             width="min-w-[110px] max-w-[135px]"
           />
 
-          {(search || statusFilter !== "ALL" || ratingFilter !== "ALL") && (
-            <FilterResetButton
-              onClick={() => {
-                setSearch("")
-                setStatusFilter("ALL")
-                setRatingFilter("ALL")
-              }}
-            />
-          )}
-        </FilterGroup>
+          {/* Far-Right Refresh Button */}
+          <FilterResetButton
+            onClick={() => {
+              setSearch("")
+              setStatusFilter("ALL")
+              setRatingFilter("ALL")
+              setCurrentPage(1)
+            }}
+            title="Refresh & Reset"
+          />
+        </FilterActions>
       </FilterToolbar>
 
       {/* Reviews List Cards */}
@@ -254,126 +268,124 @@ export default function ReviewsPage() {
         {filtered
           .slice(0, currentPage * pageSize)
           .map((rev) => (
-          <Card key={rev.id} className="border-border/60 bg-card/60 backdrop-blur-xl transition-all hover:border-border">
-            <CardContent className="p-6">
-              <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
-                <div className="space-y-2">
-                  <div className="flex flex-wrap items-center gap-2">
-                    <div className="flex items-center gap-0.5">
-                      {Array.from({ length: 5 }).map((_, i) => (
-                        <Star
-                          key={i}
-                          className={cn(
-                            "h-4 w-4",
-                            i < rev.rating
-                              ? "fill-amber-400 text-amber-400"
-                              : "text-muted-foreground/30"
-                          )}
-                        />
-                      ))}
-                    </div>
-                    <span className="font-semibold text-sm text-foreground">{rev.title}</span>
-                    <span
-                      className={cn(
-                        "inline-block rounded-md border px-2 py-0.5 text-[11px] font-semibold uppercase",
-                        statusStyles[rev.status]
-                      )}
-                    >
-                      {rev.status.replace("_", " ")}
-                    </span>
-                    {rev.isFeatured && (
-                      <span className="inline-flex items-center gap-1 rounded-md border border-purple-500/20 bg-purple-500/10 px-2 py-0.5 text-[11px] font-semibold text-purple-600 dark:text-purple-400">
-                        <Award className="h-3 w-3" /> Featured
+            <Card key={rev.id} className="border-border/60 bg-card/60 backdrop-blur-xl transition-all hover:border-border">
+              <CardContent className="p-6">
+                <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
+                  <div className="space-y-2">
+                    <div className="flex flex-wrap items-center gap-2">
+                      <div className="flex items-center gap-0.5">
+                        {Array.from({ length: 5 }).map((_, i) => (
+                          <Star
+                            key={i}
+                            className={cn(
+                              "h-4 w-4",
+                              i < rev.rating
+                                ? "fill-amber-400 text-amber-400"
+                                : "text-muted-foreground/30"
+                            )}
+                          />
+                        ))}
+                      </div>
+                      <span className="font-semibold text-sm text-foreground">{rev.title}</span>
+                      <span
+                        className={cn(
+                          "inline-block rounded-sm border px-2 py-0.5 text-[11px] font-semibold uppercase",
+                          statusStyles[rev.status]
+                        )}
+                      >
+                        {rev.status.replace("_", " ")}
                       </span>
-                    )}
-                  </div>
-
-                  <p className="text-sm text-muted-foreground leading-relaxed">
-                    "{rev.comment}"
-                  </p>
-
-                  <div className="flex flex-wrap items-center gap-4 text-xs text-muted-foreground pt-1">
-                    <div className="flex items-center gap-1.5">
-                      <span className="font-medium text-foreground">{rev.travelerName}</span>
-                      {rev.isVerified && (
-                        <span className="inline-flex items-center text-[10px] text-emerald-600 dark:text-emerald-400">
-                          <CheckCircle2 className="mr-0.5 h-3 w-3" /> Verified Traveler
+                      {rev.isFeatured && (
+                        <span className="inline-flex items-center gap-1 rounded-sm border border-purple-500/20 bg-purple-500/10 px-2 py-0.5 text-[11px] font-semibold text-purple-600 dark:text-purple-400">
+                          <Award className="h-3 w-3" /> Featured
                         </span>
                       )}
                     </div>
-                    <span>•</span>
-                    <span>Journey: <strong className="text-foreground font-medium">{rev.journeyTitle}</strong></span>
-                    <span>•</span>
-                    <span>{new Date(rev.createdAt).toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" })}</span>
-                    <span>•</span>
-                    <span className="flex items-center gap-1"><ThumbsUp className="h-3 w-3" /> {rev.helpfulVotes} found helpful</span>
-                  </div>
-                </div>
 
-                {/* Actions */}
-                <div className="flex sm:flex-col items-center sm:items-end gap-2 shrink-0">
-                  {rev.status === "PENDING_MODERATION" && (
-                    <div className="flex items-center gap-1.5">
+                    <p className="text-sm text-muted-foreground leading-relaxed">
+                      "{rev.comment}"
+                    </p>
+
+                    <div className="flex flex-wrap items-center gap-4 text-xs text-muted-foreground pt-1">
+                      <div className="flex items-center gap-1.5">
+                        <span className="font-medium text-foreground">{rev.travelerName}</span>
+                        {rev.isVerified && (
+                          <span className="inline-flex items-center text-[10px] text-emerald-600 dark:text-emerald-400">
+                            <CheckCircle2 className="mr-0.5 h-3 w-3" /> Verified Traveler
+                          </span>
+                        )}
+                      </div>
+                      <span>•</span>
+                      <span>Journey: <strong className="text-foreground font-medium">{rev.journeyTitle}</strong></span>
+                      <span>•</span>
+                      <span>{new Date(rev.createdAt).toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" })}</span>
+                      <span>•</span>
+                      <span className="flex items-center gap-1"><ThumbsUp className="h-3 w-3" /> {rev.helpfulVotes} found helpful</span>
+                    </div>
+                  </div>
+
+                  {/* Actions */}
+                  <div className="flex sm:flex-col items-center sm:items-end gap-2 shrink-0">
+                    {rev.status === "PENDING_MODERATION" && (
+                      <div className="flex items-center gap-1.5">
+                        <Button
+                          size="sm"
+                          variant="outline"
+                          className="h-8 text-xs border-emerald-500/30 text-emerald-600 hover:bg-emerald-500/10"
+                          onClick={() => handleStatusChange(rev.id, "PUBLISHED")}
+                        >
+                          <CheckCircle2 className="mr-1 h-3.5 w-3.5" /> Approve
+                        </Button>
+                        <Button
+                          size="sm"
+                          variant="ghost"
+                          className="h-8 text-xs text-rose-500 hover:bg-rose-500/10"
+                          onClick={() => handleStatusChange(rev.id, "REJECTED")}
+                        >
+                          <XCircle className="mr-1 h-3.5 w-3.5" /> Reject
+                        </Button>
+                      </div>
+                    )}
+
+                    {rev.status === "PUBLISHED" && (
                       <Button
                         size="sm"
                         variant="outline"
-                        className="h-8 text-xs border-emerald-500/30 text-emerald-600 hover:bg-emerald-500/10"
-                        onClick={() => handleStatusChange(rev.id, "PUBLISHED")}
+                        className={cn(
+                          "h-8 text-xs gap-1",
+                          rev.isFeatured ? "border-purple-500/40 text-purple-600 bg-purple-500/5" : ""
+                        )}
+                        onClick={() => handleToggleFeatured(rev.id)}
                       >
-                        <CheckCircle2 className="mr-1 h-3.5 w-3.5" /> Approve
+                        <Sparkles className="h-3 w-3" />
+                        {rev.isFeatured ? "Unfeature" : "Feature on Homepage"}
                       </Button>
-                      <Button
-                        size="sm"
-                        variant="ghost"
-                        className="h-8 text-xs text-rose-500 hover:bg-rose-500/10"
-                        onClick={() => handleStatusChange(rev.id, "REJECTED")}
-                      >
-                        <XCircle className="mr-1 h-3.5 w-3.5" /> Reject
-                      </Button>
-                    </div>
-                  )}
-
-                  {rev.status === "PUBLISHED" && (
-                    <Button
-                      size="sm"
-                      variant="outline"
-                      className={cn(
-                        "h-8 text-xs gap-1",
-                        rev.isFeatured ? "border-purple-500/40 text-purple-600 bg-purple-500/5" : ""
-                      )}
-                      onClick={() => handleToggleFeatured(rev.id)}
-                    >
-                      <Sparkles className="h-3 w-3" />
-                      {rev.isFeatured ? "Unfeature" : "Feature on Homepage"}
-                    </Button>
-                  )}
+                    )}
+                  </div>
                 </div>
-              </div>
-            </CardContent>
-          </Card>
-        ))}
+              </CardContent>
+            </Card>
+          ))}
       </div>
 
       {/* Universal Pagination */}
       {filtered.length > 0 && (
-        <div className="pt-2">
-          <Pagination
-            mode="infinite"
-            currentPage={currentPage}
-            totalPages={Math.max(1, Math.ceil(filtered.length / pageSize))}
-            totalItems={filtered.length}
-            pageSize={pageSize}
-            pageSizeOptions={[5, 10, 20, 50]}
-            loadedCount={Math.min(filtered.length, currentPage * pageSize)}
-            hasMore={currentPage * pageSize < filtered.length}
-            onLoadMore={() => setCurrentPage((p) => p + 1)}
-            onPageChange={setCurrentPage}
-            onPageSizeChange={(sz) => {
-              setPageSize(sz)
-              setCurrentPage(1)
-            }}
-          />
-        </div>
+        <Pagination
+          mode="infinite"
+          currentPage={currentPage}
+          totalPages={Math.max(1, Math.ceil(filtered.length / pageSize))}
+          totalItems={filtered.length}
+          pageSize={pageSize}
+          pageSizeOptions={[5, 10, 20, 50]}
+          loadedCount={Math.min(filtered.length, currentPage * pageSize)}
+          hasMore={currentPage * pageSize < filtered.length}
+          onLoadMore={() => setCurrentPage((p) => p + 1)}
+          onPageChange={setCurrentPage}
+          onPageSizeChange={(sz) => {
+            setPageSize(sz)
+            setCurrentPage(1)
+          }}
+        />
       )}
     </div>
   )

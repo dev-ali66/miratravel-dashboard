@@ -23,12 +23,12 @@ export function UnsubscribeForm({
   const reasonsList: string[] = Array.isArray(unsubscribe.reasonsList)
     ? unsubscribe.reasonsList
     : [
-        "Emails are too frequent",
-        "Content is no longer relevant",
-        "Taking a break from travel planning",
-        "I never signed up for this",
-        "Other reasons",
-      ]
+      "Emails are too frequent",
+      "Content is no longer relevant",
+      "Taking a break from travel planning",
+      "I never signed up for this",
+      "Other reasons",
+    ]
 
   return (
     <FormSection
@@ -125,7 +125,7 @@ export function UnsubscribeForm({
                   </label>
                   <input
                     type="text"
-                    className="h-9 w-full rounded-md border border-input bg-background px-3 text-xs text-foreground focus:outline-none focus:ring-1 focus:ring-ring"
+                    className="h-9 w-full rounded-sm border border-input bg-background px-3 text-xs text-foreground focus:outline-none focus:ring-1 focus:ring-ring"
                     value={item}
                     onChange={(e) => update(e.target.value)}
                     placeholder="Enter reason..."

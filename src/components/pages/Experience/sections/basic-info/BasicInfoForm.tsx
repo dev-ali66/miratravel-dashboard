@@ -117,7 +117,7 @@ export function BasicInfoForm({
         </div>
 
         {/* CLASSIFICATION: Primary (Dropdown) & Secondary Types (Pills) */}
-        <div className="rounded-xl border border-border/80 bg-muted/15 p-4.5 flex flex-col gap-4">
+        <div className="rounded-md border border-border/80 bg-muted/15 p-4.5 flex flex-col gap-4">
           <div className="flex items-center gap-2 pb-2 border-b border-border/50">
             <Layers className="h-4 w-4 text-primary" />
             <span className="text-xs font-bold uppercase tracking-wider text-foreground">
@@ -204,7 +204,7 @@ export function BasicInfoForm({
                     type="button"
                     onClick={() => handleToggleAttribute(attr.value)}
                     className={cn(
-                      "inline-flex items-center gap-1.5 rounded-md px-2.5 py-1 text-xs font-medium border transition-colors cursor-pointer",
+                      "inline-flex items-center gap-1.5 rounded-sm px-2.5 py-1 text-xs font-medium border transition-colors cursor-pointer",
                       isSelected
                         ? "bg-secondary text-secondary-foreground border-secondary font-semibold"
                         : "bg-card text-muted-foreground border-border/60 hover:bg-muted"
@@ -220,7 +220,7 @@ export function BasicInfoForm({
         </div>
 
         {/* GEOGRAPHY LINKING: Country, Region, Place (Flex Column) */}
-        <div className="rounded-xl border border-border/80 bg-muted/15 p-4.5 flex flex-col gap-4">
+        <div className="rounded-md border border-border/80 bg-muted/15 p-4.5 flex flex-col gap-4">
           <div className="flex items-center gap-2 pb-2 border-b border-border/50">
             <Globe className="h-4 w-4 text-primary" />
             <span className="text-xs font-bold uppercase tracking-wider text-foreground">

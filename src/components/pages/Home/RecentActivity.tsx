@@ -20,7 +20,7 @@ export default function RecentActivity({ className }: { className?: string }) {
   return (
     <SlideBottom
       delay={0.4}
-      className={`flex flex-col rounded-xl border border-border/60 bg-card/60 p-6 shadow-sm backdrop-blur-xl ${className || ""}`}
+      className={`flex flex-col rounded-md border border-border/60 bg-card/60 p-6 shadow-sm backdrop-blur-xl ${className || ""}`}
     >
       <div className="flex items-center justify-between pb-4">
         <div>
@@ -81,7 +81,7 @@ export default function RecentActivity({ className }: { className?: string }) {
                     <div className="text-sm font-bold text-foreground">
                       {booking.currency} {booking.amount.toLocaleString()}
                     </div>
-                    <span className={cn("inline-block rounded-md border px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wider", statusStyle)}>
+                    <span className={cn("inline-block rounded-sm border px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wider", statusStyle)}>
                       {booking.bookingStatus.replace("_", " ")}
                     </span>
                   </div>

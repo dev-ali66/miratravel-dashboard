@@ -4,12 +4,22 @@ import { Check, X, Loader2, Inbox, Users, Clock, CheckCircle2, ShieldAlert } fro
 import { Pagination } from "@/components/shared/Pagination"
 import { useListingPagination } from "@/hooks/ui/useListingPagination"
 import { PageHeader, CompactStatCard } from "@/components/shared/PageHeader"
+import {
+  FilterToolbar,
+  FilterGroup,
+  FilterSearch,
+  FilterTabs,
+  FilterActions,
+  FilterResetButton,
+} from "@/components/shared/FilterToolbar"
 import { useGetRequests } from "@/hooks/requests/useGetRequests"
 import { useUpdateRequestStatus } from "@/hooks/requests/useUpdateRequestStatus"
 import RequestDetailsModal from "./RequestDetailsModal"
 
 export default function RequestListTable() {
   const [selectedUser, setSelectedUser] = useState<any | null>(null)
+  const [searchQuery, setSearchQuery] = useState("")
+  const [verifiedFilter, setVerifiedFilter] = useState<string>("ALL")
 
   const {
     mode,
@@ -30,7 +40,7 @@ export default function RequestListTable() {
     keyExtractor: (r) => r.id,
   })
 
-  const { data, isLoading, isFetching, isError } = useGetRequests(currentPage, effectiveLimit)
+  const { data, isLoading, isFetching, isError, refetch } = useGetRequests(currentPage, effectiveLimit)
   const { mutate: updateStatus, isPending: isUpdating } =
     useUpdateRequestStatus()
 
@@ -50,10 +60,27 @@ export default function RequestListTable() {
     return { pending, approved, rejected }
   }, [requestList])
 
-  console.log("RequestListTable Rendered", isLoading)
+  const filteredRequests = useMemo(() => {
+    return requestList.filter((user: any) => {
+      if (searchQuery) {
+        const q = searchQuery.toLowerCase()
+        const name = user.userPersonalInfo?.firstName
+          ? `${user.userPersonalInfo.firstName} ${user.userPersonalInfo.lastName || ""}`.toLowerCase()
+          : ""
+        const email = (user.email || "").toLowerCase()
+        const role = (user.roles?.[0]?.name || "").toLowerCase()
+        if (!name.includes(q) && !email.includes(q) && !role.includes(q)) {
+          return false
+        }
+      }
+      if (verifiedFilter === "VERIFIED" && !user.isVerified) return false
+      if (verifiedFilter === "PENDING" && user.isVerified) return false
+      return true
+    })
+  }, [requestList, searchQuery, verifiedFilter])
 
   return (
-    <div className="w-full animate-in pt-2 duration-700 fade-in slide-in-from-bottom-4">
+    <div className="w-full space-y-6 pt-2">
       {/* Universal Page Header with 30% title & 70% compact statistics */}
       <PageHeader
         icon={Inbox}
@@ -93,8 +120,44 @@ export default function RequestListTable() {
         }
       />
 
-      <div className="min-h-100 overflow-hidden rounded-2xl border border-border/60 bg-background/50 backdrop-blur-xl">
-        {isLoading ? (
+      {/* Controls Bar */}
+      <FilterToolbar>
+        <FilterGroup>
+          {/* Search expands to take all remaining space on left */}
+          <FilterSearch
+            value={searchQuery}
+            onChange={(val) => setSearchQuery(val)}
+            placeholder="Search by name, email, role..."
+            width="w-full flex-1 min-w-[200px]"
+          />
+        </FilterGroup>
+
+        <FilterActions>
+          {/* Filter Tabs aligned to right */}
+          <FilterTabs
+            tabs={[
+              { key: "ALL", label: "All Applicants" },
+              { key: "PENDING", label: "Pending Review" },
+              { key: "VERIFIED", label: "Verified / Approved" },
+            ]}
+            activeTab={verifiedFilter}
+            onChange={(key) => setVerifiedFilter(key)}
+          />
+
+          {/* Far-Right Refresh Button */}
+          <FilterResetButton
+            onClick={() => {
+              setSearchQuery("")
+              setVerifiedFilter("ALL")
+              refetch?.()
+            }}
+            title="Refresh & Reset"
+          />
+        </FilterActions>
+      </FilterToolbar>
+
+      <div className="min-h-100 overflow-hidden rounded-xl border border-border/60 bg-background/50 backdrop-blur-xl">
+        {isLoading && currentPage === 1 && requestList.length === 0 ? (
           <div className="w-full">
             <div className="overflow-x-auto">
               <table className="w-full text-left text-sm">
@@ -140,8 +203,8 @@ export default function RequestListTable() {
                       </td>
                       <td className="px-6 py-4">
                         <div className="flex items-center justify-end gap-2">
-                          <div className="h-8 w-8 animate-pulse rounded-md bg-muted/60" />
-                          <div className="h-8 w-8 animate-pulse rounded-md bg-muted/60" />
+                          <div className="h-8 w-8 animate-pulse rounded-sm bg-muted/60" />
+                          <div className="h-8 w-8 animate-pulse rounded-sm bg-muted/60" />
                         </div>
                       </td>
                     </tr>
@@ -154,9 +217,9 @@ export default function RequestListTable() {
           <div className="flex h-64 items-center justify-center text-rose-500">
             Failed to load requests.
           </div>
-        ) : requestList.length === 0 ? (
+        ) : filteredRequests.length === 0 ? (
           <div className="flex h-64 items-center justify-center text-muted-foreground">
-            No pending requests found.
+            No matching requests found.
           </div>
         ) : (
           <>
@@ -182,7 +245,7 @@ export default function RequestListTable() {
                   </tr>
                 </thead>
                 <tbody>
-                  {requestList.map((user, idx) => {
+                  {filteredRequests.map((user, idx) => {
                     const name = user.userPersonalInfo?.firstName
                       ? `${user.userPersonalInfo.firstName} ${user.userPersonalInfo.lastName || ""}`
                       : "No Name"
@@ -238,11 +301,10 @@ export default function RequestListTable() {
                         </td>
                         <td className="px-6 py-4">
                           <span
-                            className={`rounded-full px-2.5 py-1 text-xs font-semibold ${
-                              user.isVerified
-                                ? "border border-emerald-500/20 bg-emerald-500/10 text-emerald-500"
-                                : "border border-amber-500/20 bg-amber-500/10 text-amber-500"
-                            }`}
+                            className={`rounded-full px-2.5 py-1 text-xs font-semibold ${user.isVerified
+                              ? "border border-emerald-500/20 bg-emerald-500/10 text-emerald-500"
+                              : "border border-amber-500/20 bg-amber-500/10 text-amber-500"
+                              }`}
                           >
                             {status}
                           </span>
@@ -290,27 +352,44 @@ export default function RequestListTable() {
                       </motion.tr>
                     )
                   })}
+
+                  {/* Subtle inline skeleton row during background fetch */}
+                  {Boolean(isLoadingMore || (isFetching && currentPage > 1)) && (
+                    <tr className="animate-pulse bg-muted/20 border-b border-border/40">
+                      <td className="px-6 py-4">
+                        <div className="flex items-center gap-4">
+                          <div className="h-10 w-10 shrink-0 rounded-full bg-muted/60" />
+                          <div className="space-y-1">
+                            <div className="h-4 w-28 rounded bg-muted/60" />
+                            <div className="h-3 w-40 rounded bg-muted/40" />
+                          </div>
+                        </div>
+                      </td>
+                      <td className="px-6 py-4"><div className="h-4 w-16 rounded bg-muted/60" /></td>
+                      <td className="px-6 py-4"><div className="h-4 w-20 rounded bg-muted/60" /></td>
+                      <td className="px-6 py-4"><div className="h-6 w-16 rounded-full bg-muted/60" /></td>
+                      <td className="px-6 py-4 text-right"><div className="h-8 w-16 rounded-sm bg-muted/60 ml-auto" /></td>
+                    </tr>
+                  )}
                 </tbody>
               </table>
             </div>
 
             {(data?.meta?.total ?? 0) > 0 && (
-              <div className="border-t border-border/60 bg-background/50 p-5 backdrop-blur-xl">
-                <Pagination
-                  mode={mode}
-                  currentPage={currentPage}
-                  totalPages={totalPages}
-                  totalItems={data?.meta?.total}
-                  pageSize={effectiveLimit}
-                  pageSizeOptions={pageSizeOptions}
-                  onPageChange={setCurrentPage}
-                  onPageSizeChange={setTargetItems}
-                  hasMore={hasMore}
-                  isLoadingMore={isLoadingMore || (isFetching && currentPage > 1)}
-                  onLoadMore={handleLoadMore}
-                  loadedCount={requestList.length}
-                />
-              </div>
+              <Pagination
+                mode={mode}
+                currentPage={currentPage}
+                totalPages={totalPages}
+                totalItems={data?.meta?.total}
+                pageSize={effectiveLimit}
+                pageSizeOptions={pageSizeOptions}
+                onPageChange={setCurrentPage}
+                onPageSizeChange={setTargetItems}
+                hasMore={hasMore}
+                isLoadingMore={isLoadingMore || (isFetching && currentPage > 1)}
+                onLoadMore={handleLoadMore}
+                loadedCount={requestList.length}
+              />
             )}
           </>
         )}

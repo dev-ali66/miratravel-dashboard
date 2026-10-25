@@ -27,7 +27,7 @@ export const CollapsibleSectionCard = ({
       >
         <div className="flex min-w-0 items-center gap-3">
           {indexLabel && (
-            <span className="flex h-7 min-w-7 items-center justify-center rounded-md bg-muted px-2 text-[10px] font-semibold text-muted-foreground">
+            <span className="flex h-7 min-w-7 items-center justify-center rounded-sm bg-muted px-2 text-[10px] font-semibold text-muted-foreground">
               {indexLabel}
             </span>
           )}

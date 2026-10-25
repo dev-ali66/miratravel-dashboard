@@ -104,9 +104,8 @@ export const MediaInspectorDrawer: React.FC<MediaInspectorDrawerProps> = ({
   const handleCopyNextImage = async () => {
     const code = isVideo
       ? `<video src="${asset.url}" controls className="w-full h-auto rounded-lg" />`
-      : `<Image src="${asset.url}" alt="${altText || asset.fileName}" width={${
-          asset.width || 1200
-        }} height={${asset.height || 800}} />`
+      : `<Image src="${asset.url}" alt="${altText || asset.fileName}" width={${asset.width || 1200
+      }} height={${asset.height || 800}} />`
     await navigator.clipboard.writeText(code)
     setCopiedCode(true)
     toast.success(isVideo ? "Video tag copied to clipboard" : "Next.js <Image> tag copied to clipboard")
@@ -133,7 +132,7 @@ export const MediaInspectorDrawer: React.FC<MediaInspectorDrawerProps> = ({
         aria-hidden="true"
       />
 
-      <aside className="fixed top-16 bottom-0 right-0 z-40 w-full sm:w-[400px] xl:w-[440px] flex flex-col border-l border-border bg-background/95 backdrop-blur-xl supports-[backdrop-filter]:bg-background/80 shadow-2xl transition-transform duration-300 ease-in-out">
+      <aside className="fixed top-14 bottom-0 right-0 z-40 w-full sm:w-[400px] xl:w-[440px] flex flex-col border-l border-border bg-background/95 backdrop-blur-xl supports-[backdrop-filter]:bg-background/80 shadow-2xl transition-transform duration-300 ease-in-out">
         {/* Header */}
         <div className="flex items-center justify-between p-4 border-b border-border/60 bg-muted/20 shrink-0">
           <div className="flex items-center gap-2">
@@ -153,237 +152,237 @@ export const MediaInspectorDrawer: React.FC<MediaInspectorDrawerProps> = ({
           </Button>
         </div>
 
-      {/* Scrollable Content */}
-      <div className="flex-1 overflow-y-auto p-5 space-y-6">
-        {/* High-res Media Preview */}
-        <div className="relative rounded-xl border border-border/60 bg-muted/40 overflow-hidden flex items-center justify-center min-h-[220px] max-h-[300px]">
-          {isVideo ? (
-            <video src={asset.url} controls className="max-h-[300px] w-full object-contain" />
-          ) : (
-            <img src={asset.url} alt={asset.title || asset.fileName} className="max-h-[300px] w-full object-contain" />
-          )}
-          <div className="absolute top-2.5 right-2.5 flex items-center gap-1 bg-background/85 backdrop-blur-md p-1 rounded-xl border border-border/50 shadow-sm">
-            {/* 1. Direct Download */}
-            <button
-              type="button"
-              onClick={handleDownload}
-              disabled={isDownloading}
-              className="h-7 w-7 rounded-lg flex items-center justify-center hover:bg-muted text-foreground transition-all cursor-pointer disabled:opacity-50"
-              title={`Download ${asset.originalName || asset.fileName}`}
-            >
-              {isDownloading ? (
-                <Loader2 className="h-3.5 w-3.5 animate-spin text-primary" />
-              ) : (
-                <Download className="h-3.5 w-3.5" />
-              )}
-            </button>
-
-            {/* 2. Copy CDN URL */}
-            <button
-              type="button"
-              onClick={handleCopyUrl}
-              className="h-7 w-7 rounded-lg flex items-center justify-center hover:bg-muted text-foreground transition-all cursor-pointer"
-              title={copiedUrl ? "Copied CDN URL!" : "Copy CDN URL"}
-            >
-              {copiedUrl ? (
-                <Check className="h-3.5 w-3.5 text-emerald-600 animate-in zoom-in-50 duration-150" />
-              ) : (
-                <Copy className="h-3.5 w-3.5" />
-              )}
-            </button>
-
-            {/* 3. Copy Embed Tag / Code */}
-            <button
-              type="button"
-              onClick={handleCopyNextImage}
-              className="h-7 w-7 rounded-lg flex items-center justify-center hover:bg-muted text-foreground transition-all cursor-pointer"
-              title={copiedCode ? "Copied Embed Tag!" : isVideo ? "Copy <video> tag" : "Copy Next.js <Image /> tag"}
-            >
-              {copiedCode ? (
-                <Check className="h-3.5 w-3.5 text-emerald-600 animate-in zoom-in-50 duration-150" />
-              ) : (
-                <FileCode className="h-3.5 w-3.5" />
-              )}
-            </button>
-
-            {/* 4. Open Full Size in New Tab */}
-            <a
-              href={asset.url}
-              target="_blank"
-              rel="noreferrer"
-              className="h-7 w-7 rounded-lg flex items-center justify-center hover:bg-muted text-foreground transition-all"
-              title="Open full size in new tab"
-            >
-              <Maximize2 className="h-3.5 w-3.5" />
-            </a>
-          </div>
-        </div>
-
-        {/* Technical Spec Sheet */}
-        <div className="rounded-xl border border-border/60 bg-card/60 p-3.5 space-y-2.5 text-xs">
-          <h3 className="font-semibold text-foreground flex items-center gap-1.5">
-            <Sparkles className="h-3.5 w-3.5 text-primary" /> Technical Specifications
-          </h3>
-          <div className="grid grid-cols-2 gap-y-2 text-muted-foreground pt-1">
-            <div>
-              <span className="block text-[11px] text-muted-foreground/70">Dimensions</span>
-              <span className="font-medium text-foreground">
-                {asset.width && asset.height ? `${asset.width} × ${asset.height} px` : "Unknown"}
-              </span>
-            </div>
-            <div>
-              <span className="block text-[11px] text-muted-foreground/70">Aspect Ratio</span>
-              <span className="font-medium text-foreground">{ratio || "—"}</span>
-            </div>
-            <div>
-              <span className="block text-[11px] text-muted-foreground/70">File Size</span>
-              <span className="font-medium text-foreground font-mono">{formatBytes(asset.size)}</span>
-            </div>
-            <div>
-              <span className="block text-[11px] text-muted-foreground/70">MIME Type</span>
-              <span className="font-medium text-foreground font-mono">{asset.mimeType}</span>
-            </div>
-            <div className="col-span-2">
-              <span className="block text-[11px] text-muted-foreground/70">Original Name</span>
-              <span className="font-medium text-foreground truncate block" title={asset.fileName}>
-                {asset.fileName}
-              </span>
-            </div>
-          </div>
-        </div>
-
-        {/* Deep Usage Breakdown ("Used in X places") */}
-        <div className="rounded-xl border border-border/60 bg-card/60 p-3.5 space-y-3">
-          <div className="flex items-center justify-between">
-            <h3 className="text-xs font-semibold text-foreground flex items-center gap-1.5">
-              <Layers className="h-3.5 w-3.5 text-primary" /> Active System Usage
-            </h3>
-            {asset.usageCount > 0 ? (
-              <Badge variant="warning" className="text-[10px]">
-                In Use ({asset.usageCount})
-              </Badge>
+        {/* Scrollable Content */}
+        <div className="flex-1 overflow-y-auto p-5 space-y-6">
+          {/* High-res Media Preview */}
+          <div className="relative rounded-md border border-border/60 bg-muted/40 overflow-hidden flex items-center justify-center min-h-[220px] max-h-[300px]">
+            {isVideo ? (
+              <video src={asset.url} controls className="max-h-[300px] w-full object-contain" />
             ) : (
-              <Badge variant="success" className="text-[10px]">
-                Unused (Safe)
-              </Badge>
+              <img src={asset.url} alt={asset.title || asset.fileName} className="max-h-[300px] w-full object-contain" />
+            )}
+            <div className="absolute top-2.5 right-2.5 flex items-center gap-1 bg-background/85 backdrop-blur-md p-1 rounded-md border border-border/50 shadow-sm">
+              {/* 1. Direct Download */}
+              <button
+                type="button"
+                onClick={handleDownload}
+                disabled={isDownloading}
+                className="h-7 w-7 rounded-lg flex items-center justify-center hover:bg-muted text-foreground transition-all cursor-pointer disabled:opacity-50"
+                title={`Download ${asset.originalName || asset.fileName}`}
+              >
+                {isDownloading ? (
+                  <Loader2 className="h-3.5 w-3.5 animate-spin text-primary" />
+                ) : (
+                  <Download className="h-3.5 w-3.5" />
+                )}
+              </button>
+
+              {/* 2. Copy CDN URL */}
+              <button
+                type="button"
+                onClick={handleCopyUrl}
+                className="h-7 w-7 rounded-lg flex items-center justify-center hover:bg-muted text-foreground transition-all cursor-pointer"
+                title={copiedUrl ? "Copied CDN URL!" : "Copy CDN URL"}
+              >
+                {copiedUrl ? (
+                  <Check className="h-3.5 w-3.5 text-emerald-600 animate-in zoom-in-50 duration-150" />
+                ) : (
+                  <Copy className="h-3.5 w-3.5" />
+                )}
+              </button>
+
+              {/* 3. Copy Embed Tag / Code */}
+              <button
+                type="button"
+                onClick={handleCopyNextImage}
+                className="h-7 w-7 rounded-lg flex items-center justify-center hover:bg-muted text-foreground transition-all cursor-pointer"
+                title={copiedCode ? "Copied Embed Tag!" : isVideo ? "Copy <video> tag" : "Copy Next.js <Image /> tag"}
+              >
+                {copiedCode ? (
+                  <Check className="h-3.5 w-3.5 text-emerald-600 animate-in zoom-in-50 duration-150" />
+                ) : (
+                  <FileCode className="h-3.5 w-3.5" />
+                )}
+              </button>
+
+              {/* 4. Open Full Size in New Tab */}
+              <a
+                href={asset.url}
+                target="_blank"
+                rel="noreferrer"
+                className="h-7 w-7 rounded-lg flex items-center justify-center hover:bg-muted text-foreground transition-all"
+                title="Open full size in new tab"
+              >
+                <Maximize2 className="h-3.5 w-3.5" />
+              </a>
+            </div>
+          </div>
+
+          {/* Technical Spec Sheet */}
+          <div className="rounded-md border border-border/60 bg-card/60 p-3.5 space-y-2.5 text-xs">
+            <h3 className="font-semibold text-foreground flex items-center gap-1.5">
+              <Sparkles className="h-3.5 w-3.5 text-primary" /> Technical Specifications
+            </h3>
+            <div className="grid grid-cols-2 gap-y-2 text-muted-foreground pt-1">
+              <div>
+                <span className="block text-[11px] text-muted-foreground/70">Dimensions</span>
+                <span className="font-medium text-foreground">
+                  {asset.width && asset.height ? `${asset.width} × ${asset.height} px` : "Unknown"}
+                </span>
+              </div>
+              <div>
+                <span className="block text-[11px] text-muted-foreground/70">Aspect Ratio</span>
+                <span className="font-medium text-foreground">{ratio || "—"}</span>
+              </div>
+              <div>
+                <span className="block text-[11px] text-muted-foreground/70">File Size</span>
+                <span className="font-medium text-foreground font-mono">{formatBytes(asset.size)}</span>
+              </div>
+              <div>
+                <span className="block text-[11px] text-muted-foreground/70">MIME Type</span>
+                <span className="font-medium text-foreground font-mono">{asset.mimeType}</span>
+              </div>
+              <div className="col-span-2">
+                <span className="block text-[11px] text-muted-foreground/70">Original Name</span>
+                <span className="font-medium text-foreground truncate block" title={asset.fileName}>
+                  {asset.fileName}
+                </span>
+              </div>
+            </div>
+          </div>
+
+          {/* Deep Usage Breakdown ("Used in X places") */}
+          <div className="rounded-md border border-border/60 bg-card/60 p-3.5 space-y-3">
+            <div className="flex items-center justify-between">
+              <h3 className="text-xs font-semibold text-foreground flex items-center gap-1.5">
+                <Layers className="h-3.5 w-3.5 text-primary" /> Active System Usage
+              </h3>
+              {asset.usageCount > 0 ? (
+                <Badge variant="warning" className="text-[10px]">
+                  In Use ({asset.usageCount})
+                </Badge>
+              ) : (
+                <Badge variant="success" className="text-[10px]">
+                  Unused (Safe)
+                </Badge>
+              )}
+            </div>
+
+            {isUsageLoading ? (
+              <div className="py-3 text-center text-xs text-muted-foreground animate-pulse">
+                Scanning references across database...
+              </div>
+            ) : usageReport && usageReport.references.length > 0 ? (
+              <div className="space-y-2 max-h-[160px] overflow-y-auto pr-1">
+                {usageReport.references.map((ref) => (
+                  <div
+                    key={ref.id}
+                    className="p-2 rounded-lg border border-border/40 bg-muted/30 flex items-center justify-between text-xs"
+                  >
+                    <div className="truncate mr-2">
+                      <div className="flex items-center gap-1.5">
+                        <span className="font-semibold text-primary text-[11px] uppercase tracking-wider">
+                          {ref.entityType}
+                        </span>
+                        <span className="text-foreground truncate font-medium">{ref.entityTitle}</span>
+                      </div>
+                      <span className="text-[10px] text-muted-foreground block truncate">{ref.fieldPath}</span>
+                    </div>
+                    {ref.editUrl && (
+                      <a
+                        href={ref.editUrl}
+                        target="_blank"
+                        rel="noreferrer"
+                        className="p-1.5 rounded-sm hover:bg-muted text-muted-foreground hover:text-foreground shrink-0"
+                        title="Open in editor"
+                      >
+                        <ExternalLink className="h-3 w-3" />
+                      </a>
+                    )}
+                  </div>
+                ))}
+              </div>
+            ) : (
+              <div className="py-2 text-center text-xs text-muted-foreground bg-muted/20 rounded-lg">
+                Not referenced in any Journey, Location, Story, or CMS page. Safe to delete.
+              </div>
             )}
           </div>
 
-          {isUsageLoading ? (
-            <div className="py-3 text-center text-xs text-muted-foreground animate-pulse">
-              Scanning references across database...
+          {/* Inline SEO Metadata Editor */}
+          <div className="space-y-3 pt-1">
+            <div className="flex items-center justify-between">
+              <h3 className="text-xs font-semibold text-foreground">SEO & Accessibility Metadata</h3>
+              {isDirty && (
+                <span className="text-[10px] text-amber-600 dark:text-amber-400 font-medium animate-pulse">
+                  Unsaved changes
+                </span>
+              )}
             </div>
-          ) : usageReport && usageReport.references.length > 0 ? (
-            <div className="space-y-2 max-h-[160px] overflow-y-auto pr-1">
-              {usageReport.references.map((ref) => (
-                <div
-                  key={ref.id}
-                  className="p-2 rounded-lg border border-border/40 bg-muted/30 flex items-center justify-between text-xs"
-                >
-                  <div className="truncate mr-2">
-                    <div className="flex items-center gap-1.5">
-                      <span className="font-semibold text-primary text-[11px] uppercase tracking-wider">
-                        {ref.entityType}
-                      </span>
-                      <span className="text-foreground truncate font-medium">{ref.entityTitle}</span>
-                    </div>
-                    <span className="text-[10px] text-muted-foreground block truncate">{ref.fieldPath}</span>
-                  </div>
-                  {ref.editUrl && (
-                    <a
-                      href={ref.editUrl}
-                      target="_blank"
-                      rel="noreferrer"
-                      className="p-1.5 rounded-md hover:bg-muted text-muted-foreground hover:text-foreground shrink-0"
-                      title="Open in editor"
-                    >
-                      <ExternalLink className="h-3 w-3" />
-                    </a>
-                  )}
-                </div>
-              ))}
+
+            <div className="space-y-1.5">
+              <label className="text-[11px] font-medium text-muted-foreground">Title</label>
+              <Input
+                value={title}
+                onChange={(e) => setTitle(e.target.value)}
+                placeholder="e.g. Mostar Old Bridge at Sunset"
+                className="h-8 text-xs bg-muted/20 border-border/60"
+              />
             </div>
-          ) : (
-            <div className="py-2 text-center text-xs text-muted-foreground bg-muted/20 rounded-lg">
-              Not referenced in any Journey, Location, Story, or CMS page. Safe to delete.
+
+            <div className="space-y-1.5">
+              <label className="text-[11px] font-medium text-muted-foreground flex items-center justify-between">
+                <span>Alt Text</span>
+                <span className="text-[10px] text-muted-foreground/70">Crucial for SEO</span>
+              </label>
+              <Input
+                value={altText}
+                onChange={(e) => setAltText(e.target.value)}
+                placeholder="Descriptive text for screen readers"
+                className="h-8 text-xs bg-muted/20 border-border/60"
+              />
             </div>
-          )}
+
+            <div className="space-y-1.5">
+              <label className="text-[11px] font-medium text-muted-foreground">Caption</label>
+              <Textarea
+                value={caption}
+                onChange={(e) => setCaption(e.target.value)}
+                placeholder="Optional editorial caption or credits"
+                rows={2}
+                className="text-xs bg-muted/20 border-border/60 resize-none"
+              />
+            </div>
+
+            <Button
+              size="sm"
+              onClick={handleSaveMetadata}
+              disabled={!isDirty || updateMetadata.isPending}
+              className="w-full text-xs h-8"
+            >
+              {updateMetadata.isPending ? "Saving..." : "Save Metadata"}
+            </Button>
+          </div>
         </div>
 
-        {/* Inline SEO Metadata Editor */}
-        <div className="space-y-3 pt-1">
-          <div className="flex items-center justify-between">
-            <h3 className="text-xs font-semibold text-foreground">SEO & Accessibility Metadata</h3>
-            {isDirty && (
-              <span className="text-[10px] text-amber-600 dark:text-amber-400 font-medium animate-pulse">
-                Unsaved changes
-              </span>
-            )}
-          </div>
-
-          <div className="space-y-1.5">
-            <label className="text-[11px] font-medium text-muted-foreground">Title</label>
-            <Input
-              value={title}
-              onChange={(e) => setTitle(e.target.value)}
-              placeholder="e.g. Mostar Old Bridge at Sunset"
-              className="h-8 text-xs bg-muted/20 border-border/60"
-            />
-          </div>
-
-          <div className="space-y-1.5">
-            <label className="text-[11px] font-medium text-muted-foreground flex items-center justify-between">
-              <span>Alt Text</span>
-              <span className="text-[10px] text-muted-foreground/70">Crucial for SEO</span>
-            </label>
-            <Input
-              value={altText}
-              onChange={(e) => setAltText(e.target.value)}
-              placeholder="Descriptive text for screen readers"
-              className="h-8 text-xs bg-muted/20 border-border/60"
-            />
-          </div>
-
-          <div className="space-y-1.5">
-            <label className="text-[11px] font-medium text-muted-foreground">Caption</label>
-            <Textarea
-              value={caption}
-              onChange={(e) => setCaption(e.target.value)}
-              placeholder="Optional editorial caption or credits"
-              rows={2}
-              className="text-xs bg-muted/20 border-border/60 resize-none"
-            />
-          </div>
-
+        {/* Footer Actions */}
+        <div className="p-4 border-t border-border/60 bg-muted/20 flex items-center justify-between shrink-0">
           <Button
+            variant="outline"
             size="sm"
-            onClick={handleSaveMetadata}
-            disabled={!isDirty || updateMetadata.isPending}
-            className="w-full text-xs h-8"
+            onClick={() => onSoftDelete(asset.id)}
+            disabled={asset.usageCount > 0}
+            className="text-xs text-destructive hover:bg-destructive/10 hover:text-destructive border-border/60 gap-1.5"
+            title={asset.usageCount > 0 ? "Cannot delete: asset is actively in use" : "Move to 30-day trash"}
           >
-            {updateMetadata.isPending ? "Saving..." : "Save Metadata"}
+            <Trash2 className="h-3.5 w-3.5" />
+            {asset.usageCount > 0 ? "In Use (Protected)" : "Move to Trash"}
+          </Button>
+          <Button variant="ghost" size="sm" onClick={onClose} className="text-xs">
+            Close
           </Button>
         </div>
-      </div>
-
-      {/* Footer Actions */}
-      <div className="p-4 border-t border-border/60 bg-muted/20 flex items-center justify-between shrink-0">
-        <Button
-          variant="outline"
-          size="sm"
-          onClick={() => onSoftDelete(asset.id)}
-          disabled={asset.usageCount > 0}
-          className="text-xs text-destructive hover:bg-destructive/10 hover:text-destructive border-border/60 gap-1.5"
-          title={asset.usageCount > 0 ? "Cannot delete: asset is actively in use" : "Move to 30-day trash"}
-        >
-          <Trash2 className="h-3.5 w-3.5" />
-          {asset.usageCount > 0 ? "In Use (Protected)" : "Move to Trash"}
-        </Button>
-        <Button variant="ghost" size="sm" onClick={onClose} className="text-xs">
-          Close
-        </Button>
-      </div>
-    </aside>
+      </aside>
     </>
   )
 }

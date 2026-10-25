@@ -38,7 +38,7 @@ export function MiraTouchPreview({ draft }: ExperiencePreviewSectionProps) {
           {items.length > 0 && (
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mt-2">
               {items.map((it, idx) => (
-                <div key={idx} className="flex items-start gap-3 p-4 rounded-xl bg-white/5 border border-white/10 backdrop-blur-xs">
+                <div key={idx} className="flex items-start gap-3 p-4 rounded-md bg-white/5 border border-white/10 backdrop-blur-xs">
                   <CheckCircle2 className="h-4 w-4 text-accent-muted shrink-0 mt-0.5" />
                   <div className="flex flex-col gap-1">
                     <DynamicStyledTextPreview
@@ -60,7 +60,7 @@ export function MiraTouchPreview({ draft }: ExperiencePreviewSectionProps) {
 
         <div className="lg:col-span-5">
           {touch.imageMultimedia && (
-            <div className="relative rounded-2xl overflow-hidden shadow-2xl aspect-4/5 border border-white/20">
+            <div className="relative rounded-xl overflow-hidden shadow-2xl aspect-4/5 border border-white/20">
               <UniversalMultimediaPreview
                 multimedia={touch.imageMultimedia}
                 mode="inline"

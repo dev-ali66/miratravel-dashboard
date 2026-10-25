@@ -1,10 +1,9 @@
-import React, { useEffect, useRef } from "react"
+import React, { useEffect, useRef, useState } from "react"
 import {
   ChevronLeft,
   ChevronRight,
   ChevronDown,
   Loader2,
-  CheckCircle2,
   ArrowDown,
   Layers,
   Infinity as InfinityIcon,
@@ -28,7 +27,7 @@ export function PaginationModeToggle({
   return (
     <div
       className={cn(
-        "inline-flex items-center rounded-xl border border-border/70 bg-muted/40 p-0.5 text-xs font-semibold backdrop-blur shadow-sm",
+        "inline-flex items-center rounded-md border border-border/70 bg-muted/40 p-0.5 text-xs font-semibold backdrop-blur shadow-sm",
         className
       )}
       role="group"
@@ -119,6 +118,8 @@ export interface PaginationProps {
    * Predictive prefetch threshold ratio (0.1 to 0.9). Default: 0.3 (triggers background load at 30% of batch scroll).
    */
   prefetchThreshold?: number
+  /** Whether the pagination bar is fixed at the bottom of the screen (default: true). Set false for modals. */
+  fixed?: boolean
 }
 
 export function Pagination({
@@ -133,6 +134,7 @@ export function Pagination({
   showPageSize = true,
   showResultsCount = true,
   layout = "bar",
+  fixed = true,
 
   // Infinite Scroll & Smart Extensions
   mode = "infinite",
@@ -143,7 +145,7 @@ export function Pagination({
   onLoadMore,
   infiniteTrigger = "auto",
   loadedCount,
-  allLoadedMessage,
+  allLoadedMessage: _allLoadedMessage,
   pageSizeLabel = "per page",
   prefetchThreshold = 0.3,
 }: PaginationProps) {
@@ -156,8 +158,8 @@ export function Pagination({
     hasMore !== undefined
       ? hasMore
       : totalItems !== undefined
-      ? (loadedCount ?? safeCurrentPage * effectivePageSize) < totalItems
-      : safeCurrentPage < totalPages
+        ? (loadedCount ?? safeCurrentPage * effectivePageSize) < totalItems
+        : safeCurrentPage < totalPages
 
   const effectiveOnLoadMore =
     onLoadMore ||
@@ -178,11 +180,13 @@ export function Pagination({
   // Defense-in-depth latch to prevent multiple triggers within a single intersection event
   const hasTriggeredRef = useRef<boolean>(false)
   const prevMaxScrollRef = useRef<number>(0)
+  const [internalLoading, setInternalLoading] = useState<boolean>(false)
 
-  // Reset the trigger latch whenever loading finishes, loaded items count increases, or page changes
+  // Reset the trigger latch and internal loading whenever loading finishes, loaded items count increases, or page changes
   useEffect(() => {
     if (!isLoadingMore) {
       hasTriggeredRef.current = false
+      setInternalLoading(false)
     }
   }, [isLoadingMore, loadedCount, safeCurrentPage, effectiveHasMore])
 
@@ -252,6 +256,7 @@ export function Pagination({
         if (scrollTop >= threshold && currentBatchDistance > 20) {
           hasTriggeredRef.current = true
           prevMaxScrollRef.current = maxScroll
+          setInternalLoading(true)
           effectiveOnLoadMore()
         }
       })
@@ -283,6 +288,7 @@ export function Pagination({
           hasTriggeredRef.current = true
           if (debounceTimer) clearTimeout(debounceTimer)
           debounceTimer = setTimeout(() => {
+            setInternalLoading(true)
             effectiveOnLoadMore()
           }, 150)
         }
@@ -314,98 +320,88 @@ export function Pagination({
     const currentLoaded = loadedCount ?? (safeCurrentPage * effectivePageSize)
     const displayLoaded = totalItems !== undefined ? Math.min(currentLoaded, totalItems) : currentLoaded
     const percentLoaded = totalItems && totalItems > 0 ? Math.min(100, Math.round((displayLoaded / totalItems) * 100)) : 100
+    const isFetchingData = Boolean(isLoadingMore || internalLoading)
 
     return (
-      <div className={cn("w-full flex flex-col items-center gap-3 pt-6 pb-4 border-t border-border/60", className)}>
-        {/* Progress & Results Count */}
-        {showResultsCount && totalItems !== undefined && (
-          <div className="flex flex-col items-center gap-1.5 w-full max-w-xs text-center">
-            <div className="flex items-center justify-between w-full text-xs text-muted-foreground font-medium">
-              <span>
-                Showing <strong className="text-foreground">{displayLoaded}</strong> of{" "}
-                <strong className="text-foreground">{totalItems}</strong> items
-              </span>
-              <span className="font-semibold text-primary">{percentLoaded}%</span>
-            </div>
-            {/* Subtle Progress Bar */}
-            <div className="h-1.5 w-full overflow-hidden rounded-full bg-muted/50 border border-border/40">
-              <div
-                className="h-full rounded-full bg-primary transition-all duration-300"
-                style={{ width: `${percentLoaded}%` }}
-              />
-            </div>
-          </div>
-        )}
+      <>
+        {/* Invisible in-flow sentinel to trigger infinite scroll accurately without false positives */}
+        <div ref={sentinelRef} className="h-px w-full pointer-events-none opacity-0 !m-0 !p-0" aria-hidden="true" />
 
-        {/* Load More Button or Auto Sentinel */}
-        {effectiveHasMore ? (
-          <div className="w-full flex flex-col items-center justify-center my-2">
-            {infiniteTrigger === "button" ? (
+        <div
+          className={cn(
+            fixed
+              ? "fixed bottom-0 left-0 md:left-[280px] right-0 z-30 border-border/40 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 px-4 py-1.5 sm:py-2"
+              : "w-full py-1.5 border-border/40 bg-transparent",
+            "flex items-center justify-center transition-all duration-200",
+            className
+          )}
+        >
+          {/* Main Progress Block (1/5th width on desktop, Centered, Compact Height) */}
+          {showResultsCount ? (
+            <div className="flex flex-col gap-1 w-full max-w-[280px] sm:w-1/5 sm:min-w-[220px] mx-auto">
+              <div className="flex items-center justify-between w-full text-[11px] font-medium leading-tight">
+                {/* Left: Dynamic Results Count (Always Showing X of Y items) */}
+                <span className="text-muted-foreground whitespace-nowrap">
+                  Showing <strong className="text-foreground font-semibold">{displayLoaded}</strong>
+                  {totalItems !== undefined && (
+                    <> of <strong className="text-foreground font-semibold">{totalItems}</strong></>
+                  )}{" "}
+                  items
+                </span>
+
+                {/* Right: Loading Indicator during fetch, or Percentage when idle */}
+                {isFetchingData ? (
+                  <span className="inline-flex items-center gap-1 text-[11px] font-semibold text-primary animate-pulse whitespace-nowrap">
+                    <Loader2 className="h-3 w-3 animate-spin text-primary" />
+                    <span>Loading...</span>
+                  </span>
+                ) : (
+                  <span className="font-semibold text-[11px] text-primary whitespace-nowrap">
+                    {percentLoaded}%
+                  </span>
+                )}
+              </div>
+
+              {/* Progress Bar line underneath (Compact h-1) */}
+              <div className="h-1 w-full overflow-hidden rounded-full bg-muted/60 border border-border/40">
+                <div
+                  className="h-full rounded-full bg-primary transition-all duration-300"
+                  style={{ width: `${percentLoaded}%` }}
+                />
+              </div>
+            </div>
+          ) : (
+            <div className="shrink-0" />
+          )}
+
+          {/* Optional Load More button when in manual button mode */}
+          {infiniteTrigger === "button" && (totalItems === undefined || displayLoaded < totalItems) && (
+            <div className="ml-4 shrink-0">
               <button
                 type="button"
-                onClick={effectiveOnLoadMore}
-                disabled={isLoadingMore}
-                className="inline-flex h-9.5 px-5 items-center justify-center gap-2 rounded-xl border border-border/80 bg-card hover:bg-muted/70 text-xs sm:text-sm font-semibold text-foreground shadow-xs transition-all cursor-pointer disabled:opacity-50"
+                onClick={() => {
+                  setInternalLoading(true)
+                  effectiveOnLoadMore()
+                }}
+                disabled={isFetchingData}
+                className="inline-flex h-8 px-3.5 items-center justify-center gap-1.5 rounded-lg border border-border/80 bg-card hover:bg-muted/70 text-xs font-semibold text-foreground shadow-2xs transition-all cursor-pointer disabled:opacity-50"
               >
-                {isLoadingMore ? (
+                {isFetchingData ? (
                   <>
-                    <Loader2 className="h-4 w-4 animate-spin text-primary" />
-                    <span>Loading more items...</span>
+                    <Loader2 className="h-3.5 w-3.5 animate-spin text-primary" />
+                    <span>Loading...</span>
                   </>
                 ) : (
                   <>
                     <ArrowDown className="h-3.5 w-3.5 text-primary" />
-                    <span>Load More ({effectivePageSize} items)</span>
+                    <span>Load More ({effectivePageSize})</span>
                   </>
                 )}
               </button>
-            ) : (
-              <>
-                {/* Auto Sentinel for IntersectionObserver */}
-                <div ref={sentinelRef} className="h-6 w-full pointer-events-none" aria-hidden="true" />
-                {isLoadingMore && (
-                  <div className="inline-flex items-center gap-2 rounded-full border border-border/60 bg-card/60 px-4 py-1.5 text-xs font-medium text-muted-foreground shadow-2xs backdrop-blur-md">
-                    <Loader2 className="h-3.5 w-3.5 animate-spin text-primary" />
-                    <span>Fetching next batch...</span>
-                  </div>
-                )}
-              </>
-            )}
-          </div>
-        ) : (
-          /* All Items Loaded Badge */
-          <div className="inline-flex items-center gap-1.5 rounded-full border border-border/60 bg-muted/20 px-3.5 py-1 text-xs font-medium text-muted-foreground">
-            {allLoadedMessage ?? (
-              <>
-                <CheckCircle2 className="h-3.5 w-3.5 text-emerald-500" />
-                <span>You've reached the end ({totalItems ?? displayLoaded} items total)</span>
-              </>
-            )}
-          </div>
-        )}
-
-        {/* Batch Size Selector (Code-driven mode, no UI toggle) */}
-        {showPageSize && onPageSizeChange && (
-          <div className="flex items-center gap-1.5 text-xs text-muted-foreground pt-1">
-              <span>Batch size:</span>
-              <div className="relative inline-flex items-center">
-                <select
-                  value={effectivePageSize}
-                  onChange={(e) => onPageSizeChange(Number(e.target.value))}
-                  className="h-7.5 appearance-none rounded-lg border border-border/70 bg-muted/40 hover:bg-muted/70 pl-2.5 pr-7 text-xs font-semibold text-foreground cursor-pointer transition-colors focus:outline-none focus:ring-1 focus:ring-primary"
-                  aria-label="Items per batch"
-                >
-                  {computedPageSizeOptions.map((opt) => (
-                    <option key={opt} value={opt} className="bg-popover text-popover-foreground">
-                      {opt}
-                    </option>
-                  ))}
-                </select>
-                <ChevronDown className="pointer-events-none absolute right-2 h-3 w-3 text-muted-foreground" />
-              </div>
             </div>
-        )}
-      </div>
+          )}
+        </div>
+      </>
     )
   }
 
@@ -464,7 +460,7 @@ export function Pagination({
         type="button"
         onClick={() => canGoPrevious && onPageChange(safeCurrentPage - 1)}
         disabled={!canGoPrevious}
-        className="flex h-9 min-w-9 px-3 items-center justify-center rounded-xl border border-border/70 bg-card text-foreground hover:bg-muted/70 disabled:opacity-30 disabled:cursor-not-allowed transition-colors shadow-2xs cursor-pointer"
+        className="flex h-9 min-w-9 px-3 items-center justify-center rounded-md border border-border/70 bg-card text-foreground hover:bg-muted/70 disabled:opacity-30 disabled:cursor-not-allowed transition-colors shadow-2xs cursor-pointer"
         aria-label="Previous page"
       >
         <ChevronLeft className="h-4 w-4" />
@@ -476,7 +472,7 @@ export function Pagination({
           return (
             <div
               key={`ellipsis-${idx}`}
-              className="flex h-9 min-w-9 px-2 items-center justify-center rounded-xl border border-border/70 bg-card/60 text-muted-foreground text-xs sm:text-sm font-semibold select-none shadow-2xs"
+              className="flex h-9 min-w-9 px-2 items-center justify-center rounded-md border border-border/70 bg-card/60 text-muted-foreground text-xs sm:text-sm font-semibold select-none shadow-2xs"
             >
               ...
             </div>
@@ -491,7 +487,7 @@ export function Pagination({
             type="button"
             onClick={() => onPageChange(p as number)}
             className={cn(
-              "flex h-9 min-w-9 px-3 items-center justify-center rounded-xl text-xs sm:text-sm font-semibold transition-colors shadow-2xs cursor-pointer",
+              "flex h-9 min-w-9 px-3 items-center justify-center rounded-md text-xs sm:text-sm font-semibold transition-colors shadow-2xs cursor-pointer",
               isCurrent
                 ? "bg-primary text-primary-foreground font-bold border border-primary shadow-xs"
                 : "border border-border/70 bg-card text-foreground hover:bg-muted/70"
@@ -508,7 +504,7 @@ export function Pagination({
         type="button"
         onClick={() => canGoNext && onPageChange(safeCurrentPage + 1)}
         disabled={!canGoNext}
-        className="flex h-9 min-w-9 px-3 items-center justify-center rounded-xl border border-border/70 bg-card text-foreground hover:bg-muted/70 disabled:opacity-30 disabled:cursor-not-allowed transition-colors shadow-2xs cursor-pointer"
+        className="flex h-9 min-w-9 px-3 items-center justify-center rounded-md border border-border/70 bg-card text-foreground hover:bg-muted/70 disabled:opacity-30 disabled:cursor-not-allowed transition-colors shadow-2xs cursor-pointer"
         aria-label="Next page"
       >
         <ChevronRight className="h-4 w-4" />
@@ -543,7 +539,7 @@ export function Pagination({
         <select
           value={effectivePageSize}
           onChange={(e) => onPageSizeChange(Number(e.target.value))}
-          className="h-9 appearance-none rounded-xl border border-border/70 bg-muted/40 hover:bg-muted/70 pl-3.5 pr-8 text-xs font-semibold text-foreground cursor-pointer transition-colors focus:outline-none focus:ring-1 focus:ring-primary"
+          className="h-9 appearance-none rounded-md border border-border/70 bg-muted/40 hover:bg-muted/70 pl-3.5 pr-8 text-xs font-semibold text-foreground cursor-pointer transition-colors focus:outline-none focus:ring-1 focus:ring-primary"
           aria-label="Items per page"
         >
           {computedPageSizeOptions.map((opt) => (
@@ -564,9 +560,9 @@ export function Pagination({
   ) : null
 
   // Stacked 2-row layout matching exact specification
-  if (layout === "stacked") {
+  if (layout === "stacked" && !fixed) {
     return (
-      <div className={cn("w-full flex flex-col items-center gap-3.5 pt-4 border-t border-border/60", className)}>
+      <div className={cn("w-full flex flex-col items-center gap-3.5 pt-4 border-border/60", className)}>
         {buttonsNode}
         <div className="w-full flex items-center justify-between gap-4">
           {resultsCountNode}
@@ -576,17 +572,20 @@ export function Pagination({
     )
   }
 
-  // Unified bar layout: Results on left, Buttons in center, Page Size / Controls on right (stacks on mobile)
+  // Unified bar layout: Results on left, Buttons in center, Page Size / Controls on right
   return (
     <div
       className={cn(
-        "w-full flex flex-col sm:flex-row items-center justify-between gap-3.5 pt-4 border-t border-border/60",
+        fixed
+          ? "fixed bottom-0 left-0 md:left-[280px] right-0 z-30 border-border/40 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 px-4 sm:px-6 py-2 sm:py-2.5"
+          : "w-full py-2.5 border-border/40 bg-transparent",
+        "flex flex-col sm:flex-row items-center justify-between gap-3 sm:gap-4 transition-all duration-200",
         className
       )}
     >
-      <div className="order-2 sm:order-1">{resultsCountNode}</div>
-      <div className="order-1 sm:order-2">{buttonsNode}</div>
-      <div className="order-3">{controlsNode}</div>
+      <div className="order-2 sm:order-1 shrink-0">{resultsCountNode}</div>
+      <div className="order-1 sm:order-2 flex items-center justify-center min-w-0">{buttonsNode}</div>
+      <div className="order-3 shrink-0">{controlsNode}</div>
     </div>
   )
 }

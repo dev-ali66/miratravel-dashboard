@@ -6,9 +6,13 @@ import { mediaService, type MediaAsset } from "@/services/mediaService"
 
 interface MediaDropzoneProps {
   onUploadSuccess: (newAssets: MediaAsset[]) => void
+  customTrigger?: (triggerUpload: () => void, isUploading: boolean) => React.ReactNode
 }
 
-export const MediaDropzone: React.FC<MediaDropzoneProps> = ({ onUploadSuccess }) => {
+export const MediaDropzone: React.FC<MediaDropzoneProps> = ({
+  onUploadSuccess,
+  customTrigger,
+}) => {
   const [isDragOver, setIsDragOver] = useState(false)
   const [isUploading, setIsUploading] = useState(false)
   const [uploadProgress, setUploadProgress] = useState(0)
@@ -115,19 +119,23 @@ export const MediaDropzone: React.FC<MediaDropzoneProps> = ({ onUploadSuccess })
       />
 
       {/* Upload Trigger Button */}
-      <Button
-        size="sm"
-        onClick={() => fileInputRef.current?.click()}
-        disabled={isUploading}
-        className="text-xs h-8 gap-1.5 shadow-xs font-medium"
-      >
-        {isUploading ? (
-          <Loader2 className="h-3.5 w-3.5 animate-spin" />
-        ) : (
-          <FileUp className="h-3.5 w-3.5" />
-        )}
-        {isUploading ? "Uploading..." : "Upload Media"}
-      </Button>
+      {customTrigger ? (
+        customTrigger(() => fileInputRef.current?.click(), isUploading)
+      ) : (
+        <Button
+          size="sm"
+          onClick={() => fileInputRef.current?.click()}
+          disabled={isUploading}
+          className="text-xs h-8 gap-1.5 shadow-xs font-medium"
+        >
+          {isUploading ? (
+            <Loader2 className="h-3.5 w-3.5 animate-spin" />
+          ) : (
+            <FileUp className="h-3.5 w-3.5" />
+          )}
+          {isUploading ? "Uploading..." : "Upload Media"}
+        </Button>
+      )}
 
       {/* Global Drag-and-Drop Overlay */}
       {isDragOver && (
@@ -144,7 +152,7 @@ export const MediaDropzone: React.FC<MediaDropzoneProps> = ({ onUploadSuccess })
 
       {/* Active Upload Progress Toast Widget */}
       {isUploading && (
-        <div className="fixed bottom-6 right-6 z-50 bg-card border border-border/80 shadow-2xl rounded-2xl p-4 w-80 backdrop-blur-xl animate-in slide-in-from-bottom-4 duration-200">
+        <div className="fixed bottom-6 right-6 z-50 bg-card border border-border/80 shadow-2xl rounded-xl p-4 w-80 backdrop-blur-xl animate-in slide-in-from-bottom-4 duration-200">
           <div className="flex items-center justify-between mb-2">
             <div className="flex items-center gap-2">
               <Loader2 className="h-4 w-4 animate-spin text-primary" />

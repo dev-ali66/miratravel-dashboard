@@ -1,4 +1,4 @@
-import { useQuery } from "@tanstack/react-query"
+import { useQuery, keepPreviousData } from "@tanstack/react-query"
 import { apiPrivate } from "@/lib/api-client"
 
 export type Role = {
@@ -64,5 +64,6 @@ export function useGetRequests(page: number = 1, limit: number = 10) {
       })
       return res.data
     },
+    placeholderData: keepPreviousData,
   })
 }

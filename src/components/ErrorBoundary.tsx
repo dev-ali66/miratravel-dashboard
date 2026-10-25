@@ -53,7 +53,7 @@ export class ErrorBoundary extends Component<Props, State> {
               </p>
             </div>
 
-            <div className="w-full overflow-hidden rounded-2xl border border-destructive/10 bg-destructive/5 p-4 text-left">
+            <div className="w-full overflow-hidden rounded-xl border border-destructive/10 bg-destructive/5 p-4 text-left">
               <div className="mb-2 flex items-center space-x-2">
                 <div className="h-2 w-2 rounded-full bg-destructive" />
                 <span className="text-xs font-semibold tracking-wider text-destructive uppercase">
@@ -69,7 +69,7 @@ export class ErrorBoundary extends Component<Props, State> {
             <div className="flex w-full flex-col gap-3 pt-4 sm:flex-row">
               <Button
                 size="lg"
-                className="w-full rounded-xl sm:w-1/2"
+                className="w-full rounded-md sm:w-1/2"
                 onClick={() => window.location.reload()}
               >
                 Reload Page
@@ -77,7 +77,7 @@ export class ErrorBoundary extends Component<Props, State> {
               <Button
                 variant="outline"
                 size="lg"
-                className="w-full rounded-xl sm:w-1/2"
+                className="w-full rounded-md sm:w-1/2"
                 onClick={() => (window.location.href = "/")}
               >
                 Go to Home

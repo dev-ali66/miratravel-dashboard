@@ -57,7 +57,7 @@ export const MediaGrid: React.FC<MediaGridProps> = ({
         {Array.from({ length: 18 }).map((_, i) => (
           <div
             key={i}
-            className="rounded-xl border border-border/40 bg-muted/30 overflow-hidden animate-pulse flex flex-col aspect-[4/5]"
+            className="rounded-md border border-border/40 bg-muted/30 overflow-hidden animate-pulse flex flex-col aspect-[4/5]"
           >
             <div className="flex-1 bg-muted/60" />
             <div className="p-3 space-y-2">
@@ -72,7 +72,7 @@ export const MediaGrid: React.FC<MediaGridProps> = ({
 
   if (assets.length === 0) {
     return (
-      <div className="flex flex-col items-center justify-center py-20 text-center border-2 border-dashed border-border/60 rounded-2xl bg-muted/10 my-4">
+      <div className="flex flex-col items-center justify-center py-20 text-center border-2 border-dashed border-border/60 rounded-xl bg-muted/10 my-4">
         <div className="h-14 w-14 rounded-full bg-primary/10 text-primary flex items-center justify-center mb-4">
           <ImageIcon className="h-7 w-7 stroke-[1.5]" />
         </div>
@@ -106,7 +106,7 @@ export const MediaGrid: React.FC<MediaGridProps> = ({
             onMouseEnter={() => isVideo && setHoveredVideoId(asset.id)}
             onMouseLeave={() => isVideo && setHoveredVideoId(null)}
             className={cn(
-              "group relative flex flex-col rounded-xl border bg-card/60 backdrop-blur-sm overflow-hidden cursor-pointer transition-all duration-200 select-none hover:shadow-md hover:border-primary/50",
+              "group relative flex flex-col rounded-md border bg-card/60 backdrop-blur-sm overflow-hidden cursor-pointer transition-all duration-200 select-none hover:shadow-md hover:border-primary/50",
               isSelected
                 ? "ring-2 ring-primary border-primary shadow-sm shadow-primary/20"
                 : "border-border/60",
@@ -120,13 +120,13 @@ export const MediaGrid: React.FC<MediaGridProps> = ({
                 onToggleSelectId(asset.id, e)
               }}
               className={cn(
-                "absolute top-2 left-2 z-20 rounded-md p-1 transition-opacity",
+                "absolute top-2 left-2 z-20 rounded-sm p-1 transition-opacity",
                 isChecked || isSelected
                   ? "opacity-100"
                   : "opacity-0 group-hover:opacity-100"
               )}
             >
-              <div className="bg-background/90 backdrop-blur-sm p-1 rounded-md shadow-sm border border-border/40">
+              <div className="bg-background/90 backdrop-blur-sm p-1 rounded-sm shadow-sm border border-border/40">
                 <Checkbox checked={isChecked} />
               </div>
             </div>
@@ -187,7 +187,7 @@ export const MediaGrid: React.FC<MediaGridProps> = ({
                   className="h-full w-full object-cover transition-transform duration-300 group-hover:scale-105"
                   onError={(e) => {
                     // Fallback visual if broken image
-                    ;(e.target as HTMLElement).style.display = "none"
+                    ; (e.target as HTMLElement).style.display = "none"
                   }}
                 />
               )}

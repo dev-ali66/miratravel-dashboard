@@ -96,7 +96,7 @@ export function ActiveDevicesModal({
 
   return (
     <Dialog open={open} onOpenChange={(isOpen) => !isOpen && onClose()}>
-      <DialogContent className="max-w-xl rounded-2xl p-6 sm:p-7 shadow-2xl border-border/80 bg-card max-h-[85vh] flex flex-col">
+      <DialogContent className="max-w-xl rounded-xl p-6 sm:p-7 shadow-2xl border-border/80 bg-card max-h-[85vh] flex flex-col">
         {/* Header */}
         <DialogHeader className="text-left space-y-1">
           <div className="flex items-center justify-between">
@@ -126,7 +126,7 @@ export function ActiveDevicesModal({
 
         {/* Bulk Action Bar (if more than 1 device) */}
         {sessions.length > 1 && (
-          <div className="my-1 rounded-xl border border-amber-500/30 bg-amber-500/5 p-3 flex items-center justify-between gap-3">
+          <div className="my-1 rounded-md border border-amber-500/30 bg-amber-500/5 p-3 flex items-center justify-between gap-3">
             <div className="flex items-center gap-2 min-w-0">
               <AlertTriangle className="h-4 w-4 text-amber-600 dark:text-amber-400 shrink-0" />
               <p className="text-xs text-muted-foreground truncate">
@@ -193,11 +193,10 @@ export function ActiveDevicesModal({
               return (
                 <div
                   key={item.id}
-                  className={`group relative flex items-start justify-between gap-3 rounded-xl border p-3.5 transition-all ${
-                    isFirst
-                      ? "border-primary/40 bg-primary/[0.02] shadow-2xs ring-1 ring-primary/20"
-                      : "border-border/70 bg-card hover:border-border hover:bg-muted/30"
-                  }`}
+                  className={`group relative flex items-start justify-between gap-3 rounded-md border p-3.5 transition-all ${isFirst
+                    ? "border-primary/40 bg-primary/[0.02] shadow-2xs ring-1 ring-primary/20"
+                    : "border-border/70 bg-card hover:border-border hover:bg-muted/30"
+                    }`}
                 >
                   <div className="flex items-start gap-3 min-w-0">
                     {/* Device Icon */}

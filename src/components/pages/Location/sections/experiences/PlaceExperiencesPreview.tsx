@@ -278,7 +278,7 @@ function PreviewExperienceCard({ experienceId }: { experienceId: string }) {
         )}
 
         {expData?.price !== undefined && expData?.price !== null && (
-          <div className="absolute right-3 top-3 z-20 inline-flex items-center rounded-md bg-black/60 backdrop-blur-xs px-2 py-0.5 text-[10px] font-semibold text-white">
+          <div className="absolute right-3 top-3 z-20 inline-flex items-center rounded-sm bg-black/60 backdrop-blur-xs px-2 py-0.5 text-[10px] font-semibold text-white">
             €{Number(expData.price).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
           </div>
         )}
@@ -421,7 +421,7 @@ export function PlaceExperiencesPreview({ draft }: LocationPreviewSectionProps) 
           {/* Experience Cards Grid (Items 1+ IDs) */}
           <div className="w-full pt-6 md:pt-8 lg:pt-10">
             {gridIds.length === 0 && !featuredId ? (
-              <div className="p-8 text-center rounded-xl border border-dashed border-border/80 bg-muted/20">
+              <div className="p-8 text-center rounded-md border border-dashed border-border/80 bg-muted/20">
                 <Sparkles className="h-8 w-8 text-muted-foreground mx-auto mb-2" />
                 <p className="text-sm font-medium text-foreground">No experiences linked yet</p>
                 <p className="text-xs text-muted-foreground mt-1">

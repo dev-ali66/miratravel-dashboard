@@ -1,4 +1,4 @@
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query"
+import { useMutation, useQuery, useQueryClient, keepPreviousData } from "@tanstack/react-query"
 import { apiPrivate } from "@/lib/api-client"
 import { toast } from "sonner"
 
@@ -98,6 +98,7 @@ export function useGetBookings(params: GetBookingsParams = {}) {
       })
       return res.data
     },
+    placeholderData: keepPreviousData,
   })
 }
 

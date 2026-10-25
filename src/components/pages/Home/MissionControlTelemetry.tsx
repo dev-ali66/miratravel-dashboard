@@ -115,7 +115,7 @@ export default function MissionControlTelemetry() {
   return (
     <div className="grid gap-6 lg:grid-cols-7">
       {/* 1. Global Geography & Destination Radar (4 Cols) */}
-      <div className="lg:col-span-4 rounded-2xl border border-border/60 bg-gradient-to-b from-card/90 via-card/60 to-card/40 p-5 sm:p-6 shadow-xl backdrop-blur-2xl flex flex-col justify-between">
+      <div className="lg:col-span-4 rounded-xl border border-border/60 bg-gradient-to-b from-card/90 via-card/60 to-card/40 p-5 sm:p-6 shadow-xl backdrop-blur-2xl flex flex-col justify-between">
         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 mb-4">
           <div>
             <div className="flex items-center gap-2">
@@ -138,7 +138,7 @@ export default function MissionControlTelemetry() {
         </div>
 
         {/* Stylized Futuristic World Map SVG with glowing nodes */}
-        <div className="relative w-full h-[220px] rounded-xl border border-border/40 bg-[#070d17]/80 overflow-hidden flex items-center justify-center p-2">
+        <div className="relative w-full h-[220px] rounded-md border border-border/40 bg-[#070d17]/80 overflow-hidden flex items-center justify-center p-2">
           {/* Subtle Grid Pattern Overlay */}
           <div
             className="absolute inset-0 opacity-15"
@@ -274,7 +274,7 @@ export default function MissionControlTelemetry() {
           </svg>
 
           {/* Map Overlay Badge */}
-          <div className="absolute bottom-2 left-3 flex items-center gap-2 bg-background/80 backdrop-blur-md px-2.5 py-1 rounded-md border border-border/40 text-[10px] font-mono text-muted-foreground">
+          <div className="absolute bottom-2 left-3 flex items-center gap-2 bg-background/80 backdrop-blur-md px-2.5 py-1 rounded-sm border border-border/40 text-[10px] font-mono text-muted-foreground">
             <span className="flex h-1.5 w-1.5 rounded-full bg-emerald-500" />
             <span>GEO RADAR: 48 COUNTRIES ACTIVE</span>
           </div>
@@ -298,7 +298,7 @@ export default function MissionControlTelemetry() {
       </div>
 
       {/* 2. Platform Gauges & Funnel Telemetry (3 Cols) */}
-      <div className="lg:col-span-3 rounded-2xl border border-border/60 bg-gradient-to-b from-card/90 via-card/60 to-card/40 p-5 sm:p-6 shadow-xl backdrop-blur-2xl flex flex-col justify-between">
+      <div className="lg:col-span-3 rounded-xl border border-border/60 bg-gradient-to-b from-card/90 via-card/60 to-card/40 p-5 sm:p-6 shadow-xl backdrop-blur-2xl flex flex-col justify-between">
         <div className="flex items-center justify-between mb-4">
           <div>
             <div className="flex items-center gap-2">
@@ -314,7 +314,7 @@ export default function MissionControlTelemetry() {
         </div>
 
         {/* 3 Circular Radial Gauges */}
-        <div className="grid grid-cols-3 gap-3 py-3 px-2 rounded-xl border border-border/40 bg-muted/20">
+        <div className="grid grid-cols-3 gap-3 py-3 px-2 rounded-md border border-border/40 bg-muted/20">
           <CircularGauge
             percentage={99}
             label="Sys Health"

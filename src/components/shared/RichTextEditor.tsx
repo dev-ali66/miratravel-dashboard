@@ -228,7 +228,7 @@ const MenuBar = ({ editor }: { editor: any }) => {
               <button
                 key={c}
                 type="button"
-                className="h-6 w-6 rounded-md border border-border/80 transition hover:scale-110"
+                className="h-6 w-6 rounded-sm border border-border/80 transition hover:scale-110"
                 style={{ backgroundColor: c }}
                 onClick={() => editor.chain().focus().setColor(c).run()}
               />
@@ -289,7 +289,7 @@ const MenuBar = ({ editor }: { editor: any }) => {
               <button
                 key={c}
                 type="button"
-                className="h-6 w-full rounded-md border border-border/80 transition hover:scale-105"
+                className="h-6 w-full rounded-sm border border-border/80 transition hover:scale-105"
                 style={{ backgroundColor: c }}
                 onClick={() => editor.chain().focus().toggleHighlight({ color: c }).run()}
               />
@@ -532,7 +532,7 @@ export const RichTextEditor = ({
         inline: false,
         allowBase64: false,
         HTMLAttributes: {
-          class: "rounded-xl max-w-full my-3.5 border border-border/60 shadow-xs",
+          class: "rounded-md max-w-full my-3.5 border border-border/60 shadow-xs",
         },
       }),
     ],
@@ -544,7 +544,7 @@ export const RichTextEditor = ({
       attributes: {
         class: cn(
           "prose prose-sm dark:prose-invert max-w-none focus:outline-none p-3.5 min-h-[140px] text-foreground leading-relaxed",
-          "[&_img]:rounded-xl [&_img]:max-w-full [&_img]:my-3.5 [&_img]:border [&_img]:border-border/60 [&_img]:shadow-xs",
+          "[&_img]:rounded-md [&_img]:max-w-full [&_img]:my-3.5 [&_img]:border [&_img]:border-border/60 [&_img]:shadow-xs",
           canvasClassName
         ),
       },
