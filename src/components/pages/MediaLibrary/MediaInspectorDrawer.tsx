@@ -180,7 +180,7 @@ export const MediaInspectorDrawer: React.FC<MediaInspectorDrawerProps> = ({
 
             {/* Top-Right Collapsible Action Bar on Arrow Hover */}
             <div
-              className="absolute top-2.5 right-2.5 z-20 flex items-center justify-end"
+              className="absolute top-1.5 right-1.5 z-20 flex items-center justify-end"
               onMouseEnter={() => setIsToolbarOpen(true)}
               onMouseLeave={() => setIsToolbarOpen(false)}
             >
@@ -194,10 +194,10 @@ export const MediaInspectorDrawer: React.FC<MediaInspectorDrawerProps> = ({
                     exit={{ opacity: 0, scale: 0.9 }}
                     transition={{ duration: 0.15 }}
                     onClick={() => setIsToolbarOpen(true)}
-                    className="h-7 w-7 rounded-md bg-background/80 hover:bg-background/95 backdrop-blur-md border border-border/60 flex items-center justify-center text-foreground/80 hover:text-foreground shadow-sm transition-all cursor-pointer"
+                    className="h-8 w-8 rounded-lg bg-background/80 hover:bg-background/95 backdrop-blur-md border border-border/60 flex items-center justify-center text-foreground/80 hover:text-foreground shadow-sm transition-all cursor-pointer"
                     title="Actions (Hover or click to show)"
                   >
-                    <ChevronLeft className="h-4 w-4" />
+                    <ChevronLeft className="h-5 w-5" />
                   </motion.button>
                 ) : (
                   <motion.div
