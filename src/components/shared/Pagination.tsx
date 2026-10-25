@@ -115,9 +115,15 @@ export interface PaginationProps {
   /** Optional label for the batch selector in infinite mode (e.g. "Items per batch"). */
   pageSizeLabel?: string
   /**
-   * Predictive prefetch threshold ratio (0.1 to 0.9). Default: 0.3 (triggers background load at 30% of batch scroll).
+   * Distance in pixels from the bottom to trigger background prefetching of the next batch.
+   * Default: 500px as instructed by user.
    */
-  prefetchThreshold?: number
+  prefetchDistance?: number
+  /**
+   * Enclosing scroll container Ref (e.g. in modals with inner overflow-y-auto).
+   * If provided, listeners and intersection roots attach to this container instead of window.
+   */
+  scrollContainerRef?: React.RefObject<HTMLElement | null>
   /** Whether the pagination bar is fixed at the bottom of the screen (default: true). Set false for modals. */
   fixed?: boolean
 }
@@ -147,7 +153,8 @@ export function Pagination({
   loadedCount,
   allLoadedMessage: _allLoadedMessage,
   pageSizeLabel = "per page",
-  prefetchThreshold = 0.3,
+  prefetchDistance = 500,
+  scrollContainerRef,
 }: PaginationProps) {
   const effectivePageSize = pageSize || 10
   const safeCurrentPage = Math.max(1, Math.min(currentPage || 1, Math.max(1, totalPages || 1)))
@@ -180,42 +187,60 @@ export function Pagination({
   // Defense-in-depth latch to prevent multiple triggers within a single intersection event
   const hasTriggeredRef = useRef<boolean>(false)
   const prevMaxScrollRef = useRef<number>(0)
+  const lastTriggerScrollTopRef = useRef<number>(-1)
+  const prevLoadedCountRef = useRef<number>(loadedCount ?? 0)
   const [internalLoading, setInternalLoading] = useState<boolean>(false)
 
-  // Reset the trigger latch and internal loading whenever loading finishes, loaded items count increases, or page changes
+  // Keep latest onLoadMore callback in a ref to keep effect listeners completely stable without recreating observers
+  const onLoadMoreRef = useRef(effectiveOnLoadMore)
   useEffect(() => {
-    if (!isLoadingMore) {
+    onLoadMoreRef.current = effectiveOnLoadMore
+  })
+
+  // Reset the trigger latch only when loaded items count actually increases or loading completes
+  useEffect(() => {
+    const currentLoaded = loadedCount ?? 0
+    if (currentLoaded > prevLoadedCountRef.current) {
+      prevLoadedCountRef.current = currentLoaded
       hasTriggeredRef.current = false
+      if (internalLoading) setInternalLoading(false)
+    } else if (!isLoadingMore && internalLoading) {
       setInternalLoading(false)
     }
-  }, [isLoadingMore, loadedCount, safeCurrentPage, effectiveHasMore])
+  }, [isLoadingMore, loadedCount, internalLoading])
 
   // Reset batch baseline when page resets to 1 or loaded count decreases
   useEffect(() => {
     if (safeCurrentPage === 1 || (loadedCount !== undefined && loadedCount <= effectivePageSize)) {
       prevMaxScrollRef.current = 0
+      hasTriggeredRef.current = false
+      lastTriggerScrollTopRef.current = -1
+      prevLoadedCountRef.current = loadedCount ?? 0
     }
   }, [safeCurrentPage, loadedCount, effectivePageSize])
 
-  // Predictive early-prefetch scroll listener (triggers background load at 30% of current batch scroll range)
+  // Distance-to-bottom scroll listener (triggers background load when 500px from the bottom)
   useEffect(() => {
-    if (mode !== "infinite" || infiniteTrigger !== "auto" || !effectiveHasMore || isLoadingMore || !effectiveOnLoadMore) {
+    if (mode !== "infinite" || infiniteTrigger !== "auto" || !effectiveHasMore || isLoadingMore) {
       return
     }
 
     const sentinel = sentinelRef.current
-    if (!sentinel) return
 
-    // Find the enclosing scroll container (ancestor with overflow-y: auto / scroll, or window)
-    let scrollParent: HTMLElement | Window = window
-    let parent: HTMLElement | null = sentinel.parentElement
-    while (parent) {
-      const style = window.getComputedStyle(parent)
-      if (style.overflowY === "auto" || style.overflowY === "scroll") {
-        scrollParent = parent
-        break
+    // Determine target scroll container: explicit scrollContainerRef, detected overflow-y ancestor, or window
+    const targetElement = scrollContainerRef?.current
+    let scrollParent: HTMLElement | Window = targetElement || window
+
+    if (!targetElement && sentinel) {
+      let parent: HTMLElement | null = sentinel.parentElement
+      while (parent) {
+        const style = window.getComputedStyle(parent)
+        if (style.overflowY === "auto" || style.overflowY === "scroll") {
+          scrollParent = parent
+          break
+        }
+        parent = parent.parentElement
       }
-      parent = parent.parentElement
     }
 
     let ticking = false
@@ -227,7 +252,7 @@ export function Pagination({
       requestAnimationFrame(() => {
         ticking = false
 
-        if (isLoadingMore || hasTriggeredRef.current || !effectiveHasMore) {
+        if (isLoadingMore || hasTriggeredRef.current || !effectiveHasMore || !onLoadMoreRef.current) {
           return
         }
 
@@ -248,54 +273,89 @@ export function Pagination({
         const maxScroll = Math.max(0, scrollHeight - clientHeight)
         if (maxScroll <= 0) return
 
-        // Calculate progress within current batch distance:
-        // As soon as the user scrolls past 30% of this new batch distance, start prefetching the next batch
-        const currentBatchDistance = Math.max(0, maxScroll - prevMaxScrollRef.current)
-        const threshold = prevMaxScrollRef.current + (currentBatchDistance * prefetchThreshold)
+        // NEVER auto-trigger on initial load before user scrolls!
+        // Require actual user scrolling (scrollTop > 10px)
+        if (scrollTop <= 10) return
 
-        if (scrollTop >= threshold && currentBatchDistance > 20) {
+        // Calculate distance remaining to reach the bottom of the container
+        const distanceFromBottom = scrollHeight - (scrollTop + clientHeight)
+
+        // When user scrolls down and is within prefetchDistance (default: 500px) from the bottom:
+        if (distanceFromBottom <= prefetchDistance) {
+          if (lastTriggerScrollTopRef.current >= 0 && Math.abs(scrollTop - lastTriggerScrollTopRef.current) < 20) {
+            return
+          }
           hasTriggeredRef.current = true
+          lastTriggerScrollTopRef.current = scrollTop
           prevMaxScrollRef.current = maxScroll
           setInternalLoading(true)
-          effectiveOnLoadMore()
+          onLoadMoreRef.current?.()
         }
       })
     }
 
     scrollParent.addEventListener("scroll", handleScroll, { passive: true })
-    handleScroll()
 
     return () => {
       scrollParent.removeEventListener("scroll", handleScroll)
     }
-  }, [mode, infiniteTrigger, effectiveHasMore, isLoadingMore, effectiveOnLoadMore, prefetchThreshold])
+  }, [mode, infiniteTrigger, effectiveHasMore, isLoadingMore, prefetchDistance, scrollContainerRef])
 
-  // IntersectionObserver for auto infinite scroll (catches rapid scroll jumps or short containers)
+  // IntersectionObserver as secondary trigger for rapid jumps, strictly respecting scroll container and user scroll state
   useEffect(() => {
-    if (mode !== "infinite" || infiniteTrigger !== "auto" || !effectiveHasMore || isLoadingMore || !effectiveOnLoadMore) {
+    if (mode !== "infinite" || infiniteTrigger !== "auto" || !effectiveHasMore || isLoadingMore) {
       return
     }
 
     const sentinel = sentinelRef.current
     if (!sentinel) return
 
+    const targetElement = scrollContainerRef?.current
+    let scrollParent: HTMLElement | Window = targetElement || window
+
+    if (!targetElement) {
+      let parent: HTMLElement | null = sentinel.parentElement
+      while (parent) {
+        const style = window.getComputedStyle(parent)
+        if (style.overflowY === "auto" || style.overflowY === "scroll") {
+          scrollParent = parent
+          break
+        }
+        parent = parent.parentElement
+      }
+    }
+
     let debounceTimer: any = null
 
     const observer = new IntersectionObserver(
       (entries) => {
         const first = entries[0]
-        if (first?.isIntersecting && effectiveHasMore && !isLoadingMore && !hasTriggeredRef.current) {
-          hasTriggeredRef.current = true
-          if (debounceTimer) clearTimeout(debounceTimer)
-          debounceTimer = setTimeout(() => {
-            setInternalLoading(true)
-            effectiveOnLoadMore()
-          }, 150)
+
+        // Check if user has actually scrolled down to avoid false positives on mount
+        const isScrolled =
+          scrollParent instanceof HTMLElement
+            ? scrollParent.scrollTop > 10
+            : (window.scrollY || document.documentElement.scrollTop) > 10
+
+        if (first?.isIntersecting) {
+          if (isScrolled && effectiveHasMore && !isLoadingMore && !hasTriggeredRef.current && onLoadMoreRef.current) {
+            hasTriggeredRef.current = true
+            lastTriggerScrollTopRef.current =
+              scrollParent instanceof HTMLElement ? scrollParent.scrollTop : window.scrollY || 0
+            if (debounceTimer) clearTimeout(debounceTimer)
+            debounceTimer = setTimeout(() => {
+              setInternalLoading(true)
+              onLoadMoreRef.current?.()
+            }, 150)
+          }
+        } else {
+          // When sentinel exits viewport, reset latch so user scrolling back down can trigger next batch
+          hasTriggeredRef.current = false
         }
       },
       {
-        root: null,
-        rootMargin: "0px 0px 150px 0px",
+        root: scrollParent instanceof HTMLElement ? scrollParent : null,
+        rootMargin: "0px 0px 300px 0px",
         threshold: 0.1,
       }
     )
@@ -306,7 +366,7 @@ export function Pagination({
       if (debounceTimer) clearTimeout(debounceTimer)
       observer.disconnect()
     }
-  }, [mode, infiniteTrigger, effectiveHasMore, isLoadingMore, effectiveOnLoadMore])
+  }, [mode, infiniteTrigger, effectiveHasMore, isLoadingMore, scrollContainerRef])
 
   // If no pages exist or 0 items
   if (totalPages <= 0 && (!totalItems || totalItems === 0)) {

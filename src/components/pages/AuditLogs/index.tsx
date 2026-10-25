@@ -405,9 +405,9 @@ export default function AuditLogsPage() {
                 ⚡ Listening for live audit events... Trigger actions (Booking approval, payment, login) or click "Simulate Event" above.
               </div>
             ) : (
-              liveLogs.map((log) => (
+              liveLogs.map((log, idx) => (
                 <div
-                  key={log.id}
+                  key={`${log.id}-${idx}`}
                   className="flex items-start gap-2 border-l-2 pl-2 transition-all hover:bg-zinc-900/60 py-0.5 rounded-r"
                   style={{
                     borderColor:
@@ -457,8 +457,8 @@ export default function AuditLogsPage() {
             <tbody className="divide-y divide-border/40 text-foreground">
               {filteredLogs
                 .slice(0, currentPage * pageSize)
-                .map((log) => (
-                  <tr key={log.id} className="transition-colors hover:bg-muted/30">
+                .map((log, idx) => (
+                  <tr key={`${log.id}-${idx}`} className="transition-colors hover:bg-muted/30">
                     <td className="px-5 py-3.5 text-xs text-muted-foreground whitespace-nowrap">
                       {formatDate(log.timestamp)}
                     </td>

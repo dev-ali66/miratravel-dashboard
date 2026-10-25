@@ -21,12 +21,16 @@ export const MEDIA_QUERY_KEYS = {
 /**
  * Fetch paginated media assets
  */
-export function useMediaGallery(params: MediaGalleryParams = {}) {
+export function useMediaGallery(
+  params: MediaGalleryParams = {},
+  options?: { enabled?: boolean }
+) {
   return useQuery({
     queryKey: MEDIA_QUERY_KEYS.gallery(params),
     queryFn: () => mediaService.getGallery(params),
     placeholderData: (previousData) => previousData,
     staleTime: 1000 * 30, // 30s
+    enabled: options?.enabled ?? true,
   })
 }
 

@@ -18,6 +18,23 @@ import { VideoUploadField as VideoUploader } from "@/components/shared/VideoUplo
 import { Palette, RotateCcw, ChevronDown } from "lucide-react"
 import { cn } from "@/lib/utils"
 
+export function toValidHexColor(val: any, fallback = "#000000"): string {
+  if (typeof val !== "string" || !val.trim()) return fallback
+  const s = val.trim()
+  if (/^#[0-9a-fA-F]{6}$/.test(s)) return s.toLowerCase()
+  if (/^#[0-9a-fA-F]{3}$/.test(s)) {
+    return `#${s[1]}${s[1]}${s[2]}${s[2]}${s[3]}${s[3]}`.toLowerCase()
+  }
+  const match = s.match(/^rgba?\((\d+),\s*(\d+),\s*(\d+)/i)
+  if (match) {
+    const r = Math.min(255, parseInt(match[1], 10)).toString(16).padStart(2, "0")
+    const g = Math.min(255, parseInt(match[2], 10)).toString(16).padStart(2, "0")
+    const b = Math.min(255, parseInt(match[3], 10)).toString(16).padStart(2, "0")
+    return `#${r}${g}${b}`.toLowerCase()
+  }
+  return fallback
+}
+
 /* ============================================================
    TYPES & UNIFIED VALUE INTERFACES
    ============================================================ */
@@ -647,7 +664,7 @@ export function DynamicStyledField(props: DynamicStyledFieldProps) {
               <div className="flex items-center gap-2.5">
                 <input
                   type="color"
-                  value={rawValue || THEME_COLORS.overlayBlack}
+                  value={toValidHexColor(rawValue, THEME_COLORS.overlayBlack)}
                   onChange={(e) => handleValueChange(e.target.value)}
                   disabled={disabled}
                   className="h-8 w-10 cursor-pointer rounded border border-border bg-transparent p-0.5"

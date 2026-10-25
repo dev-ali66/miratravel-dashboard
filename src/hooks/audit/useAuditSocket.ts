@@ -46,14 +46,20 @@ export function useAuditSocket() {
     })
 
     const handleNewLog = (log: LiveAuditLog) => {
-      setLiveLogs((prev) => [log, ...prev.slice(0, 99)]) // Keep latest 100 in terminal stream
+      if (!log || !log.id) return
+      setLiveLogs((prev) => {
+        if (prev.some((item) => item.id === log.id)) {
+          return prev
+        }
+        return [log, ...prev.slice(0, 99)] // Keep latest 100 in terminal stream
+      })
       setStreamCount((c) => c + 1)
     }
 
     socket.on("audit:stream:new", handleNewLog)
-    socket.on("audit:log", handleNewLog)
 
     return () => {
+      socket.off("audit:stream:new", handleNewLog)
       socket.emit("audit:unsubscribe")
       socket.disconnect()
     }

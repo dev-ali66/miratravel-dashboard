@@ -15,7 +15,6 @@ import {
   X,
   Loader2,
   FolderOpen,
-  Sparkles,
 } from "lucide-react"
 import { Pagination } from "@/components/shared/Pagination"
 import {
@@ -25,6 +24,7 @@ import {
   FilterTabs,
   FilterSelect,
   FilterActions,
+  FilterCreateButton,
   FilterResetButton,
 } from "@/components/shared/FilterToolbar"
 import { useMediaGallery } from "@/hooks/media/useMediaLibrary"
@@ -64,6 +64,8 @@ function formatBytes(bytes?: number | null, decimals = 1): string {
   return parseFloat((bytes / Math.pow(k, i)).toFixed(dm)) + " " + sizes[i]
 }
 
+const EMPTY_ASSETS: MediaAsset[] = []
+
 export function MediaPickerModal({
   isOpen,
   onClose,
@@ -74,7 +76,8 @@ export function MediaPickerModal({
   initialSelectedUrl,
 }: MediaPickerModalProps) {
   // Navigation & filter state
-  const [activeTab, setActiveTab] = useState<"browse" | "upload">("browse")
+  const gridScrollRef = useRef<HTMLDivElement | null>(null)
+  const [isDragOver, setIsDragOver] = useState(false)
   const [searchInput, setSearchInput] = useState("")
   const [debouncedSearch, setDebouncedSearch] = useState("")
   const [page, setPage] = useState(1)
@@ -113,15 +116,18 @@ export function MediaPickerModal({
   const uploadInputRef = useRef<HTMLInputElement>(null)
   const [limit, setLimit] = useState(24)
 
-  // Query gallery
-  const galleryQuery = useMediaGallery({
-    page,
-    limit,
-    search: debouncedSearch || undefined,
-    type: typeFilter,
-    status: "ACTIVE",
-    sortBy,
-  })
+  // Query gallery only when modal is open
+  const galleryQuery = useMediaGallery(
+    {
+      page,
+      limit,
+      search: debouncedSearch || undefined,
+      type: typeFilter,
+      status: "ACTIVE",
+      sortBy,
+    },
+    { enabled: isOpen }
+  )
 
   const { data: galleryData, isLoading, isFetching, refetch } = galleryQuery
 
@@ -156,12 +162,12 @@ export function MediaPickerModal({
     isFetchingMoreRef.current = false
   }, [filterKey])
 
-  const assets = accumulatedAssets.length > 0 ? accumulatedAssets : (galleryData?.data || [])
+  const assets = accumulatedAssets.length > 0 ? accumulatedAssets : (galleryData?.data ?? EMPTY_ASSETS)
   const meta = galleryData?.meta || { page: 1, limit, total: 0, totalPages: 1 }
 
   // Pre-select initial URL if provided when modal opens
   useEffect(() => {
-    if (isOpen && initialSelectedUrl && selectedMap.size === 0) {
+    if (isOpen && initialSelectedUrl && selectedMap.size === 0 && assets.length > 0) {
       const matched = assets.find((a) => a.url === initialSelectedUrl)
       if (matched) {
         setSelectedMap(
@@ -192,7 +198,6 @@ export function MediaPickerModal({
     setSelectedMap(new Map())
     setSearchInput("")
     setPage(1)
-    setActiveTab("browse")
     onClose()
   }
 
@@ -258,14 +263,14 @@ export function MediaPickerModal({
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
       if (!isOpen) return
-      if (e.key === "Enter" && selectedMap.size > 0 && activeTab === "browse") {
+      if (e.key === "Enter" && selectedMap.size > 0) {
         e.preventDefault()
         handleConfirm()
       }
     }
     window.addEventListener("keydown", handleKeyDown)
     return () => window.removeEventListener("keydown", handleKeyDown)
-  }, [isOpen, selectedMap, activeTab])
+  }, [isOpen, selectedMap])
 
   // In-modal file upload handler with client-side SHA-256 pre-check
   const handleUploadFiles = async (files: FileList | File[]) => {
@@ -308,7 +313,6 @@ export function MediaPickerModal({
 
         // Refetch gallery to show newly uploaded file
         galleryQuery.refetch()
-        setActiveTab("browse")
       }
     } catch (err: any) {
       toast.error(err?.response?.data?.message || "Failed to upload file")
@@ -338,6 +342,27 @@ export function MediaPickerModal({
         showCloseButton={false}
         className="fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[95vw] max-w-5xl h-[88vh] max-h-[820px] p-0 flex flex-col overflow-hidden bg-background/98 backdrop-blur-2xl border border-border shadow-2xl rounded-xl z-50 animate-in fade-in-0 zoom-in-95 duration-150"
       >
+        {/* Hidden File Input for Direct Upload */}
+        <input
+          type="file"
+          ref={uploadInputRef}
+          multiple={mode === "multiple"}
+          accept={
+            allowedTypes?.length === 1 && allowedTypes[0] === "video"
+              ? "video/*"
+              : allowedTypes?.length === 1 && allowedTypes[0] === "image"
+                ? "image/*"
+                : "image/*,video/*"
+          }
+          className="hidden"
+          onChange={(e) => {
+            if (e.target.files && e.target.files.length > 0) {
+              handleUploadFiles(e.target.files)
+              e.target.value = ""
+            }
+          }}
+        />
+
         {/* Top Header Bar */}
         <DialogHeader className="flex flex-row items-center justify-between px-5 py-3.5 border-b border-border/70 shrink-0 bg-muted/20">
           <div className="flex items-center gap-2.5">
@@ -356,54 +381,22 @@ export function MediaPickerModal({
             </div>
           </div>
 
-          <div className="flex items-center gap-2">
-            {/* Tab switch: Browse vs Upload */}
-            <div className="flex items-center rounded-lg border border-border/80 bg-muted/50 p-0.5">
-              <button
-                type="button"
-                onClick={() => setActiveTab("browse")}
-                className={cn(
-                  "flex items-center gap-1.5 rounded-sm px-3 py-1 text-xs font-medium transition-all cursor-pointer",
-                  activeTab === "browse"
-                    ? "bg-background text-foreground font-semibold shadow-xs"
-                    : "text-muted-foreground hover:text-foreground"
-                )}
-              >
-                <FolderOpen className="h-3.5 w-3.5" />
-                Browse Library
-              </button>
-              <button
-                type="button"
-                onClick={() => setActiveTab("upload")}
-                className={cn(
-                  "flex items-center gap-1.5 rounded-sm px-3 py-1 text-xs font-medium transition-all cursor-pointer",
-                  activeTab === "upload"
-                    ? "bg-background text-foreground font-semibold shadow-xs"
-                    : "text-muted-foreground hover:text-foreground"
-                )}
-              >
-                <Upload className="h-3.5 w-3.5" />
-                Upload New
-              </button>
-            </div>
-
-            {/* Close button */}
-            <Button
-              variant="ghost"
-              size="icon"
-              className="h-8 w-8 rounded-full text-muted-foreground hover:text-foreground"
-              onClick={handleClose}
-            >
-              <X className="h-4 w-4" />
-            </Button>
-          </div>
+          {/* Close button */}
+          <Button
+            variant="ghost"
+            size="icon"
+            className="h-8 w-8 rounded-full text-muted-foreground hover:text-foreground cursor-pointer"
+            onClick={handleClose}
+          >
+            <X className="h-4 w-4" />
+          </Button>
         </DialogHeader>
 
-        {/* Tab 1: Browse Library View */}
-        {activeTab === "browse" && (
-          <div className="flex flex-col flex-1 min-h-0">
-            {/* Filter & Search Bar (Sticky at top of modal browse view) */}
-            <FilterToolbar sticky topOffset="top-0" className="px-4 py-1.5 border-b border-border/60 shrink-0">
+        {/* Main Browse Library View */}
+        <div className="flex flex-col flex-1 min-h-0">
+          {/* Universal Segmented Filter & Search Bar with Integrated Upload */}
+          <div className="px-5 py-2.5 border-b border-border/40 bg-muted/5 shrink-0">
+            <FilterToolbar sticky={false} className="p-0">
               <FilterGroup>
                 {/* Search expands across remaining space on left */}
                 <FilterSearch
@@ -435,6 +428,7 @@ export function MediaPickerModal({
 
                 <FilterSelect
                   value={sortBy}
+                  allValue="newest"
                   onChange={(val) => {
                     setSortBy(val as any)
                     setPage(1)
@@ -450,6 +444,14 @@ export function MediaPickerModal({
                   width="min-w-[115px] max-w-[135px]"
                 />
 
+                {/* Integrated Upload New Button */}
+                <FilterCreateButton
+                  onClick={() => uploadInputRef.current?.click()}
+                  label={isUploading ? "Uploading..." : "Upload New"}
+                  icon={isUploading ? Loader2 : Upload}
+                  disabled={isUploading}
+                />
+
                 {/* Far-Right Refresh Button */}
                 <FilterResetButton
                   onClick={refetch}
@@ -457,9 +459,60 @@ export function MediaPickerModal({
                 />
               </FilterActions>
             </FilterToolbar>
+          </div>
 
-            {/* Media Grid Body */}
-            <div className="flex-1 overflow-y-auto p-5 min-h-0 bg-muted/5">
+          {/* Real-time uploading banner */}
+          {isUploading && (
+            <div className="flex items-center gap-3 px-5 py-2 bg-primary/10 border-b border-primary/20 shrink-0 animate-in fade-in duration-150">
+              <Loader2 className="h-4 w-4 animate-spin text-primary shrink-0" />
+              <div className="flex-1 min-w-0">
+                <div className="flex items-center justify-between text-xs mb-1">
+                  <span className="font-medium text-foreground">Uploading and checking deduplication...</span>
+                  <span className="font-mono text-primary font-bold">{uploadProgress}%</span>
+                </div>
+                <div className="w-full h-1.5 bg-primary/20 rounded-full overflow-hidden">
+                  <div
+                    className="h-full bg-primary transition-all duration-200"
+                    style={{ width: `${Math.max(uploadProgress, 10)}%` }}
+                  />
+                </div>
+              </div>
+            </div>
+          )}
+
+          {/* Media Grid Body with Instant Dropzone support */}
+          <div
+            ref={gridScrollRef}
+            onDragOver={(e) => {
+              e.preventDefault()
+              e.stopPropagation()
+              setIsDragOver(true)
+            }}
+            onDragLeave={(e) => {
+              e.preventDefault()
+              e.stopPropagation()
+              setIsDragOver(false)
+            }}
+            onDrop={(e) => {
+              e.preventDefault()
+              e.stopPropagation()
+              setIsDragOver(false)
+              if (e.dataTransfer.files && e.dataTransfer.files.length > 0) {
+                handleUploadFiles(e.dataTransfer.files)
+              }
+            }}
+            className="relative flex-1 overflow-y-auto p-5 min-h-0 bg-muted/5"
+          >
+            {/* Drag & Drop Visual Overlay */}
+            {isDragOver && (
+              <div className="absolute inset-0 z-30 flex flex-col items-center justify-center bg-background/90 backdrop-blur-sm border-2 border-dashed border-primary m-4 rounded-xl animate-in fade-in-0 duration-150 pointer-events-none">
+                <div className="flex h-14 w-14 items-center justify-center rounded-xl bg-primary/10 text-primary mb-3">
+                  <Upload className="h-7 w-7" />
+                </div>
+                <p className="text-sm font-semibold text-foreground">Drop files here to upload instantly</p>
+                <p className="text-xs text-muted-foreground mt-1">Automatic deduplication with SHA-256</p>
+              </div>
+            )}
               {isLoading ? (
                 <div className="flex flex-col items-center justify-center h-64 gap-3 text-muted-foreground">
                   <Loader2 className="h-8 w-8 animate-spin text-primary" />
@@ -477,8 +530,8 @@ export function MediaPickerModal({
                   <Button
                     variant="outline"
                     size="sm"
-                    onClick={() => setActiveTab("upload")}
-                    className="gap-1.5 mt-1"
+                    onClick={() => uploadInputRef.current?.click()}
+                    className="gap-1.5 mt-1 cursor-pointer"
                   >
                     <Upload className="h-3.5 w-3.5" />
                     Upload File
@@ -568,6 +621,8 @@ export function MediaPickerModal({
                 <Pagination
                   fixed={false}
                   mode="infinite"
+                  scrollContainerRef={gridScrollRef}
+                  prefetchDistance={500}
                   currentPage={page}
                   totalPages={meta.totalPages}
                   totalItems={meta.total}
@@ -588,73 +643,6 @@ export function MediaPickerModal({
               </div>
             )}
           </div>
-        )}
-
-        {/* Tab 2: Upload New View */}
-        {activeTab === "upload" && (
-          <div className="flex-1 flex flex-col items-center justify-center p-8 bg-muted/5">
-            <input
-              type="file"
-              ref={uploadInputRef}
-              multiple={mode === "multiple"}
-              accept={
-                allowedTypes?.length === 1 && allowedTypes[0] === "video"
-                  ? "video/*"
-                  : allowedTypes?.length === 1 && allowedTypes[0] === "image"
-                    ? "image/*"
-                    : "image/*,video/*"
-              }
-              className="hidden"
-              onChange={(e) => e.target.files && handleUploadFiles(e.target.files)}
-            />
-
-            <div
-              onDragOver={(e) => {
-                e.preventDefault()
-                e.stopPropagation()
-              }}
-              onDrop={(e) => {
-                e.preventDefault()
-                e.stopPropagation()
-                if (e.dataTransfer.files) handleUploadFiles(e.dataTransfer.files)
-              }}
-              onClick={() => uploadInputRef.current?.click()}
-              className={cn(
-                "flex flex-col items-center justify-center w-full max-w-xl h-80 rounded-xl border-2 border-dashed border-border/80 bg-background p-8 text-center cursor-pointer transition-all hover:border-primary/60 hover:bg-muted/30 shadow-xs",
-                isUploading && "pointer-events-none opacity-60"
-              )}
-            >
-              {isUploading ? (
-                <div className="flex flex-col items-center gap-3">
-                  <Loader2 className="h-10 w-10 animate-spin text-primary" />
-                  <p className="text-sm font-semibold text-foreground">Uploading and checking deduplication...</p>
-                  <div className="w-48 h-1.5 bg-muted rounded-full overflow-hidden">
-                    <div
-                      className="h-full bg-primary transition-all duration-200"
-                      style={{ width: `${uploadProgress || 35}%` }}
-                    />
-                  </div>
-                </div>
-              ) : (
-                <>
-                  <div className="flex h-16 w-16 items-center justify-center rounded-xl bg-primary/10 text-primary mb-4">
-                    <Upload className="h-8 w-8" />
-                  </div>
-                  <h3 className="text-base font-semibold text-foreground mb-1">
-                    Drop files here or click to browse
-                  </h3>
-                  <p className="text-xs text-muted-foreground max-w-xs mb-4">
-                    Instant client SHA-256 deduplication active. Files existing on server reuse zero extra bytes.
-                  </p>
-                  <Button variant="secondary" size="sm" className="gap-2 pointer-events-none">
-                    <Sparkles className="h-3.5 w-3.5 text-primary" />
-                    Select File from Device
-                  </Button>
-                </>
-              )}
-            </div>
-          </div>
-        )}
 
         {/* Sticky Action Footer */}
         <div className="flex items-center justify-between px-5 py-3 border-t border-border/70 bg-card shrink-0">

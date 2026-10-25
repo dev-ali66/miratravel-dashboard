@@ -13,6 +13,7 @@ import {
 } from "@/components/ui/select"
 import { ArrowRight, SlidersHorizontal } from "lucide-react"
 import { cn } from "@/lib/utils"
+import { toValidHexColor } from "./FormControls"
 
 export type ButtonVariant =
   | "primary"
@@ -330,7 +331,7 @@ export function ButtonsField({
                     <div className="flex items-center gap-2">
                       <input
                         type="color"
-                        value={item.backgroundColor || THEME_COLORS.white}
+                        value={toValidHexColor(item.backgroundColor, THEME_COLORS.white)}
                         onChange={(e) => update({ ...item, backgroundColor: e.target.value })}
                         className="h-7 w-8 rounded border border-border bg-transparent p-0.5 cursor-pointer"
                       />
@@ -372,7 +373,7 @@ export function ButtonsField({
                     <div className="flex items-center gap-2">
                       <input
                         type="color"
-                        value={item.textColor || THEME_COLORS.overlayBlack}
+                        value={toValidHexColor(item.textColor, THEME_COLORS.overlayBlack)}
                         onChange={(e) => update({ ...item, textColor: e.target.value })}
                         className="h-7 w-8 rounded border border-border bg-transparent p-0.5 cursor-pointer"
                       />
@@ -409,7 +410,7 @@ export function ButtonsField({
                     <div className="flex items-center gap-2">
                       <input
                         type="color"
-                        value={item.hoverBackgroundColor || THEME_COLORS.lightText}
+                        value={toValidHexColor(item.hoverBackgroundColor, THEME_COLORS.lightText)}
                         onChange={(e) => update({ ...item, hoverBackgroundColor: e.target.value })}
                         className="h-7 w-8 rounded border border-border bg-transparent p-0.5 cursor-pointer"
                       />
@@ -429,7 +430,7 @@ export function ButtonsField({
                     <div className="flex items-center gap-2">
                       <input
                         type="color"
-                        value={item.hoverTextColor || THEME_COLORS.overlayBlack}
+                        value={toValidHexColor(item.hoverTextColor, THEME_COLORS.overlayBlack)}
                         onChange={(e) => update({ ...item, hoverTextColor: e.target.value })}
                         className="h-7 w-8 rounded border border-border bg-transparent p-0.5 cursor-pointer"
                       />
@@ -449,7 +450,7 @@ export function ButtonsField({
                     <div className="flex items-center gap-2">
                       <input
                         type="color"
-                        value={item.borderColor || THEME_COLORS.white}
+                        value={toValidHexColor(item.borderColor, THEME_COLORS.white)}
                         onChange={(e) => update({ ...item, borderColor: e.target.value })}
                         className="h-7 w-8 rounded border border-border bg-transparent p-0.5 cursor-pointer"
                       />
