@@ -28,6 +28,7 @@ import {
   CheckCircle2,
   Clock,
   Code2,
+  Sliders,
 } from "lucide-react"
 import { cn } from "@/lib/utils"
 
@@ -306,7 +307,15 @@ export function Navbar({ onMenuClick }: NavbarProps) {
                     className="flex items-center gap-2.5 px-2.5 py-2 text-xs font-medium text-foreground rounded-lg cursor-pointer transition-colors hover:bg-muted focus:bg-muted"
                   >
                     <User className="h-4 w-4 text-muted-foreground" />
-                    <span>My Profile & Settings</span>
+                    <span>My Profile & Security</span>
+                  </DropdownMenuItem>
+
+                  <DropdownMenuItem
+                    onClick={() => navigate("/site-settings")}
+                    className="flex items-center gap-2.5 px-2.5 py-2 text-xs font-medium text-foreground rounded-lg cursor-pointer transition-colors hover:bg-muted focus:bg-muted"
+                  >
+                    <Sliders className="h-4 w-4 text-muted-foreground" />
+                    <span>Global Site Settings</span>
                   </DropdownMenuItem>
 
                   <DropdownMenuItem

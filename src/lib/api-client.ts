@@ -41,6 +41,10 @@ apiPrivate.interceptors.request.use(
     if (token) {
       config.headers.Authorization = `Bearer ${token}`
     }
+    // For multipart FormData uploads, remove Content-Type so Axios/browser computes the multipart boundary
+    if (config.data instanceof FormData) {
+      delete config.headers["Content-Type"]
+    }
     return config
   },
   (error) => Promise.reject(error)
@@ -51,6 +55,9 @@ apiUpload.interceptors.request.use(
     const token = localStorage.getItem("accessToken")
     if (token) {
       config.headers.Authorization = `Bearer ${token}`
+    }
+    if (config.data instanceof FormData) {
+      delete config.headers["Content-Type"]
     }
     return config
   },
@@ -183,10 +190,14 @@ apiPrivate.interceptors.response.use(
     }
 
     // For non-401 errors, show toast notification
-    const message =
+    let message =
       (error.response?.data as { message?: string })?.message ||
       error.message ||
       "An unexpected error occurred"
+
+    if (error.response?.status === 429) {
+      message = "Too many requests. Please wait a minute before trying again."
+    }
 
     toast.error(message)
     return Promise.reject(error)

@@ -1,302 +1,301 @@
-import MiraLoader from "@/components/shared/MiraLoader"
-import { useState, useEffect } from "react"
+import { useState, useEffect, useCallback, useRef } from "react"
+import { useNavigate, useSearchParams } from "react-router-dom"
+import { useQueryClient } from "@tanstack/react-query"
 import {
-  Globe,
-  Search,
-  Save,
-  RotateCcw,
-  Building2,
-  Image as ImageIcon,
-  Share2,
-  Sparkles,
-  Terminal,
-  Sliders,
+  User,
+  KeyRound,
 } from "lucide-react"
 import { toast } from "sonner"
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
-import { Button } from "@/components/ui/button"
-import { PageHeader, CompactStatCard } from "@/components/shared/PageHeader"
-import { useGetSettings, useUpdateSettings } from "@/hooks/settings/useSettings"
+import MiraLoader from "@/components/shared/MiraLoader"
+import { useMe } from "@/hooks/auth/useMe"
+import { apiPrivate } from "@/lib/api-client"
+import { ActiveDevicesModal } from "@/components/layout/ActiveDevicesModal"
 
-// Modular form components & types
 import {
-  type SiteSettingsState,
-  type SocialLinkItem,
-  defaultState,
-  emptyImageMultimedia,
-  emptyVideoMultimedia,
-  normalizeMultimediaField,
-} from "./settingsTypes"
-import { IdentityForm } from "./forms/IdentityForm"
-import { BrandAssetsForm } from "./forms/BrandAssetsForm"
-import { SocialLinksForm } from "./forms/SocialLinksForm"
-import { SocialMetaForm } from "./forms/SocialMetaForm"
-import { SeoForm } from "./forms/SeoForm"
+  PersonalDetailsSection,
+  type ProfileDetailsState,
+} from "./PersonalDetailsSection"
+import { PasswordSecuritySection } from "./PasswordSecuritySection"
 
-// Re-export types & helpers for external modules
-export {
-  emptyImageMultimedia,
-  emptyVideoMultimedia,
-  normalizeMultimediaField,
+const INITIAL_PROFILE_STATE: ProfileDetailsState = {
+  firstName: "",
+  lastName: "",
+  email: "",
+  phone: "",
+  address: "",
+  country: "",
+  state: "",
+  city: "",
+  zip: "",
+  nationality: "",
+  dateOfBirth: "",
+  about: "",
 }
-export type { SiteSettingsState, SocialLinkItem }
 
 export default function SettingsPage() {
-  const { data: settingsData, isLoading } = useGetSettings()
-  const { mutate: updateSettings, isPending: isSaving } = useUpdateSettings()
+  const navigate = useNavigate()
+  const [searchParams, setSearchParams] = useSearchParams()
+  const activeTab = searchParams.get("tab") === "password" ? "password" : "profile"
 
-  const [formData, setFormData] = useState<SiteSettingsState>(defaultState)
+  const queryClient = useQueryClient()
+  const { data: user, isLoading } = useMe()
 
+  const [form, setForm] = useState<ProfileDetailsState>(INITIAL_PROFILE_STATE)
+  const [photoFile, setPhotoFile] = useState<File | null>(null)
+  const [photoPreview, setPhotoPreview] = useState<string | null>(null)
+  const [currentPhotoUrl, setCurrentPhotoUrl] = useState<string | null>(null)
+
+  const [savingProfile, setSavingProfile] = useState(false)
+  const [profileErrors, setProfileErrors] = useState<Record<string, string>>({})
+  const [isDevicesModalOpen, setIsDevicesModalOpen] = useState(false)
+  const isInitializedRef = useRef(false)
+
+  // Populate form ONCE from live user profile data without wiping active typing
   useEffect(() => {
-    if (settingsData) {
-      let parsedSocialLinks: SocialLinkItem[] = []
-      if (Array.isArray(settingsData.socialLinks)) {
-        parsedSocialLinks = settingsData.socialLinks
-      } else if (typeof settingsData.socialLinks === "string") {
-        try {
-          parsedSocialLinks = JSON.parse(settingsData.socialLinks)
-        } catch {
-          parsedSocialLinks = []
-        }
+    if (user && !isInitializedRef.current) {
+      isInitializedRef.current = true
+      const pi = user.userPersonalInfo as Record<string, any> | null
+      const rawUser = user as Record<string, any>
+
+      // Extract photo candidate
+      let candidatePhoto: string | null = null
+      if (pi?.photoUrl && Array.isArray(pi.photoUrl) && pi.photoUrl.length > 0) {
+        candidatePhoto = pi.photoUrl[0]
+      } else if (typeof pi?.photoUrl === "string" && pi.photoUrl.trim()) {
+        candidatePhoto = pi.photoUrl.trim()
+      } else if (rawUser?.avatar && typeof rawUser.avatar === "string") {
+        candidatePhoto = rawUser.avatar
       }
 
-      setFormData((prev) => ({
-        ...prev,
-        ...settingsData,
-        socialLinks: parsedSocialLinks,
-        siteLogo: normalizeMultimediaField(settingsData.siteLogo, "image"),
-        siteLogoLight: normalizeMultimediaField(settingsData.siteLogoLight, "image"),
-        siteLogoDark: normalizeMultimediaField(settingsData.siteLogoDark, "image"),
-        siteFavicon: normalizeMultimediaField(settingsData.siteFavicon, "image"),
-        navbarLogo: normalizeMultimediaField(settingsData.navbarLogo, "image"),
-        footerLogo: normalizeMultimediaField(settingsData.footerLogo, "image"),
-        authLogo: normalizeMultimediaField(settingsData.authLogo, "image"),
-        loadingVideo: normalizeMultimediaField(settingsData.loadingVideo, "video"),
-      }))
-    }
-  }, [settingsData])
+      setCurrentPhotoUrl(candidatePhoto)
 
-  const handleChange = (field: keyof SiteSettingsState, value: any) => {
-    setFormData((prev) => ({
-      ...prev,
-      [field]: value,
-    }))
-  }
-
-  // Social Links Array Operations
-  const handleAddSocialLink = () => {
-    const newLink: SocialLinkItem = {
-      id: "soc_" + Date.now(),
-      platform: "Instagram",
-      title: "Instagram",
-      url: "",
-      icon: "",
-      iconImage: "",
-    }
-    setFormData((prev) => ({
-      ...prev,
-      socialLinks: [...(prev.socialLinks || []), newLink],
-    }))
-  }
-
-  const handleUpdateSocialLink = (index: number, field: keyof SocialLinkItem, value: any) => {
-    setFormData((prev) => {
-      const updated = [...(prev.socialLinks || [])]
-      updated[index] = {
-        ...updated[index],
-        [field]: value,
+      // Format Date of Birth if present
+      let rawDob = (pi?.dateOfBirth as string) ?? (rawUser?.dob as string) ?? ""
+      if (rawDob && rawDob.includes("T")) {
+        rawDob = rawDob.split("T")[0]
       }
-      return { ...prev, socialLinks: updated }
+
+      setForm({
+        firstName: pi?.firstName ?? rawUser?.firstName ?? "",
+        lastName: pi?.lastName ?? rawUser?.lastName ?? "",
+        email: user.email ?? "",
+        phone: pi?.phone ?? rawUser?.phone ?? "",
+        address: pi?.address ?? rawUser?.address ?? "",
+        country: pi?.country ?? rawUser?.country ?? "",
+        state: pi?.state ?? rawUser?.state ?? "",
+        city: pi?.city ?? rawUser?.city ?? "",
+        zip: (pi?.zipCode as string) ?? (pi?.zip as string) ?? (rawUser?.zip as string) ?? "",
+        nationality: pi?.nationality ?? rawUser?.nationality ?? "",
+        dateOfBirth: rawDob,
+        about: pi?.about ?? rawUser?.about ?? "",
+      })
+    }
+  }, [user])
+
+  const handleTabChange = (tab: "profile" | "password") => {
+    setSearchParams({ tab })
+  }
+
+  const handleFieldChange = (field: keyof ProfileDetailsState, value: string) => {
+    setForm((prev) => ({ ...prev, [field]: value }))
+    setProfileErrors((prev) => {
+      const next = { ...prev }
+      delete next[field]
+      return next
     })
   }
 
-  const handleRemoveSocialLink = (index: number) => {
-    // Safely update form state; physical media lifecycle is managed via backend reference tracking
-    setFormData((prev) => ({
-      ...prev,
-      socialLinks: (prev.socialLinks || []).filter((_, i) => i !== index),
-    }))
+  const handleFileSelect = (file: File) => {
+    // Validate size (max 5 MB)
+    if (file.size > 5 * 1024 * 1024) {
+      toast.error("File is too large. Maximum allowed size is 5 MB.")
+      return
+    }
+
+    // Validate type
+    const validTypes = ["image/jpeg", "image/png", "image/webp"]
+    if (!validTypes.includes(file.type)) {
+      toast.error("Invalid image format. Allowed: *.jpeg, *.png, *.webp.")
+      return
+    }
+
+    setPhotoFile(file)
+    const preview = URL.createObjectURL(file)
+    setPhotoPreview(preview)
+    toast.info(`Selected photo "${file.name}". Click "Save Profile Details" to persist.`)
   }
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleResetPhoto = () => {
+    if (photoPreview) {
+      URL.revokeObjectURL(photoPreview)
+    }
+    setPhotoFile(null)
+    setPhotoPreview(null)
+    toast.info("Reverted to previous profile avatar.")
+  }
+
+  const validateProfile = useCallback((): Record<string, string> => {
+    const errs: Record<string, string> = {}
+    if (!form.firstName.trim()) {
+      errs.firstName = "First name is required"
+    }
+    if (!form.lastName.trim()) {
+      errs.lastName = "Last name is required"
+    }
+    return errs
+  }, [form.firstName, form.lastName])
+
+  const handleSaveProfile = async (e: React.FormEvent) => {
     e.preventDefault()
-    updateSettings(formData)
-  }
+    const validationErrors = validateProfile()
+    setProfileErrors(validationErrors)
+    // Match frontend: do NOT show a toast on validation errors, display inline messages
+    if (Object.keys(validationErrors).length > 0) {
+      return
+    }
 
-  const handleReset = () => {
-    if (settingsData) {
-      let parsedSocialLinks: SocialLinkItem[] = []
-      if (Array.isArray(settingsData.socialLinks)) {
-        parsedSocialLinks = settingsData.socialLinks
-      } else if (typeof settingsData.socialLinks === "string") {
-        try {
-          parsedSocialLinks = JSON.parse(settingsData.socialLinks)
-        } catch {
-          parsedSocialLinks = []
-        }
+    setSavingProfile(true)
+    try {
+      const fd = new FormData()
+
+      fd.append("firstName", form.firstName.trim())
+      fd.append("lastName", form.lastName.trim())
+
+      if (form.phone.trim()) fd.append("phone", form.phone.trim())
+      if (form.address.trim()) fd.append("address", form.address.trim())
+      if (form.country.trim()) fd.append("country", form.country.trim())
+      if (form.state.trim()) fd.append("state", form.state.trim())
+      if (form.city.trim()) fd.append("city", form.city.trim())
+
+      const zipVal = form.zip.trim()
+      if (zipVal) {
+        fd.append("zipCode", zipVal)
+        fd.append("zip", zipVal)
       }
-      setFormData({
-        ...defaultState,
-        ...settingsData,
-        socialLinks: parsedSocialLinks,
-        siteLogo: normalizeMultimediaField(settingsData.siteLogo, "image"),
-        siteLogoLight: normalizeMultimediaField(settingsData.siteLogoLight, "image"),
-        siteLogoDark: normalizeMultimediaField(settingsData.siteLogoDark, "image"),
-        siteFavicon: normalizeMultimediaField(settingsData.siteFavicon, "image"),
-        navbarLogo: normalizeMultimediaField(settingsData.navbarLogo, "image"),
-        footerLogo: normalizeMultimediaField(settingsData.footerLogo, "image"),
-        authLogo: normalizeMultimediaField(settingsData.authLogo, "image"),
-        loadingVideo: normalizeMultimediaField(settingsData.loadingVideo, "video"),
-      })
-    } else {
-      setFormData(defaultState)
+
+      if (form.nationality.trim()) fd.append("nationality", form.nationality.trim())
+
+      const dobVal = form.dateOfBirth.trim()
+      if (dobVal) {
+        fd.append("dateOfBirth", dobVal)
+        fd.append("dob", dobVal)
+      }
+
+      if (form.about.trim()) fd.append("about", form.about.trim())
+
+      if (photoFile) {
+        fd.append("photoUrl", photoFile)
+      }
+
+      // apiPrivate request interceptor automatically omits Content-Type for FormData
+      // allowing browser to attach multipart/form-data with the correct boundary
+      const res = await apiPrivate.post("/auth/me", fd)
+
+      if (res.data?.success || res.status === 200) {
+        toast.success("Profile details updated successfully!")
+        setPhotoFile(null)
+
+        const freshUser = res.data?.data
+        if (freshUser?.userPersonalInfo?.photoUrl?.[0]) {
+          setCurrentPhotoUrl(freshUser.userPersonalInfo.photoUrl[0])
+        }
+
+        // Refetch user data across app
+        await queryClient.invalidateQueries({ queryKey: ["GET_ME"] })
+      } else {
+        toast.error(res.data?.message || "Failed to update profile.")
+      }
+    } catch (err: any) {
+      const msg =
+        err.response?.data?.message ||
+        err.message ||
+        "Failed to update profile details."
+      if (!msg.includes("Too many requests")) {
+        toast.error(msg)
+      }
+    } finally {
+      setSavingProfile(false)
     }
   }
 
   if (isLoading) {
     return (
-      <MiraLoader text="Loading site settings..." className="min-h-[300px] py-12" />
+      <MiraLoader text="Loading administrator profile..." className="min-h-[350px] py-16" />
     )
   }
 
   return (
     <div className="w-full space-y-6 pt-2 pb-16">
-      {/* Page Header with 30% title & 70% compact statistics */}
-      <PageHeader
-        icon={Globe}
-        title="Global Site Settings"
-        subtitle="Modular configuration forms for Identity, Brand Assets, Social, Meta, and SEO."
-        stats={
-          <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 sm:gap-2.5 w-full">
-            <CompactStatCard
-              label="Modules"
-              value="5 Sections"
-              subtext="Identity to SEO"
-              icon={Sliders}
-              iconColor="text-emerald-500"
-            />
-            <CompactStatCard
-              label="Socials"
-              value={`${formData?.socialLinks?.length || 4} Profiles`}
-              subtext="Connected channels"
-              icon={Share2}
-              iconColor="text-blue-500"
-            />
-            <CompactStatCard
-              label="Brand Media"
-              value="8 Assets"
-              subtext="Logos & loaders"
-              icon={ImageIcon}
-              iconColor="text-purple-500"
-            />
-            <CompactStatCard
-              label="SEO / Meta"
-              value="Configured"
-              subtext="Search & OG tags"
-              icon={Search}
-              iconColor="text-amber-500"
-            />
-          </div>
-        }
-      />
-
-      {/* Action Bar */}
-      <div className="flex items-center justify-end gap-2.5">
-        <Button
-          type="button"
-          variant="outline"
-          onClick={() => {
-            console.log("⚙️ [GLOBAL SITE SETTINGS PAYLOAD]:", formData)
-            toast.info("Site settings payload logged to browser console (F12)")
-          }}
-          className="flex items-center gap-2 cursor-pointer"
-          title="Inspect clean site settings payload in browser console (F12)"
-        >
-          <Terminal className="h-4 w-4 text-primary" />
-          <span>Console Data</span>
-        </Button>
-
-        <Button
-          type="button"
-          variant="outline"
-          onClick={handleReset}
-          disabled={isSaving}
-          className="flex items-center gap-2 cursor-pointer"
-        >
-          <RotateCcw className="h-4 w-4" />
-          <span>Reset</span>
-        </Button>
-
-        <Button
-          type="button"
-          onClick={handleSubmit}
-          disabled={isSaving}
-          className="flex items-center gap-2 shadow-sm cursor-pointer"
-        >
-          <Save className="h-4 w-4" />
-          <span>{isSaving ? "Saving Settings..." : "Save Settings"}</span>
-        </Button>
+      {/* Clean Page Title & Subtitle (Exact frontend parity) */}
+      <div className="flex flex-col gap-1">
+        <h1 className="text-2xl sm:text-3xl font-bold tracking-tight text-foreground font-heading">
+          {activeTab === "profile" ? "Personal Details" : "Password & Security"}
+        </h1>
+        <p className="text-sm text-muted-foreground">
+          {activeTab === "profile"
+            ? "Manage your account information and personal details."
+            : "Update your password and manage account security."}
+        </p>
       </div>
 
-      {/* Separate Forms Tabs */}
-      <Tabs defaultValue="identity" className="w-full space-y-6">
-        <TabsList className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 h-auto p-1 bg-muted/70 border border-border/50 gap-1">
-          <TabsTrigger value="identity" className="flex items-center gap-2 py-2">
-            <Building2 className="h-4 w-4" />
-            <span>1. Identity</span>
-          </TabsTrigger>
+      {/* Settings Navigation Tabs (Exact frontend parity) */}
+      <div className="flex items-center gap-2 border-b border-border/70 pb-3">
+        <button
+          type="button"
+          onClick={() => handleTabChange("profile")}
+          className={`flex items-center gap-2 rounded-lg px-4 py-2 text-xs font-semibold transition-all cursor-pointer ${
+            activeTab === "profile"
+              ? "bg-primary text-primary-foreground shadow-xs"
+              : "bg-muted/40 text-muted-foreground hover:bg-muted/70 hover:text-foreground"
+          }`}
+        >
+          <User className="h-3.5 w-3.5" />
+          <span>Profile Details</span>
+        </button>
 
-          <TabsTrigger value="brand" className="flex items-center gap-2 py-2">
-            <ImageIcon className="h-4 w-4" />
-            <span>2. Brand Assets</span>
-          </TabsTrigger>
+        <button
+          type="button"
+          onClick={() => handleTabChange("password")}
+          className={`flex items-center gap-2 rounded-lg px-4 py-2 text-xs font-semibold transition-all cursor-pointer ${
+            activeTab === "password"
+              ? "bg-primary text-primary-foreground shadow-xs"
+              : "bg-muted/40 text-muted-foreground hover:bg-muted/70 hover:text-foreground"
+          }`}
+        >
+          <KeyRound className="h-3.5 w-3.5" />
+          <span>Password & Security</span>
+        </button>
+      </div>
 
-          <TabsTrigger value="social" className="flex items-center gap-2 py-2">
-            <Share2 className="h-4 w-4" />
-            <span>3. Social Links ({formData.socialLinks?.length || 0})</span>
-          </TabsTrigger>
+      {/* TAB 1: PERSONAL DETAILS & AVATAR */}
+      {activeTab === "profile" && (
+        <PersonalDetailsSection
+          form={form}
+          currentPhotoUrl={currentPhotoUrl}
+          photoFile={photoFile}
+          photoPreview={photoPreview}
+          errors={profileErrors}
+          loading={savingProfile}
+          onChange={handleFieldChange}
+          onFileSelect={handleFileSelect}
+          onResetPhoto={handleResetPhoto}
+          onSubmit={handleSaveProfile}
+        />
+      )}
 
-          <TabsTrigger value="meta" className="flex items-center gap-2 py-2">
-            <Sparkles className="h-4 w-4" />
-            <span>4. Social Meta</span>
-          </TabsTrigger>
+      {/* TAB 2: PASSWORD & SECURITY CREDENTIALS */}
+      {activeTab === "password" && (
+        <PasswordSecuritySection
+          onOpenDevicesModal={() => setIsDevicesModalOpen(true)}
+          onNavigateAuditLogs={() => navigate("/audit-logs")}
+        />
+      )}
 
-          <TabsTrigger value="seo" className="flex items-center gap-2 py-2">
-            <Search className="h-4 w-4" />
-            <span>5. SEO & Meta</span>
-          </TabsTrigger>
-        </TabsList>
-
-        {/* FORM 1: IDENTITY */}
-        <TabsContent value="identity" className="space-y-6">
-          <IdentityForm formData={formData} handleChange={handleChange} />
-        </TabsContent>
-
-        {/* FORM 2: BRAND ASSETS */}
-        <TabsContent value="brand" className="space-y-6">
-          <BrandAssetsForm formData={formData} handleChange={handleChange} />
-        </TabsContent>
-
-        {/* FORM 3: SOCIAL LINKS */}
-        <TabsContent value="social" className="space-y-6">
-          <SocialLinksForm
-            formData={formData}
-            handleAddSocialLink={handleAddSocialLink}
-            handleUpdateSocialLink={handleUpdateSocialLink}
-            handleRemoveSocialLink={handleRemoveSocialLink}
-          />
-        </TabsContent>
-
-        {/* FORM 4: SOCIAL META */}
-        <TabsContent value="meta" className="space-y-6">
-          <SocialMetaForm formData={formData} handleChange={handleChange} />
-        </TabsContent>
-
-        {/* FORM 5: SEO */}
-        <TabsContent value="seo" className="space-y-6">
-          <SeoForm formData={formData} handleChange={handleChange} />
-        </TabsContent>
-      </Tabs>
+      {/* Active Devices Inspection Modal */}
+      <ActiveDevicesModal
+        open={isDevicesModalOpen}
+        onClose={() => setIsDevicesModalOpen(false)}
+      />
     </div>
   )
 }

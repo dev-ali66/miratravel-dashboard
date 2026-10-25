@@ -86,6 +86,14 @@ export function useMe() {
   return useQuery({
     queryKey: ["GET_ME"],
     queryFn: async () => {
+      try {
+        const userInfoRes = await apiPrivate.get<MeResponse>("/auth/user-info")
+        if (userInfoRes.data?.data) {
+          return userInfoRes.data.data
+        }
+      } catch {
+        // Fallback to /auth/me if /auth/user-info fails
+      }
       const res = await apiPrivate.get<MeResponse>("/auth/me")
       return res.data.data
     },

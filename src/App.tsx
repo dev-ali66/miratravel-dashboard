@@ -46,6 +46,7 @@ import PromotionsPage from "@/components/pages/Promotions"
 import NewsletterPage from "@/components/pages/Newsletter"
 import NotificationsPage from "@/components/pages/Notifications"
 import SettingsPage from "@/components/pages/Settings"
+import SiteSettingsPage from "@/components/pages/SiteSettings"
 
 import PageLoader from "@/components/shared/PageLoader"
 import InquiryPage from "./components/pages/Inquiry"
@@ -90,6 +91,7 @@ export function App() {
             <Route path="system-health" element={<SystemHealthPage />} />
             <Route path="payment-config" element={<PaymentConfigPage />} />
             <Route path="settings" element={<SettingsPage />} />
+            <Route path="site-settings" element={<SiteSettingsPage />} />
           </Route>
 
           {/* Full Screen Editors (outside RootLayout) */}
