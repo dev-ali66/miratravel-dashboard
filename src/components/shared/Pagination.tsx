@@ -145,8 +145,8 @@ export function Pagination({
   showResultsCount = true,
   layout = "bar",
   fixed,
-  isTable,
-  isGrid,
+  isTable: _isTable,
+  isGrid: _isGrid,
 
   // Infinite Scroll & Smart Extensions
   mode = "infinite",
@@ -161,21 +161,11 @@ export function Pagination({
   pageSizeLabel = "per page",
   prefetchDistance = 500,
   scrollContainerRef,
-  columns,
+  columns: _columns,
 }: PaginationProps) {
-  // Table views sit directly under the table without fixing to viewport bottom.
-  // Grid views (with columns or isGrid) default to fixed bottom floating bar.
-  const isTableView = isTable === true || isGrid === false
-  const isGridView = isGrid === true || (columns !== undefined && columns > 0)
-
-  const effectiveFixed =
-    fixed !== undefined
-      ? fixed
-      : isTableView
-        ? false
-        : isGridView
-          ? true
-          : false
+  // By default, ALL primary views (both Grid and Table) use the canonical fixed floating bottom bar,
+  // matching Location, Stories, and Experiences. Only modals or explicit fixed={false} override this.
+  const effectiveFixed = fixed !== undefined ? fixed : true
 
   const effectivePageSize = pageSize || 10
   const safeCurrentPage = Math.max(1, Math.min(currentPage || 1, Math.max(1, totalPages || 1)))
@@ -411,47 +401,70 @@ export function Pagination({
         <div
           className={cn(
             effectiveFixed
-              ? "fixed bottom-0 left-0 md:left-[280px] right-0 z-30 border-border/40 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 px-4 py-1.5 sm:py-2 flex items-center justify-center"
+              ? "fixed bottom-0 left-0 md:left-[280px] right-0 z-30 border-t border-border/40 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 px-4 py-1.5 sm:py-2 flex items-center justify-center shadow-lg"
               : "w-full py-2.5 px-3 sm:px-4 rounded-md border border-border/60 bg-card/60 backdrop-blur-sm shadow-2xs mt-2.5 flex flex-col sm:flex-row items-center justify-between gap-3",
             "transition-all duration-200",
             className
           )}
         >
           {effectiveFixed ? (
-            /* Floating Grid Bar: Centered 1/5th compact width */
-            showResultsCount ? (
-              <div className="flex flex-col gap-1 w-full max-w-[280px] sm:w-1/5 sm:min-w-[220px] mx-auto">
-                <div className="flex items-center justify-between w-full text-[11px] font-medium leading-tight">
-                  <span className="text-muted-foreground whitespace-nowrap">
-                    Showing <strong className="text-foreground font-semibold">{displayLoaded}</strong>
-                    {totalItems !== undefined && (
-                      <> of <strong className="text-foreground font-semibold">{totalItems}</strong></>
-                    )}{" "}
-                    items
-                  </span>
-
-                  {isFetchingData ? (
-                    <span className="inline-flex items-center gap-1 text-[11px] font-semibold text-primary animate-pulse whitespace-nowrap">
-                      <Loader2 className="h-3 w-3 animate-spin text-primary" />
-                      <span>Loading...</span>
+            /* Floating Grid & Table Bar: Centered 1/5th compact width matching Location & Stories */
+            <>
+              {showResultsCount ? (
+                <div className="flex flex-col gap-1 w-full max-w-[280px] sm:w-1/5 sm:min-w-[220px] mx-auto">
+                  <div className="flex items-center justify-between w-full text-[11px] font-medium leading-tight">
+                    <span className="text-muted-foreground whitespace-nowrap">
+                      Showing <strong className="text-foreground font-semibold">{displayLoaded}</strong>
+                      {totalItems !== undefined && (
+                        <> of <strong className="text-foreground font-semibold">{totalItems}</strong></>
+                      )}{" "}
+                      items
                     </span>
-                  ) : (
-                    <span className="font-semibold text-[11px] text-primary whitespace-nowrap">
-                      {percentLoaded}%
-                    </span>
-                  )}
-                </div>
 
-                <div className="h-1 w-full overflow-hidden rounded-full bg-muted/60 border border-border/40">
-                  <div
-                    className="h-full rounded-full bg-primary transition-all duration-300"
-                    style={{ width: `${percentLoaded}%` }}
-                  />
+                    {isFetchingData ? (
+                      <span className="inline-flex items-center gap-1 text-[11px] font-semibold text-primary animate-pulse whitespace-nowrap">
+                        <Loader2 className="h-3 w-3 animate-spin text-primary" />
+                        <span>Loading...</span>
+                      </span>
+                    ) : (
+                      <span className="font-semibold text-[11px] text-primary whitespace-nowrap">
+                        {percentLoaded}%
+                      </span>
+                    )}
+                  </div>
+
+                  <div className="h-1 w-full overflow-hidden rounded-full bg-muted/60 border border-border/40">
+                    <div
+                      className="h-full rounded-full bg-primary transition-all duration-300"
+                      style={{ width: `${percentLoaded}%` }}
+                    />
+                  </div>
                 </div>
-              </div>
-            ) : (
-              <div className="shrink-0" />
-            )
+              ) : (
+                <div className="shrink-0" />
+              )}
+
+              {/* Right: Page Size Selector (rendered cleanly in floating mode) */}
+              {showPageSize && onPageSizeChange && (
+                <div className="absolute right-4 hidden sm:inline-flex items-center">
+                  <div className="relative inline-flex items-center">
+                    <select
+                      value={effectivePageSize}
+                      onChange={(e) => onPageSizeChange(Number(e.target.value))}
+                      className="h-7.5 appearance-none rounded-md border border-border/70 bg-card/80 hover:bg-muted/70 pl-2 pr-6 text-[11px] font-semibold text-foreground cursor-pointer transition-colors focus:outline-none focus:ring-1 focus:ring-primary shadow-xs"
+                      aria-label="Items per page"
+                    >
+                      {computedPageSizeOptions.map((opt) => (
+                        <option key={opt} value={opt} className="bg-popover text-popover-foreground">
+                          {opt} {pageSizeLabel}
+                        </option>
+                      ))}
+                    </select>
+                    <ChevronDown className="pointer-events-none absolute right-1.5 h-3 w-3 text-muted-foreground" />
+                  </div>
+                </div>
+              )}
+            </>
           ) : (
             /* Table In-Flow Bar: Clean 3-section layout (Count on left, Progress in center, Page Size on right) */
             <>

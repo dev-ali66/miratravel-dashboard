@@ -74,7 +74,7 @@ export function RootLayout() {
           onMobileClose={() => setIsMobileMenuOpen(false)}
         />
 
-        <main className="flex-1 min-w-0 px-2 md:ml-[280px] pb-6 sm:pb-8">
+        <main className="flex-1 min-w-0 px-2 md:ml-[280px] pb-14 sm:pb-16">
           <Outlet />
         </main>
       </div>

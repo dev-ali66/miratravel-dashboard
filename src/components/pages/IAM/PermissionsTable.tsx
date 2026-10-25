@@ -241,8 +241,6 @@ export default function PermissionsTable({
           isLoadingMore={isLoadingMore || (isFetching && currentPage > 1)}
           onLoadMore={handleLoadMore}
           loadedCount={permissions.length}
-          fixed={false}
-          isTable
         />
       )}
 

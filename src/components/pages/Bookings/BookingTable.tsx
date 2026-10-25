@@ -519,8 +519,6 @@ export default function BookingTable() {
           isLoadingMore={isLoadingMore || (isFetching && currentPage > 1)}
           onLoadMore={handleLoadMore}
           loadedCount={bookings.length}
-          fixed={false}
-          isTable
         />
       )}
 

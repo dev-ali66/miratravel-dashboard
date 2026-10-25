@@ -415,8 +415,6 @@ export default function PromotionsPage() {
               setPageSize(sz)
               setCurrentPage(1)
             }}
-            fixed={false}
-            isTable
           />
         )}
       </div>

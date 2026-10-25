@@ -352,8 +352,6 @@ export default function RequestListTable() {
           isLoadingMore={isLoadingMore || (isFetching && currentPage > 1)}
           onLoadMore={handleLoadMore}
           loadedCount={requestList.length}
-          fixed={false}
-          isTable
         />
       )}
 

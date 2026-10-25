@@ -429,8 +429,6 @@ export default function InquiryPage() {
           onLoadMore={handleLoadMore}
           onPageChange={setCurrentPage}
           onPageSizeChange={setTargetItems}
-          fixed={false}
-          isTable
         />
       )}
 
