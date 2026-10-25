@@ -1,5 +1,6 @@
 import { useState } from "react"
 import { Link, useNavigate } from "react-router-dom"
+import { motion, AnimatePresence } from "framer-motion"
 import { useMe } from "@/hooks/auth/useMe"
 import { useUserSessions } from "@/hooks/auth/useUserSessions"
 import { useGetCmsBySlug } from "@/hooks/cms/useGetCmsBySlug"
@@ -175,6 +176,10 @@ export function Navbar({ onMenuClick }: NavbarProps) {
   const { isDevMode, toggleDevMode } = useDevMode()
   const [isLogoutOpen, setIsLogoutOpen] = useState(false)
   const [isDevicesModalOpen, setIsDevicesModalOpen] = useState(false)
+  const [isProfileHovered, setIsProfileHovered] = useState(false)
+  const [isDropdownOpen, setIsDropdownOpen] = useState(false)
+
+  const isProfileExpanded = isProfileHovered || isDropdownOpen
 
   const profileName = user?.userPersonalInfo?.firstName
     ? `${user.userPersonalInfo.firstName} ${user.userPersonalInfo.lastName || ""}`.trim()
@@ -258,11 +263,13 @@ export function Navbar({ onMenuClick }: NavbarProps) {
             <ThemeToggle />
 
             <div className="h-6 w-px bg-border/60" />
-            <DropdownMenu>
+            <DropdownMenu open={isDropdownOpen} onOpenChange={setIsDropdownOpen}>
               <DropdownMenuTrigger asChild>
                 <button
                   type="button"
-                  className="flex items-center gap-2.5 rounded-full border border-border/60 bg-card/70 py-0.5 pl-1 pr-2.5 transition-all hover:bg-muted/80 hover:border-border focus:outline-none focus:ring-2 focus:ring-primary/20 cursor-pointer shadow-2xs group"
+                  onMouseEnter={() => setIsProfileHovered(true)}
+                  onMouseLeave={() => setIsProfileHovered(false)}
+                  className="flex items-center rounded-full border border-border/60 bg-card/70 p-0.5 transition-all hover:bg-muted/80 hover:border-border focus:outline-none focus:ring-2 focus:ring-primary/20 cursor-pointer shadow-2xs group overflow-hidden"
                 >
                   {/* User Avatar with live status pulse */}
                   <div className="relative h-8 w-8 shrink-0 overflow-hidden rounded-full ring-2 ring-primary/20 group-hover:ring-primary/40 transition-all">
@@ -274,17 +281,29 @@ export function Navbar({ onMenuClick }: NavbarProps) {
                     <span className="absolute bottom-0 right-0 h-2 w-2 rounded-full bg-emerald-500 ring-1.5 ring-background" />
                   </div>
 
-                  {/* Name & Role (Desktop) */}
-                  <div className="hidden sm:flex flex-col text-left">
-                    <span className="text-xs font-bold text-foreground leading-tight truncate max-w-[120px]">
-                      {profileName}
-                    </span>
-                    <span className="text-[10px] font-medium text-muted-foreground leading-tight uppercase tracking-wider">
-                      {userRole}
-                    </span>
-                  </div>
+                  {/* Sliding Name, Role & Chevron on Hover */}
+                  <AnimatePresence>
+                    {isProfileExpanded && (
+                      <motion.div
+                        initial={{ width: 0, opacity: 0 }}
+                        animate={{ width: "auto", opacity: 1 }}
+                        exit={{ width: 0, opacity: 0 }}
+                        transition={{ duration: 0.22, ease: [0.4, 0, 0.2, 1] }}
+                        className="overflow-hidden flex items-center pl-2 pr-2.5 gap-2 whitespace-nowrap"
+                      >
+                        <div className="flex flex-col text-left">
+                          <span className="text-xs font-bold text-foreground leading-tight truncate max-w-[120px]">
+                            {profileName}
+                          </span>
+                          <span className="text-[10px] font-medium text-muted-foreground leading-tight uppercase tracking-wider">
+                            {userRole}
+                          </span>
+                        </div>
 
-                  <ChevronDown className="h-3.5 w-3.5 text-muted-foreground transition-transform group-data-[state=open]:rotate-180" />
+                        <ChevronDown className="h-3.5 w-3.5 text-muted-foreground transition-transform group-data-[state=open]:rotate-180 shrink-0" />
+                      </motion.div>
+                    )}
+                  </AnimatePresence>
                 </button>
               </DropdownMenuTrigger>
 
