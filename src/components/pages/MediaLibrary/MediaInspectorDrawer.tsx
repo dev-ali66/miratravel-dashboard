@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react"
+import { motion, AnimatePresence } from "framer-motion"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Textarea } from "@/components/ui/textarea"
@@ -15,8 +16,11 @@ import {
   Sparkles,
   Download,
   Loader2,
+  ChevronLeft,
+  ChevronRight,
 } from "lucide-react"
 import { toast } from "sonner"
+import { cn } from "@/lib/utils"
 import { mediaService, type MediaAsset } from "@/services/mediaService"
 import { useMediaUsage, useUpdateMediaMetadata } from "@/hooks/media/useMediaLibrary"
 
@@ -59,6 +63,7 @@ export const MediaInspectorDrawer: React.FC<MediaInspectorDrawerProps> = ({
   const [title, setTitle] = useState("")
   const [altText, setAltText] = useState("")
   const [caption, setCaption] = useState("")
+  const [isToolbarOpen, setIsToolbarOpen] = useState(false)
 
   const { data: usageReport, isLoading: isUsageLoading } = useMediaUsage(asset?.id)
   const updateMetadata = useUpdateMediaMetadata()
@@ -82,8 +87,9 @@ export const MediaInspectorDrawer: React.FC<MediaInspectorDrawerProps> = ({
       setTitle(asset.title || "")
       setAltText(asset.altText || "")
       setCaption(asset.caption || "")
+      setIsToolbarOpen(false)
     }
-  }, [asset])
+  }, [asset?.id])
 
   if (!asset) return null
 
@@ -104,8 +110,9 @@ export const MediaInspectorDrawer: React.FC<MediaInspectorDrawerProps> = ({
   const handleCopyNextImage = async () => {
     const code = isVideo
       ? `<video src="${asset.url}" controls className="w-full h-auto rounded-lg" />`
-      : `<Image src="${asset.url}" alt="${altText || asset.fileName}" width={${asset.width || 1200
-      }} height={${asset.height || 800}} />`
+      : `<Image src="${asset.url}" alt="${altText || asset.fileName}" width={${
+          asset.width || 1200
+        }} height={${asset.height || 800}} />`
     await navigator.clipboard.writeText(code)
     setCopiedCode(true)
     toast.success(isVideo ? "Video tag copied to clipboard" : "Next.js <Image> tag copied to clipboard")
@@ -144,7 +151,7 @@ export const MediaInspectorDrawer: React.FC<MediaInspectorDrawerProps> = ({
           <Button
             variant="ghost"
             size="icon"
-            className="h-8 w-8 text-muted-foreground hover:text-foreground"
+            className="h-8 w-8 text-muted-foreground hover:text-foreground cursor-pointer"
             onClick={onClose}
             title="Close inspector and expand gallery"
           >
@@ -170,60 +177,138 @@ export const MediaInspectorDrawer: React.FC<MediaInspectorDrawerProps> = ({
             ) : (
               <img src={asset.url} alt={asset.title || asset.fileName} className="max-h-[300px] w-full object-contain" />
             )}
-            <div className="absolute top-2.5 right-2.5 flex items-center gap-1 bg-background/85 backdrop-blur-md p-1 rounded-md border border-border/50 shadow-sm">
-              {/* 1. Direct Download */}
-              <button
-                type="button"
-                onClick={handleDownload}
-                disabled={isDownloading}
-                className="h-7 w-7 rounded-lg flex items-center justify-center hover:bg-muted text-foreground transition-all cursor-pointer disabled:opacity-50"
-                title={`Download ${asset.originalName || asset.fileName}`}
-              >
-                {isDownloading ? (
-                  <Loader2 className="h-3.5 w-3.5 animate-spin text-primary" />
-                ) : (
-                  <Download className="h-3.5 w-3.5" />
-                )}
-              </button>
 
-              {/* 2. Copy CDN URL */}
-              <button
-                type="button"
-                onClick={handleCopyUrl}
-                className="h-7 w-7 rounded-lg flex items-center justify-center hover:bg-muted text-foreground transition-all cursor-pointer"
-                title={copiedUrl ? "Copied CDN URL!" : "Copy CDN URL"}
-              >
-                {copiedUrl ? (
-                  <Check className="h-3.5 w-3.5 text-emerald-600 animate-in zoom-in-50 duration-150" />
+            {/* Top-Right Collapsible Action Bar on Arrow Hover */}
+            <div
+              className="absolute top-2.5 right-2.5 z-20 flex items-center justify-end"
+              onMouseEnter={() => setIsToolbarOpen(true)}
+              onMouseLeave={() => setIsToolbarOpen(false)}
+            >
+              <AnimatePresence mode="wait">
+                {!isToolbarOpen ? (
+                  <motion.button
+                    key="arrow-trigger"
+                    type="button"
+                    initial={{ opacity: 0, scale: 0.9 }}
+                    animate={{ opacity: 1, scale: 1 }}
+                    exit={{ opacity: 0, scale: 0.9 }}
+                    transition={{ duration: 0.15 }}
+                    onClick={() => setIsToolbarOpen(true)}
+                    className="h-7 w-7 rounded-md bg-background/80 hover:bg-background/95 backdrop-blur-md border border-border/60 flex items-center justify-center text-foreground/80 hover:text-foreground shadow-sm transition-all cursor-pointer"
+                    title="Actions (Hover or click to show)"
+                  >
+                    <ChevronLeft className="h-4 w-4" />
+                  </motion.button>
                 ) : (
-                  <Copy className="h-3.5 w-3.5" />
-                )}
-              </button>
+                  <motion.div
+                    key="expanded-toolbar"
+                    initial={{ opacity: 0, scale: 0.95, x: 8 }}
+                    animate={{ opacity: 1, scale: 1, x: 0 }}
+                    exit={{ opacity: 0, scale: 0.95, x: 8 }}
+                    transition={{ duration: 0.15, ease: "easeOut" }}
+                    className="flex items-center gap-1 bg-background/90 backdrop-blur-md p-1 rounded-md border border-border/60 shadow-md"
+                  >
+                    {/* 1. Direct Download */}
+                    <button
+                      type="button"
+                      onClick={handleDownload}
+                      disabled={isDownloading}
+                      className="h-7 w-7 rounded-lg flex items-center justify-center hover:bg-muted text-foreground transition-all cursor-pointer disabled:opacity-50"
+                      title={`Download ${asset.originalName || asset.fileName}`}
+                    >
+                      {isDownloading ? (
+                        <Loader2 className="h-3.5 w-3.5 animate-spin text-primary" />
+                      ) : (
+                        <Download className="h-3.5 w-3.5" />
+                      )}
+                    </button>
 
-              {/* 3. Copy Embed Tag / Code */}
-              <button
-                type="button"
-                onClick={handleCopyNextImage}
-                className="h-7 w-7 rounded-lg flex items-center justify-center hover:bg-muted text-foreground transition-all cursor-pointer"
-                title={copiedCode ? "Copied Embed Tag!" : isVideo ? "Copy <video> tag" : "Copy Next.js <Image /> tag"}
-              >
-                {copiedCode ? (
-                  <Check className="h-3.5 w-3.5 text-emerald-600 animate-in zoom-in-50 duration-150" />
-                ) : (
-                  <FileCode className="h-3.5 w-3.5" />
-                )}
-              </button>
+                    {/* 2. Copy CDN URL */}
+                    <button
+                      type="button"
+                      onClick={handleCopyUrl}
+                      className="h-7 w-7 rounded-lg flex items-center justify-center hover:bg-muted text-foreground transition-all cursor-pointer"
+                      title={copiedUrl ? "Copied CDN URL!" : "Copy CDN URL"}
+                    >
+                      {copiedUrl ? (
+                        <Check className="h-3.5 w-3.5 text-emerald-600 animate-in zoom-in-50 duration-150" />
+                      ) : (
+                        <Copy className="h-3.5 w-3.5" />
+                      )}
+                    </button>
 
-              {/* 4. Open Full Size in New Tab */}
-              <a
-                href={asset.url}
-                target="_blank"
-                rel="noreferrer"
-                className="h-7 w-7 rounded-lg flex items-center justify-center hover:bg-muted text-foreground transition-all"
-                title="Open full size in new tab"
-              >
-                <Maximize2 className="h-3.5 w-3.5" />
-              </a>
+                    {/* 3. Copy Embed Tag / Code */}
+                    <button
+                      type="button"
+                      onClick={handleCopyNextImage}
+                      className="h-7 w-7 rounded-lg flex items-center justify-center hover:bg-muted text-foreground transition-all cursor-pointer"
+                      title={copiedCode ? "Copied Embed Tag!" : isVideo ? "Copy <video> tag" : "Copy Next.js <Image /> tag"}
+                    >
+                      {copiedCode ? (
+                        <Check className="h-3.5 w-3.5 text-emerald-600 animate-in zoom-in-50 duration-150" />
+                      ) : (
+                        <FileCode className="h-3.5 w-3.5" />
+                      )}
+                    </button>
+
+                    {/* 4. Open Full Size in New Tab */}
+                    <a
+                      href={asset.url}
+                      target="_blank"
+                      rel="noreferrer"
+                      className="h-7 w-7 rounded-lg flex items-center justify-center hover:bg-muted text-foreground transition-all"
+                      title="Open full size in new tab"
+                    >
+                      <Maximize2 className="h-3.5 w-3.5" />
+                    </a>
+
+                    {/* Divider */}
+                    <div className="h-3.5 w-[1px] bg-border/60 mx-0.5" />
+
+                    {/* 5. Delete Asset (Relocated from bottom footer) */}
+                    <button
+                      type="button"
+                      onClick={() => {
+                        if (asset.usageCount > 0) {
+                          toast.error(
+                            `Cannot delete: asset is actively used in ${asset.usageCount} location${
+                              asset.usageCount > 1 ? "s" : ""
+                            }`
+                          )
+                          return
+                        }
+                        onSoftDelete(asset.id)
+                      }}
+                      disabled={asset.usageCount > 0}
+                      className={cn(
+                        "h-7 w-7 rounded-lg flex items-center justify-center transition-all",
+                        asset.usageCount > 0
+                          ? "opacity-40 cursor-not-allowed text-muted-foreground hover:bg-transparent"
+                          : "hover:bg-destructive/15 text-destructive/80 hover:text-destructive cursor-pointer"
+                      )}
+                      title={
+                        asset.usageCount > 0
+                          ? `Cannot delete: in use (${asset.usageCount} reference${
+                              asset.usageCount > 1 ? "s" : ""
+                            })`
+                          : "Move to 30-day trash"
+                      }
+                    >
+                      <Trash2 className="h-3.5 w-3.5" />
+                    </button>
+
+                    {/* Arrow toggle to collapse */}
+                    <button
+                      type="button"
+                      onClick={() => setIsToolbarOpen(false)}
+                      className="h-7 w-7 rounded-lg flex items-center justify-center hover:bg-muted text-muted-foreground hover:text-foreground transition-all cursor-pointer"
+                      title="Collapse actions"
+                    >
+                      <ChevronRight className="h-3.5 w-3.5" />
+                    </button>
+                  </motion.div>
+                )}
+              </AnimatePresence>
             </div>
           </div>
 
@@ -367,29 +452,11 @@ export const MediaInspectorDrawer: React.FC<MediaInspectorDrawerProps> = ({
               size="sm"
               onClick={handleSaveMetadata}
               disabled={!isDirty || updateMetadata.isPending}
-              className="w-full text-xs h-8"
+              className="w-full text-xs h-8 cursor-pointer"
             >
               {updateMetadata.isPending ? "Saving..." : "Save Metadata"}
             </Button>
           </div>
-        </div>
-
-        {/* Footer Actions */}
-        <div className="p-4 border-t border-border/60 bg-muted/20 flex items-center justify-between shrink-0">
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={() => onSoftDelete(asset.id)}
-            disabled={asset.usageCount > 0}
-            className="text-xs text-destructive hover:bg-destructive/10 hover:text-destructive border-border/60 gap-1.5"
-            title={asset.usageCount > 0 ? "Cannot delete: asset is actively in use" : "Move to 30-day trash"}
-          >
-            <Trash2 className="h-3.5 w-3.5" />
-            {asset.usageCount > 0 ? "In Use (Protected)" : "Move to Trash"}
-          </Button>
-          <Button variant="ghost" size="sm" onClick={onClose} className="text-xs">
-            Close
-          </Button>
         </div>
       </aside>
     </>
