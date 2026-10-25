@@ -508,6 +508,8 @@ export default function UserListTable() {
             isLoadingMore={isLoadingMore || (isFetching && currentPage > 1)}
             onLoadMore={handleLoadMore}
             loadedCount={currentUsers.length}
+            fixed={false}
+            isTable
           />
         )}
       </div>

@@ -532,6 +532,8 @@ export default function AuditLogsPage() {
               setPageSize(sz)
               setCurrentPage(1)
             }}
+            fixed={false}
+            isTable
           />
         )}
       </div>

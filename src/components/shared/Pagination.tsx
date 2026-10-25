@@ -124,8 +124,12 @@ export interface PaginationProps {
    * If provided, listeners and intersection roots attach to this container instead of window.
    */
   scrollContainerRef?: React.RefObject<HTMLElement | null>
-  /** Whether the pagination bar is fixed at the bottom of the screen (default: true). Set false for modals. */
+  /** Whether the pagination bar is fixed at the bottom of the screen (default: false for table views, true for grid views). */
   fixed?: boolean
+  /** Explicitly marks this pagination bar as sitting under a table view (disables viewport fixed positioning). */
+  isTable?: boolean
+  /** Explicitly marks this pagination bar as sitting under a grid view. */
+  isGrid?: boolean
 }
 
 export function Pagination({
@@ -140,7 +144,9 @@ export function Pagination({
   showPageSize = true,
   showResultsCount = true,
   layout = "bar",
-  fixed = true,
+  fixed,
+  isTable,
+  isGrid,
 
   // Infinite Scroll & Smart Extensions
   mode = "infinite",
@@ -155,7 +161,22 @@ export function Pagination({
   pageSizeLabel = "per page",
   prefetchDistance = 500,
   scrollContainerRef,
+  columns,
 }: PaginationProps) {
+  // Table views sit directly under the table without fixing to viewport bottom.
+  // Grid views (with columns or isGrid) default to fixed bottom floating bar.
+  const isTableView = isTable === true || isGrid === false
+  const isGridView = isGrid === true || (columns !== undefined && columns > 0)
+
+  const effectiveFixed =
+    fixed !== undefined
+      ? fixed
+      : isTableView
+        ? false
+        : isGridView
+          ? true
+          : false
+
   const effectivePageSize = pageSize || 10
   const safeCurrentPage = Math.max(1, Math.min(currentPage || 1, Math.max(1, totalPages || 1)))
   const sentinelRef = useRef<HTMLDivElement | null>(null)
@@ -389,53 +410,130 @@ export function Pagination({
 
         <div
           className={cn(
-            fixed
-              ? "fixed bottom-0 left-0 md:left-[280px] right-0 z-30 border-border/40 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 px-4 py-1.5 sm:py-2"
-              : "w-full py-1.5 border-border/40 bg-transparent",
-            "flex items-center justify-center transition-all duration-200",
+            effectiveFixed
+              ? "fixed bottom-0 left-0 md:left-[280px] right-0 z-30 border-border/40 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 px-4 py-1.5 sm:py-2 flex items-center justify-center"
+              : "w-full py-2.5 px-3 sm:px-4 rounded-md border border-border/60 bg-card/60 backdrop-blur-sm shadow-2xs mt-2.5 flex flex-col sm:flex-row items-center justify-between gap-3",
+            "transition-all duration-200",
             className
           )}
         >
-          {/* Main Progress Block (1/5th width on desktop, Centered, Compact Height) */}
-          {showResultsCount ? (
-            <div className="flex flex-col gap-1 w-full max-w-[280px] sm:w-1/5 sm:min-w-[220px] mx-auto">
-              <div className="flex items-center justify-between w-full text-[11px] font-medium leading-tight">
-                {/* Left: Dynamic Results Count (Always Showing X of Y items) */}
-                <span className="text-muted-foreground whitespace-nowrap">
+          {effectiveFixed ? (
+            /* Floating Grid Bar: Centered 1/5th compact width */
+            showResultsCount ? (
+              <div className="flex flex-col gap-1 w-full max-w-[280px] sm:w-1/5 sm:min-w-[220px] mx-auto">
+                <div className="flex items-center justify-between w-full text-[11px] font-medium leading-tight">
+                  <span className="text-muted-foreground whitespace-nowrap">
+                    Showing <strong className="text-foreground font-semibold">{displayLoaded}</strong>
+                    {totalItems !== undefined && (
+                      <> of <strong className="text-foreground font-semibold">{totalItems}</strong></>
+                    )}{" "}
+                    items
+                  </span>
+
+                  {isFetchingData ? (
+                    <span className="inline-flex items-center gap-1 text-[11px] font-semibold text-primary animate-pulse whitespace-nowrap">
+                      <Loader2 className="h-3 w-3 animate-spin text-primary" />
+                      <span>Loading...</span>
+                    </span>
+                  ) : (
+                    <span className="font-semibold text-[11px] text-primary whitespace-nowrap">
+                      {percentLoaded}%
+                    </span>
+                  )}
+                </div>
+
+                <div className="h-1 w-full overflow-hidden rounded-full bg-muted/60 border border-border/40">
+                  <div
+                    className="h-full rounded-full bg-primary transition-all duration-300"
+                    style={{ width: `${percentLoaded}%` }}
+                  />
+                </div>
+              </div>
+            ) : (
+              <div className="shrink-0" />
+            )
+          ) : (
+            /* Table In-Flow Bar: Clean 3-section layout (Count on left, Progress in center, Page Size on right) */
+            <>
+              {/* Left: Dynamic Results Count */}
+              <div className="flex items-center gap-2 text-xs font-medium text-muted-foreground whitespace-nowrap shrink-0">
+                <span>
                   Showing <strong className="text-foreground font-semibold">{displayLoaded}</strong>
                   {totalItems !== undefined && (
                     <> of <strong className="text-foreground font-semibold">{totalItems}</strong></>
                   )}{" "}
                   items
                 </span>
-
-                {/* Right: Loading Indicator during fetch, or Percentage when idle */}
-                {isFetchingData ? (
-                  <span className="inline-flex items-center gap-1 text-[11px] font-semibold text-primary animate-pulse whitespace-nowrap">
+                {isFetchingData && (
+                  <span className="inline-flex items-center gap-1 text-[11px] font-semibold text-primary animate-pulse ml-1">
                     <Loader2 className="h-3 w-3 animate-spin text-primary" />
                     <span>Loading...</span>
-                  </span>
-                ) : (
-                  <span className="font-semibold text-[11px] text-primary whitespace-nowrap">
-                    {percentLoaded}%
                   </span>
                 )}
               </div>
 
-              {/* Progress Bar line underneath (Compact h-1) */}
-              <div className="h-1 w-full overflow-hidden rounded-full bg-muted/60 border border-border/40">
-                <div
-                  className="h-full rounded-full bg-primary transition-all duration-300"
-                  style={{ width: `${percentLoaded}%` }}
-                />
+              {/* Center: Progress Bar & Percentage */}
+              <div className="flex items-center gap-2.5 w-full max-w-[220px] sm:max-w-[260px] shrink-0">
+                <div className="h-1.5 w-full overflow-hidden rounded-full bg-muted/60 border border-border/40">
+                  <div
+                    className="h-full rounded-full bg-primary transition-all duration-300"
+                    style={{ width: `${percentLoaded}%` }}
+                  />
+                </div>
+                <span className="font-semibold text-[11px] text-primary whitespace-nowrap shrink-0">
+                  {percentLoaded}%
+                </span>
               </div>
-            </div>
-          ) : (
-            <div className="shrink-0" />
+
+              {/* Right: Page Size Selector or Load More button */}
+              <div className="flex items-center gap-2 shrink-0">
+                {infiniteTrigger === "button" && (totalItems === undefined || displayLoaded < totalItems) && (
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setInternalLoading(true)
+                      effectiveOnLoadMore()
+                    }}
+                    disabled={isFetchingData}
+                    className="inline-flex h-7.5 px-3 items-center justify-center gap-1.5 rounded-md border border-border/80 bg-card hover:bg-muted/70 text-xs font-semibold text-foreground shadow-2xs transition-all cursor-pointer disabled:opacity-50"
+                  >
+                    {isFetchingData ? (
+                      <>
+                        <Loader2 className="h-3.5 w-3.5 animate-spin text-primary" />
+                        <span>Loading...</span>
+                      </>
+                    ) : (
+                      <>
+                        <ArrowDown className="h-3 w-3 text-primary" />
+                        <span>Load More</span>
+                      </>
+                    )}
+                  </button>
+                )}
+
+                {showPageSize && onPageSizeChange && (
+                  <div className="relative inline-flex items-center">
+                    <select
+                      value={effectivePageSize}
+                      onChange={(e) => onPageSizeChange(Number(e.target.value))}
+                      className="h-7.5 appearance-none rounded-md border border-border/70 bg-muted/40 hover:bg-muted/70 pl-2.5 pr-7 text-xs font-semibold text-foreground cursor-pointer transition-colors focus:outline-none focus:ring-1 focus:ring-primary"
+                      aria-label="Items per page"
+                    >
+                      {computedPageSizeOptions.map((opt) => (
+                        <option key={opt} value={opt} className="bg-popover text-popover-foreground">
+                          {opt} {pageSizeLabel}
+                        </option>
+                      ))}
+                    </select>
+                    <ChevronDown className="pointer-events-none absolute right-2 h-3 w-3 text-muted-foreground" />
+                  </div>
+                )}
+              </div>
+            </>
           )}
 
-          {/* Optional Load More button when in manual button mode */}
-          {infiniteTrigger === "button" && (totalItems === undefined || displayLoaded < totalItems) && (
+          {/* Optional Load More button for floating mode */}
+          {effectiveFixed && infiniteTrigger === "button" && (totalItems === undefined || displayLoaded < totalItems) && (
             <div className="ml-4 shrink-0">
               <button
                 type="button"
@@ -620,7 +718,7 @@ export function Pagination({
   ) : null
 
   // Stacked 2-row layout matching exact specification
-  if (layout === "stacked" && !fixed) {
+  if (layout === "stacked" && !effectiveFixed) {
     return (
       <div className={cn("w-full flex flex-col items-center gap-3.5 pt-4 border-border/60", className)}>
         {buttonsNode}
@@ -636,9 +734,9 @@ export function Pagination({
   return (
     <div
       className={cn(
-        fixed
+        effectiveFixed
           ? "fixed bottom-0 left-0 md:left-[280px] right-0 z-30 border-border/40 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 px-4 sm:px-6 py-2 sm:py-2.5"
-          : "w-full py-2.5 border-border/40 bg-transparent",
+          : "w-full py-2.5 px-3 sm:px-4 rounded-md border border-border/60 bg-card/60 backdrop-blur-sm shadow-2xs mt-2.5",
         "flex flex-col sm:flex-row items-center justify-between gap-3 sm:gap-4 transition-all duration-200",
         className
       )}

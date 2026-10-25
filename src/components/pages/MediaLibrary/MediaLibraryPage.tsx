@@ -289,8 +289,10 @@ export const MediaLibraryPage: React.FC = () => {
               onLoadMore={handleLoadMore}
               onPageChange={setCurrentPage}
               onPageSizeChange={setTargetItems}
-              columns={columns}
-              className="mt-6"
+              columns={viewMode === "grid" ? columns : undefined}
+              fixed={viewMode === "grid"}
+              isTable={viewMode === "table"}
+              className={viewMode === "grid" ? "mt-6" : undefined}
             />
           )}
         </div>

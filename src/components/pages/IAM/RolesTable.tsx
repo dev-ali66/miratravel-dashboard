@@ -287,6 +287,8 @@ export default function RolesTable({
                 isLoadingMore={isLoadingMore || (isFetching && currentPage > 1)}
                 onLoadMore={handleLoadMore}
                 loadedCount={roles.length}
+                fixed={false}
+                isTable
               />
             )}
           </>

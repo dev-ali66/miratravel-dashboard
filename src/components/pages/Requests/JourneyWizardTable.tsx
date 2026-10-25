@@ -401,6 +401,8 @@ export default function JourneyWizardTable() {
                 isLoadingMore={isLoadingMore || (isFetching && currentPage > 1)}
                 onLoadMore={handleLoadMore}
                 loadedCount={requestList.length}
+                fixed={false}
+                isTable
               />
             )}
           </>

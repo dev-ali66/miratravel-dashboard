@@ -374,6 +374,8 @@ export default function NewsletterPage() {
               setPageSize(sz)
               setCurrentPage(1)
             }}
+            fixed={false}
+            isTable
           />
         )}
       </div>
