@@ -1,17 +1,16 @@
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import { motion } from "framer-motion"
+import { useListingPagination } from "@/hooks/ui/useListingPagination"
 import {
   Edit2,
   Trash2,
   CheckCircle2,
   XCircle,
-  Search,
   UserPlus,
   Crown,
   ShieldCheck,
   Shield,
   User,
-  FilterX,
   Compass,
   MoreVertical,
   Users,
@@ -19,7 +18,6 @@ import {
 } from "lucide-react"
 import { cn } from "@/lib/utils"
 import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
 import {
   Select,
   SelectContent,
@@ -36,6 +34,15 @@ import {
 } from "@/components/ui/dropdown-menu"
 import { Pagination } from "@/components/shared/Pagination"
 import { PageHeader, CompactStatCard } from "@/components/shared/PageHeader"
+import {
+  FilterToolbar,
+  FilterGroup,
+  FilterSearch,
+  FilterSelect,
+  FilterActions,
+  FilterCreateButton,
+  FilterResetButton,
+} from "@/components/shared/FilterToolbar"
 import { useGetUsers, type UserItem } from "@/hooks/users/useGetUsers"
 import { useEditUser } from "@/hooks/users/useEditUser"
 import CreateUserModal from "./CreateUserModal"
@@ -61,7 +68,6 @@ const roleStyles: Record<string, { bg: string; icon: any }> = {
 }
 
 export default function UserListTable() {
-  const [currentPage, setCurrentPage] = useState(1)
   const [search, setSearch] = useState("")
   const [roleFilter, setRoleFilter] = useState("ALL")
   const [statusFilter, setStatusFilter] = useState("ALL")
@@ -70,18 +76,44 @@ export default function UserListTable() {
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false)
   const [selectedUserForEdit, setSelectedUserForEdit] = useState<UserItem | null>(null)
   const [selectedUserForDelete, setSelectedUserForDelete] = useState<UserItem | null>(null)
-  const [limit, setLimit] = useState(10)
 
-  const { data, isLoading } = useGetUsers(currentPage, limit, {
+  const filterKey = `${search}-${roleFilter}-${statusFilter}-${verifiedFilter}`
+
+  const {
+    mode,
+    currentPage,
+    setCurrentPage,
+    setTargetItems,
+    effectiveLimit,
+    pageSizeOptions,
+    displayItems: currentUsers,
+    hasMore,
+    isLoadingMore,
+    handleLoadMore,
+    setIncomingData,
+  } = useListingPagination<UserItem>({
+    mode: "infinite",
+    initialTargetItems: 10,
+    isGrid: false,
+    filterKey,
+    keyExtractor: (u) => u.id,
+  })
+
+  const { data, isLoading, isFetching } = useGetUsers(currentPage, effectiveLimit, {
     search: search || undefined,
     role: roleFilter,
     status: statusFilter,
     isVerified: verifiedFilter === "ALL" ? undefined : verifiedFilter,
   })
 
+  useEffect(() => {
+    if (data) {
+      setIncomingData(data.data, data.meta?.total)
+    }
+  }, [data, setIncomingData])
+
   const { mutate: editUser } = useEditUser()
 
-  const currentUsers = data?.data || []
   const totalPages = data?.meta?.totalPages || 1
   const stats = data?.meta?.stats
 
@@ -151,104 +183,89 @@ export default function UserListTable() {
       />
 
       {/* Filter and Search Toolbar */}
-      <div className="flex flex-col gap-3 rounded-xl border border-border/60 bg-card/60 p-4 backdrop-blur-xl md:flex-row md:items-center md:justify-between">
-        {/* Search */}
-        <div className="relative flex-1 min-w-[240px]">
-          <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
-          <Input
-            placeholder="Search by name, email, or phone..."
+      <FilterToolbar>
+        <FilterGroup>
+          {/* Search */}
+          <FilterSearch
             value={search}
-            onChange={(e) => {
-              setSearch(e.target.value)
+            onChange={(val) => {
+              setSearch(val)
               setCurrentPage(1)
             }}
-            className="pl-9 bg-background/50"
+            placeholder="Search users..."
+            width="w-44 sm:w-56 shrink-0"
           />
-        </div>
 
-        {/* Filter Controls */}
-        <div className="flex flex-wrap items-center gap-2.5">
           {/* Role Filter */}
-          <Select
+          <FilterSelect
             value={roleFilter}
-            onValueChange={(val) => {
+            onChange={(val) => {
               setRoleFilter(val)
               setCurrentPage(1)
             }}
-          >
-            <SelectTrigger className="w-[130px] bg-background/50">
-              <SelectValue placeholder="Role: All" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="ALL">All Roles</SelectItem>
-              <SelectItem value="ADMIN">Admin</SelectItem>
-              <SelectItem value="MANAGER">Manager</SelectItem>
-              <SelectItem value="EDITOR">Editor</SelectItem>
-              <SelectItem value="USER">User</SelectItem>
-            </SelectContent>
-          </Select>
+            options={[
+              { label: "Admin", value: "ADMIN" },
+              { label: "Manager", value: "MANAGER" },
+              { label: "Editor", value: "EDITOR" },
+              { label: "User", value: "USER" },
+            ]}
+            allLabel="All Roles"
+            allValue="ALL"
+            placeholder="Role: All"
+            width="min-w-[105px] max-w-[130px]"
+          />
 
           {/* Status Filter */}
-          <Select
+          <FilterSelect
             value={statusFilter}
-            onValueChange={(val) => {
+            onChange={(val) => {
               setStatusFilter(val)
               setCurrentPage(1)
             }}
-          >
-            <SelectTrigger className="w-[140px] bg-background/50">
-              <SelectValue placeholder="Status: All" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="ALL">All Statuses</SelectItem>
-              <SelectItem value="ACTIVE">Active</SelectItem>
-              <SelectItem value="INACTIVE">Inactive</SelectItem>
-              <SelectItem value="BLOCKED">Blocked</SelectItem>
-              <SelectItem value="SUSPENDED">Suspended</SelectItem>
-              <SelectItem value="PENDING">Pending</SelectItem>
-            </SelectContent>
-          </Select>
+            options={[
+              { label: "Active", value: "ACTIVE" },
+              { label: "Inactive", value: "INACTIVE" },
+              { label: "Blocked", value: "BLOCKED" },
+              { label: "Suspended", value: "SUSPENDED" },
+              { label: "Pending", value: "PENDING" },
+            ]}
+            allLabel="All Statuses"
+            allValue="ALL"
+            placeholder="Status: All"
+            width="min-w-[105px] max-w-[130px]"
+          />
 
           {/* Verification Filter */}
-          <Select
+          <FilterSelect
             value={verifiedFilter}
-            onValueChange={(val) => {
+            onChange={(val) => {
               setVerifiedFilter(val)
               setCurrentPage(1)
             }}
-          >
-            <SelectTrigger className="w-[140px] bg-background/50">
-              <SelectValue placeholder="Verification: All" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="ALL">All Verification</SelectItem>
-              <SelectItem value="true">Verified</SelectItem>
-              <SelectItem value="false">Unverified</SelectItem>
-            </SelectContent>
-          </Select>
+            options={[
+              { label: "Verified", value: "true" },
+              { label: "Unverified", value: "false" },
+            ]}
+            allLabel="All Verification"
+            allValue="ALL"
+            placeholder="Verification: All"
+            width="min-w-[110px] max-w-[140px]"
+          />
 
           {/* Reset Filters */}
           {(search || roleFilter !== "ALL" || statusFilter !== "ALL" || verifiedFilter !== "ALL") && (
-            <Button
-              variant="ghost"
-              size="icon"
-              onClick={handleResetFilters}
-              title="Reset Filters"
-              className="text-muted-foreground hover:text-foreground"
-            >
-              <FilterX className="h-4 w-4" />
-            </Button>
+            <FilterResetButton onClick={handleResetFilters} />
           )}
+        </FilterGroup>
 
-          <Button
+        <FilterActions>
+          <FilterCreateButton
             onClick={() => setIsCreateModalOpen(true)}
-            className="flex items-center gap-2 shadow-sm"
-          >
-            <UserPlus className="h-4 w-4" />
-            <span>Add New User</span>
-          </Button>
-        </div>
-      </div>
+            label="Add New User"
+            icon={UserPlus}
+          />
+        </FilterActions>
+      </FilterToolbar>
 
       {/* Table Card */}
       <div className="overflow-hidden rounded-xl border border-border/60 bg-card/60 shadow-sm backdrop-blur-xl">
@@ -455,16 +472,18 @@ export default function UserListTable() {
         {(data?.meta?.total ?? 0) > 0 && (
           <div className="border-t border-border/60 bg-muted/10 px-5 py-3">
             <Pagination
+              mode={mode}
               currentPage={currentPage}
               totalPages={totalPages}
               totalItems={data?.meta?.total}
-              pageSize={limit}
-              pageSizeOptions={[10, 20, 50, 100]}
-              onPageChange={(page) => setCurrentPage(page)}
-              onPageSizeChange={(sz) => {
-                setLimit(sz)
-                setCurrentPage(1)
-              }}
+              pageSize={effectiveLimit}
+              pageSizeOptions={pageSizeOptions}
+              onPageChange={setCurrentPage}
+              onPageSizeChange={setTargetItems}
+              hasMore={hasMore}
+              isLoadingMore={isLoadingMore || (isFetching && currentPage > 1)}
+              onLoadMore={handleLoadMore}
+              loadedCount={currentUsers.length}
             />
           </div>
         )}

@@ -1,14 +1,23 @@
-import MiraLoader from "@/components/shared/MiraLoader"
 import { useEffect, useState } from "react"
 import { Link } from "react-router-dom"
 import { Pagination } from "@/components/shared/Pagination"
+import { DataPreview } from "@/components/shared/DataPreview"
+import { useListingPagination } from "@/hooks/ui/useListingPagination"
 import { PageHeader, CompactStatCard } from "@/components/shared/PageHeader"
+import {
+  FilterToolbar,
+  FilterGroup,
+  FilterSearch,
+  FilterSelect,
+  FilterActions,
+  FilterCreateButton,
+  FilterResetButton,
+} from "@/components/shared/FilterToolbar"
 import {
   Trash2,
   Compass,
   Loader2,
   Plus,
-  Search,
   Globe,
   Tag,
   CheckCircle2,
@@ -38,10 +47,7 @@ import {
 import { UniversalMultimediaPreview } from "@/components/pages/CMS/Home/shared/preview/UniversalMultimediaPreview"
 import { getSafeStringValue } from "@/components/pages/Location/shared/normalizeHelpers"
 
-const PAGE_SIZE = 12
-
 export default function JourneyPages() {
-  const [page, setPage] = useState(1)
   const [searchInput, setSearchInput] = useState("")
   const [search, setSearch] = useState("")
   const [journeyType, setJourneyType] = useState<string>("")
@@ -52,19 +58,52 @@ export default function JourneyPages() {
   useEffect(() => {
     const timeout = setTimeout(() => {
       setSearch(searchInput)
-      setPage(1)
     }, 350)
     return () => clearTimeout(timeout)
   }, [searchInput])
 
-  const { data, isLoading, isError, refetch } = useGetJourneys({
-    page,
-    limit: PAGE_SIZE,
+  const filterKey = `${search}-${journeyType}-${travelStyle}-${status}`
+
+  const {
+    mode,
+    currentPage,
+    setCurrentPage,
+    setTargetItems,
+    columns,
+    effectiveLimit,
+    pageSizeOptions,
+    gridRef,
+    displayItems,
+    hasMore,
+    isLoadingMore,
+    handleLoadMore,
+    setIncomingData,
+  } = useListingPagination<JourneyPageData>({
+    mode: "infinite",
+    initialTargetItems: 18,
+    isGrid: true,
+    gridColumns: { base: 1, md: 3, lg: 5, xl: 6 },
+    filterKey,
+    keyExtractor: (item) => item.id,
+  })
+
+  const setPage = setCurrentPage
+
+  const { data, isLoading, isFetching, isError, refetch } = useGetJourneys({
+    page: currentPage,
+    limit: effectiveLimit,
     search: search || undefined,
     journeyType: journeyType || undefined,
     travelStyle: travelStyle || undefined,
     status: status || undefined,
   })
+
+  // Sync incoming data to pagination manager
+  useEffect(() => {
+    if (data) {
+      setIncomingData(data.data, data.meta?.total)
+    }
+  }, [data, setIncomingData])
 
   useEffect(() => {
     refetch()
@@ -98,13 +137,13 @@ export default function JourneyPages() {
     })
   }
 
-  const journeys = data?.data ?? []
+  const journeys = displayItems
   const meta = data?.meta
 
   const hasFilters = Boolean(search || journeyType || travelStyle || status)
 
   return (
-    <div className="w-full animate-in pt-2 duration-700 fade-in slide-in-from-bottom-4">
+    <div className="w-full space-y-6 animate-in pt-2 duration-700 fade-in slide-in-from-bottom-4">
       {/* Header with 30% title & 70% compact statistics */}
       <PageHeader
         icon={Compass}
@@ -145,94 +184,113 @@ export default function JourneyPages() {
       />
 
       {/* Filters */}
-      <div className="mb-6 flex flex-col gap-3 md:flex-row md:items-center">
-        <div className="relative flex-1">
-          <Search className="pointer-events-none absolute top-1/2 left-3 h-4 w-4 -translate-y-1/2 text-extra-light" />
-
-          <input
+      <FilterToolbar>
+        <FilterGroup>
+          <FilterSearch
             value={searchInput}
-            onChange={(e) => setSearchInput(e.target.value)}
-            placeholder="Search journeys by title, slug or summary..."
-            className="w-full rounded-xl border border-border bg-card py-2.5 pr-3 pl-9 text-sm text-foreground placeholder:text-muted-foreground outline-none focus:border-primary focus:ring-1 focus:ring-primary"
+            onChange={(val) => {
+              setSearchInput(val)
+              setPage(1)
+            }}
+            placeholder="Search journeys..."
+            width="w-44 sm:w-56 shrink-0"
           />
-        </div>
 
-        <select
-          value={journeyType}
-          onChange={(e) => {
-            setJourneyType(e.target.value)
-            setPage(1)
-          }}
-          className="rounded-xl border border-border bg-card px-3 py-2.5 text-sm text-foreground outline-none focus:border-primary md:w-44"
-        >
-          <option value="">All Journey Types</option>
-          {JOURNEY_TYPES.map((t) => (
-            <option key={t} value={t}>
-              {t.replace(/_/g, " ")}
-            </option>
-          ))}
-        </select>
+          <FilterSelect
+            value={journeyType}
+            onChange={(val) => {
+              setJourneyType(val)
+              setPage(1)
+            }}
+            options={JOURNEY_TYPES.map((t) => ({
+              label: t.replace(/_/g, " "),
+              value: t,
+            }))}
+            allLabel="All Journey Types"
+            placeholder="Journey Type"
+            width="min-w-[130px] max-w-[160px]"
+          />
 
-        <select
-          value={travelStyle}
-          onChange={(e) => {
-            setTravelStyle(e.target.value)
-            setPage(1)
-          }}
-          className="rounded-xl border border-border bg-card px-3 py-2.5 text-sm text-foreground outline-none focus:border-primary md:w-44"
-        >
-          <option value="">All Travel Styles</option>
-          {TRAVEL_STYLES.map((s) => (
-            <option key={s} value={s}>
-              {s.replace(/_/g, " ")}
-            </option>
-          ))}
-        </select>
+          <FilterSelect
+            value={travelStyle}
+            onChange={(val) => {
+              setTravelStyle(val)
+              setPage(1)
+            }}
+            options={TRAVEL_STYLES.map((s) => ({
+              label: s.replace(/_/g, " "),
+              value: s,
+            }))}
+            allLabel="All Travel Styles"
+            placeholder="Travel Style"
+            width="min-w-[130px] max-w-[160px]"
+          />
 
-        <select
-          value={status}
-          onChange={(e) => {
-            setStatus(e.target.value)
-            setPage(1)
-          }}
-          className="rounded-xl border border-border bg-card px-3 py-2.5 text-sm text-foreground outline-none focus:border-primary md:w-36"
-        >
-          <option value="">All Statuses</option>
-          {JOURNEY_STATUS_LIST.map((st) => (
-            <option key={st} value={st}>
-              {st}
-            </option>
-          ))}
-        </select>
+          <FilterSelect
+            value={status}
+            onChange={(val) => {
+              setStatus(val)
+              setPage(1)
+            }}
+            options={JOURNEY_STATUS_LIST.map((st) => ({
+              label: st,
+              value: st,
+            }))}
+            allLabel="All Statuses"
+            placeholder="Status"
+            width="min-w-[105px] max-w-[125px]"
+          />
 
-         <Link
+          {(searchInput || journeyType || travelStyle || status) && (
+            <FilterResetButton
+              onClick={() => {
+                setSearchInput("")
+                setJourneyType("")
+                setTravelStyle("")
+                setStatus("")
+                setPage(1)
+              }}
+            />
+          )}
+        </FilterGroup>
+
+        <FilterActions>
+          <FilterCreateButton
             to="/journeys/new"
-            className="inline-flex shrink-0 items-center gap-2 rounded-xl bg-brand-primary px-4 py-2.5 text-sm font-medium text-white shadow-sm transition hover:bg-accent"
-          >
-            <Plus className="h-4 w-4" />
-            Create Journey
-          </Link>
-      </div>
+            label="Create Journey"
+            icon={Plus}
+          />
+        </FilterActions>
+      </FilterToolbar>
 
-      {/* Loading */}
-      {isLoading ? (
-        <MiraLoader text="Loading commercial journeys..." className="py-12 min-h-[300px]" />
-      ) : isError ? (
-        <div className="rounded-xl border border-destructive/30 bg-destructive/5 p-6 text-center">
-          <p className="text-sm font-medium text-destructive">
-            Failed to load journeys.
-          </p>
-          <p className="mt-1 text-xs text-muted-foreground">
-            Please try again later.
-          </p>
-        </div>
-      ) : journeys.length > 0 ? (
-        <>
-          {/* Journeys Grid */}
-          <div className="grid grid-cols-1 gap-2 md:grid-cols-3 lg:grid-cols-5 xl:grid-cols-6">
-            {journeys.map((j, index) => {
-              const journeyTitle = j.title || "Untitled Journey"
-              const slugPath = j.slug ? `/journeys/${j.slug}` : ""
+      {/* Journeys Grid via Universal DataPreview */}
+      <DataPreview<JourneyPageData>
+        gridRef={gridRef}
+        items={displayItems}
+        isLoading={isLoading && currentPage === 1}
+        isError={isError}
+        errorMessage="Failed to load journeys. Please try again later."
+        onRetry={refetch}
+        layout="grid"
+        gridClassName="grid grid-cols-1 gap-2 md:grid-cols-3 lg:grid-cols-5 xl:grid-cols-6"
+        emptyIcon={Compass}
+        emptyTitle={hasFilters ? "No matching journeys found" : "No Journeys Created Yet"}
+        emptyDescription={
+          hasFilters
+            ? "Try adjusting your search criteria or clearing filters."
+            : "Click below to build your first bespoke journey."
+        }
+        emptyAction={
+          <Link
+            to="/journeys/new"
+            className="mt-4 inline-flex items-center gap-2 rounded-xl bg-brand-primary px-4 py-2.5 text-sm font-medium text-white shadow-sm transition hover:bg-accent"
+          >
+            <Plus className="h-4 w-4" /> Add Journey
+          </Link>
+        }
+        renderItem={(j, index) => {
+          const journeyTitle = j.title || "Untitled Journey"
+          const slugPath = j.slug ? `/journeys/${j.slug}` : ""
 
               const heroData = j.hero || (j as any).data?.hero || {}
               const heroMultimedia = heroData.backgroundMultimedia
@@ -379,45 +437,27 @@ export default function JourneyPages() {
                   </div>
                 </div>
               )
-            })}
-          </div>
+            }}
+          />
 
-          {/* Universal Pagination */}
-          {meta && (
-            <Pagination
-              currentPage={meta.page}
-              totalPages={meta.totalPages}
-              totalItems={meta.total}
-              pageSize={PAGE_SIZE}
-              onPageChange={setPage}
-              className="mt-8"
-            />
-          )}
-        </>
-      ) : (
-        /* Empty State */
-        <div className="flex flex-col items-center justify-center rounded-2xl border border-dashed border-border/70 bg-card/40 py-24 text-center">
-          <div className="mb-4 rounded-full bg-accent/10 p-4">
-            <Compass className="h-8 w-8 text-accent" />
-          </div>
-
-          <h3 className="mb-2 text-xl font-serif font-bold text-brand-primary">
-            {hasFilters ? "No matching journeys found" : "No Journeys Created Yet"}
-          </h3>
-
-          <p className="max-w-sm text-sm text-subtitle">
-            {hasFilters
-              ? "Try adjusting your search criteria or clearing filters."
-              : "Click below to build your first bespoke journey."}
-          </p>
-
-          <Link
-            to="/journeys/new"
-            className="mt-4 inline-flex items-center gap-2 rounded-xl bg-brand-primary px-4 py-2.5 text-sm font-medium text-white shadow-sm transition hover:bg-accent"
-          >
-            <Plus className="h-4 w-4" /> Add Journey
-          </Link>
-        </div>
+      {/* Universal Smart Pagination & Infinite Scroll Sentinel */}
+      {meta && (
+        <Pagination
+          mode={mode}
+          currentPage={currentPage}
+          totalPages={meta.totalPages}
+          totalItems={meta.total}
+          pageSize={effectiveLimit}
+          pageSizeOptions={pageSizeOptions}
+          onPageChange={setCurrentPage}
+          onPageSizeChange={setTargetItems}
+          hasMore={hasMore}
+          isLoadingMore={isLoadingMore || (isFetching && currentPage > 1)}
+          onLoadMore={handleLoadMore}
+          loadedCount={displayItems.length}
+          columns={columns}
+          className="mt-6"
+        />
       )}
 
       {/* Delete Confirmation Modal */}

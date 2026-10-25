@@ -33,6 +33,8 @@ type ParentLocationSelectProps = {
   /** Label shown for the "clear" option. Defaults to "No parent (top-level)". */
   noneLabel?: string
   placeholder?: string
+  className?: string
+  triggerClassName?: string
 }
 
 export function ParentLocationSelect({
@@ -44,6 +46,8 @@ export function ParentLocationSelect({
   label = "Parent Location",
   noneLabel = "No parent (top-level)",
   placeholder = "Search location by name, slug or type...",
+  className,
+  triggerClassName,
 }: ParentLocationSelectProps) {
   const [open, setOpen] = useState(false)
   const [query, setQuery] = useState("")
@@ -102,7 +106,7 @@ export function ParentLocationSelect({
   }
 
   return (
-    <div className="space-y-1.5">
+    <div className={cn("space-y-1.5", className)}>
       {label && (
         <label className="text-xs font-semibold text-foreground mb-1 block">
           {label}
@@ -113,7 +117,10 @@ export function ParentLocationSelect({
         <PopoverTrigger asChild>
           <button
             type="button"
-            className="flex w-full items-center justify-between rounded-lg border border-border/60 bg-background px-3 py-2 text-left text-xs transition-all outline-none hover:border-border focus:border-primary shadow-2xs cursor-pointer"
+            className={cn(
+              "flex w-full items-center justify-between rounded-lg border border-border/60 bg-background px-3 py-2 text-left text-xs transition-all outline-none hover:border-border focus:border-primary shadow-2xs cursor-pointer",
+              triggerClassName
+            )}
           >
             <span
               className={cn(

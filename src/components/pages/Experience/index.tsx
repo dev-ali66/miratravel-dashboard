@@ -1,18 +1,28 @@
-import MiraLoader from "@/components/shared/MiraLoader"
 import {
   useGetExperiencePages,
   type ExperienceItemData,
 } from "@/hooks/experience/useGetExperiences"
 import { useDeleteExperience } from "@/hooks/experience/useDeleteExperience"
 import { Pagination } from "@/components/shared/Pagination"
+import { DataPreview } from "@/components/shared/DataPreview"
+import { useListingPagination } from "@/hooks/ui/useListingPagination"
 import { PageHeader, CompactStatCard } from "@/components/shared/PageHeader"
+import {
+  FilterToolbar,
+  FilterGroup,
+  FilterSearch,
+  FilterSelect,
+  FilterToggle,
+  FilterActions,
+  FilterCreateButton,
+  FilterResetButton,
+} from "@/components/shared/FilterToolbar"
 import { Link } from "react-router-dom"
 import { useEffect, useState } from "react"
 import {
   Trash2,
   MapPin,
   Plus,
-  Search,
   Sparkles,
   Compass,
   Globe,
@@ -39,8 +49,6 @@ import {
   type ExperienceType,
 } from "./experienceTypes"
 
-const PAGE_SIZE = 12
-
 const getSafeStringValue = (val: any, fallback = ""): string => {
   if (typeof val === "string") return val.trim()
   if (typeof val?.text === "string") return val.text.trim()
@@ -48,7 +56,6 @@ const getSafeStringValue = (val: any, fallback = ""): string => {
 }
 
 export default function ExperiencePages() {
-  const [page, setPage] = useState(1)
   const [searchInput, setSearchInput] = useState("")
   const [search, setSearch] = useState("")
   const [countryId, setCountryId] = useState<string | null>(null)
@@ -61,15 +68,41 @@ export default function ExperiencePages() {
   useEffect(() => {
     const timeout = setTimeout(() => {
       setSearch(searchInput)
-      setPage(1)
     }, 350)
 
     return () => clearTimeout(timeout)
   }, [searchInput])
 
-  const { data, isLoading, isError, refetch } = useGetExperiencePages({
-    page,
-    limit: PAGE_SIZE,
+  const filterKey = `${search}-${countryId}-${primaryType}-${status}-${currency}-${featured}`
+
+  const {
+    mode,
+    currentPage,
+    setCurrentPage,
+    setTargetItems,
+    columns,
+    effectiveLimit,
+    pageSizeOptions,
+    gridRef,
+    displayItems,
+    hasMore,
+    isLoadingMore,
+    handleLoadMore,
+    setIncomingData,
+  } = useListingPagination<ExperienceItemData>({
+    mode: "infinite",
+    initialTargetItems: 18,
+    isGrid: true,
+    gridColumns: { base: 1, md: 3, lg: 5, xl: 6 },
+    filterKey,
+    keyExtractor: (item) => item.id,
+  })
+
+  const setPage = setCurrentPage
+
+  const { data, isLoading, isFetching, isError, refetch } = useGetExperiencePages({
+    page: currentPage,
+    limit: effectiveLimit,
     search: search || undefined,
     countryId: countryId || undefined,
     primaryType: primaryType || undefined,
@@ -77,6 +110,13 @@ export default function ExperiencePages() {
     currency: currency || undefined,
     featured,
   })
+
+  // Sync incoming data to pagination manager
+  useEffect(() => {
+    if (data) {
+      setIncomingData(data.data, data.meta?.total)
+    }
+  }, [data, setIncomingData])
 
   useEffect(() => {
     refetch()
@@ -132,7 +172,7 @@ export default function ExperiencePages() {
   const meta = data?.meta
 
   return (
-    <div className="flex flex-col gap-6">
+    <div className="w-full space-y-6 animate-in pt-2 duration-700 fade-in slide-in-from-bottom-4">
       {/* Page Header with 30% title & 70% compact statistics */}
       <PageHeader
         icon={Sparkles}
@@ -173,79 +213,68 @@ export default function ExperiencePages() {
       />
 
       {/* Filter and Search Bar */}
-      <div className="flex flex-col gap-3">
-        <div className="flex flex-col md:flex-row items-stretch md:items-center gap-3">
+      <FilterToolbar>
+        <FilterGroup>
           {/* Search Input */}
-          <div className="relative flex-1">
-            <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-            <input
-              type="text"
-              value={searchInput}
-              onChange={(e) => setSearchInput(e.target.value)}
-              placeholder="Search experiences by name or slug..."
-              className="w-full rounded-xl border border-border/70 bg-card pl-9 pr-4 py-2 text-xs md:text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-1 focus:ring-primary"
-            />
-          </div>
+          <FilterSearch
+            value={searchInput}
+            onChange={(val) => {
+              setSearchInput(val)
+              setPage(1)
+            }}
+            placeholder="Search experiences..."
+            width="w-40 sm:w-52 shrink-0"
+          />
 
           {/* Primary Type Filter */}
-          <select
+          <FilterSelect
             value={primaryType}
-            onChange={(e) => {
-              setPrimaryType(e.target.value)
+            onChange={(val) => {
+              setPrimaryType(val)
               setPage(1)
             }}
-            className="rounded-xl border border-border/70 bg-card px-3 py-2 text-xs md:text-sm text-foreground outline-none focus:border-primary focus:ring-1 focus:ring-primary md:w-52 cursor-pointer"
-          >
-            <option value="">All 8 Experience Types</option>
-            {EXPERIENCE_TYPES.map((t) => (
-              <option key={t.value} value={t.value}>
-                {t.label}
-              </option>
-            ))}
-          </select>
+            options={EXPERIENCE_TYPES}
+            allLabel="All 8 Experience Types"
+            placeholder="Experience Type"
+            width="min-w-[150px] max-w-[170px]"
+          />
 
           {/* Status Filter */}
-          <select
+          <FilterSelect
             value={status}
-            onChange={(e) => {
-              setStatus(e.target.value)
+            onChange={(val) => {
+              setStatus(val)
               setPage(1)
             }}
-            className="rounded-xl border border-border/70 bg-card px-3 py-2 text-xs md:text-sm text-foreground outline-none focus:border-primary focus:ring-1 focus:ring-primary md:w-36 cursor-pointer"
-          >
-            <option value="">All Statuses</option>
-            {EXPERIENCE_STATUS_OPTIONS.map((st) => (
-              <option key={st.value} value={st.value}>
-                {st.label}
-              </option>
-            ))}
-          </select>
+            options={EXPERIENCE_STATUS_OPTIONS}
+            allLabel="All Statuses"
+            placeholder="Status"
+            width="min-w-[105px] max-w-[120px]"
+          />
 
           {/* Currency Filter */}
-          <select
+          <FilterSelect
             value={currency}
-            onChange={(e) => {
-              setCurrency(e.target.value)
+            onChange={(val) => {
+              setCurrency(val)
               setPage(1)
             }}
-            className="rounded-xl border border-border/70 bg-card px-3 py-2 text-xs md:text-sm text-foreground outline-none focus:border-primary focus:ring-1 focus:ring-primary md:w-36 cursor-pointer"
-          >
-            <option value="">All Currencies</option>
-            {EXPERIENCE_CURRENCY_OPTIONS.map((c) => (
-              <option key={c.value} value={c.value}>
-                {c.label}
-              </option>
-            ))}
-          </select>
+            options={EXPERIENCE_CURRENCY_OPTIONS}
+            allLabel="All Currencies"
+            placeholder="Currency"
+            width="min-w-[100px] max-w-[115px]"
+          />
 
           {/* Country Location Filter */}
-          <div className="w-full md:w-56">
+          <div className="w-36 sm:w-44 shrink-0">
             <ParentLocationSelect
               value={countryId}
               filterType="COUNTRY"
               label=""
               noneLabel="All Countries"
               placeholder="Filter by country..."
+              className="space-y-0"
+              triggerClassName="h-8 sm:h-8.5 rounded-lg border-border/70 bg-background/60 dark:bg-background/40 hover:bg-muted/50 text-xs px-2.5 py-1"
               onChange={(id) => {
                 setCountryId(id || null)
                 setPage(1)
@@ -254,48 +283,71 @@ export default function ExperiencePages() {
           </div>
 
           {/* Featured Filter Toggle */}
-          <button
-            type="button"
-            onClick={() => {
+          <FilterToggle
+            active={featured === true}
+            onToggle={() => {
               setFeatured((prev) => (prev === true ? undefined : true))
               setPage(1)
             }}
-            className={`inline-flex items-center gap-1.5 rounded-xl border px-3.5 py-2 text-xs font-medium transition-colors cursor-pointer shrink-0 ${
-              featured === true
-                ? "border-primary bg-primary/10 text-primary font-semibold"
-                : "border-border/70 bg-card text-muted-foreground hover:bg-muted/50"
-            }`}
-          >
-            <Sparkles className="h-3.5 w-3.5" />
-            <span>Featured</span>
-          </button>
+            label="Featured"
+            icon={Sparkles}
+          />
 
-           <Link
+          {/* Reset Filters */}
+          {(searchInput || primaryType || status || currency || countryId || featured !== undefined) && (
+            <FilterResetButton
+              onClick={() => {
+                setSearchInput("")
+                setPrimaryType("")
+                setStatus("")
+                setCurrency("")
+                setCountryId(null)
+                setFeatured(undefined)
+                setPage(1)
+              }}
+            />
+          )}
+        </FilterGroup>
+
+        {/* Action Button */}
+        <FilterActions>
+          <FilterCreateButton
             to="/experiences/new"
-            className="inline-flex items-center justify-center gap-2 rounded-xl bg-primary px-4 py-2.5 text-xs md:text-sm font-semibold text-primary-foreground shadow-sm hover:bg-primary/90 transition-colors self-start sm:self-auto cursor-pointer"
-          >
-            <Plus className="h-4 w-4" />
-            <span>Create Experience</span>
-          </Link>
-        </div>
-        
-      </div>
+            label="Create Experience"
+            icon={Plus}
+          />
+        </FilterActions>
+      </FilterToolbar>
 
-      {/* Experience List Cards */}
-      {isLoading ? (
-        <MiraLoader text="Loading experiences..." className="min-h-[300px] py-12" />
-      ) : isError ? (
-        <div className="rounded-xl border border-destructive/20 bg-destructive/5 p-8 text-center">
-          <p className="text-sm font-semibold text-destructive">Failed to fetch experiences.</p>
-          <p className="text-xs text-muted-foreground mt-1">
-            Please make sure the backend server is running on port 5010.
-          </p>
-        </div>
-      ) : data?.data && data.data.length > 0 ? (
-        <div className="grid grid-cols-1 gap-2 md:grid-cols-3 lg:grid-cols-5 xl:grid-cols-6">
-          {data.data.map((exp, index) => {
-            const expName = exp.name ? exp.name.trim() : "Untitled Experience"
-            const slugPath = exp.slug ? `/${exp.slug.replace(/^\//, "")}` : ""
+      {/* Experience List Cards via Universal DataPreview */}
+      <DataPreview<ExperienceItemData>
+        gridRef={gridRef}
+        items={displayItems}
+        isLoading={isLoading && currentPage === 1}
+        isError={isError}
+        errorMessage="Failed to fetch experiences. Please verify the backend server is running on port 5010."
+        onRetry={refetch}
+        layout="grid"
+        gridClassName="grid grid-cols-1 gap-2 md:grid-cols-3 lg:grid-cols-5 xl:grid-cols-6"
+        emptyIcon={Compass}
+        emptyTitle="No experiences found"
+        emptyDescription={
+          search || countryId || primaryType || status || currency || featured !== undefined
+            ? "Try adjusting your search criteria or clear active filters."
+            : "Get started by creating your first MIRA curated experience."
+        }
+        emptyAction={
+          <Link
+            to="/experiences/new"
+            className="mt-4 inline-flex items-center gap-2 rounded-xl bg-primary px-3.5 py-2 text-xs font-semibold text-primary-foreground hover:bg-primary/90 transition-colors"
+          >
+            <Plus className="h-3.5 w-3.5" />
+            Create First Experience
+          </Link>
+        }
+        renderItem={(exp, index) => {
+          const expName = exp.name ? exp.name.trim() : "Untitled Experience"
+          const slugPath = exp.slug ? `/${exp.slug.replace(/^\//, "")}` : ""
 
             // Media data
             const heroData = exp.hero || {}
@@ -524,37 +576,25 @@ export default function ExperiencePages() {
                 </div>
               </div>
             )
-          })}
-        </div>
-      ) : (
-        <div className="flex flex-col items-center justify-center rounded-2xl border border-dashed border-border/80 bg-card p-12 text-center">
-          <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-muted text-muted-foreground mb-3">
-            <Compass className="h-6 w-6" />
-          </div>
-          <h3 className="text-sm font-semibold text-foreground">No experiences found</h3>
-          <p className="text-xs text-muted-foreground mt-1 max-w-sm">
-            {search || countryId || primaryType || status
-              ? "Try adjusting your search criteria or clear active filters."
-              : "Get started by creating your first MIRA curated experience."}
-          </p>
-          <Link
-            to="/experiences/new"
-            className="mt-4 inline-flex items-center gap-2 rounded-xl bg-primary px-3.5 py-2 text-xs font-semibold text-primary-foreground hover:bg-primary/90 transition-colors"
-          >
-            <Plus className="h-3.5 w-3.5" />
-            Create First Experience
-          </Link>
-        </div>
-      )}
+          }}
+        />
 
-      {/* Universal Pagination */}
+      {/* Universal Smart Pagination & Infinite Scroll Sentinel */}
       {data?.meta && (
         <Pagination
-          currentPage={page}
+          mode={mode}
+          currentPage={currentPage}
           totalPages={data.meta.totalPages}
           totalItems={data.meta.total}
-          pageSize={PAGE_SIZE}
-          onPageChange={setPage}
+          pageSize={effectiveLimit}
+          pageSizeOptions={pageSizeOptions}
+          onPageChange={setCurrentPage}
+          onPageSizeChange={setTargetItems}
+          hasMore={hasMore}
+          isLoadingMore={isLoadingMore || (isFetching && currentPage > 1)}
+          onLoadMore={handleLoadMore}
+          loadedCount={displayItems.length}
+          columns={columns}
           className="mt-6"
         />
       )}

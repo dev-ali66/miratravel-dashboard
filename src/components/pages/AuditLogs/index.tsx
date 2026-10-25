@@ -2,8 +2,6 @@ import { THEME_COLORS } from "@/config/theme"
 import { useState, useMemo } from "react"
 import {
   History,
-  Search,
-  FilterX,
   ShieldAlert,
   ShieldCheck,
   CheckCircle2,
@@ -17,14 +15,6 @@ import {
   Sparkles,
 } from "lucide-react"
 import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select"
 import {
   Dialog,
   DialogContent,
@@ -34,6 +24,13 @@ import {
 } from "@/components/ui/dialog"
 import { Pagination } from "@/components/shared/Pagination"
 import { PageHeader, CompactStatCard } from "@/components/shared/PageHeader"
+import {
+  FilterToolbar,
+  FilterGroup,
+  FilterSearch,
+  FilterSelect,
+  FilterResetButton,
+} from "@/components/shared/FilterToolbar"
 import { useAuditSocket, type LiveAuditLog } from "@/hooks/audit/useAuditSocket"
 import axios from "axios"
 
@@ -262,7 +259,7 @@ export default function AuditLogsPage() {
       />
 
       {/* Stream Status & Actions Bar */}
-      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 rounded-xl border border-border/60 bg-card/60 p-3.5 backdrop-blur-xl">
+      <div className="flex flex-wrap items-center justify-between gap-2 rounded-xl border border-border/60 bg-card/60 p-1.5 sm:p-2 backdrop-blur-md">
         <div
           className={`inline-flex items-center gap-1.5 rounded-full px-2.5 py-1 text-xs font-semibold ${
             isConnected
@@ -274,12 +271,12 @@ export default function AuditLogsPage() {
           <span>{isConnected ? "🟢 Live Audit Stream" : "🟡 Connecting..."}</span>
         </div>
 
-        <div className="flex flex-wrap items-center gap-2">
+        <div className="flex flex-wrap items-center gap-1.5 sm:gap-2">
           <Button
             variant="outline"
             size="sm"
             onClick={() => setShowTerminal(!showTerminal)}
-            className="gap-1.5 text-xs"
+            className="gap-1.5 text-xs h-8 sm:h-8.5 rounded-lg px-2.5"
           >
             <Terminal className="size-3.5" />
             <span>{showTerminal ? "Hide Live Terminal" : "Show Live Terminal"}</span>
@@ -290,7 +287,7 @@ export default function AuditLogsPage() {
             size="sm"
             onClick={handleSimulateEvent}
             disabled={isSimulating}
-            className="gap-1.5 text-xs bg-primary/5 hover:bg-primary/10 border-primary/20 text-primary"
+            className="gap-1.5 text-xs h-8 sm:h-8.5 rounded-lg px-2.5 bg-primary/5 hover:bg-primary/10 border-primary/20 text-primary"
           >
             <Sparkles className="size-3.5" />
             <span>{isSimulating ? "Dispatching..." : "Simulate Event"}</span>
@@ -299,7 +296,7 @@ export default function AuditLogsPage() {
           <Button
             variant="outline"
             size="sm"
-            className="flex items-center gap-2 text-xs"
+            className="flex items-center gap-1.5 text-xs h-8 sm:h-8.5 rounded-lg px-2.5"
             onClick={() => {
               const jsonStr = JSON.stringify(allLogs, null, 2)
               const blob = new Blob([jsonStr], { type: "application/json" })
@@ -392,60 +389,56 @@ export default function AuditLogsPage() {
 
 
       {/* Filter Toolbar */}
-      <div className="flex flex-col gap-3 rounded-xl border border-border/60 bg-card/60 p-4 backdrop-blur-xl md:flex-row md:items-center md:justify-between">
-        <div className="relative flex-1 min-w-[240px]">
-          <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
-          <Input
-            placeholder="Search by actor, action, entity ID, or details..."
+      <FilterToolbar>
+        <FilterGroup>
+          <FilterSearch
             value={search}
-            onChange={(e) => setSearch(e.target.value)}
-            className="pl-9 bg-background/50"
+            onChange={(val) => setSearch(val)}
+            placeholder="Search by actor, action, ID..."
+            width="w-48 sm:w-64 shrink-0"
           />
-        </div>
 
-        <div className="flex flex-wrap items-center gap-2.5">
-          <Select value={actionFilter} onValueChange={setActionFilter}>
-            <SelectTrigger className="w-[160px] bg-background/50">
-              <SelectValue placeholder="Action: All" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="ALL">All Actions</SelectItem>
-              <SelectItem value="BOOKING">Booking Actions</SelectItem>
-              <SelectItem value="PAYMENT">Payment Actions</SelectItem>
-              <SelectItem value="AUTH">Authentication</SelectItem>
-              <SelectItem value="STORY">Editorial / Stories</SelectItem>
-              <SelectItem value="USER">User Management</SelectItem>
-            </SelectContent>
-          </Select>
+          <FilterSelect
+            value={actionFilter}
+            onChange={(val) => setActionFilter(val)}
+            options={[
+              { label: "Booking Actions", value: "BOOKING" },
+              { label: "Payment Actions", value: "PAYMENT" },
+              { label: "Authentication", value: "AUTH" },
+              { label: "Editorial / Stories", value: "STORY" },
+              { label: "User Management", value: "USER" },
+            ]}
+            allLabel="All Actions"
+            allValue="ALL"
+            placeholder="Action: All"
+            width="min-w-[125px] max-w-[150px]"
+          />
 
-          <Select value={statusFilter} onValueChange={setStatusFilter}>
-            <SelectTrigger className="w-[140px] bg-background/50">
-              <SelectValue placeholder="Status: All" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="ALL">All Statuses</SelectItem>
-              <SelectItem value="SUCCESS">Success</SelectItem>
-              <SelectItem value="WARNING">Warning</SelectItem>
-              <SelectItem value="FAILED">Failed</SelectItem>
-            </SelectContent>
-          </Select>
+          <FilterSelect
+            value={statusFilter}
+            onChange={(val) => setStatusFilter(val)}
+            options={[
+              { label: "Success", value: "SUCCESS" },
+              { label: "Warning", value: "WARNING" },
+              { label: "Failed", value: "FAILED" },
+            ]}
+            allLabel="All Statuses"
+            allValue="ALL"
+            placeholder="Status: All"
+            width="min-w-[110px] max-w-[130px]"
+          />
 
           {(search || actionFilter !== "ALL" || statusFilter !== "ALL") && (
-            <Button
-              variant="ghost"
-              size="icon"
+            <FilterResetButton
               onClick={() => {
                 setSearch("")
                 setActionFilter("ALL")
                 setStatusFilter("ALL")
               }}
-              title="Reset Filters"
-            >
-              <FilterX className="h-4 w-4" />
-            </Button>
+            />
           )}
-        </div>
-      </div>
+        </FilterGroup>
+      </FilterToolbar>
 
       {/* Logs Table */}
       <div className="overflow-hidden rounded-xl border border-border/60 bg-card/60 shadow-sm backdrop-blur-xl">
@@ -464,7 +457,7 @@ export default function AuditLogsPage() {
             </thead>
             <tbody className="divide-y divide-border/40 text-foreground">
               {filteredLogs
-                .slice((currentPage - 1) * pageSize, currentPage * pageSize)
+                .slice(0, currentPage * pageSize)
                 .map((log) => (
                 <tr key={log.id} className="transition-colors hover:bg-muted/30">
                   <td className="px-5 py-3.5 text-xs text-muted-foreground whitespace-nowrap">
@@ -527,11 +520,15 @@ export default function AuditLogsPage() {
         {filteredLogs.length > 0 && (
           <div className="border-t border-border/60 bg-muted/10 px-5 py-3">
             <Pagination
+              mode="infinite"
               currentPage={currentPage}
               totalPages={Math.max(1, Math.ceil(filteredLogs.length / pageSize))}
               totalItems={filteredLogs.length}
               pageSize={pageSize}
               pageSizeOptions={[10, 20, 50, 100]}
+              loadedCount={Math.min(filteredLogs.length, currentPage * pageSize)}
+              hasMore={currentPage * pageSize < filteredLogs.length}
+              onLoadMore={() => setCurrentPage((p) => p + 1)}
               onPageChange={setCurrentPage}
               onPageSizeChange={(sz) => {
                 setPageSize(sz)

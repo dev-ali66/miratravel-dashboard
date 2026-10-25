@@ -1,8 +1,15 @@
+import { useState } from "react"
 import MiraLoader from "@/components/shared/MiraLoader"
 import { useGetPages } from "@/hooks/cms/useGetPages"
 import { Link } from "react-router-dom"
 import { FileText, Layers, Globe, CheckCircle2 } from "lucide-react"
 import { PageHeader, CompactStatCard } from "@/components/shared/PageHeader"
+import {
+  FilterToolbar,
+  FilterGroup,
+  FilterSearch,
+  FilterResetButton,
+} from "@/components/shared/FilterToolbar"
 
 export default function CMSPage() {
   const { data, isLoading } = useGetPages()
@@ -53,8 +60,20 @@ export default function CMSPage() {
     }
   })
 
+  const [search, setSearch] = useState("")
+
+  const filteredPages = displayedPages.filter((page) => {
+    if (!search.trim()) return true
+    const term = search.toLowerCase()
+    return (
+      page.name.toLowerCase().includes(term) ||
+      page.slug.toLowerCase().includes(term) ||
+      page.description.toLowerCase().includes(term)
+    )
+  })
+
   return (
-    <div className="w-full animate-in pt-2 duration-700 fade-in slide-in-from-bottom-4">
+    <div className="w-full space-y-6 animate-in pt-2 duration-700 fade-in slide-in-from-bottom-4">
       <PageHeader
         icon={FileText}
         title="Content Management"
@@ -93,11 +112,31 @@ export default function CMSPage() {
         }
       />
 
+      <FilterToolbar>
+        <FilterGroup>
+          <FilterSearch
+            value={search}
+            onChange={setSearch}
+            placeholder="Search CMS pages..."
+          />
+          {search && (
+            <FilterResetButton
+              label="Reset"
+              onClick={() => setSearch("")}
+            />
+          )}
+        </FilterGroup>
+      </FilterToolbar>
+
       {isLoading ? (
         <MiraLoader text="Loading CMS pages..." className="py-12 min-h-[300px]" />
+      ) : filteredPages.length === 0 ? (
+        <div className="rounded-xl border border-border/60 bg-card p-12 text-center text-muted-foreground">
+          No CMS pages match "{search}".
+        </div>
       ) : (
         <div className="grid grid-cols-1 gap-2 md:grid-cols-3 lg:grid-cols-5 xl:grid-cols-6">
-          {displayedPages.map((page) => (
+          {filteredPages.map((page) => (
             <div
               key={page.slug}
               className="group relative flex flex-col gap-2 justify-between overflow-hidden rounded-xl border border-border/60 bg-card p-6 shadow-sm transition-all hover:shadow-md"

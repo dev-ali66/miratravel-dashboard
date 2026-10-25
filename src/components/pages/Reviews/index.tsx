@@ -1,8 +1,6 @@
 import { useState } from "react"
 import {
   Star,
-  Search,
-  FilterX,
   CheckCircle2,
   XCircle,
   Clock,
@@ -12,17 +10,16 @@ import {
   Award,
 } from "lucide-react"
 import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select"
 import { Card, CardContent } from "@/components/ui/card"
 import { Pagination } from "@/components/shared/Pagination"
 import { PageHeader, CompactStatCard } from "@/components/shared/PageHeader"
+import {
+  FilterToolbar,
+  FilterGroup,
+  FilterSearch,
+  FilterSelect,
+  FilterResetButton,
+} from "@/components/shared/FilterToolbar"
 import { cn } from "@/lib/utils"
 
 export interface ReviewItem {
@@ -201,64 +198,61 @@ export default function ReviewsPage() {
       />
 
       {/* Toolbar */}
-      <div className="flex flex-col gap-3 rounded-xl border border-border/60 bg-card/60 p-4 backdrop-blur-xl md:flex-row md:items-center md:justify-between">
-        <div className="relative flex-1 min-w-[240px]">
-          <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
-          <Input
-            placeholder="Search reviews by guest, journey, or keyword..."
+      <FilterToolbar>
+        <FilterGroup>
+          <FilterSearch
             value={search}
-            onChange={(e) => setSearch(e.target.value)}
-            className="pl-9 bg-background/50"
+            onChange={(val) => setSearch(val)}
+            placeholder="Search reviews..."
+            width="w-48 sm:w-64 shrink-0"
           />
-        </div>
 
-        <div className="flex items-center gap-2.5">
-          <Select value={statusFilter} onValueChange={setStatusFilter}>
-            <SelectTrigger className="w-[160px] bg-background/50">
-              <SelectValue placeholder="Status: All" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="ALL">All Statuses</SelectItem>
-              <SelectItem value="PUBLISHED">Published</SelectItem>
-              <SelectItem value="PENDING_MODERATION">Pending</SelectItem>
-              <SelectItem value="REJECTED">Rejected</SelectItem>
-            </SelectContent>
-          </Select>
+          <FilterSelect
+            value={statusFilter}
+            onChange={(val) => setStatusFilter(val)}
+            options={[
+              { label: "Published", value: "PUBLISHED" },
+              { label: "Pending", value: "PENDING_MODERATION" },
+              { label: "Rejected", value: "REJECTED" },
+            ]}
+            allLabel="All Statuses"
+            allValue="ALL"
+            placeholder="Status: All"
+            width="min-w-[110px] max-w-[140px]"
+          />
 
-          <Select value={ratingFilter} onValueChange={setRatingFilter}>
-            <SelectTrigger className="w-[140px] bg-background/50">
-              <SelectValue placeholder="Stars: All" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="ALL">All Stars</SelectItem>
-              <SelectItem value="5">5 Stars</SelectItem>
-              <SelectItem value="4">4 Stars</SelectItem>
-              <SelectItem value="3">3 Stars</SelectItem>
-              <SelectItem value="2">2 Stars</SelectItem>
-              <SelectItem value="1">1 Star</SelectItem>
-            </SelectContent>
-          </Select>
+          <FilterSelect
+            value={ratingFilter}
+            onChange={(val) => setRatingFilter(val)}
+            options={[
+              { label: "5 Stars", value: "5", icon: Star },
+              { label: "4 Stars", value: "4", icon: Star },
+              { label: "3 Stars", value: "3", icon: Star },
+              { label: "2 Stars", value: "2", icon: Star },
+              { label: "1 Star", value: "1", icon: Star },
+            ]}
+            allLabel="All Stars"
+            allValue="ALL"
+            placeholder="Stars: All"
+            width="min-w-[110px] max-w-[135px]"
+          />
 
           {(search || statusFilter !== "ALL" || ratingFilter !== "ALL") && (
-            <Button
-              variant="ghost"
-              size="icon"
+            <FilterResetButton
               onClick={() => {
                 setSearch("")
                 setStatusFilter("ALL")
                 setRatingFilter("ALL")
               }}
-            >
-              <FilterX className="h-4 w-4" />
-            </Button>
+            />
           )}
-        </div>
-      </div>
+        </FilterGroup>
+      </FilterToolbar>
 
       {/* Reviews List Cards */}
       <div className="space-y-4">
         {filtered
-          .slice((currentPage - 1) * pageSize, currentPage * pageSize)
+          .slice(0, currentPage * pageSize)
           .map((rev) => (
           <Card key={rev.id} className="border-border/60 bg-card/60 backdrop-blur-xl transition-all hover:border-border">
             <CardContent className="p-6">
@@ -364,11 +358,15 @@ export default function ReviewsPage() {
       {filtered.length > 0 && (
         <div className="pt-2">
           <Pagination
+            mode="infinite"
             currentPage={currentPage}
             totalPages={Math.max(1, Math.ceil(filtered.length / pageSize))}
             totalItems={filtered.length}
             pageSize={pageSize}
             pageSizeOptions={[5, 10, 20, 50]}
+            loadedCount={Math.min(filtered.length, currentPage * pageSize)}
+            hasMore={currentPage * pageSize < filtered.length}
+            onLoadMore={() => setCurrentPage((p) => p + 1)}
             onPageChange={setCurrentPage}
             onPageSizeChange={(sz) => {
               setPageSize(sz)

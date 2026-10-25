@@ -1,14 +1,23 @@
-import MiraLoader from "@/components/shared/MiraLoader"
 import { useEffect, useState } from "react"
 import { Link } from "react-router-dom"
 import { Pagination } from "@/components/shared/Pagination"
+import { DataPreview } from "@/components/shared/DataPreview"
+import { useListingPagination } from "@/hooks/ui/useListingPagination"
 import { PageHeader, CompactStatCard } from "@/components/shared/PageHeader"
+import {
+  FilterToolbar,
+  FilterGroup,
+  FilterSearch,
+  FilterSelect,
+  FilterActions,
+  FilterCreateButton,
+  FilterResetButton,
+} from "@/components/shared/FilterToolbar"
 import {
   Trash2,
   BookOpen,
   Loader2,
   Plus,
-  Search,
   Globe,
   Tag,
   Clock,
@@ -34,10 +43,7 @@ import type { Story } from "@/hooks/story/storyTypes"
 import { UniversalMultimediaPreview } from "@/components/pages/CMS/Home/shared/preview/UniversalMultimediaPreview"
 import { getSafeStringValue } from "@/components/pages/Location/shared/normalizeHelpers"
 
-const PAGE_SIZE = 12
-
 export default function StoriesPage() {
-  const [page, setPage] = useState(1)
   const [searchInput, setSearchInput] = useState("")
   const [search, setSearch] = useState("")
   const [type, setType] = useState<string>("")
@@ -48,7 +54,6 @@ export default function StoriesPage() {
   useEffect(() => {
     const timeout = setTimeout(() => {
       setSearch(searchInput)
-      setPage(1)
     }, 350)
     return () => clearTimeout(timeout)
   }, [searchInput])
@@ -57,15 +62,49 @@ export default function StoriesPage() {
   const { data: categoriesData } = useGetStoryCategories()
   const categoriesList = categoriesData?.data ?? []
 
+  const filterKey = `${search}-${type}-${category}-${status}`
+
+  const {
+    mode,
+    currentPage,
+    setCurrentPage,
+    setTargetItems,
+    columns,
+    effectiveLimit,
+    pageSizeOptions,
+    gridRef,
+    displayItems,
+    hasMore,
+    isLoadingMore,
+    handleLoadMore,
+    setIncomingData,
+  } = useListingPagination<Story>({
+    mode: "infinite",
+    initialTargetItems: 18,
+    isGrid: true,
+    gridColumns: { base: 1, md: 3, lg: 5, xl: 6 },
+    filterKey,
+    keyExtractor: (item) => item.id,
+  })
+
+  const setPage = setCurrentPage
+
   // Fetch stories with query params
-  const { data, isLoading, isError, refetch } = useGetStories({
-    page,
-    limit: PAGE_SIZE,
+  const { data, isLoading, isFetching, isError, refetch } = useGetStories({
+    page: currentPage,
+    limit: effectiveLimit,
     search: search || undefined,
     type: type || undefined,
     category: category || undefined,
     status: status || undefined,
   })
+
+  // Sync incoming data to pagination manager
+  useEffect(() => {
+    if (data) {
+      setIncomingData(data.data, data.meta?.total)
+    }
+  }, [data, setIncomingData])
 
   useEffect(() => {
     refetch()
@@ -97,7 +136,7 @@ export default function StoriesPage() {
     })
   }
 
-  const stories = data?.data ?? []
+  const stories = displayItems
   const meta = data?.meta
 
   const hasFilters = Boolean(search || type || category || status)
@@ -111,7 +150,7 @@ export default function StoriesPage() {
   }
 
   return (
-    <div className="w-full animate-in pt-2 duration-700 fade-in slide-in-from-bottom-4">
+    <div className="w-full space-y-6 animate-in pt-2 duration-700 fade-in slide-in-from-bottom-4">
       {/* Header with 30% title & 70% compact statistics */}
       <PageHeader
         icon={BookOpen}
@@ -152,91 +191,117 @@ export default function StoriesPage() {
       />
 
       {/* Filters Bar */}
-      <div className="mb-6 flex flex-col gap-3 md:flex-row md:items-center">
-        {/* Search */}
-        <div className="relative flex-1">
-          <Search className="pointer-events-none absolute top-1/2 left-3 h-4 w-4 -translate-y-1/2 text-extra-light" />
-          <input
+      <FilterToolbar>
+        <FilterGroup>
+          {/* Search */}
+          <FilterSearch
             value={searchInput}
-            onChange={(e) => setSearchInput(e.target.value)}
-            placeholder="Search stories by title, slug or author..."
-            className="w-full rounded-xl border border-border bg-card py-2.5 pr-3 pl-9 text-sm text-foreground placeholder:text-muted-foreground outline-none focus:border-primary focus:ring-1 focus:ring-primary"
+            onChange={(val) => {
+              setSearchInput(val)
+              setPage(1)
+            }}
+            placeholder="Search stories..."
+            width="w-44 sm:w-56 shrink-0"
           />
-        </div>
 
-        {/* Story Type Filter */}
-        <select
-          value={type}
-          onChange={(e) => {
-            setType(e.target.value)
-            setPage(1)
-          }}
-          className="rounded-xl border border-border bg-card px-3 py-2.5 text-sm text-foreground outline-none focus:border-primary md:w-44"
-        >
-          <option value="">All Story Types</option>
-          <option value="short_story">Short Story</option>
-          <option value="long_story">Long Story</option>
-          <option value="guidance">Guidance</option>
-        </select>
+          {/* Story Type Filter */}
+          <FilterSelect
+            value={type}
+            onChange={(val) => {
+              setType(val)
+              setPage(1)
+            }}
+            options={[
+              { label: "Short Story", value: "short_story" },
+              { label: "Long Story", value: "long_story" },
+              { label: "Guidance", value: "guidance" },
+            ]}
+            allLabel="All Story Types"
+            placeholder="Story Type"
+            width="min-w-[125px] max-w-[150px]"
+          />
 
-        {/* Category Filter */}
-        <select
-          value={category}
-          onChange={(e) => {
-            setCategory(e.target.value)
-            setPage(1)
-          }}
-          className="rounded-xl border border-border bg-card px-3 py-2.5 text-sm text-foreground outline-none focus:border-primary md:w-44"
-        >
-          <option value="">All Categories</option>
-          {categoriesList.map((cat) => (
-            <option key={cat.id} value={cat.name}>
-              {cat.name}
-            </option>
-          ))}
-        </select>
+          {/* Category Filter */}
+          <FilterSelect
+            value={category}
+            onChange={(val) => {
+              setCategory(val)
+              setPage(1)
+            }}
+            options={categoriesList.map((cat) => ({
+              label: cat.name,
+              value: cat.name,
+            }))}
+            allLabel="All Categories"
+            placeholder="Category"
+            width="min-w-[125px] max-w-[155px]"
+          />
 
-        {/* Status Filter */}
-        <select
-          value={status}
-          onChange={(e) => {
-            setStatus(e.target.value)
-            setPage(1)
-          }}
-          className="rounded-xl border border-border bg-card px-3 py-2.5 text-sm text-foreground outline-none focus:border-primary md:w-36"
-        >
-          <option value="">All Statuses</option>
-          <option value="PUBLISHED">PUBLISHED</option>
-          <option value="DRAFT">DRAFT</option>
-        </select>
-        
-        <Link
-          to="/stories/new"
-          className="inline-flex shrink-0 items-center gap-2 rounded-xl bg-brand-primary px-4 py-2.5 text-sm font-medium text-white shadow-sm transition hover:bg-accent"
-        >
-          <Plus className="h-4 w-4" />
-          Create Story
-        </Link>
-      </div>
+          {/* Status Filter */}
+          <FilterSelect
+            value={status}
+            onChange={(val) => {
+              setStatus(val)
+              setPage(1)
+            }}
+            options={[
+              { label: "PUBLISHED", value: "PUBLISHED" },
+              { label: "DRAFT", value: "DRAFT" },
+            ]}
+            allLabel="All Statuses"
+            placeholder="Status"
+            width="min-w-[105px] max-w-[125px]"
+          />
 
-      {/* Loading State */}
-      {isLoading ? (
-        <MiraLoader text="Loading travel stories..." className="py-12 min-h-[300px]" />
-      ) : isError ? (
-        <div className="rounded-xl border border-destructive/30 bg-destructive/5 p-6 text-center">
-          <p className="text-sm font-medium text-destructive">
-            Failed to load stories.
-          </p>
-          <p className="mt-1 text-xs text-muted-foreground">
-            Please try again later.
-          </p>
-        </div>
-      ) : stories.length > 0 ? (
-        <>
-          {/* Stories Grid */}
-          <div className="grid grid-cols-1 gap-2 md:grid-cols-3 lg:grid-cols-5 xl:grid-cols-6">
-            {stories.map((s: any, index) => {
-              const rawTitle = s.title
+          {(searchInput || type || category || status) && (
+            <FilterResetButton
+              onClick={() => {
+                setSearchInput("")
+                setType("")
+                setCategory("")
+                setStatus("")
+                setPage(1)
+              }}
+            />
+          )}
+        </FilterGroup>
+
+        <FilterActions>
+          <FilterCreateButton
+            to="/stories/new"
+            label="Create Story"
+            icon={Plus}
+          />
+        </FilterActions>
+      </FilterToolbar>
+
+      {/* Stories Grid via Universal DataPreview */}
+      <DataPreview<Story>
+        gridRef={gridRef}
+        items={displayItems}
+        isLoading={isLoading && currentPage === 1}
+        isError={isError}
+        errorMessage="Failed to load stories. Please try again later."
+        onRetry={refetch}
+        layout="grid"
+        gridClassName="grid grid-cols-1 gap-2 md:grid-cols-3 lg:grid-cols-5 xl:grid-cols-6"
+        emptyIcon={BookOpen}
+        emptyTitle={hasFilters ? "No matching stories found" : "No Stories Created Yet"}
+        emptyDescription={
+          hasFilters
+            ? "Try adjusting your search criteria or clearing filters."
+            : "Click below to create your first travel story."
+        }
+        emptyAction={
+          <Link
+            to="/stories/new"
+            className="mt-4 inline-flex items-center gap-2 rounded-xl bg-brand-primary px-4 py-2.5 text-sm font-medium text-white shadow-sm transition hover:bg-accent"
+          >
+            <Plus className="h-4 w-4" /> Add Story
+          </Link>
+        }
+        renderItem={(s: any, index) => {
+          const rawTitle = s.title
               const storyTitle = typeof rawTitle === "string" ? rawTitle : rawTitle?.value || "Untitled Story"
               const rawSlug = s.slug
               const slugStr = typeof rawSlug === "string" ? rawSlug : rawSlug?.value || ""
@@ -419,45 +484,27 @@ export default function StoriesPage() {
                   </div>
                 </div>
               )
-            })}
-          </div>
+            }}
+          />
 
-          {/* Universal Pagination */}
-          {meta && (
-            <Pagination
-              currentPage={meta.page}
-              totalPages={meta.totalPages}
-              totalItems={meta.total}
-              pageSize={PAGE_SIZE}
-              onPageChange={setPage}
-              className="mt-8"
-            />
-          )}
-        </>
-      ) : (
-        /* Empty State */
-        <div className="flex flex-col items-center justify-center rounded-2xl border border-dashed border-border/70 bg-card/40 py-24 text-center">
-          <div className="mb-4 rounded-full bg-accent/10 p-4">
-            <BookOpen className="h-8 w-8 text-accent" />
-          </div>
-
-          <h3 className="mb-2 text-xl font-serif font-bold text-brand-primary">
-            {hasFilters ? "No matching stories found" : "No Stories Created Yet"}
-          </h3>
-
-          <p className="max-w-sm text-sm text-subtitle">
-            {hasFilters
-              ? "Try adjusting your search criteria or clearing filters."
-              : "Click below to create your first travel story."}
-          </p>
-
-          <Link
-            to="/stories/new"
-            className="mt-4 inline-flex items-center gap-2 rounded-xl bg-brand-primary px-4 py-2.5 text-sm font-medium text-white shadow-sm transition hover:bg-accent"
-          >
-            <Plus className="h-4 w-4" /> Add Story
-          </Link>
-        </div>
+      {/* Universal Smart Pagination & Infinite Scroll Sentinel */}
+      {meta && (
+        <Pagination
+          mode={mode}
+          currentPage={currentPage}
+          totalPages={meta.totalPages}
+          totalItems={meta.total}
+          pageSize={effectiveLimit}
+          pageSizeOptions={pageSizeOptions}
+          onPageChange={setCurrentPage}
+          onPageSizeChange={setTargetItems}
+          hasMore={hasMore}
+          isLoadingMore={isLoadingMore || (isFetching && currentPage > 1)}
+          onLoadMore={handleLoadMore}
+          loadedCount={displayItems.length}
+          columns={columns}
+          className="mt-6"
+        />
       )}
 
       {/* Delete Confirmation Modal */}

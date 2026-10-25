@@ -1,8 +1,6 @@
 import { useState, useEffect, useCallback } from "react"
 import {
   Send,
-  Search,
-  FilterX,
   Download,
   MailCheck,
   TrendingUp,
@@ -16,15 +14,15 @@ import {
 } from "lucide-react"
 import { Pagination } from "@/components/shared/Pagination"
 import { PageHeader, CompactStatCard } from "@/components/shared/PageHeader"
-import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
 import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select"
+  FilterToolbar,
+  FilterGroup,
+  FilterSearch,
+  FilterSelect,
+  FilterActions,
+  FilterResetButton,
+} from "@/components/shared/FilterToolbar"
+import { Button } from "@/components/ui/button"
 import { cn } from "@/lib/utils"
 import { apiPrivate } from "@/lib/api-client"
 
@@ -186,66 +184,76 @@ export default function NewsletterPage() {
       />
 
       {/* Toolbar */}
-      <div className="flex flex-col gap-3 rounded-xl border border-border/60 bg-card/60 p-4 backdrop-blur-xl md:flex-row md:items-center md:justify-between">
-        <div className="relative flex-1 min-w-[240px]">
-          <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
-          <Input
-            placeholder="Search by subscriber email..."
+      <FilterToolbar>
+        <FilterGroup>
+          <FilterSearch
             value={search}
-            onChange={(e) => setSearch(e.target.value)}
-            className="pl-9 bg-background/50"
+            onChange={(val) => setSearch(val)}
+            placeholder="Search email..."
+            width="w-48 sm:w-64 shrink-0"
           />
-        </div>
 
-        <div className="flex items-center gap-2.5">
-          <Select value={statusFilter} onValueChange={setStatusFilter}>
-            <SelectTrigger className="w-[160px] bg-background/50">
-              <SelectValue placeholder="Status: All" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="ALL">All Statuses</SelectItem>
-              <SelectItem value="SUBSCRIBED">Subscribed</SelectItem>
-              <SelectItem value="UNSUBSCRIBED">Unsubscribed</SelectItem>
-            </SelectContent>
-          </Select>
+          <FilterSelect
+            value={statusFilter}
+            onChange={(val) => setStatusFilter(val)}
+            options={[
+              { label: "Subscribed", value: "SUBSCRIBED" },
+              { label: "Unsubscribed", value: "UNSUBSCRIBED" },
+            ]}
+            allLabel="All Statuses"
+            allValue="ALL"
+            placeholder="Status: All"
+            width="min-w-[110px] max-w-[140px]"
+          />
 
-          <Select value={sourceFilter} onValueChange={setSourceFilter}>
-            <SelectTrigger className="w-[170px] bg-background/50">
-              <SelectValue placeholder="Source: All" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="ALL">All Sources</SelectItem>
-              <SelectItem value="FOOTER">Footer Form</SelectItem>
-              <SelectItem value="HOMEPAGE">Homepage</SelectItem>
-              <SelectItem value="STORY_POPUP">Story Popup</SelectItem>
-              <SelectItem value="CONCIERGE">Concierge Lead</SelectItem>
-            </SelectContent>
-          </Select>
+          <FilterSelect
+            value={sourceFilter}
+            onChange={(val) => setSourceFilter(val)}
+            options={[
+              { label: "Footer Form", value: "FOOTER" },
+              { label: "Homepage", value: "HOMEPAGE" },
+              { label: "Story Popup", value: "STORY_POPUP" },
+              { label: "Concierge Lead", value: "CONCIERGE" },
+            ]}
+            allLabel="All Sources"
+            allValue="ALL"
+            placeholder="Source: All"
+            width="min-w-[110px] max-w-[140px]"
+          />
 
           {(search || statusFilter !== "ALL" || sourceFilter !== "ALL") && (
-            <Button
-              variant="ghost"
-              size="icon"
+            <FilterResetButton
               onClick={() => {
                 setSearch("")
                 setStatusFilter("ALL")
                 setSourceFilter("ALL")
               }}
-            >
-              <FilterX className="h-4 w-4" />
-            </Button>
+            />
           )}
+        </FilterGroup>
 
-          <Button onClick={fetchSubscribers} variant="outline" size="icon" disabled={loading} title="Refresh list">
-            <RefreshCw className={cn("h-4 w-4", loading && "animate-spin")} />
+        <FilterActions>
+          <Button
+            onClick={fetchSubscribers}
+            variant="outline"
+            size="icon"
+            disabled={loading}
+            title="Refresh list"
+            className="h-8 sm:h-8.5 w-8 sm:w-8.5 rounded-lg cursor-pointer"
+          >
+            <RefreshCw className={cn("h-3.5 w-3.5", loading && "animate-spin")} />
           </Button>
 
-          <Button onClick={handleExportCSV} variant="outline" className="flex items-center gap-2 shadow-xs">
-            <Download className="h-4 w-4" />
+          <Button
+            onClick={handleExportCSV}
+            variant="outline"
+            className="h-8 sm:h-8.5 rounded-lg flex items-center gap-1.5 px-2.5 cursor-pointer shadow-2xs text-xs whitespace-nowrap"
+          >
+            <Download className="h-3.5 w-3.5" />
             <span>Export CSV</span>
           </Button>
-        </div>
-      </div>
+        </FilterActions>
+      </FilterToolbar>
 
       {/* Table */}
       <div className="overflow-hidden rounded-xl border border-border/60 bg-card/60 shadow-sm backdrop-blur-xl">
@@ -274,7 +282,7 @@ export default function NewsletterPage() {
               </thead>
               <tbody className="divide-y divide-border/40 text-foreground">
                 {filtered
-                  .slice((currentPage - 1) * pageSize, currentPage * pageSize)
+                  .slice(0, currentPage * pageSize)
                   .map((s) => (
                     <tr key={s.id} className="transition-colors hover:bg-muted/30">
                       <td className="px-5 py-3.5 font-medium text-xs text-foreground">
@@ -355,11 +363,15 @@ export default function NewsletterPage() {
         {filtered.length > 0 && (
           <div className="border-t border-border/60 bg-muted/10 px-5 py-3">
             <Pagination
+              mode="infinite"
               currentPage={currentPage}
               totalPages={Math.max(1, Math.ceil(filtered.length / pageSize))}
               totalItems={filtered.length}
               pageSize={pageSize}
               pageSizeOptions={[10, 20, 50, 100]}
+              loadedCount={Math.min(filtered.length, currentPage * pageSize)}
+              hasMore={currentPage * pageSize < filtered.length}
+              onLoadMore={() => setCurrentPage((p) => p + 1)}
               onPageChange={setCurrentPage}
               onPageSizeChange={(sz) => {
                 setPageSize(sz)

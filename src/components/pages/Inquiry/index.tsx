@@ -1,8 +1,6 @@
 import { useState, useEffect, useCallback } from "react"
 import {
   Inbox,
-  Search,
-  FilterX,
   Eye,
   Trash2,
   RefreshCw,
@@ -18,8 +16,15 @@ import {
 } from "lucide-react"
 import { Pagination } from "@/components/shared/Pagination"
 import { PageHeader, CompactStatCard } from "@/components/shared/PageHeader"
+import {
+  FilterToolbar,
+  FilterGroup,
+  FilterSearch,
+  FilterSelect,
+  FilterActions,
+  FilterResetButton,
+} from "@/components/shared/FilterToolbar"
 import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
 import {
   Select,
   SelectContent,
@@ -185,56 +190,53 @@ export default function InquiryPage() {
       />
 
       {/* Toolbar */}
-      <div className="flex flex-col gap-3 rounded-xl border border-border/60 bg-card/60 p-4 backdrop-blur-xl md:flex-row md:items-center md:justify-between">
-        <div className="relative flex-1 min-w-[240px]">
-          <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
-          <Input
-            placeholder="Search by full name, email, destination, or inquiry ref..."
+      <FilterToolbar>
+        <FilterGroup>
+          <FilterSearch
             value={search}
-            onChange={(e) => setSearch(e.target.value)}
-            className="pl-9 bg-background/50"
+            onChange={(val) => setSearch(val)}
+            placeholder="Search inquiries..."
+            width="w-48 sm:w-64 shrink-0"
           />
-        </div>
 
-        <div className="flex items-center gap-2.5">
-          <Select value={statusFilter} onValueChange={setStatusFilter}>
-            <SelectTrigger className="w-[160px] bg-background/50">
-              <SelectValue placeholder="Status: All" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="ALL">All Statuses</SelectItem>
-              <SelectItem value="NEW">New</SelectItem>
-              <SelectItem value="IN_REVIEW">In Review</SelectItem>
-              <SelectItem value="CONTACTED">Contacted</SelectItem>
-              <SelectItem value="CLOSED">Closed</SelectItem>
-            </SelectContent>
-          </Select>
+          <FilterSelect
+            value={statusFilter}
+            onChange={(val) => setStatusFilter(val)}
+            options={[
+              { label: "New", value: "NEW" },
+              { label: "In Review", value: "IN_REVIEW" },
+              { label: "Contacted", value: "CONTACTED" },
+              { label: "Closed", value: "CLOSED" },
+            ]}
+            allLabel="All Statuses"
+            allValue="ALL"
+            placeholder="Status: All"
+            width="min-w-[110px] max-w-[140px]"
+          />
 
           {(search || statusFilter !== "ALL") && (
-            <Button
-              variant="ghost"
-              size="icon"
+            <FilterResetButton
               onClick={() => {
                 setSearch("")
                 setStatusFilter("ALL")
               }}
-            >
-              <FilterX className="h-4 w-4" />
-            </Button>
+            />
           )}
+        </FilterGroup>
 
+        <FilterActions>
           <Button
             variant="outline"
             size="icon"
             onClick={fetchInquiries}
             disabled={loading}
             title="Refresh Inquiries"
-            className="h-9 w-9"
+            className="h-8 sm:h-8.5 w-8 sm:w-8.5 rounded-lg cursor-pointer"
           >
-            <RefreshCw className={cn("h-4 w-4", loading && "animate-spin")} />
+            <RefreshCw className={cn("h-3.5 w-3.5", loading && "animate-spin")} />
           </Button>
-        </div>
-      </div>
+        </FilterActions>
+      </FilterToolbar>
 
       {/* Table */}
       <div className="overflow-hidden rounded-xl border border-border/60 bg-card/60 shadow-sm backdrop-blur-xl">
@@ -266,7 +268,7 @@ export default function InquiryPage() {
                 </tr>
               ) : (
                 inquiries
-                  .slice((currentPage - 1) * pageSize, currentPage * pageSize)
+                  .slice(0, currentPage * pageSize)
                   .map((inquiry) => (
                     <tr key={inquiry.id} className="transition-colors hover:bg-muted/30">
                       <td className="px-5 py-3.5 font-mono text-xs font-semibold">
@@ -355,11 +357,15 @@ export default function InquiryPage() {
         {inquiries.length > 0 && (
           <div className="border-t border-border/60 bg-muted/10 px-5 py-3">
             <Pagination
+              mode="infinite"
               currentPage={currentPage}
               totalPages={Math.max(1, Math.ceil(inquiries.length / pageSize))}
               totalItems={inquiries.length}
               pageSize={pageSize}
               pageSizeOptions={[10, 20, 50, 100]}
+              loadedCount={Math.min(inquiries.length, currentPage * pageSize)}
+              hasMore={currentPage * pageSize < inquiries.length}
+              onLoadMore={() => setCurrentPage((p) => p + 1)}
               onPageChange={setCurrentPage}
               onPageSizeChange={(sz) => {
                 setPageSize(sz)

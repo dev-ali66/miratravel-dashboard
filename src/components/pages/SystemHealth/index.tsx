@@ -18,6 +18,12 @@ import { Switch } from "@/components/ui/switch"
 import { apiPrivate } from "@/lib/api-client"
 import { useSystemSocket } from "@/hooks/system/useSystemSocket"
 import { PageHeader, CompactStatCard } from "@/components/shared/PageHeader"
+import {
+  FilterToolbar,
+  FilterGroup,
+  FilterTabs,
+  FilterActions,
+} from "@/components/shared/FilterToolbar"
 import { toast } from "sonner"
 
 export default function SystemHealthPage() {
@@ -156,98 +162,57 @@ export default function SystemHealthPage() {
         }
       />
 
-      {/* Diagnostics Toolbar */}
-      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 rounded-xl border border-border/60 bg-card/60 p-3.5 backdrop-blur-xl">
-        <div className="flex items-center gap-2">
-          {isConnected ? (
-            <span className="inline-flex items-center gap-1.5 rounded-full bg-emerald-500/10 px-2.5 py-1 text-xs font-semibold text-emerald-600 dark:text-emerald-400 border border-emerald-500/30">
-              <span className="h-2 w-2 rounded-full bg-emerald-500 animate-ping" />
-              Socket Live Stream
-            </span>
-          ) : (
-            <span className="inline-flex items-center gap-1.5 rounded-full bg-zinc-500/10 px-2.5 py-1 text-xs font-semibold text-zinc-500 border border-zinc-500/30">
-              REST Polling Active
-            </span>
-          )}
-        </div>
+      {/* Unified Diagnostics Toolbar with Tabs and Actions */}
+      <FilterToolbar>
+        <FilterGroup className="overflow-x-auto scrollbar-none py-0.5">
+          <FilterTabs
+            tabs={[
+              { key: "TELEMETRY", label: "Core Telemetry", icon: Server },
+              { key: "GATEWAYS", label: "Gateways", icon: Globe },
+              { key: "CRON", label: "Cron Jobs", icon: Clock, count: cronJobs.length },
+              { key: "BACKUPS", label: "Snapshots", icon: Database, count: backups.length },
+              { key: "FLAGS", label: "Feature Flags", icon: Sliders },
+            ]}
+            activeTab={activeTab}
+            onChange={(key) => setActiveTab(key as any)}
+          />
+        </FilterGroup>
 
-        <div className="flex items-center gap-2">
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={handleClearCache}
-            className="flex items-center gap-2 text-rose-600 border-rose-500/20 hover:bg-rose-500/10 text-xs"
-          >
-            <Zap className="h-3.5 w-3.5" />
-            <span>Flush Cache</span>
-          </Button>
+        <FilterActions>
+          <div className="flex items-center gap-1.5 sm:gap-2">
+            {isConnected ? (
+              <span className="inline-flex items-center gap-1.5 rounded-full bg-emerald-500/10 px-2.5 py-1 text-xs font-semibold text-emerald-600 dark:text-emerald-400 border border-emerald-500/30 whitespace-nowrap">
+                <span className="h-1.5 w-1.5 rounded-full bg-emerald-500 animate-ping" />
+                Live Stream
+              </span>
+            ) : (
+              <span className="inline-flex items-center gap-1.5 rounded-full bg-zinc-500/10 px-2.5 py-1 text-xs font-semibold text-zinc-500 border border-zinc-500/30 whitespace-nowrap">
+                REST Polling
+              </span>
+            )}
 
-          <Button
-            size="sm"
-            onClick={fetchAllData}
-            disabled={isLoading}
-            className="flex items-center gap-2 shadow-sm text-xs"
-          >
-            <RefreshCw className={`h-3.5 w-3.5 ${isLoading ? "animate-spin" : ""}`} />
-            <span>Refresh Diagnostics</span>
-          </Button>
-        </div>
-      </div>
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={handleClearCache}
+              className="h-8 sm:h-8.5 rounded-lg flex items-center gap-1.5 text-rose-600 border-rose-500/20 hover:bg-rose-500/10 text-xs px-2.5 cursor-pointer whitespace-nowrap"
+            >
+              <Zap className="h-3 w-3" />
+              <span>Flush Cache</span>
+            </Button>
 
-
-
-      {/* Navigation Tabs */}
-      <div className="flex items-center gap-2 border-b border-border/60 pb-2">
-        <Button
-          variant={activeTab === "TELEMETRY" ? "default" : "ghost"}
-          size="sm"
-          onClick={() => setActiveTab("TELEMETRY")}
-          className="gap-2 text-xs"
-        >
-          <Server className="h-4 w-4" />
-          <span>Core Telemetry</span>
-        </Button>
-
-        <Button
-          variant={activeTab === "GATEWAYS" ? "default" : "ghost"}
-          size="sm"
-          onClick={() => setActiveTab("GATEWAYS")}
-          className="gap-2 text-xs"
-        >
-          <Globe className="h-4 w-4" />
-          <span>Gateways & Third-Party</span>
-        </Button>
-
-        <Button
-          variant={activeTab === "CRON" ? "default" : "ghost"}
-          size="sm"
-          onClick={() => setActiveTab("CRON")}
-          className="gap-2 text-xs"
-        >
-          <Clock className="h-4 w-4" />
-          <span>Cron Automation ({cronJobs.length})</span>
-        </Button>
-
-        <Button
-          variant={activeTab === "BACKUPS" ? "default" : "ghost"}
-          size="sm"
-          onClick={() => setActiveTab("BACKUPS")}
-          className="gap-2 text-xs"
-        >
-          <Database className="h-4 w-4" />
-          <span>Snapshots & Backups ({backups.length})</span>
-        </Button>
-
-        <Button
-          variant={activeTab === "FLAGS" ? "default" : "ghost"}
-          size="sm"
-          onClick={() => setActiveTab("FLAGS")}
-          className="gap-2 text-xs"
-        >
-          <Sliders className="h-4 w-4" />
-          <span>Feature Flags</span>
-        </Button>
-      </div>
+            <Button
+              size="sm"
+              onClick={fetchAllData}
+              disabled={isLoading}
+              className="h-8 sm:h-8.5 rounded-lg flex items-center gap-1.5 shadow-xs text-xs px-2.5 cursor-pointer whitespace-nowrap"
+            >
+              <RefreshCw className={`h-3 w-3 ${isLoading ? "animate-spin" : ""}`} />
+              <span>Refresh</span>
+            </Button>
+          </div>
+        </FilterActions>
+      </FilterToolbar>
 
       {/* Tab 1: Core Telemetry */}
       {activeTab === "TELEMETRY" && (

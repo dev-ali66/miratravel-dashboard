@@ -143,7 +143,30 @@ export const MediaLibraryPage: React.FC = () => {
     refetchStats()
   }
 
-  const assets = galleryData?.data || []
+  const [accumulatedAssets, setAccumulatedAssets] = useState<MediaAsset[]>([])
+
+  // Reset or accumulate assets for infinite scroll stream
+  useEffect(() => {
+    if (galleryData?.data) {
+      if ((params.page || 1) === 1) {
+        setAccumulatedAssets(galleryData.data)
+      } else {
+        setAccumulatedAssets((prev) => {
+          const ids = new Set(prev.map((a) => a.id))
+          const fresh = galleryData.data.filter((a) => !ids.has(a.id))
+          return [...prev, ...fresh]
+        })
+      }
+    }
+  }, [galleryData, params.page])
+
+  // Reset accumulated assets on filter or tab change
+  const filterKey = `${params.search}-${params.type}-${params.inUse}-${params.sortBy}-${activeTab}`
+  useEffect(() => {
+    setAccumulatedAssets([])
+  }, [filterKey])
+
+  const assets = accumulatedAssets.length > 0 ? accumulatedAssets : (galleryData?.data || [])
   const meta = galleryData?.meta || { page: 1, limit: 30, total: 0, totalPages: 1 }
 
   return (
@@ -194,71 +217,74 @@ export const MediaLibraryPage: React.FC = () => {
       />
 
       {/* Main Tabs (Active Library vs Trash Bin) */}
-      <div className="flex items-center gap-2 border-b border-border/60 pb-1">
-        <button
-          type="button"
-          onClick={() => handleTabChange("active")}
-          className={cn(
-            "px-4 py-2 text-xs font-semibold rounded-lg transition-all flex items-center gap-2 cursor-pointer",
-            activeTab === "active"
-              ? "bg-primary text-primary-foreground shadow-xs"
-              : "text-muted-foreground hover:text-foreground hover:bg-muted/40"
-          )}
-        >
-          <Sparkles className="h-3.5 w-3.5" />
-          Active Library
-        </button>
+      <div className="flex flex-wrap items-center justify-between gap-2 border-b border-border/60 pb-1.5">
+        <div className="flex items-center gap-1">
+          <button
+            type="button"
+            onClick={() => handleTabChange("active")}
+            className={cn(
+              "px-3 py-1.5 text-xs font-semibold rounded-lg transition-all flex items-center gap-1.5 cursor-pointer",
+              activeTab === "active"
+                ? "bg-primary text-primary-foreground shadow-xs"
+                : "text-muted-foreground hover:text-foreground hover:bg-muted/40"
+            )}
+          >
+            <Sparkles className="h-3.5 w-3.5" />
+            Active Library
+          </button>
 
-        <button
-          type="button"
-          onClick={() => handleTabChange("trash")}
-          className={cn(
-            "px-4 py-2 text-xs font-semibold rounded-lg transition-all flex items-center gap-2 cursor-pointer",
-            activeTab === "trash"
-              ? "bg-amber-600 text-white shadow-xs"
-              : "text-muted-foreground hover:text-foreground hover:bg-muted/40"
-          )}
-        >
-          <Trash2 className="h-3.5 w-3.5" />
-          Trash Bin
-          {(stats?.trashCount ?? 0) > 0 ? (
-            <span
-              className={cn(
-                "text-[10px] px-1.5 py-0 rounded-full font-bold",
-                activeTab === "trash"
-                  ? "bg-white/20 text-white"
-                  : "bg-amber-500/20 text-amber-800 dark:text-amber-200"
-              )}
-            >
-              {stats?.trashCount}
-            </span>
-          ) : null}
-        </button>
-         <div className="flex items-center gap-2.5">
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={() => setIsOptimizerOpen(true)}
-              className="text-xs h-9 gap-1.5 border-emerald-500/40 text-emerald-700 dark:text-emerald-400 hover:bg-emerald-500/10 hover:border-emerald-500/60 transition-all font-medium"
-              title="Scan and consolidate duplicate files into single masters"
-            >
-              <Zap className="h-4 w-4 text-amber-500 fill-amber-500/40" />
-              Optimize Storage
-              {(optimizerScan?.totalDuplicateGroups ?? 0) > 0 && (
-                <span className="ml-0.5 bg-amber-500/20 text-amber-800 dark:text-amber-200 text-[10px] px-1.5 py-0.5 rounded-full font-bold">
-                  {optimizerScan?.totalDuplicateGroups}
-                </span>
-              )}
-            </Button>
+          <button
+            type="button"
+            onClick={() => handleTabChange("trash")}
+            className={cn(
+              "px-3 py-1.5 text-xs font-semibold rounded-lg transition-all flex items-center gap-1.5 cursor-pointer",
+              activeTab === "trash"
+                ? "bg-amber-600 text-white shadow-xs"
+                : "text-muted-foreground hover:text-foreground hover:bg-muted/40"
+            )}
+          >
+            <Trash2 className="h-3.5 w-3.5" />
+            Trash Bin
+            {(stats?.trashCount ?? 0) > 0 ? (
+              <span
+                className={cn(
+                  "text-[10px] px-1.5 py-0 rounded-full font-bold",
+                  activeTab === "trash"
+                    ? "bg-white/20 text-white"
+                    : "bg-amber-500/20 text-amber-800 dark:text-amber-200"
+                )}
+              >
+                {stats?.trashCount}
+              </span>
+            ) : null}
+          </button>
+        </div>
 
-            <MediaDropzone
-              onUploadSuccess={() => {
-                refetchGallery()
-                refetchStats()
-                refetchOptimizer()
-              }}
-            />
-          </div>
+        <div className="flex items-center gap-2">
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={() => setIsOptimizerOpen(true)}
+            className="text-xs h-8 sm:h-8.5 gap-1.5 border-emerald-500/40 text-emerald-700 dark:text-emerald-400 hover:bg-emerald-500/10 hover:border-emerald-500/60 transition-all font-medium rounded-lg px-2.5"
+            title="Scan and consolidate duplicate files into single masters"
+          >
+            <Zap className="h-3.5 w-3.5 text-amber-500 fill-amber-500/40" />
+            Optimize Storage
+            {(optimizerScan?.totalDuplicateGroups ?? 0) > 0 && (
+              <span className="ml-0.5 bg-amber-500/20 text-amber-800 dark:text-amber-200 text-[10px] px-1.5 py-0.5 rounded-full font-bold">
+                {optimizerScan?.totalDuplicateGroups}
+              </span>
+            )}
+          </Button>
+
+          <MediaDropzone
+            onUploadSuccess={() => {
+              refetchGallery()
+              refetchStats()
+              refetchOptimizer()
+            }}
+          />
+        </div>
       </div>
 
       {/* Tab 1: Active Library */}
@@ -301,13 +327,21 @@ export const MediaLibraryPage: React.FC = () => {
           {/* Universal Pagination Bar */}
           {meta && (
             <Pagination
+              mode="infinite"
               currentPage={meta.page}
               totalPages={meta.totalPages}
               totalItems={meta.total}
               pageSize={meta.limit}
               pageSizeOptions={[15, 30, 60, 120]}
+              loadedCount={assets.length}
+              hasMore={assets.length < meta.total}
+              isLoadingMore={isFetching && meta.page > 1}
+              onLoadMore={() => setParams((prev) => ({ ...prev, page: (prev.page || 1) + 1 }))}
               onPageChange={(p) => setParams((prev) => ({ ...prev, page: p }))}
-              onPageSizeChange={(sz) => setParams((prev) => ({ ...prev, limit: sz, page: 1 }))}
+              onPageSizeChange={(sz) => {
+                setAccumulatedAssets([])
+                setParams((prev) => ({ ...prev, limit: sz, page: 1 }))
+              }}
               className="mt-6"
             />
           )}

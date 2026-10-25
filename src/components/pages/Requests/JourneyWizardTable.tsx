@@ -1,8 +1,16 @@
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import { motion } from "framer-motion"
-import { Compass, Calendar, Euro, Sparkles, Eye, Trash2, CheckCircle2, Search, X, Mail, User, Phone, Clock } from "lucide-react"
+import { Compass, Calendar, Euro, Sparkles, Eye, Trash2, CheckCircle2, Mail, User, Phone, Clock } from "lucide-react"
 import { Pagination } from "@/components/shared/Pagination"
+import { useListingPagination } from "@/hooks/ui/useListingPagination"
 import { PageHeader, CompactStatCard } from "@/components/shared/PageHeader"
+import {
+  FilterToolbar,
+  FilterGroup,
+  FilterSearch,
+  FilterTabs,
+  FilterResetButton,
+} from "@/components/shared/FilterToolbar"
 import {
   useGetJourneyWizardRequests,
   useUpdateJourneyWizardRequestStatus,
@@ -12,15 +20,35 @@ import {
 import JourneyWizardDetailsModal from "./JourneyWizardDetailsModal"
 
 export default function JourneyWizardTable() {
-  const [currentPage, setCurrentPage] = useState(1)
-  const [limit, setLimit] = useState(10)
   const [selectedStatusFilter, setSelectedStatusFilter] = useState<string>("")
   const [searchQuery, setSearchQuery] = useState<string>("")
   const [selectedRequest, setSelectedRequest] = useState<JourneyWizardRequestItem | null>(null)
 
-  const { data, isLoading, isError } = useGetJourneyWizardRequests(
+  const filterKey = `${searchQuery}-${selectedStatusFilter}`
+
+  const {
+    mode,
     currentPage,
-    limit,
+    setCurrentPage,
+    setTargetItems,
+    effectiveLimit,
+    pageSizeOptions,
+    displayItems: requestList,
+    hasMore,
+    isLoadingMore,
+    handleLoadMore,
+    setIncomingData,
+  } = useListingPagination<JourneyWizardRequestItem>({
+    mode: "infinite",
+    initialTargetItems: 10,
+    isGrid: false,
+    filterKey,
+    keyExtractor: (r) => r.id,
+  })
+
+  const { data, isLoading, isFetching, isError } = useGetJourneyWizardRequests(
+    currentPage,
+    effectiveLimit,
     selectedStatusFilter || undefined,
     searchQuery || undefined
   )
@@ -29,19 +57,19 @@ export default function JourneyWizardTable() {
   const { mutate: deleteRequest } = useDeleteJourneyWizardRequest()
 
   const rawData = data as any
-  const requestList: JourneyWizardRequestItem[] = Array.isArray(rawData?.data)
-    ? rawData.data
-    : rawData?.data?.items || []
-
   const totalPages =
     rawData?.meta?.totalPages || rawData?.data?.pagination?.totalPages || 1
-
   const totalItems =
-    rawData?.meta?.total || rawData?.data?.pagination?.total || (Array.isArray(rawData?.data) ? rawData.data.length : 0)
+    rawData?.meta?.total || rawData?.data?.pagination?.total || 0
 
-  const handlePageChange = (page: number) => {
-    setCurrentPage(page)
-  }
+  useEffect(() => {
+    if (rawData) {
+      const items = Array.isArray(rawData?.data)
+        ? rawData.data
+        : rawData?.data?.items || []
+      setIncomingData(items, totalItems)
+    }
+  }, [rawData, totalItems, setIncomingData])
 
   const handleDelete = (id: string, e: React.MouseEvent) => {
     e.stopPropagation()
@@ -56,7 +84,7 @@ export default function JourneyWizardTable() {
   const closedCount = requestList.filter((r) => r.status === "CLOSED").length
 
   return (
-    <div className="w-full animate-in duration-700 fade-in slide-in-from-bottom-4">
+    <div className="w-full space-y-6 animate-in pt-2 duration-700 fade-in slide-in-from-bottom-4">
       {/* Universal Page Header with 30% title & 70% compact statistics */}
       <PageHeader
         icon={Compass}
@@ -97,65 +125,44 @@ export default function JourneyWizardTable() {
       />
 
       {/* Controls Bar */}
-      <div className="mb-6 flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-end">
+      <FilterToolbar>
+        <FilterGroup>
+          <FilterSearch
+            value={searchQuery}
+            onChange={(val) => {
+              setSearchQuery(val)
+              setCurrentPage(1)
+            }}
+            placeholder="Search by name, email, phone..."
+            width="w-44 sm:w-60 shrink-0"
+          />
 
-        {/* Search Bar and Status Filter Badges */}
-        <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3">
-          {/* Search Input */}
-          <div className="relative min-w-[220px]">
-            <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-            <input
-              type="text"
-              value={searchQuery}
-              onChange={(e) => {
-                setSearchQuery(e.target.value)
+          <FilterTabs
+            tabs={[
+              { key: "", label: "All Requests" },
+              { key: "NEW", label: "New" },
+              { key: "CONTACTED", label: "Contacted" },
+              { key: "IN_PROGRESS", label: "In Progress" },
+              { key: "CLOSED", label: "Closed" },
+            ]}
+            activeTab={selectedStatusFilter}
+            onChange={(key) => {
+              setSelectedStatusFilter(key)
+              setCurrentPage(1)
+            }}
+          />
+
+          {(searchQuery || selectedStatusFilter !== "") && (
+            <FilterResetButton
+              onClick={() => {
+                setSearchQuery("")
+                setSelectedStatusFilter("")
                 setCurrentPage(1)
               }}
-              placeholder="Search by name, email, phone..."
-              className="w-full rounded-xl border border-border/60 bg-background/80 pl-9 pr-8 py-1.5 text-xs text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-1 focus:ring-primary shadow-2xs"
             />
-            {searchQuery && (
-              <button
-                type="button"
-                onClick={() => {
-                  setSearchQuery("")
-                  setCurrentPage(1)
-                }}
-                className="absolute right-2.5 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground p-0.5 rounded-full"
-              >
-                <X className="h-3.5 w-3.5" />
-              </button>
-            )}
-          </div>
-
-          {/* Filter Badges */}
-          <div className="flex flex-wrap items-center gap-1 rounded-xl border border-border/60 bg-muted/20 p-1">
-            {[
-              { label: "All Requests", value: "" },
-              { label: "New", value: "NEW" },
-              { label: "Contacted", value: "CONTACTED" },
-              { label: "In Progress", value: "IN_PROGRESS" },
-              { label: "Closed", value: "CLOSED" },
-            ].map((tab) => (
-              <button
-                key={tab.value}
-                type="button"
-                onClick={() => {
-                  setSelectedStatusFilter(tab.value)
-                  setCurrentPage(1)
-                }}
-                className={`rounded-lg px-2.5 py-1.5 text-xs font-semibold transition-all cursor-pointer ${
-                  selectedStatusFilter === tab.value
-                    ? "bg-primary text-primary-foreground shadow-2xs"
-                    : "text-muted-foreground hover:bg-muted/60 hover:text-foreground"
-                }`}
-              >
-                {tab.label}
-              </button>
-            ))}
-          </div>
-        </div>
-      </div>
+          )}
+        </FilterGroup>
+      </FilterToolbar>
 
       {/* Table Container */}
       <div className="min-h-100 overflow-hidden rounded-2xl border border-border/60 bg-background/50 backdrop-blur-xl">
@@ -360,16 +367,18 @@ export default function JourneyWizardTable() {
             {totalItems > 0 && (
               <div className="border-t border-border/60 bg-background/50 p-4">
                 <Pagination
+                  mode={mode}
                   currentPage={currentPage}
                   totalPages={totalPages}
                   totalItems={totalItems}
-                  pageSize={limit}
-                  pageSizeOptions={[10, 20, 50, 100]}
-                  onPageChange={handlePageChange}
-                  onPageSizeChange={(sz) => {
-                    setLimit(sz)
-                    setCurrentPage(1)
-                  }}
+                  pageSize={effectiveLimit}
+                  pageSizeOptions={pageSizeOptions}
+                  onPageChange={setCurrentPage}
+                  onPageSizeChange={setTargetItems}
+                  hasMore={hasMore}
+                  isLoadingMore={isLoadingMore || (isFetching && currentPage > 1)}
+                  onLoadMore={handleLoadMore}
+                  loadedCount={requestList.length}
                 />
               </div>
             )}

@@ -5,10 +5,8 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog"
-import { Input } from "@/components/ui/input"
 import { Button } from "@/components/ui/button"
 import {
-  Search,
   Image as ImageIcon,
   Video as VideoIcon,
   Check,
@@ -20,6 +18,11 @@ import {
   Sparkles,
 } from "lucide-react"
 import { Pagination } from "@/components/shared/Pagination"
+import {
+  FilterSearch,
+  FilterTabs,
+  FilterSelect,
+} from "@/components/shared/FilterToolbar"
 import { useMediaGallery } from "@/hooks/media/useMediaLibrary"
 import { mediaService, type MediaAsset } from "@/services/mediaService"
 import { cn } from "@/lib/utils"
@@ -116,8 +119,30 @@ export function MediaPickerModal({
     sortBy,
   })
 
-  const { data: galleryData, isLoading } = galleryQuery
-  const assets = galleryData?.data || []
+  const { data: galleryData, isLoading, isFetching } = galleryQuery
+
+  const [accumulatedAssets, setAccumulatedAssets] = useState<MediaAsset[]>([])
+
+  useEffect(() => {
+    if (galleryData?.data) {
+      if (page === 1) {
+        setAccumulatedAssets(galleryData.data)
+      } else {
+        setAccumulatedAssets((prev) => {
+          const ids = new Set(prev.map((a) => a.id))
+          const fresh = galleryData.data.filter((a) => !ids.has(a.id))
+          return [...prev, ...fresh]
+        })
+      }
+    }
+  }, [galleryData, page])
+
+  const filterKey = `${debouncedSearch}-${typeFilter}-${sortBy}`
+  useEffect(() => {
+    setAccumulatedAssets([])
+  }, [filterKey])
+
+  const assets = accumulatedAssets.length > 0 ? accumulatedAssets : (galleryData?.data || [])
   const meta = galleryData?.meta || { page: 1, limit, total: 0, totalPages: 1 }
 
   // Pre-select initial URL if provided when modal opens
@@ -364,99 +389,49 @@ export function MediaPickerModal({
         {activeTab === "browse" && (
           <div className="flex flex-col flex-1 min-h-0">
             {/* Filter & Search Bar */}
-            <div className="flex flex-wrap items-center justify-between gap-3 px-5 py-2.5 border-b border-border/50 bg-muted/10 shrink-0">
-              {/* Search Box */}
-              <div className="relative w-full sm:w-72">
-                <Search className="absolute left-2.5 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-                <Input
-                  type="text"
-                  placeholder="Search file name, title..."
-                  value={searchInput}
-                  onChange={(e) => setSearchInput(e.target.value)}
-                  className="h-8.5 pl-8.5 pr-8 text-xs rounded-lg bg-background"
-                />
-                {searchInput && (
-                  <button
-                    type="button"
-                    onClick={() => setSearchInput("")}
-                    className="absolute right-2.5 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground"
-                  >
-                    <X className="h-3.5 w-3.5" />
-                  </button>
-                )}
-              </div>
+            <div className="flex flex-wrap items-center justify-between gap-3 px-4 py-2 border-b border-border/60 bg-muted/10 shrink-0">
+              <FilterSearch
+                value={searchInput}
+                onChange={(val) => {
+                  setSearchInput(val)
+                  setPage(1)
+                }}
+                placeholder="Search file name, title..."
+                width="w-full sm:w-72"
+              />
 
               <div className="flex flex-wrap items-center gap-2">
-                {/* Media Type Filter Tabs (if not restricted to single type) */}
                 {(!allowedTypes || allowedTypes.length > 1) && (
-                  <div className="flex items-center rounded-lg border border-border/80 bg-background p-0.5">
-                    <button
-                      type="button"
-                      onClick={() => {
-                        setTypeFilter("all")
-                        setPage(1)
-                      }}
-                      className={cn(
-                        "rounded px-2.5 py-1 text-xs font-medium transition-colors cursor-pointer",
-                        typeFilter === "all"
-                          ? "bg-primary/15 text-primary font-semibold"
-                          : "text-muted-foreground hover:text-foreground"
-                      )}
-                    >
-                      All
-                    </button>
-                    <button
-                      type="button"
-                      onClick={() => {
-                        setTypeFilter("image")
-                        setPage(1)
-                      }}
-                      className={cn(
-                        "flex items-center gap-1 rounded px-2 py-1 text-xs font-medium transition-colors cursor-pointer",
-                        typeFilter === "image"
-                          ? "bg-primary/15 text-primary font-semibold"
-                          : "text-muted-foreground hover:text-foreground"
-                      )}
-                    >
-                      <ImageIcon className="h-3 w-3" />
-                      Images
-                    </button>
-                    <button
-                      type="button"
-                      onClick={() => {
-                        setTypeFilter("video")
-                        setPage(1)
-                      }}
-                      className={cn(
-                        "flex items-center gap-1 rounded px-2 py-1 text-xs font-medium transition-colors cursor-pointer",
-                        typeFilter === "video"
-                          ? "bg-primary/15 text-primary font-semibold"
-                          : "text-muted-foreground hover:text-foreground"
-                      )}
-                    >
-                      <VideoIcon className="h-3 w-3" />
-                      Videos
-                    </button>
-                  </div>
-                )}
-
-                {/* Sort selector */}
-                <div className="flex items-center gap-1">
-                  <ArrowUpDown className="h-3.5 w-3.5 text-muted-foreground" />
-                  <select
-                    value={sortBy}
-                    onChange={(e) => {
-                      setSortBy(e.target.value as any)
+                  <FilterTabs
+                    tabs={[
+                      { key: "all", label: "All" },
+                      { key: "image", label: "Images", icon: ImageIcon },
+                      { key: "video", label: "Videos", icon: VideoIcon },
+                    ]}
+                    activeTab={typeFilter}
+                    onChange={(key) => {
+                      setTypeFilter(key as any)
                       setPage(1)
                     }}
-                    className="h-8 rounded-lg border border-border/80 bg-background px-2 text-xs text-foreground cursor-pointer focus:outline-none"
-                  >
-                    <option value="newest">Newest First</option>
-                    <option value="oldest">Oldest First</option>
-                    <option value="usage_desc">Most Used</option>
-                    <option value="size_desc">Largest Size</option>
-                  </select>
-                </div>
+                  />
+                )}
+
+                <FilterSelect
+                  value={sortBy}
+                  onChange={(val) => {
+                    setSortBy(val as any)
+                    setPage(1)
+                  }}
+                  options={[
+                    { label: "Newest First", value: "newest" },
+                    { label: "Oldest First", value: "oldest" },
+                    { label: "Most Used", value: "usage_desc" },
+                    { label: "Largest Size", value: "size_desc" },
+                  ]}
+                  icon={ArrowUpDown}
+                  placeholder="Sort"
+                  width="min-w-[130px]"
+                />
               </div>
             </div>
 
@@ -568,13 +543,19 @@ export function MediaPickerModal({
             {meta.total > 0 && (
               <div className="px-5 py-2.5 border-t border-border/50 bg-muted/10 shrink-0">
                 <Pagination
+                  mode="infinite"
                   currentPage={page}
                   totalPages={meta.totalPages}
                   totalItems={meta.total}
                   pageSize={limit}
                   pageSizeOptions={[12, 24, 48, 96]}
+                  loadedCount={assets.length}
+                  hasMore={assets.length < meta.total}
+                  isLoadingMore={isFetching && page > 1}
+                  onLoadMore={() => setPage((p) => p + 1)}
                   onPageChange={setPage}
                   onPageSizeChange={(sz) => {
+                    setAccumulatedAssets([])
                     setLimit(sz)
                     setPage(1)
                   }}

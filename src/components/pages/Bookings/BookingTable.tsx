@@ -1,21 +1,28 @@
-import { useState, useMemo } from "react"
+import { useState, useMemo, useEffect } from "react"
 import { motion } from "framer-motion"
 import {
   Eye,
-  Search,
   CheckCircle2,
   Clock,
   DollarSign,
   Layers,
   Download,
-  Filter,
   CreditCard,
   Ban,
   CalendarDays,
 } from "lucide-react"
 import { cn } from "@/lib/utils"
 import { Pagination } from "@/components/shared/Pagination"
+import { useListingPagination } from "@/hooks/ui/useListingPagination"
 import { PageHeader, CompactStatCard } from "@/components/shared/PageHeader"
+import {
+  FilterToolbar,
+  FilterGroup,
+  FilterSearch,
+  FilterSelect,
+  FilterActions,
+  FilterResetButton,
+} from "@/components/shared/FilterToolbar"
 import {
   useGetBookings,
   type BookingItem,
@@ -27,8 +34,6 @@ import { ApproveBookingModal } from "./ApproveBookingModal"
 import { RecordPaymentModal } from "./RecordPaymentModal"
 
 export default function BookingTable() {
-  const [currentPage, setCurrentPage] = useState(1)
-  const [limit, setLimit] = useState(10)
   const [selectedBooking, setSelectedBooking] = useState<BookingItem | null>(null)
   const [approveBookingItem, setApproveBookingItem] = useState<BookingItem | null>(null)
   const [paymentBookingItem, setPaymentBookingItem] = useState<BookingItem | null>(null)
@@ -38,21 +43,44 @@ export default function BookingTable() {
   const [selectedBookingStatus, setSelectedBookingStatus] = useState<string>("ALL")
   const [selectedPaymentStatus, setSelectedPaymentStatus] = useState<string>("ALL")
 
-  const { data, isLoading, isError } = useGetBookings({
+  const filterKey = `${searchInput}-${selectedBookingStatus}-${selectedPaymentStatus}`
+
+  const {
+    mode,
+    currentPage,
+    setCurrentPage,
+    setTargetItems,
+    effectiveLimit,
+    pageSizeOptions,
+    displayItems: bookings,
+    hasMore,
+    isLoadingMore,
+    handleLoadMore,
+    setIncomingData,
+  } = useListingPagination<BookingItem>({
+    mode: "infinite",
+    initialTargetItems: 10,
+    isGrid: false,
+    filterKey,
+    keyExtractor: (b) => b.id,
+  })
+
+  const { data, isLoading, isFetching, isError } = useGetBookings({
     page: currentPage,
-    limit,
+    limit: effectiveLimit,
     search: searchInput.trim() || undefined,
     bookingStatus: selectedBookingStatus !== "ALL" ? selectedBookingStatus : undefined,
     paymentStatus: selectedPaymentStatus !== "ALL" ? selectedPaymentStatus : undefined,
   })
 
-  const bookings = data?.data || []
+  useEffect(() => {
+    if (data) {
+      setIncomingData(data.data, data.meta?.total)
+    }
+  }, [data, setIncomingData])
+
   const totalPages = data?.meta?.totalPages || 1
   const totalCount = data?.meta?.total || bookings.length
-
-  const handlePageChange = (page: number) => {
-    setCurrentPage(page)
-  }
 
   const formatDate = (dateString?: string) => {
     if (!dateString) return "—"
@@ -170,7 +198,7 @@ export default function BookingTable() {
   }
 
   return (
-    <div className="flex flex-col gap-6">
+    <div className="w-full space-y-6 animate-in pt-2 duration-700 fade-in slide-in-from-bottom-4">
       {/* Universal Page Header with 30% title & 70% compact statistics */}
       <PageHeader
         icon={CalendarDays}
@@ -211,76 +239,89 @@ export default function BookingTable() {
       />
 
       {/* Filter & Search Toolbar */}
-      <div className="flex flex-col md:flex-row md:items-center justify-between gap-3 rounded-2xl border border-border/60 bg-background/50 p-4 backdrop-blur-xl">
-        {/* Search */}
-        <div className="relative flex-1 max-w-md">
-          <Search className="absolute left-3.5 top-3 h-4 w-4 text-muted-foreground" />
-          <input
-            type="text"
+      <FilterToolbar>
+        <FilterGroup>
+          {/* Search */}
+          <FilterSearch
             value={searchInput}
-            onChange={(e) => {
-              setSearchInput(e.target.value)
+            onChange={(val) => {
+              setSearchInput(val)
               setCurrentPage(1)
             }}
-            placeholder="Search booking #, traveler name, email..."
-            className="w-full rounded-xl border border-border bg-background/80 pl-10 pr-4 py-2 text-sm text-foreground focus:outline-none focus:ring-2 focus:ring-primary/40"
+            placeholder="Search booking #, traveler, email..."
+            width="w-48 sm:w-64 shrink-0"
           />
-        </div>
 
-        {/* Status Dropdowns & Export */}
-        <div className="flex flex-wrap items-center gap-2.5">
-          <div className="flex items-center gap-1.5">
-            <Filter className="h-3.5 w-3.5 text-muted-foreground" />
-            <select
-              value={selectedBookingStatus}
-              onChange={(e) => {
-                setSelectedBookingStatus(e.target.value)
+          {/* Booking Status Dropdown */}
+          <FilterSelect
+            value={selectedBookingStatus}
+            onChange={(val) => {
+              setSelectedBookingStatus(val)
+              setCurrentPage(1)
+            }}
+            options={[
+              { label: "Request Submitted", value: "REQUEST_SUBMITTED" },
+              { label: "Under Review", value: "UNDER_REVIEW" },
+              { label: "Approved", value: "APPROVED" },
+              { label: "Awaiting Deposit", value: "AWAITING_DEPOSIT" },
+              { label: "Deposit Paid (Tentative)", value: "DEPOSIT_PAID_TENTATIVE" },
+              { label: "Awaiting Final Payment", value: "AWAITING_FINAL_PAYMENT" },
+              { label: "Fully Paid", value: "FULLY_PAID" },
+              { label: "Confirmed", value: "CONFIRMED" },
+              { label: "Cancelled", value: "CANCELLED" },
+              { label: "Rejected", value: "REJECTED" },
+            ]}
+            allLabel="All Booking Statuses"
+            allValue="ALL"
+            placeholder="Booking Status"
+            width="min-w-[135px] max-w-[170px]"
+          />
+
+          {/* Payment Status Dropdown */}
+          <FilterSelect
+            value={selectedPaymentStatus}
+            onChange={(val) => {
+              setSelectedPaymentStatus(val)
+              setCurrentPage(1)
+            }}
+            options={[
+              { label: "Unpaid", value: "UNPAID" },
+              { label: "Deposit Paid", value: "DEPOSIT_PAID" },
+              { label: "Partially Paid", value: "PARTIALLY_PAID" },
+              { label: "Balance Due", value: "BALANCE_DUE" },
+              { label: "Fully Paid", value: "FULLY_PAID" },
+              { label: "Refunded", value: "REFUNDED" },
+            ]}
+            allLabel="All Payment Statuses"
+            allValue="ALL"
+            placeholder="Payment Status"
+            width="min-w-[130px] max-w-[160px]"
+          />
+
+          {(searchInput || selectedBookingStatus !== "ALL" || selectedPaymentStatus !== "ALL") && (
+            <FilterResetButton
+              onClick={() => {
+                setSearchInput("")
+                setSelectedBookingStatus("ALL")
+                setSelectedPaymentStatus("ALL")
                 setCurrentPage(1)
               }}
-              className="rounded-xl border border-border bg-background/80 px-3 py-2 text-xs font-semibold text-foreground focus:outline-none focus:ring-2 focus:ring-primary/40 cursor-pointer"
-            >
-              <option value="ALL">All Booking Statuses</option>
-              <option value="REQUEST_SUBMITTED">Request Submitted</option>
-              <option value="UNDER_REVIEW">Under Review</option>
-              <option value="APPROVED">Approved</option>
-              <option value="AWAITING_DEPOSIT">Awaiting Deposit</option>
-              <option value="DEPOSIT_PAID_TENTATIVE">Deposit Paid (Tentative)</option>
-              <option value="AWAITING_FINAL_PAYMENT">Awaiting Final Payment</option>
-              <option value="FULLY_PAID">Fully Paid</option>
-              <option value="CONFIRMED">Confirmed</option>
-              <option value="CANCELLED">Cancelled</option>
-              <option value="REJECTED">Rejected</option>
-            </select>
-          </div>
+            />
+          )}
+        </FilterGroup>
 
-          <select
-            value={selectedPaymentStatus}
-            onChange={(e) => {
-              setSelectedPaymentStatus(e.target.value)
-              setCurrentPage(1)
-            }}
-            className="rounded-xl border border-border bg-background/80 px-3 py-2 text-xs font-semibold text-foreground focus:outline-none focus:ring-2 focus:ring-primary/40 cursor-pointer"
-          >
-            <option value="ALL">All Payment Statuses</option>
-            <option value="UNPAID">Unpaid</option>
-            <option value="DEPOSIT_PAID">Deposit Paid</option>
-            <option value="PARTIALLY_PAID">Partially Paid</option>
-            <option value="BALANCE_DUE">Balance Due</option>
-            <option value="FULLY_PAID">Fully Paid</option>
-            <option value="REFUNDED">Refunded</option>
-          </select>
-
+        <FilterActions>
           <button
             type="button"
             onClick={handleExportCSV}
-            className="inline-flex cursor-pointer items-center gap-1.5 rounded-xl border border-border bg-background/80 px-3.5 py-2 text-xs font-semibold text-foreground hover:bg-muted transition-colors"
+            className="h-8 sm:h-8.5 inline-flex cursor-pointer items-center gap-1.5 rounded-lg border border-border/70 bg-background/60 dark:bg-background/40 px-2.5 py-1 text-xs font-semibold text-foreground hover:bg-muted/50 transition-all shadow-2xs whitespace-nowrap"
             title="Export CSV"
           >
             <Download className="h-3.5 w-3.5" />
-            Export CSV
+            <span>Export CSV</span>
           </button>
-        </div>
-      </div>
+        </FilterActions>
+      </FilterToolbar>
 
       {/* Booking Table Container */}
       <div className="min-h-[400px] overflow-hidden rounded-2xl border border-border/60 bg-background/50 backdrop-blur-xl">
@@ -476,16 +517,18 @@ export default function BookingTable() {
             {totalCount > 0 && (
               <div className="border-t border-border/60 bg-background/50 p-5 backdrop-blur-xl">
                 <Pagination
+                  mode={mode}
                   currentPage={currentPage}
                   totalPages={totalPages}
                   totalItems={data?.meta?.total ?? totalCount}
-                  pageSize={limit}
-                  pageSizeOptions={[10, 20, 50, 100]}
-                  onPageChange={handlePageChange}
-                  onPageSizeChange={(sz) => {
-                    setLimit(sz)
-                    setCurrentPage(1)
-                  }}
+                  pageSize={effectiveLimit}
+                  pageSizeOptions={pageSizeOptions}
+                  onPageChange={setCurrentPage}
+                  onPageSizeChange={setTargetItems}
+                  hasMore={hasMore}
+                  isLoadingMore={isLoadingMore || (isFetching && currentPage > 1)}
+                  onLoadMore={handleLoadMore}
+                  loadedCount={bookings.length}
                 />
               </div>
             )}

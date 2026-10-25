@@ -1,8 +1,6 @@
 import { useState } from "react"
 import {
   Tag,
-  Search,
-  FilterX,
   Plus,
   Copy,
   Check,
@@ -26,6 +24,15 @@ import {
 import { Switch } from "@/components/ui/switch"
 import { Pagination } from "@/components/shared/Pagination"
 import { PageHeader, CompactStatCard } from "@/components/shared/PageHeader"
+import {
+  FilterToolbar,
+  FilterGroup,
+  FilterSearch,
+  FilterSelect,
+  FilterActions,
+  FilterCreateButton,
+  FilterResetButton,
+} from "@/components/shared/FilterToolbar"
 import { cn } from "@/lib/utils"
 
 export interface PromotionVoucher {
@@ -230,48 +237,46 @@ export default function PromotionsPage() {
       />
 
       {/* Toolbar */}
-      <div className="flex flex-col gap-3 rounded-xl border border-border/60 bg-card/60 p-4 backdrop-blur-xl md:flex-row md:items-center md:justify-between">
-        <div className="relative flex-1 min-w-[240px]">
-          <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
-          <Input
-            placeholder="Search voucher code, campaign title, or applicability..."
+      <FilterToolbar>
+        <FilterGroup>
+          <FilterSearch
             value={search}
-            onChange={(e) => setSearch(e.target.value)}
-            className="pl-9 bg-background/50"
+            onChange={(val) => setSearch(val)}
+            placeholder="Search vouchers, campaigns..."
+            width="w-48 sm:w-64 shrink-0"
           />
-        </div>
 
-        <div className="flex items-center gap-2.5">
-          <Select value={statusFilter} onValueChange={setStatusFilter}>
-            <SelectTrigger className="w-[160px] bg-background/50">
-              <SelectValue placeholder="Status: All" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="ALL">All Campaigns</SelectItem>
-              <SelectItem value="ACTIVE">Active Only</SelectItem>
-              <SelectItem value="INACTIVE">Inactive / Expired</SelectItem>
-            </SelectContent>
-          </Select>
+          <FilterSelect
+            value={statusFilter}
+            onChange={(val) => setStatusFilter(val)}
+            options={[
+              { label: "Active Only", value: "ACTIVE" },
+              { label: "Inactive / Expired", value: "INACTIVE" },
+            ]}
+            allLabel="All Campaigns"
+            allValue="ALL"
+            placeholder="Status: All"
+            width="min-w-[125px] max-w-[155px]"
+          />
 
           {(search || statusFilter !== "ALL") && (
-            <Button
-              variant="ghost"
-              size="icon"
+            <FilterResetButton
               onClick={() => {
                 setSearch("")
                 setStatusFilter("ALL")
               }}
-            >
-              <FilterX className="h-4 w-4" />
-            </Button>
+            />
           )}
+        </FilterGroup>
 
-          <Button onClick={() => setIsCreateOpen(true)} className="flex items-center gap-2 shadow-xs">
-            <Plus className="h-4 w-4" />
-            <span>Create Voucher Code</span>
-          </Button>
-        </div>
-      </div>
+        <FilterActions>
+          <FilterCreateButton
+            onClick={() => setIsCreateOpen(true)}
+            label="Create Voucher"
+            icon={Plus}
+          />
+        </FilterActions>
+      </FilterToolbar>
 
       {/* Table */}
       <div className="overflow-hidden rounded-xl border border-border/60 bg-card/60 shadow-sm backdrop-blur-xl">
@@ -291,7 +296,7 @@ export default function PromotionsPage() {
             </thead>
             <tbody className="divide-y divide-border/40 text-foreground">
               {filtered
-                .slice((currentPage - 1) * pageSize, currentPage * pageSize)
+                .slice(0, currentPage * pageSize)
                 .map((p) => {
                 const percentUsed = Math.min(100, Math.round((p.usageCount / p.usageLimit) * 100))
                 return (
@@ -377,11 +382,15 @@ export default function PromotionsPage() {
         {filtered.length > 0 && (
           <div className="border-t border-border/60 bg-muted/10 px-5 py-3">
             <Pagination
+              mode="infinite"
               currentPage={currentPage}
               totalPages={Math.max(1, Math.ceil(filtered.length / pageSize))}
               totalItems={filtered.length}
               pageSize={pageSize}
               pageSizeOptions={[10, 20, 50, 100]}
+              loadedCount={Math.min(filtered.length, currentPage * pageSize)}
+              hasMore={currentPage * pageSize < filtered.length}
+              onLoadMore={() => setCurrentPage((p) => p + 1)}
               onPageChange={setCurrentPage}
               onPageSizeChange={(sz) => {
                 setPageSize(sz)

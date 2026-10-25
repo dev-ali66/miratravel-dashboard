@@ -1,8 +1,9 @@
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import { motion } from "framer-motion"
 import { Edit2, Trash2, Plus, Key } from "lucide-react"
 import { cn } from "@/lib/utils"
 import { Pagination } from "@/components/shared/Pagination"
+import { useListingPagination } from "@/hooks/ui/useListingPagination"
 import {
   useGetPermissions,
   type PermissionItem,
@@ -10,43 +11,75 @@ import {
 import PermissionFormModal from "./PermissionFormModal"
 import DeletePermissionModal from "./DeletePermissionModal"
 
-export default function PermissionsTable() {
-  const [currentPage, setCurrentPage] = useState(1)
-  const [limit, setLimit] = useState(10)
+export interface PermissionsTableProps {
+  showCreateModal?: boolean
+  setShowCreateModal?: (show: boolean) => void
+}
+
+export default function PermissionsTable({
+  showCreateModal: externalShowCreateModal,
+  setShowCreateModal: externalSetShowCreateModal,
+}: PermissionsTableProps = {}) {
   const [selectedPermForEdit, setSelectedPermForEdit] =
     useState<PermissionItem | null>(null)
   const [selectedPermForDelete, setSelectedPermForDelete] =
     useState<PermissionItem | null>(null)
-  const [showCreateModal, setShowCreateModal] = useState(false)
+  const [internalShowCreateModal, setInternalShowCreateModal] = useState(false)
 
-  const { data, isLoading, isError } = useGetPermissions(currentPage, limit)
+  const isControlled = externalShowCreateModal !== undefined
+  const showCreate = isControlled ? externalShowCreateModal : internalShowCreateModal
+  const setShowCreate = externalSetShowCreateModal || setInternalShowCreateModal
 
-  const permissions = data?.data || []
+  const {
+    mode,
+    currentPage,
+    setCurrentPage,
+    setTargetItems,
+    effectiveLimit,
+    pageSizeOptions,
+    displayItems: permissions,
+    hasMore,
+    isLoadingMore,
+    handleLoadMore,
+    setIncomingData,
+  } = useListingPagination<PermissionItem>({
+    mode: "infinite",
+    initialTargetItems: 10,
+    isGrid: false,
+    keyExtractor: (p) => p.id,
+  })
+
+  const { data, isLoading, isFetching, isError } = useGetPermissions(currentPage, effectiveLimit)
+
+  useEffect(() => {
+    if (data) {
+      setIncomingData(data.data, data.meta?.total)
+    }
+  }, [data, setIncomingData])
+
   const totalPages = data?.meta?.totalPages || 1
-
-  const handlePageChange = (page: number) => {
-    setCurrentPage(page)
-  }
 
   return (
     <>
-      {/* Create Permission Button */}
-      <div className="mb-5 flex items-center justify-end">
-        <button
-          type="button"
-          onClick={() => setShowCreateModal(true)}
-          className={cn(
-            "inline-flex cursor-pointer items-center gap-2 rounded-xl px-5 py-2.5",
-            "bg-primary text-primary-foreground text-sm font-semibold",
-            "shadow-lg shadow-primary/20",
-            "transition-all duration-200 hover:shadow-xl hover:shadow-primary/30 hover:brightness-110",
-            "active:scale-[0.97]"
-          )}
-        >
-          <Plus className="h-4 w-4" />
-          Create Permission
-        </button>
-      </div>
+      {/* Create Permission Button (rendered only if not controlled by parent FilterToolbar) */}
+      {!isControlled && (
+        <div className="mb-5 flex items-center justify-end">
+          <button
+            type="button"
+            onClick={() => setShowCreate(true)}
+            className={cn(
+              "inline-flex cursor-pointer items-center gap-2 rounded-xl px-5 py-2.5",
+              "bg-primary text-primary-foreground text-sm font-semibold",
+              "shadow-lg shadow-primary/20",
+              "transition-all duration-200 hover:shadow-xl hover:shadow-primary/30 hover:brightness-110",
+              "active:scale-[0.97]"
+            )}
+          >
+            <Plus className="h-4 w-4" />
+            Create Permission
+          </button>
+        </div>
+      )}
 
       {/* Table Container */}
       <div className="min-h-[400px] overflow-hidden rounded-2xl border border-border/60 bg-background/50 backdrop-blur-xl">
@@ -209,16 +242,18 @@ export default function PermissionsTable() {
             {(data?.meta?.total ?? 0) > 0 && (
               <div className="border-t border-border/60 bg-background/50 p-5 backdrop-blur-xl">
                 <Pagination
+                  mode={mode}
                   currentPage={currentPage}
                   totalPages={totalPages}
                   totalItems={data?.meta?.total}
-                  pageSize={limit}
-                  pageSizeOptions={[10, 20, 50, 100]}
-                  onPageChange={handlePageChange}
-                  onPageSizeChange={(sz) => {
-                    setLimit(sz)
-                    setCurrentPage(1)
-                  }}
+                  pageSize={effectiveLimit}
+                  pageSizeOptions={pageSizeOptions}
+                  onPageChange={setCurrentPage}
+                  onPageSizeChange={setTargetItems}
+                  hasMore={hasMore}
+                  isLoadingMore={isLoadingMore || (isFetching && currentPage > 1)}
+                  onLoadMore={handleLoadMore}
+                  loadedCount={permissions.length}
                 />
               </div>
             )}
@@ -228,9 +263,9 @@ export default function PermissionsTable() {
 
       {/* Create Modal */}
       <PermissionFormModal
-        open={showCreateModal}
+        open={showCreate}
         permission={null}
-        onClose={() => setShowCreateModal(false)}
+        onClose={() => setShowCreate(false)}
       />
 
       {/* Edit Modal */}

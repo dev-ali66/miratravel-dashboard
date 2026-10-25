@@ -1,4 +1,3 @@
-import MiraLoader from "@/components/shared/MiraLoader"
 import {
   useGetLocationPages,
   type LocationPageData,
@@ -6,14 +5,24 @@ import {
 import { useDeleteLocation } from "@/hooks/location/useDeleteLocation"
 import { Link } from "react-router-dom"
 import { Pagination } from "@/components/shared/Pagination"
+import { DataPreview } from "@/components/shared/DataPreview"
+import { useListingPagination } from "@/hooks/ui/useListingPagination"
 import { PageHeader, CompactStatCard } from "@/components/shared/PageHeader"
+import {
+  FilterToolbar,
+  FilterGroup,
+  FilterSearch,
+  FilterSelect,
+  FilterActions,
+  FilterCreateButton,
+  FilterResetButton,
+} from "@/components/shared/FilterToolbar"
 import { useEffect, useState } from "react"
 import {
   Trash2,
   MapPin,
   Loader2,
   Plus,
-  Search,
   Globe,
   Sparkles,
   Building2,
@@ -35,10 +44,7 @@ import { ParentLocationSelect } from "@/components/pages/Location/shared/ParentL
 import { UniversalMultimediaPreview } from "@/components/pages/CMS/Home/shared/preview/UniversalMultimediaPreview"
 import { getSafeStringValue } from "@/components/pages/Location/shared/normalizeHelpers"
 
-const PAGE_SIZE = 12
-
 export default function LocationPages() {
-  const [page, setPage] = useState(1)
   const [searchInput, setSearchInput] = useState("")
   const [search, setSearch] = useState("")
   const [type, setType] = useState<string>("")
@@ -48,19 +54,52 @@ export default function LocationPages() {
   useEffect(() => {
     const timeout = setTimeout(() => {
       setSearch(searchInput)
-      setPage(1)
     }, 350)
 
     return () => clearTimeout(timeout)
   }, [searchInput])
 
-  const { data, isLoading, isError, refetch } = useGetLocationPages({
-    page,
-    limit: PAGE_SIZE,
+  const filterKey = `${search}-${type}-${parentId}`
+
+  const {
+    mode,
+    currentPage,
+    setCurrentPage,
+    setTargetItems,
+    columns,
+    effectiveLimit,
+    pageSizeOptions,
+    gridRef,
+    displayItems,
+    hasMore,
+    isLoadingMore,
+    handleLoadMore,
+    setIncomingData,
+  } = useListingPagination<LocationPageData>({
+    mode: "infinite",
+    initialTargetItems: 18,
+    isGrid: true,
+    gridColumns: { base: 1, md: 3, lg: 5, xl: 6 },
+    filterKey,
+    keyExtractor: (item) => item.id,
+  })
+
+  const setPage = setCurrentPage
+
+  const { data, isLoading, isFetching, isError, refetch } = useGetLocationPages({
+    page: currentPage,
+    limit: effectiveLimit,
     search: search || undefined,
     type: type || undefined,
     parentId: parentId || undefined,
   })
+
+  // Sync incoming data to pagination manager
+  useEffect(() => {
+    if (data) {
+      setIncomingData(data.data, data.meta?.total)
+    }
+  }, [data, setIncomingData])
 
   // Refetch when mounting or returning back to this page
   useEffect(() => {
@@ -102,13 +141,13 @@ export default function LocationPages() {
       .trim()
   }
 
-  const pages = data?.data ?? []
+  const pages = displayItems
   const meta = data?.meta
 
   const hasFilters = Boolean(search || type || parentId)
 
   return (
-    <div className="w-full animate-in pt-2 duration-700 fade-in slide-in-from-bottom-4">
+    <div className="w-full space-y-6 animate-in pt-2 duration-700 fade-in slide-in-from-bottom-4">
       {/* Header with 30% title & 70% compact statistics */}
       <PageHeader
         icon={MapPin}
@@ -149,74 +188,94 @@ export default function LocationPages() {
       />
 
       {/* Search + Filters */}
-      <div className="mb-6 flex flex-col gap-3 md:flex-row md:items-center">
-        <div className="relative flex-1">
-          <Search className="pointer-events-none absolute top-1/2 left-3 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
-
-          <input
+      <FilterToolbar>
+        <FilterGroup>
+          <FilterSearch
             value={searchInput}
-            onChange={(e) => setSearchInput(e.target.value)}
-            placeholder="Search locations by name, slug or type..."
-            className="w-full rounded-lg border border-border/60 bg-background py-2.5 pr-3 pl-9 text-sm outline-none focus:border-primary"
-          />
-        </div>
-
-        <select
-          value={type}
-          onChange={(e) => {
-            setType(e.target.value)
-            setPage(1)
-          }}
-          className="rounded-lg border border-border/60 bg-background px-3 py-2.5 text-sm outline-none focus:border-primary md:w-48"
-        >
-          <option value="">All Types</option>
-          {LOCATION_TYPES.map((t) => (
-            <option key={t} value={t}>
-              {t}
-            </option>
-          ))}
-        </select>
-
-        <div className="md:w-64">
-          <ParentLocationSelect
-            value={parentId}
-            label=""
-            noneLabel="All Parent Locations"
-            onChange={(id) => {
-              setParentId(id)
+            onChange={(val) => {
+              setSearchInput(val)
               setPage(1)
             }}
+            placeholder="Search locations..."
+            width="w-44 sm:w-56 shrink-0"
           />
-        </div>
 
-        <Link
-          to="/locations/new"
-          className="inline-flex shrink-0 items-center gap-2 rounded-xl bg-primary px-4 py-2.5 text-sm font-medium text-primary-foreground shadow-sm transition hover:opacity-90"
-        >
-          <Plus className="h-4 w-4" />
-          Add Location
-        </Link>
-      </div>
+          <FilterSelect
+            value={type}
+            onChange={(val) => {
+              setType(val)
+              setPage(1)
+            }}
+            options={LOCATION_TYPES.map((t) => ({ label: t, value: t }))}
+            allLabel="All Location Types"
+            placeholder="Location Type"
+            width="min-w-[130px] max-w-[160px]"
+          />
 
-      {/* Loading */}
-      {isLoading ? (
-        <MiraLoader text="Loading location pages..." className="py-12 min-h-[300px]" />
-      ) : isError ? (
-        /* Error State */
-        <div className="rounded-xl border border-destructive/30 bg-destructive/5 p-6 text-center">
-          <p className="text-sm font-medium text-destructive">
-            Failed to load location pages.
-          </p>
-          <p className="mt-1 text-xs text-muted-foreground">
-            Please try again.
-          </p>
-        </div>
-      ) : pages.length > 0 ? (
-        <>
-          {/* Location Pages */}
-          <div className="grid grid-cols-1 gap-2 md:grid-cols-3 lg:grid-cols-5 xl:grid-cols-6">
-            {pages.map((page, index) => {
-              const pageName = page.name ? formatPageName(page.name) : "Untitled Location"
+          <div className="w-40 sm:w-52 shrink-0">
+            <ParentLocationSelect
+              value={parentId}
+              label=""
+              noneLabel="All Parent Locations"
+              placeholder="Filter by parent..."
+              className="space-y-0"
+              triggerClassName="h-8 sm:h-8.5 rounded-lg border-border/70 bg-background/60 dark:bg-background/40 hover:bg-muted/50 text-xs px-2.5 py-1"
+              onChange={(id) => {
+                setParentId(id)
+                setPage(1)
+              }}
+            />
+          </div>
+
+          {(searchInput || type || parentId) && (
+            <FilterResetButton
+              onClick={() => {
+                setSearchInput("")
+                setType("")
+                setParentId(null)
+                setPage(1)
+              }}
+            />
+          )}
+        </FilterGroup>
+
+        <FilterActions>
+          <FilterCreateButton
+            to="/locations/new"
+            label="Add Location"
+            icon={Plus}
+          />
+        </FilterActions>
+      </FilterToolbar>
+
+      {/* Location Pages via Universal DataPreview */}
+      <DataPreview<LocationPageData>
+        gridRef={gridRef}
+        items={displayItems}
+        isLoading={isLoading && currentPage === 1}
+        isError={isError}
+        errorMessage="Failed to load location pages. Please check backend connection."
+        onRetry={refetch}
+        layout="grid"
+        gridClassName="grid grid-cols-1 gap-2 md:grid-cols-3 lg:grid-cols-5 xl:grid-cols-6"
+        emptyIcon={MapPin}
+        emptyTitle={hasFilters ? "No matching locations found" : "No Location Pages Found"}
+        emptyDescription={
+          hasFilters
+            ? "Try a different search term or clear the filters."
+            : "There are no location pages created yet."
+        }
+        emptyAction={
+          <Link
+            to="/locations/new"
+            className="mt-4 inline-flex items-center gap-2 rounded-xl bg-primary px-3.5 py-2 text-xs font-semibold text-primary-foreground hover:bg-primary/90 transition-colors"
+          >
+            <Plus className="h-3.5 w-3.5" />
+            Add First Location
+          </Link>
+        }
+        renderItem={(page, index) => {
+          const pageName = page.name ? formatPageName(page.name) : "Untitled Location"
 
               // 1. Basic Info Data
               const typeName = page.type || "PLACE"
@@ -413,41 +472,28 @@ export default function LocationPages() {
                   </div>
                 </div>
               )
-            })}
-          </div>
+            }}
+          />
 
-          {/* Universal Pagination */}
+          {/* Universal Smart Pagination & Infinite Scroll Sentinel */}
           {meta && (
             <Pagination
-              currentPage={meta.page}
+              mode={mode}
+              currentPage={currentPage}
               totalPages={meta.totalPages}
               totalItems={meta.total}
-              pageSize={PAGE_SIZE}
-              onPageChange={setPage}
-              className="mt-8"
+              pageSize={effectiveLimit}
+              pageSizeOptions={pageSizeOptions}
+              onPageChange={setCurrentPage}
+              onPageSizeChange={setTargetItems}
+              hasMore={hasMore}
+              isLoadingMore={isLoadingMore || (isFetching && currentPage > 1)}
+              onLoadMore={handleLoadMore}
+              loadedCount={displayItems.length}
+              columns={columns}
+              className="mt-6"
             />
           )}
-        </>
-      ) : (
-        /* Empty State */
-        <div className="flex flex-col items-center justify-center rounded-xl border border-dashed border-border/60 bg-card/50 py-24 text-center">
-          <div className="mb-4 rounded-full bg-primary/10 p-4">
-            <MapPin className="h-8 w-8 text-primary" />
-          </div>
-
-          <h3 className="mb-2 text-xl font-semibold">
-            {hasFilters
-              ? "No matching locations found"
-              : "No Location Pages Found"}
-          </h3>
-
-          <p className="max-w-sm text-muted-foreground">
-            {hasFilters
-              ? "Try a different search term or clear the filters."
-              : "There are no location pages created yet."}
-          </p>
-        </div>
-      )}
 
       {/* Delete Dialog */}
       <Dialog open={deleteModalOpen} onOpenChange={setDeleteModalOpen}>

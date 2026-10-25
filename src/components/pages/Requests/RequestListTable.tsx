@@ -1,22 +1,45 @@
-import { useState, useMemo } from "react"
+import { useState, useMemo, useEffect } from "react"
 import { motion } from "framer-motion"
 import { Check, X, Loader2, Inbox, Users, Clock, CheckCircle2, ShieldAlert } from "lucide-react"
 import { Pagination } from "@/components/shared/Pagination"
+import { useListingPagination } from "@/hooks/ui/useListingPagination"
 import { PageHeader, CompactStatCard } from "@/components/shared/PageHeader"
 import { useGetRequests } from "@/hooks/requests/useGetRequests"
 import { useUpdateRequestStatus } from "@/hooks/requests/useUpdateRequestStatus"
 import RequestDetailsModal from "./RequestDetailsModal"
 
 export default function RequestListTable() {
-  const [currentPage, setCurrentPage] = useState(1)
-  const [limit, setLimit] = useState(10)
   const [selectedUser, setSelectedUser] = useState<any | null>(null)
 
-  const { data, isLoading, isError } = useGetRequests(currentPage, limit)
+  const {
+    mode,
+    currentPage,
+    setCurrentPage,
+    setTargetItems,
+    effectiveLimit,
+    pageSizeOptions,
+    displayItems: requestList,
+    hasMore,
+    isLoadingMore,
+    handleLoadMore,
+    setIncomingData,
+  } = useListingPagination<any>({
+    mode: "infinite",
+    initialTargetItems: 10,
+    isGrid: false,
+    keyExtractor: (r) => r.id,
+  })
+
+  const { data, isLoading, isFetching, isError } = useGetRequests(currentPage, effectiveLimit)
   const { mutate: updateStatus, isPending: isUpdating } =
     useUpdateRequestStatus()
 
-  const requestList = data?.data || []
+  useEffect(() => {
+    if (data) {
+      setIncomingData(data.data, data.meta?.total)
+    }
+  }, [data, setIncomingData])
+
   const totalPages = data?.meta?.totalPages || 1
   const totalCount = data?.meta?.total || requestList.length
 
@@ -26,10 +49,6 @@ export default function RequestListTable() {
     const rejected = requestList.filter((r: any) => r.status === "REJECTED").length
     return { pending, approved, rejected }
   }, [requestList])
-
-  const handlePageChange = (page: number) => {
-    setCurrentPage(page)
-  }
 
   console.log("RequestListTable Rendered", isLoading)
 
@@ -278,16 +297,18 @@ export default function RequestListTable() {
             {(data?.meta?.total ?? 0) > 0 && (
               <div className="border-t border-border/60 bg-background/50 p-5 backdrop-blur-xl">
                 <Pagination
+                  mode={mode}
                   currentPage={currentPage}
                   totalPages={totalPages}
                   totalItems={data?.meta?.total}
-                  pageSize={limit}
-                  pageSizeOptions={[10, 20, 50, 100]}
-                  onPageChange={handlePageChange}
-                  onPageSizeChange={(sz) => {
-                    setLimit(sz)
-                    setCurrentPage(1)
-                  }}
+                  pageSize={effectiveLimit}
+                  pageSizeOptions={pageSizeOptions}
+                  onPageChange={setCurrentPage}
+                  onPageSizeChange={setTargetItems}
+                  hasMore={hasMore}
+                  isLoadingMore={isLoadingMore || (isFetching && currentPage > 1)}
+                  onLoadMore={handleLoadMore}
+                  loadedCount={requestList.length}
                 />
               </div>
             )}

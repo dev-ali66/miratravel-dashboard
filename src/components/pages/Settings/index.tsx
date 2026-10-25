@@ -10,6 +10,7 @@ import MiraLoader from "@/components/shared/MiraLoader"
 import { useMe } from "@/hooks/auth/useMe"
 import { apiPrivate } from "@/lib/api-client"
 import { ActiveDevicesModal } from "@/components/layout/ActiveDevicesModal"
+import { FilterToolbar, FilterGroup, FilterTabs } from "@/components/shared/FilterToolbar"
 
 import {
   PersonalDetailsSection,
@@ -238,34 +239,19 @@ export default function SettingsPage() {
         </p>
       </div>
 
-      {/* Settings Navigation Tabs (Exact frontend parity) */}
-      <div className="flex items-center gap-2 border-b border-border/70 pb-3">
-        <button
-          type="button"
-          onClick={() => handleTabChange("profile")}
-          className={`flex items-center gap-2 rounded-lg px-4 py-2 text-xs font-semibold transition-all cursor-pointer ${
-            activeTab === "profile"
-              ? "bg-primary text-primary-foreground shadow-xs"
-              : "bg-muted/40 text-muted-foreground hover:bg-muted/70 hover:text-foreground"
-          }`}
-        >
-          <User className="h-3.5 w-3.5" />
-          <span>Profile Details</span>
-        </button>
-
-        <button
-          type="button"
-          onClick={() => handleTabChange("password")}
-          className={`flex items-center gap-2 rounded-lg px-4 py-2 text-xs font-semibold transition-all cursor-pointer ${
-            activeTab === "password"
-              ? "bg-primary text-primary-foreground shadow-xs"
-              : "bg-muted/40 text-muted-foreground hover:bg-muted/70 hover:text-foreground"
-          }`}
-        >
-          <KeyRound className="h-3.5 w-3.5" />
-          <span>Password & Security</span>
-        </button>
-      </div>
+      {/* Settings Navigation Tabs */}
+      <FilterToolbar>
+        <FilterGroup>
+          <FilterTabs
+            tabs={[
+              { id: "profile", label: "Profile Details", icon: User },
+              { id: "password", label: "Password & Security", icon: KeyRound },
+            ]}
+            activeTab={activeTab}
+            onChange={(tab) => handleTabChange(tab as "profile" | "password")}
+          />
+        </FilterGroup>
+      </FilterToolbar>
 
       {/* TAB 1: PERSONAL DETAILS & AVATAR */}
       {activeTab === "profile" && (

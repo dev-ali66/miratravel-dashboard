@@ -1,10 +1,15 @@
 import RolesTable from "./RolesTable"
 import PermissionsTable from "./PermissionsTable"
 import { useState } from "react"
-import { cn } from "@/lib/utils"
-import { Shield, Key, ShieldCheck, Lock } from "lucide-react"
+import { Shield, Key, ShieldCheck, Lock, Plus } from "lucide-react"
 import { PageHeader, CompactStatCard } from "@/components/shared/PageHeader"
-import { motion } from "framer-motion"
+import {
+  FilterToolbar,
+  FilterGroup,
+  FilterTabs,
+  FilterActions,
+  FilterCreateButton,
+} from "@/components/shared/FilterToolbar"
 import { useGetRoles } from "@/hooks/role/useRoles"
 import { useGetPermissions } from "@/hooks/permission/usePermissions"
 
@@ -12,19 +17,17 @@ type Tab = "roles" | "permissions"
 
 export default function IAMPage() {
   const [activeTab, setActiveTab] = useState<Tab>("roles")
+  const [showCreateRoleModal, setShowCreateRoleModal] = useState(false)
+  const [showCreatePermModal, setShowCreatePermModal] = useState(false)
+
   const { data: rolesData } = useGetRoles(1, 100)
   const { data: permsData } = useGetPermissions(1, 100)
 
   const totalRoles = rolesData?.meta?.total ?? rolesData?.data?.length ?? 0
   const totalPerms = permsData?.meta?.total ?? permsData?.data?.length ?? 0
 
-  const tabs: { key: Tab; label: string; icon: React.ElementType }[] = [
-    { key: "roles", label: "Roles", icon: Shield },
-    { key: "permissions", label: "Permissions", icon: Key },
-  ]
-
   return (
-    <div className="w-full animate-in pt-2 duration-700 fade-in slide-in-from-bottom-4">
+    <div className="w-full space-y-6 animate-in pt-2 duration-700 fade-in slide-in-from-bottom-4">
       {/* Header with 30% title & 70% compact statistics */}
       <PageHeader
         icon={ShieldCheck}
@@ -64,45 +67,48 @@ export default function IAMPage() {
         }
       />
 
-      {/* Tab Switcher */}
-      <div className="mb-6 flex items-center gap-1 rounded-xl border border-border/60 bg-muted/20 p-1 backdrop-blur-xl w-fit">
-        {tabs.map((tab) => {
-          const Icon = tab.icon
-          const isActive = activeTab === tab.key
+      {/* Unified Tab & Action Toolbar */}
+      <FilterToolbar>
+        <FilterGroup>
+          <FilterTabs
+            tabs={[
+              { key: "roles", label: "Roles", icon: Shield, count: totalRoles },
+              { key: "permissions", label: "Permissions", icon: Key, count: totalPerms },
+            ]}
+            activeTab={activeTab}
+            onChange={(key) => setActiveTab(key as Tab)}
+          />
+        </FilterGroup>
 
-          return (
-            <button
-              key={tab.key}
-              type="button"
-              onClick={() => setActiveTab(tab.key)}
-              className={cn(
-                "relative flex items-center gap-2 rounded-lg px-5 py-2.5 text-sm font-medium transition-colors duration-200 cursor-pointer",
-                isActive
-                  ? "text-foreground"
-                  : "text-muted-foreground hover:text-foreground"
-              )}
-            >
-              {isActive && (
-                <motion.div
-                  layoutId="iam-tab-pill"
-                  className="absolute inset-0 rounded-lg bg-background shadow-sm border border-border/60"
-                  transition={{
-                    type: "spring",
-                    bounce: 0.2,
-                    duration: 0.5,
-                  }}
-                />
-              )}
-
-              <Icon className="relative z-10 h-4 w-4" />
-              <span className="relative z-10">{tab.label}</span>
-            </button>
-          )
-        })}
-      </div>
+        <FilterActions>
+          {activeTab === "roles" ? (
+            <FilterCreateButton
+              onClick={() => setShowCreateRoleModal(true)}
+              label="Create Role"
+              icon={Plus}
+            />
+          ) : (
+            <FilterCreateButton
+              onClick={() => setShowCreatePermModal(true)}
+              label="Create Permission"
+              icon={Plus}
+            />
+          )}
+        </FilterActions>
+      </FilterToolbar>
 
       {/* Content */}
-      {activeTab === "roles" ? <RolesTable /> : <PermissionsTable />}
+      {activeTab === "roles" ? (
+        <RolesTable
+          showCreateModal={showCreateRoleModal}
+          setShowCreateModal={setShowCreateRoleModal}
+        />
+      ) : (
+        <PermissionsTable
+          showCreateModal={showCreatePermModal}
+          setShowCreateModal={setShowCreatePermModal}
+        />
+      )}
     </div>
   )
 }

@@ -6,6 +6,11 @@ import { Label } from "@/components/ui/label"
 import { Switch } from "@/components/ui/switch"
 import { Card, CardContent } from "@/components/ui/card"
 import { PageHeader, CompactStatCard } from "@/components/shared/PageHeader"
+import {
+  FilterToolbar,
+  FilterGroup,
+  FilterActions,
+} from "@/components/shared/FilterToolbar"
 import { toast } from "sonner"
 
 export default function PaymentConfigPage() {
@@ -95,16 +100,33 @@ export default function PaymentConfigPage() {
       />
 
       {/* Action Bar */}
-      <div className="flex items-center justify-end gap-2.5">
-        <Button variant="outline" onClick={handleReset} className="flex items-center gap-2 cursor-pointer">
-          <RotateCcw className="h-4 w-4" />
-          <span>Reset Defaults</span>
-        </Button>
-        <Button onClick={handleSave} disabled={isSaving} className="flex items-center gap-2 shadow-sm cursor-pointer">
-          <Save className="h-4 w-4" />
-          <span>{isSaving ? "Saving..." : "Save Policy"}</span>
-        </Button>
-      </div>
+      <FilterToolbar>
+        <FilterGroup>
+          <div className="flex items-center gap-1.5 text-xs text-muted-foreground font-medium px-1">
+            <DollarSign className="h-3.5 w-3.5 text-primary shrink-0" />
+            <span>Settlement, Deposit & Automated Expiry Policy Rules</span>
+          </div>
+        </FilterGroup>
+
+        <FilterActions>
+          <Button
+            variant="outline"
+            onClick={handleReset}
+            className="h-8 sm:h-8.5 rounded-lg flex items-center gap-1.5 cursor-pointer border-border/70 text-xs px-2.5"
+          >
+            <RotateCcw className="h-3.5 w-3.5" />
+            <span>Reset Defaults</span>
+          </Button>
+          <Button
+            onClick={handleSave}
+            disabled={isSaving}
+            className="h-8 sm:h-8.5 rounded-lg flex items-center gap-1.5 shadow-xs cursor-pointer text-xs px-3"
+          >
+            <Save className="h-3.5 w-3.5" />
+            <span>{isSaving ? "Saving..." : "Save Policy"}</span>
+          </Button>
+        </FilterActions>
+      </FilterToolbar>
 
       {/* Rules Form */}
       <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
