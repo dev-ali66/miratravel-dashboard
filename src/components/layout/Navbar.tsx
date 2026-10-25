@@ -272,13 +272,13 @@ export function Navbar({ onMenuClick }: NavbarProps) {
                   className="flex items-center rounded-full border border-border/60 bg-card/70 p-0.5 transition-all hover:bg-muted/80 hover:border-border focus:outline-none focus:ring-2 focus:ring-primary/20 cursor-pointer shadow-2xs group overflow-hidden"
                 >
                   {/* User Avatar with live status pulse */}
-                  <div className="relative h-8 w-8 shrink-0 overflow-hidden rounded-full ring-2 ring-primary/20 group-hover:ring-primary/40 transition-all">
+                  <div className="relative h-10 w-10 shrink-0 overflow-hidden rounded-full ring-2 ring-primary/20 group-hover:ring-primary/40 transition-all">
                     <img
                       src={profileImage}
                       alt={profileName}
-                      className="h-full w-full object-cover"
+                      className="h-full w-full object-cover scale-105"
                     />
-                    <span className="absolute bottom-0 right-0 h-2 w-2 rounded-full bg-emerald-500 ring-1.5 ring-background" />
+                    <span className="absolute bottom-0 right-0 h-2.5 w-2.5 rounded-full bg-emerald-500 ring-1.5 ring-background" />
                   </div>
 
                   {/* Sliding Name, Role & Chevron on Hover */}
