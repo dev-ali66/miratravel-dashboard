@@ -52,22 +52,22 @@ export const MediaTableView: React.FC<MediaTableViewProps> = ({
   const isAllSelected = assets.length > 0 && assets.every((a) => selectedIds.includes(a.id))
 
   return (
-    <div className="overflow-hidden rounded-md border border-border/60 bg-card/60 shadow-xs backdrop-blur-xl">
-      <div className="overflow-x-auto">
+    <div className="rounded-md border border-border/60 bg-card/60 shadow-xs backdrop-blur-xl">
+      <div className="overflow-x-clip">
         <table className="w-full text-left text-sm border-collapse">
-          <thead className="border-b border-border/60 bg-muted/40 text-xs font-semibold uppercase tracking-wider text-muted-foreground select-none">
+          <thead className="sticky top-[106px] z-10 border-b border-border/60 text-xs font-semibold uppercase tracking-wider text-muted-foreground select-none">
             <tr>
-              <th className="px-4 py-3.5 w-10">
+              <th className="sticky top-[106px] z-10 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 px-4 py-3.5 w-10 first:rounded-tl-md">
                 <Checkbox checked={isAllSelected} onCheckedChange={onToggleSelectAll} />
               </th>
-              <th className="px-4 py-3.5 w-16">Preview</th>
-              <th className="px-4 py-3.5 font-semibold">File Name / Title</th>
-              <th className="px-4 py-3.5 font-semibold">Format</th>
-              <th className="px-4 py-3.5 font-semibold">Dimensions</th>
-              <th className="px-4 py-3.5 font-semibold">Size</th>
-              <th className="px-4 py-3.5 font-semibold">Usage</th>
-              <th className="px-4 py-3.5 font-semibold">Date Added</th>
-              <th className="px-4 py-3.5 text-right font-semibold">Actions</th>
+              <th className="sticky top-[106px] z-10 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 px-4 py-3.5 w-16">Preview</th>
+              <th className="sticky top-[106px] z-10 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 px-4 py-3.5 font-semibold">File Name / Title</th>
+              <th className="sticky top-[106px] z-10 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 px-4 py-3.5 font-semibold">Format</th>
+              <th className="sticky top-[106px] z-10 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 px-4 py-3.5 font-semibold">Dimensions</th>
+              <th className="sticky top-[106px] z-10 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 px-4 py-3.5 font-semibold">Size</th>
+              <th className="sticky top-[106px] z-10 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 px-4 py-3.5 font-semibold">Usage</th>
+              <th className="sticky top-[106px] z-10 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 px-4 py-3.5 font-semibold">Date Added</th>
+              <th className="sticky top-[106px] z-10 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 px-4 py-3.5 text-right font-semibold last:rounded-tr-md">Actions</th>
             </tr>
           </thead>
           <tbody className="divide-y divide-border/40 text-foreground">

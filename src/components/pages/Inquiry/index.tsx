@@ -259,18 +259,18 @@ export default function InquiryPage() {
       </FilterToolbar>
 
       {/* Canonical Table Container */}
-      <div className="overflow-hidden rounded-md border border-border/60 bg-card/60 shadow-xs backdrop-blur-xl">
-        <div className="overflow-x-auto">
+      <div className="rounded-md border border-border/60 bg-card/60 shadow-xs backdrop-blur-xl">
+        <div className="overflow-x-clip">
           <table className="w-full text-left text-sm border-collapse">
-            <thead className="border-b border-border/60 bg-muted/40 text-xs font-semibold uppercase tracking-wider text-muted-foreground select-none">
+            <thead className="sticky top-[106px] z-10 border-b border-border/60 text-xs font-semibold uppercase tracking-wider text-muted-foreground select-none">
               <tr>
-                <th className="px-5 py-3.5 font-semibold">Ref #</th>
-                <th className="px-5 py-3.5 font-semibold">Traveler Name & Email</th>
-                <th className="px-5 py-3.5 font-semibold">Destination & Travel Date</th>
-                <th className="px-5 py-3.5 font-semibold">Travelers & Types</th>
-                <th className="px-5 py-3.5 font-semibold">Status</th>
-                <th className="px-5 py-3.5 font-semibold">Submitted At</th>
-                <th className="px-5 py-3.5 text-right font-semibold">Actions</th>
+                <th className="sticky top-[106px] z-10 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 px-5 py-3.5 font-semibold first:rounded-tl-md">Ref #</th>
+                <th className="sticky top-[106px] z-10 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 px-5 py-3.5 font-semibold">Traveler Name & Email</th>
+                <th className="sticky top-[106px] z-10 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 px-5 py-3.5 font-semibold">Destination & Travel Date</th>
+                <th className="sticky top-[106px] z-10 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 px-5 py-3.5 font-semibold">Travelers & Types</th>
+                <th className="sticky top-[106px] z-10 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 px-5 py-3.5 font-semibold">Status</th>
+                <th className="sticky top-[106px] z-10 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 px-5 py-3.5 font-semibold">Submitted At</th>
+                <th className="sticky top-[106px] z-10 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 px-5 py-3.5 text-right font-semibold last:rounded-tr-md">Actions</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-border/40 text-foreground">
@@ -429,6 +429,8 @@ export default function InquiryPage() {
           onLoadMore={handleLoadMore}
           onPageChange={setCurrentPage}
           onPageSizeChange={setTargetItems}
+          fixed={false}
+          isTable
         />
       )}
 

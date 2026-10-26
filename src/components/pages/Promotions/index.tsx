@@ -287,19 +287,19 @@ export default function PromotionsPage() {
       </FilterToolbar>
 
       {/* Table */}
-      <div className="overflow-hidden rounded-md border border-border/60 bg-card/60 shadow-xs backdrop-blur-xl">
-        <div className="overflow-x-auto">
+      <div className="rounded-md border border-border/60 bg-card/60 shadow-xs backdrop-blur-xl">
+        <div className="overflow-x-clip">
           <table className="w-full text-left text-sm border-collapse">
-            <thead className="border-b border-border/60 bg-muted/40 text-xs font-semibold uppercase tracking-wider text-muted-foreground select-none">
+            <thead className="sticky top-[106px] z-10 border-b border-border/60 text-xs font-semibold uppercase tracking-wider text-muted-foreground select-none">
               <tr>
-                <th className="px-5 py-3.5 font-semibold">Voucher Code</th>
-                <th className="px-5 py-3.5 font-semibold">Campaign & Scope</th>
-                <th className="px-5 py-3.5 font-semibold">Discount Rate</th>
-                <th className="px-5 py-3.5 font-semibold">Min. Spend</th>
-                <th className="px-5 py-3.5 font-semibold">Redemptions</th>
-                <th className="px-5 py-3.5 font-semibold">Validity Period</th>
-                <th className="px-5 py-3.5 text-center font-semibold">Status</th>
-                <th className="px-5 py-3.5 text-right font-semibold">Actions</th>
+                <th className="sticky top-[106px] z-10 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 px-5 py-3.5 font-semibold first:rounded-tl-md">Voucher Code</th>
+                <th className="sticky top-[106px] z-10 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 px-5 py-3.5 font-semibold">Campaign & Scope</th>
+                <th className="sticky top-[106px] z-10 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 px-5 py-3.5 font-semibold">Discount Rate</th>
+                <th className="sticky top-[106px] z-10 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 px-5 py-3.5 font-semibold">Min. Spend</th>
+                <th className="sticky top-[106px] z-10 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 px-5 py-3.5 font-semibold">Redemptions</th>
+                <th className="sticky top-[106px] z-10 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 px-5 py-3.5 font-semibold">Validity Period</th>
+                <th className="sticky top-[106px] z-10 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 px-5 py-3.5 text-center font-semibold">Status</th>
+                <th className="sticky top-[106px] z-10 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 px-5 py-3.5 text-right font-semibold last:rounded-tr-md">Actions</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-border/40 text-foreground">
@@ -317,82 +317,82 @@ export default function PromotionsPage() {
                 filtered
                   .slice(0, currentPage * pageSize)
                   .map((p) => {
-                  const percentUsed = Math.min(100, Math.round((p.usageCount / p.usageLimit) * 100))
-                  return (
-                    <tr key={p.id} className="transition-colors hover:bg-muted/30">
-                      <td className="px-5 py-3.5">
-                        <div className="flex items-center gap-2">
-                          <span className="font-mono text-xs font-bold tracking-wider rounded bg-primary/10 px-2 py-1 text-primary">
-                            {p.code}
-                          </span>
-                          <Button
-                            variant="ghost"
-                            size="icon"
-                            className="h-6 w-6 text-muted-foreground hover:text-foreground"
-                            onClick={() => handleCopy(p.code)}
-                          >
-                            {copiedCode === p.code ? (
-                              <Check className="h-3 w-3 text-emerald-500" />
-                            ) : (
-                              <Copy className="h-3 w-3" />
-                            )}
-                          </Button>
-                        </div>
-                      </td>
-                      <td className="px-5 py-3.5">
-                        <div className="flex flex-col">
-                          <span className="text-xs font-semibold text-foreground">{p.description}</span>
-                          <span className="text-[11px] text-muted-foreground">{p.applicableTo}</span>
-                        </div>
-                      </td>
-                      <td className="px-5 py-3.5">
-                        <span className="font-semibold text-xs text-foreground">
-                          {p.type === "PERCENTAGE" ? `${p.discountValue}% OFF` : `$${p.discountValue.toLocaleString()} OFF`}
-                        </span>
-                      </td>
-                      <td className="px-5 py-3.5 text-xs text-muted-foreground">
-                        ${p.minBookingValue.toLocaleString()}
-                      </td>
-                      <td className="px-5 py-3.5">
-                        <div className="flex flex-col gap-1 text-xs">
-                          <span className="font-semibold text-foreground">
-                            {p.usageCount} / {p.usageLimit} ({percentUsed}%)
-                          </span>
-                          <div className="h-1.5 w-24 overflow-hidden rounded-full bg-muted">
-                            <div
-                              className={cn(
-                                "h-full rounded-full",
-                                percentUsed > 80 ? "bg-amber-500" : "bg-primary"
+                    const percentUsed = Math.min(100, Math.round((p.usageCount / p.usageLimit) * 100))
+                    return (
+                      <tr key={p.id} className="transition-colors hover:bg-muted/30">
+                        <td className="px-5 py-3.5">
+                          <div className="flex items-center gap-2">
+                            <span className="font-mono text-xs font-bold tracking-wider rounded bg-primary/10 px-2 py-1 text-primary">
+                              {p.code}
+                            </span>
+                            <Button
+                              variant="ghost"
+                              size="icon"
+                              className="h-6 w-6 text-muted-foreground hover:text-foreground"
+                              onClick={() => handleCopy(p.code)}
+                            >
+                              {copiedCode === p.code ? (
+                                <Check className="h-3 w-3 text-emerald-500" />
+                              ) : (
+                                <Copy className="h-3 w-3" />
                               )}
-                              style={{ width: `${percentUsed}%` }}
-                            />
+                            </Button>
                           </div>
-                        </div>
-                      </td>
-                      <td className="px-5 py-3.5 text-xs text-muted-foreground">
-                        {p.validFrom} to {p.validTo}
-                      </td>
-                      <td className="px-5 py-3.5 text-center">
-                        <span
-                          className={cn(
-                            "inline-block rounded-sm border px-2 py-0.5 text-[11px] font-semibold uppercase",
-                            p.isActive
-                              ? "border-emerald-500/20 bg-emerald-500/10 text-emerald-600 dark:text-emerald-400"
-                              : "border-zinc-500/20 bg-zinc-500/10 text-zinc-500"
-                          )}
-                        >
-                          {p.isActive ? "Active" : "Inactive"}
-                        </span>
-                      </td>
-                      <td className="px-5 py-3.5 text-right">
-                        <Switch
-                          checked={p.isActive}
-                          onCheckedChange={() => handleToggleActive(p.id)}
-                        />
-                      </td>
-                    </tr>
-                  )
-                })
+                        </td>
+                        <td className="px-5 py-3.5">
+                          <div className="flex flex-col">
+                            <span className="text-xs font-semibold text-foreground">{p.description}</span>
+                            <span className="text-[11px] text-muted-foreground">{p.applicableTo}</span>
+                          </div>
+                        </td>
+                        <td className="px-5 py-3.5">
+                          <span className="font-semibold text-xs text-foreground">
+                            {p.type === "PERCENTAGE" ? `${p.discountValue}% OFF` : `$${p.discountValue.toLocaleString()} OFF`}
+                          </span>
+                        </td>
+                        <td className="px-5 py-3.5 text-xs text-muted-foreground">
+                          ${p.minBookingValue.toLocaleString()}
+                        </td>
+                        <td className="px-5 py-3.5">
+                          <div className="flex flex-col gap-1 text-xs">
+                            <span className="font-semibold text-foreground">
+                              {p.usageCount} / {p.usageLimit} ({percentUsed}%)
+                            </span>
+                            <div className="h-1.5 w-24 overflow-hidden rounded-full bg-muted">
+                              <div
+                                className={cn(
+                                  "h-full rounded-full",
+                                  percentUsed > 80 ? "bg-amber-500" : "bg-primary"
+                                )}
+                                style={{ width: `${percentUsed}%` }}
+                              />
+                            </div>
+                          </div>
+                        </td>
+                        <td className="px-5 py-3.5 text-xs text-muted-foreground">
+                          {p.validFrom} to {p.validTo}
+                        </td>
+                        <td className="px-5 py-3.5 text-center">
+                          <span
+                            className={cn(
+                              "inline-block rounded-sm border px-2 py-0.5 text-[11px] font-semibold uppercase",
+                              p.isActive
+                                ? "border-emerald-500/20 bg-emerald-500/10 text-emerald-600 dark:text-emerald-400"
+                                : "border-zinc-500/20 bg-zinc-500/10 text-zinc-500"
+                            )}
+                          >
+                            {p.isActive ? "Active" : "Inactive"}
+                          </span>
+                        </td>
+                        <td className="px-5 py-3.5 text-right">
+                          <Switch
+                            checked={p.isActive}
+                            onCheckedChange={() => handleToggleActive(p.id)}
+                          />
+                        </td>
+                      </tr>
+                    )
+                  })
               )}
             </tbody>
           </table>
@@ -415,6 +415,8 @@ export default function PromotionsPage() {
               setPageSize(sz)
               setCurrentPage(1)
             }}
+            fixed={false}
+            isTable
           />
         )}
       </div>

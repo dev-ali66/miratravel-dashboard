@@ -43,7 +43,6 @@ export function RootLayout() {
         { href: "/system-health", label: "System Health", icon: "health" as any },
         { href: "/audit-logs", label: "Audit Logs", icon: "audit" as any },
         { href: "/payment-config", label: "Payment Config", icon: "paymentConfig" as any },
-        { href: "/settings", label: "Profile & Security", icon: "user" as any },
         { href: "/site-settings", label: "Site Settings", icon: "settings" as any },
         { href: "/iam", label: "Roles & Access", icon: "iam" as any },
       ],
@@ -74,7 +73,7 @@ export function RootLayout() {
           onMobileClose={() => setIsMobileMenuOpen(false)}
         />
 
-        <main className="flex-1 min-w-0 px-2 md:ml-[280px] pb-14 sm:pb-16">
+        <main className="flex-1 min-w-0 px-2 md:ml-[280px] pb-6 sm:pb-8">
           <Outlet />
         </main>
       </div>

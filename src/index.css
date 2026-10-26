@@ -322,11 +322,11 @@
   }
 
   ::-webkit-scrollbar-track {
-    @apply bg-primary;
+    @apply bg-secondary;
   }
 
   ::-webkit-scrollbar-thumb {
-    @apply bg-secondary rounded-none hover:bg-muted-foreground;
+    @apply bg-primary rounded-none hover:bg-muted-foreground;
   }
 }
 
@@ -371,7 +371,7 @@ html.lenis body {
   display: inline-block;
 }
 
-.ProseMirror > *:last-child {
+.ProseMirror>*:last-child {
   margin-bottom: 0;
 }
 
@@ -471,7 +471,8 @@ html.lenis body {
   0% {
     transform: translateX(0%);
   }
+
   100% {
     transform: translateX(-33.333%);
   }
-}
+}

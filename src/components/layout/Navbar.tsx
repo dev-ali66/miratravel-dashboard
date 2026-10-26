@@ -224,7 +224,7 @@ export function Navbar({ onMenuClick }: NavbarProps) {
           <div className="flex items-center gap-3 md:gap-4 h-full">
             <button
               type="button"
-              className="md:hidden flex h-9 w-9 items-center justify-center rounded-lg border border-border/60 bg-muted/40 text-foreground hover:bg-muted cursor-pointer shrink-0"
+              className="md:hidden flex h-10 w-10 items-center justify-center rounded-lg border border-border/60 bg-muted/40 text-foreground hover:bg-muted cursor-pointer shrink-0"
               onClick={onMenuClick}
               aria-label="Toggle navigation menu"
             >
@@ -242,11 +242,11 @@ export function Navbar({ onMenuClick }: NavbarProps) {
                   type="button"
                   onMouseEnter={() => setIsProfileHovered(true)}
                   onMouseLeave={() => setIsProfileHovered(false)}
-                  className="flex items-center rounded-full border border-border/60 bg-card/70 p-0.5 transition-all hover:bg-muted/80 hover:border-border focus:outline-none focus:ring-2 focus:ring-primary/20 cursor-pointer shadow-2xs group overflow-hidden"
+                  className="flex items-center rounded-full border border-border/60 bg-card/70 transition-all hover:bg-muted/80 hover:border-border focus:outline-none cursor-pointer shadow-2xs group overflow-hidden"
                   title={profileName}
                 >
                   {/* Clean circular profile avatar */}
-                  <div className="relative h-9 w-9 shrink-0 overflow-hidden  ring-2 ring-primary/20 group-hover:ring-primary/40 transition-all shadow-xs">
+                  <div className="relative h-10 w-10 shrink-0 overflow-hidden rounded-full ring-2 ring-primary/20 group-hover:ring-primary/40 transition-all shadow-xs">
                     <img
                       src={profileImage}
                       alt={profileName}

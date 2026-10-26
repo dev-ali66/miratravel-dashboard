@@ -12,7 +12,7 @@ export function ThemeToggle({ className }: { className?: string }) {
     <button
       type="button"
       onClick={toggleTheme}
-      className={`relative inline-flex h-10 w-10 items-center justify-center rounded-full text-foreground transition-all hover:bg-muted/70 hover:scale-105 active:scale-95 focus:outline-none cursor-pointer ${className || ""}`}
+      className={`relative inline-flex h-9 w-9 items-center justify-center rounded-full hover:ring-1 hover: ring-amber-400 text-foreground transition-all hover:bg-muted/70 hover:scale-105 active:scale-95 focus:outline-none cursor-pointer ${className || ""}`}
       title={`Switch to ${theme === "dark" ? "Light" : "Dark"} mode`}
       aria-label="Toggle theme"
     >

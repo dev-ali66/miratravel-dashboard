@@ -9,12 +9,12 @@ export function GalleryPreview({ gallery, draft }: { gallery?: any; draft?: any 
     safeGal.items && safeGal.items.length > 0
       ? safeGal.items
       : [
-          { title: "Coastline", multimedia: { show: "image", image: { url: "" } } },
-          { title: "Berat", multimedia: { show: "image", image: { url: "" } } },
-          { title: "Ottoman Fortress", multimedia: { show: "image", image: { url: "" } } },
-          { title: "Theth Alps", multimedia: { show: "image", image: { url: "" } } },
-          { title: "Blue Eye Spring", multimedia: { show: "image", image: { url: "" } } },
-        ]
+        { title: "Coastline", multimedia: { show: "image", image: { url: "" } } },
+        { title: "Berat", multimedia: { show: "image", image: { url: "" } } },
+        { title: "Ottoman Fortress", multimedia: { show: "image", image: { url: "" } } },
+        { title: "Theth Alps", multimedia: { show: "image", image: { url: "" } } },
+        { title: "Blue Eye Spring", multimedia: { show: "image", image: { url: "" } } },
+      ]
 
   const galTitle = getStr(safeGal.title, "Visual Impressions")
 
@@ -30,7 +30,7 @@ export function GalleryPreview({ gallery, draft }: { gallery?: any; draft?: any 
       </div>
 
       <div className="flex flex-col lg:flex-row items-stretch gap-6 w-full">
-        <div className="w-full lg:w-1/2 min-h-[320px] md:min-h-[420px] xl:h-[498px] rounded-lg overflow-hidden relative shadow-sm">
+        <div className="w-full lg:w-1/2 min-h-[320px] md:min-h-[420px] xl:h-[4100px] rounded-lg overflow-hidden relative shadow-sm">
           <UniversalMultimediaPreview
             multimedia={items[0]?.multimedia || items[0]?.multimediaData || { show: items[0]?.type === "video" ? "video" : "image", image: { url: typeof items[0]?.url === "string" ? items[0].url : "" } }}
             className="w-full h-full object-cover object-center"

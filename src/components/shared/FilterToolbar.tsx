@@ -30,13 +30,13 @@ export function FilterToolbar({
     <div
       className={cn(
         "w-full transition-all duration-200",
-        sticky && cn("sticky z-20 pb-2 bg-transparent", topOffset),
+        sticky && cn("sticky z-20 pb-2", topOffset),
         className
       )}
     >
       <div
         className={cn(
-          "flex flex-wrap items-stretch justify-between rounded-md border border-border/40 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 dark:bg-card/90 dark:supports-[backdrop-filter]:dark:bg-card/60 shadow-2xs transition-all overflow-hidden divide-y sm:divide-y-0 sm:divide-x divide-border/40",
+          "flex flex-wrap items-stretch justify-between rounded-md border border-border/40 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 shadow-2xs transition-all overflow-hidden divide-y sm:divide-y-0 sm:divide-x divide-border/40",
           containerClassName
         )}
       >

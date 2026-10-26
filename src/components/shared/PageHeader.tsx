@@ -28,13 +28,13 @@ export function CompactStatCard({
     <div
       onClick={onClick}
       className={cn(
-        "rounded-md border border-border/60 bg-card/60 backdrop-blur-xl px-2.5 py-1.5 sm:px-3 sm:py-2 shadow-xs flex flex-col justify-between h-14 transition-all hover:border-border/90 hover:bg-card/80 min-w-0 select-none",
+        "rounded-md border border-border/60 bg-card/60 backdrop-blur-xl px-2.5 py-1 sm:px-3 sm:py-1 shadow-xs flex flex-col justify-between h-14 transition-all hover:border-border/90 hover:bg-card/80 min-w-0 select-none",
         onClick && "cursor-pointer hover:border-primary/50 hover:shadow-sm active:scale-[0.99]",
         className
       )}
     >
       <div className="flex items-center justify-between gap-1.5 min-w-0">
-        <span className="text-[10px] sm:text-[10.5px] font-semibold uppercase tracking-wider text-muted-foreground truncate leading-none">
+        <span className="text-xs sm:text-xs font-semibold uppercase tracking-wider text-muted-foreground truncate leading-none">
           {label}
         </span>
         <div className="flex h-4 w-4 sm:h-4.5 sm:w-4.5 shrink-0 items-center justify-center rounded-xs bg-muted/40">
@@ -42,7 +42,7 @@ export function CompactStatCard({
         </div>
       </div>
       <div className="min-w-0">
-        <div className="text-sm sm:text-base font-bold tracking-tight text-foreground truncate leading-tight">
+        <div className="text-xs sm:text-xs font-bold tracking-tight text-foreground truncate leading-tight">
           {value}
         </div>
         {subtext && (

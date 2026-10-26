@@ -82,15 +82,15 @@ export default function PermissionsTable({
       )}
 
       {/* Canonical Table Container */}
-      <div className="overflow-hidden rounded-md border border-border/60 bg-card/60 shadow-xs backdrop-blur-xl">
-        <div className="overflow-x-auto">
+      <div className="rounded-md border border-border/60 bg-card/60 shadow-xs backdrop-blur-xl">
+        <div className="overflow-x-clip">
           <table className="w-full text-left text-sm border-collapse">
-            <thead className="border-b border-border/60 bg-muted/40 text-xs font-semibold uppercase tracking-wider text-muted-foreground select-none">
+            <thead className="sticky top-[96px] z-10 border-b border-border/60 text-xs font-semibold uppercase tracking-wider text-muted-foreground select-none">
               <tr>
-                <th className="px-5 py-3.5 font-semibold">Action</th>
-                <th className="px-5 py-3.5 font-semibold">Resource</th>
-                <th className="px-5 py-3.5 font-semibold">Scope</th>
-                <th className="px-5 py-3.5 text-right font-semibold">Actions</th>
+                <th className="sticky top-[96px] z-10 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 px-5 py-3.5 font-semibold first:rounded-tl-md">Action</th>
+                <th className="sticky top-[96px] z-10 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 px-5 py-3.5 font-semibold">Resource</th>
+                <th className="sticky top-[96px] z-10 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 px-5 py-3.5 font-semibold">Scope</th>
+                <th className="sticky top-[96px] z-10 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 px-5 py-3.5 text-right font-semibold last:rounded-tr-md">Actions</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-border/40 text-foreground">
@@ -241,6 +241,8 @@ export default function PermissionsTable({
           isLoadingMore={isLoadingMore || (isFetching && currentPage > 1)}
           onLoadMore={handleLoadMore}
           loadedCount={permissions.length}
+          fixed={false}
+          isTable
         />
       )}
 
