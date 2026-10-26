@@ -245,7 +245,17 @@ export function Navbar({ onMenuClick }: NavbarProps) {
                   className="flex items-center rounded-full border border-border/60 bg-card/70 p-0.5 transition-all hover:bg-muted/80 hover:border-border focus:outline-none focus:ring-2 focus:ring-primary/20 cursor-pointer shadow-2xs group overflow-hidden"
                   title={profileName}
                 >
-                  {/* Sliding Name, Role & Chevron to the LEFT (bam side-e) */}
+                  {/* Clean circular profile avatar */}
+                  <div className="relative h-10 w-10 shrink-0 overflow-hidden rounded-full ring-2 ring-primary/20 group-hover:ring-primary/40 transition-all shadow-xs">
+                    <img
+                      src={profileImage}
+                      alt={profileName}
+                      className="h-full w-full object-cover scale-105"
+                    />
+                    <span className="absolute bottom-0 right-0 h-2.5 w-2.5 rounded-full bg-emerald-500 ring-1.5 ring-background" />
+                  </div>
+
+                  {/* Sliding Name, Role & Chevron to the Right */}
                   <AnimatePresence>
                     {isProfileExpanded && (
                       <motion.div
@@ -253,9 +263,9 @@ export function Navbar({ onMenuClick }: NavbarProps) {
                         animate={{ width: "auto", opacity: 1 }}
                         exit={{ width: 0, opacity: 0 }}
                         transition={{ duration: 0.22, ease: [0.4, 0, 0.2, 1] }}
-                        className="overflow-hidden flex items-center pl-3 pr-2 gap-2 whitespace-nowrap"
+                        className="overflow-hidden flex items-center pl-2.5 pr-2 gap-2 whitespace-nowrap"
                       >
-                        <div className="flex flex-col text-right">
+                        <div className="flex flex-col text-left">
                           <span className="text-xs font-bold text-foreground leading-tight truncate max-w-[130px]">
                             {profileName}
                           </span>
@@ -268,16 +278,6 @@ export function Navbar({ onMenuClick }: NavbarProps) {
                       </motion.div>
                     )}
                   </AnimatePresence>
-
-                  {/* Clean circular profile avatar */}
-                  <div className="relative h-10 w-10 shrink-0 overflow-hidden rounded-full ring-2 ring-primary/20 group-hover:ring-primary/40 transition-all shadow-xs">
-                    <img
-                      src={profileImage}
-                      alt={profileName}
-                      className="h-full w-full object-cover scale-105"
-                    />
-                    <span className="absolute bottom-0 right-0 h-2.5 w-2.5 rounded-full bg-emerald-500 ring-1.5 ring-background" />
-                  </div>
                 </button>
               </DropdownMenuTrigger>
 
