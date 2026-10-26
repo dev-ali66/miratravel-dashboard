@@ -1,5 +1,6 @@
 import { useState } from "react"
 import { Link, useNavigate } from "react-router-dom"
+import { motion, AnimatePresence } from "framer-motion"
 import { useMe } from "@/hooks/auth/useMe"
 import { useUserSessions } from "@/hooks/auth/useUserSessions"
 import { useGetCmsBySlug } from "@/hooks/cms/useGetCmsBySlug"
@@ -25,6 +26,7 @@ import {
   Activity,
   LogOut,
   Menu,
+  ChevronDown,
   Laptop,
   CheckCircle2,
   Clock,
@@ -174,6 +176,10 @@ export function Navbar({ onMenuClick }: NavbarProps) {
   const { isDevMode, toggleDevMode } = useDevMode()
   const [isLogoutOpen, setIsLogoutOpen] = useState(false)
   const [isDevicesModalOpen, setIsDevicesModalOpen] = useState(false)
+  const [isProfileHovered, setIsProfileHovered] = useState(false)
+  const [isDropdownOpen, setIsDropdownOpen] = useState(false)
+
+  const isProfileExpanded = isProfileHovered || isDropdownOpen
 
   const profileName = user?.userPersonalInfo?.firstName
     ? `${user.userPersonalInfo.firstName} ${user.userPersonalInfo.lastName || ""}`.trim()
@@ -232,15 +238,17 @@ export function Navbar({ onMenuClick }: NavbarProps) {
 
             <div className="h-6 w-px bg-border/60" />
 
-            <DropdownMenu>
+            <DropdownMenu open={isDropdownOpen} onOpenChange={setIsDropdownOpen}>
               <DropdownMenuTrigger asChild>
                 <button
                   type="button"
-                  className="relative h-10 w-10 rounded-full focus:outline-none focus:ring-2 focus:ring-primary/30 transition-transform hover:scale-105 active:scale-95 cursor-pointer shrink-0"
+                  onMouseEnter={() => setIsProfileHovered(true)}
+                  onMouseLeave={() => setIsProfileHovered(false)}
+                  className="flex items-center rounded-full bg-transparent border-0 p-0 focus:outline-none focus:ring-2 focus:ring-primary/30 cursor-pointer group select-none transition-all"
                   title={profileName}
                 >
                   {/* Clean circular profile avatar without extra borders or backgrounds */}
-                  <div className="relative h-full w-full overflow-hidden rounded-full ring-2 ring-primary/20 hover:ring-primary/50 transition-all shadow-xs">
+                  <div className="relative h-10 w-10 shrink-0 overflow-hidden rounded-full ring-2 ring-primary/20 group-hover:ring-primary/50 transition-all shadow-xs">
                     <img
                       src={profileImage}
                       alt={profileName}
@@ -248,6 +256,30 @@ export function Navbar({ onMenuClick }: NavbarProps) {
                     />
                     <span className="absolute bottom-0 right-0 h-2.5 w-2.5 rounded-full bg-emerald-500 ring-1.5 ring-background" />
                   </div>
+
+                  {/* Sliding Name, Role & Chevron on Hover - Pure typography, zero background, zero border */}
+                  <AnimatePresence>
+                    {isProfileExpanded && (
+                      <motion.div
+                        initial={{ width: 0, opacity: 0 }}
+                        animate={{ width: "auto", opacity: 1 }}
+                        exit={{ width: 0, opacity: 0 }}
+                        transition={{ duration: 0.2, ease: [0.4, 0, 0.2, 1] }}
+                        className="overflow-hidden flex items-center pl-2.5 pr-1 gap-2 whitespace-nowrap"
+                      >
+                        <div className="flex flex-col text-left">
+                          <span className="text-xs font-bold text-foreground leading-tight truncate max-w-[130px]">
+                            {profileName}
+                          </span>
+                          <span className="text-[10px] font-medium text-muted-foreground leading-tight uppercase tracking-wider">
+                            {userRole}
+                          </span>
+                        </div>
+
+                        <ChevronDown className="h-3.5 w-3.5 text-muted-foreground transition-transform group-data-[state=open]:rotate-180 shrink-0" />
+                      </motion.div>
+                    )}
+                  </AnimatePresence>
                 </button>
               </DropdownMenuTrigger>
 
