@@ -218,7 +218,7 @@ export function Navbar({ onMenuClick }: NavbarProps) {
 
   return (
     <>
-      <header className="fixed top-0 z-50 w-full border-b border-border/40 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
+      <header className="fixed top-0 z-50 w-full bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
         <div className="flex h-14 items-center px-4 md:px-6 justify-between">
           {/* Left: Hamburger (Mobile) + Brand Logo */}
           <div className="flex items-center gap-3 md:gap-4 h-full">
@@ -236,38 +236,26 @@ export function Navbar({ onMenuClick }: NavbarProps) {
           <div className="flex items-center gap-2.5 sm:gap-3">
             <ThemeToggle />
 
-            <div className="h-6 w-px bg-border/60" />
-
             <DropdownMenu open={isDropdownOpen} onOpenChange={setIsDropdownOpen}>
               <DropdownMenuTrigger asChild>
                 <button
                   type="button"
                   onMouseEnter={() => setIsProfileHovered(true)}
                   onMouseLeave={() => setIsProfileHovered(false)}
-                  className="flex items-center rounded-full bg-transparent border-0 p-0 focus:outline-none focus:ring-2 focus:ring-primary/30 cursor-pointer group select-none transition-all"
+                  className="flex items-center rounded-full border border-border/60 bg-card/70 p-0.5 transition-all hover:bg-muted/80 hover:border-border focus:outline-none focus:ring-2 focus:ring-primary/20 cursor-pointer shadow-2xs group overflow-hidden"
                   title={profileName}
                 >
-                  {/* Clean circular profile avatar without extra borders or backgrounds */}
-                  <div className="relative h-10 w-10 shrink-0 overflow-hidden rounded-full ring-2 ring-primary/20 group-hover:ring-primary/50 transition-all shadow-xs">
-                    <img
-                      src={profileImage}
-                      alt={profileName}
-                      className="h-full w-full object-cover scale-105"
-                    />
-                    <span className="absolute bottom-0 right-0 h-2.5 w-2.5 rounded-full bg-emerald-500 ring-1.5 ring-background" />
-                  </div>
-
-                  {/* Sliding Name, Role & Chevron on Hover - Pure typography, zero background, zero border */}
+                  {/* Sliding Name, Role & Chevron to the LEFT (bam side-e) */}
                   <AnimatePresence>
                     {isProfileExpanded && (
                       <motion.div
                         initial={{ width: 0, opacity: 0 }}
                         animate={{ width: "auto", opacity: 1 }}
                         exit={{ width: 0, opacity: 0 }}
-                        transition={{ duration: 0.2, ease: [0.4, 0, 0.2, 1] }}
-                        className="overflow-hidden flex items-center pl-2.5 pr-1 gap-2 whitespace-nowrap"
+                        transition={{ duration: 0.22, ease: [0.4, 0, 0.2, 1] }}
+                        className="overflow-hidden flex items-center pl-3 pr-2 gap-2 whitespace-nowrap"
                       >
-                        <div className="flex flex-col text-left">
+                        <div className="flex flex-col text-right">
                           <span className="text-xs font-bold text-foreground leading-tight truncate max-w-[130px]">
                             {profileName}
                           </span>
@@ -280,6 +268,16 @@ export function Navbar({ onMenuClick }: NavbarProps) {
                       </motion.div>
                     )}
                   </AnimatePresence>
+
+                  {/* Clean circular profile avatar */}
+                  <div className="relative h-10 w-10 shrink-0 overflow-hidden rounded-full ring-2 ring-primary/20 group-hover:ring-primary/40 transition-all shadow-xs">
+                    <img
+                      src={profileImage}
+                      alt={profileName}
+                      className="h-full w-full object-cover scale-105"
+                    />
+                    <span className="absolute bottom-0 right-0 h-2.5 w-2.5 rounded-full bg-emerald-500 ring-1.5 ring-background" />
+                  </div>
                 </button>
               </DropdownMenuTrigger>
 
