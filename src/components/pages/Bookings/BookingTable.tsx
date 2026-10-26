@@ -32,6 +32,7 @@ import {
 import BookingDetailsSheet from "./BookingDetailsSheet"
 import { ApproveBookingModal } from "./ApproveBookingModal"
 import { RecordPaymentModal } from "./RecordPaymentModal"
+import { triggerCsvExport, exportToCsv } from "@/lib/exportUtils"
 
 export default function BookingTable() {
   const [selectedBooking, setSelectedBooking] = useState<BookingItem | null>(null)
@@ -157,44 +158,63 @@ export default function BookingTable() {
     }
   }, [bookings, totalCount])
 
-  // CSV Export Handler
-  const handleExportCSV = () => {
-    if (bookings.length === 0) return
-    const headers = [
-      "Booking Number",
-      "Traveler Name",
-      "Email",
-      "Arrival Date",
-      "Departure Date",
-      "Confirmed Total",
-      "Currency",
-      "Paid Amount",
-      "Outstanding Amount",
-      "Booking Status",
-      "Payment Status",
-    ]
-    const rows = bookings.map((b) => [
-      b.bookingNumber,
-      `"${b.travelerFirstName} ${b.travelerLastName}"`,
-      b.travelerEmail,
-      b.travelArrivalDate,
-      b.travelDepartureDate,
-      b.confirmedTotal || 0,
-      b.currency,
-      b.paidAmount,
-      b.outstandingAmount,
-      b.bookingStatus,
-      b.paymentStatus,
-    ])
-
-    const csvContent = "data:text/csv;charset=utf-8," + [headers.join(","), ...rows.map((e) => e.join(","))].join("\n")
-    const encodedUri = encodeURI(csvContent)
-    const link = document.createElement("a")
-    link.setAttribute("href", encodedUri)
-    link.setAttribute("download", `mira_bookings_export_${new Date().toISOString().split("T")[0]}.csv`)
-    document.body.appendChild(link)
-    link.click()
-    document.body.removeChild(link)
+  // Rich CSV Export Handler
+  const handleExportCSV = async () => {
+    await triggerCsvExport({
+      endpoint: "bookings",
+      params: {
+        search: searchInput.trim() || undefined,
+        bookingStatus: selectedBookingStatus !== "ALL" ? selectedBookingStatus : undefined,
+        paymentStatus: selectedPaymentStatus !== "ALL" ? selectedPaymentStatus : undefined,
+      },
+      defaultFilename: `mira_bookings_export_${new Date().toISOString().split("T")[0]}.csv`,
+      entityName: "Bookings",
+      fallback: () => {
+        const headers = [
+          "Booking Reference #",
+          "Booking Status",
+          "Payment Status",
+          "Journey Title",
+          "Traveler Full Name",
+          "Traveler First Name",
+          "Traveler Last Name",
+          "Traveler Email",
+          "Traveler Phone",
+          "Traveler Nationality",
+          "Traveler Type",
+          "Adults",
+          "Children",
+          "Arrival Date",
+          "Departure Date",
+          "Currency",
+          "Confirmed Total",
+          "Paid Amount",
+          "Outstanding Amount",
+        ]
+        const rows = bookings.map((b) => [
+          b.bookingNumber,
+          b.bookingStatus,
+          b.paymentStatus,
+          b.journey?.title || "N/A",
+          `${b.travelerFirstName || ""} ${b.travelerLastName || ""}`.trim(),
+          b.travelerFirstName || "",
+          b.travelerLastName || "",
+          b.travelerEmail || "",
+          b.travelerPhone || "",
+          b.travelerNationality || "",
+          b.travelerType || "SOLO",
+          b.adults ?? 0,
+          b.children ?? 0,
+          b.travelArrivalDate ? new Date(b.travelArrivalDate).toISOString().split("T")[0] : "",
+          b.travelDepartureDate ? new Date(b.travelDepartureDate).toISOString().split("T")[0] : "",
+          b.currency || "EUR",
+          b.confirmedTotal || 0,
+          b.paidAmount || 0,
+          b.outstandingAmount || 0,
+        ])
+        exportToCsv(`mira_bookings_export_${new Date().toISOString().split("T")[0]}.csv`, headers, rows)
+      },
+    })
   }
 
   return (
@@ -321,15 +341,15 @@ export default function BookingTable() {
       <div className="rounded-md border border-border/60 bg-card/60 shadow-xs backdrop-blur-xl">
         <div className="overflow-x-clip">
           <table className="w-full text-left text-sm border-collapse whitespace-nowrap">
-            <thead className="sticky top-[106px] z-10 border-b border-border/60 text-xs font-semibold uppercase tracking-wider text-muted-foreground select-none">
+            <thead className="sticky top-[96px] z-10 border-b border-border/60 text-xs font-semibold uppercase tracking-wider text-muted-foreground select-none">
               <tr>
-                <th className="sticky top-[106px] z-10 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 px-5 py-3.5 font-semibold first:rounded-tl-md">Booking ID</th>
-                <th className="sticky top-[106px] z-10 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 px-5 py-3.5 font-semibold">Traveler</th>
-                <th className="sticky top-[106px] z-10 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 px-5 py-3.5 font-semibold">Dates</th>
-                <th className="sticky top-[106px] z-10 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 px-5 py-3.5 font-semibold">Confirmed Total</th>
-                <th className="sticky top-[106px] z-10 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 px-5 py-3.5 font-semibold">Booking Status</th>
-                <th className="sticky top-[106px] z-10 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 px-5 py-3.5 font-semibold">Payment Status</th>
-                <th className="sticky top-[106px] z-10 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 px-5 py-3.5 text-right font-semibold last:rounded-tr-md">Actions</th>
+                <th className="sticky top-[96px] z-10 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 px-5 py-3.5 font-semibold first:rounded-tl-md">Booking ID</th>
+                <th className="sticky top-[96px] z-10 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 px-5 py-3.5 font-semibold">Traveler</th>
+                <th className="sticky top-[96px] z-10 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 px-5 py-3.5 font-semibold">Dates</th>
+                <th className="sticky top-[96px] z-10 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 px-5 py-3.5 font-semibold">Confirmed Total</th>
+                <th className="sticky top-[96px] z-10 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 px-5 py-3.5 font-semibold">Booking Status</th>
+                <th className="sticky top-[96px] z-10 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 px-5 py-3.5 font-semibold">Payment Status</th>
+                <th className="sticky top-[96px] z-10 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 px-5 py-3.5 text-right font-semibold last:rounded-tr-md">Actions</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-border/40 text-foreground">

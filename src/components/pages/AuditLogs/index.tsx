@@ -34,6 +34,7 @@ import {
   FilterResetButton,
 } from "@/components/shared/FilterToolbar"
 import { useAuditSocket, type LiveAuditLog } from "@/hooks/audit/useAuditSocket"
+import { triggerCsvExport, exportToCsv } from "@/lib/exportUtils"
 import axios from "axios"
 
 const initialMockLogs: LiveAuditLog[] = [
@@ -162,14 +163,47 @@ export default function AuditLogsPage() {
     })
   }
 
-  const handleExportLogs = () => {
-    const jsonStr = JSON.stringify(allLogs, null, 2)
-    const blob = new Blob([jsonStr], { type: "application/json" })
-    const url = URL.createObjectURL(blob)
-    const a = document.createElement("a")
-    a.href = url
-    a.download = `audit-logs-${new Date().toISOString().slice(0, 10)}.json`
-    a.click()
+  // Rich Audit Logs CSV Export Handler
+  const handleExportLogs = async () => {
+    await triggerCsvExport({
+      endpoint: "audit-logs",
+      params: {
+        search: search.trim() || undefined,
+        action: actionFilter !== "ALL" ? actionFilter : undefined,
+        status: statusFilter !== "ALL" ? statusFilter : undefined,
+      },
+      defaultFilename: `mira_audit_logs_${new Date().toISOString().split("T")[0]}.csv`,
+      entityName: "Audit Logs",
+      fallback: () => {
+        const headers = [
+          "Log ID",
+          "Timestamp (UTC)",
+          "Actor Name",
+          "Actor Email",
+          "Actor Role",
+          "Action",
+          "Entity Type",
+          "Entity ID",
+          "Status",
+          "IP Address",
+          "Details",
+        ]
+        const rows = filteredLogs.map((l) => [
+          l.id,
+          l.timestamp,
+          l.actorName || "",
+          l.actorEmail || "",
+          l.actorRole || "",
+          l.action || "",
+          l.entityType || "",
+          l.entityId || "",
+          l.status || "SUCCESS",
+          l.ipAddress || "",
+          l.details || "",
+        ])
+        exportToCsv(`mira_audit_logs_${new Date().toISOString().split("T")[0]}.csv`, headers, rows)
+      },
+    })
   }
 
   const handleSimulateEvent = async () => {
@@ -347,10 +381,10 @@ export default function AuditLogsPage() {
             width="min-w-[110px] max-w-[130px]"
           />
 
-          {/* Borderless Segmented Export Logs Button */}
+          {/* Borderless Segmented Export CSV Button */}
           <FilterExportButton
             onClick={handleExportLogs}
-            label="Export Logs"
+            label="Export CSV"
             disabled={allLogs.length === 0}
           />
 
@@ -443,15 +477,15 @@ export default function AuditLogsPage() {
       <div className="rounded-md border border-border/60 bg-card/60 shadow-xs backdrop-blur-xl">
         <div className="overflow-x-clip">
           <table className="w-full text-left text-sm border-collapse">
-            <thead className="sticky top-[106px] z-10 border-b border-border/60 text-xs font-semibold uppercase tracking-wider text-muted-foreground select-none">
+            <thead className="sticky top-[96px] z-10 border-b border-border/60 text-xs font-semibold uppercase tracking-wider text-muted-foreground select-none">
               <tr>
-                <th className="sticky top-[106px] z-10 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 px-5 py-3.5 font-semibold first:rounded-tl-md">Timestamp</th>
-                <th className="sticky top-[106px] z-10 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 px-5 py-3.5 font-semibold">Actor</th>
-                <th className="sticky top-[106px] z-10 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 px-5 py-3.5 font-semibold">Action</th>
-                <th className="sticky top-[106px] z-10 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 px-5 py-3.5 font-semibold">Target Entity</th>
-                <th className="sticky top-[106px] z-10 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 px-5 py-3.5 font-semibold">Status</th>
-                <th className="sticky top-[106px] z-10 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 px-5 py-3.5 font-semibold">IP Address</th>
-                <th className="sticky top-[106px] z-10 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 px-5 py-3.5 text-right font-semibold last:rounded-tr-md">Inspection</th>
+                <th className="sticky top-[96px] z-10 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 px-5 py-3.5 font-semibold first:rounded-tl-md">Timestamp</th>
+                <th className="sticky top-[96px] z-10 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 px-5 py-3.5 font-semibold">Actor</th>
+                <th className="sticky top-[96px] z-10 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 px-5 py-3.5 font-semibold">Action</th>
+                <th className="sticky top-[96px] z-10 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 px-5 py-3.5 font-semibold">Target Entity</th>
+                <th className="sticky top-[96px] z-10 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 px-5 py-3.5 font-semibold">Status</th>
+                <th className="sticky top-[96px] z-10 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 px-5 py-3.5 font-semibold">IP Address</th>
+                <th className="sticky top-[96px] z-10 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 px-5 py-3.5 text-right font-semibold last:rounded-tr-md">Inspection</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-border/40 text-foreground">

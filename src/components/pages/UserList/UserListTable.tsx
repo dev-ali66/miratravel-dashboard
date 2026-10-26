@@ -40,11 +40,13 @@ import {
   FilterSearch,
   FilterSelect,
   FilterActions,
+  FilterExportButton,
   FilterCreateButton,
   FilterResetButton,
 } from "@/components/shared/FilterToolbar"
 import { useGetUsers, type UserItem } from "@/hooks/users/useGetUsers"
 import { useEditUser } from "@/hooks/users/useEditUser"
+import { triggerCsvExport, exportToCsv } from "@/lib/exportUtils"
 import CreateUserModal from "./CreateUserModal"
 import EditUserModal from "./EditUserModal"
 import DeleteUserModal from "./DeleteUserModal"
@@ -130,6 +132,50 @@ export default function UserListTable() {
     setStatusFilter("ALL")
     setVerifiedFilter("ALL")
     setCurrentPage(1)
+  }
+
+  // Rich Users CSV Export Handler
+  const handleExportCSV = async () => {
+    await triggerCsvExport({
+      endpoint: "users",
+      params: {
+        search: search.trim() || undefined,
+        role: roleFilter !== "ALL" ? roleFilter : undefined,
+        status: statusFilter !== "ALL" ? statusFilter : undefined,
+        isVerified: verifiedFilter !== "ALL" ? verifiedFilter : undefined,
+      },
+      defaultFilename: `mira_users_export_${new Date().toISOString().split("T")[0]}.csv`,
+      entityName: "Users",
+      fallback: () => {
+        const headers = [
+          "User ID",
+          "Email Address",
+          "Full Name",
+          "First Name",
+          "Last Name",
+          "Phone Number",
+          "Role(s)",
+          "Account Status",
+          "Email Verified",
+          "Total Bookings",
+          "Registration Date",
+        ]
+        const rows = currentUsers.map((u) => [
+          u.id,
+          u.email,
+          `${u.firstName || ""} ${u.lastName || ""}`.trim() || u.email.split("@")[0],
+          u.firstName || "",
+          u.lastName || "",
+          u.phone || "",
+          u.roles || "USER",
+          u.status || "ACTIVE",
+          u.isVerified ? "YES" : "NO",
+          u.bookingsCount ?? 0,
+          u.createdAt ? new Date(u.createdAt).toISOString() : "",
+        ])
+        exportToCsv(`mira_users_export_${new Date().toISOString().split("T")[0]}.csv`, headers, rows)
+      },
+    })
   }
 
   const formatDate = (dateString: string | null | undefined) => {
@@ -253,6 +299,9 @@ export default function UserListTable() {
             placeholder="All Verification"
             width="min-w-[110px] max-w-[140px]"
           />
+
+          {/* Borderless Segmented Export CSV Button */}
+          <FilterExportButton onClick={handleExportCSV} label="Export CSV" />
 
           <FilterCreateButton
             onClick={() => setIsCreateModalOpen(true)}

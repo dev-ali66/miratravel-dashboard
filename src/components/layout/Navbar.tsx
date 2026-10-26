@@ -23,15 +23,10 @@ import {
 import {
   User,
   ShieldCheck,
-  Activity,
   LogOut,
   Menu,
   ChevronDown,
-  Laptop,
-  CheckCircle2,
-  Clock,
   Code2,
-  Sliders,
 } from "lucide-react"
 import { cn } from "@/lib/utils"
 
@@ -190,7 +185,6 @@ export function Navbar({ onMenuClick }: NavbarProps) {
   const userRole = user?.roles?.[0]?.name || "ADMIN"
 
   const activeDevicesCount = sessionStats?.totalActiveDevices ?? 1
-  const onlineDevicesCount = sessionStats?.onlineDevices ?? 1
 
   let sessionInfo: {
     rememberMe?: boolean
@@ -284,78 +278,43 @@ export function Navbar({ onMenuClick }: NavbarProps) {
               <DropdownMenuContent
                 align="end"
                 sideOffset={8}
-                className="w-72 rounded-md border border-border/70 bg-card p-1.5 shadow-xl animate-in fade-in-0 zoom-in-95"
+                className="w-64 rounded-xl border border-border/70 bg-card/95 backdrop-blur-md p-1.5 shadow-xl animate-in fade-in-0 zoom-in-95"
               >
-                {/* Dropdown Header: Full Profile Card */}
-                <DropdownMenuLabel className="p-2 font-normal">
+                {/* Dropdown Header: Clean Profile Card */}
+                <DropdownMenuLabel className="p-2.5 font-normal">
                   <div className="flex items-center gap-3">
-                    <div className="relative h-10 w-10 shrink-0 overflow-hidden rounded-full ring-2 ring-primary/20">
+                    <div className="relative h-10 w-10 shrink-0 overflow-hidden rounded-full ring-2 ring-primary/20 shadow-xs">
                       <img
                         src={profileImage}
                         alt={profileName}
                         className="h-full w-full object-cover"
                       />
+                      <span className="absolute bottom-0 right-0 h-2.5 w-2.5 rounded-full bg-emerald-500 ring-2 ring-card" />
                     </div>
                     <div className="flex flex-col min-w-0">
-                      <p className="text-sm font-bold text-foreground truncate">
+                      <p className="text-sm font-semibold text-foreground truncate leading-tight">
                         {profileName}
                       </p>
-                      <p className="text-xs text-muted-foreground truncate">
+                      <p className="text-xs text-muted-foreground truncate leading-tight mt-0.5">
                         {profileEmail}
                       </p>
-                      <div className="flex items-center gap-1.5 mt-1">
-                        <span className="inline-flex items-center rounded bg-primary/10 px-1.5 py-0.5 text-[9px] font-semibold text-primary uppercase tracking-wide">
+                      <div className="flex items-center gap-1.5 mt-1.5">
+                        <span className="inline-flex items-center rounded-md bg-primary/10 px-1.5 py-0.5 text-[9px] font-bold text-primary uppercase tracking-wider">
                           {userRole}
                         </span>
-                        <span className="text-[10px] text-emerald-600 dark:text-emerald-400 font-medium flex items-center gap-1">
-                          <span className="h-1.5 w-1.5 rounded-full bg-emerald-500 animate-pulse" />
-                          {onlineDevicesCount > 1 ? `${onlineDevicesCount} Online` : "Online"}
-                        </span>
+                        {isRemembered && (
+                          <span className="inline-flex items-center rounded-md bg-muted/80 px-1.5 py-0.5 text-[9px] font-medium text-muted-foreground">
+                            {sessionDuration} session
+                          </span>
+                        )}
                       </div>
                     </div>
                   </div>
                 </DropdownMenuLabel>
 
-                {/* Remember This Device Status Banner */}
-                <div className="mx-1 my-1 rounded-lg border border-border/60 bg-muted/40 p-2 text-left">
-                  <div className="flex items-center justify-between">
-                    <span className="text-[11px] font-medium text-muted-foreground flex items-center gap-1.5">
-                      <Laptop className="h-3.5 w-3.5" />
-                      <span>Remember Device:</span>
-                    </span>
-                    {isRemembered ? (
-                      <span className="inline-flex items-center gap-1 rounded-full bg-emerald-500/15 border border-emerald-500/30 px-2 py-0.5 text-[10px] font-bold text-emerald-600 dark:text-emerald-400">
-                        <CheckCircle2 className="h-3 w-3" />
-                        TRUE ({sessionDuration})
-                      </span>
-                    ) : (
-                      <span className="inline-flex items-center gap-1 rounded-full bg-amber-500/15 border border-amber-500/30 px-2 py-0.5 text-[10px] font-bold text-amber-600 dark:text-amber-400">
-                        <Clock className="h-3 w-3" />
-                        FALSE ({sessionDuration})
-                      </span>
-                    )}
-                  </div>
+                <DropdownMenuSeparator className="my-1 bg-border/50" />
 
-                  <div className="mt-1.5 flex items-center justify-between border-t border-border/40 pt-1 text-[10px]">
-                    <span className="text-muted-foreground">
-                      Active: <strong className="font-semibold text-foreground">{activeDevicesCount} Device{activeDevicesCount > 1 ? "s" : ""}</strong>
-                    </span>
-                    <span className="text-emerald-600 dark:text-emerald-400 font-medium flex items-center gap-1">
-                      <span className="h-1.5 w-1.5 rounded-full bg-emerald-500" />
-                      {onlineDevicesCount} Online Now
-                    </span>
-                  </div>
-
-                  <p className="mt-1 text-[9px] text-muted-foreground/80 leading-tight">
-                    {isRemembered
-                      ? `Persistent session active (${sessionDuration} token lifetime).`
-                      : `Ephemeral session active (${sessionDuration} token lifetime).`}
-                  </p>
-                </div>
-
-                <DropdownMenuSeparator className="my-1 bg-border/60" />
-
-                {/* Group: Profile & Core Account */}
+                {/* Group: Profile & Security */}
                 <DropdownMenuGroup>
                   <DropdownMenuItem
                     onClick={() => navigate("/settings")}
@@ -366,14 +325,6 @@ export function Navbar({ onMenuClick }: NavbarProps) {
                   </DropdownMenuItem>
 
                   <DropdownMenuItem
-                    onClick={() => navigate("/site-settings")}
-                    className="flex items-center gap-2.5 px-2.5 py-2 text-xs font-medium text-foreground rounded-lg cursor-pointer transition-colors hover:bg-muted focus:bg-muted"
-                  >
-                    <Sliders className="h-4 w-4 text-muted-foreground" />
-                    <span>Global Site Settings</span>
-                  </DropdownMenuItem>
-
-                  <DropdownMenuItem
                     onClick={() => setIsDevicesModalOpen(true)}
                     className="flex items-center justify-between px-2.5 py-2 text-xs font-medium text-foreground rounded-lg cursor-pointer transition-colors hover:bg-muted focus:bg-muted"
                   >
@@ -381,26 +332,13 @@ export function Navbar({ onMenuClick }: NavbarProps) {
                       <ShieldCheck className="h-4 w-4 text-muted-foreground" />
                       <span>Security & Sessions</span>
                     </div>
-                    <div className="flex items-center gap-1">
-                      <span className="rounded bg-primary/10 px-1.5 py-0.5 text-[9px] font-semibold text-primary">
-                        {activeDevicesCount} Device{activeDevicesCount > 1 ? "s" : ""}
-                      </span>
-                      <span className="rounded bg-emerald-500/10 px-1.5 py-0.5 text-[9px] font-semibold text-emerald-600 dark:text-emerald-400">
-                        {onlineDevicesCount} Online
-                      </span>
-                    </div>
-                  </DropdownMenuItem>
-
-                  <DropdownMenuItem
-                    onClick={() => navigate("/audit-logs")}
-                    className="flex items-center gap-2.5 px-2.5 py-2 text-xs font-medium text-foreground rounded-lg cursor-pointer transition-colors hover:bg-muted focus:bg-muted"
-                  >
-                    <Activity className="h-4 w-4 text-muted-foreground" />
-                    <span>Live Audit Logs</span>
+                    <span className="rounded-full bg-muted/80 border border-border/40 px-2 py-0.5 text-[10px] font-medium text-muted-foreground">
+                      {activeDevicesCount} {activeDevicesCount > 1 ? "devices" : "device"}
+                    </span>
                   </DropdownMenuItem>
                 </DropdownMenuGroup>
 
-                <DropdownMenuSeparator className="my-1 bg-border/60" />
+                <DropdownMenuSeparator className="my-1 bg-border/50" />
 
                 {/* Developer Mode Toggle */}
                 <DropdownMenuItem
@@ -416,10 +354,10 @@ export function Navbar({ onMenuClick }: NavbarProps) {
                   </div>
                   <span
                     className={cn(
-                      "inline-flex items-center gap-1 rounded-full px-2 py-0.5 text-[10px] font-bold border transition-all",
+                      "inline-flex items-center gap-1.5 rounded-full px-2 py-0.5 text-[10px] font-semibold border transition-all",
                       isDevMode
                         ? "bg-amber-500/15 text-amber-700 dark:text-amber-300 border-amber-500/40"
-                        : "bg-muted/60 text-muted-foreground border-border/60"
+                        : "bg-muted/70 text-muted-foreground border-border/50"
                     )}
                   >
                     <span
@@ -432,7 +370,7 @@ export function Navbar({ onMenuClick }: NavbarProps) {
                   </span>
                 </DropdownMenuItem>
 
-                <DropdownMenuSeparator className="my-1 bg-border/60" />
+                <DropdownMenuSeparator className="my-1 bg-border/50" />
 
                 {/* Footer: Log Out */}
                 <DropdownMenuItem

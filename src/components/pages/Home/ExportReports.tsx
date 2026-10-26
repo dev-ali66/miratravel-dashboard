@@ -1,34 +1,55 @@
 import { SlideLeft } from "@/components/animation"
-import { FileText, Download, FileSpreadsheet } from "lucide-react"
+import { Download, FileSpreadsheet } from "lucide-react"
+import { triggerCsvExport } from "@/lib/exportUtils"
 
 const availableReports = [
   {
+    id: "financial",
     title: "Financial Summary",
     description: "Detailed breakdown of revenue, refunds, and net income.",
-    type: "PDF",
-    icon: FileText,
+    type: "CSV",
+    icon: FileSpreadsheet,
+    endpoint: "bookings",
+    filename: "mira_financial_summary.csv",
   },
   {
+    id: "bookings",
     title: "Booking History",
     description: "Complete list of all bookings with their current statuses.",
     type: "CSV",
     icon: FileSpreadsheet,
+    endpoint: "bookings",
+    filename: "mira_booking_history.csv",
   },
   {
-    title: "Instructor Performance",
-    description: "Ratings, review counts, and total bookings per instructor.",
+    id: "users",
+    title: "User Demographics",
+    description: "Data export of registered travelers, countries, and booking frequency.",
     type: "CSV",
     icon: FileSpreadsheet,
+    endpoint: "users",
+    filename: "mira_user_demographics.csv",
   },
   {
-    title: "User Demographics",
-    description: "Data export of user age, location, and booking frequency.",
-    type: "PDF",
-    icon: FileText,
+    id: "inquiries",
+    title: "Inquiries & Leads",
+    description: "Complete export of trip planning inquiries and contact requests.",
+    type: "CSV",
+    icon: FileSpreadsheet,
+    endpoint: "inquiries",
+    filename: "mira_inquiries_leads.csv",
   },
 ]
 
 export default function ExportReports({ className }: { className?: string }) {
+  const handleGenerate = (report: (typeof availableReports)[0]) => {
+    triggerCsvExport({
+      endpoint: report.endpoint,
+      defaultFilename: report.filename,
+      entityName: report.title,
+    })
+  }
+
   return (
     <SlideLeft
       delay={0.4}
@@ -64,7 +85,10 @@ export default function ExportReports({ className }: { className?: string }) {
               <p className="mt-1 text-xs leading-relaxed text-muted-foreground">
                 {report.description}
               </p>
-              <button className="mt-3 flex items-center gap-1.5 text-xs font-semibold text-primary transition-colors hover:text-primary/80">
+              <button
+                onClick={() => handleGenerate(report)}
+                className="mt-3 flex items-center gap-1.5 text-xs font-semibold text-primary transition-colors hover:text-primary/80 cursor-pointer"
+              >
                 <Download className="size-3.5" />
                 Generate {report.type}
               </button>

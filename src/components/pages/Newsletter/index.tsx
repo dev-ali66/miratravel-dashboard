@@ -24,6 +24,7 @@ import {
 import { Button } from "@/components/ui/button"
 import { cn } from "@/lib/utils"
 import { apiPrivate } from "@/lib/api-client"
+import { triggerCsvExport, exportToCsv } from "@/lib/exportUtils"
 
 export interface Subscriber {
   id: string
@@ -112,25 +113,34 @@ export default function NewsletterPage() {
     }
   }
 
-  const handleExportCSV = () => {
-    const csvContent =
-      "data:text/csv;charset=utf-8," +
-      ["ID,Email,Source,Status,Created At"]
-        .concat(
-          filtered.map(
-            (s) =>
-              `"${s.id}","${s.email}","${s.source || "FOOTER"}","${s.status}","${s.createdAt || ""}"`
-          )
-        )
-        .join("\n")
-
-    const encodedUri = encodeURI(csvContent)
-    const link = document.createElement("a")
-    link.setAttribute("href", encodedUri)
-    link.setAttribute("download", `mira_newsletter_subscribers_${Date.now()}.csv`)
-    document.body.appendChild(link)
-    link.click()
-    document.body.removeChild(link)
+  // Rich Newsletter CSV Export Handler
+  const handleExportCSV = async () => {
+    await triggerCsvExport({
+      endpoint: "newsletter",
+      params: {
+        search: search.trim() || undefined,
+        status: statusFilter !== "ALL" ? statusFilter : undefined,
+      },
+      defaultFilename: `mira_newsletter_subscribers_${new Date().toISOString().split("T")[0]}.csv`,
+      entityName: "Newsletter Subscribers",
+      fallback: () => {
+        const headers = [
+          "Subscriber ID",
+          "Email Address",
+          "Subscription Status",
+          "Acquisition Source",
+          "Subscribed Date",
+        ]
+        const rows = filtered.map((s) => [
+          s.id,
+          s.email,
+          s.status,
+          s.source || "FOOTER",
+          s.createdAt ? new Date(s.createdAt).toISOString() : "",
+        ])
+        exportToCsv(`mira_newsletter_subscribers_${new Date().toISOString().split("T")[0]}.csv`, headers, rows)
+      },
+    })
   }
 
   const filtered = subscribers.filter((s) => {
@@ -257,13 +267,13 @@ export default function NewsletterPage() {
       <div className="rounded-md border border-border/60 bg-card/60 shadow-xs backdrop-blur-xl">
         <div className="overflow-x-clip">
           <table className="w-full text-left text-sm border-collapse">
-            <thead className="sticky top-[106px] z-10 border-b border-border/60 text-xs font-semibold uppercase tracking-wider text-muted-foreground select-none">
+            <thead className="sticky top-[96px] z-10 border-b border-border/60 text-xs font-semibold uppercase tracking-wider text-muted-foreground select-none">
               <tr>
-                <th className="sticky top-[106px] z-10 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 px-5 py-3.5 font-semibold first:rounded-tl-md">Subscriber Email</th>
-                <th className="sticky top-[106px] z-10 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 px-5 py-3.5 font-semibold">Source Channel</th>
-                <th className="sticky top-[106px] z-10 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 px-5 py-3.5 font-semibold">Status</th>
-                <th className="sticky top-[106px] z-10 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 px-5 py-3.5 font-semibold">Subscribed Date</th>
-                <th className="sticky top-[106px] z-10 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 px-5 py-3.5 text-right font-semibold last:rounded-tr-md">Actions</th>
+                <th className="sticky top-[96px] z-10 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 px-5 py-3.5 font-semibold first:rounded-tl-md">Subscriber Email</th>
+                <th className="sticky top-[96px] z-10 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 px-5 py-3.5 font-semibold">Source Channel</th>
+                <th className="sticky top-[96px] z-10 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 px-5 py-3.5 font-semibold">Status</th>
+                <th className="sticky top-[96px] z-10 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 px-5 py-3.5 font-semibold">Subscribed Date</th>
+                <th className="sticky top-[96px] z-10 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 px-5 py-3.5 text-right font-semibold last:rounded-tr-md">Actions</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-border/40 text-foreground">

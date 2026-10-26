@@ -10,8 +10,10 @@ import {
   FilterSearch,
   FilterTabs,
   FilterActions,
+  FilterExportButton,
   FilterResetButton,
 } from "@/components/shared/FilterToolbar"
+import { triggerCsvExport, exportToCsv } from "@/lib/exportUtils"
 import {
   useGetJourneyWizardRequests,
   useUpdateJourneyWizardRequestStatus,
@@ -77,6 +79,54 @@ export default function JourneyWizardTable() {
     if (confirm("Are you sure you want to delete this wizard request?")) {
       deleteRequest(id)
     }
+  }
+
+  // Rich Journey Requests CSV Export Handler
+  const handleExportCSV = async () => {
+    await triggerCsvExport({
+      endpoint: "journey-requests",
+      params: {
+        search: searchQuery.trim() || undefined,
+        status: selectedStatusFilter || undefined,
+      },
+      defaultFilename: `mira_journey_requests_export_${new Date().toISOString().split("T")[0]}.csv`,
+      entityName: "Journey Requests",
+      fallback: () => {
+        const headers = [
+          "Request ID",
+          "Status",
+          "Requester Name",
+          "Email Address",
+          "Phone Number",
+          "Duration",
+          "Budget",
+          "Budget Description",
+          "Journey Types",
+          "Travel Styles",
+          "Pace Preference",
+          "Comfort Level",
+          "Special Notes",
+          "Received Date",
+        ]
+        const rows = requestList.map((r) => [
+          r.id,
+          r.status || "NEW",
+          r.name || "",
+          r.email || "",
+          r.phone || "",
+          r.duration || "",
+          r.budget ?? "",
+          r.budgetText || "",
+          Array.isArray(r.journeyTypes) ? r.journeyTypes.join("; ") : "",
+          Array.isArray(r.travelStyles) ? r.travelStyles.join("; ") : "",
+          r.pace || "",
+          r.comfortLevel || "",
+          r.notes || "",
+          r.createdAt ? new Date(r.createdAt).toISOString() : "",
+        ])
+        exportToCsv(`mira_journey_requests_export_${new Date().toISOString().split("T")[0]}.csv`, headers, rows)
+      },
+    })
   }
 
   const newCount = requestList.filter((r) => r.status === "NEW").length
@@ -157,6 +207,9 @@ export default function JourneyWizardTable() {
             }}
           />
 
+          {/* Borderless Segmented Export CSV Button */}
+          <FilterExportButton onClick={handleExportCSV} label="Export CSV" />
+
           {/* Far-Right Refresh Button */}
           <FilterResetButton
             onClick={() => {
@@ -174,15 +227,15 @@ export default function JourneyWizardTable() {
       <div className="rounded-md border border-border/60 bg-card/60 shadow-xs backdrop-blur-xl">
         <div className="overflow-x-clip">
           <table className="w-full text-left text-sm border-collapse">
-            <thead className="sticky top-[106px] z-10 border-b border-border/60 text-xs font-semibold uppercase tracking-wider text-muted-foreground select-none">
+            <thead className="sticky top-[96px] z-10 border-b border-border/60 text-xs font-semibold uppercase tracking-wider text-muted-foreground select-none">
               <tr>
-                <th className="sticky top-[106px] z-10 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 px-5 py-3.5 font-semibold first:rounded-tl-md">Date Received</th>
-                <th className="sticky top-[106px] z-10 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 px-5 py-3.5 font-semibold">Requester Contact</th>
-                <th className="sticky top-[106px] z-10 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 px-5 py-3.5 font-semibold">Duration & Budget</th>
-                <th className="sticky top-[106px] z-10 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 px-5 py-3.5 font-semibold">Journey Types</th>
-                <th className="sticky top-[106px] z-10 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 px-5 py-3.5 font-semibold">Styles & Pace</th>
-                <th className="sticky top-[106px] z-10 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 px-5 py-3.5 font-semibold">Status</th>
-                <th className="sticky top-[106px] z-10 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 px-5 py-3.5 text-right font-semibold last:rounded-tr-md">Actions</th>
+                <th className="sticky top-[96px] z-10 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 px-5 py-3.5 font-semibold first:rounded-tl-md">Date Received</th>
+                <th className="sticky top-[96px] z-10 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 px-5 py-3.5 font-semibold">Requester Contact</th>
+                <th className="sticky top-[96px] z-10 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 px-5 py-3.5 font-semibold">Duration & Budget</th>
+                <th className="sticky top-[96px] z-10 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 px-5 py-3.5 font-semibold">Journey Types</th>
+                <th className="sticky top-[96px] z-10 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 px-5 py-3.5 font-semibold">Styles & Pace</th>
+                <th className="sticky top-[96px] z-10 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 px-5 py-3.5 font-semibold">Status</th>
+                <th className="sticky top-[96px] z-10 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 px-5 py-3.5 text-right font-semibold last:rounded-tr-md">Actions</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-border/40 text-foreground">

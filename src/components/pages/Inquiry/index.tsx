@@ -38,6 +38,7 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog"
 import { cn } from "@/lib/utils"
+import { triggerCsvExport, exportToCsv } from "@/lib/exportUtils"
 import { useListingPagination } from "@/hooks/ui/useListingPagination"
 import {
   useGetInquiries,
@@ -99,46 +100,48 @@ export default function InquiryPage() {
   const totalItems = data?.meta?.total ?? inquiries.length
   const totalPages = data?.meta?.totalPages ?? Math.max(1, Math.ceil(totalItems / effectiveLimit))
 
-  const handleExportCSV = () => {
-    if (!inquiries.length) return
-    const headers = [
-      "Inquiry Number",
-      "Full Name",
-      "Email",
-      "Phone",
-      "Destination",
-      "Travel Date",
-      "Travelers",
-      "Status",
-      "Message",
-      "Created At",
-    ]
-    const rows = inquiries.map((i) => [
-      i.inquiryNumber || i.id,
-      `"${i.fullName || ""}"`,
-      i.email || "",
-      i.phone || "",
-      `"${i.destination || ""}"`,
-      `"${i.travelDate || ""}"`,
-      `"${i.travelers || ""}"`,
-      i.status,
-      `"${(i.message || "").replace(/"/g, '""')}"`,
-      i.createdAt ? new Date(i.createdAt).toISOString() : "",
-    ])
-
-    const csvContent =
-      "data:text/csv;charset=utf-8," +
-      [headers.join(","), ...rows.map((e) => e.join(","))].join("\n")
-    const encodedUri = encodeURI(csvContent)
-    const link = document.createElement("a")
-    link.setAttribute("href", encodedUri)
-    link.setAttribute(
-      "download",
-      `mira_inquiries_export_${new Date().toISOString().split("T")[0]}.csv`
-    )
-    document.body.appendChild(link)
-    link.click()
-    document.body.removeChild(link)
+  // Rich Inquiries CSV Export Handler
+  const handleExportCSV = async () => {
+    await triggerCsvExport({
+      endpoint: "inquiries",
+      params: {
+        search: search.trim() || undefined,
+        status: statusFilter !== "ALL" ? statusFilter : undefined,
+      },
+      defaultFilename: `mira_inquiries_export_${new Date().toISOString().split("T")[0]}.csv`,
+      entityName: "Inquiries",
+      fallback: () => {
+        const headers = [
+          "Inquiry Number",
+          "Status",
+          "Traveler Full Name",
+          "Email Address",
+          "Phone Number",
+          "Destination",
+          "Travel Date",
+          "Travelers",
+          "Journey Types",
+          "Traveler Message",
+          "Admin Notes",
+          "Submitted Date",
+        ]
+        const rows = inquiries.map((i) => [
+          i.inquiryNumber || i.id,
+          i.status,
+          i.fullName || "",
+          i.email || "",
+          i.phone || "",
+          i.destination || "",
+          i.travelDate || "",
+          i.travelers || "",
+          Array.isArray(i.journeyTypes) ? i.journeyTypes.join("; ") : "",
+          i.message || "",
+          i.adminNotes || "",
+          i.createdAt ? new Date(i.createdAt).toISOString() : "",
+        ])
+        exportToCsv(`mira_inquiries_export_${new Date().toISOString().split("T")[0]}.csv`, headers, rows)
+      },
+    })
   }
 
   const handleStatusChange = (inquiryId: string, newStatus: string) => {
@@ -262,15 +265,15 @@ export default function InquiryPage() {
       <div className="rounded-md border border-border/60 bg-card/60 shadow-xs backdrop-blur-xl">
         <div className="overflow-x-clip">
           <table className="w-full text-left text-sm border-collapse">
-            <thead className="sticky top-[106px] z-10 border-b border-border/60 text-xs font-semibold uppercase tracking-wider text-muted-foreground select-none">
+            <thead className="sticky top-[96px] z-10 border-b border-border/60 text-xs font-semibold uppercase tracking-wider text-muted-foreground select-none">
               <tr>
-                <th className="sticky top-[106px] z-10 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 px-5 py-3.5 font-semibold first:rounded-tl-md">Ref #</th>
-                <th className="sticky top-[106px] z-10 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 px-5 py-3.5 font-semibold">Traveler Name & Email</th>
-                <th className="sticky top-[106px] z-10 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 px-5 py-3.5 font-semibold">Destination & Travel Date</th>
-                <th className="sticky top-[106px] z-10 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 px-5 py-3.5 font-semibold">Travelers & Types</th>
-                <th className="sticky top-[106px] z-10 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 px-5 py-3.5 font-semibold">Status</th>
-                <th className="sticky top-[106px] z-10 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 px-5 py-3.5 font-semibold">Submitted At</th>
-                <th className="sticky top-[106px] z-10 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 px-5 py-3.5 text-right font-semibold last:rounded-tr-md">Actions</th>
+                <th className="sticky top-[96px] z-10 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 px-5 py-3.5 font-semibold first:rounded-tl-md">Ref #</th>
+                <th className="sticky top-[96px] z-10 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 px-5 py-3.5 font-semibold">Traveler Name & Email</th>
+                <th className="sticky top-[96px] z-10 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 px-5 py-3.5 font-semibold">Destination & Travel Date</th>
+                <th className="sticky top-[96px] z-10 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 px-5 py-3.5 font-semibold">Travelers & Types</th>
+                <th className="sticky top-[96px] z-10 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 px-5 py-3.5 font-semibold">Status</th>
+                <th className="sticky top-[96px] z-10 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 px-5 py-3.5 font-semibold">Submitted At</th>
+                <th className="sticky top-[96px] z-10 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 px-5 py-3.5 text-right font-semibold last:rounded-tr-md">Actions</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-border/40 text-foreground">
