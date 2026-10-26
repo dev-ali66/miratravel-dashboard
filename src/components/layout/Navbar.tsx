@@ -246,7 +246,7 @@ export function Navbar({ onMenuClick }: NavbarProps) {
                   title={profileName}
                 >
                   {/* Clean circular profile avatar */}
-                  <div className="relative h-10 w-10 shrink-0 overflow-hidden rounded-full ring-2 ring-primary/20 group-hover:ring-primary/40 transition-all shadow-xs">
+                  <div className="relative h-9 w-9 shrink-0 overflow-hidden  ring-2 ring-primary/20 group-hover:ring-primary/40 transition-all shadow-xs">
                     <img
                       src={profileImage}
                       alt={profileName}
