@@ -39,7 +39,8 @@ function LocationRow({
   onRemove: (idx: number) => void
 }) {
   const { data: rawLocData } = useGetLocationById(locationId)
-  const loc = rawLocData?.data || rawLocData
+  const raw = rawLocData?.data ?? rawLocData
+  const loc = Array.isArray(raw) ? raw[0] : raw
   const name = loc?.name || `Location (${locationId.slice(-8)})`
   const type = loc?.type || "LOCATION"
 
@@ -108,7 +109,8 @@ function JourneyRow({
   onRemove: (idx: number) => void
 }) {
   const { data: rawData } = useGetJourneyById(journeyId)
-  const journey = rawData?.data || rawData
+  const raw = rawData?.data ?? rawData
+  const journey = Array.isArray(raw) ? raw[0] : raw
   const title = journey?.title || `Journey (${journeyId.slice(-8)})`
 
   return (
@@ -171,7 +173,8 @@ function StoryRow({
   onRemove: (idx: number) => void
 }) {
   const { data: rawData } = useGetStoryById(storyId)
-  const story = (rawData as any)?.data || rawData
+  const raw = (rawData as any)?.data ?? rawData
+  const story = Array.isArray(raw) ? raw[0] : raw
   const title = story?.title || `Story (${storyId.slice(-8)})`
   const type = story?.type || "STORY"
 

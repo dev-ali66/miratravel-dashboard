@@ -134,7 +134,13 @@ export function RepeaterList<T>({
                   )
                 )}
                 <span className="truncate max-w-[240px]">
-                  {itemLabel ? itemLabel(item, index) : `Item ${index + 1}`}
+                  {(() => {
+                    const label = itemLabel ? itemLabel(item, index) : `Item ${index + 1}`
+                    if (label && typeof label === "object") {
+                      return (label as any)?.value || `Item ${index + 1}`
+                    }
+                    return String(label ?? `Item ${index + 1}`)
+                  })()}
                 </span>
               </div>
               <div className="flex items-center gap-1 shrink-0" onClick={(e) => e.stopPropagation()}>

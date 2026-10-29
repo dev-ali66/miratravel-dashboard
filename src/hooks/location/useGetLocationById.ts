@@ -17,7 +17,12 @@ export function useGetLocationById(id?: string) {
       const response = await apiPrivate.get<GetLocationResponse>(
         `/locations?id=${encodeURIComponent(id!)}`
       )
-      return response.data
+      const raw = response.data?.data
+      const single = Array.isArray(raw) ? raw[0] || null : raw
+      return {
+        ...response.data,
+        data: single,
+      }
     },
 
     enabled: !!id,

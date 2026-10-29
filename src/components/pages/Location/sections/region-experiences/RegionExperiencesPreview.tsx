@@ -6,14 +6,17 @@ import { DynamicCmsButtonPreview } from "@/components/pages/CMS/shared/DynamicCm
 import { UniversalMultimediaPreview } from "@/components/pages/CMS/Home/shared/preview/UniversalMultimediaPreview"
 import type { LocationPreviewSectionProps } from "../../config/locationSections"
 import type { RegionExperienceItemData } from "../../locationTypes"
+import { getSafeStringValue } from "../../shared/normalizeHelpers"
 
 export function RegionExperiencesPreview({ draft }: LocationPreviewSectionProps) {
+  const destName = getSafeStringValue(draft?.name, "Destination")
+
   const regionExperiences =
     draft?.regionExperiences ||
     (draft as any)?.data?.regionExperiences ||
     (draft as any)?.experience || {
-      label: "",
-      title: "",
+      label: `EXPLORE ${destName.toUpperCase()}`,
+      title: "Four Regions. Four Different Experiences.",
       items: [],
       backgroundMultimedia: null,
     }
@@ -25,60 +28,60 @@ export function RegionExperiencesPreview({ draft }: LocationPreviewSectionProps)
   const sampleItems: RegionExperienceItemData[] = [
     {
       id: "sample-1",
-      title: { value: "North Albania" },
+      title: { value: `${destName} Highlands` },
       subtitle: { value: "Alpine Peaks & High Passes" },
-      description: { value: "Soaring limestone peaks, ancient mountain villages, and pristine river valleys." },
-      tag: { value: "ALPINE" },
+      description: { value: `Untouched nature, mountain peaks, and quiet valleys of ${destName}.` },
+      tag: { value: "HIGHLANDS" },
       imageMultimedia: {
         show: "image",
         image: {
           url: "",
-          alt: "North Albania",
+          alt: `${destName} Highlands`,
           fit: "cover",
         },
       },
     },
     {
       id: "sample-2",
-      title: { value: "Central Albania" },
+      title: { value: `Central ${destName}` },
       subtitle: { value: "Culture & Living Heritage" },
-      description: { value: "Historic castles, vibrant bazaars, and traditional hospitality in UNESCO heritage towns." },
+      description: { value: `Historic castles, vibrant bazaars, and traditional hospitality in ${destName}.` },
       tag: { value: "CULTURE" },
       imageMultimedia: {
         show: "image",
         image: {
           url: "",
-          alt: "Central Albania",
+          alt: `Central ${destName}`,
           fit: "cover",
         },
       },
     },
     {
       id: "sample-3",
-      title: { value: "Albanian Riviera" },
-      subtitle: { value: "Coastal Coves & Sea Caves" },
-      description: { value: "Turquoise Ionian waters, secluded beaches, and olive grove coastal hillsides." },
-      tag: { value: "COASTAL" },
+      title: { value: `${destName} Valleys` },
+      subtitle: { value: "Rivers & Rural Villages" },
+      description: { value: `Pristine water springs, serene valleys, and authentic artisan crafts.` },
+      tag: { value: "NATURE" },
       imageMultimedia: {
         show: "image",
         image: {
           url: "",
-          alt: "Albanian Riviera",
+          alt: `${destName} Valleys`,
           fit: "cover",
         },
       },
     },
     {
       id: "sample-4",
-      title: { value: "South Albania" },
+      title: { value: `Southern ${destName}` },
       subtitle: { value: "Thermal Springs & Ancient Ruins" },
-      description: { value: "Stone architecture, ancient Greek and Ottoman ruins, and natural thermal springs." },
+      description: { value: `Stone architecture, ancient ruins, and rich culinary traditions.` },
       tag: { value: "HERITAGE" },
       imageMultimedia: {
         show: "image",
         image: {
           url: "",
-          alt: "South Albania",
+          alt: `Southern ${destName}`,
           fit: "cover",
         },
       },
@@ -177,10 +180,7 @@ export function RegionExperiencesPreview({ draft }: LocationPreviewSectionProps)
                                 show: "image",
                                 image: {
                                   url: (activeRegion as any).image || "",
-                                  alt:
-                                    typeof activeRegion.title === "object"
-                                      ? activeRegion.title?.value
-                                      : activeRegion.title || "Region Experience",
+                                  alt: getSafeStringValue(activeRegion.title, "Region Experience"),
                                   opacity: 100,
                                   overlayColor: THEME_COLORS.overlayBlack,
                                   overlayOpacity: 0,
@@ -233,10 +233,7 @@ export function RegionExperiencesPreview({ draft }: LocationPreviewSectionProps)
                     const itemId = region.id || `region-${idx}`
                     const isActive = itemId === activeId || (idx === 0 && !activeId)
 
-                    const itemTitleFallback =
-                      typeof region.title === "object"
-                        ? region.title?.value
-                        : region.title || `Region ${idx + 1}`
+                    const itemTitleFallback = getSafeStringValue(region.title, `Region ${idx + 1}`)
 
                     const exploreUrl =
                       region.button?.url ||
@@ -244,7 +241,7 @@ export function RegionExperiencesPreview({ draft }: LocationPreviewSectionProps)
                       `/destinations/${region.id || `region-${idx + 1}`}`
 
                     const exploreLabel =
-                      region.button?.label ||
+                      getSafeStringValue(region.button?.label) ||
                       (region as any).buttonText ||
                       `Explore ${itemTitleFallback}`
 

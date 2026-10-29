@@ -78,6 +78,11 @@ export function DynamicCmsButtonPreview({
         const isGhost = variant === "ghost" || variant === "link"
         const showIcon = btn.showIcon !== undefined ? Boolean(btn.showIcon) : isGhost
 
+        const labelText =
+          typeof btn.label === "object" && btn.label !== null
+            ? (btn.label as any)?.value ?? ""
+            : String(btn.label ?? "")
+
         return (
           <a
             key={idx}
@@ -97,7 +102,7 @@ export function DynamicCmsButtonPreview({
               buttonClassName
             )}
           >
-            <span>{btn.label}</span>
+            <span>{labelText}</span>
             {showIcon && <ArrowRight className="h-4 w-4 shrink-0 transition-transform group-hover:translate-x-0.5" />}
           </a>
         )

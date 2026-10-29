@@ -20,6 +20,7 @@ import type { LocationFormSectionProps } from "../../config/locationSections"
 import { useSearchLocations, type LocationSearchItem } from "@/hooks/location/useGetLocation"
 import { ButtonsField } from "@/components/pages/CMS/shared/ButtonsField"
 import { emptyLocation } from "../../shared/emptyLocation"
+import { getSafeStringValue } from "../../shared/normalizeHelpers"
 
 export function SignatureExperiencesForm({
   draft,
@@ -108,9 +109,8 @@ export function SignatureExperiencesForm({
 
     // Extract description from location hero / essence
     const descText =
-      (loc as any).hero?.description?.value ||
-      (loc as any).hero?.description ||
-      (loc as any).essence?.paragraphs?.value ||
+      getSafeStringValue((loc as any).hero?.description) ||
+      getSafeStringValue((loc as any).essence?.paragraphs) ||
       `Experience the unique character, heritage, and wilderness of ${loc.name}.`
 
     const targetSlug = loc.slug || loc.name.toLowerCase().replace(/\s+/g, "-")
@@ -454,10 +454,7 @@ export function SignatureExperiencesForm({
             <div className="space-y-3">
               {items.map((exp: SignatureExperienceItem, index: number) => {
                 const isItemOpen = expandedIndex === index
-                const expTitle =
-                  typeof exp.title === "object"
-                    ? (exp.title as any)?.value || ""
-                    : exp.title || ""
+                const expTitle = getSafeStringValue(exp.title, "Untitled Experience")
 
                 return (
                   <div

@@ -117,7 +117,11 @@ export function ButtonsField({
         onChange={onChange}
         addLabel="Add Action Button"
         emptyLabel="No buttons added."
-        itemLabel={(item) => item.label || "Untitled Button"}
+        itemLabel={(item) =>
+          typeof item.label === "object" && item.label !== null
+            ? (item.label as any)?.value || "Untitled Button"
+            : String(item.label || "Untitled Button")
+        }
         newItem={() => ({
           label: "Explore Journeys",
           url: "/journeys",
@@ -212,7 +216,11 @@ export function ButtonsField({
                               : "rounded-full"
                     )}
                   >
-                    <span className="truncate max-w-[90px]">{item.label || "Button"}</span>
+                    <span className="truncate max-w-[90px]">
+                      {typeof item.label === "object" && item.label !== null
+                        ? (item.label as any)?.value || "Button"
+                        : String(item.label || "Button")}
+                    </span>
                     {item.showIcon !== false && <ArrowRight className="h-2.5 w-2.5 shrink-0" />}
                   </div>
                 </div>
@@ -226,7 +234,11 @@ export function ButtonsField({
                     <Input
                       type="text"
                       placeholder="e.g. Explore Journeys"
-                      value={item.label || ""}
+                      value={
+                        typeof item.label === "object" && item.label !== null
+                          ? (item.label as any)?.value || ""
+                          : String(item.label || "")
+                      }
                       onChange={(e) => update({ ...item, label: e.target.value })}
                       className="h-8 text-xs"
                     />

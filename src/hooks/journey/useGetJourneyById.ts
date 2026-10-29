@@ -9,7 +9,12 @@ export function useGetJourneyById(id?: string) {
       const res = await apiPrivate.get(`/journeys`, {
         params: { id },
       })
-      return res.data
+      const raw = res.data?.data
+      const single = Array.isArray(raw) ? raw[0] || null : raw
+      return {
+        ...res.data,
+        data: single,
+      }
     },
     enabled: Boolean(id),
   })

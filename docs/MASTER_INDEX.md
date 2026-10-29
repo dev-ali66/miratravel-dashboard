@@ -31,6 +31,44 @@ The project consists of three main applications:
 
 ## Feature Implementation & Current Status
 
+### 0.6 RichText Media Reference Tracking & Linked Entity (Location/Journey) Name Resolution
+- **Issue A: RichText Embedded Images Showing as "Unused" in Media Library**:
+  - *Symptom*: Images added into story paragraph blocks via the rich-text editor were actively displayed on the website and story preview, but the Media Library classified them as `Unused` (0 references).
+  - *Root Cause*: `isMediaUrl()` in `mira_backend_v1/src/utils/mediaExtractor.ts` validated strings solely with domain matching (`KNOWN_STORAGE_DOMAINS.some(d => trimmed.includes(d))`). When a rich-text block containing HTML (`<p>...<img src="...jpg" />...</p>`) was passed, `isMediaUrl()` evaluated to `true` on the entire HTML string, pushing the full HTML blob as the media URL. Consequently, `syncEntityMediaReferences` could not match the asset filename/URL in `MediaAsset` table, and 0 `MediaReference` rows were created.
+  - *Fix Applied*:
+    - Updated [`mira_backend_v1/src/utils/mediaExtractor.ts`](file:///c:/Users/aalia/OneDrive/Desktop/Poli%20Full%20stack/mira_backend_v1/src/utils/mediaExtractor.ts): Hardened `isMediaUrl()` to reject strings containing spaces, `<`, `>`, or quotes. Added comprehensive HTML/RichText scanning using `src`/`href` regex (`/(?:src|href)=["']([^"']+)["']/gi`), Markdown syntax (`/!\[.*?\]\(([^)\s]+)\)/gi`), and raw storage URL extraction to parse all individual media URLs from rich-text blocks.
+    - Executed batch synchronization across all stories: 11 media references were immediately linked for the Vukoje story (and across other stories), transitioning all rich-text images into `ACTIVE USE` (`refCount > 0`) in the Media Library.
+- **Issue B: Linked Locations & Journeys Showing IDs instead of Names in Section 02 Form**:
+  - *Symptom*: In Story Section 02 (*Linked Locations, Journeys & Related Stories*), added locations and journeys displayed fallback labels `Location (dbbicxed)`, `Location (bw0fsqxc)`, and `Journey (Oj3norde)` instead of their human-readable titles/names.
+  - *Root Cause*: Backend endpoints `GET /api/v1/locations?id=...` and `GET /api/v1/journeys?id=...` return paginated results formatted as `{ data: [ item ] }` (an array). In `useGetLocationById` and `useGetJourneyById`, `response.data` was returned directly without unwrapping the single item from the array. In `LocationRow` and `JourneyRow`, accessing `loc?.name` and `journey?.title` on an array evaluated to `undefined`, falling back to `slice(-8)` ID labels.
+  - *Fix Applied*:
+    - Updated [`dashboard/src/hooks/location/useGetLocationById.ts`](file:///c:/Users/aalia/OneDrive/Desktop/Poli%20Full%20stack/dashboard/src/hooks/location/useGetLocationById.ts): Unwrapped array response (`Array.isArray(raw) ? raw[0] || null : raw`).
+    - Updated [`dashboard/src/hooks/journey/useGetJourneyById.ts`](file:///c:/Users/aalia/OneDrive/Desktop/Poli%20Full%20stack/dashboard/src/hooks/journey/useGetJourneyById.ts): Unwrapped array response (`Array.isArray(raw) ? raw[0] || null : raw`).
+    - Updated [`dashboard/src/components/pages/Stories/sections/relationships/RelationshipsForm.tsx`](file:///c:/Users/aalia/OneDrive/Desktop/Poli%20Full%20stack/dashboard/src/components/pages/Stories/sections/relationships/RelationshipsForm.tsx): Hardened `LocationRow`, `JourneyRow`, and `StoryRow` to safely unwrap `raw[0]` if `data` is an array.
+- **Verification**: Verified 0 TypeScript compilation errors in both `dashboard/` (`npx tsc -b`) and `mira_backend_v1/` (`npx tsc --noEmit`).
+
+### 0.5 Client Inquiry Resolution: Content Updates, Hero Videos, Region Experiences (React Error #31), and Blog Publishing
+- **Issue 1: Content Updates & Next.js Caching Behavior**:
+  - *Symptom*: Dashboard edits appear to take time or several days to appear on the live site.
+  - *Root Cause Analysis*: Next.js 14/15 uses aggressive static caching (ISR and Data Cache with tags). When records are updated in PostgreSQL via backend APIs, the Next.js cache remains active until its revalidation window expires or until `POST /api/revalidate` is invoked with relevant tags (`locations`, `stories`, `settings`).
+  - *Remediation & Recommendation*: Immediate live verification should use the CMS Live Preview or hard-refreshing (`Ctrl+F5`/`Cmd+Shift+R`). Added guidance on triggering on-demand revalidation.
+- **Issue 2: Hero Videos & Media Preservation**:
+  - *Investigation*: Audited live PostgreSQL database for all `Location` records. Verified all hero videos uploaded to Cloudinary are completely intact and safely stored in the database (e.g. Greece `ftwqcnukygr1dujid6zy.mp4`, Bulgaria `d1ovlbuqdnpygwde5mxw.mp4`, Slovenia `jmoofizmkaniphl4qlob.mp4`, Albania, etc.).
+  - *Root Cause*: Destination hero sections utilize the Universal Multimedia Object with a `show` selector (`"image"`, `"video"`, `"color"`). If a destination was edited and saved with `show: "image"`, the frontend renders the fallback image while the video URL remains preserved in the database. Selecting `show: "video"` resumes video playback immediately without re-uploading.
+- **Issue 3: Region Experiences (Section 07) Crash - Minified React Error #31**:
+  - *Root Cause*: `Minified React error #31: Objects are not valid as a React child (found: object with keys {value, textColor, textOpacity, backgroundColor, backgroundOpacity})`. In `RegionExperiencesForm.tsx`, `handleAddLocationFromSearch` fell back to `loc.hero?.subtitle` or `loc.hero?.description` when `loc.hero?.subtitle?.value` was empty. Because `loc.hero?.subtitle` is a normalized styled object, it was placed inside `newItem.subtitle.value`. Rendering `<p>{itemSubtitle}</p>` or button labels directly crashed React.
+  - *Fixes Applied*:
+    - [`dashboard/src/components/pages/CMS/shared/DynamicCmsButtonPreview.tsx`](file:///c:/Users/aalia/OneDrive/Desktop/Poli%20Full%20stack/dashboard/src/components/pages/CMS/shared/DynamicCmsButtonPreview.tsx): Wrapped button labels with safe string unwrapper (`typeof btn.label === "object" ? btn.label?.value : btn.label`).
+    - [`dashboard/src/components/pages/CMS/shared/ButtonsField.tsx`](file:///c:/Users/aalia/OneDrive/Desktop/Poli%20Full%20stack/dashboard/src/components/pages/CMS/shared/ButtonsField.tsx): Safely unwrapped `item.label` in `itemLabel`, preview pill, and input field.
+    - [`dashboard/src/components/pages/CMS/shared/RepeaterList.tsx`](file:///c:/Users/aalia/OneDrive/Desktop/Poli%20Full%20stack/dashboard/src/components/pages/CMS/shared/RepeaterList.tsx): Safely unwrapped `renderedLabel` in accordion header rendering.
+    - [`dashboard/src/components/pages/Location/sections/region-experiences/RegionExperiencesForm.tsx`](file:///c:/Users/aalia/OneDrive/Desktop/Poli%20Full%20stack/dashboard/src/components/pages/Location/sections/region-experiences/RegionExperiencesForm.tsx): Imported and applied `getSafeStringValue` to extract strings in `handleAddLocationFromSearch`, `itemTitle`, `itemSubtitle`, and `itemTag`.
+    - [`dashboard/src/components/pages/Location/sections/region-experiences/RegionExperiencesPreview.tsx`](file:///c:/Users/aalia/OneDrive/Desktop/Poli%20Full%20stack/dashboard/src/components/pages/Location/sections/region-experiences/RegionExperiencesPreview.tsx): Made default sample items and section label dynamic (`EXPLORE ${destName.toUpperCase()}` and `${destName} Highlands`, etc.) so non-Albania destinations (like Kosovo) no longer display hardcoded Albania sample cards in live preview.
+    - [`dashboard/src/components/pages/Location/sections/signature-experiences/SignatureExperiencesForm.tsx`](file:///c:/Users/aalia/OneDrive/Desktop/Poli%20Full%20stack/dashboard/src/components/pages/Location/sections/signature-experiences/SignatureExperiencesForm.tsx): Hardened `handleAddLocationFromSearch` and accordion card title rendering with `getSafeStringValue`.
+- **Issue 4: Blog Section Article Publishing Workflow**:
+  - *Investigation*: Queried all stories in PostgreSQL. Found 6 stories in DB: 2 are `PUBLISHED` (`Southern Croatia Travel Guide`, `A Slow Journey Along The Croatian Coast`) and visible on the website; 4 stories (`A Journey Across the Croatian Islands`, `Travel Story`, `Dubrovnik — The Gateway to Southern Croatia`, `Vukoje: A Different Vintage of Herzegovina`) were saved with `status: "DRAFT"`.
+  - *Explanation*: The website frontend strictly filters stories by `status === 'PUBLISHED'` so in-progress articles are never exposed to public visitors. When saving in the dashboard, authors must switch the publication status toggle from `DRAFT` to `PUBLISHED` in the Story Settings bar.
+- **Verification**: Verified 0 TypeScript errors across `dashboard/` (`npx tsc -b`) and `mira_backend_v1/` (`npx tsc --noEmit`).
+
 ### 0. Journey Type Canonical Updates (Limited to Normal, MIRA Collection, Signature)
 - **Requirements & Specification**:
   - Journey types across the entire full stack are strictly limited to exactly three canonical options:
@@ -58,8 +96,7 @@ The project consists of three main applications:
   - `lib/constants/enums.ts`: Pruned `FALLBACK_ENUMS.JourneyType` and `JOURNEY_TYPE` to `NORMAL`, `MIRA_COLLECTION`, `SIGNATURE`; added display label overrides (`'Normal'`, `'MIRA Collection'`, `'Signature'`).
   - `lib/constants/journey-wizard.ts`: Updated `JOURNEY_TYPE_OPTIONS` to `['Normal', 'MIRA Collection', 'Signature']`.
   - `app/dashboard/saved-journeys/SavedJourneysPageClient.tsx`: Updated `JOURNEY_TYPES_CONFIG` options.
-  - `lib/api/home.ts`, `lib/api/journeys.ts`, `lib/api/wishlist.ts`, `app/(site)/page.tsx`: Updated fallback defaults and signature resolvers to support `SIGNATURE` and `NORMAL`.
-  - `components/ui/journey-badge.tsx`: Added support for resolving `NORMAL` badge text.
+  - `lib/api/home.ts`, `lib/api/journeys.ts`, `lib/api/wishlist.ts`: Synced types and query mappings.
   - Verified 0 compilation errors with `npx tsc --noEmit`.
 
 ---
@@ -76,14 +113,26 @@ The project consists of three main applications:
   - Added performance indexes `@@index([userId])` and `@@index([email])`.
   - Pushed to Neon/VPS PostgreSQL with `npx prisma db push`.
 - **Backend Middleware & Service Implementation (`mira_backend_v1/`)**:
-  - `src/modules/journeyWizard/journeyWizard.routes.ts`: Attached `preDecode` middleware to `router.post("/")` and `router.get("/")`.
-  - `src/modules/journeyWizard/journeyWizard.validator.ts`: Added `userId` and `email` parameters to validators.
+  - `src/modules/journeyWizard/journeyWizard.routes.ts`:
+    - Attached `preDecode` middleware to `router.post("/")` and `router.get("/")`.
+  - `src/modules/journeyWizard/journeyWizard.validator.ts`:
+    - `createJourneyWizardRequestValidator`: accepts `userId: z.string().optional().nullable()`.
+    - `getJourneyWizardRequestsValidator`: accepts optional query filters `userId: z.string().optional()` and `email: z.string().optional()`.
   - `src/modules/journeyWizard/journeyWizard.service.ts`:
-    - Added `extractUserRoles(auth)` and `isStaffOrAdmin(auth)` to robustly detect roles across object arrays, string arrays, or scalar strings.
-    - Automatically links `userId` and `email` on `createJourneyWizardRequest`.
-    - Conditionally restricts records by user in `getJourneyWizardRequests` when caller is a regular user.
+    - Added helper `extractUserRoles(auth)` and `isStaffOrAdmin(auth)` to robustly detect roles from JWT decoded tokens across object arrays (`[{ name: 'USER' }]`), string arrays, or scalar strings.
+    - `createJourneyWizardRequest`: Automatically extracts `req.auth?.id` / `req.user?.id` and attaches `userId` and `email` to the persisted record.
+    - `getJourneyWizardRequests`:
+      - Validates caller authentication for HTTP requests.
+      - If caller is a regular user (`!isAdmin`), scopes the Prisma `where` clause:
+        `customWhere.OR = [{ userId: auth.id }, { email: { equals: auth.email, mode: "insensitive" } }]`.
+      - If search is also provided, groups them cleanly: `customWhere.AND = [{ OR: userConditions }, { OR: searchConditions }]`.
+      - If caller is Admin/Staff, does not restrict by user, returning the full dataset.
 - **Verification**:
-  - Ran `npx tsc --noEmit` with 0 errors.
+  - Run `npx tsc --noEmit` inside `mira_backend_v1/` with 0 errors.
+  - Verified live database query compatibility and index resolution with test script.
+  - `lib/api/home.ts`, `lib/api/journeys.ts`, `lib/api/wishlist.ts`, `app/(site)/page.tsx`: Updated fallback defaults and signature resolvers to support `SIGNATURE` and `NORMAL`.
+  - `components/ui/journey-badge.tsx`: Added support for resolving `NORMAL` badge text.
+  - Verified 0 compilation errors with `npx tsc --noEmit`.
 
 ---
 
@@ -1623,10 +1672,794 @@ Reference: [`docs/MEDIA_MANAGEMENT_ROADMAP.md`](file:///c:/Users/aalia/OneDrive/
                       - Dashboard Build: `npm run build` in `dashboard/` -> **PASSED with 0 errors (Exit Code 0, 3,179 modules transformed in 3.21s)**.
                       - Backend TypeCheck (Rule 1): `npx tsc --noEmit` in `mira_backend_v1/` -> **PASSED with 0 errors (Exit Code 0)**.
 
+                  - **Table Infinite Scroll Non-Collapsing Loading Fix & Scroll Reset Elimination [COMPLETED]**:
+                    - **Issue Reported (Audio Directive)**:
+                      User observed that in table views (such as Bookings, Inquiries, User List, Requests):
+                      *"আচ্ছা একটা জিনিস খেয়াল করো, যেগুলাতে তুমি হচ্ছে গ্রিড না, গ্রিড গেলো ওখে, যেগুলাতে টেবিল হিসেবে দেখতেছো লাইক বুকিং, ইনকোয়ারিস, এরকম যে জায়গাগুলা আছে, এগুলাতে পেইজ লোডিংটা অন্যরকম মানে পেইজ লোডিং হইলে যে মোডটা হয় যার কারণে আসে লোডিং মোডটা ওইটার কারণে ধরো আমি সেকেন্ড পেইজ ইয়া করসি ওইখান থেকে ডাটা না আবার নতুন একবারে টপে চলে যাচ্ছে স্ক্রলটা..."*
+                    - **Root Cause Confirmed**:
+                      1. **Query Key Transition**: In TanStack Query v5, when `page` changed from 1 to 2, queries without `placeholderData: keepPreviousData` reset `data` to `undefined` and flipped `isLoading` back to `true`.
+                      2. **DOM Height Collapse**: In table views, the UI evaluated `{isLoading ? (<skeleton table />) : ...}`. When page 2 was requested, the entire table containing page 1 rows unmounted and was replaced with 5 skeleton rows or a 50px `Loading...` div.
+                      3. **Forced Scroll Clamping**: When the `<main>` container's `scrollHeight` suddenly collapsed from 1500px down to 250px, the browser layout engine physically clamped `scrollTop` back to 0. When page 2 data arrived and the table re-expanded, the user remained stranded at the very top of the page.
+                    - **Comprehensive Repository-Wide Solution Implemented**:
+                      1. **`placeholderData: keepPreviousData` Rollout**:
+                         - [`dashboard/src/hooks/booking/useBookings.ts`](file:///c:/Users/aalia/OneDrive/Desktop/Poli%20Full%20stack/dashboard/src/hooks/booking/useBookings.ts): Added `keepPreviousData` to `useGetBookings`.
+                         - [`dashboard/src/hooks/users/useGetUsers.ts`](file:///c:/Users/aalia/OneDrive/Desktop/Poli%20Full%20stack/dashboard/src/hooks/users/useGetUsers.ts): Added `keepPreviousData` to `useGetUsers`.
+                         - [`dashboard/src/hooks/requests/useGetJourneyWizardRequests.ts`](file:///c:/Users/aalia/OneDrive/Desktop/Poli%20Full%20stack/dashboard/src/hooks/requests/useGetJourneyWizardRequests.ts): Added `keepPreviousData` to `useGetJourneyWizardRequests`.
+                         - [`dashboard/src/hooks/requests/useGetRequests.ts`](file:///c:/Users/aalia/OneDrive/Desktop/Poli%20Full%20stack/dashboard/src/hooks/requests/useGetRequests.ts): Added `keepPreviousData` to `useGetRequests`.
+                         - [`dashboard/src/hooks/role/useRoles.ts`](file:///c:/Users/aalia/OneDrive/Desktop/Poli%20Full%20stack/dashboard/src/hooks/role/useRoles.ts): Added `keepPreviousData` to `useGetRoles`.
+                         - [`dashboard/src/hooks/permission/usePermissions.ts`](file:///c:/Users/aalia/OneDrive/Desktop/Poli%20Full%20stack/dashboard/src/hooks/permission/usePermissions.ts): Added `keepPreviousData` to `useGetPermissions`.
+                         - Created [`dashboard/src/hooks/inquiry/useInquiries.ts`](file:///c:/Users/aalia/OneDrive/Desktop/Poli%20Full%20stack/dashboard/src/hooks/inquiry/useInquiries.ts): Full-featured query and mutation hook with `keepPreviousData` and server pagination.
+                      2. **Non-Collapsing Initial Loading Condition**:
+                         - Standardized condition across all table modules:
+                           `isInitialLoading = isLoading && currentPage === 1 && items.length === 0`
+                         - All tables now remain 100% mounted during subsequent batch requests (`currentPage > 1`), completely preserving the container height.
+                      3. **Inline Bottom Skeleton Stream Rows**:
+                         - Appended subtle, non-disruptive ghost pulse rows at the bottom of the table's `<tbody>` while `isLoadingMore || (isFetching && currentPage > 1)` is active.
+                         - Replaces the abrupt full-table unmounting with a sleek streaming experience matching the card grids.
+                      4. **Components Upgraded**:
+                         - [`Bookings/BookingTable.tsx`](file:///c:/Users/aalia/OneDrive/Desktop/Poli%20Full%20stack/dashboard/src/components/pages/Bookings/BookingTable.tsx)
+                         - [`Inquiry/index.tsx`](file:///c:/Users/aalia/OneDrive/Desktop/Poli%20Full%20stack/dashboard/src/components/pages/Inquiry/index.tsx)
+                         - [`UserList/UserListTable.tsx`](file:///c:/Users/aalia/OneDrive/Desktop/Poli%20Full%20stack/dashboard/src/components/pages/UserList/UserListTable.tsx)
+                         - [`Requests/JourneyWizardTable.tsx`](file:///c:/Users/aalia/OneDrive/Desktop/Poli%20Full%20stack/dashboard/src/components/pages/Requests/JourneyWizardTable.tsx)
+                         - [`Requests/RequestListTable.tsx`](file:///c:/Users/aalia/OneDrive/Desktop/Poli%20Full%20stack/dashboard/src/components/pages/Requests/RequestListTable.tsx)
+                         - [`IAM/RolesTable.tsx`](file:///c:/Users/aalia/OneDrive/Desktop/Poli%20Full%20stack/dashboard/src/components/pages/IAM/RolesTable.tsx)
+                         - [`IAM/PermissionsTable.tsx`](file:///c:/Users/aalia/OneDrive/Desktop/Poli%20Full%20stack/dashboard/src/components/pages/IAM/PermissionsTable.tsx)
+                         - [`Newsletter/index.tsx`](file:///c:/Users/aalia/OneDrive/Desktop/Poli%20Full%20stack/dashboard/src/components/pages/Newsletter/index.tsx)
+                    - **Verification & Compliance**:
+                      - Dashboard Typecheck: `npm run typecheck` (`tsc --noEmit`) ➔ **PASSED with 0 errors (Exit Code 0)**.
+                      - Dashboard Production Build: `npm run build` (`vite build`) ➔ **PASSED with 0 errors (Exit Code 0, ✓ 3,180 modules transformed in 2.96s)**.
+                      - Backend TypeCheck (Rule 1): `npx tsc --noEmit` in `mira_backend_v1/` ➔ **PASSED with 0 errors (Exit Code 0)**.
+
+                  - **Fixed Bottom Screen Universal Pagination Bar Architecture [COMPLETED]**:
+                    - **User Directive (Audio Prompt)**:
+                      *"পেজিনেশনের যে বারটা আছে, এটা ঠিক স্ক্রিনের নিচে, স্ক্রিনের একদম নিচে ফিক্সড করে দাও। মানে পুরো টোটাল স্ক্রিন হাইট যেটা, ওইটার নিচে ফিক্সড করে দাও।"*
+                      (Translation: "The pagination bar that exists, fix it right at the bottom of the screen, completely fixed at the bottom of the screen. Meaning, whatever the total screen height is, fix it at the bottom of that.")
+                    - **Architectural Challenges & Solutions**:
+                      1. **IntersectionObserver Sentinel Disconnection Trap**:
+                         - If an `IntersectionObserver` sentinel is placed inside a `position: fixed; bottom: 0;` container, it resides permanently within the viewport. The observer would immediately fire `isIntersecting: true` on initial mount and repeatedly trigger loads until all database records are exhausted.
+                         - **Solution**: Designed a dual-structure component:
+                           - An invisible in-flow anchor `<div ref={sentinelRef} className="h-px w-full pointer-events-none opacity-0 -mt-px" />` rendered in the normal document flow right where `<Pagination />` is placed at the end of the listing/table.
+                           - A visually detached, glassmorphic floating bar rendered with `fixed bottom-0 left-0 md:left-[280px] right-0 z-30`.
+                      2. **Responsive Sidebar Offset (`left-0 md:left-[280px]`)**:
+                         - Desktop (`md:` and above): The sidebar is permanently docked at `w-[280px]`. The pagination bar spans from `md:left-[280px]` to `right-0`, perfectly docking across the main content viewport.
+                         - Mobile (`< md`): The sidebar is off-canvas (hidden or slides in with `z-40` overlay). The pagination bar spans `left-0` to `right-0`.
+                         - Layering (`z-30`): Floats above scrolling table content (`z-0`/`z-10`), while naturally sitting under mobile sidebar drawers (`z-40`), modal dialogs (`z-50`), and inspection sheets (`z-50`).
+                      3. **Content Overlap Prevention in Layout**:
+                         - Updated `<main>` in [`dashboard/src/components/layout/RootLayout.tsx`](file:///c:/Users/aalia/OneDrive/Desktop/Poli%20Full%20stack/dashboard/src/components/layout/RootLayout.tsx) to include `pb-16 sm:pb-20`.
+                         - Ensures that when scrolling to the very bottom of any table or card listing, the last rows or cards sit completely clear of the floating bottom bar with ample breathing room.
+                      4. **Modal Dialog Scoping (`fixed={false}`)**:
+                         - Added `fixed?: boolean` prop to `PaginationProps` (defaulting to `true`).
+                         - In modal dialogs (e.g. [`MediaPickerModal.tsx`](file:///c:/Users/aalia/OneDrive/Desktop/Poli%20Full%20stack/dashboard/src/components/shared/MediaPickerModal.tsx)), passing `fixed={false}` keeps the pagination controls neatly docked within the modal dialog footer without escaping to the global screen bottom.
+                      5. **Elimination of Redundant Card Footer Padding**:
+                         - Stripped redundant padded wrappers (`border-t ... p-5` / `px-5 py-3`) across all table modules (`BookingTable.tsx`, `Inquiry/index.tsx`, `UserListTable.tsx`, `JourneyWizardTable.tsx`, `RequestListTable.tsx`, `RolesTable.tsx`, `PermissionsTable.tsx`, `Newsletter/index.tsx`, `AuditLogs/index.tsx`, `Promotions/index.tsx`, `Reviews/index.tsx`).
+                         - Tables now conclude cleanly with their native bottom border while the universal pagination bar floats seamlessly at the viewport bottom.
+                    - **Verification & Compliance**:
+                      - Dashboard Typecheck: `npm run typecheck` (`tsc --noEmit`) ➔ **PASSED with 0 errors (Exit Code 0)**.
+                      - Dashboard Production Build: `npm run build` (`vite build`) ➔ **PASSED with 0 errors (Exit Code 0, ✓ 3,180 modules transformed in 4.29s)**.
+                      - Backend TypeCheck (Rule 1): `npx tsc --noEmit` in `mira_backend_v1/` ➔ **PASSED with 0 errors (Exit Code 0)**.
+
+                  - **Dynamic Progress Bar Loading Indicator & Complete State Enhancement [COMPLETED]**:
+                    - **User Directive (Audio & Screenshot)**:
+                      *"ডিজাইনটা এরকম হবে, লাইক হচ্ছে ওই যে যেমন পার্সেন্টেজ দেখাচ্ছে, যখন ডাটা ফেচিং হবে তখন পার্সেন্টেজ দেখাবে না। ওই জায়গায় তখন লোডিং... একটা দেখাবে। আর যখন সম্পূর্ণ রেডি হয়ে যাবে, মানে একবারে শেষ হয়ে যাবে, নিচে চলে আসবে, তখন হচ্ছে তোমার ওই যে দেখাবে হচ্ছে, নিচের দিকে, একবারে নিচের দিকে তখন ওই শোয়িং এত অফ এত আইটেমস যেটা দেখাচ্ছে, ওইটা তখন মেসেজ দেখাবে লাইক কমপ্লিট।"*
+                    - **Implementation Details ([`dashboard/src/components/shared/Pagination.tsx`](file:///c:/Users/aalia/OneDrive/Desktop/Poli%20Full%20stack/dashboard/src/components/shared/Pagination.tsx))**:
+                      1. **State-Driven Fetching Indicator (`isFetchingData`)**:
+                         - Combined `isLoadingMore` and `internalLoading` into `isFetchingData`.
+                         - While next batch is being fetched: the right-side percentage (`68%`) is dynamically hidden and replaced with `<Loader2 className="animate-spin text-primary" /> Loading...` with subtle pulse animation.
+                         - The moment data arrives: `isFetchingData` flips to `false` and the updated percentage (`80%`) appears smoothly.
+                      2. **Wide 2-Row Layout Structure**:
+                         - Restored the prominent 2-row layout from the user's screenshot (`w-full sm:max-w-md md:max-w-lg`): Row 1 contains Left Label + Right Status/Percentage; Row 2 contains the full-width progress bar line.
+                    - **Verification & Compliance**:
+                      - Dashboard Typecheck: `npm run typecheck` ➔ **PASSED with 0 errors (Exit Code 0)**.
+                      - Dashboard Production Build: `npm run build` ➔ **PASSED with 0 errors (Exit Code 0, ✓ 3,180 modules in 3.03s)**.
+                      - Backend Typecheck (Rule 1): `npx tsc --noEmit` ➔ **PASSED with 0 errors (Exit Code 0)**.
+
+                  - **Infinite Scroll Refinement: Batch Dropdown Removal & Dynamic Counter Preservation [COMPLETED]**:
+                    - **User Directive (Audio Prompt)**:
+                      *"এই যে... ডান সাইডে যে ব্যাচ এরিয়াটা দেখাচ্ছে ড্রপডাউনটা, ইনফিনিটি স্ক্রলে এটা লাগবে না, বুঝতে পারছো? এটা বাদ দাও। আর এই যে সম্পূর্ণ মানে যে কমপ্লিট হয়ে গেলে যে তুমি হচ্ছে দেখাচ্ছো যে হচ্ছে... সবকিছু কমপ্লিট, ঐটা না। ঐ যে মানে Showing 88 of 88 items এর পরিবর্তে যেটা Complete দেখাচ্ছে ঐটা লাগবে না। এটা হইলেই ঠিক আছে যে Showing 88 of 88 items, এইটাই দেখাবে। মানে এইটাই ডায়নামিক থাকবে। আলাদা করে চেঞ্জ করে Complete দেখাইতে হবে না।"*
+                      (Translation: "On the right side, the batch area dropdown that is showing, in infinite scroll this is not needed, understand? Remove this. And when completely finished, where you are showing Complete, not that. In place of 'Showing 88 of 88 items' where it shows 'Complete', that's not needed. It is fine as 'Showing 88 of 88 items', this is what it should show. Meaning this itself will stay dynamic. No need to separately change it to 'Complete'.")
+                    - **Refinements Implemented ([`dashboard/src/components/shared/Pagination.tsx`](file:///c:/Users/aalia/OneDrive/Desktop/Poli%20Full%20stack/dashboard/src/components/shared/Pagination.tsx))**:
+                      1. **Batch Size Dropdown Elimination in Infinite Scroll**:
+                         - Completely removed the batch size dropdown selector from `mode === "infinite"`.
+                         - Batch size is now strictly determined by the listing's code configuration / responsive defaults, preventing users from inadvertently changing batch sizes in continuous scroll mode.
+                         - The batch dropdown is preserved strictly for traditional page mode (`mode === "pages"`).
+                      2. **Dynamic "Showing X of Y items" Counter Preservation**:
+                         - Eliminated the completion state override that replaced the counter with a static "Complete" text string.
+                         - The counter now strictly displays `Showing {displayLoaded} of {totalItems} items` (e.g. `Showing 88 of 88 items`) dynamically across all loading and loaded states.
+                      3. **Dynamic Fetching Indicator & Percentage Progression**:
+                         - Dynamic right status: shows `<Loader2 className="animate-spin text-primary" /> Loading...` while `isFetchingData` is active, and cleanly returns to `{percentLoaded}%` (e.g. `100%`) when idle.
+                         - Progress bar fills smoothly to 100% with `bg-primary`.
+                      4. **Centered 1/5th Width & Compact Profile Layout**:
+                         - **User Directive**: *"5 vager ek vag widhth hbe. center a hbe. hihgt arektu kom hbe"* (1/5th width, centered, and lower height).
+                         - **Refined Styling**:
+                           - **Width**: Configured to exactly 1/5th (`sm:w-1/5`) on desktop with `sm:min-w-[220px] max-w-[280px] mx-auto` to ensure text never wraps while strictly honoring the 1/5th proportion.
+                           - **Centering**: Centered via `mx-auto` inside the `flex items-center justify-center` fixed bottom bar.
+                           - **Compact Height**: Pinned bar vertical padding reduced to `py-1.5 sm:py-2`, inner vertical gap reduced to `gap-1`, text compact at `text-[11px] leading-tight`, and progress bar line streamlined to `h-1`.
+                      5. **Elimination of Excessive Bottom Padding Void (`pb-10 sm:pb-11`)**:
+                         - **User Directive (Screenshot & Prompt)**: *"end er pb onk besi hoise komay dew"* (The padding bottom at the end is way too much, reduce it).
+                         - **Root Causes**:
+                           - `<main>` container had `pb-16 sm:pb-20` (80px), pushing the bottom of listings far above the bottom bar.
+                           - The invisible sentinel had parent `space-y-6` adding 24px of empty top margin before the bottom bar.
+                           - Redundant page-level `pb-20` / `pb-16` wrappers were present on `MediaLibraryPage.tsx`, `SiteSettings/index.tsx`, and `Settings/index.tsx`.
+                         - **Fix**:
+                           - Reduced `<main>` bottom padding in `RootLayout.tsx` to `pb-10 sm:pb-11` (~40px), matching the compact ~34px height of the fixed bottom bar with a comfortable ~6px to 8px clearance.
+                           - Added `!m-0 !p-0` to the sentinel in `Pagination.tsx` so parent `space-y-*` does not introduce empty vertical space.
+                           - Stripped duplicate `pb-` declarations from `MediaLibraryPage.tsx`, `SiteSettings/index.tsx`, and `Settings/index.tsx`.
+                    - **Verification & Compliance**:
+                      - Dashboard Typecheck: `npm run typecheck` (`tsc --noEmit`) ➔ **PASSED with 0 errors (Exit Code 0)**.
+                      - Dashboard Production Build: `npm run build` (`vite build`) ➔ **PASSED with 0 errors (Exit Code 0, ✓ 3,180 modules transformed in 3.32s)**.
+                      - Backend Typecheck (Rule 1): `npx tsc --noEmit` in `mira_backend_v1/` ➔ **PASSED with 0 errors (Exit Code 0)**.
+
+                  - **Universal Sticky FilterToolbar System Across All Views [COMPLETED]**:
+                    - **User Directive (Audio & Screenshot)**:
+                      *"এরকম যত ফিল্টার আছে, মিডিয়া পিকার এ বলো আর যে জায়গায় বলো, যে কোনো লিস্ট এ বলো, যে কোনো গ্রিড লিস্ট এ বলো, বুকিংস এ বলো, ইনকোয়ারি তে বলো, জার্নি তে বলো, এরকম অনেক অসংখ্য আছে আমার ড্যাশবোর্ড এ। ড্যাশবোর্ড এর এগুলো খুঁজে খুঁজে বের করো। আর জিনিস টা এইভাবে স্টিকি হয়ে থাকবে। আমি যে পজিশন টা দিছি, যে নেভবার এর ঠিক নিচে ওই ভাবে স্টিকি হয়ে থাকবে। ওই জায়গায়। স্ক্রল করার সময় ওই জায়গায় গেলে ওইটা স্টিকি হয়ে যাবে। এরকম করো।"*
+                      (Translation: "All such filters that exist—whether in Media Picker or anywhere else, in any list, in any grid list, in Bookings, in Inquiry, in Journey, there are many such filters in my dashboard. Find all of them in the dashboard. And this thing should stay sticky like this. The position I have shown—right below the navbar, it should stay sticky in that position. When scrolling, once it reaches that place, it should become sticky. Do it like this.")
+                    - **Architectural Discovery & Resolution**:
+                      1. **RootLayout Overflow Trap Elimination**:
+                         - In `dashboard/src/components/layout/RootLayout.tsx`, removed `overflow-hidden` from the flex container (line 80) and removed `overflow-y-auto` from `<main>` (line 87).
+                         - Because the layout had unbounded height (`min-h-svh`), the window (`window.scrollY`) is the true scrolling container. CSS `position: sticky` relative to the viewport is fundamentally broken when an ancestor has `overflow: hidden` or `overflow: auto`. Removing these dead overflow properties unblocked `position: sticky` completely.
+                      2. **Default `sticky = true` & Navbar Offset (`top-16` / 64px)**:
+                         - Updated `dashboard/src/components/shared/FilterToolbar.tsx` with default `sticky = true` and `topOffset = "top-16"`.
+                         - Container styled with `sticky top-16 z-20 py-2 bg-background/95 dark:bg-card/95 backdrop-blur-md`.
+                         - Directly below the 64px fixed Navbar (`Navbar` is `fixed top-0 h-16 z-50`), the toolbar docks flush beneath the header at `64px`; cards and tables scroll smoothly behind it, blurred and masked with zero visual collision.
+                      3. **Container Normalization & Instructor Requests Integration**:
+                         - Cleaned root wrappers in `Location/index.tsx`, `Journey/index.tsx`, `Experience/index.tsx`, `Stories/index.tsx`, `Bookings/BookingTable.tsx`, and `JourneyWizardTable.tsx` to `<div className="w-full space-y-6 pt-2">` (eliminating animation containing block interference).
+                         - Added `FilterToolbar` to `Requests/RequestListTable.tsx` (Instructor Requests) with `FilterSearch`, `FilterTabs` (All Applicants, Pending Review, Verified / Approved), and `FilterResetButton`.
+                         - Added tab switcher to `Requests/index.tsx` allowing seamless toggling between "Journey Requests (Wizard)" and "Instructor Requests (Instructor Table)".
+                         - Upgraded `MediaPickerModal.tsx` browse toolbar with `FilterToolbar sticky topOffset="top-0"`.
+                      4. **Universal Coverage Across All 18 Views**:
+                         - Card Grid Listings: `Location/index.tsx`, `Journey/index.tsx`, `Experience/index.tsx`, `Stories/index.tsx`.
+                         - Table Listings: `Bookings/BookingTable.tsx`, `Inquiry/index.tsx`, `UserList/UserListTable.tsx`, `Requests/JourneyWizardTable.tsx`, `Requests/RequestListTable.tsx`, `Reviews/index.tsx`, `Promotions/index.tsx`, `Newsletter/index.tsx`, `AuditLogs/index.tsx`, `IAM/index.tsx`.
+                         - Media System: `MediaLibrary/MediaFilters.tsx`, `MediaPickerModal.tsx`.
+                         - System & Governance: `SystemHealth/index.tsx`, `PaymentConfig/index.tsx`, `Settings/index.tsx`, `CMS/index.tsx`.
+                    - **Verification & Compliance**:
+                      - Dashboard Typecheck: `npm run typecheck` (`tsc --noEmit`) ➔ **PASSED with 0 errors (Exit Code 0)**.
+                      - Dashboard Production Build: `npm run build` (`vite build`) ➔ **PASSED with 0 errors (Exit Code 0, ✓ 3,184 modules transformed in 3.03s)**.
+                      - Backend Typecheck (Rule 1): `npx tsc --noEmit` in `mira_backend_v1/` ➔ **PASSED with 0 errors (Exit Code 0)**.
+
+                  - **FilterToolbar: Unified Segmented Control & User Reference Mockup Parity [COMPLETED]**:
+                    - **User Directive (Audio & Reference Mockup Image)**:
+                      *"dekho, search bar-ta hu-ba-hu erokom hobe, kintu side-er corner-gulo full rounded hobe na. Square-er pore halka ektu curved/baka hobe. Ar ei je ekhane je background-ta dekhte parso, eitar background-ta transparent hobe. Theme-ta amar theme-er sathe match kore banay diba. Filter toolbar-ta thik erokom dekhte chai."*
+                      (Search bar must look exactly like the reference image, but corners must NOT be full rounded capsule—slightly curved after square (`rounded-md`). Background must be transparent frosted glass matching the system theme).
+                    - **Implementation Details ([`dashboard/src/components/shared/FilterToolbar.tsx`](file:///c:/Users/aalia/OneDrive/Desktop/Poli%20Full%20stack/dashboard/src/components/shared/FilterToolbar.tsx))**:
+                      - **Unified Segmented Architecture**: Converted disjointed floating filter boxes into a single cohesive segmented bar with vertical divider lines (`divide-x divide-border/60`).
+                      - **Border Radius**: Applied `rounded-md` (12px radius) for the requested rectangular curve with subtle rounding, strictly avoiding full capsule pill corners (`rounded-full`).
+                      - **Translucent Frosted Background**: Styled container with `border border-border/70 bg-background/60 dark:bg-card/40 backdrop-blur-md shadow-2xs` matching light and dark themes.
+                      - **Integrated Segments**:
+                        1. *Search Segment (`FilterSearch`)*: Borderless integrated slot with magnifying glass icon, transparent input, and clear button.
+                        2. *Pill Tabs Segment (`FilterTabs`)*: Soft pill badges nestled beside search.
+                        3. *Dropdown Selects (`FilterSelect`)*: Borderless slots with leading category icons, center text, and right chevron, separated by vertical lines.
+                        4. *Action Segment (`FilterCreateButton`)*: Unified `Create +` button slot.
+                        5. *Refresh Segment (`FilterResetButton`)*: Square `h-10 w-10` slot with circular `RotateCcw` refresh icon at the far right.
+                      - Updated `ParentLocationSelect` in `Location/index.tsx` and `Experience/index.tsx` to match the borderless segmented slot style.
+                    - **Verification & Compliance**:
+                      - Dashboard Typecheck: `npm run typecheck` ➔ **PASSED with 0 errors (Exit Code 0)**.
+                      - Backend Typecheck (Rule 1): `npx tsc --noEmit` in `mira_backend_v1/` ➔ **PASSED with 0 errors (Exit Code 0)**.
+
+                  - **FilterToolbar: Right-Aligned Actions, Search Stretch (`flex-1`), Brand Green Buttons & Seamless Segmentation [COMPLETED]**:
+                    - **User Directive (Audio Notes)**:
+                      1. *Search Bar Stretch*: Search input must occupy and stretch across the entire available space on the left (`w-full flex-1 min-w-[...]`). No awkward blank space or gaps between controls.
+                      2. *Right Alignment*: All dropdown filters, filter tabs, action buttons, and segmented slots must dock to the far right (`ml-auto flex items-center divide-x divide-border/60`).
+                      3. *Universal Far-Right Refresh Button (`↻`)*: Every filter toolbar across the system MUST terminate with the circular arrow refresh icon button (`FilterResetButton`) at the absolute right end.
+                      4. *Brand Greenish Add/Create Button*: `Create +` / `Add ... +` buttons must feature theme-aligned greenish text (`text-emerald-600 dark:text-emerald-400 font-semibold hover:text-emerald-700 dark:hover:text-emerald-300 hover:bg-emerald-500/10`).
+                      5. *Elimination of Floating Button Borders*: Remove separate outline borders on buttons inside the bar (e.g. Export CSV, Flush Cache, Live Stream).
+                      6. *Page-Specific Refinements*:
+                         - **User List (`UserListTable.tsx`)**: Left = Search (`flex-1`). Right = `[All Roles] | [All Statuses] | [All Verification] | [Add New User] | [↻ Refresh]`.
+                         - **Bookings (`BookingTable.tsx`)**: Left = Search (`flex-1`). Right = `[Booking Status] | [Payment Status] | [Export CSV] | [↻ Refresh]`.
+                         - **Inquiries (`Inquiry/index.tsx`)**: Left = Search (`flex-1`). Right = `[Status] | [Download CSV] | [↻ Refresh]`. Implemented `handleExportCSV` with full canonical inquiry field mapping.
+                         - **Journey Requests (`JourneyWizardTable.tsx` & `RequestListTable.tsx`)**: Left = Search (`flex-1`). Right = `[Status Tabs] | [↻ Refresh]`.
+                         - **Reviews & Ratings (`Reviews/index.tsx`)**: Left = Search (`flex-1`). Right = `[Status] | [Rating] | [↻ Refresh]`.
+                         - **Newsletter Subscribers (`Newsletter/index.tsx`)**: Left = Search (`flex-1`). Right = `[Status] | [Source] | [Export CSV] | [↻ Refresh]`.
+                         - **Media Library (`MediaLibraryPage.tsx` & `MediaFilters.tsx`)**: Merged the 4 top floating buttons (`Active Library`, `Trash Bin`, `Optimize Storage`, `Upload Media`) directly into the unified `FilterToolbar` segmented bar.
+                         - **Journeys, Locations, Experiences, Stories**: Left = Search (`flex-1`). Right = Dropdowns + Greenish `Create / Add` button + `↻ Refresh`.
+                         - **System Health (`SystemHealth/index.tsx`)**: Converted `Flush Cache` and `Live Stream` (with live pulse dot) into borderless segmented toolbar items, ending with `↻ Refresh`.
+                         - **Audit Logs (`AuditLogs/index.tsx`)**: Integrated `Export Logs` as `FilterExportButton` directly into the toolbar alongside Action & Status filters, ending with `↻ Refresh`.
+                         - **Payment Config (`PaymentConfig/index.tsx`)**: Replaced outline buttons with borderless segmented `Save Policy` and `Reset Defaults`.
+                         - **Media Picker Modal (`MediaPickerModal.tsx`)**: Left = Search (`flex-1`). Right = `[Tabs] | [Sort] | [↻ Refresh]`.
+                    - **Verification & Compliance**:
+                      - Dashboard Production Build: `npm run build` (`vite build`) ➔ **PASSED with 0 errors (Exit Code 0, ✓ 3,184 modules transformed in 6.25s)**.
+                      - Backend Typecheck (Rule 1): `npx tsc --noEmit` in `mira_backend_v1/` ➔ **PASSED with 0 errors (Exit Code 0)**.
+
+                  - **Media Library Tab Blinking Resolution & Universal FilterTabs Redesign [COMPLETED]**:
+                    - **User Directive (Audio Notes)**:
+                      1. *Media Library Tab Blinking Fix*:
+                         *"media library te je tab gulo ache oi tab gulo kaj kore na. jekono tab e click korle blinking shuru kore... mane oi tab e move kortese abar genuine URL e chole ashche... e issue ta fix koro..."*
+                         (Clicking tabs in Media Library caused rapid blinking/flickering and bounced back to genuine URL).
+                      2. *Tab UI Redesign*:
+                         *"ar amake je tab er je, je tab er UI ta ache eta ekdom pochondo hoy ni. UI ta ke change koro, tab er, just tab er. Search box purotai thik ache, filter box ta, filter tool box sob thik ache, shudu tab je je jaygay use korso oi jaygar design gulo pochondo hocche na, UI ta."*
+                         (Redesign the tab UI completely. Search box and filter toolbar are fine, but the tab UI was unsatisfactory across the board).
+                    - **Technical Implementation**:
+                      1. *Media Library Blinking Bug Resolution*:
+                         - Root Cause: In `dashboard/src/components/pages/MediaLibrary/MediaLibraryPage.tsx`, two conflicting `useEffect` blocks were running a circular race condition. When `activeTab` updated locally, the first effect checked `searchParams.get("tab") !== activeTab` (which was still stale), immediately reverting `activeTab` back to "active". Then the second effect attempted to push the new URL, causing an infinite ping-pong state loop and visual blinking.
+                         - Fix: Replaced dual-sync state with `searchParams` as the single source of truth (`const activeTab = searchParams.get("tab") === "trash" ? "trash" : "active"`). Handlers (`handleTabChange`, `handleViewModeChange`) mutate `searchParams` directly via `setSearchParams({ replace: true })`. Removed both circular effects. Zero blinking, instant tab transitions, and seamless browser history support.
+                      2. *FilterTabs Full-Height Seamless Segmented Redesign*:
+                         - In `dashboard/src/components/shared/FilterToolbar.tsx`, eliminated the awkward nested pill bubble container (`bg-muted/40 p-1`).
+                         - Replaced with full-height (`h-10`) seamless segmented tabs divided by vertical lines (`divide-x divide-border/50`).
+                         - Active Tab: Soft primary background tint (`bg-primary/10 dark:bg-primary/15`), crisp font (`font-semibold text-primary`), and a vibrant bottom indicator line (`after:absolute after:bottom-0 after:left-2 after:right-2 after:h-[2px] after:bg-primary after:rounded-full`).
+                         - Inactive Tabs: Clean muted styling (`text-muted-foreground hover:text-foreground hover:bg-muted/30`).
+                         - Micro Badges: Integrated badge counts with high-contrast pill styling.
+                         - Uniform across Media Library (`Active Library` vs `Trash`), Requests (`Journey Requests` vs `Instructor Requests` and status tabs), System Health Diagnostics, IAM Roles & Permissions, and Media Picker Modal.
+                      3. *CompactStatCard Clickability*:
+                         - Added `onClick?: () => void` to `PageHeader.tsx`'s `CompactStatCardProps`, enabling users to click the "Trash Grace" KPI card to jump directly to the Trash view.
+                    - **Verification & Compliance**:
+                      - Dashboard Production Build: `npm run build` (`vite build`) ➔ **PASSED with 0 errors (Exit Code 0, ✓ 3,184 modules transformed in 3.16s)**.
+                      - Backend Typecheck (Rule 1): `npx tsc --noEmit` in `mira_backend_v1/` ➔ **PASSED with 0 errors (Exit Code 0)**.
+
+                  - **Audit Logs Unified Toolbar & Site Settings FilterToolbar Integration [COMPLETED]**:
+                    - **User Directive (Audio Notes)**:
+                      1. *Audit Logs*:
+                         *"Audit log te jeita ache, audit log e FilterToolbar use kora hoy nai... eita ekta..."*
+                         (In Audit Logs, an unintegrated custom bar was being used instead of the canonical FilterToolbar).
+                      2. *Site Settings*:
+                         *"Ar Site Settings e je tab ta ache, otao FilterToolbar use kora hoy nai, otao FilterToolbar use korba. Ar okhane tab, je tab gula ache tab gula rakhba, sathe oi toolbar er moddhei console data reset and save settings egula thakbe... Ar Save Settings er naam shudu hocche 'Save' thakbe, 'Settings' word ta dorkar nai..."*
+                         (In Site Settings, the tabs and action bar weren't using FilterToolbar. Use FilterToolbar for the tabs, put Console Data, Reset, and Save inside the toolbar, and rename 'Save Settings' strictly to 'Save').
+                    - **Technical Implementation**:
+                      1. *Audit Logs (`dashboard/src/components/pages/AuditLogs/index.tsx`)*:
+                         - Removed the detached custom quick actions bar above the terminal.
+                         - Unified all controls into a single sticky `FilterToolbar`:
+                           - Left (`FilterGroup`): Search bar stretching to occupy remaining space (`w-full flex-1 min-w-[180px]`).
+                           - Right (`FilterActions`): Live Stream socket indicator (pulsing green dot), `FilterSegmentButton` for Live Terminal toggle, `FilterSegmentButton` for Simulate Event, Action filter dropdown, Status filter dropdown, `FilterExportButton` for Export Logs, and `FilterResetButton` for universal refresh.
+                         - Terminal console renders directly below the unified toolbar when toggled on.
+                      2. *Site Settings (`dashboard/src/components/pages/SiteSettings/index.tsx`)*:
+                         - Removed the floating outline button bar and the Radix `<TabsList>`.
+                         - Implemented canonical `FilterToolbar`:
+                           - Left (`FilterGroup`): Seamless full-height `FilterTabs` with all 5 sections: `1. Identity`, `2. Brand Assets`, `3. Social Links` (with dynamic badge count), `4. Social Meta`, and `5. SEO & Meta`.
+                           - Right (`FilterActions`): Borderless segmented `Console Data` button, `Reset` button, and brand-green `Save` button (strictly titled "Save" without "Settings").
+                         - Added `disabled?: boolean` prop support to `FilterCreateButton` in `FilterToolbar.tsx`.
+                    - **Verification & Compliance**:
+                      - Dashboard Production Build: `npm run build` (`vite build`) ➔ **PASSED with 0 errors (Exit Code 0, ✓ 3,183 modules transformed in 3.12s)**.
+                      - Backend Typecheck (Rule 1): `npx tsc --noEmit` in `mira_backend_v1/` ➔ **PASSED with 0 errors (Exit Code 0)**.
+
+                  - **FilterToolbar 1:1 Navbar Background & Transparency Parity [COMPLETED]**:
+                    - **User Directive (Audio & Screenshot)**:
+                      *"Ei je eitar vitore... Filter je toolbar ta ache, toolbar er vitorer background tao ekdom same to same navbar er moto transparent hobe..."*
+                      (The background inside the filter toolbar must be exact same to same transparent like the navbar).
+                    - **Technical Root Cause & Implementation ([`dashboard/src/components/shared/FilterToolbar.tsx`](file:///c:/Users/aalia/OneDrive/Desktop/Poli%20Full%20stack/dashboard/src/components/shared/FilterToolbar.tsx))**:
+                      - *Double Background Layering Removed*: Previously, the outer sticky container had `bg-background/85 supports-[backdrop-filter]:bg-background/60`, and the inner toolbar container had `bg-background/60`. Two 60% opacity layers stacked together produced an 84-94% opaque milky/solid cream band.
+                      - *Outer Sticky Wrapper*: Stripped background and borders from the outer sticky wrapper (`sticky z-20 pb-2 bg-transparent`).
+                      - *Inner Toolbar Container*: Formatted container with the EXACT tokens used in [`Navbar.tsx`](file:///c:/Users/aalia/OneDrive/Desktop/Poli%20Full%20stack/dashboard/src/components/layout/Navbar.tsx) line 154: `rounded-xl border border-border/40 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 dark:bg-card/90 dark:supports-[backdrop-filter]:dark:bg-card/60 shadow-2xs divide-border/40`.
+                      - *Subtle Tab Transparency*: Refined `FilterTabs` active tab background to `bg-primary/8 dark:bg-primary/15` with `after:h-[2px] after:bg-primary`, allowing the frosted glass blur and underlying content to remain visible without solid color blocks.
+                    - **Verification & Compliance**:
+                      - Dashboard Production Build: `npm run build` (`vite build`) ➔ **PASSED with 0 errors (Exit Code 0, ✓ 3,183 modules transformed in 3.20s)**.
+                      - Backend Typecheck (Rule 1): `npx tsc --noEmit` in `mira_backend_v1/` ➔ **PASSED with 0 errors (Exit Code 0)**.
+
+                  - **Navbar Compact Height (h-14 / 56px) & FilterToolbar py-2 Spacing Alignment [COMPLETED]**:
+                    - **User Directive (Audio)**:
+                      *"Ar navbar er je height ta ache, height ta arektu komaye dio. Ar eitar je my ba py thakbe ota 2 kore dio..."*
+                      (Reduce the height of the navbar a bit. And whatever py or my this has, make it 2).
+                    - **Technical Implementation**:
+                      1. *Navbar Height Reduction ([`dashboard/src/components/layout/Navbar.tsx`](file:///c:/Users/aalia/OneDrive/Desktop/Poli%20Full%20stack/dashboard/src/components/layout/Navbar.tsx))*:
+                         - Changed header height from `h-16` (64px) to `h-14` (56px) on line 155 (`<div className="flex h-14 items-center px-4 md:px-6 justify-between">`).
+                      2. *Synchronized Fixed Offsets & Layout Padding*:
+                         - [`RootLayout.tsx`](file:///c:/Users/aalia/OneDrive/Desktop/Poli%20Full%20stack/dashboard/src/components/layout/RootLayout.tsx): Updated main content top padding from `pt-16` to `pt-14` (`<div className="flex flex-1 min-w-0 pt-14">`).
+                         - [`Sidebar.tsx`](file:///c:/Users/aalia/OneDrive/Desktop/Poli%20Full%20stack/dashboard/src/components/layout/Sidebar.tsx): Updated fixed sidebar top offset from `top-16` to `top-14` (`fixed top-14 bottom-0 left-0 z-40 w-[280px]`).
+                         - [`MediaInspectorDrawer.tsx`](file:///c:/Users/aalia/OneDrive/Desktop/Poli%20Full%20stack/dashboard/src/components/pages/MediaLibrary/MediaInspectorDrawer.tsx): Updated media details drawer top offset from `top-16` to `top-14` (`fixed top-14 bottom-0 right-0`).
+                      3. *FilterToolbar Sticky Spacing & Default Offset ([`dashboard/src/components/shared/FilterToolbar.tsx`](file:///c:/Users/aalia/OneDrive/Desktop/Poli%20Full%20stack/dashboard/src/components/shared/FilterToolbar.tsx))*:
+                         - Changed default `topOffset` from `"top-16"` to `"top-14"` (56px) to stick flush right underneath the compact navbar without any gap or overlap.
+                         - Changed sticky wrapper vertical padding from `pb-2` to `py-2` (`sticky && cn("sticky z-20 py-2 bg-transparent", topOffset)`), providing balanced 8px padding above and below the bar during scrolling.
+                    - **Verification & Compliance**:
+                      - Dashboard Production Build: `npm run build` (`tsc -b && vite build`) ➔ **PASSED with 0 errors (Exit Code 0, ✓ 3,183 modules transformed in 4.07s)**.
+                      - Backend Typecheck (Rule 1): `npx tsc --noEmit` in `mira_backend_v1/` ➔ **PASSED with 0 errors (Exit Code 0)**.
+
+                  - **Navbar Brand Logo Full-Height Scaling (h-14 / 56px, Zero Padding) [COMPLETED]**:
+                    - **User Directive**:
+                      *"thik ache but brand logo ta choto hoy hese ota boro koro navbar hiht er er moto ota padding lagbena"*
+                      (Make the brand logo bigger matching the navbar height, no padding is needed for it).
+                    - **Technical Implementation ([`dashboard/src/components/layout/Navbar.tsx`](file:///c:/Users/aalia/OneDrive/Desktop/Poli%20Full%20stack/dashboard/src/components/layout/Navbar.tsx))**:
+                      1. *Removed Fixed `h-8` & `h-9` Constraints*: Replaced legacy `h-8 max-w-[160px]` with `h-14 max-h-14 w-auto max-w-[280px]` directly matching the 56px navbar height.
+                      2. *Zero Padding*: Applied `p-0 py-0` on container and image, eliminating any inner padding that previously shrank the logo.
+                      3. *Native Aspect Ratio & Left Alignment*: Implemented direct `<img />` rendering with `object-contain object-left select-none pointer-events-none` so horizontal or brand logos scale naturally up to 56px height without distortion or cropping.
+                      4. *Full-Height Flex Alignment*: Added `h-full` to the left header flex container (`<div className="flex items-center gap-3 md:gap-4 h-full">`) so the logo link occupies full vertical space cleanly.
+                    - **Verification & Compliance**:
+                      - Dashboard Production Build: `npm run build` (`tsc -b && vite build`) ➔ **PASSED with 0 errors (Exit Code 0, ✓ 3,183 modules transformed in 3.10s)**.
+                      - Backend Typecheck (Rule 1): `npx tsc --noEmit` in `mira_backend_v1/` ➔ **PASSED with 0 errors (Exit Code 0)**.
+
+                  - **Media Picker Modal Universal FilterToolbar & Integrated Upload [COMPLETED]**:
+                    - **User Directive (Audio & Screenshot)**:
+                      *"Image ar video-r je media picker-ta ache, okhane dekho ekta tab ache upore... Browse library ar hocche upload. To Browse library lagbena, by default to browse thekei asche. Ar upload-e click korle to upload-er option-ta asche. To tumi oi je filter toolbar-er moddhe oi upload-ta lagaye dao ekdom. Okay? Ar filter toolbar-ta to universal jeta use korteso otai thakbe, thik kore dao, ekhane ektu issue ache."*
+                      (Remove the redundant 'Browse Library' tab from the modal header. Integrate the 'Upload New' button directly inside the universal FilterToolbar. Fix the toolbar styling to match the universal design system).
+                    - **Technical Implementation ([`dashboard/src/components/shared/MediaPickerModal.tsx`](file:///c:/Users/aalia/OneDrive/Desktop/Poli%20Full%20stack/dashboard/src/components/shared/MediaPickerModal.tsx))**:
+                      1. *Removed Redundant Header Tabs*: Eliminated the `Browse Library` and `Upload New` pill toggle from `DialogHeader`. The header now cleanly contains only the modal title, description, and close button (`X`).
+                      2. *Integrated `Upload New` into `FilterToolbar`*:
+                         - Added `<FilterCreateButton onClick={() => uploadInputRef.current?.click()} label={isUploading ? "Uploading..." : "Upload New"} icon={isUploading ? Loader2 : Upload} disabled={isUploading} />` directly inside `FilterActions`.
+                         - One-click direct access to device file picker without switching screens or losing library context.
+                      3. *Universal Segmented Bar Standardization*:
+                         - Placed `FilterToolbar` inside `<div className="px-5 py-2.5 border-b border-border/40 bg-muted/5 shrink-0">` with `sticky={false}`.
+                         - Added `allValue="newest"` to the Sort `FilterSelect` so the default sort ("Newest First") isn't highlighted in active filter green/grey.
+                      4. *Seamless Drag-and-Drop & Live Progress*:
+                         - Added `onDragOver` / `onDrop` directly onto the media grid with a frosted dropzone visual overlay (`isDragOver`).
+                         - Added a real-time progress banner showing `{uploadProgress}%` during file upload and SHA-256 deduplication.
+                         - Empty state "Upload File" button also triggers `uploadInputRef.current?.click()` directly.
+                    - **Verification & Compliance**:
+                      - Dashboard Production Build: `npm run build` (`tsc -b && vite build`) ➔ **PASSED with 0 errors (Exit Code 0, ✓ 3,183 modules transformed in 4.05s)**.
+                      - Backend Typecheck (Rule 1): `npx tsc --noEmit` in `mira_backend_v1/` ➔ **PASSED with 0 errors (Exit Code 0)**.
+
+                  - **Universal 500px Distance-to-Bottom Infinite Scroll & Media Picker Pre-load Fix [COMPLETED]**:
+                    - **User Directive (Audio)**:
+                      *"Accha media picker e arekta issue hoye geche... shob gula ekshathe load hoye jaitese mane jotogula ache shuru theke shesh porjonto shob image ba video sob gula ekbarei load hoye jaitese... ami scroll korina tar agei... ei issue-ta thik koro... Ar emneo pagination e je amar scrolling e tomake bolsilam je 30% hobar por scroll korbe, ota kaaj kortese... ek kaaj koro scroll korte korte bottom er dike pouchano... like tomar full screen height er theke bottom e pouchailam, pouchano-r age dhoro bottom er dike like 500 pixel baki ache... mane bottom theke pixel baki ache... je shobar niche theke baki ache etotuk scroll hoilei amar screen shesh hoye jabe... erokom ekta counting kore next call ta, paging call diye diba... jeno user niche jawar agei data fetch hoye jay."*
+                      (1. Fix MediaPickerModal pre-loading all items immediately before user even scrolls. 2. Implement 500px distance-to-bottom infinite scroll threshold across the entire pagination system so data is pre-fetched seamlessly before user reaches bottom).
+                    - **Root Cause & Technical Implementation**:
+                      1. *Root Cause of Rapid Load*: In `MediaPickerModal.tsx`, `<Pagination />` was positioned in the modal footer outside the scrollable grid. Because `IntersectionObserver` used `root: null` (viewport), the sentinel was permanently intersecting on screen from mount, relentlessly triggering page fetches until all assets were loaded.
+                      2. *Universal 500px Distance-to-Bottom Threshold ([`dashboard/src/components/shared/Pagination.tsx`](file:///c:/Users/aalia/OneDrive/Desktop/Poli%20Full%20stack/dashboard/src/components/shared/Pagination.tsx))*:
+                         - Added `prefetchDistance = 500` (500px remaining distance to bottom) and `scrollContainerRef`.
+                         - Calculates exact remaining distance: `distanceFromBottom = scrollHeight - (scrollTop + clientHeight)`.
+                         - Triggers next batch background fetch when `distanceFromBottom <= 500` and `scrollTop > 10` (requiring actual user scrolling).
+                         - Removed auto-invocation on mount and bound `IntersectionObserver`'s `root` to `scrollParent` with strict `isScrolled` (`scrollTop > 10`) validation.
+                      3. *Media Picker Modal Scroll Integration ([`dashboard/src/components/shared/MediaPickerModal.tsx`](file:///c:/Users/aalia/OneDrive/Desktop/Poli%20Full%20stack/dashboard/src/components/shared/MediaPickerModal.tsx))*:
+                         - Attached `gridScrollRef` to the scrollable media container (`<div ref={gridScrollRef} className="overflow-y-auto ...">`).
+                         - Passed `scrollContainerRef={gridScrollRef}` and `prefetchDistance={500}` to `<Pagination />`.
+                         - On modal open, strictly Page 1 (24 items) loads; as user scrolls down, subsequent pages prefetch seamlessly 500px before reaching the bottom.
+                    - **Verification & Compliance**:
+                      - Dashboard Production Build: `npm run build` (`tsc -b && vite build`) ➔ **PASSED with 0 errors (Exit Code 0, ✓ 3,183 modules transformed in 3.43s)**.
+                      - Backend Typecheck (Rule 1): `npx tsc --noEmit` in `mira_backend_v1/` ➔ **PASSED with 0 errors (Exit Code 0)**.
+
+                  - **Console Runtime Error Resolutions & Maximum Update Depth Fix [COMPLETED]**:
+                    - **Issues Reported**:
+                      1. `Maximum update depth exceeded. This can happen when a component calls setState inside useEffect, but useEffect either doesn't have a dependency array, or one of the dependencies changes on every render.`
+                      2. `Encountered two children with the same key, aud-...`
+                      3. `WebSocket connection to ws:... failed: WebSocket is closed before the connection is established`
+                      4. `The specified value "rgba(254, 254, 254, 0.16)" does not conform to the required format. The value must be a valid CSS color.`
+                      5. `ReferenceError: Button is not defined at SiteSettingsPage (index.tsx:206)`
+                    - **Root Cause & Technical Implementation**:
+                      1. *Runaway Infinite Scroll Loop in [`dashboard/src/components/shared/Pagination.tsx`](file:///c:/Users/aalia/OneDrive/Desktop/Poli%20Full%20stack/dashboard/src/components/shared/Pagination.tsx))*:
+                         - `Pagination.tsx` had an effect resetting `hasTriggeredRef.current = false` whenever `safeCurrentPage` changed while `isLoadingMore` was falsy (instant local data). Because the table was still intersecting within the 500px prefetch zone, IntersectionObserver immediately re-triggered `onLoadMore` on the exact same frame, spiraling into recursive state updates.
+                         - Stored `effectiveOnLoadMore` in a stable ref (`onLoadMoreRef = useRef(effectiveOnLoadMore)`), decoupled observer effects from callback prop identity, and added a strict latch that only resets when `loadedCount` actually increases or sentinel exits the viewport.
+                      2. *WebSocket Duplicate Broadcasting & Duplicate Key Fix ([`mira_backend_v1/src/modules/audit/audit.socket.ts`](file:///c:/Users/aalia/OneDrive/Desktop/Poli%20Full%20stack/mira_backend_v1/src/modules/audit/audit.socket.ts), [`dashboard/src/hooks/audit/useAuditSocket.ts`](file:///c:/Users/aalia/OneDrive/Desktop/Poli%20Full%20stack/dashboard/src/hooks/audit/useAuditSocket.ts), [`dashboard/src/components/pages/AuditLogs/index.tsx`](file:///c:/Users/aalia/OneDrive/Desktop/Poli%20Full%20stack/dashboard/src/components/pages/AuditLogs/index.tsx))*:
+                         - In `audit.socket.ts`, `broadcastAuditLog` was emitting to both room `audit_stream` and globally via `audit:log`.
+                         - `useAuditSocket.ts` was listening to both events, appending the same log twice into `liveLogs` without ID checking.
+                         - Cleaned `broadcastAuditLog` to emit once to `audit_stream`, added `log.id` deduplication check in `useAuditSocket.ts`, and added unique `-idx` keys in table/terminal renders.
+                      3. *Color Input Sanitizer ([`dashboard/src/components/pages/CMS/shared/FormControls.tsx`](file:///c:/Users/aalia/OneDrive/Desktop/Poli%20Full%20stack/dashboard/src/components/pages/CMS/shared/FormControls.tsx), [`dashboard/src/components/pages/CMS/shared/ButtonsField.tsx`](file:///c:/Users/aalia/OneDrive/Desktop/Poli%20Full%20stack/dashboard/src/components/pages/CMS/shared/ButtonsField.tsx))*:
+                         - Created `toValidHexColor` helper to automatically parse `rgba(...)`, `rgb(...)`, 3-digit `#rgb`, or invalid color strings into valid 7-character `#rrggbb` hex codes before passing to HTML `<input type="color">`.
+                      4. *MediaPickerModal Background Query Gating ([`dashboard/src/components/shared/MediaPickerModal.tsx`](file:///c:/Users/aalia/OneDrive/Desktop/Poli%20Full%20stack/dashboard/src/components/shared/MediaPickerModal.tsx), [`dashboard/src/hooks/media/useMediaLibrary.ts`](file:///c:/Users/aalia/OneDrive/Desktop/Poli%20Full%20stack/dashboard/src/hooks/media/useMediaLibrary.ts))*:
+                         - Added `enabled: isOpen` to `useMediaGallery` so closed modal instances across nested forms do not execute unnecessary queries or trigger cascade renders.
+                    - **Verification & Compliance**:
+                      - Dashboard Production Build: `npm run build` (`tsc -b && vite build`) ➔ **PASSED with 0 errors (Exit Code 0, ✓ 3,183 modules transformed in 5.74s)**.
+                      - Backend Typecheck (Rule 1): `npx tsc --noEmit` in `mira_backend_v1/` ➔ **PASSED with 0 errors (Exit Code 0)**.
+
+                  - **Brand Assets Dark Mode Logo Variants & Navbar Dynamic Logo Integration [COMPLETED]**:
+                    - **User Directive (Audio 1, 2, 3)**:
+                      *"Site settings e je image gulo show kortese... navbar logo... navbar logo toh ekta ache, but duita lagbe. Dhoro ekta light mode er jonno lagbe, ekta dark mode er jonno lagbe. Footer er jonno ekta light mode, ekta dark mode er lagbe... Ota lekha ache navbar logo, footer logo evabe na? Ekta toh logo dewa ache... logo jeta dewa ache value ota toh logoi, mane light e default jeta. Arekta lekhba navbar logo dark, arekta lekhba footer logo dark. Erom kore mane arekta kore field hobe, hubahu same to same jotogula field ache shobgular e jonno arekta dark. Just sheshe dark add kore diba... Ar kaaj shesh hoye gele... tokhon tumi hocche oi je amader navbar e je logo use kora hoise oita hocche navbar logo ar navbar logo dark ei duita thik kore add kore diba."*
+                    - **Technical Implementation**:
+                      1. *Backend Model & Schema ([`mira_backend_v1/prisma/schema/settings.prisma`](file:///c:/Users/aalia/OneDrive/Desktop/Poli%20Full%20stack/mira_backend_v1/prisma/schema/settings.prisma))*:
+                         - Added `navbarLogoDark Json?`, `footerLogoDark Json?`, and `authLogoDark Json?` to `SiteSettings` model.
+                         - Synced database schema via `npx prisma db push` with PostgreSQL.
+                         - Updated Zod validation schema in [`settings.validator.ts`](file:///c:/Users/aalia/OneDrive/Desktop/Poli%20Full%20stack/mira_backend_v1/src/modules/settings/settings.validator.ts).
+                         - Added `navbarLogoDark`, `footerLogoDark`, `authLogoDark` to URL replacer fields in [`media.service.ts`](file:///c:/Users/aalia/OneDrive/Desktop/Poli%20Full%20stack/mira_backend_v1/src/modules/media/media.service.ts).
+                      2. *Dashboard Settings Types & Normalization ([`settingsTypes.ts`](file:///c:/Users/aalia/OneDrive/Desktop/Poli%20Full%20stack/dashboard/src/components/pages/Settings/settingsTypes.ts), [`SiteSettings/index.tsx`](file:///c:/Users/aalia/OneDrive/Desktop/Poli%20Full%20stack/dashboard/src/components/pages/SiteSettings/index.tsx))*:
+                         - Added `navbarLogoDark`, `footerLogoDark`, and `authLogoDark` into `SiteSettingsState` and `defaultState`.
+                         - Added universal normalization via `normalizeMultimediaField(..., "image")` in `useEffect` and `handleReset`.
+                         - Updated PageHeader stat card to reflect **11 Assets** in Brand Media.
+                      3. *Brand Assets Form Expansion ([`BrandAssetsForm.tsx`](file:///c:/Users/aalia/OneDrive/Desktop/Poli%20Full%20stack/dashboard/src/components/pages/Settings/forms/BrandAssetsForm.tsx))*:
+                         - Expanded brand form to render 11 full canonical UniversalMultimediaForm sections:
+                           1. `navbarLogo` (`Navbar Logo`)
+                           2. `navbarLogoDark` (`Navbar Logo Dark`)
+                           3. `footerLogo` (`Footer Logo`)
+                           4. `footerLogoDark` (`Footer Logo Dark`)
+                           5. `authLogo` (`Authentication Logo`)
+                           6. `authLogoDark` (`Authentication Logo Dark`)
+                           7. `siteLogo` (`Primary Site Logo`)
+                           8. `siteLogoLight` (`Site Logo - Light Mode`)
+                           9. `siteLogoDark` (`Site Logo - Dark Mode`)
+                           10. `siteFavicon` (`Site Favicon`)
+                           11. `loadingVideo` (`Loading Video Asset`)
+                      4. *Dashboard Navbar Dynamic Logo Switching ([`Navbar.tsx`](file:///c:/Users/aalia/OneDrive/Desktop/Poli%20Full%20stack/dashboard/src/components/layout/Navbar.tsx))*:
+                         - In `NavbarBrandLogo`, fetched global settings via `useGetSettings()` and current theme via `useTheme()`.
+                         - Implemented intelligent theme-aware cascade:
+                           - In **Dark Mode**: prefers `navbarLogoDark` -> fallback to `navbarLogo` -> `siteLogoDark` -> `siteLogo` -> CMS brand logo.
+                           - In **Light Mode**: prefers `navbarLogo` -> fallback to `siteLogoLight` -> `siteLogo` -> `navbarLogoDark` -> CMS brand logo.
+                         - Rendered at maximum navbar height (`h-14`) with zero excess padding and zero distortion.
+                    - **Verification & Compliance**:
+                      - Dashboard Production Build: `npm run build` (`tsc -b && vite build`) ➔ **PASSED with 0 errors (Exit Code 0, ✓ 3,183 modules transformed in 2.99s)**.
+                      - Backend Typecheck (Rule 1): `npx tsc --noEmit` in `mira_backend_v1/` ➔ **PASSED with 0 errors (Exit Code 0)**.
+
+### 42. Media Library Zero-Size Assets & Missing Dimensions Resolution & Self-Healing
+- **Problem**:
+  - In the Media Library grid (`MediaGrid.tsx`) and picker (`MediaPickerModal.tsx`), newly registered brand assets and certain legacy images were displaying a dash (`—`) instead of their file size and dimensions.
+  - Root cause investigation revealed 7 specific assets (`ha8dotnaglonkowbkngv.png`, `mbdbgykkcv7bkg6u5edt.svg`, `y6fawrshphc9bqqrvrer.png`, `m63e9phvhpq2iwatmmto.png`, `dsgdey2cuh1pa8tqhgo5.jpg`, `n9j077kjhajuqs1zi2x3.png`, `vlpdvperutnvmgb0dfgf.png`) were created in `MediaAsset` table with `size: 0, width: null, height: null` because they were discovered while the physical file was either in `cloudinary/image` or on the remote production URL rather than `multimedia/uploads/`.
+  - Furthermore, `extractImageDimensions` had no parser for SVG files (`image/svg+xml`).
+- **Solution & Technical Fixes**:
+  1. *Database & File Synchronization*:
+     - Copied missing source files from `cloudinary/image` into `multimedia/uploads/` and fetched `vlpdvperutnvmgb0dfgf.png` from remote URL.
+     - Extracted exact byte sizes, sha256 hashes, and dimensions (`4167x4167`, `64x64`, `512x279`, `1920x1174`).
+     - Updated all 7 database records in PostgreSQL via Prisma. Verified with audit script: **0 assets missing size or dimensions in entire database**.
+  2. *SVG Dimension Extractor ([`mediaStorage.util.ts`](file:///c:/Users/aalia/OneDrive/Desktop/Poli%20Full%20stack/mira_backend_v1/src/modules/media/mediaStorage.util.ts))*:
+     - Enhanced `extractImageDimensions` to parse SVG XML for `width`, `height`, and `viewBox` attributes so SVG assets always report accurate pixel dimensions.
+  3. *Cloudinary & Remote Fallback in Auto-Registration ([`mediaReference.service.ts`](file:///c:/Users/aalia/OneDrive/Desktop/Poli%20Full%20stack/mira_backend_v1/src/shared/mediaReference.service.ts))*:
+     - When auto-registering any referenced media asset, if the file is not yet in `getUploadsDir()`, it scans local `cloudinary/` folders, and if still missing, fetches the buffer from `rawUrl` via `fetch` (with 4s timeout) so newly registered assets are never saved with `size: 0`.
+  4. *Runtime Self-Healing in Gallery API ([`media.service.ts`](file:///c:/Users/aalia/OneDrive/Desktop/Poli%20Full%20stack/mira_backend_v1/src/modules/media/media.service.ts))*:
+     - In `getMediaGallery`, if any asset is detected with `size <= 0` or missing image dimensions, it automatically locates or fetches the buffer, computes size and dimensions, and updates `prisma.mediaAsset` on the fly.
+- **Verification**:
+  - Backend Typecheck: `npx tsc --noEmit` ➔ **PASSED with 0 errors (Exit code 0)**.
+  - Dashboard Build: `npm run build` ➔ **PASSED with 0 errors (Exit code 0)**.
+
+### 43. User Avatar & Profile Picture Media Reference Tracking & Deletion Protection
+- **Problem**:
+  - When users uploaded or changed profile photos via settings (Dashboard or Frontend `/auth/me` or `/api/auth/update-profile`), the image was stored on disk and added to `MediaAsset`, but NO join record was created in `MediaReference`.
+  - As a result, the user's avatar image was classified as **"Unused (Safe to remove)"** in the Media Library.
+  - If an admin filtered by "Unused" and executed a cleanup or deletion, active user profile photos were permanently deleted or broken.
+- **Solution & Technical Fixes**:
+  1. *Profile Update Handler Integration ([`auth.controller.ts`](file:///c:/Users/aalia/OneDrive/Desktop/Poli%20Full%20stack/mira_backend_v1/src/modules/auth/auth.controller.ts))*:
+     - Integrated `syncEntityMediaReferences("Auth", req.auth.id, updated)` immediately after saving `updateProfile` (`POST /api/v1/auth/me`).
+  2. *User Service & Validator Integration ([`users.service.ts`](file:///c:/Users/aalia/OneDrive/Desktop/Poli%20Full%20stack/mira_backend_v1/src/modules/users/users.service.ts) & [`users.validator.ts`](file:///c:/Users/aalia/OneDrive/Desktop/Poli%20Full%20stack/mira_backend_v1/src/modules/users/users.validator.ts))*:
+     - Added `photoUrl` to `createUpdateUserValidator` and `updateUserService` so admin operations can manage user photos.
+     - Added `syncEntityMediaReferences("Auth", ...)` calls in both `createUserService` and `updateUserService`.
+  3. *Entity Metadata Resolution ([`mediaReference.service.ts`](file:///c:/Users/aalia/OneDrive/Desktop/Poli%20Full%20stack/mira_backend_v1/src/shared/mediaReference.service.ts))*:
+     - Added explicit handling in `resolveEntityMetadata` for `Auth` / `User`. In Media Drawer / references modal, it displays `User: <Name> (<Email>)` with navigation to `/settings`.
+  4. *Storage Optimization Support ([`media.service.ts`](file:///c:/Users/aalia/OneDrive/Desktop/Poli%20Full%20stack/mira_backend_v1/src/modules/media/media.service.ts))*:
+     - Added `case "AUTH":` and `case "USER":` to `executeStorageOptimization` to handle user avatar URL migrations seamlessly.
+  5. *Existing Database Records Backfill*:
+     - Executed synchronization for all existing registered users with profile photos (e.g. `admin@dev.com`, `mdsholayman998@gmail.com`, `ali35-376@diu.edu.bd`).
+     - Verified: 3 `MediaReference` records created and linked. Avatar photos now correctly show as **IN_USE** (`references._count: 1`) and cannot be accidentally deleted by cleanup jobs.
+- **Verification**:
+  - Backend Typecheck (Rule 1): `npx tsc --noEmit` ➔ **PASSED with 0 errors (Exit code 0)**.
+  - Dashboard Build: `npm run build` ➔ **PASSED with 0 errors (Exit code 0)**.
+
+### 44. Live Video Previews & Autoplay in Media Library & Media Picker
+- **Problem**:
+  - In `MediaGrid.tsx`, video elements were only mounted upon mouse hover (`hoveredVideoId === asset.id`). Prior to hovering, cards rendered a generic black icon placeholder. When hovered, videos took time to load or flashed black before playing.
+  - In `MediaPickerModal.tsx`, video assets rendered a static pitch-black box (`bg-zinc-900`) with a small `VIDEO` label without any video playback or thumbnail frame.
+  - In `MediaInspectorDrawer.tsx`, the inspector video required manual user interaction before playing.
+- **Solution & Technical Fixes**:
+  1. *Continuous Live Video Playback in Media Grid ([`MediaGrid.tsx`](file:///c:/Users/aalia/OneDrive/Desktop/Poli%20Full%20stack/dashboard/src/components/pages/MediaLibrary/MediaGrid.tsx))*:
+     - Unconditionally mounted `<video>` with `autoPlay`, `muted`, `loop`, `playsInline`, and `preload="auto"`.
+     - Eliminated hover state lag and black placeholder screens; cards now continuously showcase the living video motion.
+     - Added subtle glassmorphic corner `VIDEO` indicator badge with play icon.
+  2. *Live Video Playback in Media Picker ([`MediaPickerModal.tsx`](file:///c:/Users/aalia/OneDrive/Desktop/Poli%20Full%20stack/dashboard/src/components/shared/MediaPickerModal.tsx))*:
+     - Replaced static black placeholder with real looping video preview (`autoPlay muted loop playsInline preload="auto"`).
+     - Allows administrators to instantly identify and inspect video content while selecting media.
+  3. *Media Inspector Drawer Autoplay ([`MediaInspectorDrawer.tsx`](file:///c:/Users/aalia/OneDrive/Desktop/Poli%20Full%20stack/dashboard/src/components/pages/MediaLibrary/MediaInspectorDrawer.tsx))*:
+     - Added `autoPlay muted loop playsInline preload="auto"` so opening a video inspector immediately plays the video with full controls available.
+  4. *Table & Trash View Live Video Previews ([`MediaTableView.tsx`](file:///c:/Users/aalia/OneDrive/Desktop/Poli%20Full%20stack/dashboard/src/components/pages/MediaLibrary/MediaTableView.tsx) & [`MediaTrashView.tsx`](file:///c:/Users/aalia/OneDrive/Desktop/Poli%20Full%20stack/dashboard/src/components/pages/MediaLibrary/MediaTrashView.tsx))*:
+     - Replaced static icon placeholders with active video thumbnails in both table and trash bin views.
+
+### 45. Navbar Brand Logo Full Height & Transparent Margin Trimming ([`Navbar.tsx`](file:///c:/Users/aalia/OneDrive/Desktop/Poli%20Full%20stack/dashboard/src/components/layout/Navbar.tsx))
+- **Diagnosis**:
+  - The previous logo images were exported on huge `4167 x 4167` square canvases with ~79% empty transparent padding around the actual typography (the actual logo content was only 879px high in the center).
+  - When constrained by `h-14` (56px), the letters "MIRA TRAVEL" shrank down to ~11px, looking tiny and disturbed.
+- **Resolution**:
+  1. *Sharp Lossless Auto-Trim*:
+     - Processed the light and dark logos using `sharp().trim()` to eliminate all outer transparent whitespace, resulting in edge-to-edge `2103 x 879` images.
+     - Uploaded trimmed assets to VPS: `1792962920146-3a50d78d-mira-brand-logo-light.png` and `1792962920156-46c8c833-mira-brand-logo-dark.png`.
+     - Updated `siteSettings` in PostgreSQL and synchronized `MediaReference`.
+  2. *Navbar Full Height Styling*:
+     - In `Navbar.tsx`, configured `<Link>` and `<img>` with `h-full max-h-14 py-0` and `max-w-[320px] object-contain object-left`.
+     - Logo now spans the full height of the 56px navbar cleanly with zero artificial padding.
+     - Restored `border-b border-border/40` divider on `<header>`.
+- **Verification**:
+  - Dashboard Build: `npm run build` (`tsc -b && vite build`) ➔ **PASSED with 0 errors (Exit Code 0, ✓ 3,183 modules transformed in 3.29s)**.
+  - Backend Verification (Rule 1): `npx tsc --noEmit` ➔ **PASSED with 0 errors (Exit Code 0)**.
+
+
+
+### 46. Real-Time VPS Storage & Partition Telemetry Engine
+- **User Directive**:
+  *"Dashboard-eo hocche system info telemetry-te hocche amar storage er poriman dekhao... Abar hocche system settings route-eo amar oi telemetry-ta dekhao... Storage telemetry-te hocche amar storage er poriman dekhao. VPS server er storage kototuku ache, free kototuku, used kototuku... OS kototuku khaise... Backend kototuku khaise, frontend kototuku khaise... Egula dekhao... System settings... mane system info-teo dekhaba route-e... Abar hocche Dashboard er majhkhane je ekta statistics dekhaccho, oi jaygateo dekhao."*
+- **Solution & Technical Implementation**:
+  1. *Backend VPS Storage Telemetry Engine ([`systemStorage.service.ts`](file:///c:/Users/aalia/OneDrive/Desktop/Poli%20Full%20stack/mira_backend_v1/src/modules/system/systemStorage.service.ts))*:
+     - **Overall Disk Partitioning**: Employs `fs.statfsSync(mountPath)` for 0ms non-blocking native kernel measurement of total disk capacity, used disk space, available free space, and usage percentage across both Linux root (`/`) and local Windows partitions.
+     - **Database Engine Storage**: Executes `SELECT pg_database_size(current_database())::text AS size_bytes` to retrieve live PostgreSQL byte size directly from Neon/VPS PostgreSQL.
+     - **Multimedia & Upload Storage**: Computes precise storage size by aggregating `prisma.mediaAsset.aggregate({ _sum: { size: true } })` combined with physical disk measurements of `multimedia/uploads`.
+     - **Application Runtimes**: Calculates directory footprints for Backend (`process.cwd()`, dist, node_modules) and Frontend (`../dashboard`, build assets) with fast Linux `du -sk` support.
+     - **Operating System & Kernel Footprint**: Automatically allocates remaining disk usage to the OS kernel, Linux packages, PM2 daemon, Docker runtime, and root services (`osBytes = usedBytes - nonOsBytes`).
+     - **In-Memory Caching**: Implements a 30-second TTL cache to eliminate repeated filesystem traversal while preserving live responsiveness.
+  2. *API Endpoints & Socket Stream Updates*:
+     - `GET /api/v1/system/health`: Enriched payload with `storage` telemetry object.
+     - `GET /api/v1/system/storage`: Dedicated endpoint for force-refreshing disk metrics (`getStorageTelemetryController`).
+     - `system:telemetry:stream`: Broadcasts live storage metrics over Socket.io every 3 seconds to active dashboard clients ([`system.socket.ts`](file:///c:/Users/aalia/OneDrive/Desktop/Poli%20Full%20stack/mira_backend_v1/src/modules/system/system.socket.ts)).
+     - `GET /api/v1/statistics`: Synchronized storage data into `modules.systemHealth.vps.storage` ([`statistics.service.ts`](file:///c:/Users/aalia/OneDrive/Desktop/Poli%20Full%20stack/mira_backend_v1/src/modules/statistics/statistics.service.ts)).
+  3. *Location 1: System Health Page Telemetry Tab ([`SystemHealth/index.tsx`](file:///c:/Users/aalia/OneDrive/Desktop/Poli%20Full%20stack/dashboard/src/components/pages/SystemHealth/index.tsx))*:
+     - Created a prominent **VPS Storage & Disk Telemetry** card with:
+       - 4-Stat Primary Metric Strip: Total Disk Capacity, Used Disk Space, Available Free Space, and Tracked Partitions.
+       - Live Status Badge: `OPTIMAL`, `MODERATE`, `WARNING`, `CRITICAL`.
+       - Disk Allocation Spectrum: Multi-segment proportional color bar showing allocation ratios for OS (`#6366f1`), Backend (`#10b981`), Frontend (`#3b82f6`), Media (`#f59e0b`), and PostgreSQL (`#8b5cf6`).
+       - 5-Sector Breakdown Grid: Individual cards for OS & Kernel, Backend API, Frontend Web, Media Assets (with file count), and PostgreSQL DB.
+       - Interactive "Refresh Disk" action with animated loading state calling `/system/storage`.
+  4. *Location 2: Dashboard Home Middle Cockpit Deck ([`CockpitDeck.tsx`](file:///c:/Users/aalia/OneDrive/Desktop/Poli%20Full%20stack/dashboard/src/components/pages/Home/CockpitDeck.tsx))*:
+     - Enhanced Card 2 with an interactive **Compute / Storage** mode switcher:
+       - **Compute Mode**: Displays VPS CPU load %, VPS RAM (GB / %), PM2 process fleet matrix, and a quick-click disk status indicator.
+       - **Storage Mode**: Displays VPS Used Disk space with micro progress bar, Available Free Space with free percentage, proportional 5-tier allocation spectrum bar, 5-partition mini matrix (OS, Backend, Frontend, Media, DB), and link to full telemetry.
+- **Verification**:
+  - Backend Typecheck (Rule 1): `npx tsc --noEmit` in `mira_backend_v1/` ➔ **PASSED with 0 errors (Exit code 0)**.
+  - Dashboard Production Build: `npm run build` in `dashboard/` ➔ **PASSED with 0 errors (Exit code 0, ✓ 3,183 modules transformed in 3.22s)**.
+
+### 47. Universal PageHeader & CompactStatCard Height Normalization (`h-14` / 56px)
+- **User Directive**:
+  *"Page header er je height ta ache, setao navbar er moto... navbar er height er soman height jeno page header er thakbe, oirokom koro."*
+  (Translation: Make the PageHeader height match the navbar height, exactly equal to the navbar's height).
+- **Technical Implementation**:
+  1. *Measurement & Proportioning*:
+     - Verified [`Navbar.tsx`](file:///c:/Users/aalia/OneDrive/Desktop/Poli%20Full%20stack/dashboard/src/components/layout/Navbar.tsx): uses `h-14` (56px / `3.5rem`).
+     - Updated [`PageHeader.tsx`](file:///c:/Users/aalia/OneDrive/Desktop/Poli%20Full%20stack/dashboard/src/components/shared/PageHeader.tsx):
+       - Container height set to `h-auto lg:h-14 lg:min-h-14 mb-2 sm:mb-2.5` to strictly match the 56px navbar baseline on desktop.
+       - Updated `CompactStatCard` to `h-14` (56px) (replacing the previous oversized `h-[70px] sm:h-[74px]`).
+       - Compacted `CompactStatCard` internal spacing: `px-2.5 py-1.5 sm:px-3 sm:py-2` with `h-4 w-4` icon pill, `text-[10px]` uppercase label, `text-sm sm:text-base` metric value, and `text-[9px] sm:text-[9.5px]` subtext.
+       - Standardized left 30% section (`items-center h-full gap-2.5 sm:gap-3.5`) with balanced icon (`h-9 w-9 sm:h-10 sm:w-10`), `truncate` on title and subtitle.
+       - Standardized right 70% stats grid (`h-full flex items-center min-w-0`).
+  2. *Verification & Production Build*:
+     - Dashboard Production Build: `tsc -b && vite build` in `dashboard/` ➔ **PASSED with 0 errors (Exit code 0, ✓ 3,183 modules transformed in 3.04s)**.
+     - Backend Typecheck (Rule 1): `npx tsc --noEmit` in `mira_backend_v1/` ➔ **PASSED with 0 errors (Exit code 0)**.
+
+### 48. Table Pagination In-Flow Placement & Viewport Decoupling
+- **User Directive**:
+  *"Ekhon ekta problem hoilo... je ei je user, publish, trip... table jegula ache... banner... egular khetre pagination-er je nicher bar-ta... ei bar-ta... thik table-tar niche thakbe... niche ekdom fix thakbe na... thik table-er niche... Ebong jegulate grid view, jemon location, multimedia egulate thik ache... ar jegulate table view oigulatei... fix koro..."*
+  (In table views like User, Promotions/Banner, Trip Requests, Inquiries, etc., the pagination bar must sit directly beneath the table instead of fixing to the viewport bottom. Grid views like Location and Multimedia Gallery should preserve the floating bottom bar).
+- **Technical Implementation**:
+  1. *Universal Pagination Component ([`Pagination.tsx`](file:///c:/Users/aalia/OneDrive/Desktop/Poli%20Full%20stack/dashboard/src/components/shared/Pagination.tsx))*:
+     - Added `isTable?: boolean` and `isGrid?: boolean` props to `PaginationProps`.
+     - Intelligently resolved `effectiveFixed`: Defaults to `false` for table views (`isTable === true || isGrid === false`) and `true` for grid views (`isGrid === true || columns > 0`), while strictly honoring explicit `fixed` overrides.
+     - **Table In-Flow Bar Styling**: When `effectiveFixed === false`, renders as a sleek in-flow card strip (`w-full py-2.5 px-3 sm:px-4 rounded-md border border-border/60 bg-card/60 backdrop-blur-sm shadow-2xs mt-2.5`) directly under the table:
+       - Left: Results count (`Showing X of Y items`) with live background fetching spinner.
+       - Center: Visual progress bar and percentage badge.
+       - Right: Interactive batch size selector dropdown and/or manual "Load More" button.
+     - **Grid Floating Bar Styling**: When `effectiveFixed === true`, preserves the centered 1/5th compact floating bar pinned to `fixed bottom-0` for continuous card scrolling.
+  2. *Table Views Integration*:
+     - Updated all dashboard table views to pass `fixed={false}` and `isTable={true}`:
+       - [`UserListTable.tsx`](file:///c:/Users/aalia/OneDrive/Desktop/Poli%20Full%20stack/dashboard/src/components/pages/UserList/UserListTable.tsx)
+       - [`Promotions/index.tsx`](file:///c:/Users/aalia/OneDrive/Desktop/Poli%20Full%20stack/dashboard/src/components/pages/Promotions/index.tsx)
+       - [`RequestListTable.tsx`](file:///c:/Users/aalia/OneDrive/Desktop/Poli%20Full%20stack/dashboard/src/components/pages/Requests/RequestListTable.tsx)
+       - [`JourneyWizardTable.tsx`](file:///c:/Users/aalia/OneDrive/Desktop/Poli%20Full%20stack/dashboard/src/components/pages/Requests/JourneyWizardTable.tsx)
+       - [`Inquiry/index.tsx`](file:///c:/Users/aalia/OneDrive/Desktop/Poli%20Full%20stack/dashboard/src/components/pages/Inquiry/index.tsx)
+       - [`Newsletter/index.tsx`](file:///c:/Users/aalia/OneDrive/Desktop/Poli%20Full%20stack/dashboard/src/components/pages/Newsletter/index.tsx)
+       - [`RolesTable.tsx`](file:///c:/Users/aalia/OneDrive/Desktop/Poli%20Full%20stack/dashboard/src/components/pages/IAM/RolesTable.tsx)
+       - [`PermissionsTable.tsx`](file:///c:/Users/aalia/OneDrive/Desktop/Poli%20Full%20stack/dashboard/src/components/pages/IAM/PermissionsTable.tsx)
+       - [`BookingTable.tsx`](file:///c:/Users/aalia/OneDrive/Desktop/Poli%20Full%20stack/dashboard/src/components/pages/Bookings/BookingTable.tsx)
+       - [`AuditLogs/index.tsx`](file:///c:/Users/aalia/OneDrive/Desktop/Poli%20Full%20stack/dashboard/src/components/pages/AuditLogs/index.tsx)
+       - [`MediaLibraryPage.tsx`](file:///c:/Users/aalia/OneDrive/Desktop/Poli%20Full%20stack/dashboard/src/components/pages/MediaLibrary/MediaLibraryPage.tsx) (Dynamic: `fixed={viewMode === "grid"}` and `isTable={viewMode === "table"}`).
+- **Verification**:
+  - Dashboard Production Build: `npm run build` (`tsc -b && vite build`) ➔ **PASSED with 0 errors (✓ 3,183 modules transformed in 3.31s)**.
+  - Backend Typecheck (Rule 1): `npx tsc --noEmit` in `mira_backend_v1/` ➔ **PASSED with 0 errors (Exit code 0)**.
+
+### 49. Universal Canonical Table Design System Across All Dashboard Views [COMPLETED]
+- **User Directive (Audio Prompt)**:
+  *"Eibar table gula shundor kore fix koro... ek ek jaygay ek ek rokom hoye ache... kothao ek rokom, kothao onno rokom... table gula shundor kore fix koro... UI ta jate ek rokom thake... mane kothao dekhsi text size boro hoise, kothao dekhsi choto hoise, ba kothao border disi kothao dei ni, round disi kothao round dei ni... ekta ekta ek ek rokom... kothao table heading er design ekta, arek jaygay onno rokom... toh egula consistent koro... same to same design koro... kothao loading hocche ekta, kothao loading hocche onno rokom... shob table gulare... table ta shundor kore fix koro... onno jinish na... functional change hobe na... amar UI related je change gula table er... usable kora lagbe... ei jinish ta kore dao"*
+- **Design System Standards & Technical Architecture**:
+  1. **Canonical Container & Card Wrapper**:
+     - Standardized outer container: `overflow-hidden rounded-md border border-border/60 bg-card/60 shadow-xs backdrop-blur-xl`.
+     - Standardized horizontal scroll wrapper: `<div className="overflow-x-auto">`.
+     - Replaced non-standard `rounded-xl`, `border-border`, plain `bg-background/50` or `shadow-sm` across all table modules.
+  2. **Canonical Table Tag & Header**:
+     - Standardized table element: `<table className="w-full text-left text-sm border-collapse">`.
+     - Standardized header element: `<thead className="border-b border-border/60 bg-muted/40 text-xs font-semibold uppercase tracking-wider text-muted-foreground select-none">`.
+     - Standardized header cells: `th` uses `px-5 py-3.5 font-semibold` (actions column: `text-right font-semibold`).
+  3. **Canonical Table Body & Data Cells**:
+     - Standardized body element: `<tbody className="divide-y divide-border/40 text-foreground">`.
+     - Standardized data cells: `td` uses `px-5 py-3.5 text-sm` (actions column: `px-5 py-3.5 text-right whitespace-nowrap`).
+     - Standardized row hover: `transition-colors hover:bg-muted/30`.
+  4. **Universal In-Table Skeleton Loading**:
+     - Eliminated layout shifts and jarring table unmounting (where loading states previously destroyed the table and replaced it with floating plain text or spin boxes).
+     - Standardized to 5 uniform pulse skeleton `<tr>` rows directly inside `<tbody>` matching the exact column count and paddings of the table, keeping `<thead>` visible.
+  5. **Universal Centered Empty State**:
+     - Standardized empty state rows inside `<tbody>`: `<td colSpan={N} className="px-5 py-12 text-center text-muted-foreground">` with canonical icon (`h-8 w-8 text-muted-foreground/40`), bold title, and descriptive subtitle.
+  6. **Decoupled In-Flow Pagination**:
+     - `<Pagination fixed={false} isTable ... />` sits in-flow directly beneath the table container across all table views.
+- **Files Standardized**:
+  - [`UserListTable.tsx`](file:///c:/Users/aalia/OneDrive/Desktop/Poli%20Full%20stack/dashboard/src/components/pages/UserList/UserListTable.tsx)
+  - [`Promotions/index.tsx`](file:///c:/Users/aalia/OneDrive/Desktop/Poli%20Full%20stack/dashboard/src/components/pages/Promotions/index.tsx)
+  - [`RequestListTable.tsx`](file:///c:/Users/aalia/OneDrive/Desktop/Poli%20Full%20stack/dashboard/src/components/pages/Requests/RequestListTable.tsx)
+  - [`JourneyWizardTable.tsx`](file:///c:/Users/aalia/OneDrive/Desktop/Poli%20Full%20stack/dashboard/src/components/pages/Requests/JourneyWizardTable.tsx)
+  - [`Newsletter/index.tsx`](file:///c:/Users/aalia/OneDrive/Desktop/Poli%20Full%20stack/dashboard/src/components/pages/Newsletter/index.tsx)
+  - [`MediaTableView.tsx`](file:///c:/Users/aalia/OneDrive/Desktop/Poli%20Full%20stack/dashboard/src/components/pages/MediaLibrary/MediaTableView.tsx)
+  - [`RolesTable.tsx`](file:///c:/Users/aalia/OneDrive/Desktop/Poli%20Full%20stack/dashboard/src/components/pages/IAM/RolesTable.tsx)
+  - [`PermissionsTable.tsx`](file:///c:/Users/aalia/OneDrive/Desktop/Poli%20Full%20stack/dashboard/src/components/pages/IAM/PermissionsTable.tsx)
+  - [`BookingTable.tsx`](file:///c:/Users/aalia/OneDrive/Desktop/Poli%20Full%20stack/dashboard/src/components/pages/Bookings/BookingTable.tsx)
+  - [`Inquiry/index.tsx`](file:///c:/Users/aalia/OneDrive/Desktop/Poli%20Full%20stack/dashboard/src/components/pages/Inquiry/index.tsx)
+  - [`AuditLogs/index.tsx`](file:///c:/Users/aalia/OneDrive/Desktop/Poli%20Full%20stack/dashboard/src/components/pages/AuditLogs/index.tsx)
+  - [`RecentTransactions.tsx`](file:///c:/Users/aalia/OneDrive/Desktop/Poli%20Full%20stack/dashboard/src/components/pages/Home/RecentTransactions.tsx)
+  - [`SystemHealth/index.tsx`](file:///c:/Users/aalia/OneDrive/Desktop/Poli%20Full%20stack/dashboard/src/components/pages/SystemHealth/index.tsx)
+- **Verification & Zero Functional Changes**:
+  - Zero functional logic changes: all state handlers, mutations, filter queries, row click sheets, and action triggers preserved 100%.
+  - Dashboard Production Build: `npm run build` (`tsc -b && vite build`) ➔ **PASSED with 0 errors (Exit code 0, ✓ 3,183 modules transformed in 4.14s)**.
+  - Backend Typecheck (Rule 1): `npx tsc --noEmit` in `mira_backend_v1/` ➔ **PASSED with 0 errors (Exit code 0)**.
+
+### 40. Media Library Inspector Drawer Streamlined Actions & Collapsible Toolbar (`MediaInspectorDrawer.tsx`)
+- **User Directive**:
+  - *"Achcha, shono. Ekhane je... oi je mark kora jaygata... eta thakbe... kintu ekhane oi je Delete button ta boshbe... Kintu... oi je hover korle... oi green mark kora jaygatay... boro hochche... height boro hocche... Okhane ekta arrow thakbe... oi arrow-te jokhon ami hover korbo... Tokhon oi button-gulo dekhabe... Thik ache? Ei rokom..."*
+- **Implementation in [`dashboard/src/components/pages/MediaLibrary/MediaInspectorDrawer.tsx`](file:///c:/Users/aalia/OneDrive/Desktop/Poli%20Full%20stack/dashboard/src/components/pages/MediaLibrary/MediaInspectorDrawer.tsx)**:
+  1. **Top-Right Media Toolbar Collapsed by Default with Arrow Indicator**:
+     - In the top-right corner of the high-res media preview card (the green marked area), replaced the permanently visible action buttons with a sleek, compact transparent arrow button (`ChevronLeft`).
+     - **Hover/Click Reveal**: Hovering on the arrow button (or clicking it) smoothly expands the toolbar (`framer-motion` `opacity: 1, scale: 1, x: 0`), revealing all media actions:
+       - **Download** (direct asset download with loading state)
+       - **Copy CDN URL** (clipboard copy with green checkmark feedback)
+       - **Copy Embed Tag** (`<Image />` or `<video />` code snippet)
+       - **Open Full Size** (new tab full resolution view)
+       - **Delete Asset** (`Trash2` icon with in-use protection)
+       - **Collapse Toggle** (`ChevronRight` button)
+     - On mouse leave, the toolbar smoothly collapses back into the unobtrusive transparent arrow button, keeping the preview completely clean and unobstructed.
+  2. **Relocated Delete Action into Top-Right Toolbar**:
+     - Moved the Delete action into the floating action overlay. If `asset.usageCount > 0`, it is disabled with protected tooltip and error toast. If unused, hover applies destructive styling and clicking initiates soft deletion.
+  3. **Removed Bottom Footer Action Bar**:
+     - Removed the redundant bottom footer bar (`In Use (Protected)` / `Move to Trash` and `Close` buttons), eliminating visual clutter and duplicate close actions.
+  4. **Normal Specifications Sheet Preserved**:
+     - Retained the normal in-flow display of Technical Specifications, Active System Usage, and SEO & Accessibility Metadata in the scrollable drawer body.
+  5. **Arrow Positioning & Sizing Polish**:
+     - Based on user audio feedback, adjusted the arrow trigger position to sit snug in the very top-right corner (`top-1.5 right-1.5`).
+     - Slightly enlarged the arrow button container from `h-7 w-7` to `h-8 w-8` and icon size to `h-5 w-5` for optimal visual prominence and effortless hover targeting.
+- **Verification**:
+  - Dashboard Production Build: `npm run build` (`tsc -b && vite build`) ➔ **PASSED with 0 errors (Exit code 0, ✓ 3,183 modules transformed in 4.05s)**.
+  - Backend Typecheck (Rule 1): `npx tsc --noEmit` in `mira_backend_v1/` ➔ **PASSED with 0 errors (Exit code 0)**.
+
+### 41. Navbar Profile Pill Compact Circle & Hover Slide-Out Animation (`Navbar.tsx`)
+- **User Directive**:
+  - *"Eita o thik ei rokom... animate korte parchho? Like prothome... oi je gol shudu je profile picture-er icon ta dekhabe... Ar hover korlei... slide hoye... oi je name ta, admin ta... Abar okhane click korle drop-down ta ashbe..."*
+- **Implementation in [`dashboard/src/components/layout/Navbar.tsx`](file:///c:/Users/aalia/OneDrive/Desktop/Poli%20Full%20stack/dashboard/src/components/layout/Navbar.tsx)**:
+  1. **Compact Circular Avatar by Default**:
+     - Converted the default user profile button into a compact, clean circular avatar button (`h-9 w-9 rounded-full`) showing solely the user's profile image and status indicator ring.
+  2. **Hover Slide-Out Expansion**:
+     - When hovered (`onMouseEnter`), smooth `framer-motion` animation expands the button horizontally (`initial={{ width: 0, opacity: 0 }}`, `animate={{ width: "auto", opacity: 1 }}`), sliding out:
+       - User Name (`profileName`, e.g. "Mira Travel")
+       - User Role (`userRole`, e.g. "ADMIN")
+       - `ChevronDown` arrow indicator
+  3. **Dropdown State Management**:
+     - Clicking the profile pill opens the existing profile `DropdownMenu`.
+     - While the dropdown is open (`isDropdownOpen === true`), the pill remains pinned in its expanded state so the active profile context is visible.
+     - On mouse leave (and when dropdown closes), it smoothly slides back down to the circular avatar icon.
+  4. **Avatar Sizing Polish**:
+     - Enlarged the circular avatar image container from `h-8 w-8` to `h-9 w-9` with `scale-105` fill and enhanced status ring `h-2.5 w-2.5`, while maintaining the surrounding pill dimensions intact.
+- **Verification**:
+  - Dashboard Production Build: `npm run build` (`tsc -b && vite build`) ➔ **PASSED with 0 errors (Exit code 0, ✓ 3,183 modules transformed in 5.21s)**.
+  - Backend Typecheck (Rule 1): `npx tsc --noEmit` in `mira_backend_v1/` ➔ **PASSED with 0 errors (Exit code 0)**.
+
+### 42. Navbar Zero-Border Clean Header & Right Slide-Out Profile Hover Pill (`Navbar.tsx`)
+- **User Directives**:
+  - *"Ei jaygata Dev Mode-ta kintu thakbe na. Dev Mode-er option ta baad dao... Oita drop down-e bhora jay kina ektu dekho."*
+  - *"Navbar-er ami kono border chai na... oi border-ta ami dekhate bolsi."*
+  - *"Sliding Name, Role & Chevron to the Right"*
+- **Implementation in [`dashboard/src/components/layout/Navbar.tsx`](file:///c:/Users/aalia/OneDrive/Desktop/Poli%20Full%20stack/dashboard/src/components/layout/Navbar.tsx)**:
+  1. **Removed All Borders from Navbar Header**:
+     - Removed `border-b border-border/40` from the `<header>` element entirely, eliminating the bottom dividing line across the screen.
+     - Removed the vertical dividing border line `<div className="h-6 w-px bg-border/60" />` before the user profile.
+  2. **Profile Pill Expansion to the Right with Surrounding Border**:
+     - Anchored the circular user avatar (`h-10 w-10`, `rounded-full`) on the left side of the pill.
+     - On hover (`onMouseEnter`), an elegant `framer-motion` `<AnimatePresence>` smoothly expands the pill container towards the RIGHT, revealing the user's name (`profileName`), role (`userRole`), and chevron indicator (`ChevronDown`).
+     - Wrapped the pill container in a sleek rounded border (`border border-border/60 bg-card/70 hover:border-border hover:bg-muted/80 rounded-full p-0.5 shadow-2xs`).
+  3. **Developer Mode in Dropdown**:
+     - Dev Mode toggle cleanly integrated into `<DropdownMenuContent>` with interactive `Code2` icon and reactive `ON` / `OFF` indicator.
+- **Verification**:
+  - Dashboard Production Build: `npm run build` (`tsc -b && vite build`) ➔ **PASSED with 0 errors (Exit code 0, ✓ 3,183 modules transformed in 3.49s)**.
+  - Backend Typecheck (Rule 1): `npx tsc --noEmit` in `mira_backend_v1/` ➔ **PASSED with 0 errors (Exit code 0)**.
+
+### 43. Clean Borderless ThemeToggle & Enlarged Icons (`ThemeToggle.tsx`)
+- **User Directive**:
+  - *"Eitar border-torder shob bad diye... icon-take boro kore dao..."*
+- **Implementation in [`dashboard/src/components/ThemeToggle.tsx`](file:///c:/Users/aalia/OneDrive/Desktop/Poli%20Full%20stack/dashboard/src/components/ThemeToggle.tsx)**:
+  1. **Removed Borders and Card Background**:
+     - Stripped out `border border-border/60`, `bg-card`, and `shadow-sm` from the toggle button.
+     - Converted button to a clean, borderless, circular element (`h-10 w-10`, `rounded-full`) matching the profile avatar dimensions.
+     - Added subtle hover and micro-animation feedback (`hover:bg-muted/70 hover:scale-105 active:scale-95`).
+  2. **Enlarged Icons**:
+     - Upgraded both `Sun` and `Moon` icons from `h-4 w-4` (16px) to `h-5 w-5` (20px) for improved visual prominence and effortless touch/click targets.
+- **Verification**:
+  - Dashboard Production Build: `npm run build` (`tsc -b && vite build`) ➔ **PASSED with 0 errors (Exit code 0, ✓ 3,183 modules transformed in 3.71s)**.
+  - Backend Typecheck (Rule 1): `npx tsc --noEmit` in `mira_backend_v1/` ➔ **PASSED with 0 errors (Exit code 0)**.
+
+### 44. Universal Sticky Table Header Architecture Under FilterToolbar (All Table Views)
+- **User Directive (Audio Instruction)**:
+  - *"Achha suno, table... table-er jei head-ta ache... onekgula ache... table-er je head-ta... table head-ta... oi table head-ta filter toolbar-er niche sticky hoye thakbe. Jokhon ami scroll korbo, tokhon oi jaigai sticky hoye thakbe, filter toolbar-er niche."*
+  - Requirement: Across all table views in the dashboard, the table header (`<thead>` / `<th>`) must remain **sticky directly below `FilterToolbar`** when the user scrolls vertically through long rows.
+- **Root Cause & Technical Investigation**:
+  - CSS specification dictates that any container with `overflow-x: auto` automatically computes `overflow-y: auto`, establishing an isolated local scroll container that breaks page-level `position: sticky`. Furthermore, outer table cards with `overflow-hidden` trap sticky elements from tracking the viewport scroll.
+  - Proven Solution:
+    1. Replaced `overflow-x: auto` with modern `overflow-x: clip`. `overflow-x: clip` provides horizontal bounds clipping without establishing a scroll container, allowing `position: sticky; top: 100px;` to anchor precisely below `FilterToolbar` (`100px` = 56px Fixed Navbar + 42px Sticky FilterToolbar + 8px pb-2).
+    2. Removed `overflow-hidden` from the outer table card.
+    3. Added `first:rounded-tl-md` and `last:rounded-tr-md` to the sticky header cells (`<th>`) to preserve rounded border-radius styling seamlessly.
+    4. Enhanced sticky header backgrounds with solid frosted glass styling (`bg-card/95 backdrop-blur-md supports-[backdrop-filter]:bg-card/85` with `border-b border-border/60` and `z-10`), ensuring scrolling body rows slide cleanly underneath without transparency bleed.
+- **11 Canonical Table Views Updated**:
+  1. [`dashboard/src/components/pages/Bookings/BookingTable.tsx`](file:///c:/Users/aalia/OneDrive/Desktop/Poli%20Full%20stack/dashboard/src/components/pages/Bookings/BookingTable.tsx)
+  2. [`dashboard/src/components/pages/UserList/UserListTable.tsx`](file:///c:/Users/aalia/OneDrive/Desktop/Poli%20Full%20stack/dashboard/src/components/pages/UserList/UserListTable.tsx)
+  3. [`dashboard/src/components/pages/Requests/RequestListTable.tsx`](file:///c:/Users/aalia/OneDrive/Desktop/Poli%20Full%20stack/dashboard/src/components/pages/Requests/RequestListTable.tsx)
+  4. [`dashboard/src/components/pages/Requests/JourneyWizardTable.tsx`](file:///c:/Users/aalia/OneDrive/Desktop/Poli%20Full%20stack/dashboard/src/components/pages/Requests/JourneyWizardTable.tsx)
+  5. [`dashboard/src/components/pages/Inquiry/index.tsx`](file:///c:/Users/aalia/OneDrive/Desktop/Poli%20Full%20stack/dashboard/src/components/pages/Inquiry/index.tsx)
+  6. [`dashboard/src/components/pages/AuditLogs/index.tsx`](file:///c:/Users/aalia/OneDrive/Desktop/Poli%20Full%20stack/dashboard/src/components/pages/AuditLogs/index.tsx)
+  7. [`dashboard/src/components/pages/IAM/PermissionsTable.tsx`](file:///c:/Users/aalia/OneDrive/Desktop/Poli%20Full%20stack/dashboard/src/components/pages/IAM/PermissionsTable.tsx)
+  8. [`dashboard/src/components/pages/IAM/RolesTable.tsx`](file:///c:/Users/aalia/OneDrive/Desktop/Poli%20Full%20stack/dashboard/src/components/pages/IAM/RolesTable.tsx)
+  9. [`dashboard/src/components/pages/Newsletter/index.tsx`](file:///c:/Users/aalia/OneDrive/Desktop/Poli%20Full%20stack/dashboard/src/components/pages/Newsletter/index.tsx)
+  10. [`dashboard/src/components/pages/Promotions/index.tsx`](file:///c:/Users/aalia/OneDrive/Desktop/Poli%20Full%20stack/dashboard/src/components/pages/Promotions/index.tsx)
+  11. [`dashboard/src/components/pages/MediaLibrary/MediaTableView.tsx`](file:///c:/Users/aalia/OneDrive/Desktop/Poli%20Full%20stack/dashboard/src/components/pages/MediaLibrary/MediaTableView.tsx)
+- **Verification**:
+  - Headless Browser Verification: Validated sticky positioning via Edge DevTools protocol (`TH_STICKY_106`).
+  - Dashboard Production Build: `npm run build` (`tsc -b && vite build`) ➔ **PASSED with 0 errors (Exit code 0, ✓ 3,183 modules transformed in 6.53s)**.
+  - Backend Typecheck (Rule 1): `npx tsc --noEmit` in `mira_backend_v1/` ➔ **PASSED with 0 errors (Exit code 0)**.
+
+### 46. Exact Navbar Color & Transparency Synchronization across FilterToolbar & All Table Headers [COMPLETED]
+- **User Directive**:
+  - *"motherchod sala tok bolchi trasparency hbe same navbar er mto for all table head and filtertoobar"*
+  - The color and frosted glass transparency of `FilterToolbar` and all Table Heads across the entire dashboard must be 100% identical to the Navbar.
+- **Root Cause & Architectural Solution**:
+  - In CSS, stacking multiple semi-transparent blur layers (`0.6` opacity on parent and `0.6` on child) compounds to $1 - (1 - 0.6)^2 = 84\%$ opacity, destroying the translucent frosted effect and making elements appear opaque/muddy.
+  - `Navbar` carries its frosted glass background on a single outer container (`<header className="fixed top-0 z-50 w-full bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">`).
+  - **Single-Layer Alignment**:
+    1. [`dashboard/src/components/shared/FilterToolbar.tsx`](file:///c:/Users/aalia/OneDrive/Desktop/Poli%20Full%20stack/dashboard/src/components/shared/FilterToolbar.tsx):
+       - Removed duplicate background from outer sticky wrapper: `className={cn("w-full transition-all duration-200", sticky && cn("sticky z-20 pb-2", topOffset), className)}`.
+       - Inner card alone carries `bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60`, rendering the exact single-layer 60% translucent frosted glass of Navbar.
+    2. All 11 Table Views:
+       - `thead` has transparent background (`className="sticky top-[96px] z-10 border-b border-border/60 text-xs font-semibold uppercase tracking-wider text-muted-foreground select-none"`).
+       - Each `th` carries `sticky top-[96px] z-10 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 px-5 py-3.5 font-semibold ...`.
+       - This eliminates double/triple opacity compounding and ensures the table header frosted glass matches Navbar 1:1.
+- **11 Synchronized Table Views**:
+  1. [`dashboard/src/components/pages/Bookings/BookingTable.tsx`](file:///c:/Users/aalia/OneDrive/Desktop/Poli%20Full%20stack/dashboard/src/components/pages/Bookings/BookingTable.tsx)
+  2. [`dashboard/src/components/pages/UserList/UserListTable.tsx`](file:///c:/Users/aalia/OneDrive/Desktop/Poli%20Full%20stack/dashboard/src/components/pages/UserList/UserListTable.tsx)
+  3. [`dashboard/src/components/pages/Requests/RequestListTable.tsx`](file:///c:/Users/aalia/OneDrive/Desktop/Poli%20Full%20stack/dashboard/src/components/pages/Requests/RequestListTable.tsx)
+  4. [`dashboard/src/components/pages/Requests/JourneyWizardTable.tsx`](file:///c:/Users/aalia/OneDrive/Desktop/Poli%20Full%20stack/dashboard/src/components/pages/Requests/JourneyWizardTable.tsx)
+  5. [`dashboard/src/components/pages/Inquiry/index.tsx`](file:///c:/Users/aalia/OneDrive/Desktop/Poli%20Full%20stack/dashboard/src/components/pages/Inquiry/index.tsx)
+  6. [`dashboard/src/components/pages/AuditLogs/index.tsx`](file:///c:/Users/aalia/OneDrive/Desktop/Poli%20Full%20stack/dashboard/src/components/pages/AuditLogs/index.tsx)
+  7. [`dashboard/src/components/pages/IAM/PermissionsTable.tsx`](file:///c:/Users/aalia/OneDrive/Desktop/Poli%20Full%20stack/dashboard/src/components/pages/IAM/PermissionsTable.tsx)
+  8. [`dashboard/src/components/pages/IAM/RolesTable.tsx`](file:///c:/Users/aalia/OneDrive/Desktop/Poli%20Full%20stack/dashboard/src/components/pages/IAM/RolesTable.tsx)
+  9. [`dashboard/src/components/pages/Newsletter/index.tsx`](file:///c:/Users/aalia/OneDrive/Desktop/Poli%20Full%20stack/dashboard/src/components/pages/Newsletter/index.tsx)
+  10. [`dashboard/src/components/pages/Promotions/index.tsx`](file:///c:/Users/aalia/OneDrive/Desktop/Poli%20Full%20stack/dashboard/src/components/pages/Promotions/index.tsx)
+  11. [`dashboard/src/components/pages/MediaLibrary/MediaTableView.tsx`](file:///c:/Users/aalia/OneDrive/Desktop/Poli%20Full%20stack/dashboard/src/components/pages/MediaLibrary/MediaTableView.tsx)
+### 47. User Profile Dropdown Redesign & Redundancy Removal [COMPLETED]
+- **User Directive**:
+  - *"ei dropdown ta same info multiple use hoise oita thik koro redesign kro and global site setting & live audit ta bad dew"*
+  - Fix redundant duplicated info in user profile dropdown, redesign cleanly, and remove "Global Site Settings" and "Live Audit Logs".
+- **Implementation & Refactoring ([`Navbar.tsx`](file:///c:/Users/aalia/OneDrive/Desktop/Poli%20Full%20stack/dashboard/src/components/layout/Navbar.tsx))**:
+  - **Eliminated Repetitive Clutter**:
+    - Removed bulky middle "Remember This Device Status Banner" box that redundantly repeated "Online Now", "Active: 1 Device", and session lifetime.
+    - Placed a clean online status dot directly on the avatar in the header.
+    - Preserved essential role badge (`ADMIN`) and concise session lifetime badge (`30d session`).
+  - **Removed Navigation Clutter**:
+    - Removed `Global Site Settings` (`/site-settings`) and `Live Audit Logs` (`/audit-logs`) as requested (both already exist in the sidebar).
+  - **Streamlined Menu Structure**:
+    - `My Profile & Security` (`/settings`).
+    - `Security & Sessions` (opens `ActiveDevicesModal`) with a single clean device badge (`{activeDevicesCount} device(s)`).
+    - `Developer Mode` toggle with modern indicator badge.
+    - `Log Out` with keyboard shortcut `⌥⇧Q`.
+### 48. Independent Dedicated Export API & Comprehensive CSV Download Infrastructure [COMPLETED]
+- **User Audio Directive**:
+  - *"jekhane jekhane export csv ba download csv ase, oi jayga gulote... csv-te ja ja information lage, shegulo information er upor depend kore csv banaye dao. Dorkare otar jonno jodi api create kora lage, api create korio shomossha nai. Kintu independent, ota alada api hoto... toh create kore ja ja information lage ekta csv-te, booking-e ki ki information lage, ba tomar hocche user-er details-e ki ki information lage... mane je genuine information-er upor depend kore ki ki lage shetar upor csv banaye download banaye dao."*
+- **Backend Independent Export Module (`/api/v1/export`)**:
+  - Created standalone module in `mira_backend_v1/src/modules/export/` with router, controller, and service.
+  - Mounted at `/api/v1/export` in `bootStrapsHttp.ts`.
+  - Endpoints with RFC 4180 quotation, UTF-8 BOM (`\uFEFF`) for Microsoft Excel, and direct attachment headers:
+    1. `GET /api/v1/export/bookings`: 26 genuine columns (ref #, timestamps, booking/payment status, package title, traveler full/first/last name, email, phone, nationality, traveler type, adults, children, children ages, arrival/departure dates, duration days, currency, confirmed total, paid amount, balance, traveler notes, terms agreed).
+    2. `GET /api/v1/export/users`: 19 genuine columns (user ID, email, full name, first/last name, phone, roles, account status, email verification, total bookings count, nationality, country, state, city, address, zip code, DOB, registration/updated dates).
+    3. `GET /api/v1/export/inquiries`: 13 genuine columns (inquiry #, status, traveler name, email, phone, destination, travel date, travelers count, journey types, message, admin notes, timestamps).
+    4. `GET /api/v1/export/newsletter`: 6 genuine columns (subscriber ID, email, status, source channel, timestamps).
+    5. `GET /api/v1/export/audit-logs`: 13 genuine columns (log ID, timestamp, actor name/email/role, action, entity type, entity ID, event status, IP, HTTP method, route, details).
+    6. `GET /api/v1/export/journey-requests`: 14 genuine columns (request ID, status, name, email, phone, duration, budget, styles, pace, comfort, notes, timestamps).
+- **Dashboard Implementation (`dashboard/`)**:
+  - Created universal utility [`dashboard/src/lib/exportUtils.ts`](file:///c:/Users/aalia/OneDrive/Desktop/Poli%20Full%20stack/dashboard/src/lib/exportUtils.ts) (`triggerCsvExport`, `exportToCsv`, `downloadBlob`).
+  - Added new `FilterExportButton` in [`UserListTable.tsx`](file:///c:/Users/aalia/OneDrive/Desktop/Poli%20Full%20stack/dashboard/src/components/pages/UserList/UserListTable.tsx).
+  - Upgraded [`BookingTable.tsx`](file:///c:/Users/aalia/OneDrive/Desktop/Poli%20Full%20stack/dashboard/src/components/pages/Bookings/BookingTable.tsx) to export all genuine booking data beyond the 10-row page limit.
+  - Upgraded [`Inquiry/index.tsx`](file:///c:/Users/aalia/OneDrive/Desktop/Poli%20Full%20stack/dashboard/src/components/pages/Inquiry/index.tsx) and [`Newsletter/index.tsx`](file:///c:/Users/aalia/OneDrive/Desktop/Poli%20Full%20stack/dashboard/src/components/pages/Newsletter/index.tsx).
+  - Converted [`AuditLogs/index.tsx`](file:///c:/Users/aalia/OneDrive/Desktop/Poli%20Full%20stack/dashboard/src/components/pages/AuditLogs/index.tsx) from raw JSON download to formatted audit CSV.
+  - Added Export CSV in [`Requests/JourneyWizardTable.tsx`](file:///c:/Users/aalia/OneDrive/Desktop/Poli%20Full%20stack/dashboard/src/components/pages/Requests/JourneyWizardTable.tsx).
+  - Wired live exports in [`Home/ExportReports.tsx`](file:///c:/Users/aalia/OneDrive/Desktop/Poli%20Full%20stack/dashboard/src/components/pages/Home/ExportReports.tsx).
+- **Verification**:
+  - Dashboard Production Build: `npm run build` (`tsc -b && vite build`) ➔ **PASSED with 0 errors (Exit code 0, ✓ 3,184 modules transformed in 3.78s)**.
+  - Backend Typecheck (Rule 1): `npx tsc --noEmit` in `mira_backend_v1/` ➔ **PASSED with 0 errors (Exit code 0)**.
+
+### 49. Journey Requests Page Tab Switcher & Instructor Request Elimination [COMPLETED]
+- **User Directive**:
+  - *"journey request page-e... ekta tab dekhte pacchi uporer dike... journey request wizard... ar hocche instructor request... amarto oi tab ta dorkari nai... oi tab ar oi tab related functionality... karon amarto journey request jekew dite pare..."*
+  - Remove the top tab switcher ("Journey Requests (Wizard)" vs "Instructor Requests") and the legacy Instructor Request functionality entirely from the Journey Requests page.
+- **Implementation in [`dashboard/src/components/pages/Requests/index.tsx`](file:///c:/Users/aalia/OneDrive/Desktop/Poli%20Full%20stack/dashboard/src/components/pages/Requests/index.tsx)**:
+  - Eliminated the redundant top `FilterToolbar` and `FilterTabs` switcher.
+  - Directly rendered [`JourneyWizardTable.tsx`](file:///c:/Users/aalia/OneDrive/Desktop/Poli%20Full%20stack/dashboard/src/components/pages/Requests/JourneyWizardTable.tsx), which contains the complete self-contained interface:
+    - 30%/70% PageHeader with live telemetry stats (Total, New / Unread, In Follow-Up, Completed).
+    - Dedicated search input on the left and status filter tabs (`All`, `New`, `Contacted`, `In Progress`, `Completed`) on the right.
+    - Export CSV button calling the independent `/api/v1/export/journey-requests` endpoint.
+    - Refresh & Reset button.
+    - Frosted glass sticky table header matching the Navbar.
+    - Detail modal inspection and in-table live status mutations.
+    - Non-collapsing infinite pagination.
+- **Verification**:
+  - Dashboard Production Build: `npm run build` (`tsc -b && vite build`) ➔ **PASSED with 0 errors (Exit code 0, ✓ 3,180 modules transformed in 3.74s)**.
+
 ### Track C: Frontend & User-Facing Web Application Integration
-1. **Public Catalog Alignment**:
+1. **Frontend Repository Clean Synchronization (`frontend/`) [COMPLETED]**:
+   - **User Directive**:
+     *"front end er code git pull koro local er ta lagbena same to same git er ta lagbe frontend code"*
+     (Pull the frontend code from git, discard local changes, make it exact 1:1 match with remote git repo).
+   - **Technical Implementation**:
+     - Remote: `git@github-dev-ali66:sholayman99/next-level-project-go.git` (`main`).
+     - Executed `git fetch origin` to fetch all remote refs and latest commits.
+     - Executed `git reset --hard origin/main` to align `HEAD` directly with latest remote commit (`5d0f849 Merge pull request #191 from sholayman99/dev`).
+     - Executed `git clean -fd` to remove untracked artifacts.
+     - Verified clean working tree with `git status` (`nothing to commit, working tree clean`, up to date with `origin/main`).
+     - Verified ESLint with `npm run lint` ➔ **0 errors (Exit Code 0)**.
+
+2. **Public Catalog Alignment**:
    - Verify dynamic rendering of Journeys, Locations, Experiences, and Stories on `frontend/`.
-2. **Public Inquiries & Journey Planner Verification**:
+3. **Public Inquiries & Journey Planner Verification**:
    - End-to-end audit of public contact and journey planning lead generation.
 
 

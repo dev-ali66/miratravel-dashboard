@@ -20,6 +20,7 @@ import type { LocationFormSectionProps } from "../../config/locationSections"
 import type { RegionExperienceItemData } from "../../locationTypes"
 import { useSearchLocations, type LocationSearchItem } from "@/hooks/location/useGetLocation"
 import { emptyLocation } from "../../shared/emptyLocation"
+import { getSafeStringValue } from "../../shared/normalizeHelpers"
 
 export function RegionExperiencesForm({
   draft,
@@ -32,7 +33,7 @@ export function RegionExperiencesForm({
     draft?.regionExperiences ||
     (draft as any)?.data?.regionExperiences ||
     (draft as any)?.experience || {
-      label: "EXPLORE ALBANIA",
+      label: `EXPLORE ${getSafeStringValue(draft?.name, "DESTINATION").toUpperCase()}`,
       title: "Four Regions. Four Different Experiences.",
       items: [],
       backgroundMultimedia: null,
@@ -89,17 +90,15 @@ export function RegionExperiencesForm({
 
     // Extract subtitle or why tags
     const subtitleText =
-      (loc as any).hero?.subtitle?.value ||
-      (loc as any).hero?.subtitle ||
+      getSafeStringValue((loc as any).hero?.subtitle) ||
       (Array.isArray((loc as any).why?.tags) ? (loc as any).why.tags.join(" • ") : "") ||
-      (loc as any).hero?.breadcrumb?.value ||
+      getSafeStringValue((loc as any).hero?.breadcrumb) ||
       "Scenic highlights, authentic culture and traditions"
 
     // Extract description
     const descText =
-      (loc as any).hero?.description?.value ||
-      (loc as any).hero?.description ||
-      (loc as any).essence?.paragraphs?.value ||
+      getSafeStringValue((loc as any).hero?.description) ||
+      getSafeStringValue((loc as any).essence?.paragraphs) ||
       `Explore the unique character, heritage, and landscapes of ${loc.name}.`
 
     const heroMedia = (loc as any).hero?.backgroundMultimedia || (loc as any).backgroundMultimedia
@@ -465,20 +464,9 @@ export function RegionExperiencesForm({
           <div className="space-y-3">
             {items.map((item, idx) => {
               const isExpanded = expandedItemIndex === idx
-              const itemTitle =
-                typeof item.title === "object"
-                  ? item.title?.value || `Region ${idx + 1}`
-                  : item.title || `Region ${idx + 1}`
-              const itemSubtitle =
-                typeof item.subtitle === "object"
-                  ? item.subtitle?.value || ""
-                  : item.subtitle || ""
-              const itemTag =
-                typeof item.tag === "object"
-                  ? (item.tag as any)?.value || ""
-                  : typeof item.tag === "string"
-                    ? item.tag
-                    : ""
+              const itemTitle = getSafeStringValue(item.title, `Region ${idx + 1}`)
+              const itemSubtitle = getSafeStringValue(item.subtitle, "")
+              const itemTag = getSafeStringValue(item.tag, "")
 
               const previewImg =
                 item.imageMultimedia?.image?.url || ""
