@@ -1,5 +1,5 @@
 import { THEME_COLORS } from "@/config/theme"
-import { normalizeMultimedia, normalizeStyledField, normalizeButtonsArray } from "../../shared/normalizeHelpers"
+import { normalizeMultimedia, normalizeStyledField, normalizeButtonsArray, normalizeButton } from "../../shared/normalizeHelpers"
 import { emptyStories } from "./emptyStories"
 
 export function normalizeStories(input: any) {
@@ -16,7 +16,8 @@ export function normalizeStories(input: any) {
       ? safeInput.items.map((it: any) => ({
           title: normalizeStyledField(it.title, "", THEME_COLORS.primary),
           subtitle: normalizeStyledField(it.subtitle, "", THEME_COLORS.sub),
-          button: it.button || { label: "Read Story", url: "#" },
+          button: normalizeButton(it.button || { label: "Read Story", url: it.url || "#" }),
+          url: it.button?.url || it.url || "",
         }))
       : [],
     buttons: normalizeButtonsArray(safeInput.buttons || emptyStories.buttons),

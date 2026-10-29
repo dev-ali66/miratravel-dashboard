@@ -8,6 +8,7 @@ import { Plus, Trash2, ChevronDown, ChevronUp, ArrowUp, ArrowDown } from "lucide
 import { Button } from "@/components/ui/button"
 import { useGetStories } from "@/hooks/story/useGetStories"
 import { emptyMiraStories } from "./emptyMiraStories"
+import { StorySearchPicker } from "@/components/pages/CMS/shared/StorySearchPicker"
 
 export function MiraStoriesForm({
   section,
@@ -120,6 +121,47 @@ export function MiraStoriesForm({
       ""
     const storyUrl = `/stories/${selectedStory.slug}`
 
+    const storyImage =
+      (selectedStory as any).hero?.backgroundMultimedia?.image?.url ||
+      (selectedStory as any).hero?.image?.url ||
+      (selectedStory as any).coverImage ||
+      ""
+
+    const existingMedia = currentItem.media || {}
+    const updatedMedia =
+      storyImage && !existingMedia?.image?.url
+        ? {
+            ...existingMedia,
+            show: existingMedia.show ?? true,
+            color: existingMedia.color ?? "#000000",
+            image: {
+              url: storyImage,
+              alt: selectedStory.title || "",
+              opacity: existingMedia.image?.opacity ?? 100,
+              overlayColor: existingMedia.image?.overlayColor ?? "#000000",
+              overlayOpacity: existingMedia.image?.overlayOpacity ?? 0,
+              width: existingMedia.image?.width ?? 0,
+              height: existingMedia.image?.height ?? 0,
+              aspectRatio: existingMedia.image?.aspectRatio ?? "auto",
+              fit: existingMedia.image?.fit ?? "cover",
+            },
+            video: {
+              url: existingMedia.video?.url ?? "",
+              alt: existingMedia.video?.alt ?? "",
+              opacity: existingMedia.video?.opacity ?? 100,
+              overlayColor: existingMedia.video?.overlayColor ?? "#000000",
+              overlayOpacity: existingMedia.video?.overlayOpacity ?? 0,
+              width: existingMedia.video?.width ?? 0,
+              height: existingMedia.video?.height ?? 0,
+              aspectRatio: existingMedia.video?.aspectRatio ?? "auto",
+              fit: existingMedia.video?.fit ?? "cover",
+              autoplay: existingMedia.video?.autoplay ?? true,
+              loop: existingMedia.video?.loop ?? true,
+              muted: existingMedia.video?.muted ?? true,
+            },
+          }
+        : existingMedia
+
     updateItem(itemIndex, {
       title:
         typeof currentItem.title === "object" && currentItem.title !== null
@@ -159,6 +201,7 @@ export function MiraStoriesForm({
         url: storyUrl,
       },
       url: storyUrl,
+      ...(storyImage && !existingMedia?.image?.url ? { media: updatedMedia } : {}),
     })
   }
 
@@ -327,27 +370,12 @@ export function MiraStoriesForm({
 
                     {isItemOpen && (
                       <div className="flex flex-col gap-3 p-3 border-t border-border/30">
-                        {stories.length > 0 && (
-                          <div className="flex flex-col gap-1.5">
-                            <label className="text-[11px] font-medium text-muted-foreground">
-                              Select from Published Stories
-                            </label>
-                            <select
-                              className="h-8 w-full rounded-sm border border-input bg-background px-2.5 text-xs text-foreground focus:outline-none focus:ring-1 focus:ring-ring"
-                              defaultValue=""
-                              onChange={(e) => selectStoryForIndex(itemIndex, e.target.value)}
-                            >
-                              <option value="" disabled>
-                                -- Pick a story to autofill --
-                              </option>
-                              {stories.map((story: any) => (
-                                <option key={story.id} value={story.id}>
-                                  {story.title} ({story.slug})
-                                </option>
-                              ))}
-                            </select>
-                          </div>
-                        )}
+                        {/* Searchable Story Picker */}
+                        <StorySearchPicker
+                          stories={stories}
+                          selectedTitle={getSafeString(item.title, "")}
+                          onSelectStory={(story) => selectStoryForIndex(itemIndex, story.id)}
+                        />
 
                         <DynamicStyledField
                           type="text"
