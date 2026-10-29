@@ -41,6 +41,7 @@ import {
 import { useDeleteJourney } from "@/hooks/journey/useDeleteJourney"
 import {
   JOURNEY_TYPES,
+  JOURNEY_TYPE_LABELS,
   TRAVEL_STYLES,
   JOURNEY_STATUS_LIST,
 } from "./journeyTypes"
@@ -206,7 +207,7 @@ export default function JourneyPages() {
               setPage(1)
             }}
             options={JOURNEY_TYPES.map((t) => ({
-              label: t.replace(/_/g, " "),
+              label: JOURNEY_TYPE_LABELS[t] || t.replace(/_/g, " "),
               value: t,
             }))}
             allLabel="All Journey Types"

@@ -5,13 +5,9 @@ import type { CmsButton } from "@/components/pages/CMS/shared/ButtonsField"
 ===================================================== */
 
 export type JourneyTypeEnum =
-  | "PRIVATE_JOURNEY"
-  | "SELF_DRIVE_JOURNEY"
-  | "SMALL_GROUP"
-  | "LUXURY_ESCAPE"
-  | "FAMILY_JOURNEY"
-  | "SIGNATURE_JOURNEY"
+  | "NORMAL"
   | "MIRA_COLLECTION"
+  | "SIGNATURE"
 
 export type TravelStyleEnum =
   | "CULTURE_HERITAGE"
@@ -44,14 +40,16 @@ export type ComfortLevelEnum = "COMFORT" | "BOUTIQUE" | "PREMIUM_LUXURY"
 export type JourneyStatusEnum = "DRAFT" | "PUBLISHED" | "ARCHIVED"
 
 export const JOURNEY_TYPES: JourneyTypeEnum[] = [
-  "PRIVATE_JOURNEY",
-  "SELF_DRIVE_JOURNEY",
-  "SMALL_GROUP",
-  "LUXURY_ESCAPE",
-  "FAMILY_JOURNEY",
-  "SIGNATURE_JOURNEY",
+  "NORMAL",
   "MIRA_COLLECTION",
+  "SIGNATURE",
 ]
+
+export const JOURNEY_TYPE_LABELS: Record<JourneyTypeEnum, string> = {
+  NORMAL: "Normal",
+  MIRA_COLLECTION: "MIRA Collection",
+  SIGNATURE: "Signature",
+}
 
 export const TRAVEL_STYLES: TravelStyleEnum[] = [
   "CULTURE_HERITAGE",

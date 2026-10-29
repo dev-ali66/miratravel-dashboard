@@ -22,7 +22,7 @@ export function JourneyCmsSignatureJourneysPreview({ draft }: JourneyCmsPreviewS
       title: "Ultimate Wildlife Expedition",
       description: "An immersive adventure through some of the world's most spectacular wilderness",
       priceFrom: "$3195",
-      journeyType: "SIGNATURE_JOURNEY",
+      journeyType: "SIGNATURE",
       days: "7 DAYS",
       style: "NATURE",
       image: "https://images.unsplash.com/photo-1541872703-74c5e44368f9?auto=format&fit=crop&w=1200&q=80",
@@ -32,7 +32,7 @@ export function JourneyCmsSignatureJourneysPreview({ draft }: JourneyCmsPreviewS
       title: "Wildlife Safari",
       description: "Experience remarkable wildlife and unforgettable encounters in nature",
       priceFrom: "$3195",
-      journeyType: "LUXURY_ESCAPE",
+      journeyType: "MIRA_COLLECTION",
       days: "7 DAYS",
       style: "NATURE",
       image: "https://images.unsplash.com/photo-1507525428034-b723cf961d3e?auto=format&fit=crop&w=800&q=80",
@@ -42,7 +42,7 @@ export function JourneyCmsSignatureJourneysPreview({ draft }: JourneyCmsPreviewS
       title: "Ancient Temples",
       description: "From the Julian Alps to the Aegean Foothills",
       priceFrom: "$7495",
-      journeyType: "FAMILY_JOURNEY",
+      journeyType: "NORMAL",
       days: "21 DAYS",
       style: "CULTURE_HERITAGE",
       image: "https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?auto=format&fit=crop&w=800&q=80",
@@ -50,7 +50,7 @@ export function JourneyCmsSignatureJourneysPreview({ draft }: JourneyCmsPreviewS
   ]
 
   const formatJourneyType = (rawType: any) => {
-    if (!rawType) return "SIGNATURE_JOURNEY"
+    if (!rawType) return "SIGNATURE"
     const str = Array.isArray(rawType) ? rawType[0] : String(rawType)
     return str.toUpperCase().replace(/[\s-]+/g, "_")
   }

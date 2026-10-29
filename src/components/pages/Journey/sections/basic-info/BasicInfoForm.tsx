@@ -1,6 +1,7 @@
 import type { JourneyData } from "../../journeyTypes"
 import {
   JOURNEY_TYPES,
+  JOURNEY_TYPE_LABELS,
   TRAVEL_STYLES,
   PERFECT_FOR_LIST,
   PACE_LIST,
@@ -190,7 +191,7 @@ export function BasicInfoForm({
                         : "bg-muted hover:bg-muted/80 text-muted-foreground"
                       }`}
                   >
-                    {type.replace(/_/g, " ")}
+                    {JOURNEY_TYPE_LABELS[type] || type.replace(/_/g, " ")}
                   </button>
                 )
               })}
