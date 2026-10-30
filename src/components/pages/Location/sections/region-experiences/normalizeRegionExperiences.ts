@@ -1,4 +1,3 @@
-import { THEME_COLORS } from "@/config/theme"
 import { normalizeMultimedia, normalizeStyledField, LOCATION_THEME_COLORS } from "../../shared/normalizeHelpers"
 import { emptyRegionExperiences } from "./emptyRegionExperiences"
 
@@ -15,39 +14,30 @@ export function normalizeRegionExperiences(regionExperiences: any) {
     ),
     items: Array.isArray(safeRegExp.items)
       ? safeRegExp.items.map((it: any) => {
-          const rawButtons = Array.isArray(it.buttons) && it.buttons.length > 0
-            ? it.buttons
-            : it.button
-              ? [it.button]
-              : []
-
-          const normalizedButtons = rawButtons.map((btn: any) => ({
-            label: btn.label ?? it.buttonText ?? "Explore Region",
-            url: btn.url ?? it.buttonUrl ?? "",
-            style: btn.style ?? (btn.variant ? String(btn.variant).toLowerCase() : "primary"),
-            variant: (btn.variant ?? btn.style ?? "PRIMARY").toUpperCase(),
-            textColor: btn.textColor ?? THEME_COLORS.white,
-            backgroundColor: btn.backgroundColor ?? LOCATION_THEME_COLORS.accent,
-          }))
-
           const normItem = {
-            id: it.id ?? "",
-            category: normalizeStyledField(it.category ?? it.tag, "", LOCATION_THEME_COLORS.accent),
-            tag: normalizeStyledField(it.tag ?? it.category, "", LOCATION_THEME_COLORS.accent),
-            title: normalizeStyledField(it.title, "", LOCATION_THEME_COLORS.primary),
-            subtitle: normalizeStyledField(it.subtitle, "", LOCATION_THEME_COLORS.muted),
-            description: normalizeStyledField(it.description, "", LOCATION_THEME_COLORS.muted),
-            quote: normalizeStyledField(it.quote, "", LOCATION_THEME_COLORS.muted),
-            locationName: normalizeStyledField(it.locationName ?? it.location, "", LOCATION_THEME_COLORS.primary),
-            badgeText: normalizeStyledField(it.badgeText ?? it.badge, "", LOCATION_THEME_COLORS.accent),
-            buttons: normalizedButtons,
-            imageMultimedia: normalizeMultimedia(it.imageMultimedia, "image"),
-            backgroundMultimedia: normalizeMultimedia(it.backgroundMultimedia, "color"),
+            id: it?.id ?? "",
+            title: normalizeStyledField(it?.title, "", LOCATION_THEME_COLORS.primary),
+            subtitle: normalizeStyledField(it?.subtitle, "", LOCATION_THEME_COLORS.muted),
+            description: normalizeStyledField(it?.description, "", LOCATION_THEME_COLORS.muted),
           }
 
+          // Strip all extraneous, duplicate, or static location fields
+          delete (normItem as any).imageMultimedia
+          delete (normItem as any).backgroundMultimedia
+          delete (normItem as any).buttons
+          delete (normItem as any).button
+          delete (normItem as any).tag
+          delete (normItem as any).category
+          delete (normItem as any).quote
+          delete (normItem as any).locationName
+          delete (normItem as any).badgeText
+          delete (normItem as any).badge
+          delete (normItem as any).location
+          delete (normItem as any).image
           delete (normItem as any).categoryStyle
           delete (normItem as any).titleStyle
           delete (normItem as any).subtitleStyle
+          delete (normItem as any).descriptionStyle
           delete (normItem as any).quoteStyle
           delete (normItem as any).locationStyle
           delete (normItem as any).badgeStyle
@@ -64,4 +54,3 @@ export function normalizeRegionExperiences(regionExperiences: any) {
 
   return normalizedRegionExperiences
 }
-

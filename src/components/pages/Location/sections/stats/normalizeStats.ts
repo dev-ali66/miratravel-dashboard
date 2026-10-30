@@ -1,31 +1,39 @@
-import { THEME_COLORS } from "@/config/theme"
 import { normalizeMultimedia, normalizeStyledField } from "../../shared/normalizeHelpers"
-import { emptyStats } from "./emptyStats"
+import { emptyStats, DEFAULT_STATS_TEXT_COLOR } from "./emptyStats"
 
 export function normalizeStats(statistics: any) {
   const safeStats = statistics && typeof statistics === "object" ? statistics : {}
 
-  const rawFacts = Array.isArray(safeStats.facts) ? safeStats.facts : (Array.isArray(safeStats.items) ? safeStats.items : (emptyStats.items ?? []))
-  const normalizedFacts = rawFacts.map((fact: any) => {
-    const normFact = {
-      label: normalizeStyledField(fact.label, "", THEME_COLORS.primary),
-      value: normalizeStyledField(fact.value, "", THEME_COLORS.accent),
-      description: normalizeStyledField(fact.description, "", THEME_COLORS.muted),
-      image: fact.image ?? "",
-      icon: fact.icon ?? "",
-      media: normalizeMultimedia(fact.media || fact.multimedia),
+  const rawItems = Array.isArray(safeStats.items)
+    ? safeStats.items
+    : (Array.isArray(safeStats.facts)
+      ? safeStats.facts
+      : (emptyStats.items ?? []))
+
+  const normalizedItems = rawItems.map((item: any) => {
+    const normItem = {
+      label: normalizeStyledField(item?.label, "", DEFAULT_STATS_TEXT_COLOR),
+      value: normalizeStyledField(item?.value, "", DEFAULT_STATS_TEXT_COLOR),
+      description: normalizeStyledField(item?.description, "", DEFAULT_STATS_TEXT_COLOR),
     }
-    delete (normFact as any).labelStyle
-    delete (normFact as any).valueStyle
-    delete (normFact as any).descriptionStyle
-    delete (normFact as any).style
-    return normFact
+
+    // Explicitly ensure no icon, image, or media fields inside items
+    delete (normItem as any).image
+    delete (normItem as any).icon
+    delete (normItem as any).media
+    delete (normItem as any).multimedia
+    delete (normItem as any).labelStyle
+    delete (normItem as any).valueStyle
+    delete (normItem as any).descriptionStyle
+    delete (normItem as any).style
+
+    return normItem
   })
 
   const normalizedStatistics = {
     ...safeStats,
-    title: normalizeStyledField(safeStats.title ?? emptyStats.title, "", THEME_COLORS.primary),
-    facts: normalizedFacts,
+    title: normalizeStyledField(safeStats.title ?? emptyStats.title, "", DEFAULT_STATS_TEXT_COLOR),
+    items: normalizedItems,
     ...(safeStats.area ? {
       area: {
         unit: safeStats.area.unit ?? "km²",
@@ -50,8 +58,9 @@ export function normalizeStats(statistics: any) {
     ),
   }
 
+  // Ensure legacy duplicate facts property is removed - only items remains
+  delete (normalizedStatistics as any).facts
   delete (normalizedStatistics as any).style
 
   return normalizedStatistics
 }
-

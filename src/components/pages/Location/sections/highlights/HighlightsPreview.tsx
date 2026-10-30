@@ -5,6 +5,7 @@ import { UniversalMultimediaPreview } from "@/components/pages/CMS/Home/shared/p
 import type { LocationPreviewSectionProps } from "../../config/locationSections"
 import type { HighlightLocationItem } from "../../locationTypes"
 import { useGetLocationPages } from "@/hooks/location/useGetLocation"
+import { useGetLocationById } from "@/hooks/location/useGetLocationById"
 
 export function HighlightsPreview({ draft }: LocationPreviewSectionProps) {
   const [isPaused, setIsPaused] = useState(false)
@@ -25,80 +26,6 @@ export function HighlightsPreview({ draft }: LocationPreviewSectionProps) {
 
   // Normalize highlights.items (supports both rich objects and legacy string IDs)
   const rawItems: any[] = Array.isArray(highlights.items) ? highlights.items : []
-
-  const dynamicItems: HighlightLocationItem[] = rawItems
-    .map((it: any, idx: number) => {
-      if (typeof it === "string") {
-        const loc =
-          availableLocations.find((l) => l.id === it || l.slug === it) ||
-          (draft?.children as any[])?.find((c: any) => c.id === it || c.slug === it)
-        const parentName = loc?.parent?.name || draft?.name || "Country"
-        const parentSlug = loc?.parent?.slug || draft?.slug || "explore"
-        const childSlug = loc?.slug || `highlight-${idx + 1}`
-        const subtitleTag =
-          loc?.hero?.subtitle?.value ||
-          loc?.hero?.subtitle ||
-          (Array.isArray(loc?.why?.tags) ? loc.why.tags.join(" • ") : "") ||
-          loc?.hero?.breadcrumb?.value ||
-          loc?.type ||
-          ""
-
-        const heroMedia = loc?.hero?.backgroundMultimedia
-        const imgUrl =
-          heroMedia?.image?.url ||
-          loc?.hero?.image?.url ||
-          loc?.card?.background_image ||
-          (heroMedia?.show === "image" ? heroMedia?.image?.url : "") ||
-          ""
-
-        return {
-          id: it,
-          locationId: it,
-          region: loc?.name || loc?.hero?.title?.value || `Region ${idx + 1}`,
-          country: parentName,
-          tags: subtitleTag,
-          imageMultimedia: {
-            show: "image",
-            image: {
-              url: imgUrl,
-              alt: loc?.name || "Highlight",
-              fit: "cover",
-            },
-          },
-          countrySlug: parentSlug,
-          regionSlug: childSlug,
-          href: `/destinations/${parentSlug}/${childSlug}`,
-        }
-      }
-
-      // If it is an object
-      const loc = it.locationId
-        ? availableLocations.find((l) => l.id === it.locationId || l.slug === it.locationId)
-        : null
-
-      const fallbackRegion = loc?.name || loc?.hero?.title?.value || `Region ${idx + 1}`
-      const fallbackCountry = loc?.parent?.name || draft?.name || "Country"
-      const fallbackTags =
-        loc?.hero?.subtitle?.value ||
-        loc?.hero?.subtitle ||
-        (Array.isArray(loc?.why?.tags) ? loc.why.tags.join(" • ") : "") ||
-        ""
-
-      return {
-        ...it,
-        id: it.id || loc?.id || `hl-${idx}`,
-        locationId: it.locationId || loc?.id,
-        region: it.region || fallbackRegion,
-        country: it.country || fallbackCountry,
-        tags: it.tags !== undefined ? it.tags : fallbackTags,
-        href:
-          it.href ||
-          (it.countrySlug && it.regionSlug
-            ? `/destinations/${it.countrySlug}/${it.regionSlug}`
-            : "#"),
-      }
-    })
-    .filter(Boolean) as HighlightLocationItem[]
 
   // Sample items shown only if no items have been added
   const sampleItems: HighlightLocationItem[] = [
@@ -160,8 +87,7 @@ export function HighlightsPreview({ draft }: LocationPreviewSectionProps) {
     },
   ]
 
-  const items: HighlightLocationItem[] =
-    dynamicItems.length > 0 ? dynamicItems : sampleItems
+  const items = rawItems.length > 0 ? rawItems : sampleItems
 
   // Create a 3x set for seamless infinite marquee loop ticker
   const marqueeItems = [...items, ...items, ...items]
@@ -235,114 +161,156 @@ export function HighlightsPreview({ draft }: LocationPreviewSectionProps) {
                 animationPlayState: isPaused ? "paused" : "running",
               }}
             >
-              {marqueeItems.map((item, index) => {
-                const cardMedia =
-                  item.imageMultimedia ||
-                  ((item as any).image
-                    ? {
-                        show: "image",
-                        image: {
-                          url: (item as any).image,
-                          alt:
-                            typeof item.region === "object"
-                              ? item.region?.value
-                              : item.region || "Highlight",
-                          fit: "cover",
-                        },
-                      }
-                    : {
-                        show: "image",
-                        image: {
-                          url: "",
-                          alt:
-                            typeof item.region === "object"
-                              ? item.region?.value
-                              : item.region || "Highlight",
-                          fit: "cover",
-                        },
-                      })
-
-                const regionLabel =
-                  typeof item.region === "object"
-                    ? item.region?.value || ""
-                    : item.region || ""
-                const countryLabel =
-                  typeof item.country === "object"
-                    ? item.country?.value || ""
-                    : item.country || ""
-
-                return (
-                  <div
-                    key={`${item.id}-${index}`}
-                    className="group relative shrink-0 block overflow-hidden shadow-md transition-shadow duration-500 hover:shadow-2xl focus:outline-none focus-visible:ring-2 focus-visible:ring-primary w-[300px] md:w-[440px] lg:w-[487px] xlg:w-[507px] xl:w-[527px] h-[340px] md:h-[500px] lg:h-[520px] xlg:h-[540px] xl:h-[551px]"
-                    aria-label={`Explore ${regionLabel}, ${countryLabel}`}
-                  >
-                    {/* Background Media Container with Hover Scale */}
-                    <div className="absolute inset-0 size-full transition-transform duration-1000 ease-out group-hover:scale-105">
-                      <UniversalMultimediaPreview
-                        multimedia={cardMedia}
-                        fallbackAlt={`${regionLabel} — ${countryLabel}`}
-                        mode="background"
-                        className="size-full object-cover object-center"
-                      />
-                    </div>
-
-                    {/* Left-to-Right Primary Color Slide-In Layer */}
-                    <div
-                      className="absolute inset-0 -translate-x-full bg-gradient-to-r from-brand-primary/60 via-brand-primary/40 to-brand-primary/20 transition-transform duration-700 ease-out group-hover:translate-x-0 pointer-events-none z-10"
-                      aria-hidden="true"
-                    />
-
-                    {/* Top Ambient Subtle Vignette */}
-                    <div
-                      className="absolute inset-0 bg-gradient-to-b from-black/25 via-transparent to-transparent opacity-60 transition-opacity duration-500 group-hover:opacity-85 pointer-events-none"
-                      aria-hidden="true"
-                    />
-
-                    {/* Gradient Dark Overlay (from bottom to top) */}
-                    <div
-                      style={{
-                        background:
-                          "linear-gradient(0deg, rgba(6, 23, 0, 0.8) 0%, rgba(6, 23, 0, 0) 50%, rgba(6, 23, 0, 0) 100%)",
-                      }}
-                      className="absolute inset-0 pointer-events-none transition-opacity duration-500 group-hover:opacity-95"
-                      aria-hidden="true"
-                    />
-
-                    {/* Content Box Positioned at Bottom Left */}
-                    <div className="absolute inset-x-0 bottom-0 z-10 flex flex-col justify-start items-start gap-1.5 p-6 sm:p-7 md:p-8 lg:p-9 xl:p-[36px] text-left">
-                      {/* Country Tag */}
-                      <DynamicStyledTextPreview
-                        as="span"
-                        data={item.country}
-                        fallbackColor={THEME_COLORS.lightText}
-                        className="text-neutral-100/60 uppercase text-xs md:text-[13.5px] xl:text-sm font-normal xl:leading-[22.5px] md:leading-[20px] leading-[18px] tracking-[1.4px]"
-                      />
-
-                      {/* Region Title */}
-                      <DynamicStyledTextPreview
-                        as="h3"
-                        data={item.region}
-                        fallbackColor={THEME_COLORS.white}
-                        className="text-neutral-100 font-heading text-xl md:text-[26px] xl:text-[27px] font-normal leading-9 md:leading-[38px] xl:leading-[41px] transition-colors duration-300 group-hover:text-accent"
-                      />
-
-                      {/* Subtitle / Activity Tags */}
-                      <DynamicStyledTextPreview
-                        as="p"
-                        data={item.tags}
-                        fallbackColor={THEME_COLORS.white}
-                        className="text-neutral-100 text-sm md:text-[15px] xl:text-base font-normal xl:leading-5 md:leading-[18px] leading-4 tracking-[1px] pt-[5px] transition-colors duration-300 group-hover:text-neutral-100/95 line-clamp-1"
-                      />
-                    </div>
-                  </div>
-                )
-              })}
+              {marqueeItems.map((item, index) => (
+                <HighlightMarqueeCard
+                  key={`${typeof item === "string" ? item : item?.id || "hl"}-${index}`}
+                  item={item}
+                  index={index}
+                  draft={draft}
+                  availableLocations={availableLocations}
+                />
+              ))}
             </div>
           </div>
         </div>
       </div>
     </section>
+  )
+}
+
+function HighlightMarqueeCard({
+  item,
+  index,
+  draft,
+  availableLocations,
+}: {
+  item: any
+  index: number
+  draft: any
+  availableLocations: any[]
+}) {
+  const isString = typeof item === "string"
+  const itemId = isString ? item : item?.locationId || item?.id
+
+  // Fetch location by ID if item is a string ID and not cached
+  const { data: rawData } = useGetLocationById(isString ? itemId : undefined)
+  const locData = rawData?.data !== undefined ? rawData.data : rawData
+  const fetchedLoc = Array.isArray(locData) ? locData[0] : locData
+
+  const childLoc = (draft?.children as any[])?.find(
+    (c: any) => c.id === itemId || c.slug === itemId
+  )
+  const availLoc = availableLocations.find(
+    (l: any) => l.id === itemId || l.slug === itemId
+  )
+
+  const loc = childLoc || availLoc || fetchedLoc || (typeof item === "object" ? item : null)
+
+  const regionLabel =
+    loc?.name ||
+    loc?.region ||
+    loc?.hero?.title?.value ||
+    loc?.hero?.title ||
+    `Region ${(index % 4) + 1}`
+
+  const countryLabel =
+    loc?.parent?.name ||
+    loc?.country ||
+    draft?.name ||
+    "Country"
+
+  const subtitleTag =
+    loc?.hero?.subtitle?.value ||
+    loc?.hero?.subtitle ||
+    loc?.tags ||
+    (Array.isArray(loc?.why?.tags) ? loc.why.tags.join(" • ") : "") ||
+    loc?.hero?.breadcrumb?.value ||
+    loc?.type ||
+    ""
+
+  const heroMedia = loc?.hero?.backgroundMultimedia
+  const imgUrl =
+    loc?.imageMultimedia?.image?.url ||
+    heroMedia?.image?.url ||
+    loc?.hero?.image?.url ||
+    loc?.card?.background_image ||
+    loc?.essence?.imageMultimedia?.image?.url ||
+    (heroMedia?.show === "image" ? heroMedia?.image?.url : "") ||
+    ""
+
+  const cardMedia = {
+    show: "image",
+    image: {
+      url: imgUrl,
+      alt: typeof regionLabel === "object" ? regionLabel?.value : regionLabel || "Highlight",
+      fit: "cover",
+    },
+  }
+
+  return (
+    <div
+      className="group relative shrink-0 block overflow-hidden shadow-md transition-shadow duration-500 hover:shadow-2xl focus:outline-none focus-visible:ring-2 focus-visible:ring-primary w-[300px] md:w-[440px] lg:w-[487px] xlg:w-[507px] xl:w-[527px] h-[340px] md:h-[500px] lg:h-[520px] xlg:h-[540px] xl:h-[551px]"
+      aria-label={`Explore ${regionLabel}, ${countryLabel}`}
+    >
+      {/* Background Media Container with Hover Scale */}
+      <div className="absolute inset-0 size-full transition-transform duration-1000 ease-out group-hover:scale-105">
+        <UniversalMultimediaPreview
+          multimedia={cardMedia as any}
+          fallbackAlt={`${regionLabel} — ${countryLabel}`}
+          mode="background"
+          className="size-full object-cover object-center"
+        />
+      </div>
+
+      {/* Left-to-Right Primary Color Slide-In Layer */}
+      <div
+        className="absolute inset-0 -translate-x-full bg-gradient-to-r from-brand-primary/60 via-brand-primary/40 to-brand-primary/20 transition-transform duration-700 ease-out group-hover:translate-x-0 pointer-events-none z-10"
+        aria-hidden="true"
+      />
+
+      {/* Top Ambient Subtle Vignette */}
+      <div
+        className="absolute inset-0 bg-gradient-to-b from-black/25 via-transparent to-transparent opacity-60 transition-opacity duration-500 group-hover:opacity-85 pointer-events-none"
+        aria-hidden="true"
+      />
+
+      {/* Gradient Dark Overlay (from bottom to top) */}
+      <div
+        style={{
+          background:
+            "linear-gradient(0deg, rgba(6, 23, 0, 0.8) 0%, rgba(6, 23, 0, 0) 50%, rgba(6, 23, 0, 0) 100%)",
+        }}
+        className="absolute inset-0 pointer-events-none transition-opacity duration-500 group-hover:opacity-95"
+        aria-hidden="true"
+      />
+
+      {/* Content Box Positioned at Bottom Left */}
+      <div className="absolute inset-x-0 bottom-0 z-10 flex flex-col justify-start items-start gap-1.5 p-6 sm:p-7 md:p-8 lg:p-9 xl:p-[36px] text-left">
+        {/* Country Tag */}
+        <DynamicStyledTextPreview
+          as="span"
+          data={countryLabel}
+          fallbackColor={THEME_COLORS.lightText}
+          className="text-neutral-100/60 uppercase text-xs md:text-[13.5px] xl:text-sm font-normal xl:leading-[22.5px] md:leading-[20px] leading-[18px] tracking-[1.4px]"
+        />
+
+        {/* Region Title */}
+        <DynamicStyledTextPreview
+          as="h3"
+          data={regionLabel}
+          fallbackColor={THEME_COLORS.white}
+          className="text-neutral-100 font-heading text-xl md:text-[26px] xl:text-[27px] font-normal leading-9 md:leading-[38px] xl:leading-[41px] transition-colors duration-300 group-hover:text-accent"
+        />
+
+        {/* Subtitle / Activity Tags */}
+        <DynamicStyledTextPreview
+          as="p"
+          data={subtitleTag}
+          fallbackColor={THEME_COLORS.white}
+          className="text-neutral-100 text-sm md:text-[15px] xl:text-base font-normal xl:leading-5 md:leading-[18px] leading-4 tracking-[1px] pt-[5px] transition-colors duration-300 group-hover:text-neutral-100/95 line-clamp-1"
+        />
+      </div>
+    </div>
   )
 }
 

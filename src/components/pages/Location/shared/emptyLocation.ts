@@ -30,6 +30,7 @@ export const emptyLocation: LocationData = {
   type: (isDevModeActive() ? "TEST" : "") as any,
   featured: false,
   parentId: null,
+  children: [],
 
   hero: emptyHero,
   infoCard: emptyPlaceInfo,
@@ -39,7 +40,7 @@ export const emptyLocation: LocationData = {
   regionExperienceList: [],
   placeExperiences: [],
   essence: emptyEssence,
-  stats: emptyStats,
+  statistics: emptyStats,
   glance: emptyGlance,
   character: emptyCharacter,
   highlights: emptyHighlights,

@@ -77,12 +77,12 @@ export function normalizeLocationPayload(
     safeData.practicalInfo ??
     safeData.beforeTravel ??
     {}
-  const statsData =
-    safeDraft.statistics ??
-    safeDraft.stats ??
-    safeData.statistics ??
-    safeData.stats ??
-    {}
+  const statsData = {
+    ...(typeof safeData.stats === "object" ? safeData.stats : {}),
+    ...(typeof safeData.statistics === "object" ? safeData.statistics : {}),
+    ...(typeof safeDraft.stats === "object" ? safeDraft.stats : {}),
+    ...(typeof safeDraft.statistics === "object" ? safeDraft.statistics : {}),
+  }
   const expFieldName = getExperienceFieldName(safeDraft.type)
   const experiencesData =
     (safeDraft as any)?.[expFieldName] ??

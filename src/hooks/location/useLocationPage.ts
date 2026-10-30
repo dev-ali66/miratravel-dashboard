@@ -41,6 +41,7 @@ export function useLocationPage(locationId?: string, _slug?: string) {
     if (location) {
       const resolvedLocation: LocationData = {
         ...location,
+        children: location.children ?? location.data?.children ?? [],
         countryExperiences: Array.isArray(location.countryExperiences)
           ? location.countryExperiences
               .map((e: any) => (typeof e === "string" ? e : e?.id))
@@ -66,6 +67,12 @@ export function useLocationPage(locationId?: string, _slug?: string) {
         why: location.why ?? location.data?.why ?? emptyLocation.data?.why,
         sharedInfo: location.sharedInfo ?? location.data?.sharedInfo ?? emptyLocation.data?.sharedInfo,
         geoData: location.geoData ?? location.data?.geoData ?? emptyLocation.geoData,
+        statistics:
+          location.statistics ??
+          location.stats ??
+          location.data?.statistics ??
+          location.data?.stats ??
+          emptyLocation.statistics,
       }
 
       setDraft(

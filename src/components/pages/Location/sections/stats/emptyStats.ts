@@ -1,19 +1,154 @@
 import { THEME_COLORS } from "@/config/theme"
+
+export const DEFAULT_STATS_TEXT_COLOR = "#182D09"
+
 export const emptyStats = {
   title: {
     value: "Key Regional Statistics",
-    textColor: THEME_COLORS.primary,
+    textColor: DEFAULT_STATS_TEXT_COLOR,
     textOpacity: 1,
     backgroundColor: null,
     backgroundOpacity: 1,
   },
   items: [
-    { label: "Coastline", value: "170 km", description: "Ionian & Adriatic coastline" },
-    { label: "Sunshine", value: "300+ Days", description: "Mediterranean sunshine annually" },
-    { label: "Water Temp", value: "24–27°C", description: "Peak summer swimming" },
-    { label: "Best Access", value: "Vlorë / Sarandë", description: "Coastal highway or ferry" },
-    { label: "Beach Season", value: "May – Oct", description: "Peak window: Jun–Sep" },
-    { label: "Currency", value: "Albanian Lek / EUR", description: "Cards accepted in towns" },
+    {
+      label: {
+        value: "Coastline",
+        textColor: DEFAULT_STATS_TEXT_COLOR,
+        textOpacity: 1,
+        backgroundColor: null,
+        backgroundOpacity: 1,
+      },
+      value: {
+        value: "170 km",
+        textColor: DEFAULT_STATS_TEXT_COLOR,
+        textOpacity: 1,
+        backgroundColor: null,
+        backgroundOpacity: 1,
+      },
+      description: {
+        value: "Ionian & Adriatic coastline",
+        textColor: DEFAULT_STATS_TEXT_COLOR,
+        textOpacity: 1,
+        backgroundColor: null,
+        backgroundOpacity: 1,
+      },
+    },
+    {
+      label: {
+        value: "Sunshine",
+        textColor: DEFAULT_STATS_TEXT_COLOR,
+        textOpacity: 1,
+        backgroundColor: null,
+        backgroundOpacity: 1,
+      },
+      value: {
+        value: "300+ Days",
+        textColor: DEFAULT_STATS_TEXT_COLOR,
+        textOpacity: 1,
+        backgroundColor: null,
+        backgroundOpacity: 1,
+      },
+      description: {
+        value: "Mediterranean sunshine annually",
+        textColor: DEFAULT_STATS_TEXT_COLOR,
+        textOpacity: 1,
+        backgroundColor: null,
+        backgroundOpacity: 1,
+      },
+    },
+    {
+      label: {
+        value: "Water Temp",
+        textColor: DEFAULT_STATS_TEXT_COLOR,
+        textOpacity: 1,
+        backgroundColor: null,
+        backgroundOpacity: 1,
+      },
+      value: {
+        value: "24–27°C",
+        textColor: DEFAULT_STATS_TEXT_COLOR,
+        textOpacity: 1,
+        backgroundColor: null,
+        backgroundOpacity: 1,
+      },
+      description: {
+        value: "Peak summer swimming",
+        textColor: DEFAULT_STATS_TEXT_COLOR,
+        textOpacity: 1,
+        backgroundColor: null,
+        backgroundOpacity: 1,
+      },
+    },
+    {
+      label: {
+        value: "Best Access",
+        textColor: DEFAULT_STATS_TEXT_COLOR,
+        textOpacity: 1,
+        backgroundColor: null,
+        backgroundOpacity: 1,
+      },
+      value: {
+        value: "Vlorë / Sarandë",
+        textColor: DEFAULT_STATS_TEXT_COLOR,
+        textOpacity: 1,
+        backgroundColor: null,
+        backgroundOpacity: 1,
+      },
+      description: {
+        value: "Coastal highway or ferry",
+        textColor: DEFAULT_STATS_TEXT_COLOR,
+        textOpacity: 1,
+        backgroundColor: null,
+        backgroundOpacity: 1,
+      },
+    },
+    {
+      label: {
+        value: "Beach Season",
+        textColor: DEFAULT_STATS_TEXT_COLOR,
+        textOpacity: 1,
+        backgroundColor: null,
+        backgroundOpacity: 1,
+      },
+      value: {
+        value: "May – Oct",
+        textColor: DEFAULT_STATS_TEXT_COLOR,
+        textOpacity: 1,
+        backgroundColor: null,
+        backgroundOpacity: 1,
+      },
+      description: {
+        value: "Peak window: Jun–Sep",
+        textColor: DEFAULT_STATS_TEXT_COLOR,
+        textOpacity: 1,
+        backgroundColor: null,
+        backgroundOpacity: 1,
+      },
+    },
+    {
+      label: {
+        value: "Currency",
+        textColor: DEFAULT_STATS_TEXT_COLOR,
+        textOpacity: 1,
+        backgroundColor: null,
+        backgroundOpacity: 1,
+      },
+      value: {
+        value: "Albanian Lek / EUR",
+        textColor: DEFAULT_STATS_TEXT_COLOR,
+        textOpacity: 1,
+        backgroundColor: null,
+        backgroundOpacity: 1,
+      },
+      description: {
+        value: "Cards accepted in towns",
+        textColor: DEFAULT_STATS_TEXT_COLOR,
+        textOpacity: 1,
+        backgroundColor: null,
+        backgroundOpacity: 1,
+      },
+    },
   ],
   backgroundMultimedia: {
     show: "color",

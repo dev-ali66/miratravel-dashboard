@@ -2480,6 +2480,102 @@ Reference: [`docs/MEDIA_MANAGEMENT_ROADMAP.md`](file:///c:/Users/aalia/OneDrive/
 - **Verification**:
   - Dashboard Production Build: `npm run build` (`tsc -b && vite build`) ➔ **PASSED with 0 errors (Exit code 0, ✓ 3,180 modules transformed in 3.74s)**.
 
+### 50. Location Statistics Data Synchronization & `items` Harmonization [COMPLETED]
+- **User Directive**:
+  - *"show korse na ... jokhon console kortesi, console e ei data ta jacche na ... hardcoded data theke jacche ... facts ar items dutai eki jinish ... shudhu items ta thakley hobe"*
+  - Fix the Location Statistics form where user edits (e.g. changing stat value to "220 km") were not propagating to the API payload / console output and hardcoded default values remained.
+  - Harmonize `facts` and `items` so only `items` remains in the final normalized `statistics` payload without duplicate `facts` arrays.
+- **Root Cause Identified**:
+  - `StatsForm.tsx` was dispatching updates to `stats.${fieldPath}` (`stats.items`), whereas the Prisma database model, backend routes, and Location schema store data under `statistics`.
+  - In `useLocationPage.ts`, `resolvedLocation` did not explicitly resolve `statistics`, leaving `draft.statistics` populated from backend while `draft.stats` held form updates.
+  - In `normalizeLocationPayload.ts`, `statsData` checked `safeDraft.statistics ?? safeDraft.stats`, causing unedited backend `statistics` to overshadow user changes made in `safeDraft.stats`.
+  - In `normalizeStats.ts`, normalized items were written to `facts`, while `...safeStats` also spread `items`, producing duplicate `facts` and `items` in the console/API payload.
+- **Implementation**:
+  - **[`StatsForm.tsx`](file:///c:/Users/aalia/OneDrive/Desktop/Poli%20Full%20stack/dashboard/src/components/pages/Location/sections/stats/StatsForm.tsx)**:
+    - Updated `updateStatsField` to write directly to `statistics.${fieldPath}`.
+    - Updated form field names to `statistics.title`, `statistics.items.${index}.*`, and `statistics.backgroundMultimedia`.
+    - Harmonized internal state and array mutations to operate on `items`.
+  - **[`normalizeStats.ts`](file:///c:/Users/aalia/OneDrive/Desktop/Poli%20Full%20stack/dashboard/src/components/pages/Location/sections/stats/normalizeStats.ts)**:
+    - Prioritized `safeStats.items` over `safeStats.facts`.
+    - Stored normalized items under `items: normalizedItems`.
+    - Explicitly stripped legacy `facts` property (`delete normalizedStatistics.facts`) so only `items` is retained.
+  - **[`StatsPreview.tsx`](file:///c:/Users/aalia/OneDrive/Desktop/Poli%20Full%20stack/dashboard/src/components/pages/Location/sections/stats/StatsPreview.tsx)**:
+    - Prioritized `draft.statistics` and `statsData.items`.
+    - Mapped over `items` array directly.
+  - **[`emptyLocation.ts`](file:///c:/Users/aalia/OneDrive/Desktop/Poli%20Full%20stack/dashboard/src/components/pages/Location/shared/emptyLocation.ts)**:
+    - Standardized default property to `statistics: emptyStats` (aligning with `LocationData` interface).
+  - **[`useLocationPage.ts`](file:///c:/Users/aalia/OneDrive/Desktop/Poli%20Full%20stack/dashboard/src/hooks/location/useLocationPage.ts)**:
+    - Explicitly resolved `statistics: location.statistics ?? location.stats ?? location.data?.statistics ?? location.data?.stats ?? emptyLocation.statistics`.
+  - **[`normalizeLocationPayload.ts`](file:///c:/Users/aalia/OneDrive/Desktop/Poli%20Full%20stack/dashboard/src/components/pages/Location/shared/normalizeLocationPayload.ts)**:
+    - Safely merged `safeDraft.stats` and `safeDraft.statistics` so no edits are lost regardless of legacy draft state.
+- **Verification**:
+  - Dashboard TypeCheck: `npx tsc --noEmit` in `dashboard/` ➔ **PASSED with 0 errors (Exit code 0)**.
+  - Backend TypeCheck: `npx tsc --noEmit` in `mira_backend_v1/` ➔ **PASSED with 0 errors (Exit code 0, Rule 1 compliant)**.
+
+### 51. Location Seasonal Highlights & Child Regions Array/Object Resolution [COMPLETED]
+- **User Directive**:
+  - *"ekhane all thik that ache but i think result array hisebe astese but khujar try kortese object thats why problem kortese"*
+  - In Location CMS Section "03. Seasonal Highlights & Regions", highlighted items (child regions) were showing fallback placeholder names ("Region 3", "Region 4", "Region 1") and empty images ("No image uploaded yet") in the Live Preview, while in the form editor raw truncated IDs were displayed.
+- **Root Causes Identified**:
+  1. *Backend Array Return*: Queries to `GET /locations?id=...` return `{ success: true, data: [ ... ] }` where `data` is an array. When fetching by ID, callers attempting direct object property access (`res.data.name`) failed if unwrapping was not performed.
+  2. *Missing Relation in Prisma*: `getLocationService` previously fetched location records without including `children`. With over 160 locations in the database, `GET /locations?limit=100` did not contain all child regions.
+- **Implementation**:
+  - **[`location.service.ts`](file:///c:/Users/aalia/OneDrive/Desktop/Poli%20Full%20stack/mira_backend_v1/src/modules/location/location.service.ts)**:
+    - Added `children` relation to `include` in `getLocationService` selecting child `id`, `name`, `slug`, `type`, `hero`, `card`, `essence`, `why`, and `parent`.
+  - **[`useLocationPage.ts`](file:///c:/Users/aalia/OneDrive/Desktop/Poli%20Full%20stack/dashboard/src/hooks/location/useLocationPage.ts)**:
+    - Added `children: location.children ?? location.data?.children ?? []` to `resolvedLocation`.
+  - **[`HighlightsForm.tsx`](file:///c:/Users/aalia/OneDrive/Desktop/Poli%20Full%20stack/dashboard/src/components/pages/Location/sections/highlights/HighlightsForm.tsx)**:
+    - Added `<HighlightLocationRow>` subcomponent with dual-resolution: checks `draft.children`, `availableLocations`, and `useGetLocationById(id)`.
+    - Implemented safe unwrapping: `const locData = Array.isArray(inner) ? inner[0] : inner` to cleanly handle both array and object responses.
+  - **[`HighlightsPreview.tsx`](file:///c:/Users/aalia/OneDrive/Desktop/Poli%20Full%20stack/dashboard/src/components/pages/Location/sections/highlights/HighlightsPreview.tsx)**:
+    - Added `<HighlightMarqueeCard>` subcomponent with safe `Array.isArray(inner) ? inner[0] : inner` unwrapping.
+    - Extracted real region names, country labels, and hero/card images seamlessly.
+- **Verification**:
+  - Dashboard TypeCheck: `npx tsc --noEmit` in `dashboard/` ➔ **PASSED with 0 errors (Exit code 0)**.
+  - Backend TypeCheck: `npx tsc --noEmit` in `mira_backend_v1/` ➔ **PASSED with 0 errors (Exit code 0, Rule 1 compliant)**.
+
+### 52. Location Statistics Default Text Color (`#182D09`) & Items Media Field Elimination [COMPLETED]
+- **User Directive**:
+  - *"stats er default loading a textColor #182D09 and inside items er vitor object gulote icon, image,media field lagbena"*
+  - In Location CMS Section "04. Location Statistics", ensure default loading sets `textColor` to `#182D09` across title and items.
+  - Inside `items`, eliminate all extraneous `icon`, `image`, and `media` (or `multimedia`) fields so each stat item strictly contains only `{ label, value, description }`.
+- **Implementation**:
+  - **[`emptyStats.ts`](file:///c:/Users/aalia/OneDrive/Desktop/Poli%20Full%20stack/dashboard/src/components/pages/Location/sections/stats/emptyStats.ts)**:
+    - Exported canonical constant `DEFAULT_STATS_TEXT_COLOR = "#182D09"`.
+    - Standardized `title` and all 6 default items (`Coastline`, `Sunshine`, `Water Temp`, `Best Access`, `Beach Season`, `Currency`) to canonical styled objects with `textColor: DEFAULT_STATS_TEXT_COLOR` (`#182D09`).
+    - Excluded all `icon`, `image`, and `media` keys from item definitions.
+  - **[`normalizeStats.ts`](file:///c:/Users/aalia/OneDrive/Desktop/Poli%20Full%20stack/dashboard/src/components/pages/Location/sections/stats/normalizeStats.ts)**:
+    - Set default color fallback to `DEFAULT_STATS_TEXT_COLOR` (`#182D09`) across `title`, `item.label`, `item.value`, and `item.description`.
+    - Explicitly deleted `image`, `icon`, `media`, and `multimedia` properties from each normalized item object.
+  - **[`StatsForm.tsx`](file:///c:/Users/aalia/OneDrive/Desktop/Poli%20Full%20stack/dashboard/src/components/pages/Location/sections/stats/StatsForm.tsx)**:
+    - In `addStatItem`, initialized new stat items with `textColor: DEFAULT_STATS_TEXT_COLOR` (`#182D09`) for `label`, `value`, and `description`.
+  - **[`StatsPreview.tsx`](file:///c:/Users/aalia/OneDrive/Desktop/Poli%20Full%20stack/dashboard/src/components/pages/Location/sections/stats/StatsPreview.tsx)**:
+    - Updated fallback color for `DynamicStyledTextPreview` across `label`, `value`, and `description` to `DEFAULT_STATS_TEXT_COLOR` (`#182D09`).
+- **Verification**:
+  - Dashboard TypeCheck: `npx tsc --noEmit` in `dashboard/` ➔ **PASSED with 0 errors (Exit code 0)**.
+  - Backend TypeCheck: `npx tsc --noEmit` in `mira_backend_v1/` ➔ **PASSED with 0 errors (Exit code 0, Rule 1 compliant)**.
+
+### 53. Location Region Experiences Focused Schema & Dynamic Metadata Resolution [COMPLETED]
+- **User Directive**:
+  - In `regionExperiences.items`, eliminate static duplicated location snapshots: `backgroundMultimedia`, `imageMultimedia`, `buttons`, `tag`, `quote`, `locationName`, and `badgeText`.
+  - Retain strictly 4 focused fields per item: `{ id, title, subtitle, description }`.
+  - In Preview and Form UI, dynamically resolve live location image (`hero.backgroundMultimedia` / `card.background_image`), location type badge (`type`), name, and explore button link (`/destinations/${slug}`) by `id`.
+  - In all fetch operations, safely unwrap array vs object responses (`const locData = Array.isArray(inner) ? inner[0] : inner`).
+- **Implementation**:
+  - **[`normalizeRegionExperiences.ts`](file:///c:/Users/aalia/OneDrive/Desktop/Poli%20Full%20stack/dashboard/src/components/pages/Location/sections/region-experiences/normalizeRegionExperiences.ts)**:
+    - Normalizes each item to strictly contain `{ id, title, subtitle, description }`.
+    - Explicitly strips `imageMultimedia`, `backgroundMultimedia`, `buttons`, `button`, `tag`, `category`, `quote`, `locationName`, `badgeText`, and redundant style objects.
+  - **[`RegionExperiencesPreview.tsx`](file:///c:/Users/aalia/OneDrive/Desktop/Poli%20Full%20stack/dashboard/src/components/pages/Location/sections/region-experiences/RegionExperiencesPreview.tsx)**:
+    - `<RegionActiveMediaFrame>` dynamically queries location by `activeRegion.id` with safe array unwrapping (`Array.isArray(inner) ? inner[0] : inner`) and reads live image and tag.
+    - `<RegionTabItem>` dynamically queries location for each tab to resolve destination metadata and fallbacks without displaying any buttons (button completely eliminated from preview per user directive).
+  - **[`RegionExperiencesForm.tsx`](file:///c:/Users/aalia/OneDrive/Desktop/Poli%20Full%20stack/dashboard/src/components/pages/Location/sections/region-experiences/RegionExperiencesForm.tsx)**:
+    - `<RegionExperienceRow>` dynamically looks up location by `item.id` with array unwrapping, showing live thumbnail, region name, and type badge in the card header.
+    - Expanded card form fields are strictly focused on `title`, `subtitle`, and `description`.
+    - Search add and child import actions only persist the 4 focused fields.
+- **Verification**:
+  - Dashboard TypeCheck: `npx tsc --noEmit` in `dashboard/` ➔ **PASSED with 0 errors (Exit code 0)**.
+  - Backend TypeCheck: `npx tsc --noEmit` in `mira_backend_v1/` ➔ **PASSED with 0 errors (Exit code 0, Rule 1 compliant)**.
+
 ### Track C: Frontend & User-Facing Web Application Integration
 1. **Frontend Repository Clean Synchronization (`frontend/`) [COMPLETED]**:
    - **User Directive**:

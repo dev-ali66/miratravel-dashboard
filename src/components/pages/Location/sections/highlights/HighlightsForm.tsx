@@ -22,6 +22,7 @@ import {
   useGetLocationPages,
   type LocationSearchItem,
 } from "@/hooks/location/useGetLocation"
+import { useGetLocationById } from "@/hooks/location/useGetLocationById"
 import { emptyLocation } from "../../shared/emptyLocation"
 
 export function HighlightsForm({
@@ -360,106 +361,144 @@ export function HighlightsForm({
           </div>
         ) : (
           <div className="space-y-2">
-            {itemIds.map((id, idx) => {
-              const loc =
-                availableLocations.find((l: any) => l.id === id || l.slug === id) ||
-                (draft?.children as any[])?.find((c: any) => c.id === id || c.slug === id)
-
-              const locationTitle = loc?.name || id
-              const locationType = loc?.type || "Location"
-              const locationParent = loc?.parent?.name || draft?.name || ""
-              const locationSlug = loc?.slug || id
-
-              const heroMedia = loc?.hero?.backgroundMultimedia
-              const previewImg =
-                heroMedia?.image?.url ||
-                loc?.hero?.image?.url ||
-                loc?.card?.background_image ||
-                ""
-
-              return (
-                <div
-                  key={`${id}-${idx}`}
-                  className="flex items-center justify-between gap-3 p-3 rounded-md border border-border/70 bg-card hover:border-border transition-all shadow-2xs"
-                >
-                  <div className="flex items-center gap-3 min-w-0 flex-1">
-                    <span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-sm bg-primary/10 text-primary text-[11px] font-bold">
-                      {(idx + 1).toString().padStart(2, "0")}
-                    </span>
-
-                    {/* Mini Thumbnail */}
-                    <div className="relative h-9 w-12 shrink-0 overflow-hidden rounded border border-border bg-muted">
-                      {previewImg ? (
-                        <img
-                          src={previewImg}
-                          alt={locationTitle}
-                          className="h-full w-full object-cover"
-                        />
-                      ) : (
-                        <div className="flex h-full w-full items-center justify-center text-[9px] text-muted-foreground">
-                          <MapPin className="h-4 w-4 opacity-40" />
-                        </div>
-                      )}
-                    </div>
-
-                    <div className="min-w-0 flex-1">
-                      <div className="flex items-center gap-2">
-                        <p className="text-xs font-semibold text-foreground truncate">
-                          {locationTitle}
-                        </p>
-                        <span className="shrink-0 rounded bg-primary/10 px-1.5 py-0.5 text-[9px] font-semibold text-primary uppercase">
-                          {locationType}
-                        </span>
-                      </div>
-                      <div className="flex items-center gap-2 text-[10px] text-muted-foreground mt-0.5">
-                        {locationParent && <span>In {locationParent}</span>}
-                        <span className="font-mono text-[9px] opacity-70">
-                          ID: {id}
-                        </span>
-                        {locationSlug && locationSlug !== id && (
-                          <span className="font-mono text-[9px] opacity-70">
-                            /{locationSlug}
-                          </span>
-                        )}
-                      </div>
-                    </div>
-                  </div>
-
-                  <div className="flex items-center gap-1">
-                    <button
-                      type="button"
-                      onClick={() => handleMoveItem(idx, "up")}
-                      disabled={idx === 0}
-                      className="rounded p-1 text-muted-foreground hover:bg-muted hover:text-foreground disabled:opacity-30 cursor-pointer"
-                      title="Move up"
-                    >
-                      <ChevronUp className="h-4 w-4" />
-                    </button>
-                    <button
-                      type="button"
-                      onClick={() => handleMoveItem(idx, "down")}
-                      disabled={idx === itemIds.length - 1}
-                      className="rounded p-1 text-muted-foreground hover:bg-muted hover:text-foreground disabled:opacity-30 cursor-pointer"
-                      title="Move down"
-                    >
-                      <ChevronDown className="h-4 w-4" />
-                    </button>
-                    <button
-                      type="button"
-                      onClick={() => handleDeleteItem(idx)}
-                      className="rounded p-1 text-destructive/80 hover:bg-destructive/10 hover:text-destructive cursor-pointer"
-                      title="Remove highlight"
-                    >
-                      <Trash2 className="h-4 w-4" />
-                    </button>
-                  </div>
-                </div>
-              )
-            })}
+            {itemIds.map((id, idx) => (
+              <HighlightLocationRow
+                key={`${id}-${idx}`}
+                id={id}
+                idx={idx}
+                isFirst={idx === 0}
+                isLast={idx === itemIds.length - 1}
+                draft={draft}
+                availableLocations={availableLocations}
+                onMove={handleMoveItem}
+                onDelete={handleDeleteItem}
+              />
+            ))}
           </div>
         )}
       </div>
     </FormSection>
+  )
+}
+
+function HighlightLocationRow({
+  id,
+  idx,
+  isFirst,
+  isLast,
+  draft,
+  availableLocations,
+  onMove,
+  onDelete,
+}: {
+  id: string
+  idx: number
+  isFirst: boolean
+  isLast: boolean
+  draft: any
+  availableLocations: any[]
+  onMove: (idx: number, dir: "up" | "down") => void
+  onDelete: (idx: number) => void
+}) {
+  const { data: rawData } = useGetLocationById(id)
+  const locData = rawData?.data !== undefined ? rawData.data : rawData
+  const fetchedLoc = Array.isArray(locData) ? locData[0] : locData
+
+  const loc =
+    (draft?.children as any[])?.find((c: any) => c.id === id || c.slug === id) ||
+    availableLocations.find((l: any) => l.id === id || l.slug === id) ||
+    fetchedLoc
+
+  const locationTitle = loc?.name || id
+  const locationType = loc?.type || "Location"
+  const locationParent = loc?.parent?.name || draft?.name || ""
+  const locationSlug = loc?.slug || id
+
+  const heroMedia = loc?.hero?.backgroundMultimedia
+  const previewImg =
+    heroMedia?.image?.url ||
+    loc?.hero?.image?.url ||
+    loc?.card?.background_image ||
+    loc?.essence?.imageMultimedia?.image?.url ||
+    ""
+
+  return (
+    <div
+      key={`${id}-${idx}`}
+      className="flex items-center justify-between gap-3 p-3 rounded-md border border-border/70 bg-card hover:border-border transition-all shadow-2xs"
+    >
+      <div className="flex items-center gap-3 min-w-0 flex-1">
+        <span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-sm bg-primary/10 text-primary text-[11px] font-bold">
+          {(idx + 1).toString().padStart(2, "0")}
+        </span>
+
+        {/* Mini Thumbnail */}
+        <div className="relative h-9 w-12 shrink-0 overflow-hidden rounded border border-border bg-muted">
+          {previewImg ? (
+            <img
+              src={previewImg}
+              alt={locationTitle}
+              className="h-full w-full object-cover"
+            />
+          ) : (
+            <div className="flex h-full w-full items-center justify-center text-[9px] text-muted-foreground">
+              <MapPin className="h-4 w-4 opacity-40" />
+            </div>
+          )}
+        </div>
+
+        <div className="min-w-0 flex-1">
+          <div className="flex items-center gap-2">
+            <p className="text-xs font-semibold text-foreground truncate">
+              {locationTitle}
+            </p>
+            <span className="shrink-0 rounded bg-primary/10 px-1.5 py-0.5 text-[9px] font-semibold text-primary uppercase">
+              {locationType}
+            </span>
+          </div>
+          <div className="flex items-center gap-2 text-[10px] text-muted-foreground mt-0.5">
+            {locationParent && <span>In {locationParent}</span>}
+            <span className="font-mono text-[9px] opacity-70">
+              ID: {id}
+            </span>
+            {locationSlug && locationSlug !== id && (
+              <span className="font-mono text-[9px] opacity-70">
+                /{locationSlug}
+              </span>
+            )}
+          </div>
+        </div>
+      </div>
+
+      <div className="flex items-center gap-1">
+        <button
+          type="button"
+          onClick={() => onMove(idx, "up")}
+          disabled={isFirst}
+          className="rounded p-1 text-muted-foreground hover:bg-muted hover:text-foreground disabled:opacity-30 cursor-pointer"
+          title="Move up"
+        >
+          <ChevronUp className="h-4 w-4" />
+        </button>
+        <button
+          type="button"
+          onClick={() => onMove(idx, "down")}
+          disabled={isLast}
+          className="rounded p-1 text-muted-foreground hover:bg-muted hover:text-foreground disabled:opacity-30 cursor-pointer"
+          title="Move down"
+        >
+          <ChevronDown className="h-4 w-4" />
+        </button>
+        <button
+          type="button"
+          onClick={() => onDelete(idx)}
+          className="rounded p-1 text-destructive/80 hover:bg-destructive/10 hover:text-destructive cursor-pointer"
+          title="Remove highlight"
+        >
+          <Trash2 className="h-4 w-4" />
+        </button>
+      </div>
+    </div>
   )
 }
 

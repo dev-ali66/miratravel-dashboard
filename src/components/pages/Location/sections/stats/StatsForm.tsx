@@ -1,25 +1,16 @@
-import { THEME_COLORS } from "@/config/theme"
 import { useState } from "react"
 import { ChevronDown, ChevronRight, ChevronUp, Plus, Trash2 } from "lucide-react"
 import { DynamicStyledField } from "@/components/pages/CMS/shared/FormControls"
 import { UniversalMultimediaForm } from "@/components/pages/CMS/shared/UniversalMultimediaForm"
 import { FormSection } from "../../shared/fields"
 import type { LocationFormSectionProps } from "../../config/locationSections"
+import { emptyStats, DEFAULT_STATS_TEXT_COLOR } from "./emptyStats"
 
 export type StatItem = {
   label: any
   value: any
   description: any
 }
-
-const defaultFacts: StatItem[] = [
-  { label: "Coastline", value: "170 km", description: "Ionian & Adriatic coastline" },
-  { label: "Sunshine", value: "300+ Days", description: "Mediterranean sunshine annually" },
-  { label: "Water Temp", value: "24–27°C", description: "Peak summer swimming" },
-  { label: "Best Access", value: "Vlorë / Sarandë", description: "Coastal highway or ferry" },
-  { label: "Beach Season", value: "May – Oct", description: "Peak window: Jun–Sep" },
-  { label: "Currency", value: "Albanian Lek / EUR", description: "Cards accepted in towns" },
-]
 
 export function StatsForm({
   draft,
@@ -30,16 +21,23 @@ export function StatsForm({
 }: LocationFormSectionProps) {
   const isOpen = Boolean(openSections["stats"])
 
-  // Support stats under stats.items, statistics.items, or legacy facts
+  // Support stats under statistics.items or stats.items (prioritize statistics)
   const statsData =
-    draft?.stats ||
     draft?.statistics ||
-    (draft as any)?.data?.stats ||
+    draft?.stats ||
     (draft as any)?.data?.statistics ||
+    (draft as any)?.data?.stats ||
     {}
 
-  const rawFacts = statsData.items || statsData.facts || (draft as any)?.data?.stats?.items || (draft as any)?.data?.stats?.facts || (draft as any)?.data?.statistics?.items || (draft as any)?.data?.statistics?.facts
-  const facts: StatItem[] = Array.isArray(rawFacts) && rawFacts.length > 0 ? rawFacts : defaultFacts
+  const rawItems =
+    statsData.items ||
+    statsData.facts ||
+    (draft as any)?.data?.statistics?.items ||
+    (draft as any)?.data?.statistics?.facts ||
+    (draft as any)?.data?.stats?.items ||
+    (draft as any)?.data?.stats?.facts
+  const items: StatItem[] =
+    Array.isArray(rawItems) && rawItems.length > 0 ? rawItems : (emptyStats.items as StatItem[])
 
   // State to manage individual collapsible cards (first item expanded by default)
   const [openItems, setOpenItems] = useState<Record<number, boolean>>({ 0: true })
@@ -52,7 +50,7 @@ export function StatsForm({
   }
 
   const expandAll = () => {
-    const allOpen = facts.reduce((acc, _, idx) => ({ ...acc, [idx]: true }), {})
+    const allOpen = items.reduce((acc, _, idx) => ({ ...acc, [idx]: true }), {})
     setOpenItems(allOpen)
   }
 
@@ -61,19 +59,19 @@ export function StatsForm({
   }
 
   const updateStatsField = (fieldPath: string, value: any) => {
-    updateField(`stats.${fieldPath}`, value)
+    updateField(`statistics.${fieldPath}`, value)
   }
 
-  const updateFactItem = (index: number, key: keyof StatItem, val: any) => {
-    const updated = facts.map((item, idx) => (idx === index ? { ...item, [key]: val } : item))
+  const updateStatItem = (index: number, key: keyof StatItem, val: any) => {
+    const updated = items.map((item, idx) => (idx === index ? { ...item, [key]: val } : item))
     updateStatsField("items", updated)
   }
 
-  const moveFactItem = (index: number, direction: "up" | "down") => {
+  const moveStatItem = (index: number, direction: "up" | "down") => {
     const targetIndex = direction === "up" ? index - 1 : index + 1
-    if (targetIndex < 0 || targetIndex >= facts.length) return
+    if (targetIndex < 0 || targetIndex >= items.length) return
 
-    const updated = [...facts]
+    const updated = [...items]
     const [moved] = updated.splice(index, 1)
     updated.splice(targetIndex, 0, moved)
 
@@ -92,37 +90,37 @@ export function StatsForm({
     updateStatsField("items", updated)
   }
 
-  const addFactItem = () => {
+  const addStatItem = () => {
     const newItem: StatItem = {
       label: {
         value: "New Stat Label",
-        textColor: THEME_COLORS.primary,
+        textColor: DEFAULT_STATS_TEXT_COLOR,
         textOpacity: 1,
         backgroundColor: null,
         backgroundOpacity: 1,
       },
       value: {
         value: "100+",
-        textColor: THEME_COLORS.accent,
+        textColor: DEFAULT_STATS_TEXT_COLOR,
         textOpacity: 1,
         backgroundColor: null,
         backgroundOpacity: 1,
       },
       description: {
         value: "Description or sublabel",
-        textColor: THEME_COLORS.muted,
+        textColor: DEFAULT_STATS_TEXT_COLOR,
         textOpacity: 1,
         backgroundColor: null,
         backgroundOpacity: 1,
       },
     }
-    const updated = [...facts, newItem]
+    const updated = [...items, newItem]
     updateStatsField("items", updated)
     setOpenItems((prev) => ({ ...prev, [updated.length - 1]: true }))
   }
 
-  const removeFactItem = (index: number) => {
-    const updated = facts.filter((_, idx) => idx !== index)
+  const removeStatItem = (index: number) => {
+    const updated = items.filter((_, idx) => idx !== index)
     updateStatsField("items", updated)
 
     setOpenItems((prev) => {
@@ -148,7 +146,7 @@ export function StatsForm({
         <DynamicStyledField
           type="text"
           label="Section Title / Label"
-          fieldName="stats.title"
+          fieldName="statistics.title"
           placeholder="e.g. Key Regional Statistics"
           value={statsData.title || "Key Regional Statistics"}
           onChange={(val) => updateStatsField("title", val)}
@@ -159,7 +157,7 @@ export function StatsForm({
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-3">
               <h4 className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
-                Statistics & Key Facts ({facts.length})
+                Statistics & Key Facts ({items.length})
               </h4>
               <div className="flex items-center gap-1.5 text-[11px] text-muted-foreground">
                 <button
@@ -182,7 +180,7 @@ export function StatsForm({
 
             <button
               type="button"
-              onClick={addFactItem}
+              onClick={addStatItem}
               className="flex items-center gap-1 rounded-sm bg-primary/10 px-2.5 py-1 text-xs font-medium text-primary hover:bg-primary/20 cursor-pointer"
             >
               <Plus className="h-3.5 w-3.5" />
@@ -191,7 +189,7 @@ export function StatsForm({
           </div>
 
           <div className="flex flex-col gap-3.5">
-            {facts.map((item, index) => {
+            {items.map((item, index) => {
               const isItemOpen = Boolean(openItems[index])
               const itemLabelText =
                 typeof item.label === "object" ? item.label?.value : item.label
@@ -225,7 +223,7 @@ export function StatsForm({
                     <div className="flex shrink-0 items-center gap-1">
                       <button
                         type="button"
-                        onClick={() => moveFactItem(index, "up")}
+                        onClick={() => moveStatItem(index, "up")}
                         disabled={index === 0}
                         className="rounded p-1 text-muted-foreground hover:bg-muted hover:text-foreground disabled:opacity-30 disabled:cursor-not-allowed cursor-pointer"
                         title="Move Up in Array"
@@ -234,8 +232,8 @@ export function StatsForm({
                       </button>
                       <button
                         type="button"
-                        onClick={() => moveFactItem(index, "down")}
-                        disabled={index === facts.length - 1}
+                        onClick={() => moveStatItem(index, "down")}
+                        disabled={index === items.length - 1}
                         className="rounded p-1 text-muted-foreground hover:bg-muted hover:text-foreground disabled:opacity-30 disabled:cursor-not-allowed cursor-pointer"
                         title="Move Down in Array"
                       >
@@ -244,7 +242,7 @@ export function StatsForm({
                       <div className="mx-1 h-3.5 w-px bg-border/60" />
                       <button
                         type="button"
-                        onClick={() => removeFactItem(index)}
+                        onClick={() => removeStatItem(index)}
                         className="rounded p-1 text-muted-foreground hover:bg-destructive/10 hover:text-destructive cursor-pointer"
                         title="Remove item"
                       >
@@ -260,30 +258,30 @@ export function StatsForm({
                       <DynamicStyledField
                         type="text"
                         label="Label (e.g. Coastline)"
-                        fieldName={`stats.items.${index}.label`}
+                        fieldName={`statistics.items.${index}.label`}
                         placeholder="e.g. Coastline"
                         value={item.label}
-                        onChange={(val) => updateFactItem(index, "label", val)}
+                        onChange={(val) => updateStatItem(index, "label", val)}
                       />
 
                       {/* Value */}
                       <DynamicStyledField
                         type="text"
                         label="Value (e.g. 170 km)"
-                        fieldName={`stats.items.${index}.value`}
+                        fieldName={`statistics.items.${index}.value`}
                         placeholder="e.g. 170 km"
                         value={item.value}
-                        onChange={(val) => updateFactItem(index, "value", val)}
+                        onChange={(val) => updateStatItem(index, "value", val)}
                       />
 
                       {/* Description */}
                       <DynamicStyledField
                         type="text"
                         label="Description / Sublabel"
-                        fieldName={`stats.items.${index}.description`}
+                        fieldName={`statistics.items.${index}.description`}
                         placeholder="e.g. Ionian & Adriatic coastline"
                         value={item.description}
-                        onChange={(val) => updateFactItem(index, "description", val)}
+                        onChange={(val) => updateStatItem(index, "description", val)}
                       />
                     </div>
                   )}
@@ -296,18 +294,10 @@ export function StatsForm({
         {/* Section Background Multimedia */}
         <UniversalMultimediaForm
           title="Section Background Media / Color"
-          fieldName="stats.backgroundMultimedia"
+          fieldName="statistics.backgroundMultimedia"
           value={
-            statsData.backgroundMultimedia || {
-              show: "color",
-              color: {
-                color: THEME_COLORS.white,
-                opacity: 100,
-                width: "100%",
-                height: "100%",
-                aspectRatio: "auto",
-              },
-            }
+            statsData.backgroundMultimedia ||
+            emptyStats.backgroundMultimedia
           }
           onChange={(multimedia) => updateStatsField("backgroundMultimedia", multimedia)}
         />
