@@ -2609,6 +2609,9 @@ Reference: [`docs/MEDIA_MANAGEMENT_ROADMAP.md`](file:///c:/Users/aalia/OneDrive/
   - `DEFAULT_FORMAT`: `"webp"`.
   - `DEFAULT_FIT`: `"cover"`.
   - `CACHE_MAX_AGE_SECONDS`: 7,776,000 (3 months).
+  - `ALLOW_UPSCALE`: `true` (enables high-fidelity upscaling of smaller images to requested dimensions).
+  - `UPSCALE_KERNEL`: `"lanczos3"` (highest-grade mathematical anti-aliased interpolation).
+  - `ENABLE_SMART_SHARPEN`: `true` (unsharp mask filter to maintain crisp edges when upscaling).
 - **Core Implementation**:
   - **[`imageOptimizer.service.ts`](file:///c:/Users/aalia/OneDrive/Desktop/Poli%20Full%20stack/mira_backend_v1/src/modules/media/imageOptimizer.service.ts)**:
     - Parses `w`/`width`, `h`/`height`, `q`/`quality`, `fit`, `fmt`/`format`.
