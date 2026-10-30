@@ -2595,8 +2595,37 @@ Reference: [`docs/MEDIA_MANAGEMENT_ROADMAP.md`](file:///c:/Users/aalia/OneDrive/
     - Stored `keyExtractor` in a ref (`keyExtractorRef`) so inline selector arrow functions never trigger accumulation effects.
     - In `setAccumulatedItems`, added `prev === activeIncomingItems ? prev : activeIncomingItems` equality guard.
 - **Verification**:
-  - Dashboard: `npm run build` (`tsc -b && vite build`) passed with Code 0.
-  - Backend: `npx tsc --noEmit` in `mira_backend_v1/` passed with 0 errors (Exit code 0, Rule 1 compliant).
+  ### 55. High-Performance On-the-Fly Image Optimizer with Cloudflare Edge Caching [COMPLETED]
+- **Context & Architecture**:
+  - Implemented dynamic image resizing and optimization using `sharp` on the Node.js backend (`mira_backend_v1`) to dramatically reduce bandwidth consumption without saving redundant resized files to the VPS disk.
+  - The service operates directly in RAM and issues standard HTTP caching headers (`Cache-Control: public, max-age=7776000, immutable`), instructing Cloudflare Free CDN to cache the transformed WebP assets globally at the edge for 3 months.
+- **Adjustable Top-Level Configuration (`IMAGE_OPTIMIZER_CONFIG`)**:
+  - `MAX_ALLOWED_WIDTH`: 2048 (2K hard ceiling).
+  - `MAX_ALLOWED_HEIGHT`: 2048.
+  - `FALLBACK_CLAMP_WIDTH`: 1440 (clamping ceiling for excessive/malicious queries).
+  - `FALLBACK_CLAMP_HEIGHT`: 1440.
+  - `MIN_ALLOWED_DIMENSION`: 10.
+  - `DEFAULT_QUALITY`: 85 (range: 10 - 100).
+  - `DEFAULT_FORMAT`: `"webp"`.
+  - `DEFAULT_FIT`: `"cover"`.
+  - `CACHE_MAX_AGE_SECONDS`: 7,776,000 (3 months).
+- **Core Implementation**:
+  - **[`imageOptimizer.service.ts`](file:///c:/Users/aalia/OneDrive/Desktop/Poli%20Full%20stack/mira_backend_v1/src/modules/media/imageOptimizer.service.ts)**:
+    - Parses `w`/`width`, `h`/`height`, `q`/`quality`, `fit`, `fmt`/`format`.
+    - Automatically maintains aspect ratio if only width or only height is provided.
+    - Clamps excessive inputs (> 2048px) to 1440px.
+    - Middleware `imageOptimizationMiddleware`: intercepts `/uploads/*` and `/multimedia/uploads/*`. If resize queries exist, processes on the fly; if no query parameters exist, bypasses to `express.static` with zero overhead.
+    - API Endpoint `optimizeMediaRouteHandler`: mounted at `/api/v1/media/optimize?url=...&w=...`. Supports both local storage paths and remote/legacy Cloudinary URLs with automatic fetch & fallback redirect.
+  - **[`app.ts`](file:///c:/Users/aalia/OneDrive/Desktop/Poli%20Full%20stack/mira_backend_v1/app.ts)**:
+    - Attached `imageOptimizationMiddleware` directly into `staticUploadsMiddleware` before `express.static`.
+  - **[`media.routes.ts`](file:///c:/Users/aalia/OneDrive/Desktop/Poli%20Full%20stack/mira_backend_v1/src/modules/media/media.routes.ts)**:
+    - Registered `GET /api/v1/media/optimize` route.
+- **Verification**:
+  - Local HTTP curl test verified:
+    - `GET /uploads/about-balkan1.jpg?w=300` ➔ 200 OK, `image/webp`, `max-age=7776000`, 19.5 KB (down from 35.6 KB original JPEG).
+    - `GET /api/v1/media/optimize?url=/uploads/about-balkan1.jpg&w=250` ➔ 200 OK, `image/webp`, 13.8 KB.
+    - `GET /uploads/about-balkan1.jpg?w=10000` ➔ clamped to 1440px limit.
+  - Backend TypeCheck & Build: `npx tsc` ➔ **PASSED with 0 errors (Exit code 0)**.
 
 ### Track C: Frontend & User-Facing Web Application Integration
 1. **Frontend Repository Clean Synchronization (`frontend/`) [COMPLETED]**:
