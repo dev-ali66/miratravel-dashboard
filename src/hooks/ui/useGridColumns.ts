@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback, type RefObject } from "react"
+import { useState, useEffect, useCallback, useMemo, type RefObject } from "react"
 
 export interface ResponsiveColumnsConfig {
   base?: number  // < 48rem (768px) (Default: 1)
@@ -81,9 +81,33 @@ export function useGridColumns(
   config: ResponsiveColumnsConfig = DEFAULT_DASHBOARD_COLUMNS,
   containerRef?: RefObject<HTMLElement | null>
 ): number {
+  const {
+    base,
+    sm,
+    md,
+    lg,
+    lgx,
+    xlg,
+    mid,
+    xl,
+    "2xl": col2xl,
+  } = config
+
+  const memoizedConfig = useMemo<ResponsiveColumnsConfig>(() => ({
+    base,
+    sm,
+    md,
+    lg,
+    lgx,
+    xlg,
+    mid,
+    xl,
+    "2xl": col2xl,
+  }), [base, sm, md, lg, lgx, xlg, mid, xl, col2xl])
+
   const getActiveColumns = useCallback((): number => {
     if (typeof window === "undefined") {
-      return config.xl ?? config.lg ?? config.md ?? config.base ?? 6
+      return memoizedConfig.xl ?? memoizedConfig.lg ?? memoizedConfig.md ?? memoizedConfig.base ?? 6
     }
 
     // 1. Direct layout ground truth if container element is mounted
@@ -96,25 +120,28 @@ export function useGridColumns(
 
     // 2. CSS Breakpoint matching with exact index.css definitions
     for (const { key, query, pxFallback } of DASHBOARD_BREAKPOINT_QUERIES) {
-      if (config[key] !== undefined) {
+      if (memoizedConfig[key] !== undefined) {
         if (typeof window.matchMedia === "function") {
           if (window.matchMedia(query).matches) {
-            return config[key]!
+            return memoizedConfig[key]!
           }
         } else if (window.innerWidth >= pxFallback) {
-          return config[key]!
+          return memoizedConfig[key]!
         }
       }
     }
 
-    return config.base ?? 1
-  }, [config, containerRef])
+    return memoizedConfig.base ?? 1
+  }, [memoizedConfig, containerRef])
 
   const [columns, setColumns] = useState<number>(getActiveColumns)
 
   useEffect(() => {
-    // Initial sync
-    setColumns(getActiveColumns())
+    // Initial sync with functional equality check to prevent infinite re-renders
+    setColumns((prev) => {
+      const next = getActiveColumns()
+      return prev !== next ? next : prev
+    })
 
     const handleUpdate = () => {
       setColumns((prev) => {

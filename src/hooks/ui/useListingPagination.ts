@@ -29,6 +29,9 @@ export interface UseListingPaginationOptions<T = any> {
   filterKey?: string
 }
 
+const DEFAULT_KEY_EXTRACTOR = (item: any) => item?.id ?? item?._id
+const EMPTY_ITEMS: any[] = []
+
 export function useListingPagination<T = any>({
   mode: codeMode,
   initialMode = "infinite",
@@ -38,12 +41,29 @@ export function useListingPagination<T = any>({
   gridColumns,
   gridRef,
   isFetching,
-  incomingItems = [],
+  incomingItems = EMPTY_ITEMS,
   totalItems,
-  keyExtractor = (item: any) => item?.id ?? item?._id,
+  keyExtractor = DEFAULT_KEY_EXTRACTOR,
   filterKey = "",
 }: UseListingPaginationOptions<T> = {}) {
-  const effectiveColumnsConfig = gridColumns || columnsConfig || DEFAULT_DASHBOARD_COLUMNS
+  const rawConfig = gridColumns || columnsConfig
+  const effectiveColumnsConfig = useMemo(() => {
+    return rawConfig || DEFAULT_DASHBOARD_COLUMNS
+  }, [
+    rawConfig?.base,
+    rawConfig?.sm,
+    rawConfig?.md,
+    rawConfig?.lg,
+    rawConfig?.lgx,
+    rawConfig?.xlg,
+    rawConfig?.mid,
+    rawConfig?.xl,
+    rawConfig?.["2xl"],
+  ])
+
+  const keyExtractorRef = useRef(keyExtractor)
+  keyExtractorRef.current = keyExtractor
+
   const internalGridRef = useRef<HTMLDivElement | null>(null)
   const effectiveGridRef = gridRef || internalGridRef
 
@@ -127,17 +147,18 @@ export function useListingPagination<T = any>({
 
     setAccumulatedItems((prev) => {
       if (currentPage === 1) {
-        return activeIncomingItems
+        return prev === activeIncomingItems ? prev : activeIncomingItems
       }
 
-      // Deduplicate using keyExtractor
-      const existingKeys = new Set(prev.map(keyExtractor))
-      const newUnique = activeIncomingItems.filter((item) => !existingKeys.has(keyExtractor(item)))
+      // Deduplicate using keyExtractorRef to avoid render loop on inline functions
+      const extractor = keyExtractorRef.current
+      const existingKeys = new Set(prev.map(extractor))
+      const newUnique = activeIncomingItems.filter((item) => !existingKeys.has(extractor(item)))
 
       if (newUnique.length === 0) return prev
       return [...prev, ...newUnique]
     })
-  }, [activeIncomingItems, currentPage, mode, keyExtractor])
+  }, [activeIncomingItems, currentPage, mode])
 
   // Reset function
   const reset = useCallback(() => {

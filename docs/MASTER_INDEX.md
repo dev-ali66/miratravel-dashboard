@@ -2576,6 +2576,28 @@ Reference: [`docs/MEDIA_MANAGEMENT_ROADMAP.md`](file:///c:/Users/aalia/OneDrive/
   - Dashboard TypeCheck: `npx tsc --noEmit` in `dashboard/` ➔ **PASSED with 0 errors (Exit code 0)**.
   - Backend TypeCheck: `npx tsc --noEmit` in `mira_backend_v1/` ➔ **PASSED with 0 errors (Exit code 0, Rule 1 compliant)**.
 
+### 54. UI Grid Hooks Infinite Render Loop Fix (`useGridColumns.ts` & `useListingPagination.ts`) [COMPLETED]
+- **Issue**:
+  - Browser threw: `Maximum update depth exceeded. This can happen when a component calls setState inside useEffect, but useEffect either doesn't have a dependency array, or one of the dependencies changes on every render. at (anonymous) @ useGridColumns.ts:117`.
+- **Root Cause**:
+  1. Callers of `useListingPagination` (e.g. `Location/index.tsx`, `Stories/index.tsx`, `MediaLibraryPage.tsx`, etc.) pass object literals for `gridColumns: { base: 1, md: 3, lg: 5, xl: 6 }` and inline functions for `keyExtractor: (item) => item.id`.
+  2. Because object literals have a new memory reference on every render, `getActiveColumns` in `useGridColumns.ts` was recreated on every single render.
+  3. `useEffect` in `useGridColumns.ts` had `[getActiveColumns, containerRef]` in its dependency array, causing it to run on every render.
+  4. At line 117, `setColumns(getActiveColumns())` was called unconditionally on every effect run, scheduling a state update and causing an infinite re-render loop exceeding React's maximum update depth.
+  5. Similarly in `useListingPagination.ts`, inline `keyExtractor` functions triggered the accumulation `useEffect` continuously on every render.
+- **Resolution**:
+  - **[`useGridColumns.ts`](file:///c:/Users/aalia/OneDrive/Desktop/Poli%20Full%20stack/dashboard/src/hooks/ui/useGridColumns.ts)**:
+    - Destructured `config` into primitive breakpoint keys (`base`, `sm`, `md`, `lg`, `lgx`, `xlg`, `mid`, `xl`, `2xl`) and memoized with `useMemo` so `memoizedConfig` maintains referential equality across renders even when callers pass inline object literals.
+    - Updated `useEffect` line 117 to use a functional state update with equality check: `setColumns((prev) => { const next = getActiveColumns(); return prev !== next ? next : prev; })`. If `prev === next`, React immediately bails out with 0 re-renders.
+  - **[`useListingPagination.ts`](file:///c:/Users/aalia/OneDrive/Desktop/Poli%20Full%20stack/dashboard/src/hooks/ui/useListingPagination.ts)**:
+    - Defined `DEFAULT_KEY_EXTRACTOR` and `EMPTY_ITEMS` at module level to prevent default param reference instability.
+    - Memoized `effectiveColumnsConfig` based on primitive values of `rawConfig`.
+    - Stored `keyExtractor` in a ref (`keyExtractorRef`) so inline selector arrow functions never trigger accumulation effects.
+    - In `setAccumulatedItems`, added `prev === activeIncomingItems ? prev : activeIncomingItems` equality guard.
+- **Verification**:
+  - Dashboard: `npm run build` (`tsc -b && vite build`) passed with Code 0.
+  - Backend: `npx tsc --noEmit` in `mira_backend_v1/` passed with 0 errors (Exit code 0, Rule 1 compliant).
+
 ### Track C: Frontend & User-Facing Web Application Integration
 1. **Frontend Repository Clean Synchronization (`frontend/`) [COMPLETED]**:
    - **User Directive**:
