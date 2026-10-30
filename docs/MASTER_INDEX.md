@@ -2600,12 +2600,12 @@ Reference: [`docs/MEDIA_MANAGEMENT_ROADMAP.md`](file:///c:/Users/aalia/OneDrive/
   - Implemented dynamic image resizing and optimization using `sharp` on the Node.js backend (`mira_backend_v1`) to dramatically reduce bandwidth consumption without saving redundant resized files to the VPS disk.
   - The service operates directly in RAM and issues standard HTTP caching headers (`Cache-Control: public, max-age=7776000, immutable`), instructing Cloudflare Free CDN to cache the transformed WebP assets globally at the edge for 3 months.
 - **Adjustable Top-Level Configuration (`IMAGE_OPTIMIZER_CONFIG`)**:
-  - `MAX_ALLOWED_WIDTH`: 2048 (2K hard ceiling).
-  - `MAX_ALLOWED_HEIGHT`: 2048.
+  - `MAX_ALLOWED_WIDTH`: 3840 (4K hard ceiling).
+  - `MAX_ALLOWED_HEIGHT`: 3840 (4K hard ceiling).
   - `FALLBACK_CLAMP_WIDTH`: 1440 (clamping ceiling for excessive/malicious queries).
   - `FALLBACK_CLAMP_HEIGHT`: 1440.
   - `MIN_ALLOWED_DIMENSION`: 10.
-  - `DEFAULT_QUALITY`: 85 (range: 10 - 100).
+  - `DEFAULT_QUALITY`: 100 (100% full fidelity).
   - `DEFAULT_FORMAT`: `"webp"`.
   - `DEFAULT_FIT`: `"cover"`.
   - `CACHE_MAX_AGE_SECONDS`: 7,776,000 (3 months).
