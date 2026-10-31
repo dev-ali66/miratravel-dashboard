@@ -4,6 +4,7 @@ import { DynamicStyledTextPreview } from "@/components/pages/CMS/shared/DynamicS
 import { UniversalMultimediaPreview } from "@/components/pages/CMS/shared/UniversalMultimediaPreview"
 import { DynamicCmsButtonPreview } from "@/components/pages/CMS/shared/DynamicCmsButtonPreview"
 import { Calendar, MapPin, ArrowRight } from "lucide-react"
+import { getOptimizedImageUrl } from "@/lib/optimizedImage"
 
 export function SignatureJourneysPreview({ draft }: JourneyPreviewSectionProps) {
   if (!draft) return null
@@ -91,7 +92,7 @@ export function SignatureJourneysPreview({ draft }: JourneyPreviewSectionProps) 
             >
               <div className="relative h-60 w-full overflow-hidden bg-muted">
                 <img
-                  src={j.image}
+                  src={getOptimizedImageUrl(j.image, { width: 400, quality: 100 })}
                   alt={j.title}
                   className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
                 />

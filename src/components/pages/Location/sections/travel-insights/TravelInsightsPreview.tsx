@@ -5,6 +5,7 @@ import { UniversalMultimediaPreview } from "@/components/pages/CMS/Home/shared/p
 import type { LocationPreviewSectionProps } from "../../config/locationSections"
 import type { TravelInsightArticle } from "../../locationTypes"
 import { BookOpen, ImageIcon } from "lucide-react"
+import { getOptimizedImageUrl } from "@/lib/optimizedImage"
 
 export function TravelInsightsPreview({ draft }: LocationPreviewSectionProps) {
   const travelInsight =
@@ -165,7 +166,7 @@ export function TravelInsightsPreview({ draft }: LocationPreviewSectionProps) {
                             {thumbUrl ? (
                               <>
                                 <img
-                                  src={thumbUrl}
+                                  src={getOptimizedImageUrl(thumbUrl, { width: 112, quality: 100 })}
                                   alt=""
                                   loading="lazy"
                                   className="h-full w-full object-cover object-center transition-transform duration-500 ease-out group-hover:scale-110"
@@ -203,7 +204,7 @@ export function TravelInsightsPreview({ draft }: LocationPreviewSectionProps) {
                   {featuredImgUrl ? (
                     <div className="absolute inset-0 overflow-hidden">
                       <motion.img
-                        src={featuredImgUrl}
+                        src={getOptimizedImageUrl(featuredImgUrl, { width: 800, quality: 100 })}
                         alt={featuredImgAlt}
                         loading="lazy"
                         whileHover={{ scale: 1.05 }}

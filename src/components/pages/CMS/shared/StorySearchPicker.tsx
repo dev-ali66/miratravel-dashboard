@@ -1,6 +1,7 @@
 import { useState, useRef, useEffect } from "react"
 import { Search, X, BookOpen, Check, Loader2 } from "lucide-react"
 import { useGetStories } from "@/hooks/story/useGetStories"
+import { getOptimizedImageUrl, DASHBOARD_IMAGE_WIDTHS } from "@/lib/optimizedImage"
 
 export interface StorySearchPickerProps {
   label?: string
@@ -136,7 +137,7 @@ export function StorySearchPicker({
                     <div className="flex items-center gap-2.5 min-w-0 flex-1">
                       {coverImg ? (
                         <img
-                          src={coverImg}
+                          src={getOptimizedImageUrl(coverImg, { width: DASHBOARD_IMAGE_WIDTHS.STORY_PICKER_THUMBNAIL, quality: 100 })}
                           alt={story.title}
                           className="h-7 w-9 rounded object-cover border border-border/60 shrink-0"
                         />

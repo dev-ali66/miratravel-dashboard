@@ -1,6 +1,7 @@
 import { useRef } from "react"
 import { Camera, RotateCcw, UploadCloud } from "lucide-react"
 import { Button } from "@/components/ui/button"
+import { getOptimizedImageUrl, DASHBOARD_IMAGE_WIDTHS } from "@/lib/optimizedImage"
 
 interface ProfileAvatarCardProps {
   currentPhotoUrl: string | null
@@ -81,7 +82,7 @@ export function ProfileAvatarCard({
           <div className="relative size-36 sm:size-40 overflow-hidden rounded-full shadow-inner bg-muted">
             {activeImage ? (
               <img
-                src={activeImage}
+                src={getOptimizedImageUrl(activeImage, { width: DASHBOARD_IMAGE_WIDTHS.PROFILE_AVATAR, quality: 100 })}
                 alt="Profile Avatar"
                 className="size-full object-cover object-top transition-transform duration-300 group-hover:scale-105"
               />

@@ -31,6 +31,25 @@ The project consists of three main applications:
 
 ## Feature Implementation & Current Status
 
+### 0.10 Image & Video Resolution Audit & Optimizer Specification
+- **Comprehensive Resolution Audit & API Documentation**:
+  - Full dedicated documentation created in [`docs/IMAGE_OPTIMIZER_API.md`](file:///c:/Users/aalia/OneDrive/Desktop/Poli%20Full%20stack/docs/IMAGE_OPTIMIZER_API.md).
+  - Dedicated Frontend Developer Handover Guide created in [`docs/frontend/IMAGE_OPTIMIZATION_FRONTEND_GUIDE.md`](file:///c:/Users/aalia/OneDrive/Desktop/Poli%20Full%20stack/docs/frontend/IMAGE_OPTIMIZATION_FRONTEND_GUIDE.md).
+  - 106-Item Master Checklist & Progress Tracker created in [`docs/IMAGE_INTEGRATION_CHECKLIST.md`](file:///c:/Users/aalia/OneDrive/Desktop/Poli%20Full%20stack/docs/IMAGE_INTEGRATION_CHECKLIST.md).
+  - Cataloged all image and video resolutions, aspect ratios, and container dimensions used across the entire platform.
+  - Categorized into Dashboard (`dashboard/`) and Frontend (`frontend/`), ordered from smallest to largest for images, and highest/maximum to lowest/micro for videos.
+  - Documents on-the-fly resizing query parameters (`w`, `h`, `q`, `fmt`, `fit`), auto aspect-ratio preservation, clamping rules, and Edge CDN 3-month caching behaviors.
+  - Serves as the master blueprint for responsive image `srcset` breakpoints and video transcode specifications.
+
+### 0.9 Dynamic On-the-Fly Image Optimizer (Pure High-Speed Sharp Engine)
+- **Core Architecture & Goals**:
+  - High-performance, dynamic on-the-fly image optimization in `mira_backend_v1/` powered purely by **Sharp** (Lanczos3 interpolation).
+  - Zero permanent storage on VPS disk: All processing runs in ephemeral OS temp memory and streams directly to Cloudflare Free Edge CDN with a 3-month immutable cache header (`Cache-Control: public, max-age=7776000, immutable`).
+- **Core Verification & Behavioral Rules**:
+  1. **Genuine Image Rule (`/uploads/image.jpg`)**: When no query parameters are passed, the original file is served directly via `express.static` with zero CPU overhead.
+  2. **Fast On-The-Fly Resizing & Scaling**: When `w` or `h` is provided, Sharp resizes directly via Lanczos3 kernel (~5-15ms). If dimensions exceed original dimensions, it scales directly without heavy AI processing.
+  3. **Format Transcoding & Compression**: Converts on the fly to WebP or AVIF (70-80% payload reduction), with adjustable quality (`?q=...`) and fit (`?fit=cover|contain|fill|inside|outside`).
+
 ### 0.8 Searchable Story Picker (`StorySearchPicker`) for Home CMS & Location CMS
 - **Requirements & Specification**:
   - Replace the plain static HTML `<select>` dropdown (*"Select from Published Stories"*) in both Home Page CMS (`MiraStoriesForm.tsx`) and Location CMS (`LocationStoriesForm.tsx`) with an interactive, searchable combobox popover.

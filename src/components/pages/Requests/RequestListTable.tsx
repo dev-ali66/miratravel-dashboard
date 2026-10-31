@@ -15,6 +15,7 @@ import {
 import { useGetRequests } from "@/hooks/requests/useGetRequests"
 import { useUpdateRequestStatus } from "@/hooks/requests/useUpdateRequestStatus"
 import RequestDetailsModal from "./RequestDetailsModal"
+import { getOptimizedImageUrl, DASHBOARD_IMAGE_WIDTHS } from "@/lib/optimizedImage"
 
 export default function RequestListTable() {
   const [selectedUser, setSelectedUser] = useState<any | null>(null)
@@ -236,7 +237,7 @@ export default function RequestListTable() {
                         <div className="flex items-center gap-3">
                           <div className="relative h-9 w-9 overflow-hidden rounded-full ring-2 ring-transparent transition-all duration-300 group-hover:ring-primary/20">
                             <img
-                              src={avatar}
+                              src={getOptimizedImageUrl(avatar, { width: DASHBOARD_IMAGE_WIDTHS.REQUEST_AVATAR, quality: 100 })}
                               alt={name}
                               className="h-full w-full object-cover"
                             />

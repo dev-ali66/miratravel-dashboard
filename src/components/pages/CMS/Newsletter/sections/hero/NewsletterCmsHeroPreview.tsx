@@ -2,6 +2,7 @@ import { THEME_COLORS } from "@/config/theme"
 import { normalizeNewsletterCmsHero } from "./normalizeNewsletterCmsHero"
 import type { NewsletterCmsPayload } from "../../newsletterCmsTypes"
 import { Image as ImageIcon } from "lucide-react"
+import { getOptimizedImageUrl } from "@/lib/optimizedImage"
 
 export function NewsletterCmsHeroPreview({ draft }: { draft: NewsletterCmsPayload }) {
   const hero = normalizeNewsletterCmsHero(draft?.data?.hero || (draft as any)?.hero)
@@ -34,7 +35,7 @@ export function NewsletterCmsHeroPreview({ draft }: { draft: NewsletterCmsPayloa
             <div className="relative w-full aspect-[665/581] max-h-[500px] overflow-hidden rounded-sm shadow-sm bg-muted flex items-center justify-center">
               {imageUrl ? (
                 <img
-                  src={imageUrl}
+                  src={getOptimizedImageUrl(imageUrl, { width: 600, quality: 100 })}
                   alt="Newsletter expedition showcase"
                   className="w-full h-full object-cover"
                 />

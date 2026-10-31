@@ -11,6 +11,7 @@ import { UniversalMultimediaPreview } from "../pages/CMS/Home/shared/preview/Uni
 import { ThemeToggle } from "@/components/ThemeToggle"
 import { LogoutModal } from "./LogoutModal"
 import { ActiveDevicesModal } from "./ActiveDevicesModal"
+import { getOptimizedImageUrl, DASHBOARD_IMAGE_WIDTHS } from "@/lib/optimizedImage"
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -137,7 +138,7 @@ export const NavbarBrandLogo = () => {
         className="inline-flex items-center h-full max-h-14 py-0.5 transition-opacity hover:opacity-90 shrink-0"
       >
         <img
-          src={mediaUrl}
+          src={getOptimizedImageUrl(mediaUrl, { width: DASHBOARD_IMAGE_WIDTHS.NAVBAR_LOGO, quality: 100 })}
           alt={brandName}
           className="h-full w-auto max-h-14 max-w-[320px] object-contain object-left select-none pointer-events-none"
           style={{ opacity: isNaN(safeOpacity) ? 1 : safeOpacity }}
@@ -242,7 +243,7 @@ export function Navbar({ onMenuClick }: NavbarProps) {
                   {/* Clean circular profile avatar */}
                   <div className="relative h-10 w-10 shrink-0 overflow-hidden rounded-full ring-2 ring-primary/20 group-hover:ring-primary/40 transition-all shadow-xs">
                     <img
-                      src={profileImage}
+                      src={getOptimizedImageUrl(profileImage, { width: DASHBOARD_IMAGE_WIDTHS.NAVBAR_AVATAR, quality: 100 })}
                       alt={profileName}
                       className="h-full w-full object-cover scale-105"
                     />
@@ -285,7 +286,7 @@ export function Navbar({ onMenuClick }: NavbarProps) {
                   <div className="flex items-center gap-3">
                     <div className="relative h-10 w-10 shrink-0 overflow-hidden rounded-full ring-2 ring-primary/20 shadow-xs">
                       <img
-                        src={profileImage}
+                        src={getOptimizedImageUrl(profileImage, { width: DASHBOARD_IMAGE_WIDTHS.NAVBAR_AVATAR, quality: 100 })}
                         alt={profileName}
                         className="h-full w-full object-cover"
                       />

@@ -4,6 +4,7 @@ import { DynamicStyledTextPreview } from "@/components/pages/CMS/shared/DynamicS
 import { UniversalMultimediaPreview } from "@/components/pages/CMS/shared/UniversalMultimediaPreview"
 import { DynamicCmsButtonPreview } from "@/components/pages/CMS/shared/DynamicCmsButtonPreview"
 import { useGetJourneys } from "@/hooks/journey/useGetJourneys"
+import { getOptimizedImageUrl } from "@/lib/optimizedImage"
 
 export function JourneyCmsSignatureJourneysPreview({ draft }: JourneyCmsPreviewSectionProps) {
   if (!draft) return null
@@ -132,7 +133,7 @@ export function JourneyCmsSignatureJourneysPreview({ draft }: JourneyCmsPreviewS
             <div className="group relative isolate lg:col-span-7 flex flex-col justify-end min-h-[320px] md:min-h-[370px] lg:min-h-[400px] rounded-[4px] overflow-hidden shadow-sm">
               <div className="absolute inset-0 size-full overflow-hidden">
                 <img
-                  src={mainItem.image}
+                  src={getOptimizedImageUrl(mainItem.image, { width: 720, quality: 100 })}
                   alt={mainItem.title}
                   className="h-full w-full object-cover transition-transform duration-700 group-hover:scale-105"
                 />
@@ -179,7 +180,7 @@ export function JourneyCmsSignatureJourneysPreview({ draft }: JourneyCmsPreviewS
                 >
                   <div className="absolute inset-0 size-full overflow-hidden">
                     <img
-                      src={item.image}
+                      src={getOptimizedImageUrl(item.image, { width: 500, quality: 100 })}
                       alt={item.title}
                       className="h-full w-full object-cover transition-transform duration-700 group-hover:scale-105"
                     />

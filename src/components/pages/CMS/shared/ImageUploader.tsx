@@ -4,6 +4,7 @@ import { ImagePlus, Loader2, Trash2 } from "lucide-react"
 import { uploadFile } from "@/services/fileUpload"
 
 import { cn } from "@/lib/utils"
+import { getOptimizedImageUrl, DASHBOARD_IMAGE_WIDTHS } from "@/lib/optimizedImage"
 
 interface ImageUploaderProps {
   value?: string
@@ -70,7 +71,7 @@ export function ImageUploader({
         <div className="group relative">
           <div className="aspect-video overflow-hidden rounded-lg border bg-muted">
             <img
-              src={value}
+              src={getOptimizedImageUrl(value, { width: DASHBOARD_IMAGE_WIDTHS.FORM_PREVIEW, quality: 100 })}
               alt={label}
               className="h-full w-full object-cover"
             />

@@ -2,6 +2,7 @@ import type { LocationPreviewSectionProps } from "../../config/locationSections"
 import { DynamicStyledTextPreview } from "@/components/pages/CMS/shared/DynamicStyledTextPreview"
 import { DynamicCmsButtonPreview } from "@/components/pages/CMS/shared/DynamicCmsButtonPreview"
 import { UniversalMultimediaPreview } from "@/components/pages/CMS/shared/UniversalMultimediaPreview"
+import { getOptimizedImageUrl } from "@/lib/optimizedImage"
 
 export function DestinationCtaPreview({ draft }: LocationPreviewSectionProps) {
   const ctaData =
@@ -68,7 +69,7 @@ export function DestinationCtaPreview({ draft }: LocationPreviewSectionProps) {
             <div className="pointer-events-none absolute right-[-80px] @md:right-[-130px] @lg:right-[-140px] @xl:right-[-142px] top-[-100px] @sm:top-[-150px] @md:top-[-200px] @xl:top-[-260px] w-[500px] @sm:w-[650px] @md:w-[780px] @lg:w-[880px] @xl:w-[947px] h-[516px] @sm:h-[671px] @md:h-[805px] @lg:h-[908px] @xl:h-[978px] opacity-40 z-0">
               {motifMedia && (motifMedia?.image?.url || motifMedia?.url) ? (
                 <img
-                  src={motifMedia?.image?.url || motifMedia?.url}
+                  src={getOptimizedImageUrl(motifMedia?.image?.url || motifMedia?.url, { width: 960, quality: 100 })}
                   alt={motifMedia?.image?.alt || motifMedia?.alt || ""}
                   aria-hidden="true"
                   className="w-full h-full object-contain object-right"

@@ -1,6 +1,7 @@
 import { THEME_COLORS } from "@/config/theme"
 import { cn } from "@/lib/utils"
 import { Image as ImageIcon } from "lucide-react"
+import { getOptimizedImageUrl, DASHBOARD_IMAGE_WIDTHS } from "@/lib/optimizedImage"
 
 export interface ImageShowPreviewProps {
   src: string
@@ -13,6 +14,7 @@ export interface ImageShowPreviewProps {
   overlayOpacity?: number
   fit?: "cover" | "contain" | "fill" | "none" | "scale-down"
   aspectRatio?: string
+  targetWidth?: number
 }
 
 export function ImageShowPreview({
@@ -26,6 +28,7 @@ export function ImageShowPreview({
   overlayOpacity = 0,
   fit = "cover",
   aspectRatio,
+  targetWidth,
 }: ImageShowPreviewProps) {
   const fitClass =
     fit === "contain"
@@ -43,6 +46,9 @@ export function ImageShowPreview({
 
   const safeOpacity = opacity > 0 && opacity <= 1 ? opacity * 100 : opacity
 
+  const resolvedWidth = targetWidth || (mode === "background" ? 1440 : DASHBOARD_IMAGE_WIDTHS.LIVE_PREVIEW_PANE)
+  const optimizedSrc = src ? getOptimizedImageUrl(src, { width: resolvedWidth, quality: 100 }) : ""
+
   return (
     <div
       className={cn(
@@ -57,7 +63,7 @@ export function ImageShowPreview({
     >
       {src ? (
         <img
-          src={src}
+          src={optimizedSrc}
           alt={alt}
           className={cn("h-full w-full", fitClass)}
           style={{

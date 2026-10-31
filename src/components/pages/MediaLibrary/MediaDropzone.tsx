@@ -68,6 +68,15 @@ export const MediaDropzone: React.FC<MediaDropzoneProps> = ({
   const handleFiles = async (files: File[]) => {
     if (files.length === 0) return
 
+    // Requirement 7: Client-side safeguard against images exceeding 30MB
+    const MAX_IMAGE_SIZE = 30 * 1024 * 1024
+    for (const f of files) {
+      if (f.type.startsWith("image/") && f.size > MAX_IMAGE_SIZE) {
+        toast.error(`"${f.name}" (${(f.size / (1024 * 1024)).toFixed(1)}MB) exceeds the 30MB maximum image upload limit.`)
+        return
+      }
+    }
+
     setIsUploading(true)
     setUploadProgress(0)
     setCurrentFileName(files[0]?.name || "Preparing...")
@@ -145,7 +154,7 @@ export const MediaDropzone: React.FC<MediaDropzoneProps> = ({
           </div>
           <h2 className="text-2xl font-bold text-foreground">Drop files anywhere to upload</h2>
           <p className="text-sm text-muted-foreground mt-2 max-w-md text-center">
-            Images and videos will be instantly verified with client-side SHA-256 deduplication and added to your central library.
+            Images (max 30MB) and videos (max 200MB) will be instantly verified with client-side SHA-256 deduplication and added to your central library.
           </p>
         </div>
       )}

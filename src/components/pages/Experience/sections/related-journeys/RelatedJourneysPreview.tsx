@@ -1,5 +1,6 @@
 import { Compass, ArrowRight } from "lucide-react"
 import type { ExperiencePreviewSectionProps } from "../../config/experienceSections"
+import { getOptimizedImageUrl } from "@/lib/optimizedImage"
 
 export function RelatedJourneysPreview({ draft }: ExperiencePreviewSectionProps) {
   const journeys = Array.isArray(draft?.journeys) ? draft.journeys : []
@@ -39,7 +40,7 @@ export function RelatedJourneysPreview({ draft }: ExperiencePreviewSectionProps)
                 <div className="relative h-44 w-full overflow-hidden bg-muted">
                   {thumb ? (
                     <img
-                      src={thumb}
+                      src={getOptimizedImageUrl(thumb, { width: 400, quality: 100 })}
                       alt={title}
                       className="h-full w-full object-cover group-hover:scale-105 transition-transform duration-500"
                     />

@@ -18,6 +18,7 @@ import { FormSection } from "../../shared/fields"
 import type { LocationFormSectionProps } from "../../config/locationSections"
 import type { RegionExperienceItemData } from "../../locationTypes"
 import { useSearchLocations, type LocationSearchItem } from "@/hooks/location/useGetLocation"
+import { getOptimizedImageUrl } from "@/lib/optimizedImage"
 import { useGetLocationById } from "@/hooks/location/useGetLocationById"
 import { emptyLocation } from "../../shared/emptyLocation"
 import { getSafeStringValue } from "../../shared/normalizeHelpers"
@@ -88,7 +89,7 @@ function RegionExperienceRow({
           <div className="relative h-11 w-11 shrink-0 overflow-hidden rounded border border-border bg-muted">
             {imgUrl ? (
               <img
-                src={imgUrl}
+                src={getOptimizedImageUrl(imgUrl, { width: 88, quality: 100 })}
                 alt={itemTitle}
                 className="h-full w-full object-cover"
               />
@@ -540,7 +541,7 @@ export function RegionExperiencesForm({
                           <div className="relative h-8 w-8 shrink-0 overflow-hidden rounded border border-border bg-muted">
                             {imgUrl ? (
                               <img
-                                src={imgUrl}
+                                src={getOptimizedImageUrl(imgUrl, { width: 64, quality: 100 })}
                                 alt={loc.name}
                                 className="h-full w-full object-cover"
                               />

@@ -57,3 +57,10 @@ All project documentation has been organized into the `docs/` folder to keep the
 ## 5. Universal SEO Form: `SeoForm`
 - **Location**: `src/components/pages/CMS/shared/SeoForm.tsx`
 - **Rule**: The SEO section at the bottom of forms **ALWAYS uses the universal `SeoForm`** from `CMS/shared/SeoForm`. Do not write standalone, custom SEO forms.
+
+---
+
+## 6. Strict Explicit Git Push Rule
+- **NEVER** run `git push` or auto-deploy code changes on your own.
+- **ONLY** execute `git push` when the user **EXPLICITLY** instructs to push (e.g. *"git push"*, *"push kore dao"*, *"push to main"*) in that exact message.
+- Even if a previous prompt asked to push, any subsequent changes, bug fixes, or edits must **STAY LOCAL** until the user explicitly asks to push again.

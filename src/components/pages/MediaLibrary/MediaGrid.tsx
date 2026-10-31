@@ -4,6 +4,7 @@ import { Badge } from "@/components/ui/badge"
 import { Play, Image as ImageIcon, CheckCircle2, AlertCircle } from "lucide-react"
 import { cn } from "@/lib/utils"
 import type { MediaAsset } from "@/services/mediaService"
+import { getOptimizedImageUrl, DASHBOARD_IMAGE_WIDTHS } from "@/lib/optimizedImage"
 
 interface MediaGridProps {
   assets: MediaAsset[]
@@ -173,7 +174,7 @@ export const MediaGrid: React.FC<MediaGridProps> = ({
                 </div>
               ) : (
                 <img
-                  src={asset.url}
+                  src={getOptimizedImageUrl(asset.url, { width: DASHBOARD_IMAGE_WIDTHS.MEDIA_GRID_CARD, quality: 100 })}
                   alt={asset.altText || asset.title || asset.fileName}
                   loading="lazy"
                   className="h-full w-full object-cover transition-transform duration-300 group-hover:scale-105"

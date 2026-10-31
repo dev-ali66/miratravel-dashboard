@@ -27,6 +27,7 @@ import {
   type ExperienceType,
 } from "@/components/pages/Experience/experienceTypes"
 import { cn } from "@/lib/utils"
+import { getOptimizedImageUrl } from "@/lib/optimizedImage"
 
 function unwrapExperienceData(raw: any) {
   if (!raw) return null
@@ -96,7 +97,7 @@ function ExperienceItemRow({
         {/* Thumbnail (if available) */}
         {imageUrl ? (
           <div className="relative h-11 w-14 rounded-sm overflow-hidden bg-muted shrink-0 border border-border/60">
-            <img src={imageUrl} alt={name} className="h-full w-full object-cover" />
+            <img src={getOptimizedImageUrl(imageUrl, { width: 120, quality: 100 })} alt={name} className="h-full w-full object-cover" />
           </div>
         ) : (
           <div className="flex h-11 w-14 items-center justify-center rounded-sm bg-muted/60 text-muted-foreground shrink-0 border border-border/40">

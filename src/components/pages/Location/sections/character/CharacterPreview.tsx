@@ -4,6 +4,7 @@ import { DynamicStyledTextPreview } from "@/components/pages/CMS/shared/DynamicS
 import { DynamicCmsButtonPreview } from "@/components/pages/CMS/shared/DynamicCmsButtonPreview"
 import { UniversalMultimediaPreview } from "@/components/pages/CMS/Home/shared/preview/UniversalMultimediaPreview"
 import type { LocationPreviewSectionProps } from "../../config/locationSections"
+import { getOptimizedImageUrl } from "@/lib/optimizedImage"
 
 export function CharacterPreview({ draft }: LocationPreviewSectionProps) {
   const characterData =
@@ -84,7 +85,7 @@ export function CharacterPreview({ draft }: LocationPreviewSectionProps) {
                       {item.multimedia && item.multimedia.show === "image" && item.multimedia.image?.url ? (
                         <div className="size-10 rounded-lg overflow-hidden border border-black/10">
                           <img
-                            src={item.multimedia.image.url}
+                            src={getOptimizedImageUrl(item.multimedia.image.url, { width: 80, quality: 100 })}
                             alt={item.multimedia.image.alt || ""}
                             className="w-full h-full object-cover"
                           />
@@ -92,7 +93,7 @@ export function CharacterPreview({ draft }: LocationPreviewSectionProps) {
                       ) : item.iconImage ? (
                         <div className="size-10 rounded-lg overflow-hidden border border-black/10">
                           <img
-                            src={item.iconImage}
+                            src={getOptimizedImageUrl(item.iconImage, { width: 80, quality: 100 })}
                             alt=""
                             className="w-full h-full object-cover"
                           />

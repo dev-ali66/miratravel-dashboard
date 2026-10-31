@@ -4,6 +4,7 @@ import type { ExperienceFormSectionProps } from "../../config/experienceSections
 import { useGetJourneys } from "@/hooks/journey/useGetJourneys"
 import { Search, Compass, Plus, X, Loader2, Check } from "lucide-react"
 import { cn } from "@/lib/utils"
+import { getOptimizedImageUrl } from "@/lib/optimizedImage"
 
 export function RelatedJourneysForm({
   draft,
@@ -91,7 +92,7 @@ export function RelatedJourneysForm({
                     <div className="flex items-center gap-2.5 min-w-0">
                       <div className="h-10 w-12 rounded overflow-hidden bg-muted shrink-0 border border-border flex items-center justify-center">
                         {thumb ? (
-                          <img src={thumb} alt={title} className="h-full w-full object-cover" />
+                          <img src={getOptimizedImageUrl(thumb, { width: 96, quality: 100 })} alt={title} className="h-full w-full object-cover" />
                         ) : (
                           <Compass className="h-4 w-4 text-muted-foreground" />
                         )}
@@ -168,7 +169,7 @@ export function RelatedJourneysForm({
                     <div className="flex items-center gap-2.5 min-w-0">
                       <div className="h-8 w-10 rounded overflow-hidden bg-muted shrink-0 border border-border flex items-center justify-center">
                         {thumb ? (
-                          <img src={thumb} alt={item.title} className="h-full w-full object-cover" />
+                          <img src={getOptimizedImageUrl(thumb, { width: 80, quality: 100 })} alt={item.title} className="h-full w-full object-cover" />
                         ) : (
                           <Compass className="h-3.5 w-3.5 text-muted-foreground" />
                         )}

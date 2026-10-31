@@ -7,6 +7,8 @@ import { Trash2, Upload, Image as ImageIcon, FolderOpen, Loader2, Sparkles } fro
 import { cn } from "@/lib/utils"
 import { ColorField } from "@/components/pages/CMS/shared/FormControls"
 import { MediaPickerModal, type SelectedMediaAsset } from "@/components/shared/MediaPickerModal"
+import { toast } from "sonner"
+import { getOptimizedImageUrl, DASHBOARD_IMAGE_WIDTHS } from "@/lib/optimizedImage"
 
 export interface ImageUploadFieldProps extends Omit<
   React.HTMLAttributes<HTMLDivElement>,
@@ -127,6 +129,14 @@ export function ImageUploadField({
 
     if (!file) return
 
+    // Requirement 7: Safeguard against images exceeding 30MB limit
+    const MAX_IMAGE_SIZE = 30 * 1024 * 1024
+    if (file.size > MAX_IMAGE_SIZE) {
+      toast.error(`"${file.name}" (${(file.size / (1024 * 1024)).toFixed(1)}MB) exceeds the 30MB maximum image upload limit.`)
+      if (e.target) e.target.value = ""
+      return
+    }
+
     setLocalUploading(true)
     setUploadProgress(15)
     setUploadFileName(file.name)
@@ -242,7 +252,7 @@ export function ImageUploadField({
         ) : value ? (
           <div className="group relative flex h-full w-full items-center justify-center overflow-hidden rounded-lg bg-muted/10">
             <img
-              src={value}
+              src={getOptimizedImageUrl(value, { width: DASHBOARD_IMAGE_WIDTHS.FORM_PREVIEW, quality: 100 })}
               alt="Preview"
               style={{ opacity: opacity / 100 }}
               className={cn(

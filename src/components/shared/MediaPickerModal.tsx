@@ -32,6 +32,7 @@ import { useMediaGallery } from "@/hooks/media/useMediaLibrary"
 import { mediaService, type MediaAsset } from "@/services/mediaService"
 import { cn } from "@/lib/utils"
 import { toast } from "sonner"
+import { getOptimizedImageUrl, DASHBOARD_IMAGE_WIDTHS } from "@/lib/optimizedImage"
 
 export interface SelectedMediaAsset {
   id: string
@@ -576,7 +577,7 @@ export function MediaPickerModal({
                             </div>
                           ) : (
                             <img
-                              src={asset.url}
+                              src={getOptimizedImageUrl(asset.url, { width: DASHBOARD_IMAGE_WIDTHS.MEDIA_PICKER_CARD, quality: 100 })}
                               alt={asset.altText || asset.title || asset.fileName}
                               loading="lazy"
                               className="h-full w-full object-cover transition-transform duration-300 group-hover:scale-105"

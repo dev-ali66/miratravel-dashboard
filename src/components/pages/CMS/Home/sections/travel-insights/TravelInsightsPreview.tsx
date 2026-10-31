@@ -188,6 +188,7 @@ export function TravelInsightsPreview({
             <ImageShowPreview
               src={featuredInsight?.image}
               alt={featuredInsight?.title || "Featured Insight"}
+              targetWidth={700}
               className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
             />
 
@@ -219,6 +220,7 @@ export function TravelInsightsPreview({
                 <ImageShowPreview
                   src={insight?.image}
                   alt={insight?.title || "Insight Card"}
+                  targetWidth={600}
                   className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
                 />
 

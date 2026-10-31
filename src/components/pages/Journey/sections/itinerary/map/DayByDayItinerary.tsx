@@ -11,6 +11,7 @@ import {
     normalizeItineraryToChapters,
 } from './chapters';
 import type { JourneyItinerary, JourneyDay, JourneyChapter } from './journey-route';
+import { getOptimizedImageUrl } from "@/lib/optimizedImage";
 
 export interface DaySelectionRequest {
     day: number;
@@ -164,7 +165,7 @@ function DayCard({
                             />
                         ) : (resolvedMedia?.imageUrl || item.thumbnail) ? (
                             <img
-                                src={resolvedMedia?.imageUrl || item.thumbnail}
+                                src={getOptimizedImageUrl(resolvedMedia?.imageUrl || item.thumbnail, { width: 256, quality: 100 })}
                                 alt={getStr(displayTitle)}
                                 className="w-full h-full object-cover object-center group-hover:scale-105 transition-transform duration-300"
                             />
@@ -242,7 +243,7 @@ function DayCard({
                                         />
                                     ) : (resolvedMedia?.imageUrl || currentImage) ? (
                                         <img
-                                            src={resolvedMedia?.imageUrl || currentImage}
+                                            src={getOptimizedImageUrl(resolvedMedia?.imageUrl || currentImage, { width: 480, quality: 100 })}
                                             alt={getStr(item.detailedHeading || item.title)}
                                             className="w-full h-full object-cover object-center"
                                         />
@@ -478,7 +479,7 @@ export function DayByDayItinerary({
                                             <div className="relative w-full md:w-56 lg:w-[228px] lgx:w-[230px] xlg:w-[233px] mid:w-[236px] xl:w-60 md:min-w-[220px] lg:min-w-[226px] lgx:min-w-[228px] xlg:min-w-[231px] mid:min-w-[235px] xl:min-w-[240px] h-44 md:h-auto min-h-[160px] overflow-hidden shrink-0 bg-muted">
                                                 {chapterThumbnail ? (
                                                     <img
-                                                        src={chapterThumbnail}
+                                                        src={getOptimizedImageUrl(chapterThumbnail, { width: 480, quality: 100 })}
                                                         alt={getStr(chapter.title) || `Chapter ${roman}`}
                                                         className="w-full h-full object-cover object-center group-hover:scale-105 transition-transform duration-500"
                                                     />

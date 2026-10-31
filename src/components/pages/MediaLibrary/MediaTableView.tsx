@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button"
 import { Trash2, ExternalLink, AlertCircle, CheckCircle2 } from "lucide-react"
 import { cn } from "@/lib/utils"
 import type { MediaAsset } from "@/services/mediaService"
+import { getOptimizedImageUrl, DASHBOARD_IMAGE_WIDTHS } from "@/lib/optimizedImage"
 
 interface MediaTableViewProps {
   assets: MediaAsset[]
@@ -137,7 +138,7 @@ export const MediaTableView: React.FC<MediaTableViewProps> = ({
                           />
                         ) : (
                           <img
-                            src={asset.url}
+                            src={getOptimizedImageUrl(asset.url, { width: DASHBOARD_IMAGE_WIDTHS.TABLE_THUMBNAIL, quality: 100 })}
                             alt={asset.fileName}
                             className="h-full w-full object-cover"
                             loading="lazy"

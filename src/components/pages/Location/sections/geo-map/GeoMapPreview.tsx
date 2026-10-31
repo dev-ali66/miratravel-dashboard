@@ -9,6 +9,7 @@ import { UniversalMultimediaPreview } from "@/components/pages/CMS/Home/shared/p
 import type { LocationPreviewSectionProps } from "../../config/locationSections"
 import { useGetLocationPages } from "@/hooks/location/useGetLocation"
 import { ArrowUpRight, Compass, MapPin, X } from "lucide-react"
+import { getOptimizedImageUrl } from "@/lib/optimizedImage"
 
 const BASE_STYLE = "https://basemaps.cartocdn.com/gl/positron-gl-style/style.json"
 
@@ -598,7 +599,7 @@ export function GeoMapPreview({ draft }: LocationPreviewSectionProps) {
                 <div className="relative h-36 md:h-40 w-full overflow-hidden bg-muted">
                   {activePin.image ? (
                     <img
-                      src={activePin.image}
+                      src={getOptimizedImageUrl(activePin.image, { width: 360, quality: 100 })}
                       alt={activePin.heroTitle || activePin.name}
                       className="h-full w-full object-cover transition-transform duration-700 hover:scale-105"
                     />

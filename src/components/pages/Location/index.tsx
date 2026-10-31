@@ -343,6 +343,7 @@ export default function LocationPages() {
                     mode="background"
                     className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
                     containerClassName="h-full w-full"
+                    targetWidth={540}
                   />
                 ) : (
                   <div className="flex h-full items-center justify-center bg-primary/5">

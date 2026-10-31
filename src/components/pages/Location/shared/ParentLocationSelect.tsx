@@ -18,6 +18,7 @@ import {
   useSearchLocations,
   type LocationSearchItem,
 } from "@/hooks/location/useGetLocation"
+import { getOptimizedImageUrl, DASHBOARD_IMAGE_WIDTHS } from "@/lib/optimizedImage"
 
 type ParentLocationSelectProps = {
   value: string | null | undefined
@@ -235,7 +236,7 @@ export function ParentLocationSelect({
                       <div className="relative h-8 w-11 shrink-0 overflow-hidden rounded border border-border/70 bg-muted flex items-center justify-center">
                         {thumbUrl ? (
                           <img
-                            src={thumbUrl}
+                            src={getOptimizedImageUrl(thumbUrl, { width: DASHBOARD_IMAGE_WIDTHS.LOCATION_PICKER_THUMBNAIL, quality: 100 })}
                             alt={option.name}
                             className="h-full w-full object-cover"
                           />

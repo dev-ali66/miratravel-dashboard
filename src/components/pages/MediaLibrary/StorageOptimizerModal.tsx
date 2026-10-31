@@ -22,6 +22,7 @@ import {
   useStorageOptimizerScan,
   useExecuteStorageOptimization,
 } from "@/hooks/media/useMediaLibrary"
+import { getOptimizedImageUrl } from "@/lib/optimizedImage"
 
 interface StorageOptimizerModalProps {
   isOpen: boolean
@@ -258,7 +259,7 @@ export const StorageOptimizerModal: React.FC<StorageOptimizerModalProps> = ({
 
                           <div className="flex items-start gap-3">
                             <img
-                              src={masterAsset.url}
+                              src={getOptimizedImageUrl(masterAsset.url, { width: 128, quality: 100 })}
                               alt={masterAsset.fileName}
                               className="h-16 w-16 rounded-sm object-cover border border-border/60 shrink-0 bg-muted"
                             />
@@ -309,7 +310,7 @@ export const StorageOptimizerModal: React.FC<StorageOptimizerModalProps> = ({
                               >
                                 <div className="flex items-center gap-2 truncate mr-2">
                                   <img
-                                    src={dup.url}
+                                    src={getOptimizedImageUrl(dup.url, { width: 64, quality: 100 })}
                                     alt={dup.fileName}
                                     className="h-7 w-7 rounded object-cover border border-border/40 shrink-0"
                                   />

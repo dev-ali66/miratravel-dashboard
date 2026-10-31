@@ -15,6 +15,7 @@ import { FormSection } from "../../shared/fields"
 import type { LocationFormSectionProps } from "../../config/locationSections"
 import type { TravelInsightArticle } from "../../locationTypes"
 import { emptyLocation } from "../../shared/emptyLocation"
+import { getOptimizedImageUrl } from "@/lib/optimizedImage"
 
 export function TravelInsightsForm({
   draft,
@@ -319,7 +320,7 @@ export function TravelInsightsForm({
                         {/* Thumbnail Preview in Form */}
                         {thumbUrl ? (
                           <img
-                            src={thumbUrl}
+                            src={getOptimizedImageUrl(thumbUrl, { width: 64, quality: 100 })}
                             alt=""
                             className="h-8 w-8 rounded object-cover border border-border/50 shrink-0"
                           />

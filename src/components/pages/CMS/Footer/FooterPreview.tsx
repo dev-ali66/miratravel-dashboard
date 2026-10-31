@@ -8,6 +8,7 @@ import {
 } from "./config/footerSections"
 import type { FooterPageData, FooterSocialLink } from "./footerTypes"
 import type { FooterPreviewSectionContext } from "./shared/preview/sectionTypes"
+import { getOptimizedImageUrl } from "@/lib/optimizedImage"
 
 export const FooterPreview = ({
   footerData,
@@ -88,7 +89,7 @@ export const FooterPreview = ({
     if (iconSrc) {
       return (
         <img
-          src={iconSrc}
+          src={getOptimizedImageUrl(iconSrc, { width: 48, quality: 100 })}
           alt={getSafeString(link.iconAlt || link.platform || "Social icon")}
           className="object-contain"
           style={{

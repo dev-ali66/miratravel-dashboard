@@ -24,6 +24,7 @@ import {
 } from "@/hooks/location/useGetLocation"
 import { useGetLocationById } from "@/hooks/location/useGetLocationById"
 import { emptyLocation } from "../../shared/emptyLocation"
+import { getOptimizedImageUrl } from "@/lib/optimizedImage"
 
 export function HighlightsForm({
   draft,
@@ -286,7 +287,7 @@ export function HighlightsForm({
                           <div className="relative h-10 w-14 shrink-0 overflow-hidden rounded border border-border bg-muted">
                             {thumbUrl ? (
                               <img
-                                src={thumbUrl}
+                                src={getOptimizedImageUrl(thumbUrl, { width: 112, quality: 100 })}
                                 alt={loc.name}
                                 className="h-full w-full object-cover"
                               />
@@ -436,7 +437,7 @@ function HighlightLocationRow({
         <div className="relative h-9 w-12 shrink-0 overflow-hidden rounded border border-border bg-muted">
           {previewImg ? (
             <img
-              src={previewImg}
+              src={getOptimizedImageUrl(previewImg, { width: 96, quality: 100 })}
               alt={locationTitle}
               className="h-full w-full object-cover"
             />

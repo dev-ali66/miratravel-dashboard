@@ -6,6 +6,7 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog"
+import { getOptimizedImageUrl } from "@/lib/optimizedImage"
 
 interface RequestDetailsModalProps {
   selectedUser: any | null
@@ -41,10 +42,11 @@ export default function RequestDetailsModal({
           <div className="mt-2 flex flex-col gap-5">
             <div className="flex items-center gap-4 border-b border-border/40 pb-5">
               <img
-                src={
+                src={getOptimizedImageUrl(
                   selectedUser.userPersonalInfo?.photoUrl?.[0] ||
-                  "https://i.pravatar.cc/150?u=default"
-                }
+                  "https://i.pravatar.cc/150?u=default",
+                  { width: 128, quality: 100 }
+                )}
                 alt="Profile"
                 className="h-16 w-16 rounded-full border border-border object-cover"
               />

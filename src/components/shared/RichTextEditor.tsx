@@ -36,6 +36,7 @@ import {
 import { useCallback, useEffect, useState } from "react"
 import { cn } from "@/lib/utils"
 import { MediaPickerModal, type SelectedMediaAsset } from "@/components/shared/MediaPickerModal"
+import { getOptimizedImageUrl, DASHBOARD_IMAGE_WIDTHS } from "@/lib/optimizedImage"
 
 export interface RichTextEditorProps {
   value: string
@@ -484,7 +485,7 @@ const MenuBar = ({ editor }: { editor: any }) => {
                 .chain()
                 .focus()
                 .setImage({
-                  src: assets[0].url,
+                  src: getOptimizedImageUrl(assets[0].url, { width: DASHBOARD_IMAGE_WIDTHS.RICHTEXT_INSERT, quality: 100 }),
                   alt: assets[0].altText || assets[0].title || "",
                   title: assets[0].title || "",
                 })

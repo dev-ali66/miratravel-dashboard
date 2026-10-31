@@ -2,6 +2,7 @@ import { THEME_COLORS } from "@/config/theme"
 import { useState } from "react"
 import { normalizeNewsletterCmsUnsubscribe } from "./normalizeUnsubscribe"
 import type { NewsletterCmsPayload } from "../../newsletterCmsTypes"
+import { getOptimizedImageUrl } from "@/lib/optimizedImage"
 
 interface UnsubscribePreviewProps {
   draft: NewsletterCmsPayload
@@ -31,7 +32,7 @@ export function UnsubscribePreview({ draft }: UnsubscribePreviewProps) {
             <div className="relative w-full aspect-[665/581] max-h-[500px] overflow-hidden rounded-sm bg-muted flex items-center justify-center border border-border/40">
               {mediaUrl ? (
                 <img
-                  src={mediaUrl}
+                  src={getOptimizedImageUrl(mediaUrl, { width: 580, quality: 100 })}
                   alt={unsubscribe.leftSideMultimedia?.image?.alt || "Reflective traveler"}
                   className="w-full h-full object-cover"
                 />

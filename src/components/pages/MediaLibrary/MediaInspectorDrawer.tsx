@@ -23,6 +23,7 @@ import { toast } from "sonner"
 import { cn } from "@/lib/utils"
 import { mediaService, type MediaAsset } from "@/services/mediaService"
 import { useMediaUsage, useUpdateMediaMetadata } from "@/hooks/media/useMediaLibrary"
+import { getOptimizedImageUrl, DASHBOARD_IMAGE_WIDTHS } from "@/lib/optimizedImage"
 
 interface MediaInspectorDrawerProps {
   asset: MediaAsset | null
@@ -175,7 +176,7 @@ export const MediaInspectorDrawer: React.FC<MediaInspectorDrawerProps> = ({
                 className="max-h-[300px] w-full object-contain"
               />
             ) : (
-              <img src={asset.url} alt={asset.title || asset.fileName} className="max-h-[300px] w-full object-contain" />
+              <img src={getOptimizedImageUrl(asset.url, { width: DASHBOARD_IMAGE_WIDTHS.INSPECTOR_PREVIEW, quality: 100 })} alt={asset.title || asset.fileName} className="max-h-[300px] w-full object-contain" />
             )}
 
             {/* Top-Right Collapsible Action Bar on Arrow Hover */}

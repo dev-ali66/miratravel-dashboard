@@ -80,6 +80,7 @@ export type UniversalMultimediaPreviewProps = {
   className?: string
   containerClassName?: string
   overlayClassName?: string
+  targetWidth?: number
 }
 
 export function UniversalMultimediaPreview({
@@ -92,6 +93,7 @@ export function UniversalMultimediaPreview({
   className,
   containerClassName,
   overlayClassName,
+  targetWidth,
 }: UniversalMultimediaPreviewProps) {
   const showMode: MultimediaShowType =
     multimedia?.show ||
@@ -220,6 +222,7 @@ export function UniversalMultimediaPreview({
           overlayOpacity={imageConfig.overlayOpacity}
           fit={imageConfig.fit}
           aspectRatio={isBg ? undefined : imageConfig.aspectRatio}
+          targetWidth={targetWidth}
         />
       ) : (
         <div

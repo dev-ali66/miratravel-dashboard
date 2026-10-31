@@ -5,6 +5,7 @@ import { DynamicStyledTextPreview } from "@/components/pages/CMS/shared/DynamicS
 import { UniversalMultimediaPreview } from "@/components/pages/CMS/shared/UniversalMultimediaPreview"
 import { Search, SlidersHorizontal, Heart, X } from "lucide-react"
 import { useGetJourneys } from "@/hooks/journey/useGetJourneys"
+import { getOptimizedImageUrl } from "@/lib/optimizedImage"
 
 export function JourneyCmsAllJourneysPreview({ draft }: JourneyCmsPreviewSectionProps) {
   if (!draft) return null
@@ -225,7 +226,7 @@ export function JourneyCmsAllJourneysPreview({ draft }: JourneyCmsPreviewSection
                   {/* Media Cover */}
                   <div className="relative h-[250px] md:h-[270px] w-full overflow-hidden bg-muted">
                     <img
-                      src={j.image}
+                      src={getOptimizedImageUrl(j.image, { width: 400, quality: 100 })}
                       alt={j.title}
                       className="h-full w-full object-cover transition-transform duration-700 group-hover:scale-105"
                     />

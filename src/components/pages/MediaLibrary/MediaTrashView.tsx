@@ -11,6 +11,7 @@ import {
 } from "lucide-react"
 import { cn } from "@/lib/utils"
 import type { MediaAsset } from "@/services/mediaService"
+import { getOptimizedImageUrl, DASHBOARD_IMAGE_WIDTHS } from "@/lib/optimizedImage"
 import {
   useMediaWorkerStatus,
   useRestoreMedia,
@@ -220,7 +221,7 @@ export const MediaTrashView: React.FC<MediaTrashViewProps> = ({ assets, isLoadin
                     />
                   ) : (
                     <img
-                      src={asset.url}
+                      src={getOptimizedImageUrl(asset.url, { width: DASHBOARD_IMAGE_WIDTHS.MEDIA_TRASH_CARD, quality: 100 })}
                       alt={asset.fileName}
                       className="h-full w-full object-cover filter grayscale-30 group-hover:grayscale-0 transition-all"
                       loading="lazy"
