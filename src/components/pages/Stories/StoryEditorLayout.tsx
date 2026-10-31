@@ -29,14 +29,12 @@ function StoryEditorInner() {
       iconColor="text-accent"
       title={slug === "new" ? "New Story" : `Edit ${draft.title || "Story"}`}
       sidebarContent={
-        <div className="h-full">
-          <StoryForm
-            draft={draft}
-            updateField={updateField}
-            onSave={save}
-            isSaving={isSaving}
-          />
-        </div>
+        <StoryForm
+          draft={draft}
+          updateField={updateField}
+          onSave={save}
+          isSaving={isSaving}
+        />
       }
       previewContent={<StoryPreview draft={draft} />}
       useWorkspaceScale={true}

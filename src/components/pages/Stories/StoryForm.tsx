@@ -62,45 +62,50 @@ export function StoryForm({
   };
 
   return (
-    <div className="flex h-full flex-col bg-background relative pb-20">
-      {/* Sticky Save Bar */}
-      <div className="sticky top-0 z-20 flex w-full items-center justify-between border-b border-border/60 bg-card/95 px-4 py-3 backdrop-blur shadow-sm">
-        <div className="flex flex-col">
-          <h2 className="text-sm font-semibold text-foreground truncate">
-            {draft.title ? draft.title : "Untitled Story"}
-          </h2>
-          <p className="text-[11px] text-muted-foreground uppercase tracking-wider font-medium">
-            {draft.type === "short_story" ? "Short Story" : draft.type === "long_story" ? "Long Story" : "Guidance"}
-          </p>
-        </div>
+    <div className="flex min-h-full flex-col">
+      {/* Sticky Top Header matching Journey / Location / Experience */}
+      <div className="sticky top-0 z-20 border-b border-border/60 bg-card/95 px-5 py-4 backdrop-blur">
+        <div className="flex items-center justify-between gap-4">
+          <div className="min-w-0">
+            <p className="text-[10px] font-medium tracking-[0.2em] text-muted-foreground uppercase">
+              {draft.type === "short_story" ? "Short Story" : draft.type === "long_story" ? "Long Story" : "Guidance Story"}
+            </p>
 
-        <div className="flex items-center gap-3 shrink-0 ml-4">
-          <button
-            type="button"
-            onClick={handleConsoleLog}
-            className="flex items-center gap-2 rounded-sm bg-neutral-100 hover:bg-neutral-200 dark:bg-neutral-800 dark:hover:bg-neutral-700 px-3 py-1.5 text-xs font-medium text-foreground transition-colors cursor-pointer"
-          >
-            <Terminal className="h-3.5 w-3.5" />
-            Console
-          </button>
+            <h2 className="mt-1 truncate text-base font-semibold">
+              {draft.title ? draft.title : "Add Story"}
+            </h2>
+          </div>
 
-          <button
-            type="button"
-            onClick={handleSave}
-            disabled={isSaving}
-            className="flex shrink-0 items-center gap-2 rounded-sm bg-primary px-4 py-1.5 text-xs font-medium text-primary-foreground transition hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-50 cursor-pointer"
-          >
-            {isSaving ? (
-              <Loader2 className="h-3.5 w-3.5 animate-spin" />
-            ) : (
-              <Save className="h-3.5 w-3.5" />
-            )}
-            {draft.id ? "Update" : "Create"}
-          </button>
+          <div className="flex items-center gap-2">
+            <button
+              type="button"
+              onClick={handleConsoleLog}
+              className="flex shrink-0 items-center gap-1.5 rounded-lg border border-border/80 bg-background px-3 py-2 text-xs font-medium text-foreground transition hover:bg-muted cursor-pointer"
+              title="Inspect clean story payload sent to backend API in browser console (F12)"
+            >
+              <Terminal className="h-3.5 w-3.5 text-primary" />
+              Console Data
+            </button>
+
+            <button
+              type="button"
+              onClick={handleSave}
+              disabled={isSaving}
+              className="flex shrink-0 items-center gap-2 rounded-lg bg-primary px-4 py-2 text-xs font-medium text-primary-foreground transition hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-50 cursor-pointer"
+            >
+              {isSaving ? (
+                <Loader2 className="h-4 w-4 animate-spin" />
+              ) : (
+                <Save className="h-4 w-4" />
+              )}
+              {draft.id ? "Update" : "Create"}
+            </button>
+          </div>
         </div>
       </div>
 
-      <div className="flex-1 overflow-y-auto divide-y divide-border/60">
+      {/* Sections — Continuous divide-y accordion layout */}
+      <div className="flex-1 divide-y divide-border/60">
         {sections.map((section, idx) => {
           const FormComponent = section.formComponent;
           const sectionNumber = String(idx + 1).padStart(2, "0");

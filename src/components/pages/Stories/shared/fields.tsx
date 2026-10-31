@@ -38,7 +38,7 @@ export function FormSection({
         />
       </button>
       {active && (
-        <div className="animate-in slide-in-from-top-2 fade-in-50">
+        <div className="border-t border-border/40 p-4 space-y-4 animate-in slide-in-from-top-2 fade-in-50">
           {children}
         </div>
       )}

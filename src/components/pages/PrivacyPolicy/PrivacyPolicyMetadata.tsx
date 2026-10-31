@@ -15,7 +15,7 @@ export function PrivacyPolicyMetadata({
   setLastUpdated,
 }: PrivacyPolicyMetadataProps) {
   return (
-    <div className="mb-6 grid grid-cols-1 gap-4 rounded-xl border border-border/60 bg-background/50 p-5 shadow-sm backdrop-blur-xl sm:grid-cols-2">
+    <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
       <div className="space-y-1.5">
         <Label className="text-xs font-semibold tracking-wider text-muted-foreground uppercase">
           Effective Date
@@ -23,8 +23,8 @@ export function PrivacyPolicyMetadata({
         <Input
           value={effectiveDate}
           onChange={(e) => setEffectiveDate(e.target.value)}
-          placeholder="e.g. 22.07.2026"
-          className="bg-background/50 font-medium"
+          placeholder="e.g. 01.08.2025"
+          className="bg-background font-medium text-xs"
         />
       </div>
       <div className="space-y-1.5">
@@ -34,8 +34,8 @@ export function PrivacyPolicyMetadata({
         <Input
           value={lastUpdated}
           onChange={(e) => setLastUpdated(e.target.value)}
-          placeholder="e.g. 22.07.2026"
-          className="bg-background/50 font-medium"
+          placeholder="e.g. 01.08.2025"
+          className="bg-background font-medium text-xs"
         />
       </div>
     </div>
