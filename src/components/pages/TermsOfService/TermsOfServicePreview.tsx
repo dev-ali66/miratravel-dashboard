@@ -1,11 +1,14 @@
 import React, { useState } from "react"
 import type { TermsPart } from "./types"
+import type { UniversalMultimediaValue } from "@/components/pages/CMS/shared/UniversalMultimediaForm"
+import { UniversalMultimediaPreview } from "@/components/pages/CMS/shared/UniversalMultimediaPreview"
 import { FileText, Shield, CreditCard, RefreshCw, AlertTriangle, Award, Scale, Mail } from "lucide-react"
 
 interface TermsOfServicePreviewProps {
   parts: TermsPart[]
   effectiveDate: string
   lastUpdated: string
+  heroMultimedia?: UniversalMultimediaValue
 }
 
 function getSectionIcon(index: number) {
@@ -17,14 +20,36 @@ function getSectionIcon(index: number) {
 export function TermsOfServicePreview({
   parts,
   lastUpdated,
+  heroMultimedia,
 }: TermsOfServicePreviewProps) {
   const [activeSectionId, setActiveSectionId] = useState<string>(parts[0]?.id || "")
+
+  const hasMedia = Boolean(
+    heroMultimedia?.image?.url ||
+    heroMultimedia?.video?.url ||
+    (heroMultimedia?.show === "color" && heroMultimedia?.color?.color)
+  )
 
   return (
     <div className="@container w-full min-h-full bg-background text-foreground">
       {/* 1:1 Frontend Hero Banner */}
-      <section className="relative w-full overflow-hidden bg-brand-primary px-6 py-12 text-center text-surface-light md:py-16">
-        <div className="absolute inset-0 opacity-10 bg-[radial-gradient(circle_at_center,_var(--tw-gradient-stops))] from-amber-200 via-transparent to-transparent pointer-events-none" />
+      <section className="relative w-full overflow-hidden bg-[#143224] px-6 py-12 text-center text-surface-light md:py-16">
+        {/* Background Media */}
+        {hasMedia ? (
+          <div className="absolute inset-0 z-0 pointer-events-none">
+            <UniversalMultimediaPreview
+              multimedia={heroMultimedia}
+              mode="background"
+            />
+          </div>
+        ) : (
+          <div className="absolute inset-0 opacity-10 bg-[radial-gradient(circle_at_center,_var(--tw-gradient-stops))] from-amber-200 via-transparent to-transparent pointer-events-none" />
+        )}
+
+        {/* Darkening Overlay when media is present */}
+        {hasMedia && (
+          <div className="absolute inset-0 bg-black/40 pointer-events-none z-[1]" />
+        )}
 
         <div className="relative z-10 mx-auto max-w-3xl space-y-4">
           <div className="inline-flex items-center gap-2 rounded-full border border-surface-light/20 bg-surface-light/10 px-3 py-1 text-[11px] font-medium tracking-widest text-surface-muted uppercase">

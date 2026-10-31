@@ -1,7 +1,8 @@
 import { useState, useEffect } from "react"
 import { useGetCmsBySlug } from "@/hooks/cms/useGetCmsBySlug"
 import { useAddCms } from "@/hooks/cms/useAddCms"
-import { DEFAULT_PARTS, type PolicyPart } from "./types"
+import { DEFAULT_PARTS, createDefaultHeroMultimedia, type PolicyPart } from "./types"
+import { UniversalMultimediaForm, type UniversalMultimediaValue } from "@/components/pages/CMS/shared/UniversalMultimediaForm"
 import { PrivacyPolicyMetadata } from "./PrivacyPolicyMetadata"
 import { PrivacyPolicyTabs } from "./PrivacyPolicyTabs"
 import { PrivacyPolicyEditor } from "./PrivacyPolicyEditor"
@@ -18,6 +19,7 @@ export default function PrivacyPolicyPage() {
 
   const [effectiveDate, setEffectiveDate] = useState<string>("01.08.2025")
   const [lastUpdated, setLastUpdated] = useState<string>("01.08.2025")
+  const [heroMultimedia, setHeroMultimedia] = useState<UniversalMultimediaValue>(createDefaultHeroMultimedia())
   const [parts, setParts] = useState<PolicyPart[]>(DEFAULT_PARTS)
   const [activeTab, setActiveTab] = useState<string>("")
 
@@ -26,6 +28,25 @@ export default function PrivacyPolicyPage() {
     if (fetchedData) {
       if (fetchedData.effectiveDate) setEffectiveDate(fetchedData.effectiveDate)
       if (fetchedData.lastUpdated) setLastUpdated(fetchedData.lastUpdated)
+
+      if (fetchedData.heroMultimedia) {
+        setHeroMultimedia({
+          ...createDefaultHeroMultimedia(),
+          ...fetchedData.heroMultimedia,
+          image: {
+            ...createDefaultHeroMultimedia().image,
+            ...fetchedData.heroMultimedia.image,
+          },
+          video: {
+            ...createDefaultHeroMultimedia().video,
+            ...fetchedData.heroMultimedia.video,
+          },
+          color: {
+            ...createDefaultHeroMultimedia().color,
+            ...fetchedData.heroMultimedia.color,
+          },
+        })
+      }
 
       if (Array.isArray(fetchedData.parts) && fetchedData.parts.length > 0) {
         setParts(fetchedData.parts)
@@ -105,6 +126,7 @@ export default function PrivacyPolicyPage() {
       title: "MIRA PRIVACY POLICY",
       effectiveDate,
       lastUpdated,
+      heroMultimedia,
       parts,
       content: combinedContent,
     }
@@ -122,17 +144,24 @@ export default function PrivacyPolicyPage() {
       title: "MIRA PRIVACY POLICY",
       effectiveDate,
       lastUpdated,
+      heroMultimedia,
       parts,
       content: combinedContent,
     }
 
+    const fetchedCms = privacyPolicyResponse?.data?.data || privacyPolicyResponse?.data
+    const existingId = fetchedCms?.id || (Array.isArray(fetchedCms) ? fetchedCms[0]?.id : undefined)
+
     // Save under both "privacy-policy" and "privacy" slugs
     saveSection({
+      ...(existingId ? { id: existingId } : {}),
+      name: "Privacy Policy",
       slug: "privacy-policy",
       data: payload,
     })
 
     saveSection({
+      name: "Privacy",
       slug: "privacy",
       data: payload,
     })
@@ -200,6 +229,21 @@ export default function PrivacyPolicyPage() {
             setLastUpdated={setLastUpdated}
           />
 
+          {/* Hero Background Media Section */}
+          <div className="rounded-xl border border-border/60 bg-background/50 p-4 shadow-sm backdrop-blur-xl">
+            <UniversalMultimediaForm
+              title="Hero Background Media"
+              value={heroMultimedia}
+              onChange={setHeroMultimedia}
+              allowImage={true}
+              allowVideo={true}
+              allowColor={true}
+              defaultShow="image"
+              collapsible={true}
+              defaultOpen={true}
+            />
+          </div>
+
           <PrivacyPolicyTabs
             parts={parts}
             activeTab={activeTab}
@@ -225,6 +269,7 @@ export default function PrivacyPolicyPage() {
           parts={parts}
           effectiveDate={effectiveDate}
           lastUpdated={lastUpdated}
+          heroMultimedia={heroMultimedia}
         />
       }
     />

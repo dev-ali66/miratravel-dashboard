@@ -1,7 +1,8 @@
 import { useState, useEffect } from "react"
 import { useGetCmsBySlug } from "@/hooks/cms/useGetCmsBySlug"
 import { useAddCms } from "@/hooks/cms/useAddCms"
-import { DEFAULT_TERMS_PARTS, type TermsPart } from "./types"
+import { DEFAULT_TERMS_PARTS, createDefaultHeroMultimedia, type TermsPart } from "./types"
+import { UniversalMultimediaForm, type UniversalMultimediaValue } from "@/components/pages/CMS/shared/UniversalMultimediaForm"
 import { TermsOfServiceMetadata } from "./TermsOfServiceMetadata"
 import { TermsOfServiceTabs } from "./TermsOfServiceTabs"
 import { TermsOfServiceEditor } from "./TermsOfServiceEditor"
@@ -17,6 +18,7 @@ export default function TermsOfServicePage() {
 
   const [effectiveDate, setEffectiveDate] = useState<string>("01.08.2025")
   const [lastUpdated, setLastUpdated] = useState<string>("01.08.2025")
+  const [heroMultimedia, setHeroMultimedia] = useState<UniversalMultimediaValue>(createDefaultHeroMultimedia())
   const [parts, setParts] = useState<TermsPart[]>(DEFAULT_TERMS_PARTS)
   const [activeTab, setActiveTab] = useState<string>("")
 
@@ -25,6 +27,25 @@ export default function TermsOfServicePage() {
     if (fetchedData) {
       if (fetchedData.effectiveDate) setEffectiveDate(fetchedData.effectiveDate)
       if (fetchedData.lastUpdated) setLastUpdated(fetchedData.lastUpdated)
+
+      if (fetchedData.heroMultimedia) {
+        setHeroMultimedia({
+          ...createDefaultHeroMultimedia(),
+          ...fetchedData.heroMultimedia,
+          image: {
+            ...createDefaultHeroMultimedia().image,
+            ...fetchedData.heroMultimedia.image,
+          },
+          video: {
+            ...createDefaultHeroMultimedia().video,
+            ...fetchedData.heroMultimedia.video,
+          },
+          color: {
+            ...createDefaultHeroMultimedia().color,
+            ...fetchedData.heroMultimedia.color,
+          },
+        })
+      }
 
       if (Array.isArray(fetchedData.parts) && fetchedData.parts.length > 0) {
         setParts(fetchedData.parts)
@@ -102,6 +123,7 @@ export default function TermsOfServicePage() {
       title: "MIRA TERMS & CONDITIONS",
       effectiveDate,
       lastUpdated,
+      heroMultimedia,
       parts,
       content: combinedContent,
     }
@@ -120,18 +142,25 @@ export default function TermsOfServicePage() {
       title: "MIRA TERMS & CONDITIONS",
       effectiveDate,
       lastUpdated,
+      heroMultimedia,
       parts,
       content: combinedContent,
     }
 
+    const fetchedCms = termsResponse?.data?.data || termsResponse?.data
+    const existingId = fetchedCms?.id || (Array.isArray(fetchedCms) ? fetchedCms[0]?.id : undefined)
+
     // Save for terms-of-service
     saveSection({
+      ...(existingId ? { id: existingId } : {}),
+      name: "Terms of Service",
       slug: "terms-of-service",
       data: payloadData,
     })
 
     // Also save for terms slug so both endpoints work
     saveSection({
+      name: "Terms",
       slug: "terms",
       data: payloadData,
     })
@@ -199,6 +228,21 @@ export default function TermsOfServicePage() {
             setLastUpdated={setLastUpdated}
           />
 
+          {/* Hero Background Media Section */}
+          <div className="rounded-xl border border-border/60 bg-background/50 p-4 shadow-sm backdrop-blur-xl">
+            <UniversalMultimediaForm
+              title="Hero Background Media"
+              value={heroMultimedia}
+              onChange={setHeroMultimedia}
+              allowImage={true}
+              allowVideo={true}
+              allowColor={true}
+              defaultShow="image"
+              collapsible={true}
+              defaultOpen={true}
+            />
+          </div>
+
           {parts.length > 0 && (
             <TermsOfServiceTabs
               parts={parts}
@@ -226,6 +270,7 @@ export default function TermsOfServicePage() {
           parts={parts}
           effectiveDate={effectiveDate}
           lastUpdated={lastUpdated}
+          heroMultimedia={heroMultimedia}
         />
       }
     />
