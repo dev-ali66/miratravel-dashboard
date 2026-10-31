@@ -5,7 +5,7 @@ export type ViewMode = "edit" | "preview" | "split"
 interface PrivacyPolicyHeaderProps {
   onSave: () => void
   isSaving: boolean
-  onAddPart: () => void
+  onAddItem: () => void
   viewMode: ViewMode
   setViewMode: (mode: ViewMode) => void
 }
@@ -13,7 +13,7 @@ interface PrivacyPolicyHeaderProps {
 export function PrivacyPolicyHeader({
   onSave,
   isSaving,
-  onAddPart,
+  onAddItem,
   viewMode,
   setViewMode,
 }: PrivacyPolicyHeaderProps) {
@@ -67,7 +67,7 @@ export function PrivacyPolicyHeader({
         </div>
 
         <button
-          onClick={onAddPart}
+          onClick={onAddItem}
           type="button"
           className="inline-flex cursor-pointer items-center justify-center gap-1.5 rounded-md border border-border/80 bg-background px-4 py-2 text-xs font-semibold text-foreground transition hover:bg-muted active:scale-95"
         >

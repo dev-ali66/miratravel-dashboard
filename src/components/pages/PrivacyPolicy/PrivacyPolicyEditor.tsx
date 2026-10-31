@@ -2,32 +2,32 @@ import { RichTextEditor } from "@/components/shared/RichTextEditor"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { ArrowUp, ArrowDown, Trash2, Plus } from "lucide-react"
-import type { PolicyPart } from "./types"
+import type { PolicyItem } from "./types"
 
 interface PrivacyPolicyEditorProps {
-  currentPart: PolicyPart | undefined
+  currentItem: PolicyItem | undefined
   activeTab: string
-  partIndex: number
-  totalParts: number
+  itemIndex: number
+  totalItems: number
   onContentChange: (newContent: string) => void
   onTitleChange: (field: "tabTitle" | "fullTitle", value: string) => void
-  onDeletePart: (id: string) => void
-  onMovePart: (index: number, direction: "up" | "down") => void
-  onAddPart: () => void
+  onDeleteItem: (id: string) => void
+  onMoveItem: (index: number, direction: "up" | "down") => void
+  onAddItem: () => void
 }
 
 export function PrivacyPolicyEditor({
-  currentPart,
+  currentItem,
   activeTab,
-  partIndex,
-  totalParts,
+  itemIndex,
+  totalItems,
   onContentChange,
   onTitleChange,
-  onDeletePart,
-  onMovePart,
-  onAddPart,
+  onDeleteItem,
+  onMoveItem,
+  onAddItem,
 }: PrivacyPolicyEditorProps) {
-  if (!currentPart) {
+  if (!currentItem) {
     return (
       <div className="flex flex-col items-center justify-center rounded-xl border border-dashed border-border/80 bg-background/50 py-16 text-center shadow-sm">
         <h3 className="text-lg font-bold text-foreground">No Section Selected</h3>
@@ -36,8 +36,8 @@ export function PrivacyPolicyEditor({
         </p>
         <button
           type="button"
-          onClick={onAddPart}
-          className="mt-4 inline-flex items-center gap-2 rounded-md bg-primary px-5 py-2.5 text-xs font-semibold text-primary-foreground shadow-sm transition-all hover:bg-primary/90"
+          onClick={onAddItem}
+          className="mt-4 inline-flex items-center gap-2 rounded-md bg-primary px-5 py-2.5 text-xs font-semibold text-primary-foreground shadow-sm transition-all hover:bg-primary/90 cursor-pointer"
         >
           <Plus className="h-4 w-4" />
           Add First Section
@@ -53,35 +53,37 @@ export function PrivacyPolicyEditor({
         <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
           <div className="flex items-center gap-2">
             <span className="rounded-sm bg-primary/10 px-2.5 py-1 text-xs font-bold text-primary">
-              Section {partIndex + 1} of {totalParts}
+              Section {itemIndex + 1} of {totalItems}
             </span>
           </div>
 
           <div className="flex items-center gap-1.5 self-start sm:self-center">
             <button
               type="button"
-              disabled={partIndex === 0}
-              onClick={() => onMovePart(partIndex, "up")}
-              className="inline-flex cursor-pointer items-center gap-1 rounded-lg border border-border/60 bg-background px-2.5 py-1.5 text-xs font-medium text-foreground transition-all hover:bg-muted disabled:pointer-events-none disabled:opacity-40"
+              onClick={() => onMoveItem(itemIndex, "up")}
+              disabled={itemIndex === 0}
+              className="flex items-center gap-1 rounded-md border border-border/80 bg-background px-3 py-1.5 text-xs font-semibold text-foreground transition-all hover:bg-muted disabled:opacity-40 cursor-pointer"
               title="Move Up"
             >
               <ArrowUp className="h-3.5 w-3.5" />
               <span>Up</span>
             </button>
+
             <button
               type="button"
-              disabled={partIndex === totalParts - 1}
-              onClick={() => onMovePart(partIndex, "down")}
-              className="inline-flex cursor-pointer items-center gap-1 rounded-lg border border-border/60 bg-background px-2.5 py-1.5 text-xs font-medium text-foreground transition-all hover:bg-muted disabled:pointer-events-none disabled:opacity-40"
+              onClick={() => onMoveItem(itemIndex, "down")}
+              disabled={itemIndex === totalItems - 1}
+              className="flex items-center gap-1 rounded-md border border-border/80 bg-background px-3 py-1.5 text-xs font-semibold text-foreground transition-all hover:bg-muted disabled:opacity-40 cursor-pointer"
               title="Move Down"
             >
               <ArrowDown className="h-3.5 w-3.5" />
               <span>Down</span>
             </button>
+
             <button
               type="button"
-              onClick={() => onDeletePart(currentPart.id)}
-              className="inline-flex cursor-pointer items-center gap-1 rounded-lg border border-destructive/30 bg-destructive/10 px-2.5 py-1.5 text-xs font-medium text-destructive transition-all hover:bg-destructive hover:text-destructive-foreground"
+              onClick={() => onDeleteItem(currentItem.id)}
+              className="flex items-center gap-1 rounded-md border border-destructive/30 bg-destructive/5 px-3 py-1.5 text-xs font-semibold text-destructive transition-all hover:bg-destructive hover:text-destructive-foreground cursor-pointer"
               title="Delete Section"
             >
               <Trash2 className="h-3.5 w-3.5" />
@@ -90,34 +92,41 @@ export function PrivacyPolicyEditor({
           </div>
         </div>
 
-        <div className="grid grid-cols-1 gap-4 sm:grid-cols-12">
-          <div className="space-y-1.5 sm:col-span-4">
-            <Label className="text-xs font-semibold text-foreground">Tab Label (Short Name)</Label>
+        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+          <div className="space-y-1.5">
+            <Label className="text-xs font-bold tracking-wider text-muted-foreground uppercase">
+              Tab / Nav Title
+            </Label>
             <Input
-              value={currentPart.tabTitle}
+              value={currentItem.tabTitle}
               onChange={(e) => onTitleChange("tabTitle", e.target.value)}
-              placeholder="e.g. Data Collection"
-              className="bg-background text-xs font-medium"
+              placeholder="e.g. Introduction"
+              className="font-medium text-xs bg-background/50"
             />
           </div>
 
-          <div className="space-y-1.5 sm:col-span-8">
-            <Label className="text-xs font-semibold text-foreground">Full Heading Title</Label>
+          <div className="space-y-1.5">
+            <Label className="text-xs font-bold tracking-wider text-muted-foreground uppercase">
+              Full Section Heading
+            </Label>
             <Input
-              value={currentPart.fullTitle}
+              value={currentItem.fullTitle}
               onChange={(e) => onTitleChange("fullTitle", e.target.value)}
-              placeholder="e.g. Information We Collect"
-              className="bg-background text-xs font-medium"
+              placeholder="e.g. Introduction & Scope"
+              className="font-bold text-xs bg-background/50"
             />
           </div>
         </div>
       </div>
 
+      {/* Rich Text Editor */}
       <div className="space-y-2">
-        <Label className="text-xs font-semibold text-foreground">Section Rich Text Content</Label>
+        <Label className="text-xs font-bold tracking-wider text-muted-foreground uppercase">
+          Section Body Content (HTML)
+        </Label>
         <RichTextEditor
           key={activeTab}
-          value={currentPart.content}
+          value={currentItem.content}
           onChange={onContentChange}
           className="min-h-100"
           canvasClassName="max-h-[65vh]"
@@ -126,4 +135,3 @@ export function PrivacyPolicyEditor({
     </div>
   )
 }
-

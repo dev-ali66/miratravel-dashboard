@@ -1,17 +1,17 @@
 import { Label } from "@/components/ui/label"
 import { cn } from "@/lib/utils"
 import { Plus } from "lucide-react"
-import type { TermsPart } from "./types"
+import type { TermsItem } from "./types"
 
 interface TermsOfServiceTabsProps {
-  parts: TermsPart[]
+  items: TermsItem[]
   activeTab: string
   setActiveTab: (id: string) => void
   onAddSection: () => void
 }
 
 export function TermsOfServiceTabs({
-  parts,
+  items,
   activeTab,
   setActiveTab,
   onAddSection,
@@ -20,7 +20,7 @@ export function TermsOfServiceTabs({
     <div className="mb-6 space-y-2.5">
       <div className="flex flex-col justify-between gap-1 sm:flex-row sm:items-center">
         <Label className="text-xs font-bold tracking-wider text-foreground uppercase">
-          Dynamic Document Structure ({parts.length} Sections)
+          Dynamic Document Structure ({items.length} Sections)
         </Label>
         <span className="text-xs text-muted-foreground italic">
           Click a tab to view/edit, or add new sections dynamically
@@ -28,13 +28,13 @@ export function TermsOfServiceTabs({
       </div>
 
       <div className="flex flex-wrap gap-2.5 rounded-xl border border-border/40 bg-muted/20 p-2">
-        {parts.map((part) => {
-          const isActive = activeTab === part.id
+        {items.map((item) => {
+          const isActive = activeTab === item.id
           return (
             <button
-              key={part.id}
+              key={item.id}
               type="button"
-              onClick={() => setActiveTab(part.id)}
+              onClick={() => setActiveTab(item.id)}
               className={cn(
                 "group relative flex min-w-[120px] max-w-[200px] flex-1 cursor-pointer flex-col overflow-hidden rounded-md p-3 text-left transition-all",
                 isActive
@@ -50,10 +50,10 @@ export function TermsOfServiceTabs({
                     : "text-muted-foreground group-hover:text-primary"
                 )}
               >
-                {part.tabTitle}
+                {item.tabTitle}
               </span>
               <span className="line-clamp-2 text-xs leading-snug font-medium">
-                {part.fullTitle}
+                {item.fullTitle}
               </span>
             </button>
           )
@@ -65,7 +65,7 @@ export function TermsOfServiceTabs({
           className="flex min-w-[100px] items-center justify-center gap-1.5 rounded-md border border-dashed border-border/70 p-3 text-xs font-medium text-muted-foreground transition hover:border-primary hover:bg-background/50 hover:text-primary cursor-pointer"
         >
           <Plus className="h-4 w-4" />
-          <span>New Part</span>
+          <span>New Section</span>
         </button>
       </div>
     </div>

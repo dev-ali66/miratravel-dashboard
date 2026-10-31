@@ -1,8 +1,13 @@
 import { useState, useEffect } from "react"
 import { useGetCmsBySlug } from "@/hooks/cms/useGetCmsBySlug"
 import { useAddCms } from "@/hooks/cms/useAddCms"
-import { DEFAULT_TERMS_PARTS, createDefaultHeroMultimedia, type TermsPart } from "./types"
-import { UniversalMultimediaForm, type UniversalMultimediaValue } from "@/components/pages/CMS/shared/UniversalMultimediaForm"
+import { DEFAULT_TERMS_ITEMS, type TermsItem } from "./types"
+import {
+  createDefaultTermsHero,
+  normalizeLegalHero,
+  type LegalHeroData,
+} from "@/components/pages/CMS/shared/legalHeroDefaults"
+import { LegalHeroForm } from "@/components/pages/CMS/shared/LegalHeroForm"
 import { TermsOfServiceMetadata } from "./TermsOfServiceMetadata"
 import { TermsOfServiceTabs } from "./TermsOfServiceTabs"
 import { TermsOfServiceEditor } from "./TermsOfServiceEditor"
@@ -18,39 +23,37 @@ export default function TermsOfServicePage() {
 
   const [effectiveDate, setEffectiveDate] = useState<string>("01.08.2025")
   const [lastUpdated, setLastUpdated] = useState<string>("01.08.2025")
-  const [heroMultimedia, setHeroMultimedia] = useState<UniversalMultimediaValue>(createDefaultHeroMultimedia())
-  const [parts, setParts] = useState<TermsPart[]>(DEFAULT_TERMS_PARTS)
+  const [hero, setHero] = useState<LegalHeroData>(createDefaultTermsHero())
+  const [isHeroOpen, setIsHeroOpen] = useState<boolean>(true)
+  const [items, setItems] = useState<TermsItem[]>(DEFAULT_TERMS_ITEMS)
   const [activeTab, setActiveTab] = useState<string>("")
 
   useEffect(() => {
-    const fetchedData = termsResponse?.data?.data
+    const raw = termsResponse?.data
+    const record = Array.isArray(raw)
+      ? raw.find((r: any) => r.slug === "terms-of-service" || r.slug === "terms") || raw[0]
+      : raw?.data || raw
+
+    const fetchedData = record?.data || record
     if (fetchedData) {
       if (fetchedData.effectiveDate) setEffectiveDate(fetchedData.effectiveDate)
       if (fetchedData.lastUpdated) setLastUpdated(fetchedData.lastUpdated)
 
-      if (fetchedData.heroMultimedia) {
-        setHeroMultimedia({
-          ...createDefaultHeroMultimedia(),
-          ...fetchedData.heroMultimedia,
-          image: {
-            ...createDefaultHeroMultimedia().image,
-            ...fetchedData.heroMultimedia.image,
-          },
-          video: {
-            ...createDefaultHeroMultimedia().video,
-            ...fetchedData.heroMultimedia.video,
-          },
-          color: {
-            ...createDefaultHeroMultimedia().color,
-            ...fetchedData.heroMultimedia.color,
-          },
-        })
-      }
+      const normalized = normalizeLegalHero(fetchedData.hero, {
+        breadcrumb: "MIRA ARCHIVE",
+        title: fetchedData.title || "Terms & Conditions",
+        subtitle:
+          fetchedData.subtitle ||
+          "Please review the legal terms, booking requirements, and mutual commitments that govern our bespoke expeditions, private concierge services, and regional itineraries.",
+        existingMedia: fetchedData.heroMultimedia,
+      })
+      setHero(normalized)
 
-      if (Array.isArray(fetchedData.parts) && fetchedData.parts.length > 0) {
-        setParts(fetchedData.parts)
-        if (!activeTab || !fetchedData.parts.some((p: any) => p.id === activeTab)) {
-          setActiveTab(fetchedData.parts[0].id)
+      const rawItems = fetchedData.items || fetchedData.parts
+      if (Array.isArray(rawItems) && rawItems.length > 0) {
+        setItems(rawItems)
+        if (!activeTab || !rawItems.some((p: any) => p.id === activeTab)) {
+          setActiveTab(rawItems[0].id)
         }
       }
     }
@@ -58,23 +61,23 @@ export default function TermsOfServicePage() {
 
   // Handle adding a new dynamic section
   const handleAddSection = () => {
-    const nextNum = parts.length + 1
-    const newId = "section_" + Date.now()
-    const newPart: TermsPart = {
+    const nextNum = items.length + 1
+    const newId = "item_" + Date.now()
+    const newItem: TermsItem = {
       id: newId,
-      tabTitle: `Part ${nextNum}`,
+      tabTitle: `Item ${nextNum}`,
       fullTitle: `${nextNum}. New Terms Section`,
       content: "<p>Write your section content here...</p>",
     }
-    setParts((prev) => [...prev, newPart])
+    setItems((prev) => [...prev, newItem])
     setActiveTab(newId)
-    toast.success(`Section "Part ${nextNum}" added.`)
+    toast.success(`Item ${nextNum} added.`)
   }
 
   // Handle deleting current section
   const handleRemoveSection = () => {
     if (!activeTab) return
-    setParts((prev) => {
+    setItems((prev) => {
       const remaining = prev.filter((p) => p.id !== activeTab)
       if (remaining.length > 0) {
         setActiveTab(remaining[0].id)
@@ -88,44 +91,38 @@ export default function TermsOfServicePage() {
 
   // Handle reordering sections (Move Up / Down)
   const handleMoveSection = (direction: "up" | "down") => {
-    const idx = parts.findIndex((p) => p.id === activeTab)
+    const idx = items.findIndex((p) => p.id === activeTab)
     if (idx === -1) return
     const targetIdx = direction === "up" ? idx - 1 : idx + 1
-    if (targetIdx < 0 || targetIdx >= parts.length) return
+    if (targetIdx < 0 || targetIdx >= items.length) return
 
-    const nextParts = [...parts]
-    const [moved] = nextParts.splice(idx, 1)
-    nextParts.splice(targetIdx, 0, moved)
-    setParts(nextParts)
+    const nextItems = [...items]
+    const [moved] = nextItems.splice(idx, 1)
+    nextItems.splice(targetIdx, 0, moved)
+    setItems(nextItems)
   }
 
   // Handle updating section titles
-  const handleUpdatePartTitle = (tabTitle: string, fullTitle: string) => {
-    setParts((prev) =>
+  const handleUpdateItemTitle = (tabTitle: string, fullTitle: string) => {
+    setItems((prev) =>
       prev.map((p) => (p.id === activeTab ? { ...p, tabTitle, fullTitle } : p))
     )
   }
 
   // Handle updating rich text content
   const handleContentChange = (newContent: string) => {
-    setParts((prev) =>
+    setItems((prev) =>
       prev.map((p) => (p.id === activeTab ? { ...p, content: newContent } : p))
     )
   }
 
   // Inspect payload in browser console (F12)
   const handleConsoleData = () => {
-    const combinedContent = parts
-      .map((p) => `<h2>${p.fullTitle}</h2>${p.content}`)
-      .join("<hr />")
-
     const payloadData = {
-      title: "MIRA TERMS & CONDITIONS",
       effectiveDate,
       lastUpdated,
-      heroMultimedia,
-      parts,
-      content: combinedContent,
+      hero,
+      items,
     }
 
     console.log("📜 [CLEAN CMS TERMS & CONDITIONS PAYLOAD]:", payloadData)
@@ -134,21 +131,18 @@ export default function TermsOfServicePage() {
 
   // Handle saving to database
   const handleSave = () => {
-    const combinedContent = parts
-      .map((p) => `<h2>${p.fullTitle}</h2>${p.content}`)
-      .join("<hr />")
-
     const payloadData = {
-      title: "MIRA TERMS & CONDITIONS",
       effectiveDate,
       lastUpdated,
-      heroMultimedia,
-      parts,
-      content: combinedContent,
+      hero,
+      items,
     }
 
-    const fetchedCms = termsResponse?.data?.data || termsResponse?.data
-    const existingId = fetchedCms?.id || (Array.isArray(fetchedCms) ? fetchedCms[0]?.id : undefined)
+    const raw = termsResponse?.data
+    const record = Array.isArray(raw)
+      ? raw.find((r: any) => r.slug === "terms-of-service") || raw[0]
+      : raw?.data || raw
+    const existingId = record?.id
 
     // Save for terms-of-service
     saveSection({
@@ -158,7 +152,7 @@ export default function TermsOfServicePage() {
       data: payloadData,
     })
 
-    // Also save for terms slug so both endpoints work
+    // Also sync terms slug
     saveSection({
       name: "Terms",
       slug: "terms",
@@ -166,8 +160,8 @@ export default function TermsOfServicePage() {
     })
   }
 
-  const currentPart = parts.find((p) => p.id === activeTab)
-  const currentPartIndex = parts.findIndex((p) => p.id === activeTab)
+  const currentItem = items.find((p) => p.id === activeTab)
+  const currentItemIndex = items.findIndex((p) => p.id === activeTab)
 
   if (isLoading) {
     return <TermsOfServiceSkeleton />
@@ -183,14 +177,14 @@ export default function TermsOfServicePage() {
       useWorkspaceScale={true}
       sidebarContent={
         <div className="space-y-6 p-4 md:p-5">
-          {/* Header & Action Buttons (Console Data, Add Section, Save Changes) */}
+          {/* Header & Action Buttons (Console Data, Save Changes) */}
           <div className="flex flex-col gap-3 border-b border-border/60 pb-4 sm:flex-row sm:items-center sm:justify-between">
             <div>
               <h2 className="text-base font-bold tracking-tight text-foreground">
                 MIRA TERMS &amp; CONDITIONS
               </h2>
               <p className="mt-0.5 text-xs text-muted-foreground">
-                Configure dates, document structure and rich text content below.
+                Configure hero banner, document structure and rich text content below.
               </p>
             </div>
 
@@ -228,24 +222,19 @@ export default function TermsOfServicePage() {
             setLastUpdated={setLastUpdated}
           />
 
-          {/* Hero Background Media Section */}
-          <div className="rounded-xl border border-border/60 bg-background/50 p-4 shadow-sm backdrop-blur-xl">
-            <UniversalMultimediaForm
-              title="Hero Background Media"
-              value={heroMultimedia}
-              onChange={setHeroMultimedia}
-              allowImage={true}
-              allowVideo={true}
-              allowColor={true}
-              defaultShow="image"
-              collapsible={true}
-              defaultOpen={true}
-            />
-          </div>
+          {/* 1:1 Home CMS Hero Banner Form */}
+          <LegalHeroForm
+            title="Hero Banner"
+            sectionNumber={1}
+            hero={hero}
+            onChange={setHero}
+            isOpen={isHeroOpen}
+            onToggle={() => setIsHeroOpen(!isHeroOpen)}
+          />
 
-          {parts.length > 0 && (
+          {items.length > 0 && (
             <TermsOfServiceTabs
-              parts={parts}
+              items={items}
               activeTab={activeTab}
               setActiveTab={setActiveTab}
               onAddSection={handleAddSection}
@@ -253,27 +242,26 @@ export default function TermsOfServicePage() {
           )}
 
           <TermsOfServiceEditor
-            currentPart={currentPart}
+            currentItem={currentItem}
             activeTab={activeTab}
-            partIndex={currentPartIndex >= 0 ? currentPartIndex : 0}
-            totalParts={parts.length}
+            itemIndex={currentItemIndex >= 0 ? currentItemIndex : 0}
+            totalItems={items.length}
             onContentChange={handleContentChange}
-            onUpdatePartTitle={handleUpdatePartTitle}
-            onMovePart={handleMoveSection}
-            onRemovePart={handleRemoveSection}
+            onUpdateItemTitle={handleUpdateItemTitle}
+            onMoveItem={handleMoveSection}
+            onRemoveItem={handleRemoveSection}
             onAddSection={handleAddSection}
           />
         </div>
       }
       previewContent={
         <TermsOfServicePreview
-          parts={parts}
+          items={items}
           effectiveDate={effectiveDate}
           lastUpdated={lastUpdated}
-          heroMultimedia={heroMultimedia}
+          hero={hero}
         />
       }
     />
   )
 }
-

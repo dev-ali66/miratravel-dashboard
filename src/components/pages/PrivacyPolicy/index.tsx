@@ -1,8 +1,13 @@
 import { useState, useEffect } from "react"
 import { useGetCmsBySlug } from "@/hooks/cms/useGetCmsBySlug"
 import { useAddCms } from "@/hooks/cms/useAddCms"
-import { DEFAULT_PARTS, createDefaultHeroMultimedia, type PolicyPart } from "./types"
-import { UniversalMultimediaForm, type UniversalMultimediaValue } from "@/components/pages/CMS/shared/UniversalMultimediaForm"
+import { DEFAULT_ITEMS, type PolicyItem } from "./types"
+import {
+  createDefaultPrivacyHero,
+  normalizeLegalHero,
+  type LegalHeroData,
+} from "@/components/pages/CMS/shared/legalHeroDefaults"
+import { LegalHeroForm } from "@/components/pages/CMS/shared/LegalHeroForm"
 import { PrivacyPolicyMetadata } from "./PrivacyPolicyMetadata"
 import { PrivacyPolicyTabs } from "./PrivacyPolicyTabs"
 import { PrivacyPolicyEditor } from "./PrivacyPolicyEditor"
@@ -19,138 +24,132 @@ export default function PrivacyPolicyPage() {
 
   const [effectiveDate, setEffectiveDate] = useState<string>("01.08.2025")
   const [lastUpdated, setLastUpdated] = useState<string>("01.08.2025")
-  const [heroMultimedia, setHeroMultimedia] = useState<UniversalMultimediaValue>(createDefaultHeroMultimedia())
-  const [parts, setParts] = useState<PolicyPart[]>(DEFAULT_PARTS)
+  const [hero, setHero] = useState<LegalHeroData>(createDefaultPrivacyHero())
+  const [isHeroOpen, setIsHeroOpen] = useState<boolean>(true)
+  const [items, setItems] = useState<PolicyItem[]>(DEFAULT_ITEMS)
   const [activeTab, setActiveTab] = useState<string>("")
 
   useEffect(() => {
-    const fetchedData = privacyPolicyResponse?.data?.data
+    const raw = privacyPolicyResponse?.data
+    const record = Array.isArray(raw)
+      ? raw.find((r: any) => r.slug === "privacy-policy" || r.slug === "privacy") || raw[0]
+      : raw?.data || raw
+
+    const fetchedData = record?.data || record
     if (fetchedData) {
       if (fetchedData.effectiveDate) setEffectiveDate(fetchedData.effectiveDate)
       if (fetchedData.lastUpdated) setLastUpdated(fetchedData.lastUpdated)
 
-      if (fetchedData.heroMultimedia) {
-        setHeroMultimedia({
-          ...createDefaultHeroMultimedia(),
-          ...fetchedData.heroMultimedia,
-          image: {
-            ...createDefaultHeroMultimedia().image,
-            ...fetchedData.heroMultimedia.image,
-          },
-          video: {
-            ...createDefaultHeroMultimedia().video,
-            ...fetchedData.heroMultimedia.video,
-          },
-          color: {
-            ...createDefaultHeroMultimedia().color,
-            ...fetchedData.heroMultimedia.color,
-          },
-        })
-      }
+      const normalized = normalizeLegalHero(fetchedData.hero, {
+        breadcrumb: "MIRA ARCHIVE",
+        title: fetchedData.title || "Privacy Policy",
+        subtitle:
+          fetchedData.subtitle ||
+          "We are committed to protecting your privacy and ensuring transparency about how we collect, use, and safeguard your personal information across all MIRA journeys and platforms.",
+        existingMedia: fetchedData.heroMultimedia,
+      })
+      setHero(normalized)
 
-      if (Array.isArray(fetchedData.parts) && fetchedData.parts.length > 0) {
-        setParts(fetchedData.parts)
-        if (!activeTab || !fetchedData.parts.some((p: PolicyPart) => p.id === activeTab)) {
-          setActiveTab(fetchedData.parts[0].id)
+      const rawItems = fetchedData.items || fetchedData.parts
+      if (Array.isArray(rawItems) && rawItems.length > 0) {
+        setItems(rawItems)
+        if (!activeTab || !rawItems.some((p: PolicyItem) => p.id === activeTab)) {
+          setActiveTab(rawItems[0].id)
         }
       } else if (typeof fetchedData.content === "string" && fetchedData.content) {
-        const initialPart: PolicyPart = {
-          id: "part-1",
+        const initialItem: PolicyItem = {
+          id: "item-1",
           tabTitle: "Overview",
           fullTitle: "Privacy Policy Overview",
           content: fetchedData.content,
         }
-        setParts([initialPart])
-        setActiveTab("part-1")
+        setItems([initialItem])
+        setActiveTab("item-1")
       }
     }
   }, [privacyPolicyResponse])
 
-  const handleAddPart = () => {
-    const newId = `part-${Date.now()}`
-    const newPartNumber = parts.length + 1
-    const newPart: PolicyPart = {
+  // Handle adding a new item
+  const handleAddItem = () => {
+    const nextNum = items.length + 1
+    const newId = `item-${Date.now()}`
+    const newItem: PolicyItem = {
       id: newId,
-      tabTitle: `Part ${newPartNumber}`,
-      fullTitle: `${newPartNumber}. New Privacy Section`,
-      content: "<p>Write section content here...</p>",
+      tabTitle: `Item ${nextNum}`,
+      fullTitle: `${nextNum}. New Section`,
+      content: "<p>Write your section content here...</p>",
     }
-    setParts((prev) => [...prev, newPart])
+    setItems((prev) => [...prev, newItem])
     setActiveTab(newId)
+    toast.success(`Section "Item ${nextNum}" added.`)
   }
 
-  const handleDeletePart = (id: string) => {
-    setParts((prev) => {
-      const filtered = prev.filter((p) => p.id !== id)
-      if (activeTab === id) {
-        setActiveTab(filtered.length > 0 ? filtered[0].id : "")
+  // Handle removing the item
+  const handleDeleteItem = (id: string) => {
+    setItems((prev) => {
+      const remaining = prev.filter((p) => p.id !== id)
+      if (remaining.length > 0) {
+        setActiveTab(remaining[0].id)
+      } else {
+        setActiveTab("")
       }
-      return filtered
+      return remaining
     })
+    toast.info("Section removed.")
   }
 
-  const handleMovePart = (index: number, direction: "up" | "down") => {
-    if (
-      (direction === "up" && index === 0) ||
-      (direction === "down" && index === parts.length - 1)
-    ) {
-      return
-    }
-    const targetIndex = direction === "up" ? index - 1 : index + 1
-    const newParts = [...parts]
-    const temp = newParts[index]
-    newParts[index] = newParts[targetIndex]
-    newParts[targetIndex] = temp
-    setParts(newParts)
+  // Handle reordering (Move Up / Down)
+  const handleMoveItem = (index: number, direction: "up" | "down") => {
+    const targetIdx = direction === "up" ? index - 1 : index + 1
+    if (targetIdx < 0 || targetIdx >= items.length) return
+
+    const nextItems = [...items]
+    const [moved] = nextItems.splice(index, 1)
+    nextItems.splice(targetIdx, 0, moved)
+    setItems(nextItems)
   }
 
+  // Handle updating titles
   const handleTitleChange = (field: "tabTitle" | "fullTitle", value: string) => {
-    setParts((prev) =>
+    setItems((prev) =>
       prev.map((p) => (p.id === activeTab ? { ...p, [field]: value } : p))
     )
   }
 
-  const handleContentChange = (newContent: string) => {
-    setParts((prev) =>
-      prev.map((p) => (p.id === activeTab ? { ...p, content: newContent } : p))
+  // Handle updating rich text content
+  const handleContentChange = (content: string) => {
+    setItems((prev) =>
+      prev.map((p) => (p.id === activeTab ? { ...p, content } : p))
     )
   }
 
   // Inspect payload in browser console (F12)
   const handleConsoleData = () => {
-    const combinedContent = parts
-      .map((p) => `<h2>${p.fullTitle}</h2>${p.content}`)
-      .join("<hr />")
-
-    const payloadData = {
-      title: "MIRA PRIVACY POLICY",
+    const payload = {
       effectiveDate,
       lastUpdated,
-      heroMultimedia,
-      parts,
-      content: combinedContent,
+      hero,
+      items,
     }
 
-    console.log("🔒 [CLEAN CMS PRIVACY POLICY PAYLOAD]:", payloadData)
+    console.log("📜 [CLEAN CMS PRIVACY POLICY PAYLOAD]:", payload)
     toast.info("Privacy Policy payload logged to browser console (F12)")
   }
 
+  // Handle save
   const handleSave = () => {
-    const combinedContent = parts
-      .map((p) => `<h2>${p.fullTitle}</h2>${p.content}`)
-      .join("<hr />")
-
     const payload = {
-      title: "MIRA PRIVACY POLICY",
       effectiveDate,
       lastUpdated,
-      heroMultimedia,
-      parts,
-      content: combinedContent,
+      hero,
+      items,
     }
 
-    const fetchedCms = privacyPolicyResponse?.data?.data || privacyPolicyResponse?.data
-    const existingId = fetchedCms?.id || (Array.isArray(fetchedCms) ? fetchedCms[0]?.id : undefined)
+    const raw = privacyPolicyResponse?.data
+    const record = Array.isArray(raw)
+      ? raw.find((r: any) => r.slug === "privacy-policy") || raw[0]
+      : raw?.data || raw
+    const existingId = record?.id
 
     // Save under both "privacy-policy" and "privacy" slugs
     saveSection({
@@ -167,8 +166,8 @@ export default function PrivacyPolicyPage() {
     })
   }
 
-  const currentPartIndex = parts.findIndex((p) => p.id === activeTab)
-  const currentPart = currentPartIndex !== -1 ? parts[currentPartIndex] : parts[0]
+  const currentItemIndex = items.findIndex((p) => p.id === activeTab)
+  const currentItem = currentItemIndex !== -1 ? items[currentItemIndex] : items[0]
 
   if (isLoading) {
     return <PrivacyPolicySkeleton />
@@ -179,19 +178,19 @@ export default function PrivacyPolicyPage() {
       backToUrl="/"
       backToLabel="Back to Dashboard"
       icon={ShieldCheck}
-      iconColor="text-brand-green"
+      iconColor="text-emerald-500"
       title="Privacy Policy Editor"
       useWorkspaceScale={true}
       sidebarContent={
         <div className="space-y-6 p-4 md:p-5">
-          {/* Header & Action Buttons (Console Data, Add Section, Save Changes) */}
+          {/* Header & Action Buttons */}
           <div className="flex flex-col gap-3 border-b border-border/60 pb-4 sm:flex-row sm:items-center sm:justify-between">
             <div>
               <h2 className="text-base font-bold tracking-tight text-foreground">
                 MIRA PRIVACY POLICY
               </h2>
               <p className="mt-0.5 text-xs text-muted-foreground">
-                Configure dates, document structure and rich text content below.
+                Configure hero banner, document structure and rich text content below.
               </p>
             </div>
 
@@ -229,47 +228,42 @@ export default function PrivacyPolicyPage() {
             setLastUpdated={setLastUpdated}
           />
 
-          {/* Hero Background Media Section */}
-          <div className="rounded-xl border border-border/60 bg-background/50 p-4 shadow-sm backdrop-blur-xl">
-            <UniversalMultimediaForm
-              title="Hero Background Media"
-              value={heroMultimedia}
-              onChange={setHeroMultimedia}
-              allowImage={true}
-              allowVideo={true}
-              allowColor={true}
-              defaultShow="image"
-              collapsible={true}
-              defaultOpen={true}
-            />
-          </div>
+          {/* 1:1 Home CMS Hero Banner Form */}
+          <LegalHeroForm
+            title="Hero Banner"
+            sectionNumber={1}
+            hero={hero}
+            onChange={setHero}
+            isOpen={isHeroOpen}
+            onToggle={() => setIsHeroOpen(!isHeroOpen)}
+          />
 
           <PrivacyPolicyTabs
-            parts={parts}
+            items={items}
             activeTab={activeTab}
             setActiveTab={setActiveTab}
-            onAddPart={handleAddPart}
+            onAddItem={handleAddItem}
           />
 
           <PrivacyPolicyEditor
-            currentPart={currentPart}
+            currentItem={currentItem}
             activeTab={activeTab}
-            partIndex={currentPartIndex !== -1 ? currentPartIndex : 0}
-            totalParts={parts.length}
+            itemIndex={currentItemIndex !== -1 ? currentItemIndex : 0}
+            totalItems={items.length}
             onContentChange={handleContentChange}
             onTitleChange={handleTitleChange}
-            onDeletePart={handleDeletePart}
-            onMovePart={handleMovePart}
-            onAddPart={handleAddPart}
+            onMoveItem={handleMoveItem}
+            onDeleteItem={handleDeleteItem}
+            onAddItem={handleAddItem}
           />
         </div>
       }
       previewContent={
         <PrivacyPolicyPreview
-          parts={parts}
+          items={items}
           effectiveDate={effectiveDate}
           lastUpdated={lastUpdated}
-          heroMultimedia={heroMultimedia}
+          hero={hero}
         />
       }
     />
