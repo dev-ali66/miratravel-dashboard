@@ -49,11 +49,13 @@ export function StoryForm({
     };
   }, []);
 
-  const sections = getSectionsForType(draft.type || "short_story");
+  const sections = getSectionsForType(draft.type || "normal_story");
 
   const handleConsoleLog = () => {
     const payload = normalizeStoryPayload(draft);
-    console.log("Normalized Story Payload:", payload);
+    console.log("📖 [CLEAN STORY API PAYLOAD]:", payload);
+    console.log("   ★ Featured Story:", payload.featured);
+    console.log("   ✓ Recommended Story:", payload.recommended);
   };
 
   const handleSave = () => {
@@ -68,7 +70,11 @@ export function StoryForm({
         <div className="flex items-center justify-between gap-4">
           <div className="min-w-0">
             <p className="text-[10px] font-medium tracking-[0.2em] text-muted-foreground uppercase">
-              {draft.type === "short_story" ? "Short Story" : draft.type === "long_story" ? "Long Story" : "Guidance Story"}
+              {draft.type === "travel_ease"
+                ? "Travel Ease"
+                : draft.type === "mira_editorial"
+                ? "Mira Editorial"
+                : "Normal Story"}
             </p>
 
             <h2 className="mt-1 truncate text-base font-semibold">

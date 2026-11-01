@@ -6,7 +6,6 @@ import {
   ArrowUp,
   ArrowDown,
   Type,
-  Quote,
   Image as ImageIcon,
   Video as VideoIcon,
   Sparkles,
@@ -15,12 +14,17 @@ import {
   ChevronDown,
 } from "lucide-react"
 import { UniversalMultimediaForm } from "@/components/pages/CMS/shared/UniversalMultimediaForm"
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu"
 import { FormSection } from "../../shared/fields"
 import type { StoryFormSectionProps } from "../../config/storySections"
-import { emptyBlockItem, emptyBlocks, emptyBlocksBackgroundMultimedia, emptyGuidanceBlock, emptyNotesBlock } from "./emptyBlocks"
+import { emptyBlockItem, emptyBlocks, emptyBlocksBackgroundMultimedia, emptyGuidanceBlock, emptyNotesBlock, emptyParagraphBlock } from "./emptyBlocks"
 import { deleteMediaFiles } from "./shared/mediaDeleteHelper"
 import { ParagraphForm } from "./paragraph"
-import { QuoteForm } from "./quote"
 import { ImageBlockForm } from "./image"
 import { VideoBlockForm } from "./video"
 import { SpotlightCardForm } from "./spotlight"
@@ -53,12 +57,14 @@ export function BlocksForm({
     setOpenBlockIndex((current) => (current === idx ? null : idx))
   }
 
-  const addBlock = (type: "paragraph" | "quote" | "image" | "video" | "spotlight" | "guidance" | "notes") => {
+  const addBlock = (type: "paragraph" | "image" | "video" | "spotlight" | "guidance" | "notes") => {
     let newBlock: any
     if (type === "guidance") {
       newBlock = { ...emptyGuidanceBlock }
     } else if (type === "notes") {
       newBlock = { ...emptyNotesBlock }
+    } else if (type === "paragraph") {
+      newBlock = { ...emptyParagraphBlock }
     } else {
       newBlock = {
         ...emptyBlockItem,
@@ -72,14 +78,7 @@ export function BlocksForm({
         },
         content: {
           value: "",
-          textColor: type === "paragraph" ? THEME_COLORS.body : type === "quote" ? THEME_COLORS.gold : THEME_COLORS.sub,
-          textOpacity: 1,
-          backgroundColor: null,
-          backgroundOpacity: 1,
-        },
-        author: {
-          value: "",
-          textColor: THEME_COLORS.muted,
+          textColor: THEME_COLORS.sub,
           textOpacity: 1,
           backgroundColor: null,
           backgroundOpacity: 1,
@@ -139,10 +138,108 @@ export function BlocksForm({
       active={isOpen}
       onClick={() => toggleSection("blocks")}
     >
-      <div className="flex flex-col gap-6">
-        <p className="text-xs text-muted-foreground leading-relaxed">
-          Add dynamic narrative blocks (paragraphs, pullquotes, featured images, featured videos, spotlight callouts, guidance guides, or practical notes grids) to build out the story layout.
-        </p>
+      <div className="flex flex-col gap-5">
+        {/* Top Header Bar & Add Block Dropdown */}
+        <div className="flex items-center justify-between gap-3 pb-3 border-b border-border/50">
+          <div className="min-w-0 flex-1">
+            <h4 className="text-xs font-semibold text-foreground truncate">
+              Story Content Blocks ({blocks.length})
+            </h4>
+            <p className="text-[11px] text-muted-foreground truncate">
+              Add and arrange dynamic narrative sections for this story.
+            </p>
+          </div>
+
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <button
+                type="button"
+                className="flex shrink-0 items-center gap-1.5 rounded-md bg-primary px-2.5 py-1 text-xs font-medium text-primary-foreground shadow-xs transition hover:opacity-90 cursor-pointer"
+              >
+                <Plus className="h-3.5 w-3.5" />
+                <span>Add Block</span>
+                <ChevronDown className="h-3 w-3 opacity-70" />
+              </button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent
+              side="bottom"
+              align="end"
+              sideOffset={4}
+              className="w-40 p-1 shadow-md"
+            >
+              <DropdownMenuItem
+                onClick={() => addBlock("paragraph")}
+                className="flex items-center gap-2 px-2 py-1 cursor-pointer rounded text-xs font-medium text-foreground focus:bg-muted"
+              >
+                <div className="flex h-4.5 w-4.5 shrink-0 items-center justify-center rounded bg-blue-500/10 text-blue-600 dark:text-blue-400">
+                  <Type className="h-2.5 w-2.5" />
+                </div>
+                <span>Paragraph</span>
+              </DropdownMenuItem>
+
+              <DropdownMenuItem
+                onClick={() => addBlock("image")}
+                className="flex items-center gap-2 px-2 py-1 cursor-pointer rounded text-xs font-medium text-foreground focus:bg-muted"
+              >
+                <div className="flex h-4.5 w-4.5 shrink-0 items-center justify-center rounded bg-emerald-500/10 text-emerald-600 dark:text-emerald-400">
+                  <ImageIcon className="h-2.5 w-2.5" />
+                </div>
+                <span>Image</span>
+              </DropdownMenuItem>
+
+              <DropdownMenuItem
+                onClick={() => addBlock("video")}
+                className="flex items-center gap-2 px-2 py-1 cursor-pointer rounded text-xs font-medium text-foreground focus:bg-muted"
+              >
+                <div className="flex h-4.5 w-4.5 shrink-0 items-center justify-center rounded bg-red-500/10 text-red-600 dark:text-red-400">
+                  <VideoIcon className="h-2.5 w-2.5" />
+                </div>
+                <span>Video</span>
+              </DropdownMenuItem>
+
+              <DropdownMenuItem
+                onClick={() => addBlock("spotlight")}
+                className="flex items-center gap-2 px-2 py-1 cursor-pointer rounded text-xs font-medium text-foreground focus:bg-muted"
+              >
+                <div className="flex h-4.5 w-4.5 shrink-0 items-center justify-center rounded bg-purple-500/10 text-purple-600 dark:text-purple-400">
+                  <Sparkles className="h-2.5 w-2.5" />
+                </div>
+                <span>Spotlight Card</span>
+              </DropdownMenuItem>
+
+              <DropdownMenuItem
+                onClick={() => addBlock("guidance")}
+                className="flex items-center gap-2 px-2 py-1 cursor-pointer rounded text-xs font-medium text-foreground focus:bg-muted"
+              >
+                <div className="flex h-4.5 w-4.5 shrink-0 items-center justify-center rounded bg-teal-500/10 text-teal-600 dark:text-teal-400">
+                  <Compass className="h-2.5 w-2.5" />
+                </div>
+                <span>Guidance Guide</span>
+              </DropdownMenuItem>
+
+              <DropdownMenuItem
+                onClick={() => addBlock("notes")}
+                className="flex items-center gap-2 px-2 py-1 cursor-pointer rounded text-xs font-medium text-foreground focus:bg-muted"
+              >
+                <div className="flex h-4.5 w-4.5 shrink-0 items-center justify-center rounded bg-amber-500/10 text-amber-700 dark:text-amber-400">
+                  <BookOpen className="h-2.5 w-2.5" />
+                </div>
+                <span>Practical Notes</span>
+              </DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
+        </div>
+
+        {/* Empty State when no blocks exist */}
+        {blocks.length === 0 && (
+          <div className="flex flex-col items-center justify-center rounded-lg border border-dashed border-border/80 bg-muted/10 p-8 text-center">
+            <BookOpen className="h-8 w-8 text-muted-foreground/40 mb-2" />
+            <p className="text-xs font-medium text-foreground">No content blocks added yet</p>
+            <p className="text-[11px] text-muted-foreground mt-0.5 max-w-xs">
+              Click the "Add Block" button above to choose and add your first content block.
+            </p>
+          </div>
+        )}
 
         {/* Blocks Repeater List */}
         <div className="flex flex-col gap-3">
@@ -152,9 +249,15 @@ export function BlocksForm({
 
             // Helper for block title summary
             const titleSummary =
-              block.title?.value ||
+              (blockType === "paragraph"
+                ? block.content?.value
+                  ? block.content.value.replace(/<[^>]*>/g, "").trim().slice(0, 45) || "Paragraph Content"
+                  : "Paragraph Content"
+                : (block.description?.value || block.title?.value)
+                  ? String(block.description?.value || block.title?.value).replace(/<[^>]*>/g, "").trim().slice(0, 45)
+                  : "") ||
               (block.content?.value
-                ? block.content.value.replace(/<[^>]*>/g, "").slice(0, 40)
+                ? block.content.value.replace(/<[^>]*>/g, "").trim().slice(0, 45)
                 : "") ||
               (blockType === "image"
                 ? block.multimedia?.image?.url ? "Featured Image (✓ Image attached)" : "Featured Image (Click chevron to edit/upload)"
@@ -165,7 +268,7 @@ export function BlocksForm({
                     : blockType === "guidance"
                       ? "Guidance Field Guide"
                       : blockType === "notes"
-                        ? "Practical Notes Grid"
+                        ? "Practical Notes & Insider Tips"
                         : `Untitled ${blockType}`)
 
             return (
@@ -187,13 +290,12 @@ export function BlocksForm({
                     {/* Block Type Badge */}
                     <div className="flex shrink-0 items-center gap-1.5 rounded-full bg-stone-100 dark:bg-stone-800 px-2.5 py-0.5 text-[11px] font-medium text-stone-700 dark:text-stone-300 capitalize">
                       {blockType === "paragraph" && <Type className="h-3 w-3 text-blue-500" />}
-                      {blockType === "quote" && <Quote className="h-3 w-3 text-amber-500" />}
                       {blockType === "image" && <ImageIcon className="h-3 w-3 text-emerald-500" />}
                       {blockType === "video" && <VideoIcon className="h-3 w-3 text-red-500" />}
                       {blockType === "spotlight" && <Sparkles className="h-3 w-3 text-purple-500" />}
                       {(blockType === "guidance" || blockType === "guideline") && <Compass className="h-3 w-3 text-teal-500" />}
                       {blockType === "notes" && <BookOpen className="h-3 w-3 text-amber-600" />}
-                      {blockType === "image" ? "Featured Image" : blockType === "video" ? "Featured Video" : blockType === "guidance" ? "Guidance Guide" : blockType === "notes" ? "Practical Notes" : blockType}
+                      {blockType === "image" ? "Featured Image" : blockType === "video" ? "Featured Video" : blockType === "guidance" ? "Guidance Guide" : blockType === "notes" ? "Practical Notes & Insider Tips" : blockType}
                     </div>
 
                     {/* Title Summary */}
@@ -247,34 +349,9 @@ export function BlocksForm({
                 {/* Collapsible Block Form Content */}
                 {isBlockOpen && (
                   <div className="p-4 flex flex-col gap-4">
-                    {/* Block Type Switcher Dropdown */}
-                    <div className="flex items-center gap-2 pb-2 border-b border-border/40">
-                      <label className="text-xs font-medium text-muted-foreground shrink-0">Block Type:</label>
-                      <select
-                        value={blockType}
-                        onChange={(e) => updateBlockAt(idx, { type: e.target.value })}
-                        className="h-8 rounded-sm border border-border bg-background px-2.5 text-xs text-foreground focus:outline-none focus:ring-1 focus:ring-primary cursor-pointer"
-                      >
-                        <option value="paragraph">Paragraph / Text Body</option>
-                        <option value="quote">Pullquote / Quote Callout</option>
-                        <option value="image">Featured Image</option>
-                        <option value="video">Featured Video</option>
-                        <option value="spotlight">Spotlight Card</option>
-                        <option value="guidance">Guidance / Field Guide</option>
-                        <option value="notes">Practical Notes Grid</option>
-                      </select>
-                    </div>
-
                     {/* Dedicated Sub-block Forms */}
                     {blockType === "paragraph" && (
                       <ParagraphForm
-                        index={idx}
-                        block={block}
-                        onChange={(updated) => updateBlockAt(idx, updated)}
-                      />
-                    )}
-                    {blockType === "quote" && (
-                      <QuoteForm
                         index={idx}
                         block={block}
                         onChange={(updated) => updateBlockAt(idx, updated)}
@@ -320,67 +397,6 @@ export function BlocksForm({
               </div>
             )
           })}
-        </div>
-
-        {/* Add Block Toolbar */}
-        <div className="flex flex-wrap items-center gap-2 pt-2 border-t border-border/50">
-          <span className="text-xs font-semibold text-muted-foreground mr-1">Add Block:</span>
-          <button
-            type="button"
-            onClick={() => addBlock("paragraph")}
-            className="flex items-center gap-1.5 rounded-sm bg-secondary hover:bg-secondary/80 px-3 py-1.5 text-xs font-medium text-secondary-foreground transition cursor-pointer"
-          >
-            <Plus className="h-3.5 w-3.5" />
-            Paragraph
-          </button>
-          <button
-            type="button"
-            onClick={() => addBlock("quote")}
-            className="flex items-center gap-1.5 rounded-sm bg-secondary hover:bg-secondary/80 px-3 py-1.5 text-xs font-medium text-secondary-foreground transition cursor-pointer"
-          >
-            <Plus className="h-3.5 w-3.5" />
-            Quote
-          </button>
-          <button
-            type="button"
-            onClick={() => addBlock("image")}
-            className="flex items-center gap-1.5 rounded-sm bg-secondary hover:bg-secondary/80 px-3 py-1.5 text-xs font-medium text-secondary-foreground transition cursor-pointer"
-          >
-            <Plus className="h-3.5 w-3.5" />
-            Featured Image
-          </button>
-          <button
-            type="button"
-            onClick={() => addBlock("video")}
-            className="flex items-center gap-1.5 rounded-sm bg-secondary hover:bg-secondary/80 px-3 py-1.5 text-xs font-medium text-secondary-foreground transition cursor-pointer"
-          >
-            <Plus className="h-3.5 w-3.5" />
-            Featured Video
-          </button>
-          <button
-            type="button"
-            onClick={() => addBlock("spotlight")}
-            className="flex items-center gap-1.5 rounded-sm bg-secondary hover:bg-secondary/80 px-3 py-1.5 text-xs font-medium text-secondary-foreground transition cursor-pointer"
-          >
-            <Plus className="h-3.5 w-3.5" />
-            Spotlight Card
-          </button>
-          <button
-            type="button"
-            onClick={() => addBlock("guidance")}
-            className="flex items-center gap-1.5 rounded-sm bg-secondary hover:bg-secondary/80 px-3 py-1.5 text-xs font-medium text-secondary-foreground transition cursor-pointer"
-          >
-            <Plus className="h-3.5 w-3.5" />
-            Guidance Guide
-          </button>
-          <button
-            type="button"
-            onClick={() => addBlock("notes")}
-            className="flex items-center gap-1.5 rounded-sm bg-secondary hover:bg-secondary/80 px-3 py-1.5 text-xs font-medium text-secondary-foreground transition cursor-pointer"
-          >
-            <Plus className="h-3.5 w-3.5" />
-            Practical Notes
-          </button>
         </div>
 
         {/* Full Blocks Section Background Multimedia */}

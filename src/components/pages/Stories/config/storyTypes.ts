@@ -1,7 +1,13 @@
 import type { SeoMetadata } from "@/components/pages/CMS/shared/SeoForm"
 
 export type SeoPayload = SeoMetadata
-export type StoryType = "short_story" | "long_story" | "guidance"
+export type StoryType =
+  | "travel_ease"
+  | "mira_editorial"
+  | "normal_story"
+  | "short_story"
+  | "long_story"
+  | "guidance"
 
 export interface StoryData {
   id?: string
@@ -16,14 +22,9 @@ export interface StoryData {
   readTime?: string
   categories?: string[]
   category?: string
-  description?: string
-  image?: string
-  templateType?: string
-  detail?: Record<string, any>
   hero?: Record<string, any>
-  intro?: Record<string, any>
   blocks?: any[]
-  practicalNotes?: any
+  blocksBackgroundMultimedia?: Record<string, any>
   seo?: SeoPayload
   locations?: any[]
   journeys?: any[]

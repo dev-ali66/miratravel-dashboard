@@ -6,7 +6,7 @@ type StoryPreviewProps = {
 };
 
 export function StoryPreview({ draft }: StoryPreviewProps) {
-  const sections = getSectionsForType(draft.type || "short_story");
+  const sections = getSectionsForType(draft.type || "normal_story");
 
   return (
     <div className="@container flex h-full w-full flex-col bg-background overflow-y-auto overflow-x-hidden">

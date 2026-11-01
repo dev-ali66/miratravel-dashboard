@@ -1,5 +1,4 @@
 import { normalizeParagraph } from "./paragraph"
-import { normalizeQuote } from "./quote"
 import { normalizeImageBlock } from "./image"
 import { normalizeVideoBlock } from "./video"
 import { normalizeSpotlightCard } from "./spotlight"
@@ -14,8 +13,6 @@ export function normalizeBlockItem(rawBlock: any = {}) {
   switch (type) {
     case "paragraph":
       return normalizeParagraph(rawBlock)
-    case "quote":
-      return normalizeQuote(rawBlock)
     case "image":
       return normalizeImageBlock(rawBlock, (m: any) => normalizeMultimedia(m, "image"))
     case "video":
@@ -34,7 +31,9 @@ export function normalizeBlockItem(rawBlock: any = {}) {
 
 export function normalizeBlocks(blocksData: any[]) {
   if (!Array.isArray(blocksData)) return []
-  return blocksData.map((block) => normalizeBlockItem(block))
+  return blocksData
+    .filter((block) => block && block.type !== "quote")
+    .map((block) => normalizeBlockItem(block))
 }
 
 export function normalizeBlocksBackgroundMultimedia(bgData: any) {

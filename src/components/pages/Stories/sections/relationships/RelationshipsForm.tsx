@@ -45,25 +45,25 @@ function LocationRow({
   const type = loc?.type || "LOCATION"
 
   return (
-    <div className="flex items-center justify-between gap-3 rounded-lg border border-border/70 bg-card p-2.5 shadow-2xs transition-colors hover:border-border">
-      <div className="flex items-center gap-2.5 min-w-0">
-        <span className="flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-primary/10 text-[11px] font-semibold text-primary">
+    <div className="flex items-center justify-between gap-2 rounded-md border border-border/70 bg-card px-2.5 py-1.5 shadow-2xs transition-colors hover:border-border">
+      <div className="flex items-center gap-2 min-w-0">
+        <span className="flex h-4.5 w-4.5 shrink-0 items-center justify-center rounded-full bg-primary/10 text-[10px] font-semibold text-primary">
           {index + 1}
         </span>
-        <div className="flex flex-col min-w-0">
-          <div className="flex items-center gap-2">
+        <div className="flex flex-col min-w-0 leading-tight">
+          <div className="flex items-center gap-1.5">
             <span className="text-xs font-semibold text-foreground truncate">{name}</span>
-            <span className="rounded bg-muted px-1.5 py-0.5 text-[9px] font-bold uppercase tracking-wider text-muted-foreground shrink-0">
+            <span className="rounded bg-muted px-1.5 py-0.5 text-[8.5px] font-bold uppercase tracking-wider text-muted-foreground shrink-0">
               {type}
             </span>
           </div>
-          <span className="text-[10px] text-muted-foreground font-mono truncate">
+          <span className="text-[9.5px] text-muted-foreground font-mono truncate">
             ID: {locationId}
           </span>
         </div>
       </div>
 
-      <div className="flex items-center gap-1 shrink-0">
+      <div className="flex items-center gap-0.5 shrink-0">
         <button
           type="button"
           disabled={index === 0}
@@ -71,7 +71,7 @@ function LocationRow({
           className="p-1 text-muted-foreground hover:text-foreground disabled:opacity-30 cursor-pointer"
           title="Move Up"
         >
-          <ChevronUp className="h-3.5 w-3.5" />
+          <ChevronUp className="h-3 w-3" />
         </button>
         <button
           type="button"
@@ -80,7 +80,7 @@ function LocationRow({
           className="p-1 text-muted-foreground hover:text-foreground disabled:opacity-30 cursor-pointer"
           title="Move Down"
         >
-          <ChevronDown className="h-3.5 w-3.5" />
+          <ChevronDown className="h-3 w-3" />
         </button>
         <button
           type="button"
@@ -88,7 +88,7 @@ function LocationRow({
           className="p-1 text-muted-foreground hover:text-destructive transition-colors cursor-pointer"
           title="Remove Location"
         >
-          <Trash2 className="h-3.5 w-3.5" />
+          <Trash2 className="h-3 w-3" />
         </button>
       </div>
     </div>
@@ -114,20 +114,20 @@ function JourneyRow({
   const title = journey?.title || `Journey (${journeyId.slice(-8)})`
 
   return (
-    <div className="flex items-center justify-between gap-3 rounded-lg border border-border/70 bg-card p-2.5 shadow-2xs transition-colors hover:border-border">
-      <div className="flex items-center gap-2.5 min-w-0">
-        <span className="flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-emerald-500/10 text-[11px] font-semibold text-emerald-600 dark:text-emerald-400">
+    <div className="flex items-center justify-between gap-2 rounded-md border border-border/70 bg-card px-2.5 py-1.5 shadow-2xs transition-colors hover:border-border">
+      <div className="flex items-center gap-2 min-w-0">
+        <span className="flex h-4.5 w-4.5 shrink-0 items-center justify-center rounded-full bg-emerald-500/10 text-[10px] font-semibold text-emerald-600 dark:text-emerald-400">
           {index + 1}
         </span>
-        <div className="flex flex-col min-w-0">
+        <div className="flex flex-col min-w-0 leading-tight">
           <span className="text-xs font-semibold text-foreground truncate">{title}</span>
-          <span className="text-[10px] text-muted-foreground font-mono truncate">
+          <span className="text-[9.5px] text-muted-foreground font-mono truncate">
             ID: {journeyId}
           </span>
         </div>
       </div>
 
-      <div className="flex items-center gap-1 shrink-0">
+      <div className="flex items-center gap-0.5 shrink-0">
         <button
           type="button"
           disabled={index === 0}
@@ -135,7 +135,7 @@ function JourneyRow({
           className="p-1 text-muted-foreground hover:text-foreground disabled:opacity-30 cursor-pointer"
           title="Move Up"
         >
-          <ChevronUp className="h-3.5 w-3.5" />
+          <ChevronUp className="h-3 w-3" />
         </button>
         <button
           type="button"
@@ -144,7 +144,7 @@ function JourneyRow({
           className="p-1 text-muted-foreground hover:text-foreground disabled:opacity-30 cursor-pointer"
           title="Move Down"
         >
-          <ChevronDown className="h-3.5 w-3.5" />
+          <ChevronDown className="h-3 w-3" />
         </button>
         <button
           type="button"
@@ -152,7 +152,7 @@ function JourneyRow({
           className="p-1 text-muted-foreground hover:text-destructive transition-colors cursor-pointer"
           title="Remove Journey"
         >
-          <Trash2 className="h-3.5 w-3.5" />
+          <Trash2 className="h-3 w-3" />
         </button>
       </div>
     </div>
@@ -179,25 +179,25 @@ function StoryRow({
   const type = story?.type || "STORY"
 
   return (
-    <div className="flex items-center justify-between gap-3 rounded-lg border border-border/70 bg-card p-2.5 shadow-2xs transition-colors hover:border-border">
-      <div className="flex items-center gap-2.5 min-w-0">
-        <span className="flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-indigo-500/10 text-[11px] font-semibold text-indigo-600 dark:text-indigo-400">
+    <div className="flex items-center justify-between gap-2 rounded-md border border-border/70 bg-card px-2.5 py-1.5 shadow-2xs transition-colors hover:border-border">
+      <div className="flex items-center gap-2 min-w-0">
+        <span className="flex h-4.5 w-4.5 shrink-0 items-center justify-center rounded-full bg-indigo-500/10 text-[10px] font-semibold text-indigo-600 dark:text-indigo-400">
           {index + 1}
         </span>
-        <div className="flex flex-col min-w-0">
-          <div className="flex items-center gap-2">
+        <div className="flex flex-col min-w-0 leading-tight">
+          <div className="flex items-center gap-1.5">
             <span className="text-xs font-semibold text-foreground truncate">{title}</span>
-            <span className="rounded bg-indigo-500/10 px-1.5 py-0.5 text-[9px] font-bold uppercase tracking-wider text-indigo-600 dark:text-indigo-400 shrink-0">
+            <span className="rounded bg-indigo-500/10 px-1.5 py-0.5 text-[8.5px] font-bold uppercase tracking-wider text-indigo-600 dark:text-indigo-400 shrink-0">
               {type.replace(/_/g, " ")}
             </span>
           </div>
-          <span className="text-[10px] text-muted-foreground font-mono truncate">
+          <span className="text-[9.5px] text-muted-foreground font-mono truncate">
             ID: {storyId}
           </span>
         </div>
       </div>
 
-      <div className="flex items-center gap-1 shrink-0">
+      <div className="flex items-center gap-0.5 shrink-0">
         <button
           type="button"
           disabled={index === 0}
@@ -205,7 +205,7 @@ function StoryRow({
           className="p-1 text-muted-foreground hover:text-foreground disabled:opacity-30 cursor-pointer"
           title="Move Up"
         >
-          <ChevronUp className="h-3.5 w-3.5" />
+          <ChevronUp className="h-3 w-3" />
         </button>
         <button
           type="button"
@@ -214,7 +214,7 @@ function StoryRow({
           className="p-1 text-muted-foreground hover:text-foreground disabled:opacity-30 cursor-pointer"
           title="Move Down"
         >
-          <ChevronDown className="h-3.5 w-3.5" />
+          <ChevronDown className="h-3 w-3" />
         </button>
         <button
           type="button"
@@ -222,7 +222,7 @@ function StoryRow({
           className="p-1 text-muted-foreground hover:text-destructive transition-colors cursor-pointer"
           title="Remove Story"
         >
-          <Trash2 className="h-3.5 w-3.5" />
+          <Trash2 className="h-3 w-3" />
         </button>
       </div>
     </div>
@@ -270,7 +270,11 @@ export function RelationshipsForm({
     search: locSearchQuery,
     limit: 30,
   })
-  const locResults: StoryLocationItem[] = locResponse?.data || []
+  const locResults: StoryLocationItem[] = Array.isArray(locResponse?.data)
+    ? locResponse.data
+    : Array.isArray((locResponse as any)?.data?.data)
+    ? (locResponse as any).data.data
+    : []
 
   // --- JOURNEY SEARCH STATE ---
   const [journeySearchQuery, setJourneySearchQuery] = useState("")
@@ -282,7 +286,11 @@ export function RelationshipsForm({
     30,
     journeySearchQuery
   )
-  const journeyResults: StoryJourneyItem[] = journeyResponse?.data || []
+  const journeyResults: StoryJourneyItem[] = Array.isArray(journeyResponse?.data)
+    ? journeyResponse.data
+    : Array.isArray((journeyResponse as any)?.data?.data)
+    ? (journeyResponse as any).data.data
+    : []
 
   // --- STORY SEARCH STATE ---
   const [storySearchQuery, setStorySearchQuery] = useState("")
@@ -290,7 +298,13 @@ export function RelationshipsForm({
   const storyRef = useRef<HTMLDivElement>(null)
 
   const { data: storyResponse, isLoading: isStoryLoading } = useGetStories()
-  const rawStoryList: any[] = (storyResponse as any)?.data || storyResponse || []
+  const rawStoryList: any[] = Array.isArray((storyResponse as any)?.data)
+    ? (storyResponse as any).data
+    : Array.isArray((storyResponse as any)?.data?.data)
+    ? (storyResponse as any).data.data
+    : Array.isArray(storyResponse)
+    ? storyResponse
+    : []
   const storyResults = rawStoryList.filter(
     (s: any) =>
       s?.id !== draft.id &&
@@ -389,13 +403,13 @@ export function RelationshipsForm({
       active={isOpen}
       onClick={() => toggleSection("relationships")}
     >
-      <div className="flex flex-col gap-6">
+      <div className="flex flex-col gap-3.5">
 
         {/* 1. LOCATION IDs SEARCH & LINK */}
-        <div className="rounded-md border border-border/70 bg-card/60 p-4 space-y-3">
+        <div className="rounded-lg border border-border/70 bg-card/60 p-3 space-y-2">
           <div className="flex items-center justify-between">
-            <label className="text-xs font-semibold uppercase tracking-wider text-muted-foreground flex items-center gap-2">
-              <MapPin className="h-4 w-4 text-primary" />
+            <label className="text-[11px] font-semibold uppercase tracking-wider text-muted-foreground flex items-center gap-1.5">
+              <MapPin className="h-3.5 w-3.5 text-primary" />
               Linked Locations ({locationIds.length})
             </label>
           </div>
@@ -403,7 +417,7 @@ export function RelationshipsForm({
           {/* Search Dropdown */}
           <div ref={locRef} className="relative w-full">
             <div className="relative flex items-center">
-              <Search className="absolute left-3 h-3.5 w-3.5 text-muted-foreground" />
+              <Search className="absolute left-2.5 h-3.5 w-3.5 text-muted-foreground" />
               <input
                 type="text"
                 value={locSearchQuery}
@@ -413,13 +427,13 @@ export function RelationshipsForm({
                   setIsLocSearchOpen(true)
                 }}
                 placeholder="Search and link locations by name or type..."
-                className="w-full rounded-lg border border-border/80 bg-background pl-9 pr-8 py-2 text-xs text-foreground placeholder:text-muted-foreground outline-none focus:border-primary"
+                className="w-full rounded-md border border-border/80 bg-background pl-8 pr-7 py-1.5 text-xs text-foreground placeholder:text-muted-foreground outline-none focus:border-primary"
               />
               {locSearchQuery && (
                 <button
                   type="button"
                   onClick={() => setLocSearchQuery("")}
-                  className="absolute right-2.5 text-muted-foreground hover:text-foreground cursor-pointer"
+                  className="absolute right-2 text-muted-foreground hover:text-foreground cursor-pointer"
                 >
                   <X className="h-3.5 w-3.5" />
                 </button>
@@ -428,25 +442,25 @@ export function RelationshipsForm({
 
             {/* Results Popover */}
             {isLocSearchOpen && (
-              <div className="absolute left-0 right-0 top-full z-30 mt-1 max-h-60 overflow-y-auto rounded-lg border border-border bg-popover p-1.5 shadow-lg">
+              <div className="absolute left-0 right-0 top-full z-30 mt-1 max-h-52 overflow-y-auto custom-scrollbar rounded-md border border-border bg-popover p-1 shadow-lg">
                 {isLocLoading ? (
-                  <div className="flex items-center justify-center p-4 text-xs text-muted-foreground">
+                  <div className="flex items-center justify-center p-3 text-xs text-muted-foreground">
                     <Loader2 className="mr-2 h-4 w-4 animate-spin text-primary" />
                     Searching locations...
                   </div>
                 ) : locResults.length === 0 ? (
-                  <div className="p-3 text-center text-xs text-muted-foreground">
+                  <div className="p-2.5 text-center text-xs text-muted-foreground">
                     No locations found.
                   </div>
                 ) : (
-                  <div className="space-y-1">
+                  <div className="space-y-0.5">
                     {locResults.map((loc) => {
                       const isSelected = locationIds.includes(loc.id)
                       return (
                         <div
                           key={loc.id}
                           onClick={() => handleAddLocation(loc.id)}
-                          className={`flex items-center justify-between rounded-sm p-2 text-xs transition-colors cursor-pointer ${isSelected
+                          className={`flex items-center justify-between rounded-sm px-2 py-1.5 text-xs transition-colors cursor-pointer ${isSelected
                             ? "bg-primary/10 font-medium text-primary"
                             : "hover:bg-muted text-foreground"
                             }`}
@@ -471,9 +485,9 @@ export function RelationshipsForm({
             )}
           </div>
 
-          {/* Selected Location Rows */}
+          {/* Selected Location Rows (Scrolls after 3 items) */}
           {locationIds.length > 0 ? (
-            <div className="space-y-2 pt-1">
+            <div className="max-h-[136px] overflow-y-auto space-y-1.5 pt-0.5 pr-1 custom-scrollbar">
               {locationIds.map((id, idx) => (
                 <LocationRow
                   key={`${id}-${idx}`}
@@ -486,17 +500,17 @@ export function RelationshipsForm({
               ))}
             </div>
           ) : (
-            <p className="text-[11px] text-muted-foreground italic pt-1">
+            <p className="text-[11px] text-muted-foreground/75 italic pt-0.5">
               No locations linked to this story yet.
             </p>
           )}
         </div>
 
         {/* 2. JOURNEY IDs SEARCH & LINK */}
-        <div className="rounded-md border border-border/70 bg-card/60 p-4 space-y-3">
+        <div className="rounded-lg border border-border/70 bg-card/60 p-3 space-y-2">
           <div className="flex items-center justify-between">
-            <label className="text-xs font-semibold uppercase tracking-wider text-muted-foreground flex items-center gap-2">
-              <Compass className="h-4 w-4 text-emerald-600 dark:text-emerald-400" />
+            <label className="text-[11px] font-semibold uppercase tracking-wider text-muted-foreground flex items-center gap-1.5">
+              <Compass className="h-3.5 w-3.5 text-emerald-600 dark:text-emerald-400" />
               Linked Journeys ({journeyIds.length})
             </label>
           </div>
@@ -504,7 +518,7 @@ export function RelationshipsForm({
           {/* Search Dropdown */}
           <div ref={journeyRef} className="relative w-full">
             <div className="relative flex items-center">
-              <Search className="absolute left-3 h-3.5 w-3.5 text-muted-foreground" />
+              <Search className="absolute left-2.5 h-3.5 w-3.5 text-muted-foreground" />
               <input
                 type="text"
                 value={journeySearchQuery}
@@ -514,13 +528,13 @@ export function RelationshipsForm({
                   setIsJourneySearchOpen(true)
                 }}
                 placeholder="Search and link journeys by title..."
-                className="w-full rounded-lg border border-border/80 bg-background pl-9 pr-8 py-2 text-xs text-foreground placeholder:text-muted-foreground outline-none focus:border-primary"
+                className="w-full rounded-md border border-border/80 bg-background pl-8 pr-7 py-1.5 text-xs text-foreground placeholder:text-muted-foreground outline-none focus:border-primary"
               />
               {journeySearchQuery && (
                 <button
                   type="button"
                   onClick={() => setJourneySearchQuery("")}
-                  className="absolute right-2.5 text-muted-foreground hover:text-foreground cursor-pointer"
+                  className="absolute right-2 text-muted-foreground hover:text-foreground cursor-pointer"
                 >
                   <X className="h-3.5 w-3.5" />
                 </button>
@@ -529,25 +543,25 @@ export function RelationshipsForm({
 
             {/* Results Popover */}
             {isJourneySearchOpen && (
-              <div className="absolute left-0 right-0 top-full z-30 mt-1 max-h-60 overflow-y-auto rounded-lg border border-border bg-popover p-1.5 shadow-lg">
+              <div className="absolute left-0 right-0 top-full z-30 mt-1 max-h-52 overflow-y-auto custom-scrollbar rounded-md border border-border bg-popover p-1 shadow-lg">
                 {isJourneyLoading ? (
-                  <div className="flex items-center justify-center p-4 text-xs text-muted-foreground">
+                  <div className="flex items-center justify-center p-3 text-xs text-muted-foreground">
                     <Loader2 className="mr-2 h-4 w-4 animate-spin text-emerald-600" />
                     Searching journeys...
                   </div>
                 ) : journeyResults.length === 0 ? (
-                  <div className="p-3 text-center text-xs text-muted-foreground">
+                  <div className="p-2.5 text-center text-xs text-muted-foreground">
                     No journeys found.
                   </div>
                 ) : (
-                  <div className="space-y-1">
+                  <div className="space-y-0.5">
                     {journeyResults.map((j) => {
                       const isSelected = journeyIds.includes(j.id)
                       return (
                         <div
                           key={j.id}
                           onClick={() => handleAddJourney(j.id)}
-                          className={`flex items-center justify-between rounded-sm p-2 text-xs transition-colors cursor-pointer ${isSelected
+                          className={`flex items-center justify-between rounded-sm px-2 py-1.5 text-xs transition-colors cursor-pointer ${isSelected
                             ? "bg-emerald-500/10 font-medium text-emerald-600 dark:text-emerald-400"
                             : "hover:bg-muted text-foreground"
                             }`}
@@ -572,9 +586,9 @@ export function RelationshipsForm({
             )}
           </div>
 
-          {/* Selected Journey Rows */}
+          {/* Selected Journey Rows (Scrolls after 3 items) */}
           {journeyIds.length > 0 ? (
-            <div className="space-y-2 pt-1">
+            <div className="max-h-[136px] overflow-y-auto space-y-1.5 pt-0.5 pr-1 custom-scrollbar">
               {journeyIds.map((id, idx) => (
                 <JourneyRow
                   key={`${id}-${idx}`}
@@ -587,17 +601,17 @@ export function RelationshipsForm({
               ))}
             </div>
           ) : (
-            <p className="text-[11px] text-muted-foreground italic pt-1">
+            <p className="text-[11px] text-muted-foreground/75 italic pt-0.5">
               No journeys linked to this story yet.
             </p>
           )}
         </div>
 
         {/* 3. RELATED STORY IDs SEARCH & LINK */}
-        <div className="rounded-md border border-border/70 bg-card/60 p-4 space-y-3">
+        <div className="rounded-lg border border-border/70 bg-card/60 p-3 space-y-2">
           <div className="flex items-center justify-between">
-            <label className="text-xs font-semibold uppercase tracking-wider text-muted-foreground flex items-center gap-2">
-              <BookOpen className="h-4 w-4 text-indigo-600 dark:text-indigo-400" />
+            <label className="text-[11px] font-semibold uppercase tracking-wider text-muted-foreground flex items-center gap-1.5">
+              <BookOpen className="h-3.5 w-3.5 text-indigo-600 dark:text-indigo-400" />
               Related Stories ({manualRelatedStoryIds.length})
             </label>
           </div>
@@ -605,7 +619,7 @@ export function RelationshipsForm({
           {/* Search Dropdown */}
           <div ref={storyRef} className="relative w-full">
             <div className="relative flex items-center">
-              <Search className="absolute left-3 h-3.5 w-3.5 text-muted-foreground" />
+              <Search className="absolute left-2.5 h-3.5 w-3.5 text-muted-foreground" />
               <input
                 type="text"
                 value={storySearchQuery}
@@ -615,13 +629,13 @@ export function RelationshipsForm({
                   setIsStorySearchOpen(true)
                 }}
                 placeholder="Search and link related stories by title..."
-                className="w-full rounded-lg border border-border/80 bg-background pl-9 pr-8 py-2 text-xs text-foreground placeholder:text-muted-foreground outline-none focus:border-primary"
+                className="w-full rounded-md border border-border/80 bg-background pl-8 pr-7 py-1.5 text-xs text-foreground placeholder:text-muted-foreground outline-none focus:border-primary"
               />
               {storySearchQuery && (
                 <button
                   type="button"
                   onClick={() => setStorySearchQuery("")}
-                  className="absolute right-2.5 text-muted-foreground hover:text-foreground cursor-pointer"
+                  className="absolute right-2 text-muted-foreground hover:text-foreground cursor-pointer"
                 >
                   <X className="h-3.5 w-3.5" />
                 </button>
@@ -630,25 +644,25 @@ export function RelationshipsForm({
 
             {/* Results Popover */}
             {isStorySearchOpen && (
-              <div className="absolute left-0 right-0 top-full z-30 mt-1 max-h-60 overflow-y-auto rounded-lg border border-border bg-popover p-1.5 shadow-lg">
+              <div className="absolute left-0 right-0 top-full z-30 mt-1 max-h-52 overflow-y-auto custom-scrollbar rounded-md border border-border bg-popover p-1 shadow-lg">
                 {isStoryLoading ? (
-                  <div className="flex items-center justify-center p-4 text-xs text-muted-foreground">
+                  <div className="flex items-center justify-center p-3 text-xs text-muted-foreground">
                     <Loader2 className="mr-2 h-4 w-4 animate-spin text-indigo-600" />
                     Searching stories...
                   </div>
                 ) : storyResults.length === 0 ? (
-                  <div className="p-3 text-center text-xs text-muted-foreground">
+                  <div className="p-2.5 text-center text-xs text-muted-foreground">
                     No matching stories found.
                   </div>
                 ) : (
-                  <div className="space-y-1">
+                  <div className="space-y-0.5">
                     {storyResults.map((s: any) => {
                       const isSelected = manualRelatedStoryIds.includes(s.id)
                       return (
                         <div
                           key={s.id}
                           onClick={() => handleAddStory(s.id)}
-                          className={`flex items-center justify-between rounded-sm p-2 text-xs transition-colors cursor-pointer ${isSelected
+                          className={`flex items-center justify-between rounded-sm px-2 py-1.5 text-xs transition-colors cursor-pointer ${isSelected
                             ? "bg-indigo-500/10 font-medium text-indigo-600 dark:text-indigo-400"
                             : "hover:bg-muted text-foreground"
                             }`}
@@ -673,9 +687,9 @@ export function RelationshipsForm({
             )}
           </div>
 
-          {/* Selected Story Rows */}
+          {/* Selected Story Rows (Scrolls after 3 items) */}
           {manualRelatedStoryIds.length > 0 ? (
-            <div className="space-y-2 pt-1">
+            <div className="max-h-[136px] overflow-y-auto space-y-1.5 pt-0.5 pr-1 custom-scrollbar">
               {manualRelatedStoryIds.map((id, idx) => (
                 <StoryRow
                   key={`${id}-${idx}`}
@@ -688,7 +702,7 @@ export function RelationshipsForm({
               ))}
             </div>
           ) : (
-            <p className="text-[11px] text-muted-foreground italic pt-1">
+            <p className="text-[11px] text-muted-foreground/75 italic pt-0.5">
               No related stories linked yet.
             </p>
           )}

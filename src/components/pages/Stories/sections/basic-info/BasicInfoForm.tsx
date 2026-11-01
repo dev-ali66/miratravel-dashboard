@@ -26,9 +26,9 @@ export function BasicInfoForm({
 
   const storyTypeOptions = useMemo(
     () => [
-      { label: "Short Story", value: "short_story" },
-      { label: "Long Story", value: "long_story" },
-      { label: "Guidance", value: "guidance" },
+      { label: "Travel Ease", value: "travel_ease" },
+      { label: "Mira Editorial", value: "mira_editorial" },
+      { label: "Normal Story", value: "normal_story" },
     ],
     []
   )
@@ -43,7 +43,6 @@ export function BasicInfoForm({
 
   const handleTitleChange = (val: string) => {
     updateField("title", val)
-    updateField("slug", slugify(val))
   }
 
   return (
@@ -66,18 +65,6 @@ export function BasicInfoForm({
           onChange={handleTitleChange}
         />
 
-        {/* URL Slug (Disabled / Edit Blocked) */}
-        <DynamicStyledField
-          type="text"
-          label="URL Slug (Auto-generated)"
-          fieldName="slug"
-          placeholder="e.g. exploring-the-northern-peaks"
-          disabled={true}
-          enableStyle={false}
-          value={draft.slug || (draft.title ? slugify(draft.title) : "")}
-          onChange={() => {}}
-        />
-
         {/* Story Type */}
         <DynamicStyledField
           type="select"
@@ -85,7 +72,7 @@ export function BasicInfoForm({
           fieldName="type"
           required={true}
           enableStyle={false}
-          value={draft.type || "short_story"}
+          value={draft.type || "normal_story"}
           options={storyTypeOptions}
           onChange={(val) => updateField("type", val as StoryType)}
         />

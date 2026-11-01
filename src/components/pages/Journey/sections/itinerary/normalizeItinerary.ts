@@ -13,20 +13,49 @@ export function normalizeItinerary(itinerary: any) {
     ? safe.chaptersList
     : emptyItinerary.items
 
-  const normalizedChapters = rawChapters.map((chap: any, cIdx: number) => ({
-    chapterNumber: normalizeStyledField(chap.chapterNumber, `Chapter ${cIdx + 1}`, THEME_COLORS.accent),
-    title: normalizeStyledField(chap.title, "", THEME_COLORS.primary),
-    subtitle: normalizeStyledField(chap.subtitle, "", THEME_COLORS.secondary),
-    description: normalizeStyledField(chap.description, "", THEME_COLORS.muted),
-    multimedia: normalizeMultimedia(chap.multimedia ?? chap.thumbnail),
-    days: Array.isArray(chap.days)
-      ? chap.days.map((day: any, dIdx: number) => ({
-          dayNumber: Number(day.dayNumber || day.day || dIdx + 1),
-          locationId: typeof day.locationId === "string" ? day.locationId : (day.locationId?.id || (typeof day.location === "object" ? day.location?.value : day.location) || ""),
-          description: normalizeStyledField(day.description, "", THEME_COLORS.navText),
-        }))
-      : [],
-  }))
+  const normalizedChapters = rawChapters.map((chap: any, cIdx: number) => {
+    const rawChapterNum = chap.chapterNumber || chap.chapter_number || `Chapter ${cIdx + 1}`
+    return {
+      ...chap,
+      chapterNumber: normalizeStyledField(rawChapterNum, `Chapter ${cIdx + 1}`, THEME_COLORS.accent),
+      chapter_number: rawChapterNum,
+      title: normalizeStyledField(chap.title, "", THEME_COLORS.primary),
+      subtitle: normalizeStyledField(chap.subtitle, "", THEME_COLORS.secondary),
+      description: normalizeStyledField(chap.description, "", THEME_COLORS.muted),
+      multimedia: normalizeMultimedia(chap.multimedia ?? chap.thumbnail),
+      days: Array.isArray(chap.days)
+        ? chap.days.map((day: any, dIdx: number) => {
+            const dayNum = Number(day.dayNumber || day.day || dIdx + 1)
+            const raw = day.locationId ?? day.location
+            const item = Array.isArray(raw) ? raw[0] : raw
+            const locId = typeof item === "string" ? item : (item && typeof item === "object" ? item.id || item.value || item._id || "" : "")
+            const locName = typeof day.locationName === "string" && day.locationName
+              ? day.locationName
+              : (item && typeof item === "object" ? item.name || item.title || "" : typeof day.location === "string" && !day.location.startsWith("cm") ? day.location : "")
+
+            const fallbackTitle = locName || `Day ${dayNum}`
+            const dayTitle = day.title || fallbackTitle
+
+            return {
+              ...day,
+              dayNumber: dayNum,
+              dayLabel: day.dayLabel || `Day ${dayNum}`,
+              title: normalizeStyledField(dayTitle, fallbackTitle, THEME_COLORS.primary),
+              subtitle: normalizeStyledField(day.subtitle, "", THEME_COLORS.secondary),
+              locationId: locId,
+              locationName: locName,
+              location: normalizeStyledField(locName || day.location || "", "", THEME_COLORS.secondary),
+              description: normalizeStyledField(day.description, "", THEME_COLORS.navText),
+              thumbnail: typeof day.thumbnail === "string" ? day.thumbnail : (day.multimedia?.image?.url || day.image?.url || ""),
+              multimedia: normalizeMultimedia(day.multimedia ?? day.thumbnail),
+              images: Array.isArray(day.images) ? day.images : [],
+              coordinates: day.coordinates,
+              country: day.country,
+            }
+          })
+        : [],
+    }
+  })
 
   const { chapters: _c, chaptersList: _cl, ...cleanSafe } = safe
 

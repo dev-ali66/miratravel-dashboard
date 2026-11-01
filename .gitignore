@@ -49,6 +49,7 @@ dist/
 *.tmp
 *.bak
 *.swp
+*.tsbuildinfo
 
 # Module dependencies
 node_modules/

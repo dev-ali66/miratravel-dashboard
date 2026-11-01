@@ -28,6 +28,7 @@ import {
 } from "@/components/pages/Experience/experienceTypes"
 import { cn } from "@/lib/utils"
 import { getOptimizedImageUrl } from "@/lib/optimizedImage"
+import { VideoThumbnail } from "@/components/shared/VideoThumbnail"
 
 function unwrapExperienceData(raw: any) {
   if (!raw) return null
@@ -42,6 +43,13 @@ function unwrapExperienceData(raw: any) {
     return data[0] || null
   }
   return data
+}
+
+function getFieldValue(field: any): string {
+  if (!field) return ""
+  if (typeof field === "string") return field.trim()
+  if (typeof field === "object" && typeof field.value === "string") return field.value.trim()
+  return ""
 }
 
 function ExperienceItemRow({
@@ -60,7 +68,11 @@ function ExperienceItemRow({
   const { data: rawExpData, isLoading } = useGetExperienceById(experienceId)
   const expData = unwrapExperienceData(rawExpData)
 
-  const name = expData?.name || (isLoading ? "Loading..." : `Experience (${experienceId.slice(-8)})`)
+  const name =
+    getFieldValue(expData?.hero?.title) ||
+    expData?.name ||
+    (isLoading ? "Loading..." : `Experience (${experienceId.slice(-8)})`)
+
   const typeConfig = expData?.primaryType
     ? EXPERIENCE_TYPE_CONFIG[expData.primaryType as ExperienceType]
     : null
@@ -72,11 +84,24 @@ function ExperienceItemRow({
     expData?.countries?.[0]?.name ||
     expData?.country?.name
 
+  const heroMultimedia =
+    expData?.hero?.backgroundMultimedia ||
+    expData?.theExperience?.imageMultimedia ||
+    expData?.theExperience?.backgroundMultimedia ||
+    null
+
+  const videoUrl =
+    heroMultimedia?.video?.url ||
+    (heroMultimedia?.show === "video" ? heroMultimedia?.url : null) ||
+    null
+
   const imageUrl =
-    expData?.hero?.backgroundMultimedia?.image?.url ||
-    expData?.theExperience?.imageMultimedia?.image?.url ||
+    heroMultimedia?.image?.url ||
+    (heroMultimedia?.show === "image" ? heroMultimedia?.url : null) ||
     expData?.image ||
     ""
+
+  const isVideo = Boolean(videoUrl && (heroMultimedia?.show === "video" || !imageUrl))
 
   const formattedPrice =
     expData?.price !== undefined && expData?.price !== null
@@ -94,8 +119,12 @@ function ExperienceItemRow({
           {index + 1}
         </div>
 
-        {/* Thumbnail (if available) */}
-        {imageUrl ? (
+        {/* Thumbnail (video or image or Compass fallback) */}
+        {isVideo && videoUrl ? (
+          <div className="relative h-11 w-14 rounded-sm overflow-hidden bg-muted shrink-0 border border-border/60">
+            <VideoThumbnail src={videoUrl} alt={name} className="h-full w-full object-cover" />
+          </div>
+        ) : imageUrl ? (
           <div className="relative h-11 w-14 rounded-sm overflow-hidden bg-muted shrink-0 border border-border/60">
             <img src={getOptimizedImageUrl(imageUrl, { width: 120, quality: 100 })} alt={name} className="h-full w-full object-cover" />
           </div>

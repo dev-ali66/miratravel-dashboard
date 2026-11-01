@@ -53,11 +53,13 @@ export function useStoryPage(storySlug?: string) {
       setDraft({
         ...emptyStory,
         ...storyToEdit,
+        featured: Boolean(storyToEdit.featured),
+        recommended: Boolean(storyToEdit.recommended),
         locations,
         journeys,
         manualRelatedStories,
         categories,
-        type: storyToEdit.type || storyToEdit.templateType || "short_story",
+        type: storyToEdit.type || storyToEdit.templateType || "normal_story",
         hero: storyToEdit.hero || emptyStory.hero,
       });
     } else {

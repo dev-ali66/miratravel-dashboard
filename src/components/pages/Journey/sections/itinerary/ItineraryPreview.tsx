@@ -40,23 +40,35 @@ export function ItineraryPreview({ itinerary, draft }: { itinerary?: any; draft?
   }, [])
 
   return (
-    <div className="w-full flex flex-col gap-10">
-      <JourneyRouteMap
-        itinerary={resolvedItinerary}
-        titleObj={mapTitleObj}
-        descriptionObj={mapSubtitleObj}
-        badgeObj={badgeObj}
-        activeDay={activeDay}
-        onStopSelect={handleStopSelect}
-      />
-      <DayByDayItinerary
-        itinerary={resolvedItinerary}
-        titleObj={itineraryTitleObj}
-        subtitleObj={itinerarySubtitleObj}
-        badgeObj={badgeObj}
-        expandedDay={activeDay}
-        onExpandedDayChange={handleExpandedDayChange}
-      />
+    <div className="w-full flex flex-col gap-8 md:gap-10">
+      {/* Side-by-side on desktop (lg+), stacked on mobile */}
+      <div className="w-full flex flex-col lg:flex-row items-start gap-8 lgx:gap-10 xl:gap-12">
+        {/* Left Column: Chapters / Days */}
+        <div className="w-full lg:w-[56%] xl:w-[58%] min-w-0 self-start order-2 lg:order-1">
+          <DayByDayItinerary
+            itinerary={resolvedItinerary}
+            titleObj={itineraryTitleObj}
+            subtitleObj={itinerarySubtitleObj}
+            badgeObj={badgeObj}
+            expandedDay={activeDay}
+            onExpandedDayChange={handleExpandedDayChange}
+            className="!pt-0"
+          />
+        </div>
+
+        {/* Right Column: Route Map (sticky on desktop) */}
+        <div className="w-full lg:w-[44%] xl:w-[42%] shrink-0 lg:sticky lg:top-20 xl:top-24 self-start order-1 lg:order-2">
+          <JourneyRouteMap
+            itinerary={resolvedItinerary}
+            titleObj={mapTitleObj}
+            descriptionObj={mapSubtitleObj}
+            badgeObj={badgeObj}
+            activeDay={activeDay}
+            onStopSelect={handleStopSelect}
+            className="!pt-0"
+          />
+        </div>
+      </div>
     </div>
   )
 }

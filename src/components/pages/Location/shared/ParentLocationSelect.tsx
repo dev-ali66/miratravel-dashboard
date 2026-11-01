@@ -18,7 +18,10 @@ import {
   useSearchLocations,
   type LocationSearchItem,
 } from "@/hooks/location/useGetLocation"
+import { useGetLocationById } from "@/hooks/location/useGetLocationById"
 import { getOptimizedImageUrl, DASHBOARD_IMAGE_WIDTHS } from "@/lib/optimizedImage"
+
+const isCuid = (str?: string | null) => Boolean(str && /^c[a-z0-9]{20,}/i.test(str))
 
 type ParentLocationSelectProps = {
   value: string | null | undefined
@@ -54,13 +57,32 @@ export function ParentLocationSelect({
   const [query, setQuery] = useState("")
   const [debouncedQuery, setDebouncedQuery] = useState("")
   const [selectedName, setSelectedName] = useState<string | null>(
-    currentName ?? null
+    currentName && !isCuid(currentName) ? currentName : null
   )
+
+  // Auto-fetch location by ID if selectedName is missing or is a raw CUID
+  const shouldFetch = Boolean(value && (!selectedName || isCuid(selectedName) || selectedName === value))
+  const { data: locationDataRes } = useGetLocationById(shouldFetch && value ? value : undefined)
+
+  useEffect(() => {
+    if (shouldFetch && locationDataRes?.data) {
+      const loc = locationDataRes.data
+      const resolvedName = loc.name || loc.data?.name || loc.title || ""
+      if (resolvedName) {
+        setSelectedName(resolvedName)
+        onChange(value!, resolvedName)
+      }
+    }
+  }, [shouldFetch, locationDataRes, value, onChange])
 
   // keep the displayed name in sync if currentName changes from outside
   useEffect(() => {
     if (currentName !== undefined) {
-      setSelectedName(currentName)
+      if (currentName && !isCuid(currentName)) {
+        setSelectedName(currentName)
+      } else if (!currentName) {
+        setSelectedName(null)
+      }
     }
   }, [currentName])
 
@@ -130,7 +152,7 @@ export function ParentLocationSelect({
               )}
             >
               <MapPin className="h-3.5 w-3.5 shrink-0 text-muted-foreground" />
-              {value ? (selectedName ?? "Selected location") : noneLabel}
+              {value ? (selectedName && !isCuid(selectedName) ? selectedName : "Loading location...") : noneLabel}
             </span>
 
             <div className="flex shrink-0 items-center gap-1.5">

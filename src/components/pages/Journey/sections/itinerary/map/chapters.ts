@@ -19,9 +19,17 @@ export function getStr(val: any, fallback: string = ""): string {
     return fallback;
 }
 
+export function isCuid(str?: string | null): boolean {
+    return Boolean(str && /^c[a-z0-9]{20,}/i.test(str.trim()));
+}
+
 export function toRomanNumeral(num: number | string): string {
     if (typeof num === 'string') {
-        const trimmed = num.trim();
+        let trimmed = num.trim();
+        const chapMatch = trimmed.match(/^chapter\s*(.*)$/i);
+        if (chapMatch) {
+            trimmed = chapMatch[1].trim();
+        }
         if (/^[IVXLCDM]+$/i.test(trimmed)) {
             return trimmed.toUpperCase();
         }
@@ -80,16 +88,27 @@ export function getChapterDayRange(chapter: any): string {
 }
 
 export function formatLocationName(str: string): string {
-    if (!str) return "";
+    if (!str || isCuid(str)) return "";
     return str
         .split(/[-_]/)
         .map((w) => w.charAt(0).toUpperCase() + w.slice(1))
         .join(" ");
 }
 
-export function deriveLocationContext(days: any[]): string {
+export function deriveLocationContext(days: any[], locationMap?: Map<string, any>): string {
     const rawLocations = days
-        .map((d) => formatLocationName(getStr(d.location) || getStr(d.locationId)))
+        .map((d) => {
+            let locStr = getStr(d.locationName) || getStr(d.location);
+            const locId = getStr(d.locationId);
+            if ((!locStr || isCuid(locStr)) && locationMap && locId) {
+                const found = locationMap.get(locId) || locationMap.get(locId.toLowerCase());
+                if (found) {
+                    locStr = found.name || found.data?.name || '';
+                }
+            }
+            if (isCuid(locStr)) return '';
+            return formatLocationName(locStr);
+        })
         .filter((loc): loc is string => Boolean(loc));
 
     const uniqueLocations = Array.from(new Set(rawLocations));
@@ -139,7 +158,7 @@ export function deriveChaptersFromDays(days: any[]): any[] {
     });
 }
 
-export function normalizeItineraryToChapters(itinerary?: any): any[] {
+export function normalizeItineraryToChapters(itinerary?: any, locationMap?: Map<string, any>): any[] {
     if (!itinerary) return [];
     const rawChapters = itinerary.chapters || itinerary.items || [];
     if (rawChapters.length > 0) {
@@ -147,7 +166,7 @@ export function normalizeItineraryToChapters(itinerary?: any): any[] {
             const role = chapter.narrative_role ?? narrativeRoleFor(idx, rawChapters.length);
             const rawChapterNum = getStr(chapter.chapter_number, getStr(chapter.chapterNumber, toRomanNumeral(idx + 1)));
             const chapterTitle = getStr(chapter.title, `Chapter ${toRomanNumeral(idx + 1)}`);
-            const chapterLocation = getStr(chapter.location_context, deriveLocationContext(chapter.days ?? []));
+            const chapterLocation = getStr(chapter.location_context, deriveLocationContext(chapter.days ?? [], locationMap));
             const chapterDesc = getStr(chapter.description);
 
             return {
@@ -160,18 +179,30 @@ export function normalizeItineraryToChapters(itinerary?: any): any[] {
                 narrative_role: role,
                 days: (chapter.days ?? []).map((day: any, dIdx: number) => {
                     const dayNum = Number(day.dayNumber || dIdx + 1);
-                    const locIdStr = formatLocationName(getStr(day.locationId));
-                    const locStr = getStr(day.location) || locIdStr;
-                    const defaultTitle = locStr ? `${locStr}` : `Day ${dayNum}`;
+                    const locId = getStr(day.locationId);
+                    let locName = getStr(day.locationName) || getStr(day.location);
+                    if (isCuid(locName)) locName = '';
+                    if (!locName && locationMap && locId) {
+                        const found = locationMap.get(locId) || locationMap.get(locId.toLowerCase());
+                        if (found) {
+                            locName = found.name || found.data?.name || '';
+                        }
+                    }
+                    const rawTitle = getStr(day.title);
+                    const dayTitle = rawTitle && !isCuid(rawTitle) ? rawTitle : (locName || `Day ${dayNum}`);
                     return {
                         ...day,
                         dayNumber: dayNum,
-                        title: getStr(day.title, defaultTitle),
+                        dayLabel: day.dayLabel || `Day ${dayNum}`,
+                        title: dayTitle,
                         subtitle: getStr(day.subtitle),
-                        location: locStr,
+                        locationId: locId,
+                        locationName: locName,
+                        location: locName,
                         description: getStr(day.description),
                         stayName: getStr(day.stayName),
                         thumbnail: typeof day.thumbnail === 'string' ? day.thumbnail : (day.multimedia?.image?.url || day.image?.url || ''),
+                        images: Array.isArray(day.images) ? day.images : [],
                     };
                 }),
             };

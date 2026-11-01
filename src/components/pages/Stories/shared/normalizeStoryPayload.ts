@@ -26,10 +26,17 @@ export function normalizeStoryPayload(raw: Partial<StoryData> | null | undefined
     ? [raw.category]
     : []
 
-  const rawType = (raw.type || raw.templateType || "short_story") as StoryType
-  const storyType: StoryType = ["short_story", "long_story", "guidance"].includes(rawType)
-    ? rawType
-    : "short_story"
+  const rawType = (raw.type || raw.templateType || "normal_story") as StoryType
+  let storyType: StoryType = "normal_story"
+  if (["travel_ease", "mira_editorial", "normal_story"].includes(rawType)) {
+    storyType = rawType
+  } else if (rawType === "guidance") {
+    storyType = "travel_ease"
+  } else if (rawType === "long_story") {
+    storyType = "mira_editorial"
+  } else {
+    storyType = "normal_story"
+  }
 
   const locations = Array.isArray(raw.locations) && raw.locations.length > 0
     ? raw.locations.map((l: any) => (typeof l === "string" ? l : l?.id)).filter(Boolean)
@@ -61,9 +68,7 @@ export function normalizeStoryPayload(raw: Partial<StoryData> | null | undefined
     recommended: Boolean(raw.recommended),
     categories,
     hero: raw.hero || emptyStory.hero,
-    intro: raw.intro || emptyStory.intro,
     blocks: Array.isArray(raw.blocks) ? normalizeBlocks(raw.blocks) : [],
-    practicalNotes: raw.practicalNotes !== undefined ? raw.practicalNotes : emptyStory.practicalNotes,
     seo: raw.seo || {},
     locations,
     journeys,

@@ -3,7 +3,6 @@ import type { StoryData } from "../../config/storyTypes"
 import { emptyBlocks, emptyBlocksBackgroundMultimedia } from "./emptyBlocks"
 import { UniversalMultimediaPreview } from "@/components/pages/CMS/shared/UniversalMultimediaPreview"
 import { ParagraphPreview } from "./paragraph"
-import { QuotePreview } from "./quote"
 import { ImageBlockPreview } from "./image"
 import { VideoBlockPreview } from "./video"
 import { SpotlightCardPreview } from "./spotlight"
@@ -33,7 +32,6 @@ export function BlocksPreview({ story }: { story: StoryData }) {
           const type = block.type || "paragraph"
 
           if (type === "paragraph") return <ParagraphPreview key={idx} block={block} />
-          if (type === "quote") return <QuotePreview key={idx} block={block} />
           if (type === "image") return <ImageBlockPreview key={idx} block={block} />
           if (type === "video") return <VideoBlockPreview key={idx} block={block} />
           if (type === "spotlight") return <SpotlightCardPreview key={idx} block={block} />

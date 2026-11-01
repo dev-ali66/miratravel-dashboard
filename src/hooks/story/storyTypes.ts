@@ -24,7 +24,7 @@ export interface PracticalNoteItem {
 
 export interface ArticleBlock {
   id: string
-  type: 'paragraph' | 'heading' | 'quote' | 'image' | 'spotlight' | 'gallery' | 'practical-notes'
+  type: 'paragraph' | 'heading' | 'image' | 'spotlight' | 'gallery' | 'practical-notes'
   title?: string
   text?: string
   textStyle?: Record<string, any>
@@ -69,14 +69,27 @@ export interface StoryDetail {
 export interface Story {
   id: string
   slug: string
-  category: string
-  categories?: string[]
+  category?: string
+  categories?: any[]
   title: string
-  description: string
+  description?: string
   readTime?: string
   image?: string
-  templateType: StoryTemplateType
+  templateType?: StoryTemplateType
+  type?: string
+  status?: string
+  featured?: boolean
+  recommended?: boolean
+  authorName?: string
+  authorRole?: string
+  hero?: Record<string, any>
+  blocks?: ArticleBlock[]
+  seo?: Record<string, any>
+  locations?: any[]
+  journeys?: any[]
+  manualRelatedStories?: any[]
   detail?: StoryDetail
   createdAt?: string
   updatedAt?: string
 }
+

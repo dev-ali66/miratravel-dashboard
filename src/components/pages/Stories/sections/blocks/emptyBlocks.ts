@@ -1,7 +1,6 @@
 import { THEME_COLORS } from "@/config/theme"
 export { createDefaultMultimedia } from "./shared/defaultMediaHelper"
-export { emptyParagraphBlock as emptyParagraph } from "./paragraph/emptyParagraph"
-export { emptyQuoteBlock as emptyQuote } from "./quote/emptyQuote"
+export { emptyParagraphBlock as emptyParagraph, emptyParagraphBlock } from "./paragraph/emptyParagraph"
 export { emptyImageBlock } from "./image/emptyImageBlock"
 export { emptyVideoBlock } from "./video/emptyVideoBlock"
 export { emptySpotlightCard } from "./spotlight/emptySpotlightCard"
@@ -27,13 +26,6 @@ export const emptyBlockItem = {
   content: {
     value: "",
     textColor: THEME_COLORS.body,
-    textOpacity: 1,
-    backgroundColor: null,
-    backgroundOpacity: 1,
-  },
-  author: {
-    value: "",
-    textColor: THEME_COLORS.gold,
     textOpacity: 1,
     backgroundColor: null,
     backgroundOpacity: 1,

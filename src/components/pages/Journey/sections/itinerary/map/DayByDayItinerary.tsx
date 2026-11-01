@@ -32,11 +32,14 @@ export interface DayByDayItineraryProps {
 }
 
 export function resolveLocationMedia(
-    locationId: string | undefined | null,
+    rawLocationId: any,
     locationMap: Map<string, any>
 ) {
-    if (!locationId || typeof locationId !== 'string' || !locationId.trim()) return null;
-    const locKey = locationId.trim().toLowerCase();
+    if (!rawLocationId) return null;
+    const unwrapped = Array.isArray(rawLocationId) ? rawLocationId[0] : rawLocationId;
+    const locationId = typeof unwrapped === 'string' ? unwrapped.trim() : (unwrapped?.id || unwrapped?.value || unwrapped?._id || '');
+    if (!locationId || typeof locationId !== 'string') return null;
+    const locKey = locationId.toLowerCase();
     const loc = locationMap.get(locationId) || locationMap.get(locKey);
     if (!loc) return null;
 
@@ -292,7 +295,7 @@ export function DayByDayItinerary({
         return map;
     }, [locationList]);
 
-    const chapters = useMemo(() => normalizeItineraryToChapters(itinerary), [itinerary]);
+    const chapters = useMemo(() => normalizeItineraryToChapters(itinerary, locationMap), [itinerary, locationMap]);
 
     const [expandedChapters, setExpandedChapters] = useState<Record<string, boolean>>(() => {
         if (chapters.length > 0) {
@@ -438,7 +441,7 @@ export function DayByDayItinerary({
                             </p>
                         </div>
                     ) : (
-                        <div className="flex flex-col gap-8 md:gap-10 w-full">
+                        <div className="flex flex-col gap-5 md:gap-6 lgx:gap-7 xl:gap-8 w-full">
                             {chapters.map((chapter: JourneyChapter, chapterIndex: number) => {
                                 const chapterNum = chapter.chapter_number || chapterIndex + 1;
                                 const roman = toRomanNumeral(chapterNum);
@@ -446,131 +449,290 @@ export function DayByDayItinerary({
                                 const isChapterExpanded = expandedChapters[chapterKey] ?? (chapterIndex === 0);
 
                                 const dayRange = getChapterDayRange(chapter);
-                                const location = chapter.location_context?.trim() || deriveLocationContext(chapter.days);
+                                const location = chapter.location_context?.trim() || deriveLocationContext(chapter.days, locationMap);
                                 const subLineParts = [dayRange, location].filter(Boolean);
                                 const subLine = subLineParts.join('  •  ');
 
-                                const chapterThumbnail =
-                                    getStr(chapter.multimedia?.image?.url) ||
-                                    chapter.thumbnail ||
-                                    (() => {
-                                        if (!chapter.days || chapter.days.length === 0) return '';
-                                        const firstDay = chapter.days[0];
-                                        const resMedia = resolveLocationMedia(firstDay.locationId || firstDay.location, locationMap);
-                                        return resMedia?.imageUrl || getStr(firstDay.multimedia?.image?.url) || firstDay.thumbnail || '';
-                                    })();
+                                const firstDay = chapter.days?.[0];
+                                const otherDays = chapter.days?.slice(1) || [];
+                                const isFirstDayActive = currentExpandedDay === firstDay?.dayNumber;
 
-                                const chapterDescription =
-                                    chapter.description ||
-                                    (chapter.days.length > 0 ? chapter.days[0].description : undefined);
+                                const firstDayMedia = firstDay ? resolveLocationMedia(firstDay.locationId || firstDay.location, locationMap) : null;
+                                const firstDayImage = firstDayMedia?.imageUrl || firstDay?.thumbnail || (firstDay?.images && firstDay.images.length > 0 ? firstDay.images[0] : "");
+                                const rawFirstDayTitle = getStr(firstDay?.title);
+                                const cleanFirstDayTitle = rawFirstDayTitle && !/^c[a-z0-9]{20,}/i.test(rawFirstDayTitle) ? rawFirstDayTitle : '';
+                                const firstDayTitle = firstDayMedia?.name || firstDay?.locationName || cleanFirstDayTitle || (firstDay?.dayNumber ? `Day ${firstDay.dayNumber}` : 'Day 1');
 
                                 return (
-                                    <div
-                                        key={chapterKey}
-                                        className="w-full relative bg-card text-card-foreground rounded-xl border border-border/70 shadow-sm flex flex-col overflow-hidden"
-                                    >
-                                        <button
-                                            type="button"
-                                            onClick={() => toggleChapter(chapterKey)}
-                                            aria-expanded={isChapterExpanded}
-                                            className={`w-full flex flex-col md:flex-row items-stretch text-left cursor-pointer group select-none transition-colors ${isChapterExpanded ? 'border-b border-border-muted/40' : ''
-                                                }`}
+                                    <div key={chapterKey} className="flex flex-col gap-4 w-full">
+                                        {/* Main Chapter Card */}
+                                        <div
+                                            id={`chapter-${chapterKey}`}
+                                            className="self-stretch px-5 md:px-6 lg:px-7 xl:px-8 py-2 md:py-2.5 xl:py-[10px] bg-[#F9F6ED] rounded-[8px] outline outline-1 outline-offset-[-0.91px] outline-[#B7B6B6]/40 flex flex-col justify-center items-stretch overflow-hidden transition-colors duration-300"
                                         >
-                                            <div className="relative w-full md:w-56 lg:w-[228px] lgx:w-[230px] xlg:w-[233px] mid:w-[236px] xl:w-60 md:min-w-[220px] lg:min-w-[226px] lgx:min-w-[228px] xlg:min-w-[231px] mid:min-w-[235px] xl:min-w-[240px] h-44 md:h-auto min-h-[160px] overflow-hidden shrink-0 bg-muted">
-                                                {chapterThumbnail ? (
-                                                    <img
-                                                        src={getOptimizedImageUrl(chapterThumbnail, { width: 480, quality: 100 })}
-                                                        alt={getStr(chapter.title) || `Chapter ${roman}`}
-                                                        className="w-full h-full object-cover object-center group-hover:scale-105 transition-transform duration-500"
-                                                    />
-                                                ) : (
-                                                    <div className="w-full h-full bg-surface-muted flex items-center justify-center text-xs text-subtitle">No Image</div>
-                                                )}
-                                            </div>
-
-                                            <div className="flex-1 p-5 md:p-[20.5px] lg:p-[21.5px] lgx:p-[22px] xlg:p-[22.5px] mid:p-[23px] xl:p-6 flex flex-col justify-center items-start gap-1.5 md:gap-[6.25px] lg:gap-[6.75px] lgx:gap-[7px] xlg:gap-[7.25px] mid:gap-[7.5px] xl:gap-2 relative">
-                                                <div className="w-full flex items-center justify-between">
-                                                    <span className="text-sm md:text-[15px] lgx:text-[15.5px] mid:text-[15.75px] xl:text-base font-bold xl:tracking-[1px] uppercase" style={getStyleObj(chapter.badge || chapter.chapterNumber, THEME_COLORS.accent)}>
-                                                        {(() => {
-                                                            const badgeText = getStr(chapter.badge || chapter.chapterNumber)
-                                                            if (badgeText) {
-                                                                return badgeText.toUpperCase().startsWith('CHAPTER') ? badgeText.toUpperCase() : `CHAPTER ${badgeText.toUpperCase()}`
-                                                            }
-                                                            return `CHAPTER ${roman}`
-                                                        })()}
-                                                    </span>
-                                                    <motion.div
-                                                        animate={{ rotate: isChapterExpanded ? 180 : 0 }}
-                                                        transition={{ duration: 0.28, ease: [0.32, 0.72, 0, 1] }}
-                                                        className="size-6 text-subtitle group-hover:text-brand-primary transition-colors flex items-center justify-center shrink-0"
-                                                    >
-                                                        <ChevronIcon className="xl:size-6 mid:size-5 lgx:size-[18px] md:size-4 size-3.5" />
-                                                    </motion.div>
+                                            {/* Chapter Header Button */}
+                                            <button
+                                                type="button"
+                                                onClick={() => toggleChapter(chapterKey)}
+                                                aria-expanded={isChapterExpanded}
+                                                className={`w-full relative text-left inline-flex justify-between items-start cursor-pointer group select-none transition-colors p-4 md:p-[18px] lg:p-5 xl:p-[21.75px] ${
+                                                    isChapterExpanded ? "border-b border-[#B7B6B6]/40" : ""
+                                                }`}
+                                            >
+                                                <div className="flex-1 flex flex-col justify-center items-start gap-2">
+                                                    <div className="w-full flex flex-col justify-start items-start gap-3 md:gap-3.5 xl:gap-4">
+                                                        <div className="w-full flex flex-col justify-start items-start gap-2 md:gap-2.5 lg:gap-3 xl:gap-4">
+                                                            <div className="w-full inline-flex justify-between items-center">
+                                                                <div className="justify-start text-accent text-[13px] md:text-sm lg:text-[15px] xl:text-base font-bold tracking-wider xl:tracking-wide">
+                                                                    {roman.toUpperCase().startsWith("CHAPTER") ? roman : `CHAPTER ${roman}`}
+                                                                </div>
+                                                            </div>
+                                                            <div className="w-full justify-start text-[#191B1E] text-[18px] md:text-[19px] lg:text-[20px] lgx:text-[21px] xl:text-[22px] 2xl:text-[24px] font-extralight font-heading leading-snug md:leading-normal xl:leading-[28px] group-hover:text-primary transition-colors">
+                                                                {chapter.title || `Chapter ${roman}`}
+                                                            </div>
+                                                        </div>
+                                                        {subLine && (
+                                                            <div className="w-full flex flex-col justify-start items-start gap-1.5 md:gap-2">
+                                                                <div className="w-full justify-start text-[#4A483E] text-xs md:text-sm lg:text-[15px] xl:text-base font-normal leading-normal">
+                                                                    {subLine}
+                                                                </div>
+                                                            </div>
+                                                        )}
+                                                    </div>
                                                 </div>
 
-                                                <h3 className="text-xl md:text-[20.5px] lg:text-[21.5px] lgx:text-[22px] xlg:text-[22.5px] mid:text-[23px] xl:text-2xl font-[200] font-heading group-hover:text-brand-primary/80 transition-colors" style={getStyleObj(chapter.title, THEME_COLORS.primary)}>
-                                                    {getStr(chapter.title) || `Chapter ${roman}`}
-                                                </h3>
+                                                <div className="size-5 md:size-6 shrink-0 flex items-center justify-center mt-2.5 md:mt-3 xl:mt-3.5 transition-colors">
+                                                    <ChevronIcon className={`size-5 md:size-6 text-[#4A483E] group-hover:text-[#191B1E] transition-transform duration-300 ease-out ${
+                                                        isChapterExpanded ? "rotate-0" : "rotate-180"
+                                                    }`} />
+                                                </div>
+                                            </button>
 
-                                                {subLine && (
-                                                    <div className="text-xs lg:text-[13px] lgx:text-[13px] xlg:text-[13px] mid:text-[13.5px] xl:text-sm font-normal" style={getStyleObj(chapter.subtitle, THEME_COLORS.secondary)}>
-                                                        {subLine}
-                                                    </div>
+                                            {/* First Day of this chapter (inside Chapter card) */}
+                                            <AnimatePresence initial={false}>
+                                                {isChapterExpanded && firstDay && (
+                                                    <motion.div
+                                                        key={`chapter-first-day-${chapterKey}`}
+                                                        initial={{ height: 0, opacity: 0 }}
+                                                        animate={{
+                                                            height: "auto",
+                                                            opacity: 1,
+                                                            transition: { height: { duration: 0.4 }, opacity: { duration: 0.3 } },
+                                                        }}
+                                                        exit={{
+                                                            height: 0,
+                                                            opacity: 0,
+                                                            transition: { height: { duration: 0.3 }, opacity: { duration: 0.2 } },
+                                                        }}
+                                                        className="overflow-hidden w-full"
+                                                    >
+                                                        <div className="w-full pt-4 md:pt-5 xl:pt-6">
+                                                            <div
+                                                                id={`day-${firstDay.dayNumber}`}
+                                                                className="w-full flex flex-col justify-start items-start px-4 md:px-[18px] lg:px-5 xl:px-[21.75px] pb-4 md:pb-[18px] lg:pb-5 xl:pb-[21.75px]"
+                                                            >
+                                                                <button
+                                                                    type="button"
+                                                                    onClick={() => toggleExpand(firstDay.dayNumber ?? 1)}
+                                                                    aria-expanded={isFirstDayActive}
+                                                                    className="w-full text-left inline-flex justify-between items-center cursor-pointer group select-none transition-all duration-200 rounded-[6px] p-2.5 -m-2.5 hover:bg-black/[0.025]"
+                                                                >
+                                                                    <div className="flex flex-col justify-start items-start gap-1.5 md:gap-2">
+                                                                        <div className="justify-start text-accent text-xs md:text-sm font-semibold whitespace-nowrap">
+                                                                            {firstDay.dayLabel ?? (firstDay.dayNumber ? `Day ${firstDay.dayNumber}` : 'Day 1')}
+                                                                        </div>
+                                                                        <div className="self-stretch justify-start text-[#191B1E] text-xs md:text-sm font-normal group-hover:text-primary transition-colors">
+                                                                            {firstDayTitle}
+                                                                        </div>
+                                                                    </div>
+
+                                                                    <div className="size-5 md:size-6 shrink-0 flex items-center justify-center transition-all duration-200 ml-4 group-hover:scale-105">
+                                                                        <ChevronIcon className={`size-5 md:size-6 text-[#4A483E] group-hover:text-[#191B1E] transition-transform duration-300 ease-out ${
+                                                                            isFirstDayActive ? "rotate-0" : "rotate-180"
+                                                                        }`} />
+                                                                    </div>
+                                                                </button>
+
+                                                                <AnimatePresence initial={false}>
+                                                                    {isFirstDayActive && (
+                                                                        <motion.div
+                                                                            key={`first-day-content-${firstDay.dayNumber}`}
+                                                                            initial={{ height: 0, opacity: 0 }}
+                                                                            animate={{
+                                                                                height: "auto",
+                                                                                opacity: 1,
+                                                                                transition: { height: { duration: 0.4 }, opacity: { duration: 0.3, delay: 0.05 } },
+                                                                            }}
+                                                                            exit={{
+                                                                                height: 0,
+                                                                                opacity: 0,
+                                                                                transition: { height: { duration: 0.3 }, opacity: { duration: 0.2 } },
+                                                                            }}
+                                                                            className="overflow-hidden w-full"
+                                                                        >
+                                                                            <div className="w-full flex flex-col gap-4 md:gap-5 xl:gap-6 pt-4 md:pt-5 xl:pt-6">
+                                                                                {firstDay.description && (
+                                                                                    <div
+                                                                                        className="self-stretch justify-center text-[#57534E] text-sm md:text-[15px] xl:text-base font-normal leading-6 md:leading-[26px] tracking-normal md:tracking-wide xl:tracking-widest [&_p]:mb-2 [&_p:last-child]:mb-0"
+                                                                                        dangerouslySetInnerHTML={{ __html: getStr(firstDay.description) }}
+                                                                                    />
+                                                                                )}
+                                                                                <div className="self-stretch h-64 md:h-80 xl:h-[400px] min-h-px flex flex-col justify-start items-start relative overflow-hidden shrink-0 bg-[#EDE8D8]/40 rounded-[6px]">
+                                                                                    {firstDayImage ? (
+                                                                                        firstDayMedia?.isVideo && firstDayMedia?.videoUrl ? (
+                                                                                            <video
+                                                                                                src={firstDayMedia.videoUrl}
+                                                                                                autoPlay
+                                                                                                loop
+                                                                                                muted
+                                                                                                playsInline
+                                                                                                className="w-full h-full object-cover object-center"
+                                                                                            />
+                                                                                        ) : (
+                                                                                            <img
+                                                                                                src={getOptimizedImageUrl(firstDayImage, { width: 1000, quality: 100 })}
+                                                                                                alt={firstDayTitle}
+                                                                                                className="w-full h-full object-cover object-center"
+                                                                                            />
+                                                                                        )
+                                                                                    ) : (
+                                                                                        <div className="w-full h-full flex flex-col items-center justify-center bg-gradient-to-b from-[#FAF8F3] via-[#F4F0E6] to-[#ECE7DC] text-[#8D6534] select-none p-6 text-center border border-[#E2DDD3]">
+                                                                                            <span className="text-xs md:text-sm font-serif tracking-[2px] uppercase opacity-75">
+                                                                                                MIRA ARCHIVE
+                                                                                            </span>
+                                                                                            <span className="text-[11px] md:text-xs text-[#5C574F]/70 mt-1">
+                                                                                                Curated imagery for {firstDayTitle}
+                                                                                            </span>
+                                                                                        </div>
+                                                                                    )}
+                                                                                </div>
+                                                                            </div>
+                                                                        </motion.div>
+                                                                    )}
+                                                                </AnimatePresence>
+                                                            </div>
+                                                        </div>
+                                                    </motion.div>
                                                 )}
+                                            </AnimatePresence>
+                                        </div>
 
-                                                {chapterDescription && (
-                                                    getStr(chapterDescription).includes('<') ? (
-                                                        <div
-                                                            className="prose prose-sm max-w-none text-xs lg:text-[13px] lgx:text-[13px] xlg:text-[13px] mid:text-[13.5px] xl:text-sm font-normal xl:leading-5 [&_p]:m-0"
-                                                            style={getStyleObj(chapter.description, THEME_COLORS.muted)}
-                                                            dangerouslySetInnerHTML={{ __html: getStr(chapterDescription) }}
-                                                        />
-                                                    ) : (
-                                                        <p className="text-xs lg:text-[13px] lgx:text-[13px] xlg:text-[13px] mid:text-[13.5px] xl:text-sm font-normal xl:leading-5" style={getStyleObj(chapter.description, THEME_COLORS.muted)}>
-                                                            {getStr(chapterDescription)}
-                                                        </p>
-                                                    )
-                                                )}
-                                            </div>
-                                        </button>
-
+                                        {/* Other Days in Chapter (Day 2, Day 3, etc.) as clean outline cards */}
                                         <AnimatePresence initial={false}>
-                                            {isChapterExpanded && (
+                                            {isChapterExpanded && otherDays.length > 0 && (
                                                 <motion.div
+                                                    key={`chapter-other-days-${chapterKey}`}
                                                     initial={{ height: 0, opacity: 0 }}
                                                     animate={{
-                                                        height: 'auto',
+                                                        height: "auto",
                                                         opacity: 1,
-                                                        transition: {
-                                                            height: { duration: 0.35, ease: [0.32, 0.72, 0, 1] },
-                                                            opacity: { duration: 0.22, delay: 0.05 },
-                                                        },
+                                                        transition: { height: { duration: 0.4 }, opacity: { duration: 0.3 } },
                                                     }}
                                                     exit={{
                                                         height: 0,
                                                         opacity: 0,
-                                                        transition: {
-                                                            height: { duration: 0.28, ease: [0.32, 0.72, 0, 1] },
-                                                            opacity: { duration: 0.15 },
-                                                        },
+                                                        transition: { height: { duration: 0.3 }, opacity: { duration: 0.2 } },
                                                     }}
-                                                    className="overflow-hidden w-full flex flex-col divide-y divide-border-muted/40"
+                                                    className="overflow-hidden flex flex-col gap-4 w-full"
                                                 >
-                                                    {chapter.days.map((item, indexWithinChapter) => {
-                                                        const dayKey = item.dayNumber ?? indexWithinChapter + 1;
+                                                    {otherDays.map((item, otherIdx) => {
+                                                        const isDayActive = currentExpandedDay === item.dayNumber;
+                                                        const dayLabel = item.dayLabel ?? (item.dayNumber ? `Day ${item.dayNumber}` : `Day ${otherIdx + 2}`);
+                                                        const itemMedia = resolveLocationMedia(item.locationId || item.location, locationMap);
+                                                        const dayImage = itemMedia?.imageUrl || item.thumbnail || (item.images && item.images.length > 0 ? item.images[0] : null);
+                                                        const rawDayTitle = getStr(item.title);
+                                                        const cleanDayTitle = rawDayTitle && !/^c[a-z0-9]{20,}/i.test(rawDayTitle) ? rawDayTitle : '';
+                                                        const dayTitle = itemMedia?.name || item.locationName || cleanDayTitle || dayLabel;
+
                                                         return (
-                                                            <div key={dayKey} id={`day-${item.dayNumber}`}>
-                                                                <DayCard
-                                                                    item={item}
-                                                                    index={indexWithinChapter}
-                                                                    isExpanded={currentExpandedDay === item.dayNumber}
-                                                                    onToggle={() => toggleExpand(dayKey)}
-                                                                    currentImageIndex={activeImageIndexes[dayKey] ?? 0}
-                                                                    onImageChange={(nextIndex, total) =>
-                                                                        handleImageChange(dayKey, nextIndex, total)
-                                                                    }
-                                                                    locationMap={locationMap}
-                                                                />
+                                                            <div
+                                                                key={item.dayNumber ?? otherIdx}
+                                                                id={`day-${item.dayNumber}`}
+                                                                className={`self-stretch px-5 md:px-6 lg:px-7 xl:px-8 py-2 md:py-2.5 xl:py-[10px] rounded-[8px] outline outline-1 outline-offset-[-0.91px] outline-[#B7B6B6]/40 flex flex-col justify-center items-stretch transition-all duration-200 group hover:bg-[#F9F6ED]/70 hover:outline-[#8E8B85]/60 ${
+                                                                    !isDayActive ? "cursor-pointer" : ""
+                                                                }`}
+                                                            >
+                                                                <div className="w-full flex flex-col justify-start items-start p-4 md:p-[18px] lg:p-5 xl:p-[21.75px]">
+                                                                    <button
+                                                                        type="button"
+                                                                        onClick={() => toggleExpand(item.dayNumber ?? 1)}
+                                                                        aria-expanded={isDayActive}
+                                                                        className="w-full text-left inline-flex justify-between items-center cursor-pointer select-none transition-colors"
+                                                                    >
+                                                                        <div className="flex flex-col justify-start items-start gap-1.5 md:gap-2">
+                                                                            <div className="justify-start text-accent text-xs md:text-sm font-semibold whitespace-nowrap">
+                                                                                {dayLabel}
+                                                                            </div>
+                                                                            <div className="self-stretch justify-start text-[#191B1E] text-xs md:text-sm font-normal group-hover:text-primary transition-colors">
+                                                                                {dayTitle}
+                                                                            </div>
+                                                                        </div>
+
+                                                                        <div className="size-5 md:size-6 shrink-0 flex items-center justify-center transition-all duration-200 ml-4 group-hover:scale-105">
+                                                                            <ChevronIcon className={`size-5 md:size-6 text-[#4A483E] group-hover:text-[#191B1E] transition-transform duration-300 ease-out ${
+                                                                                isDayActive ? "rotate-0" : "rotate-180"
+                                                                            }`} />
+                                                                        </div>
+                                                                    </button>
+
+                                                                    <AnimatePresence initial={false}>
+                                                                        {isDayActive && (
+                                                                            <motion.div
+                                                                                key={`other-day-content-${item.dayNumber}`}
+                                                                                initial={{ height: 0, opacity: 0 }}
+                                                                                animate={{
+                                                                                    height: "auto",
+                                                                                    opacity: 1,
+                                                                                    transition: { height: { duration: 0.4 }, opacity: { duration: 0.3, delay: 0.05 } },
+                                                                                }}
+                                                                                exit={{
+                                                                                    height: 0,
+                                                                                    opacity: 0,
+                                                                                    transition: { height: { duration: 0.3 }, opacity: { duration: 0.2 } },
+                                                                                }}
+                                                                                className="overflow-hidden w-full"
+                                                                            >
+                                                                                <div className="w-full flex flex-col gap-4 md:gap-5 xl:gap-6 pt-4 md:pt-5 xl:pt-6">
+                                                                                    {item.description && (
+                                                                                        <div
+                                                                                            className="self-stretch justify-center text-[#57534E] text-sm md:text-[15px] xl:text-base font-normal leading-6 md:leading-[26px] tracking-normal md:tracking-wide xl:tracking-widest [&_p]:mb-2 [&_p:last-child]:mb-0"
+                                                                                            dangerouslySetInnerHTML={{ __html: getStr(item.description) }}
+                                                                                        />
+                                                                                    )}
+                                                                                    <div className="self-stretch h-64 md:h-80 xl:h-[400px] min-h-px flex flex-col justify-start items-start relative overflow-hidden shrink-0 bg-[#EDE8D8]/40 rounded-[6px]">
+                                                                                        {dayImage ? (
+                                                                                            itemMedia?.isVideo && itemMedia?.videoUrl ? (
+                                                                                                <video
+                                                                                                    src={itemMedia.videoUrl}
+                                                                                                    autoPlay
+                                                                                                    loop
+                                                                                                    muted
+                                                                                                    playsInline
+                                                                                                    className="w-full h-full object-cover object-center"
+                                                                                                />
+                                                                                            ) : (
+                                                                                                <img
+                                                                                                    src={getOptimizedImageUrl(dayImage, { width: 1000, quality: 100 })}
+                                                                                                    alt={dayTitle}
+                                                                                                    className="w-full h-full object-cover object-center"
+                                                                                                />
+                                                                                            )
+                                                                                        ) : (
+                                                                                            <div className="w-full h-full flex flex-col items-center justify-center bg-gradient-to-b from-[#FAF8F3] via-[#F4F0E6] to-[#ECE7DC] text-[#8D6534] select-none p-6 text-center border border-[#E2DDD3]">
+                                                                                                <span className="text-xs md:text-sm font-serif tracking-[2px] uppercase opacity-75">
+                                                                                                    MIRA ARCHIVE
+                                                                                                </span>
+                                                                                                <span className="text-[11px] md:text-xs text-[#5C574F]/70 mt-1">
+                                                                                                    Curated imagery for {dayTitle}
+                                                                                                </span>
+                                                                                            </div>
+                                                                                        )}
+                                                                                    </div>
+                                                                                </div>
+                                                                            </motion.div>
+                                                                        )}
+                                                                    </AnimatePresence>
+                                                                </div>
                                                             </div>
                                                         );
                                                     })}

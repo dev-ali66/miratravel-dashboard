@@ -440,13 +440,26 @@ export function ItineraryForm({
                                     }}
                                   />
 
+                                  <DynamicStyledField
+                                    type="text"
+                                    label="Day Title (Optional, defaults to Location Name)"
+                                    fieldName={`itinerary.items.${cIdx}.days.${dIdx}.title`}
+                                    placeholder="e.g. Arrival in Tirana & Welcome Dinner"
+                                    value={day.title}
+                                    onChange={(val) => updateField(`itinerary.items.${cIdx}.days.${dIdx}.title`, val)}
+                                  />
+
                                   <ParentLocationSelect
                                     value={day.locationId || ""}
-                                    currentName={day.locationId}
+                                    currentName={day.locationName || (typeof day.location === "string" && !day.location.startsWith("cm") ? day.location : "")}
                                     label="Location / Region (DB Search Picker)"
                                     noneLabel="Select Location ID..."
-                                    onChange={(locId) => {
+                                    onChange={(locId, locName) => {
                                       updateField(`itinerary.items.${cIdx}.days.${dIdx}.locationId`, locId || "")
+                                      if (locName) {
+                                        updateField(`itinerary.items.${cIdx}.days.${dIdx}.locationName`, locName)
+                                        updateField(`itinerary.items.${cIdx}.days.${dIdx}.location`, locName)
+                                      }
                                     }}
                                   />
                                 </div>

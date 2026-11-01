@@ -892,7 +892,7 @@ export function UniversalEditorLayout({
               {/* Scrollable Viewport Stage Container */}
               <div
                 ref={stageRef}
-                className="relative flex h-full w-full flex-1 items-start justify-center overflow-x-auto overflow-y-hidden custom-scrollbar p-1"
+                className="relative flex h-full w-full flex-1 items-start justify-center overflow-x-auto overflow-y-hidden [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden p-1"
               >
                 <div
                   className="relative flex h-full items-start justify-center"

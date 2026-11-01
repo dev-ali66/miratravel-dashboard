@@ -143,6 +143,9 @@ export default function StoriesPage() {
 
   const formatStoryTypeLabel = (t?: string) => {
     if (!t) return "Story"
+    if (t === "travel_ease" || t === "travel-ease") return "Travel Ease"
+    if (t === "mira_editorial" || t === "mira-editorial") return "Mira Editorial"
+    if (t === "normal_story" || t === "normal-story") return "Normal Story"
     if (t === "short_story" || t === "short-story") return "Short Story"
     if (t === "long_story" || t === "long-story") return "Long Story"
     if (t === "guidance" || t === "guide-story") return "Guidance"
@@ -214,9 +217,9 @@ export default function StoriesPage() {
               setPage(1)
             }}
             options={[
-              { label: "Short Story", value: "short_story" },
-              { label: "Long Story", value: "long_story" },
-              { label: "Guidance", value: "guidance" },
+              { label: "Travel Ease", value: "travel_ease" },
+              { label: "Mira Editorial", value: "mira_editorial" },
+              { label: "Normal Story", value: "normal_story" },
             ]}
             allLabel="All Story Types"
             placeholder="Story Type"
@@ -387,6 +390,12 @@ export default function StoriesPage() {
                   {((s as any).featured || detail.featured) && (
                     <span className="rounded-full bg-accent-muted px-2.5 py-0.5 text-[10px] font-bold text-brand-primary shadow-sm tracking-wider uppercase">
                       ★ Featured
+                    </span>
+                  )}
+
+                  {Boolean((s as any).recommended || detail.recommended) && (
+                    <span className="rounded-full bg-purple-100 text-purple-800 dark:bg-purple-900/40 dark:text-purple-300 px-2.5 py-0.5 text-[10px] font-bold shadow-sm tracking-wider uppercase">
+                      ✓ Recommended
                     </span>
                   )}
                 </div>

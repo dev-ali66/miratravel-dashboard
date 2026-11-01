@@ -1,46 +1,61 @@
 import { DynamicStyledTextPreview } from "@/components/pages/CMS/shared/DynamicStyledTextPreview"
 
 export function NotesPreview({ block }: { block: any }) {
-  const items: any[] = Array.isArray(block.items) ? block.items : []
+  const items: any[] = Array.isArray(block?.items) ? block.items : []
+  const headerData = block?.description || block?.title
+  const hasHeaderText = Boolean(
+    headerData?.value &&
+      String(headerData.value).replace(/<[^>]*>/g, "").replace(/&nbsp;/g, " ").trim().length > 0
+  )
+  const hasContent = Boolean(hasHeaderText || items.length > 0)
+
+  if (!hasContent) return null
 
   return (
-    <div className="w-full py-8 flex flex-col gap-8">
-      {/* Main Section Heading */}
-      {block.title?.value && (
-        <div className="flex flex-col gap-1">
+    <div className="w-full py-6 md:py-8 flex flex-col gap-6">
+      {/* Main Section Header (RichText) */}
+      {hasHeaderText && (
+        <div className="w-full prose prose-stone max-w-none text-foreground font-serif text-2xl md:text-3xl font-medium tracking-tight [&_p]:my-1 [&_h1]:text-3xl [&_h2]:text-2xl [&_h3]:text-xl">
           <DynamicStyledTextPreview
-            as="h3"
-            data={block.title}
-            className="font-serif text-3xl md:text-4xl font-normal text-gold tracking-tight"
+            data={headerData}
+            isRichText={true}
           />
-          {block.subtitle?.value && (
-            <div className="text-sm text-stone-500 dark:text-stone-400">
-              <DynamicStyledTextPreview data={block.subtitle} />
-            </div>
-          )}
         </div>
       )}
 
       {/* 2-Column Note Cards Grid */}
       {items.length > 0 && (
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-x-12 gap-y-8 w-full items-start">
-          {items.map((item: any, idx: number) => (
-            <div key={idx} className="flex flex-col gap-2 min-w-0">
-              {item.title && (
-                <h4 className="font-serif text-lg md:text-xl font-bold text-stone-900 dark:text-stone-100 tracking-tight">
-                  {item.title}
-                </h4>
-              )}
-              {item.content && (
-                <div className="text-xs md:text-sm text-stone-600 dark:text-stone-300 leading-relaxed font-normal prose prose-stone max-w-none [&_strong]:text-stone-800 dark:[&_strong]:text-stone-200 [&_strong]:font-semibold [&_ul]:list-disc [&_ul]:pl-4 [&_li]:mt-1">
-                  <DynamicStyledTextPreview
-                    data={{ value: item.content }}
-                    isRichText={true}
-                  />
-                </div>
-              )}
-            </div>
-          ))}
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-5 md:gap-7 w-full items-stretch">
+          {items.map((item: any, idx: number) => {
+            const rawDesc = item.description || (item.content ? { value: item.content } : null)
+            const cleanText =
+              typeof rawDesc?.value === "string"
+                ? rawDesc.value
+                    .replace(/<[^>]*>/g, "")
+                    .replace(/&nbsp;/g, " ")
+                    .trim()
+                : ""
+
+            return (
+              <div
+                key={idx}
+                className="flex flex-col items-start justify-start w-full h-full min-h-[140px] md:min-h-[160px] rounded-lg border border-border/60 bg-card p-4 md:p-5 shadow-2xs transition-all"
+              >
+                {cleanText ? (
+                  <div className="text-xs md:text-sm text-muted-foreground leading-relaxed font-normal prose prose-stone max-w-none [&_strong]:text-foreground [&_strong]:font-semibold [&_ul]:list-disc [&_ul]:pl-4 [&_li]:mt-1 w-full">
+                    <DynamicStyledTextPreview
+                      data={rawDesc}
+                      isRichText={true}
+                    />
+                  </div>
+                ) : (
+                  <div className="text-xs md:text-sm text-muted-foreground/40 italic font-normal leading-relaxed select-none">
+                    Add practical advice or recommendation details...
+                  </div>
+                )}
+              </div>
+            )
+          })}
         </div>
       )}
     </div>

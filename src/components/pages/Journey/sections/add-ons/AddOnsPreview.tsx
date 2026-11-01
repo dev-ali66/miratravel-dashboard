@@ -1,17 +1,54 @@
-/* =====================================================
-   JOURNEY — OPTIONAL EXPERIENCES & ADD-ONS PREVIEW
-   Renders curated Experiences linked in Journey.addOns
-   with accordion expansion, pricing, multimedia & CTA.
-===================================================== */
-
-import { useState } from "react"
+import { useState, useRef, useEffect } from "react"
+import { motion, AnimatePresence } from "framer-motion"
 import { useGetExperienceById } from "@/hooks/experience/useGetExperienceById"
 import {
   EXPERIENCE_TYPE_CONFIG,
   type ExperienceType,
 } from "@/components/pages/Experience/experienceTypes"
 import { UniversalMultimediaPreview } from "@/components/pages/CMS/Home/shared/preview/UniversalMultimediaPreview"
-import { Compass, Loader2, MapPin } from "lucide-react"
+import { VideoThumbnail } from "@/components/shared/VideoThumbnail"
+import { getOptimizedImageUrl } from "@/lib/optimizedImage"
+import { ChevronDown, MapPin } from "lucide-react"
+
+// Default brand addons data matching frontend
+export const defaultBrandAddons = [
+  {
+    id: "cycling",
+    itemNumber: 1,
+    title: "Cycling",
+    price: "$3,495",
+    dayLabel: "Day 1",
+    detailedHeading: "Make your trip fun by cycling",
+    description:
+      "Explore scenic countryside trails and historic villages on premium bikes, guided by local cycling experts with refreshment stops along the way.",
+    thumbnail: "https://images.unsplash.com/photo-1544197150-b99a580bb7a8?auto=format&fit=crop&w=600&q=80",
+    image: "https://images.unsplash.com/photo-1544197150-b99a580bb7a8?auto=format&fit=crop&w=1000&q=80",
+  },
+  {
+    id: "boat-riding",
+    itemNumber: 2,
+    title: "Boat riding",
+    price: "$3,495",
+    dayLabel: "Day 2",
+    detailedHeading: "Scenic Coastal Boat Exploration",
+    description:
+      "Cruise along secluded crystalline bays, hidden sea caves, and pristine swimming coves accessible only by private boat.",
+    thumbnail: "https://images.unsplash.com/photo-1507525428034-b723cf961d3e?auto=format&fit=crop&w=600&q=80",
+    image: "https://images.unsplash.com/photo-1507525428034-b723cf961d3e?auto=format&fit=crop&w=1000&q=80",
+  },
+  {
+    id: "zipline-tara",
+    itemNumber: 3,
+    title: "Zipline over the Tara Canyon",
+    price: "$3,495",
+    dayLabel: "Day 3",
+    detailedHeading: "Thrilling Tara Canyon Aerial Ride",
+    description:
+      "Soar across panoramic gorges and dramatic mountain valleys with state-of-the-art safety gear and breathtaking aerial views.",
+    thumbnail: "https://images.unsplash.com/photo-1533587851505-d119e13fa0d7?auto=format&fit=crop&w=600&q=80",
+    image: "https://images.unsplash.com/photo-1533587851505-d119e13fa0d7?auto=format&fit=crop&w=1000&q=80",
+  },
+]
 
 function unwrapExperienceData(raw: any) {
   if (!raw) return null
@@ -28,7 +65,17 @@ function unwrapExperienceData(raw: any) {
   return data
 }
 
-function AddOnExperienceItemRow({
+import { cn } from "@/lib/utils"
+
+function getFieldValue(field: any): string {
+  if (!field) return ""
+  if (typeof field === "string") return field.trim()
+  if (typeof field === "object" && typeof field.value === "string") return field.value.trim()
+  return ""
+}
+
+// Row component for an experience linked by ID
+function DynamicExperienceRow({
   experienceId,
   index,
   isExpanded,
@@ -46,8 +93,17 @@ function AddOnExperienceItemRow({
   const { data: rawExpData, isLoading } = useGetExperienceById(experienceId)
   const exp = unwrapExperienceData(rawExpData)
 
+  const hero = exp?.hero || {}
+  const heroBreadcrumb = getFieldValue(hero?.breadcrumb)
+  const heroTitle = getFieldValue(hero?.title)
+  const heroSubtitle = getFieldValue(hero?.subtitle)
+  const heroDesc = getFieldValue(hero?.description)
+
   const itemNum = index + 1
-  const itemTitle = exp?.name || (isLoading ? "Loading Experience..." : `Experience (${experienceId.slice(-8)})`)
+  const itemTitle =
+    heroTitle ||
+    exp?.name ||
+    (isLoading ? "Loading Experience..." : `Experience (${experienceId.slice(-8)})`)
 
   const formattedPrice =
     exp?.price !== undefined && exp?.price !== null
@@ -69,74 +125,109 @@ function AddOnExperienceItemRow({
     exp?.countries?.[0]?.name ||
     exp?.country?.name
 
-  const detailedHeading = exp?.subtitle || exp?.name || "Curated Add-On Experience"
+  const categoryTag = heroBreadcrumb || typeConfig?.label || "OPTIONAL EXPERIENCE"
+
+  const detailedHeading =
+    heroTitle ||
+    heroSubtitle ||
+    exp?.subtitle ||
+    exp?.name ||
+    "Curated Add-On Experience"
 
   const narrativeText =
+    heroDesc ||
+    heroSubtitle ||
     exp?.summary ||
-    exp?.theExperience?.summary?.value ||
-    exp?.theExperience?.narrative?.value ||
+    getFieldValue(exp?.theExperience?.summary) ||
+    getFieldValue(exp?.theExperience?.narrative) ||
     "Immerse yourself in this bespoke optional adventure crafted by local insiders."
 
-  const multimedia =
-    exp?.hero?.backgroundMultimedia ||
-    exp?.theExperience?.imageMultimedia || {
-      show: "image",
-      image: { url: exp?.image || "/images/albania-journey4.jpg" },
-    }
+  const heroMultimedia =
+    hero?.backgroundMultimedia ||
+    exp?.theExperience?.imageMultimedia ||
+    exp?.theExperience?.backgroundMultimedia ||
+    null
+
+  const heroVideoUrl =
+    heroMultimedia?.video?.url ||
+    (heroMultimedia?.show === "video" ? heroMultimedia?.url : null) ||
+    null
+
+  const heroImageUrl =
+    heroMultimedia?.image?.url ||
+    (heroMultimedia?.show === "image" ? heroMultimedia?.url : null) ||
+    exp?.image ||
+    null
+
+  const isHeroVideo = Boolean(
+    heroVideoUrl && (heroMultimedia?.show === "video" || !heroImageUrl)
+  )
 
   return (
     <div
-      className={`w-full rounded-[8px] md:rounded-[10px] lg:rounded-[11px] lgx:rounded-[12px] xlg:rounded-[13px] mid:rounded-[14px] xl:rounded-[14px] 2xl:rounded-[16px] border overflow-hidden bg-card text-card-foreground shadow-xs transition-colors duration-200 ${isExpanded ? "border-border shadow-sm" : "border-border/70 hover:border-border"
-        }`}
+      className={`w-full border overflow-hidden bg-[#F9F6ED] transition-colors duration-200 ${
+        isExpanded ? "border-black/20" : "border-black/10 hover:border-black/20"
+      }`}
     >
       {/* Clickable Header Row */}
       <button
         type="button"
         onClick={onToggleExpand}
-        className="w-full p-3 xs:p-3.5 md:p-4 lg:p-[18px] lgx:p-[18px] xlg:p-[19px] mid:p-[19px] xl:p-5 flex items-center justify-between text-left cursor-pointer transition-colors"
+        className="w-full px-4 md:px-5 py-4 flex items-center justify-between text-left cursor-pointer transition-colors"
       >
-        <div className="flex items-center gap-2.5 xs:gap-3 md:gap-3.5 lg:gap-4 lgx:gap-4 xlg:gap-[17px] mid:gap-[17px] xl:gap-[18px] min-w-0 flex-1">
+        <div className="flex items-center gap-3 md:gap-4 min-w-0 flex-1">
           {/* Number Badge */}
-          <div className="size-6 md:size-[26px] lg:size-7 lgx:size-[28px] xlg:size-[29px] mid:size-[30px] xl:size-8 2xl:size-9 shrink-0 bg-primary text-primary-foreground rounded-full flex items-center justify-center text-xs md:text-[12.5px] lg:text-[13px] lgx:text-[13.5px] xlg:text-[13.5px] mid:text-md xl:text-md 2xl:text-base font-medium leading-none">
+          <div className="size-6 md:size-8 shrink-0 bg-[#222014] text-neutral-100 rounded-full flex items-center justify-center text-xs md:text-sm font-medium leading-none select-none">
             {itemNum}
           </div>
 
           {/* Thumbnail */}
-          <div className="relative size-16 xs:size-[72px] md:size-20 lg:size-[84px] lgx:size-[86px] xlg:size-[88px] mid:size-[90px] xl:size-24 2xl:size-28 rounded-[6px] md:rounded-[8px] lg:rounded-[9px] lgx:rounded-[10px] xlg:rounded-[11px] mid:rounded-[11px] xl:rounded-[12px] shrink-0 overflow-hidden bg-muted">
-            {isLoading ? (
-              <div className="w-full h-full flex items-center justify-center text-muted-foreground">
-                <Loader2 className="h-5 w-5 animate-spin" />
-              </div>
-            ) : (
-              <UniversalMultimediaPreview
-                multimedia={multimedia}
+          <div className="relative size-16 md:size-20 shrink-0 overflow-hidden bg-muted">
+            {isHeroVideo && heroVideoUrl ? (
+              <VideoThumbnail
+                src={heroVideoUrl}
+                alt={itemTitle}
                 className="w-full h-full object-cover object-center"
-                containerClassName="w-full h-full"
               />
+            ) : heroImageUrl ? (
+              <img
+                src={getOptimizedImageUrl(heroImageUrl, { width: 160, quality: 100 })}
+                alt={itemTitle}
+                className="w-full h-full object-cover object-center"
+              />
+            ) : (
+              <div className="w-full h-full flex items-center justify-center bg-[#EFECE6] text-[#182D09]/40 text-[10px] font-heading font-medium tracking-widest uppercase">
+                MIRA
+              </div>
             )}
           </div>
 
-          {/* Title and Price */}
-          <div className="flex flex-col items-start justify-center gap-1.5 md:gap-2 min-w-0">
+          {/* Title & Price */}
+          <div className="flex flex-col items-start justify-center gap-1 min-w-0">
             <div className="flex items-center gap-2 flex-wrap">
-              <h3 className="text-foreground text-[16px] md:text-[18px] lg:text-[19px] font-semibold leading-snug font-serif truncate max-w-full">
+              <h3 className="text-foreground text-base md:text-lg font-heading font-medium leading-snug">
                 {itemTitle}
               </h3>
-              {typeConfig && (
-                <span className={`rounded px-1.5 py-0.5 text-[9px] font-bold uppercase tracking-wider border ${typeConfig.badgeColor}`}>
-                  {typeConfig.label}
+              {categoryTag && (
+                <span
+                  className={cn(
+                    "rounded px-1.5 py-0.5 text-[9px] font-bold uppercase tracking-wider border",
+                    typeConfig?.badgeColor || "bg-accent/10 text-accent border-accent/20"
+                  )}
+                >
+                  {categoryTag}
                 </span>
               )}
             </div>
 
             <div className="flex items-center gap-2.5 flex-wrap">
               {formattedPrice && (
-                <span className="text-accent text-[15px] md:text-[17px] font-medium leading-none">
+                <span className="text-accent text-sm md:text-base font-semibold leading-none">
                   {formattedPrice}
                 </span>
               )}
               {locationTag && (
-                <span className="text-[11px] text-muted-foreground flex items-center gap-1">
+                <span className="text-xs text-muted-foreground flex items-center gap-1">
                   <MapPin className="h-3 w-3" />
                   {locationTag}
                 </span>
@@ -146,66 +237,189 @@ function AddOnExperienceItemRow({
         </div>
 
         {/* Expand/Collapse Chevron */}
-        <div
-          className={`size-4 md:size-[18px] lg:size-5 shrink-0 text-muted-foreground ml-2 md:ml-4 transition-transform duration-300 ${isExpanded ? "rotate-180" : ""
-            }`}
-        >
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            viewBox="0 0 24 24"
-            fill="none"
-            className="w-full h-full"
-          >
-            <path
-              d="M12.0002 16.0002C11.8686 16.0009 11.7381 15.9757 11.6163 15.926C11.4944 15.8762 11.3836 15.8029 11.2902 15.7102L5.29019 9.71019C5.10188 9.52188 4.99609 9.26649 4.99609 9.00019C4.99609 8.73388 5.10188 8.47849 5.29019 8.29019C5.47849 8.10188 5.73388 7.99609 6.00019 7.99609C6.26649 7.99609 6.52188 8.10188 6.71019 8.29019L12.0002 13.5902L17.2902 8.30019C17.4815 8.13636 17.7276 8.05075 17.9792 8.06047C18.2309 8.0702 18.4697 8.17453 18.6477 8.35262C18.8258 8.53072 18.9302 8.76946 18.9399 9.02113C18.9496 9.27281 18.864 9.51888 18.7002 9.71019L12.7002 15.7102C12.5139 15.8949 12.2625 15.9991 12.0002 16.0002Z"
-              fill="currentColor"
-            />
-          </svg>
-        </div>
+        <ChevronDown
+          className={`size-4 md:size-5 shrink-0 text-muted-foreground transition-transform duration-300 ${
+            isExpanded ? "rotate-180 text-foreground" : ""
+          }`}
+        />
       </button>
 
       {/* Expanded Content Panel */}
-      {isExpanded && (
-        <div className="overflow-hidden border-t border-border/60">
-          <div className="p-4 md:p-6 lg:p-7 flex flex-col lg:flex-row items-stretch lg:items-center gap-5 md:gap-7">
-            {/* Left Narrative Text */}
-            <div className="flex-1 flex flex-col justify-center">
-              <span className="text-accent text-[11px] md:text-xs mb-2 font-bold uppercase tracking-wider">
-                {typeConfig ? typeConfig.label : "OPTIONAL EXPERIENCE"}
-              </span>
+      <AnimatePresence>
+        {isExpanded && (
+          <motion.div
+            initial={{ opacity: 0, height: 0 }}
+            animate={{ opacity: 1, height: "auto" }}
+            exit={{ opacity: 0, height: 0 }}
+            transition={{ duration: 0.3 }}
+            className="overflow-hidden border-t border-black/10"
+          >
+            <div className="p-5 md:p-8 flex flex-col lg:flex-row items-stretch lg:items-center gap-6 md:gap-8">
+              {/* Left Narrative */}
+              <div className="flex-1 flex flex-col justify-center">
+                <span className="text-accent text-xs mb-2 font-bold uppercase tracking-wider">
+                  {categoryTag}
+                </span>
 
-              <h4 className="text-foreground font-serif text-sm md:text-base font-semibold uppercase tracking-wider mb-2 leading-snug">
-                {detailedHeading}
-              </h4>
+                <h4 className="text-foreground font-heading text-lg md:text-xl font-medium tracking-wide mb-3 leading-snug">
+                  {detailedHeading}
+                </h4>
 
-              <p className="text-muted-foreground text-xs md:text-sm leading-relaxed mb-4">
-                {narrativeText}
-              </p>
+                <div
+                  className="text-muted-foreground text-xs md:text-sm leading-relaxed mb-6 space-y-2 [&_p]:leading-relaxed"
+                  dangerouslySetInnerHTML={{ __html: narrativeText }}
+                />
 
-              {/* Add this item CTA Button */}
-              <div>
-                <button
-                  type="button"
-                  onClick={onToggleAdd}
-                  className={`flex h-[42px] w-[260px] max-w-full items-center justify-center rounded px-4 py-2 text-xs font-semibold text-primary-foreground transition-colors duration-200 cursor-pointer ${isAdded ? "bg-emerald-700 hover:bg-emerald-800" : "bg-primary hover:bg-primary/90"
+                {/* Add to trip CTA Button */}
+                <div>
+                  <button
+                    type="button"
+                    onClick={onToggleAdd}
+                    className={`h-11 px-6 text-xs md:text-sm font-semibold tracking-wider uppercase transition-all duration-300 cursor-pointer ${
+                      isAdded
+                        ? "bg-[#222014] text-white"
+                        : "bg-accent text-white hover:bg-accent/90"
                     }`}
-                >
-                  {isAdded ? "Added to Trip ✓" : "Add this experience to trip"}
-                </button>
+                  >
+                    {isAdded ? "Added to Journey ✓" : "Add to journey"}
+                  </button>
+                </div>
+              </div>
+
+              {/* Right Media */}
+              <div className="w-full lg:w-[360px] h-[220px] md:h-[240px] relative overflow-hidden shrink-0 bg-muted">
+                {heroMultimedia ? (
+                  <UniversalMultimediaPreview
+                    multimedia={heroMultimedia}
+                    className="w-full h-full object-cover object-center"
+                    containerClassName="w-full h-full"
+                  />
+                ) : heroImageUrl ? (
+                  <img
+                    src={getOptimizedImageUrl(heroImageUrl, { width: 720, quality: 100 })}
+                    alt={detailedHeading}
+                    className="w-full h-full object-cover object-center"
+                  />
+                ) : (
+                  <div className="w-full h-full flex items-center justify-center bg-[#EFECE6] text-[#182D09]/30 text-sm font-heading tracking-widest uppercase">
+                    MIRA ARCHIVE
+                  </div>
+                )}
               </div>
             </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+    </div>
+  )
+}
 
-            {/* Right Visual Image */}
-            <div className="w-full lg:w-[320px] h-[190px] md:h-[220px] relative rounded-lg overflow-hidden shrink-0 bg-muted">
-              <UniversalMultimediaPreview
-                multimedia={multimedia}
-                className="w-full h-full object-cover object-center"
-                containerClassName="w-full h-full"
-              />
-            </div>
+// Row component for fallback brand items
+function BrandAddonRow({
+  item,
+  index,
+  isExpanded,
+  isAdded,
+  onToggleExpand,
+  onToggleAdd,
+}: {
+  item: typeof defaultBrandAddons[0]
+  index: number
+  isExpanded: boolean
+  isAdded: boolean
+  onToggleExpand: () => void
+  onToggleAdd: () => void
+}) {
+  return (
+    <div
+      className={`w-full border overflow-hidden bg-[#F9F6ED] transition-colors duration-200 ${
+        isExpanded ? "border-black/20" : "border-black/10 hover:border-black/20"
+      }`}
+    >
+      <button
+        type="button"
+        onClick={onToggleExpand}
+        className="w-full px-4 md:px-5 py-4 flex items-center justify-between text-left cursor-pointer transition-colors"
+      >
+        <div className="flex items-center gap-3 md:gap-4 min-w-0 flex-1">
+          <div className="size-6 md:size-8 shrink-0 bg-[#222014] text-neutral-100 rounded-full flex items-center justify-center text-xs md:text-sm font-medium leading-none select-none">
+            {index + 1}
+          </div>
+
+          <div className="relative size-16 md:size-20 shrink-0 overflow-hidden bg-muted">
+            <img
+              src={getOptimizedImageUrl(item.thumbnail, { width: 160, quality: 100 })}
+              alt={item.title}
+              className="w-full h-full object-cover object-center"
+            />
+          </div>
+
+          <div className="flex flex-col items-start justify-center gap-1 min-w-0">
+            <h3 className="text-foreground text-base md:text-lg font-heading font-medium leading-snug">
+              {item.title}
+            </h3>
+            <span className="text-accent text-sm md:text-base font-semibold leading-none">
+              {item.price}
+            </span>
           </div>
         </div>
-      )}
+
+        <ChevronDown
+          className={`size-4 md:size-5 shrink-0 text-muted-foreground transition-transform duration-300 ${
+            isExpanded ? "rotate-180 text-foreground" : ""
+          }`}
+        />
+      </button>
+
+      <AnimatePresence>
+        {isExpanded && (
+          <motion.div
+            initial={{ opacity: 0, height: 0 }}
+            animate={{ opacity: 1, height: "auto" }}
+            exit={{ opacity: 0, height: 0 }}
+            transition={{ duration: 0.3 }}
+            className="overflow-hidden border-t border-black/10"
+          >
+            <div className="p-5 md:p-8 flex flex-col lg:flex-row items-stretch lg:items-center gap-6 md:gap-8">
+              <div className="flex-1 flex flex-col justify-center">
+                <span className="text-accent text-xs mb-2 font-bold uppercase tracking-wider">
+                  OPTIONAL EXPERIENCE
+                </span>
+
+                <h4 className="text-foreground font-heading text-lg md:text-xl font-medium tracking-wide mb-3 leading-snug">
+                  {item.detailedHeading}
+                </h4>
+
+                <p className="text-muted-foreground text-xs md:text-sm leading-relaxed mb-6">
+                  {item.description}
+                </p>
+
+                <div>
+                  <button
+                    type="button"
+                    onClick={onToggleAdd}
+                    className={`h-11 px-6 text-xs md:text-sm font-semibold tracking-wider uppercase transition-all duration-300 cursor-pointer ${
+                      isAdded
+                        ? "bg-[#222014] text-white"
+                        : "bg-accent text-white hover:bg-accent/90"
+                    }`}
+                  >
+                    {isAdded ? "Added to Journey ✓" : "Add to journey"}
+                  </button>
+                </div>
+              </div>
+
+              <div className="w-full lg:w-[360px] h-[220px] md:h-[240px] relative overflow-hidden shrink-0 bg-muted">
+                <img
+                  src={getOptimizedImageUrl(item.image, { width: 720, quality: 100 })}
+                  alt={item.title}
+                  className="w-full h-full object-cover object-center"
+                />
+              </div>
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </div>
   )
 }
@@ -237,51 +451,51 @@ export function AddOnsPreview({ addOns, draft }: { addOns?: any; draft?: any }) 
     }))
   }
 
-  return (
-    <div className="w-full max-w-[120rem] mx-auto flex flex-col">
-      <section className="w-full">
-        <div className="w-full flex flex-col gap-5 md:gap-7">
-          {/* Section Header */}
-          <div className="flex flex-col gap-1.5">
-            <span className="text-xs font-bold uppercase tracking-widest text-accent">
-              OPTIONAL EXPERIENCES & UPGRADES
-            </span>
-            <h2 className="text-foreground font-serif text-xl md:text-3xl font-medium leading-tight">
-              Add some fun to your trip
-            </h2>
-            <p className="text-muted-foreground text-xs md:text-sm leading-relaxed">
-              Enhance your journey with curated optional experiences and bespoke excursions.
-            </p>
-          </div>
+  const hasLinkedExperiences = expIds.length > 0
 
-          {/* Add-on Experiences Accordion List */}
-          {expIds.length === 0 ? (
-            <div className="rounded-md border border-dashed border-border/80 bg-muted/15 p-10 text-center">
-              <Compass className="h-10 w-10 text-muted-foreground/40 mx-auto mb-2" />
-              <p className="text-sm font-semibold text-foreground">
-                No optional experiences linked yet
-              </p>
-              <p className="text-xs text-muted-foreground mt-1 max-w-md mx-auto">
-                Search and link curated Experiences in the &quot;Add-ons &amp; Optional Upgrades&quot; form section on the left to preview them here.
-              </p>
-            </div>
-          ) : (
-            <div className="flex flex-col gap-3.5 w-full">
-              {expIds.map((id, index) => (
-                <AddOnExperienceItemRow
-                  key={`${id}-${index}`}
-                  experienceId={id}
-                  index={index}
-                  isExpanded={expandedId === id}
-                  isAdded={Boolean(addedItems[id])}
-                  onToggleExpand={() => toggleExpand(id)}
-                  onToggleAdd={() => toggleAddItem(id)}
-                />
-              ))}
-            </div>
-          )}
-        </div>
-      </section>
+  return (
+    <div className="w-full flex flex-col gap-6 md:gap-8">
+      {/* Section Header */}
+      <div className="flex flex-col gap-2">
+        <span className="text-accent text-xs font-semibold tracking-[2px] uppercase">
+          CURATED ADD-ONS
+        </span>
+        <h2 className="text-foreground font-heading text-2xl md:text-3xl lg:text-4xl font-normal leading-tight">
+          Add some fun to your trip
+        </h2>
+        <p className="text-muted-foreground text-xs md:text-sm lg:text-[14.5px] leading-relaxed max-w-xl">
+          Enhance your journey with curated optional experiences and adventures.
+        </p>
+      </div>
+
+      {/* Add-on List: Renders live fetched experiences or default brand items */}
+      <div className="flex flex-col gap-3.5 w-full">
+        {hasLinkedExperiences ? (
+          expIds.map((id, index) => (
+            <DynamicExperienceRow
+              key={`${id}-${index}`}
+              experienceId={id}
+              index={index}
+              isExpanded={expandedId === id}
+              isAdded={Boolean(addedItems[id])}
+              onToggleExpand={() => toggleExpand(id)}
+              onToggleAdd={() => toggleAddItem(id)}
+            />
+          ))
+        ) : (
+          defaultBrandAddons.map((item, index) => (
+            <BrandAddonRow
+              key={item.id}
+              item={item}
+              index={index}
+              isExpanded={expandedId === item.id}
+              isAdded={Boolean(addedItems[item.id])}
+              onToggleExpand={() => toggleExpand(item.id)}
+              onToggleAdd={() => toggleAddItem(item.id)}
+            />
+          ))
+        )}
+      </div>
     </div>
   )
 }
