@@ -142,6 +142,8 @@
   --breakpoint-mid: 90rem;
   --breakpoint-xl: 105rem;
   --breakpoint-2xl: 120rem;
+  --breakpoint-3xl: 125rem;
+  --breakpoint-4k: 160rem;
 
   /* Frontend Container Query Breakpoints */
   --container-xs: 30rem;

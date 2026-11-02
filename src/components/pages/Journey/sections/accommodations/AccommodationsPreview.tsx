@@ -392,17 +392,56 @@ export function AccommodationsPreview({ accommodations, draft }: { accommodation
 
   const galleryImages: string[] = useMemo(() => {
     const list: string[] = []
-    if (visData.featuredImage?.url) list.push(visData.featuredImage.url)
-    if (Array.isArray(visData.galleryImages)) {
-      for (const img of visData.galleryImages) {
-        if (typeof img === "string") list.push(img)
-        else if (img?.url) list.push(img.url)
+
+    const addImgUrl = (item: any) => {
+      if (!item) return
+      if (typeof item === "string" && item.trim()) {
+        list.push(item.trim())
+        return
+      }
+      // Check canonical multimedia object: multimedia.image.url
+      if (item?.multimedia?.image?.url) {
+        list.push(item.multimedia.image.url)
+        return
+      }
+      // Direct image object: image.url
+      if (item?.image?.url) {
+        list.push(item.image.url)
+        return
+      }
+      // Root url: url
+      if (item?.url) {
+        list.push(item.url)
+        return
       }
     }
-    if (list.length === 0) {
-      list.push(brandVis.featuredImage.url)
-      for (const g of brandVis.galleryImages) list.push(g.url)
+
+    // 1. Featured image if present
+    addImgUrl(visData.featuredImage)
+
+    // 2. Items list (from AccommodationsForm: visualReference.items)
+    const rawItems = Array.isArray(visData.items) ? visData.items : []
+    for (const item of rawItems) {
+      addImgUrl(item)
     }
+
+    // 3. galleryImages array if present
+    if (Array.isArray(visData.galleryImages)) {
+      for (const img of visData.galleryImages) {
+        addImgUrl(img)
+      }
+    }
+
+    // 4. Fallback to brand default if no images provided
+    if (list.length === 0) {
+      if (brandVis.featuredImage?.url) list.push(brandVis.featuredImage.url)
+      if (Array.isArray(brandVis.galleryImages)) {
+        for (const g of brandVis.galleryImages) {
+          if (g?.url) list.push(g.url)
+        }
+      }
+    }
+
     return list
   }, [visData, brandVis])
 

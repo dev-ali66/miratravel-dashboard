@@ -225,7 +225,7 @@ export default function BookingTable() {
         title="Bookings Management"
         subtitle="Manage incoming travel requests, approve bookings, and monitor payments."
         stats={
-          <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 sm:gap-2.5 w-full">
+          <div className="grid grid-cols-1 xs:grid-cols-2 sm:grid-cols-4 gap-2 sm:gap-2.5 w-full">
             <CompactStatCard
               label="Total Bookings"
               value={metrics.total}

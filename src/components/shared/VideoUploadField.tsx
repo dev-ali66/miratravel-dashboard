@@ -197,7 +197,7 @@ export function VideoUploadField({
 
       <div
         className={cn(
-          "relative flex h-55 w-full cursor-pointer items-center justify-center rounded-md border-2 border-dashed border-border p-2 transition-colors hover:bg-muted/50",
+          "relative flex w-full aspect-video cursor-pointer items-center justify-center rounded-md border-2 border-dashed border-border p-1 transition-colors hover:bg-muted/50 overflow-hidden",
           isCurrentlyUploading && "pointer-events-none opacity-95 border-primary/50 bg-primary/5"
         )}
         onClick={() => fileInputRef.current?.click()}

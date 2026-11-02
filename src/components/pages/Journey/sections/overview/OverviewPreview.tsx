@@ -105,15 +105,21 @@ export function OverviewPreview({ overview, draft }: { overview?: any; draft?: a
   const vsTitle = getStr(vs.title, defaultOverviewData.gallery.title)
   const vsItems = Array.isArray(vs.items) && vs.items.length > 0 ? vs.items : []
 
+  const getMediaUrl = (m: any): string | null => {
+    if (!m) return null
+    if (typeof m === "string") return m
+    return m?.multimedia?.image?.url || m?.image?.url || m?.url || null
+  }
+
   const featuredImg =
     vs.featuredImage?.url ||
     (typeof vs.featuredImage === "string" ? vs.featuredImage : null) ||
-    (vsItems[0]?.image?.url || (typeof vsItems[0] === "string" ? vsItems[0] : null)) ||
+    getMediaUrl(vsItems[0]) ||
     defaultOverviewData.gallery.featured
 
   const secondaryImgs =
     vsItems.length > 1
-      ? vsItems.slice(1, 5).map((m: any) => m?.image?.url || (typeof m === "string" ? m : m?.url))
+      ? vsItems.slice(1, 5).map((m: any) => getMediaUrl(m) || defaultOverviewData.gallery.featured)
       : defaultOverviewData.gallery.secondary
 
   const [activeGalleryPage, setActiveGalleryPage] = useState(0)

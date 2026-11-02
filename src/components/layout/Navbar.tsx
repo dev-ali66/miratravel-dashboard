@@ -165,7 +165,7 @@ interface NavbarProps {
   onMenuClick: () => void
 }
 
-export function Navbar({ onMenuClick }: NavbarProps) {
+export function NavbarUserMenu() {
   const navigate = useNavigate()
   const { data: user } = useMe()
   const { data: sessionStats } = useUserSessions()
@@ -213,182 +213,165 @@ export function Navbar({ onMenuClick }: NavbarProps) {
 
   return (
     <>
-      <header className="fixed top-0 z-50 w-full bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
-        <div className="flex h-14 items-center px-4 md:px-6 justify-between">
-          {/* Left: Hamburger (Mobile) + Brand Logo */}
-          <div className="flex items-center gap-3 md:gap-4 h-full">
+      <div className="flex items-center gap-2.5 sm:gap-3">
+        <ThemeToggle />
+
+        <DropdownMenu open={isDropdownOpen} onOpenChange={setIsDropdownOpen}>
+          <DropdownMenuTrigger asChild>
             <button
               type="button"
-              className="md:hidden flex h-10 w-10 items-center justify-center rounded-lg border border-border/60 bg-muted/40 text-foreground hover:bg-muted cursor-pointer shrink-0"
-              onClick={onMenuClick}
-              aria-label="Toggle navigation menu"
+              onMouseEnter={() => setIsProfileHovered(true)}
+              onMouseLeave={() => setIsProfileHovered(false)}
+              className="flex items-center rounded-full border border-border/60 bg-card/70 transition-all hover:bg-muted/80 hover:border-border focus:outline-none cursor-pointer shadow-2xs group overflow-hidden"
+              title={profileName}
             >
-              <Menu className="h-5 w-5" />
-            </button>
-            <NavbarBrandLogo />
-          </div>
-          {/* Right: Theme Toggle + User Profile Dropdown */}
-          <div className="flex items-center gap-2.5 sm:gap-3">
-            <ThemeToggle />
+              {/* Clean circular profile avatar */}
+              <div className="relative h-10 w-10 shrink-0 overflow-hidden rounded-full ring-2 ring-primary/20 group-hover:ring-primary/40 transition-all shadow-xs">
+                <img
+                  src={getOptimizedImageUrl(profileImage, { width: DASHBOARD_IMAGE_WIDTHS.NAVBAR_AVATAR, quality: 100 })}
+                  alt={profileName}
+                  className="h-full w-full object-cover scale-105"
+                />
+                <span className="absolute bottom-0 right-0 h-2.5 w-2.5 rounded-full bg-emerald-500 ring-1.5 ring-background" />
+              </div>
 
-            <DropdownMenu open={isDropdownOpen} onOpenChange={setIsDropdownOpen}>
-              <DropdownMenuTrigger asChild>
-                <button
-                  type="button"
-                  onMouseEnter={() => setIsProfileHovered(true)}
-                  onMouseLeave={() => setIsProfileHovered(false)}
-                  className="flex items-center rounded-full border border-border/60 bg-card/70 transition-all hover:bg-muted/80 hover:border-border focus:outline-none cursor-pointer shadow-2xs group overflow-hidden"
-                  title={profileName}
-                >
-                  {/* Clean circular profile avatar */}
-                  <div className="relative h-10 w-10 shrink-0 overflow-hidden rounded-full ring-2 ring-primary/20 group-hover:ring-primary/40 transition-all shadow-xs">
-                    <img
-                      src={getOptimizedImageUrl(profileImage, { width: DASHBOARD_IMAGE_WIDTHS.NAVBAR_AVATAR, quality: 100 })}
-                      alt={profileName}
-                      className="h-full w-full object-cover scale-105"
-                    />
-                    <span className="absolute bottom-0 right-0 h-2.5 w-2.5 rounded-full bg-emerald-500 ring-1.5 ring-background" />
-                  </div>
-
-                  {/* Sliding Name, Role & Chevron to the Right */}
-                  <AnimatePresence>
-                    {isProfileExpanded && (
-                      <motion.div
-                        initial={{ width: 0, opacity: 0 }}
-                        animate={{ width: "auto", opacity: 1 }}
-                        exit={{ width: 0, opacity: 0 }}
-                        transition={{ duration: 0.22, ease: [0.4, 0, 0.2, 1] }}
-                        className="overflow-hidden flex items-center pl-2.5 pr-2 gap-2 whitespace-nowrap"
-                      >
-                        <div className="flex flex-col text-left">
-                          <span className="text-xs font-bold text-foreground leading-tight truncate max-w-[130px]">
-                            {profileName}
-                          </span>
-                          <span className="text-[10px] font-medium text-muted-foreground leading-tight uppercase tracking-wider">
-                            {userRole}
-                          </span>
-                        </div>
-
-                        <ChevronDown className="h-3.5 w-3.5 text-muted-foreground transition-transform group-data-[state=open]:rotate-180 shrink-0" />
-                      </motion.div>
-                    )}
-                  </AnimatePresence>
-                </button>
-              </DropdownMenuTrigger>
-
-              <DropdownMenuContent
-                align="end"
-                sideOffset={8}
-                className="w-64 rounded-xl border border-border/70 bg-card/95 backdrop-blur-md p-1.5 shadow-xl animate-in fade-in-0 zoom-in-95"
-              >
-                {/* Dropdown Header: Clean Profile Card */}
-                <DropdownMenuLabel className="p-2.5 font-normal">
-                  <div className="flex items-center gap-3">
-                    <div className="relative h-10 w-10 shrink-0 overflow-hidden rounded-full ring-2 ring-primary/20 shadow-xs">
-                      <img
-                        src={getOptimizedImageUrl(profileImage, { width: DASHBOARD_IMAGE_WIDTHS.NAVBAR_AVATAR, quality: 100 })}
-                        alt={profileName}
-                        className="h-full w-full object-cover"
-                      />
-                      <span className="absolute bottom-0 right-0 h-2.5 w-2.5 rounded-full bg-emerald-500 ring-2 ring-card" />
-                    </div>
-                    <div className="flex flex-col min-w-0">
-                      <p className="text-sm font-semibold text-foreground truncate leading-tight">
+              {/* Sliding Name, Role & Chevron to the Right */}
+              <AnimatePresence>
+                {isProfileExpanded && (
+                  <motion.div
+                    initial={{ width: 0, opacity: 0 }}
+                    animate={{ width: "auto", opacity: 1 }}
+                    exit={{ width: 0, opacity: 0 }}
+                    transition={{ duration: 0.22, ease: [0.4, 0, 0.2, 1] }}
+                    className="overflow-hidden flex items-center pl-2.5 pr-2 gap-2 whitespace-nowrap"
+                  >
+                    <div className="flex flex-col text-left">
+                      <span className="text-xs font-bold text-foreground leading-tight truncate max-w-[130px]">
                         {profileName}
-                      </p>
-                      <p className="text-xs text-muted-foreground truncate leading-tight mt-0.5">
-                        {profileEmail}
-                      </p>
-                      <div className="flex items-center gap-1.5 mt-1.5">
-                        <span className="inline-flex items-center rounded-md bg-primary/10 px-1.5 py-0.5 text-[9px] font-bold text-primary uppercase tracking-wider">
-                          {userRole}
-                        </span>
-                        {isRemembered && (
-                          <span className="inline-flex items-center rounded-md bg-muted/80 px-1.5 py-0.5 text-[9px] font-medium text-muted-foreground">
-                            {sessionDuration} session
-                          </span>
-                        )}
-                      </div>
+                      </span>
+                      <span className="text-[10px] font-medium text-muted-foreground leading-tight uppercase tracking-wider">
+                        {userRole}
+                      </span>
                     </div>
-                  </div>
-                </DropdownMenuLabel>
 
-                <DropdownMenuSeparator className="my-1 bg-border/50" />
+                    <ChevronDown className="h-3.5 w-3.5 text-muted-foreground transition-transform group-data-[state=open]:rotate-180 shrink-0" />
+                  </motion.div>
+                )}
+              </AnimatePresence>
+            </button>
+          </DropdownMenuTrigger>
 
-                {/* Group: Profile & Security */}
-                <DropdownMenuGroup>
-                  <DropdownMenuItem
-                    onClick={() => navigate("/settings")}
-                    className="flex items-center gap-2.5 px-2.5 py-2 text-xs font-medium text-foreground rounded-lg cursor-pointer transition-colors hover:bg-muted focus:bg-muted"
-                  >
-                    <User className="h-4 w-4 text-muted-foreground" />
-                    <span>My Profile & Security</span>
-                  </DropdownMenuItem>
-
-                  <DropdownMenuItem
-                    onClick={() => setIsDevicesModalOpen(true)}
-                    className="flex items-center justify-between px-2.5 py-2 text-xs font-medium text-foreground rounded-lg cursor-pointer transition-colors hover:bg-muted focus:bg-muted"
-                  >
-                    <div className="flex items-center gap-2.5">
-                      <ShieldCheck className="h-4 w-4 text-muted-foreground" />
-                      <span>Security & Sessions</span>
-                    </div>
-                    <span className="rounded-full bg-muted/80 border border-border/40 px-2 py-0.5 text-[10px] font-medium text-muted-foreground">
-                      {activeDevicesCount} {activeDevicesCount > 1 ? "devices" : "device"}
+          <DropdownMenuContent
+            align="end"
+            sideOffset={8}
+            className="w-64 rounded-xl border border-border/70 bg-card/95 backdrop-blur-md p-1.5 shadow-xl animate-in fade-in-0 zoom-in-95"
+          >
+            {/* Dropdown Header: Clean Profile Card */}
+            <DropdownMenuLabel className="p-2.5 font-normal">
+              <div className="flex items-center gap-3">
+                <div className="relative h-10 w-10 shrink-0 overflow-hidden rounded-full ring-2 ring-primary/20 shadow-xs">
+                  <img
+                    src={getOptimizedImageUrl(profileImage, { width: DASHBOARD_IMAGE_WIDTHS.NAVBAR_AVATAR, quality: 100 })}
+                    alt={profileName}
+                    className="h-full w-full object-cover"
+                  />
+                  <span className="absolute bottom-0 right-0 h-2.5 w-2.5 rounded-full bg-emerald-500 ring-2 ring-card" />
+                </div>
+                <div className="flex flex-col min-w-0">
+                  <p className="text-sm font-semibold text-foreground truncate leading-tight">
+                    {profileName}
+                  </p>
+                  <p className="text-xs text-muted-foreground truncate leading-tight mt-0.5">
+                    {profileEmail}
+                  </p>
+                  <div className="flex items-center gap-1.5 mt-1.5">
+                    <span className="inline-flex items-center rounded-md bg-primary/10 px-1.5 py-0.5 text-[9px] font-bold text-primary uppercase tracking-wider">
+                      {userRole}
                     </span>
-                  </DropdownMenuItem>
-                </DropdownMenuGroup>
-
-                <DropdownMenuSeparator className="my-1 bg-border/50" />
-
-                {/* Developer Mode Toggle */}
-                <DropdownMenuItem
-                  onClick={(e) => {
-                    e.preventDefault()
-                    toggleDevMode()
-                  }}
-                  className="flex items-center justify-between px-2.5 py-2 text-xs font-medium text-foreground rounded-lg cursor-pointer transition-colors hover:bg-muted focus:bg-muted"
-                >
-                  <div className="flex items-center gap-2.5">
-                    <Code2 className="h-4 w-4 text-muted-foreground" />
-                    <span>Developer Mode</span>
-                  </div>
-                  <span
-                    className={cn(
-                      "inline-flex items-center gap-1.5 rounded-full px-2 py-0.5 text-[10px] font-semibold border transition-all",
-                      isDevMode
-                        ? "bg-amber-500/15 text-amber-700 dark:text-amber-300 border-amber-500/40"
-                        : "bg-muted/70 text-muted-foreground border-border/50"
+                    {isRemembered && (
+                      <span className="inline-flex items-center rounded-md bg-muted/80 px-1.5 py-0.5 text-[9px] font-medium text-muted-foreground">
+                        {sessionDuration} session
+                      </span>
                     )}
-                  >
-                    <span
-                      className={cn(
-                        "h-1.5 w-1.5 rounded-full",
-                        isDevMode ? "bg-amber-500 animate-pulse" : "bg-muted-foreground/40"
-                      )}
-                    />
-                    {isDevMode ? "ON" : "OFF"}
-                  </span>
-                </DropdownMenuItem>
-
-                <DropdownMenuSeparator className="my-1 bg-border/50" />
-
-                {/* Footer: Log Out */}
-                <DropdownMenuItem
-                  onClick={() => setIsLogoutOpen(true)}
-                  className="flex items-center justify-between px-2.5 py-2 text-xs font-semibold text-destructive rounded-lg cursor-pointer transition-colors hover:bg-destructive/10 focus:bg-destructive/10 focus:text-destructive"
-                >
-                  <div className="flex items-center gap-2.5">
-                    <LogOut className="h-4 w-4 text-destructive" />
-                    <span>Log Out</span>
                   </div>
-                  <span className="text-[10px] font-mono text-destructive/70">⌥⇧Q</span>
-                </DropdownMenuItem>
-              </DropdownMenuContent>
-            </DropdownMenu>
-          </div>
-        </div>
-      </header>
+                </div>
+              </div>
+            </DropdownMenuLabel>
+
+            <DropdownMenuSeparator className="my-1 bg-border/50" />
+
+            {/* Group: Profile & Security */}
+            <DropdownMenuGroup>
+              <DropdownMenuItem
+                onClick={() => navigate("/settings")}
+                className="flex items-center gap-2.5 px-2.5 py-2 text-xs font-medium text-foreground rounded-lg cursor-pointer transition-colors hover:bg-muted focus:bg-muted"
+              >
+                <User className="h-4 w-4 text-muted-foreground" />
+                <span>My Profile & Security</span>
+              </DropdownMenuItem>
+
+              <DropdownMenuItem
+                onClick={() => setIsDevicesModalOpen(true)}
+                className="flex items-center justify-between px-2.5 py-2 text-xs font-medium text-foreground rounded-lg cursor-pointer transition-colors hover:bg-muted focus:bg-muted"
+              >
+                <div className="flex items-center gap-2.5">
+                  <ShieldCheck className="h-4 w-4 text-muted-foreground" />
+                  <span>Security & Sessions</span>
+                </div>
+                <span className="rounded-full bg-muted/80 border border-border/40 px-2 py-0.5 text-[10px] font-medium text-muted-foreground">
+                  {activeDevicesCount} {activeDevicesCount > 1 ? "devices" : "device"}
+                </span>
+              </DropdownMenuItem>
+            </DropdownMenuGroup>
+
+            <DropdownMenuSeparator className="my-1 bg-border/50" />
+
+            {/* Developer Mode Toggle */}
+            <DropdownMenuItem
+              onClick={(e) => {
+                e.preventDefault()
+                toggleDevMode()
+              }}
+              className="flex items-center justify-between px-2.5 py-2 text-xs font-medium text-foreground rounded-lg cursor-pointer transition-colors hover:bg-muted focus:bg-muted"
+            >
+              <div className="flex items-center gap-2.5">
+                <Code2 className="h-4 w-4 text-muted-foreground" />
+                <span>Developer Mode</span>
+              </div>
+              <span
+                className={cn(
+                  "inline-flex items-center gap-1.5 rounded-full px-2 py-0.5 text-[10px] font-semibold border transition-all",
+                  isDevMode
+                    ? "bg-amber-500/15 text-amber-700 dark:text-amber-300 border-amber-500/40"
+                    : "bg-muted/70 text-muted-foreground border-border/50"
+                )}
+              >
+                <span
+                  className={cn(
+                    "h-1.5 w-1.5 rounded-full",
+                    isDevMode ? "bg-amber-500 animate-pulse" : "bg-muted-foreground/40"
+                  )}
+                />
+                {isDevMode ? "ON" : "OFF"}
+              </span>
+            </DropdownMenuItem>
+
+            <DropdownMenuSeparator className="my-1 bg-border/50" />
+
+            {/* Footer: Log Out */}
+            <DropdownMenuItem
+              onClick={() => setIsLogoutOpen(true)}
+              className="flex items-center justify-between px-2.5 py-2 text-xs font-semibold text-destructive rounded-lg cursor-pointer transition-colors hover:bg-destructive/10 focus:bg-destructive/10 focus:text-destructive"
+            >
+              <div className="flex items-center gap-2.5">
+                <LogOut className="h-4 w-4 text-destructive" />
+                <span>Log Out</span>
+              </div>
+              <span className="text-[10px] font-mono text-destructive/70">⌥⇧Q</span>
+            </DropdownMenuItem>
+          </DropdownMenuContent>
+        </DropdownMenu>
+      </div>
 
       <LogoutModal open={isLogoutOpen} onClose={() => setIsLogoutOpen(false)} />
       <ActiveDevicesModal
@@ -399,3 +382,31 @@ export function Navbar({ onMenuClick }: NavbarProps) {
     </>
   )
 }
+
+interface NavbarProps {
+  onMenuClick: () => void
+}
+
+export function Navbar({ onMenuClick }: NavbarProps) {
+  return (
+    <header className="fixed top-0 z-50 w-full bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
+      <div className="flex h-14 items-center px-4 md:px-6 justify-between">
+        {/* Left: Hamburger (Mobile) + Brand Logo */}
+        <div className="flex items-center gap-3 md:gap-4 h-full">
+          <button
+            type="button"
+            className="md:hidden flex h-10 w-10 items-center justify-center rounded-lg border border-border/60 bg-muted/40 text-foreground hover:bg-muted cursor-pointer shrink-0"
+            onClick={onMenuClick}
+            aria-label="Toggle navigation menu"
+          >
+            <Menu className="h-5 w-5" />
+          </button>
+          <NavbarBrandLogo />
+        </div>
+        {/* Right: Theme Toggle + User Profile Dropdown */}
+        <NavbarUserMenu />
+      </div>
+    </header>
+  )
+}
+

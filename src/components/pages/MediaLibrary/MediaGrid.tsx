@@ -49,8 +49,8 @@ export const MediaGrid: React.FC<MediaGridProps> = ({
         className={cn(
           "grid gap-2 p-1",
           selectedAssetId
-            ? "grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5"
-            : "grid-cols-1 md:grid-cols-3 lg:grid-cols-5 xl:grid-cols-6"
+            ? "grid-cols-1 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4 4k:grid-cols-5"
+            : "grid-cols-1 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 4k:grid-cols-6"
         )}
       >
         {Array.from({ length: 18 }).map((_, i) => (
@@ -88,8 +88,8 @@ export const MediaGrid: React.FC<MediaGridProps> = ({
       className={cn(
         "grid gap-2 p-1 transition-all duration-300",
         selectedAssetId
-          ? "grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5"
-          : "grid-cols-1 md:grid-cols-3 lg:grid-cols-5 xl:grid-cols-6"
+          ? "grid-cols-1 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4 4k:grid-cols-5"
+          : "grid-cols-1 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 4k:grid-cols-6"
       )}
     >
       {assets.map((asset) => {

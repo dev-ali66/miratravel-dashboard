@@ -149,7 +149,7 @@ const NavLink = ({
   const Icon = iconMap[icon]
 
   const className = cn(
-    "group relative flex w-full items-center gap-3 rounded-lg px-4 py-4 text-left transition-all duration-200",
+    "group relative flex w-full items-center gap-3 rounded-md px-3.5 py-2.5 text-left transition-all duration-200",
     isActive
       ? "font-semibold text-primary"
       : "text-muted-foreground hover:bg-muted/50"
@@ -160,7 +160,7 @@ const NavLink = ({
       {isActive && (
         <motion.div
           layoutId="active-pill"
-          className="absolute inset-0 z-0 rounded-lg bg-[oklch(0.588_0.158_241.966/0.08)]"
+          className="absolute inset-0 z-0 rounded-md bg-[oklch(0.588_0.158_241.966/0.08)]"
           transition={{
             type: "spring",
             bounce: 0.2,
@@ -171,7 +171,7 @@ const NavLink = ({
 
       <Icon
         className={cn(
-          "relative z-10 h-5 w-5",
+          "relative z-10 h-5 w-5 shrink-0",
           isActive
             ? "text-primary"
             : "text-muted-foreground group-hover:text-foreground"
@@ -180,8 +180,8 @@ const NavLink = ({
 
       <span
         className={cn(
-          "relative z-10 text-sm font-medium transition-colors",
-          isActive ? "text-primary" : "group-hover:text-foreground"
+          "relative z-10 text-base font-medium transition-colors truncate",
+          isActive ? "text-primary font-semibold" : "group-hover:text-foreground"
         )}
       >
         {label}
@@ -226,18 +226,18 @@ const CMSDropdown = ({
         type="button"
         onClick={() => setIsOpen((prev) => !prev)}
         className={cn(
-          "group relative flex w-full items-center justify-between rounded-lg px-4 py-4 text-left transition-all duration-200",
+          "group relative flex w-full items-center justify-between rounded-md px-3.5 py-2.5 text-left transition-all duration-200 cursor-pointer",
           isCMSActive
             ? "font-semibold text-primary"
             : "text-muted-foreground hover:bg-muted/50"
         )}
       >
         {/* Left side */}
-        <div className="flex items-center gap-3">
+        <div className="flex items-center gap-3 min-w-0">
           {isCMSActive && (
             <motion.div
               layoutId="active-pill"
-              className="absolute inset-0 z-0 rounded-lg bg-[oklch(0.588_0.158_241.966/0.08)]"
+              className="absolute inset-0 z-0 rounded-md bg-[oklch(0.588_0.158_241.966/0.08)]"
               transition={{
                 type: "spring",
                 bounce: 0.2,
@@ -248,7 +248,7 @@ const CMSDropdown = ({
 
           <FileText
             className={cn(
-              "relative z-10 h-5 w-5",
+              "relative z-10 h-5 w-5 shrink-0",
               isCMSActive
                 ? "text-primary"
                 : "text-muted-foreground group-hover:text-foreground"
@@ -257,8 +257,8 @@ const CMSDropdown = ({
 
           <span
             className={cn(
-              "relative z-10 text-sm font-medium",
-              isCMSActive ? "text-primary" : "group-hover:text-foreground"
+              "relative z-10 text-base font-medium truncate",
+              isCMSActive ? "text-primary font-semibold" : "group-hover:text-foreground"
             )}
           >
             CMS
@@ -269,7 +269,7 @@ const CMSDropdown = ({
         <ChevronDown
           size={18}
           className={cn(
-            "relative z-10 transition-transform duration-200",
+            "relative z-10 shrink-0 transition-transform duration-200",
             isOpen && "rotate-180",
             isCMSActive ? "text-primary" : "text-muted-foreground"
           )}
@@ -284,7 +284,7 @@ const CMSDropdown = ({
         )}
       >
         <div className="overflow-hidden">
-          <div className="mt-1 ml-6 flex flex-col gap-1 border-l border-border/70 pl-4">
+          <div className="mt-0.5 ml-4 flex flex-col gap-0.5 border-l border-border/70 pl-3">
             {cmsItems.map((item) => {
               const Icon = item.icon
 
@@ -296,9 +296,9 @@ const CMSDropdown = ({
                   key={item.href}
                   to={item.href}
                   className={cn(
-                    "group flex items-center gap-3 rounded-sm px-3 py-2.5 text-sm transition-all duration-200",
+                    "group flex items-center gap-2.5 rounded-sm px-2.5 py-2 text-[15px] transition-all duration-200",
                     isActive
-                      ? "bg-primary/10 font-medium text-primary"
+                      ? "bg-primary/10 font-medium text-primary font-semibold"
                       : "text-muted-foreground hover:bg-muted/50 hover:text-foreground"
                   )}
                 >
@@ -312,7 +312,7 @@ const CMSDropdown = ({
                     )}
                   />
 
-                  <span>{item.label}</span>
+                  <span className="truncate">{item.label}</span>
                 </Link>
               )
             })}
@@ -357,31 +357,33 @@ export default function Sidebar({
     }
   }, [isCMSRoute])
 
-  // Close mobile sidebar when route changes
+  // Close mobile sidebar ONLY when pathname actually changes
   useEffect(() => {
-    if (onMobileClose) onMobileClose()
-  }, [pathname, onMobileClose])
+    onMobileClose?.()
+  }, [pathname])
 
   return (
     <aside
       className={cn(
-        "fixed top-14 bottom-0 left-0 z-40 w-[280px] flex-col bg-background/95 backdrop-blur-xl supports-[backdrop-filter]:bg-background/60 py-6 px-4 transition-transform duration-300 ease-in-out md:translate-x-0 overflow-y-auto hidden md:flex",
-        isMobileOpen ? "translate-x-0 flex" : "-translate-x-full"
+        "fixed top-14 bottom-0 left-0 z-50 w-[75vw] max-w-[280px] md:w-[clamp(250px,18.5vw,290px)] flex-col bg-background/95 backdrop-blur-xl supports-[backdrop-filter]:bg-background/60 py-3.5 px-3 transition-transform duration-300 ease-in-out md:translate-x-0 overflow-y-auto flex custom-scrollbar",
+        isMobileOpen
+          ? "translate-x-0 shadow-2xl pointer-events-auto"
+          : "-translate-x-full md:translate-x-0 pointer-events-none md:pointer-events-auto"
       )}
     >
       {/* Navigation Sections */}
-      <div className="flex flex-col gap-8 pb-10">
+      <div className="flex flex-col gap-4.5 pb-6">
         {sections?.map((section, sIdx) => (
-          <div key={section.title} className="flex flex-col gap-2">
+          <div key={section.title} className="flex flex-col gap-1.5">
             {/* Section Title */}
             <SlideLeft delay={0.1 + sIdx * 0.05}>
-              <h3 className="px-3 text-xs font-bold tracking-wider text-muted-foreground uppercase">
+              <h3 className="px-3 text-[13px] font-bold tracking-wider text-muted-foreground uppercase">
                 {section.title}
               </h3>
             </SlideLeft>
 
             {/* Navigation */}
-            <nav className="flex flex-col gap-1">
+            <nav className="flex flex-col gap-0.5">
               {section.items.map((item, iIdx) => {
                 const isCMSItem = item.href === "/cms"
 

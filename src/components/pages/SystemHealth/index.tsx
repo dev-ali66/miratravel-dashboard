@@ -154,7 +154,7 @@ export default function SystemHealthPage() {
         title="System Health"
         subtitle="Core API telemetry, database pooling, third-party gateways, and cron jobs."
         stats={
-          <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 sm:gap-2.5 w-full">
+          <div className="grid grid-cols-1 xs:grid-cols-2 sm:grid-cols-4 gap-2 sm:gap-2.5 w-full">
             <CompactStatCard
               label="API Server"
               value={activeHealth?.status || "HEALTHY"}

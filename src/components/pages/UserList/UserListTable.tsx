@@ -195,7 +195,7 @@ export default function UserListTable() {
         title="Users"
         subtitle="Manage registered travelers, team roles, and account access."
         stats={
-          <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 sm:gap-2.5 w-full">
+          <div className="grid grid-cols-1 xs:grid-cols-2 sm:grid-cols-4 gap-2 sm:gap-2.5 w-full">
             <CompactStatCard
               label="Registered"
               value={stats?.totalUsers ?? 0}

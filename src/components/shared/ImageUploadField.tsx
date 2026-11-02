@@ -210,7 +210,7 @@ export function ImageUploadField({
 
       <div
         className={cn(
-          "relative flex h-45 w-full cursor-pointer items-center justify-center rounded-md border-2 border-dashed border-border p-2 transition-colors hover:bg-muted/50",
+          "relative flex w-full aspect-video cursor-pointer items-center justify-center rounded-md border-2 border-dashed border-border p-1 transition-colors hover:bg-muted/50 overflow-hidden",
           isCurrentlyUploading && "pointer-events-none opacity-95 border-primary/50 bg-primary/5"
         )}
         onClick={() => fileInputRef.current?.click()}
@@ -250,14 +250,13 @@ export function ImageUploadField({
             </p>
           </div>
         ) : value ? (
-          <div className="group relative flex h-full w-full items-center justify-center overflow-hidden rounded-lg bg-muted/10">
+          <div className="group relative flex h-full w-full items-center justify-center overflow-hidden rounded-md bg-muted/10">
             <img
               src={getOptimizedImageUrl(value, { width: DASHBOARD_IMAGE_WIDTHS.FORM_PREVIEW, quality: 100 })}
               alt="Preview"
               style={{ opacity: opacity / 100 }}
               className={cn(
-                "h-full w-full transition-opacity duration-300 p-1",
-                objectFitClass,
+                "h-full w-full transition-opacity duration-300 object-cover",
                 previewClassName
               )}
             />

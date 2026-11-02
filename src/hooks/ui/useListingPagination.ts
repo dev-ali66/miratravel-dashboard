@@ -59,6 +59,7 @@ export function useListingPagination<T = any>({
     rawConfig?.mid,
     rawConfig?.xl,
     rawConfig?.["2xl"],
+    rawConfig?.["4k"],
   ])
 
   const keyExtractorRef = useRef(keyExtractor)

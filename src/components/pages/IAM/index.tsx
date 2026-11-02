@@ -35,7 +35,7 @@ export default function IAMPage() {
         title="Roles & Permissions"
         subtitle="Manage roles, assign permissions, and control access across the platform."
         stats={
-          <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 sm:gap-2.5 w-full">
+          <div className="grid grid-cols-1 xs:grid-cols-2 sm:grid-cols-4 gap-2 sm:gap-2.5 w-full">
             <CompactStatCard
               label="Roles"
               value={totalRoles}

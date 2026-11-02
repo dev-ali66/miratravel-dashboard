@@ -173,7 +173,7 @@ export default function InquiryPage() {
         title="Travel Inquiries"
         subtitle='Visitor requests submitted via the "Plan your escape" form.'
         stats={
-          <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 sm:gap-2.5 w-full">
+          <div className="grid grid-cols-1 xs:grid-cols-2 sm:grid-cols-4 gap-2 sm:gap-2.5 w-full">
             <CompactStatCard
               label="New Inquiries"
               value={`${newCount} Pending`}

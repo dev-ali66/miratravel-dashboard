@@ -154,7 +154,7 @@ export default function LocationPages() {
         title="Location Pages"
         subtitle="Manage destination content, countries, and regional guides."
         stats={
-          <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 sm:gap-2.5 w-full">
+          <div className="grid grid-cols-1 xs:grid-cols-2 sm:grid-cols-4 gap-2 sm:gap-2.5 w-full">
             <CompactStatCard
               label="Destinations"
               value={meta?.total ?? pages.length}
@@ -259,7 +259,7 @@ export default function LocationPages() {
         errorMessage="Failed to load location pages. Please check backend connection."
         onRetry={refetch}
         layout="grid"
-        gridClassName="grid grid-cols-1 gap-2 md:grid-cols-3 lg:grid-cols-5 xl:grid-cols-6"
+        gridClassName="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 4k:grid-cols-6 gap-2 sm:gap-2.5"
         emptyIcon={MapPin}
         emptyTitle={hasFilters ? "No matching locations found" : "No Location Pages Found"}
         emptyDescription={

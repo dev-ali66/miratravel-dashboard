@@ -159,7 +159,7 @@ export default function NewsletterPage() {
         title="Newsletter"
         subtitle="Manage live mailing lists and subscriber dispatches."
         stats={
-          <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 sm:gap-2.5 w-full">
+          <div className="grid grid-cols-1 xs:grid-cols-2 sm:grid-cols-4 gap-2 sm:gap-2.5 w-full">
             <CompactStatCard
               label="Subscribers"
               value={`${subscribers.length.toLocaleString()}`}

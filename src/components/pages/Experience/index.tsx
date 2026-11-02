@@ -179,7 +179,7 @@ export default function ExperiencePages() {
         title="Experiences"
         subtitle="Curate activities, geography links, and bespoke itineraries."
         stats={
-          <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 sm:gap-2.5 w-full">
+          <div className="grid grid-cols-1 xs:grid-cols-2 sm:grid-cols-4 gap-2 sm:gap-2.5 w-full">
             <CompactStatCard
               label="Experiences"
               value={meta?.total ?? experiences.length}
@@ -328,7 +328,7 @@ export default function ExperiencePages() {
         errorMessage="Failed to fetch experiences. Please verify the backend server is running on port 5010."
         onRetry={refetch}
         layout="grid"
-        gridClassName="grid grid-cols-1 gap-2 md:grid-cols-3 lg:grid-cols-5 xl:grid-cols-6"
+        gridClassName="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 4k:grid-cols-6 gap-2 sm:gap-2.5"
         emptyIcon={Compass}
         emptyTitle="No experiences found"
         emptyDescription={

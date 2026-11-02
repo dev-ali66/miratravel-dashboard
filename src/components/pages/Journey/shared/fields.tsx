@@ -49,7 +49,7 @@ export function FormSection({
       </button>
 
       {active && (
-        <div className="border-t border-border/40 px-2.5 py-3 space-y-3.5">
+        <div className="border-t border-border/40 px-1 py-1.5 space-y-1">
           {children}
         </div>
       )}

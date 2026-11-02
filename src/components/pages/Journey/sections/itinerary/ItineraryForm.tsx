@@ -228,17 +228,17 @@ export function ItineraryForm({
       active={isOpen}
       onClick={() => toggleSection("itinerary")}
     >
-      <div className="flex flex-col gap-6">
+      <div className="flex flex-col gap-1">
         {/* ITINERARY HEADER CMS */}
-        <div className="rounded-md border border-border/60 bg-muted/20 p-4 space-y-4">
-          <div className="flex items-center gap-2 pb-2 border-b border-border/40">
+        <div className="rounded-md border border-border/60 bg-muted/20 px-2 py-2 space-y-1">
+          <div className="flex items-center gap-2 pb-1 border-b border-border/40">
             <CalendarDays className="h-4 w-4 text-primary" />
             <span className="text-xs font-bold uppercase tracking-wider text-foreground">
               Itinerary Section Header CMS
             </span>
           </div>
 
-          <div className="flex flex-col gap-4">
+          <div className="flex flex-col gap-1">
             <DynamicStyledField
               type="text"
               label="Country / Region Badge"
@@ -269,7 +269,7 @@ export function ItineraryForm({
         </div>
 
         {/* CHAPTERS BUILDER */}
-        <div className="space-y-6 pt-4 border-t border-border/40">
+        <div className="space-y-1 pt-1 border-t border-border/40">
           <div className="flex items-center justify-between">
             <div>
               <label className="text-xs font-bold uppercase tracking-wider text-foreground flex items-center gap-1.5">
@@ -295,16 +295,16 @@ export function ItineraryForm({
             return (
               <div
                 key={cIdx}
-                className="rounded-md border-2 border-primary/20 bg-card p-4 md:p-5 space-y-4 shadow-sm"
+                className="rounded-md border-2 border-primary/20 bg-card px-2 py-1.5 md:px-2.5 md:py-2 space-y-1 shadow-sm"
               >
                 {/* Chapter Top Bar (Collapsible Header) */}
                 <div
-                  className="flex items-center justify-between pb-2 border-b border-border/50 cursor-pointer select-none"
+                  className="flex items-center justify-between pb-1 border-b border-border/50 cursor-pointer select-none"
                   onClick={() => toggleChapterOpen(cIdx)}
                 >
-                  <div className="flex items-center gap-2 min-w-0 flex-1">
-                    <span className="text-xs font-extrabold text-primary uppercase tracking-widest flex items-center gap-2 truncate">
-                      <span className="rounded bg-primary/10 px-2 py-0.5 shrink-0">
+                  <div className="flex items-center gap-1.5 min-w-0 flex-1">
+                    <span className="text-xs font-extrabold text-primary uppercase tracking-widest flex items-center gap-1.5 truncate">
+                      <span className="rounded bg-primary/10 px-1.5 py-0.5 shrink-0">
                         {toRomanNumeral(cIdx + 1).toUpperCase().startsWith("CHAPTER") ? toRomanNumeral(cIdx + 1) : `CHAPTER ${toRomanNumeral(cIdx + 1)}`}
                       </span>
                       <span className="truncate">
@@ -356,9 +356,9 @@ export function ItineraryForm({
 
                 {/* Collapsible Chapter Body */}
                 {isChapOpen && (
-                  <div className="space-y-4 pt-1">
+                  <div className="space-y-1 pt-1">
                     {/* Chapter Fields */}
-                    <div className="flex flex-col gap-3">
+                    <div className="flex flex-col gap-1">
                       <DynamicStyledField
                         type="text"
                         label="Chapter Title"
@@ -379,8 +379,8 @@ export function ItineraryForm({
                     />
 
                     {/* Days inside Chapter */}
-                    <div className="space-y-4 pt-4 border-t border-border/30 pl-2 md:pl-4 border-l-2 border-primary/30">
-                      <div className="flex flex-wrap items-center justify-between gap-2">
+                    <div className="space-y-1 pt-1 border-t border-border/30 pl-1 md:pl-1.5 border-l-2 border-primary/30">
+                      <div className="flex flex-wrap items-center justify-between gap-1">
                         <label className="text-xs font-bold uppercase tracking-wider text-foreground flex items-center gap-1.5 min-w-0">
                           <MapPin className="h-3.5 w-3.5 text-primary shrink-0" />
                           <span className="truncate">Itinerary Days ({(chap.days || []).length})</span>
@@ -405,7 +405,7 @@ export function ItineraryForm({
                         return (
                           <div
                             key={dIdx}
-                            className="rounded-lg border border-border/60 bg-muted/30 p-3.5 space-y-3 shadow-xs"
+                            className="rounded-lg border border-border/60 bg-muted/30 px-1.5 py-1.5 md:px-2 space-y-1 shadow-xs"
                           >
                             <div
                               className="flex flex-wrap items-center justify-between gap-x-2 gap-y-1 pb-1 border-b border-border/30 cursor-pointer select-none"
@@ -461,8 +461,8 @@ export function ItineraryForm({
                             </div>
 
                             {isStopOpen && (
-                              <div className="space-y-3 pt-1">
-                                <div className="flex flex-col gap-3">
+                              <div className="space-y-1 pt-1">
+                                <div className="flex flex-col gap-1">
                                   <DynamicStyledField
                                     type="text"
                                     label="Day Title (Optional, defaults to Location Name)"
@@ -496,8 +496,8 @@ export function ItineraryForm({
                                 />
 
                                 {/* STOPS INSIDE THIS DAY */}
-                                <div className="space-y-3 pt-3 border-t border-border/40 pl-2 md:pl-3 border-l-2 border-primary/20">
-                                  <div className="flex items-center justify-between gap-2">
+                                <div className="space-y-1 pt-1 border-t border-border/40 pl-1 md:pl-1.5 border-l-2 border-primary/20">
+                                  <div className="flex items-center justify-between gap-1">
                                     <label className="text-[11px] font-bold uppercase tracking-wider text-foreground flex items-center gap-1.5">
                                       <MapPin className="h-3 w-3 text-primary shrink-0" />
                                       <span>Stops / Highlights ({(day.stops || []).length})</span>
@@ -530,9 +530,9 @@ export function ItineraryForm({
                                     return (
                                       <div
                                         key={sIdx}
-                                        className="rounded border border-border/70 bg-card p-3 space-y-2.5 shadow-2xs"
+                                        className="rounded border border-border/70 bg-card px-1.5 py-1.5 md:px-2 space-y-1 shadow-2xs"
                                       >
-                                        <div className="flex items-center justify-between pb-1 border-b border-border/30">
+                                        <div className="flex items-center justify-between pb-0.5 border-b border-border/30">
                                           <span className="text-[10px] font-bold text-accent uppercase tracking-wider flex items-center gap-1.5">
                                             <span className="rounded bg-accent/15 px-1.5 py-0.5">
                                               STOP {computedStopNum}
@@ -574,7 +574,7 @@ export function ItineraryForm({
                                           </div>
                                         </div>
 
-                                        <div className="flex flex-col gap-2.5">
+                                        <div className="flex flex-col gap-1">
                                           <DynamicStyledField
                                             type="text"
                                             label="Stop Title (e.g. Castle Tour or Wine Tasting)"

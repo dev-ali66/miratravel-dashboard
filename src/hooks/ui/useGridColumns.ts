@@ -1,31 +1,31 @@
 import { useState, useEffect, useCallback, useMemo, type RefObject } from "react"
 
 export interface ResponsiveColumnsConfig {
-  base?: number  // < 48rem (768px) (Default: 1)
-  sm?: number    // >= 40rem (640px)
-  md?: number    // >= 48rem (768px) (Default: 3)
-  lg?: number    // >= 66rem (1056px) (Default: 5)
+  base?: number  // < 40rem (640px) (Default: 1)
+  sm?: number    // >= 40rem (640px) (Default: 2)
+  md?: number    // >= 48rem (768px) (Default: 2)
+  lg?: number    // >= 66rem (1056px) (Default: 3)
   lgx?: number   // >= 74rem (1184px)
   xlg?: number   // >= 80rem (1280px)
   mid?: number   // >= 90rem (1440px)
-  xl?: number    // >= 105rem (1680px) (Default: 6)
-  "2xl"?: number // >= 120rem (1920px) (Default: 6)
+  xl?: number    // >= 105rem (1680px) (Default: 4)
+  "2xl"?: number // >= 120rem (1920px) (Default: 5)
+  "4k"?: number  // >= 160rem (2560px) (Default: 6)
 }
 
 /**
  * Standard MIRA Dashboard card grid breakpoints:
- * grid-cols-1 md:grid-cols-3 lg:grid-cols-5 xl:grid-cols-6
- * Matching index.css @theme definitions:
- * - md: 48rem (768px)
- * - lg: 66rem (1056px)
- * - xl: 105rem (1680px)
+ * grid-cols-1 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 4k:grid-cols-6
+ * Matching index.css @theme definitions.
  */
 export const DEFAULT_DASHBOARD_COLUMNS: ResponsiveColumnsConfig = {
   base: 1,
-  md: 3,
-  lg: 5,
-  xl: 6,
-  "2xl": 6,
+  sm: 2,
+  md: 2,
+  lg: 3,
+  xl: 4,
+  "2xl": 5,
+  "4k": 6,
 }
 
 interface BreakpointQueryDef {
@@ -36,6 +36,7 @@ interface BreakpointQueryDef {
 
 // Ordered strictly from widest to narrowest
 const DASHBOARD_BREAKPOINT_QUERIES: BreakpointQueryDef[] = [
+  { key: "4k",  query: "(min-width: 160rem)", pxFallback: 2560 },
   { key: "2xl", query: "(min-width: 120rem)", pxFallback: 1920 },
   { key: "xl",  query: "(min-width: 105rem)", pxFallback: 1680 },
   { key: "mid", query: "(min-width: 90rem)",  pxFallback: 1440 },
@@ -91,6 +92,7 @@ export function useGridColumns(
     mid,
     xl,
     "2xl": col2xl,
+    "4k": col4k,
   } = config
 
   const memoizedConfig = useMemo<ResponsiveColumnsConfig>(() => ({
@@ -103,11 +105,12 @@ export function useGridColumns(
     mid,
     xl,
     "2xl": col2xl,
-  }), [base, sm, md, lg, lgx, xlg, mid, xl, col2xl])
+    "4k": col4k,
+  }), [base, sm, md, lg, lgx, xlg, mid, xl, col2xl, col4k])
 
   const getActiveColumns = useCallback((): number => {
     if (typeof window === "undefined") {
-      return memoizedConfig.xl ?? memoizedConfig.lg ?? memoizedConfig.md ?? memoizedConfig.base ?? 6
+      return memoizedConfig["4k"] ?? memoizedConfig["2xl"] ?? memoizedConfig.xl ?? memoizedConfig.lg ?? memoizedConfig.md ?? memoizedConfig.base ?? 4
     }
 
     // 1. Direct layout ground truth if container element is mounted

@@ -165,7 +165,7 @@ export default function ReviewsPage() {
         title="Reviews & Ratings"
         subtitle="Manage guest reviews, ratings, and testimonials."
         stats={
-          <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 sm:gap-2.5 w-full">
+          <div className="grid grid-cols-1 xs:grid-cols-2 sm:grid-cols-4 gap-2 sm:gap-2.5 w-full">
             <CompactStatCard
               label="Rating"
               value="4.92 / 5.0"

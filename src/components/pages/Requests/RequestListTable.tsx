@@ -88,7 +88,7 @@ export default function RequestListTable() {
         title="Instructor Requests"
         subtitle="Review incoming requests to become an instructor."
         stats={
-          <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 sm:gap-2.5 w-full">
+          <div className="grid grid-cols-1 xs:grid-cols-2 sm:grid-cols-4 gap-2 sm:gap-2.5 w-full">
             <CompactStatCard
               label="Total Requests"
               value={totalCount}

@@ -96,7 +96,7 @@ const MenuBar = ({ editor }: { editor: any }) => {
   if (!editor) return null
 
   return (
-    <div className="flex flex-wrap items-center gap-1 border-b border-border/60 bg-muted/40 p-1.5 backdrop-blur">
+    <div className="flex flex-wrap items-center gap-0.5 border-b border-border/60 bg-muted/40 px-1 py-0.5 backdrop-blur">
       {/* Headings / Block Types */}
       <div className="flex items-center gap-0.5">
         <Button
@@ -106,7 +106,7 @@ const MenuBar = ({ editor }: { editor: any }) => {
           onMouseDown={(e) => e.preventDefault()}
           onClick={() => editor.chain().focus().setParagraph().run()}
           className={cn(
-            "h-7 w-7 text-xs font-semibold",
+            "h-5 w-5 text-[10px] font-semibold",
             editor.isActive("paragraph") && "bg-background text-foreground shadow-xs"
           )}
           title="Paragraph"
@@ -120,12 +120,12 @@ const MenuBar = ({ editor }: { editor: any }) => {
           onMouseDown={(e) => e.preventDefault()}
           onClick={() => editor.chain().focus().toggleHeading({ level: 1 }).run()}
           className={cn(
-            "h-7 w-7",
+            "h-5 w-5",
             editor.isActive("heading", { level: 1 }) && "bg-background text-foreground shadow-xs"
           )}
           title="Heading 1"
         >
-          <Heading1 className="h-3.5 w-3.5" />
+          <Heading1 className="h-2.5 w-2.5" />
         </Button>
         <Button
           type="button"
@@ -134,12 +134,12 @@ const MenuBar = ({ editor }: { editor: any }) => {
           onMouseDown={(e) => e.preventDefault()}
           onClick={() => editor.chain().focus().toggleHeading({ level: 2 }).run()}
           className={cn(
-            "h-7 w-7",
+            "h-5 w-5",
             editor.isActive("heading", { level: 2 }) && "bg-background text-foreground shadow-xs"
           )}
           title="Heading 2"
         >
-          <Heading2 className="h-3.5 w-3.5" />
+          <Heading2 className="h-2.5 w-2.5" />
         </Button>
         <Button
           type="button"
@@ -148,16 +148,16 @@ const MenuBar = ({ editor }: { editor: any }) => {
           onMouseDown={(e) => e.preventDefault()}
           onClick={() => editor.chain().focus().toggleHeading({ level: 3 }).run()}
           className={cn(
-            "h-7 w-7",
+            "h-5 w-5",
             editor.isActive("heading", { level: 3 }) && "bg-background text-foreground shadow-xs"
           )}
           title="Heading 3"
         >
-          <Heading3 className="h-3.5 w-3.5" />
+          <Heading3 className="h-2.5 w-2.5" />
         </Button>
       </div>
 
-      <div className="mx-0.5 h-4 w-px bg-border/60" />
+      <div className="mx-0.5 h-3 w-px bg-border/60" />
 
       {/* Formatting Marks */}
       <div className="flex items-center gap-0.5">
@@ -167,10 +167,10 @@ const MenuBar = ({ editor }: { editor: any }) => {
           size="icon"
           onMouseDown={(e) => e.preventDefault()}
           onClick={() => editor.chain().focus().toggleBold().run()}
-          className={cn("h-7 w-7", editor.isActive("bold") && "bg-background text-foreground shadow-xs")}
+          className={cn("h-5 w-5", editor.isActive("bold") && "bg-background text-foreground shadow-xs")}
           title="Bold (Ctrl+B)"
         >
-          <Bold className="h-3.5 w-3.5" />
+          <Bold className="h-2.5 w-2.5" />
         </Button>
         <Button
           type="button"
@@ -178,10 +178,10 @@ const MenuBar = ({ editor }: { editor: any }) => {
           size="icon"
           onMouseDown={(e) => e.preventDefault()}
           onClick={() => editor.chain().focus().toggleItalic().run()}
-          className={cn("h-7 w-7", editor.isActive("italic") && "bg-background text-foreground shadow-xs")}
+          className={cn("h-5 w-5", editor.isActive("italic") && "bg-background text-foreground shadow-xs")}
           title="Italic (Ctrl+I)"
         >
-          <Italic className="h-3.5 w-3.5" />
+          <Italic className="h-2.5 w-2.5" />
         </Button>
         <Button
           type="button"
@@ -189,10 +189,10 @@ const MenuBar = ({ editor }: { editor: any }) => {
           size="icon"
           onMouseDown={(e) => e.preventDefault()}
           onClick={() => editor.chain().focus().toggleUnderline().run()}
-          className={cn("h-7 w-7", editor.isActive("underline") && "bg-background text-foreground shadow-xs")}
+          className={cn("h-5 w-5", editor.isActive("underline") && "bg-background text-foreground shadow-xs")}
           title="Underline (Ctrl+U)"
         >
-          <UnderlineIcon className="h-3.5 w-3.5" />
+          <UnderlineIcon className="h-2.5 w-2.5" />
         </Button>
         <Button
           type="button"
@@ -200,14 +200,14 @@ const MenuBar = ({ editor }: { editor: any }) => {
           size="icon"
           onMouseDown={(e) => e.preventDefault()}
           onClick={() => editor.chain().focus().toggleStrike().run()}
-          className={cn("h-7 w-7", editor.isActive("strike") && "bg-background text-foreground shadow-xs")}
+          className={cn("h-5 w-5", editor.isActive("strike") && "bg-background text-foreground shadow-xs")}
           title="Strikethrough"
         >
-          <Strikethrough className="h-3.5 w-3.5" />
+          <Strikethrough className="h-2.5 w-2.5" />
         </Button>
       </div>
 
-      <div className="mx-0.5 h-4 w-px bg-border/60" />
+      <div className="mx-0.5 h-3 w-px bg-border/60" />
 
       {/* Text Color Picker */}
       <Popover>
@@ -216,10 +216,10 @@ const MenuBar = ({ editor }: { editor: any }) => {
             type="button"
             variant="ghost"
             size="icon"
-            className="h-7 w-7"
+            className="h-5 w-5"
             title="Text Color"
           >
-            <Palette className="h-3.5 w-3.5 text-primary" />
+            <Palette className="h-2.5 w-2.5 text-primary" />
           </Button>
         </PopoverTrigger>
         <PopoverContent className="w-56 p-3" align="start">
@@ -277,10 +277,10 @@ const MenuBar = ({ editor }: { editor: any }) => {
             type="button"
             variant="ghost"
             size="icon"
-            className={cn("h-7 w-7", editor.isActive("highlight") && "bg-background text-foreground shadow-xs")}
+            className={cn("h-5 w-5", editor.isActive("highlight") && "bg-background text-foreground shadow-xs")}
             title="Highlight Color"
           >
-            <Highlighter className="h-3.5 w-3.5 text-amber-500" />
+            <Highlighter className="h-2.5 w-2.5 text-amber-500" />
           </Button>
         </PopoverTrigger>
         <PopoverContent className="w-56 p-3" align="start">
@@ -308,7 +308,7 @@ const MenuBar = ({ editor }: { editor: any }) => {
         </PopoverContent>
       </Popover>
 
-      <div className="mx-0.5 h-4 w-px bg-border/60" />
+      <div className="mx-0.5 h-3 w-px bg-border/60" />
 
       {/* Alignment */}
       <div className="flex items-center gap-0.5">
@@ -318,10 +318,10 @@ const MenuBar = ({ editor }: { editor: any }) => {
           size="icon"
           onMouseDown={(e) => e.preventDefault()}
           onClick={() => editor.chain().focus().setTextAlign("left").run()}
-          className={cn("h-7 w-7", editor.isActive({ textAlign: "left" }) && "bg-background text-foreground shadow-xs")}
+          className={cn("h-5 w-5", editor.isActive({ textAlign: "left" }) && "bg-background text-foreground shadow-xs")}
           title="Align Left"
         >
-          <AlignLeft className="h-3.5 w-3.5" />
+          <AlignLeft className="h-2.5 w-2.5" />
         </Button>
         <Button
           type="button"
@@ -329,10 +329,10 @@ const MenuBar = ({ editor }: { editor: any }) => {
           size="icon"
           onMouseDown={(e) => e.preventDefault()}
           onClick={() => editor.chain().focus().setTextAlign("center").run()}
-          className={cn("h-7 w-7", editor.isActive({ textAlign: "center" }) && "bg-background text-foreground shadow-xs")}
+          className={cn("h-5 w-5", editor.isActive({ textAlign: "center" }) && "bg-background text-foreground shadow-xs")}
           title="Align Center"
         >
-          <AlignCenter className="h-3.5 w-3.5" />
+          <AlignCenter className="h-2.5 w-2.5" />
         </Button>
         <Button
           type="button"
@@ -340,10 +340,10 @@ const MenuBar = ({ editor }: { editor: any }) => {
           size="icon"
           onMouseDown={(e) => e.preventDefault()}
           onClick={() => editor.chain().focus().setTextAlign("right").run()}
-          className={cn("h-7 w-7", editor.isActive({ textAlign: "right" }) && "bg-background text-foreground shadow-xs")}
+          className={cn("h-5 w-5", editor.isActive({ textAlign: "right" }) && "bg-background text-foreground shadow-xs")}
           title="Align Right"
         >
-          <AlignRight className="h-3.5 w-3.5" />
+          <AlignRight className="h-2.5 w-2.5" />
         </Button>
         <Button
           type="button"
@@ -351,14 +351,14 @@ const MenuBar = ({ editor }: { editor: any }) => {
           size="icon"
           onMouseDown={(e) => e.preventDefault()}
           onClick={() => editor.chain().focus().setTextAlign("justify").run()}
-          className={cn("h-7 w-7", editor.isActive({ textAlign: "justify" }) && "bg-background text-foreground shadow-xs")}
+          className={cn("h-5 w-5", editor.isActive({ textAlign: "justify" }) && "bg-background text-foreground shadow-xs")}
           title="Align Justify"
         >
-          <AlignJustify className="h-3.5 w-3.5" />
+          <AlignJustify className="h-2.5 w-2.5" />
         </Button>
       </div>
 
-      <div className="mx-0.5 h-4 w-px bg-border/60" />
+      <div className="mx-0.5 h-3 w-px bg-border/60" />
 
       {/* Lists & Blockquote */}
       <div className="flex items-center gap-0.5">
@@ -368,10 +368,10 @@ const MenuBar = ({ editor }: { editor: any }) => {
           size="icon"
           onMouseDown={(e) => e.preventDefault()}
           onClick={() => editor.chain().focus().toggleBulletList().run()}
-          className={cn("h-7 w-7", editor.isActive("bulletList") && "bg-background text-foreground shadow-xs")}
+          className={cn("h-5 w-5", editor.isActive("bulletList") && "bg-background text-foreground shadow-xs")}
           title="Bullet List"
         >
-          <List className="h-3.5 w-3.5" />
+          <List className="h-2.5 w-2.5" />
         </Button>
         <Button
           type="button"
@@ -379,10 +379,10 @@ const MenuBar = ({ editor }: { editor: any }) => {
           size="icon"
           onMouseDown={(e) => e.preventDefault()}
           onClick={() => editor.chain().focus().toggleOrderedList().run()}
-          className={cn("h-7 w-7", editor.isActive("orderedList") && "bg-background text-foreground shadow-xs")}
+          className={cn("h-5 w-5", editor.isActive("orderedList") && "bg-background text-foreground shadow-xs")}
           title="Numbered List"
         >
-          <ListOrdered className="h-3.5 w-3.5" />
+          <ListOrdered className="h-2.5 w-2.5" />
         </Button>
         <Button
           type="button"
@@ -390,14 +390,14 @@ const MenuBar = ({ editor }: { editor: any }) => {
           size="icon"
           onMouseDown={(e) => e.preventDefault()}
           onClick={() => editor.chain().focus().toggleBlockquote().run()}
-          className={cn("h-7 w-7", editor.isActive("blockquote") && "bg-background text-foreground shadow-xs")}
+          className={cn("h-5 w-5", editor.isActive("blockquote") && "bg-background text-foreground shadow-xs")}
           title="Quote"
         >
-          <Quote className="h-3.5 w-3.5" />
+          <Quote className="h-2.5 w-2.5" />
         </Button>
       </div>
 
-      <div className="mx-0.5 h-4 w-px bg-border/60" />
+      <div className="mx-0.5 h-3 w-px bg-border/60" />
 
       {/* Links & Clear */}
       <div className="flex items-center gap-0.5">
@@ -406,20 +406,20 @@ const MenuBar = ({ editor }: { editor: any }) => {
           variant="ghost"
           size="icon"
           onClick={setLink}
-          className={cn("h-7 w-7", editor.isActive("link") && "bg-background text-foreground shadow-xs")}
+          className={cn("h-5 w-5", editor.isActive("link") && "bg-background text-foreground shadow-xs")}
           title="Insert / Edit Link"
         >
-          <LinkIcon className="h-3.5 w-3.5" />
+          <LinkIcon className="h-2.5 w-2.5" />
         </Button>
         <Button
           type="button"
           variant="ghost"
           size="icon"
           onClick={() => setIsMediaPickerOpen(true)}
-          className={cn("h-7 w-7 text-muted-foreground hover:text-foreground", isMediaPickerOpen && "bg-background text-foreground shadow-xs")}
+          className={cn("h-5 w-5 text-muted-foreground hover:text-foreground", isMediaPickerOpen && "bg-background text-foreground shadow-xs")}
           title="Insert Image from Library"
         >
-          <ImageIcon className="h-3.5 w-3.5 text-primary" />
+          <ImageIcon className="h-2.5 w-2.5 text-primary" />
         </Button>
         {editor.isActive("link") && (
           <Button
@@ -427,10 +427,10 @@ const MenuBar = ({ editor }: { editor: any }) => {
             variant="ghost"
             size="icon"
             onClick={() => editor.chain().focus().unsetLink().run()}
-            className="h-7 w-7 text-destructive"
+            className="h-5 w-5 text-destructive"
             title="Remove Link"
           >
-            <Unlink className="h-3.5 w-3.5" />
+            <Unlink className="h-2.5 w-2.5" />
           </Button>
         )}
         <Button
@@ -439,10 +439,10 @@ const MenuBar = ({ editor }: { editor: any }) => {
           size="icon"
           onMouseDown={(e) => e.preventDefault()}
           onClick={() => editor.chain().focus().clearNodes().unsetAllMarks().run()}
-          className="h-7 w-7"
+          className="h-5 w-5"
           title="Clear Formatting"
         >
-          <Eraser className="h-3.5 w-3.5" />
+          <Eraser className="h-2.5 w-2.5" />
         </Button>
       </div>
 
@@ -454,10 +454,10 @@ const MenuBar = ({ editor }: { editor: any }) => {
           onMouseDown={(e) => e.preventDefault()}
           onClick={() => editor.chain().focus().undo().run()}
           disabled={!editor.can().undo()}
-          className="h-7 w-7"
+          className="h-5 w-5"
           title="Undo (Ctrl+Z)"
         >
-          <Undo className="h-3.5 w-3.5" />
+          <Undo className="h-2.5 w-2.5" />
         </Button>
         <Button
           type="button"
@@ -466,10 +466,10 @@ const MenuBar = ({ editor }: { editor: any }) => {
           onMouseDown={(e) => e.preventDefault()}
           onClick={() => editor.chain().focus().redo().run()}
           disabled={!editor.can().redo()}
-          className="h-7 w-7"
+          className="h-5 w-5"
           title="Redo (Ctrl+Y)"
         >
-          <Redo className="h-3.5 w-3.5" />
+          <Redo className="h-2.5 w-2.5" />
         </Button>
       </div>
 

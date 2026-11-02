@@ -1,10 +1,18 @@
-import { useState } from "react"
+import { useState, useCallback } from "react"
 import { Outlet } from "react-router-dom"
 import Sidebar, { type SectionProps } from "./Sidebar"
 import { Navbar } from "./Navbar"
 
 export function RootLayout() {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
+
+  const toggleMobileMenu = useCallback(() => {
+    setIsMobileMenuOpen((prev) => !prev)
+  }, [])
+
+  const closeMobileMenu = useCallback(() => {
+    setIsMobileMenuOpen(false)
+  }, [])
 
   const sections: SectionProps[] = [
     {
@@ -65,25 +73,24 @@ export function RootLayout() {
   ]
   return (
     <div className="flex min-h-svh flex-col bg-muted/10">
-      <Navbar onMenuClick={() => setIsMobileMenuOpen(true)} />
+      <Navbar onMenuClick={toggleMobileMenu} />
       <div className="flex flex-1 min-w-0 pt-14">
         <Sidebar
           sections={sections}
           isMobileOpen={isMobileMenuOpen}
-          onMobileClose={() => setIsMobileMenuOpen(false)}
+          onMobileClose={closeMobileMenu}
         />
 
-        <main className="flex-1 min-w-0 px-2 md:ml-[280px] pb-6 sm:pb-8">
+        <main className="flex-1 min-w-0 px-2.5 sm:px-4 md:px-5 xl:px-6 4k:px-8 md:ml-[clamp(250px,18.5vw,290px)] pb-6 sm:pb-8">
           <Outlet />
         </main>
       </div>
 
-
       {/* Mobile overlay */}
       {isMobileMenuOpen && (
         <div
-          className="fixed inset-0 z-40 bg-black/50 md:hidden"
-          onClick={() => setIsMobileMenuOpen(false)}
+          className="fixed inset-0 z-40 bg-black/50 backdrop-blur-xs md:hidden"
+          onClick={closeMobileMenu}
         />
       )}
     </div>

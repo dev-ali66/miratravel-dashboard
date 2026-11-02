@@ -158,7 +158,7 @@ export default function StoriesPage() {
         title="Stories Management"
         subtitle="Publish, filter, and curate editorial guides."
         stats={
-          <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 sm:gap-2.5 w-full">
+          <div className="grid grid-cols-1 xs:grid-cols-2 sm:grid-cols-4 gap-2 sm:gap-2.5 w-full">
             <CompactStatCard
               label="Total Stories"
               value={meta?.total ?? stories.length}
@@ -286,7 +286,7 @@ export default function StoriesPage() {
         errorMessage="Failed to load stories. Please try again later."
         onRetry={refetch}
         layout="grid"
-        gridClassName="grid grid-cols-1 gap-2 md:grid-cols-3 lg:grid-cols-5 xl:grid-cols-6"
+        gridClassName="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 4k:grid-cols-6 gap-2 sm:gap-2.5"
         emptyIcon={BookOpen}
         emptyTitle={hasFilters ? "No matching stories found" : "No Stories Created Yet"}
         emptyDescription={

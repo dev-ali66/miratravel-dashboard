@@ -7,7 +7,7 @@ export default function StatCards() {
   const overview = data?.overview
 
   return (
-    <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 w-full">
+    <div className="grid grid-cols-1 xs:grid-cols-2 sm:grid-cols-4 gap-2 w-full">
       <CompactStatCard
         label="Bookings"
         value={isLoading ? "..." : (overview?.totalBookings?.toLocaleString() ?? "0")}
