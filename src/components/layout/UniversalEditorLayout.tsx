@@ -463,9 +463,9 @@ export function UniversalEditorLayout({
         {/* =========================
             Universal Top Header
         ========================== */}
-        <header className="z-20 flex h-14 flex-none items-center justify-between border-b border-border/60 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 px-4 md:px-6 shadow-xs">
+        <header className="z-20 flex h-14 flex-none items-center justify-between border-b border-border/60 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 px-2 xs:px-3 sm:px-4 md:px-6 shadow-xs gap-2">
           {/* Left Section: MIRA Navbar Brand Logo */}
-          <div className="flex min-w-0 items-center gap-3 md:gap-4 h-full">
+          <div className="flex min-w-0 items-center gap-1.5 sm:gap-3 md:gap-4 h-full shrink">
             <NavbarBrandLogo />
           </div>
 
@@ -701,40 +701,42 @@ export function UniversalEditorLayout({
             </div>
           )}
 
-          {/* Center Section: Mobile Form / Preview Toggle Switcher */}
+          {/* Center Section: Mobile Form / Preview Toggle Switcher (Icon-only on mobile) */}
           {sidebarContent && previewContent && (
-            <div className="flex md:hidden items-center rounded-lg border border-border/70 bg-muted/60 p-0.5">
+            <div className="flex md:hidden items-center rounded-lg border border-border/70 bg-muted/60 p-0.5 shrink-0">
               <button
                 type="button"
                 onClick={() => handleMobileTabSwitch("form")}
+                title="Form Editor"
+                aria-label="Switch to Form Editor"
                 className={cn(
-                  "flex items-center gap-1.5 rounded-sm px-2.5 py-1 text-xs font-semibold transition-all cursor-pointer",
+                  "flex items-center justify-center rounded-md p-1.5 transition-all cursor-pointer",
                   mobileViewMode === "form"
-                    ? "bg-background text-foreground shadow-2xs font-bold"
+                    ? "bg-primary text-primary-foreground shadow-2xs"
                     : "text-muted-foreground hover:text-foreground"
                 )}
               >
-                <Edit3 className="h-3.5 w-3.5" />
-                <span>Form</span>
+                <Edit3 className="h-4 w-4" />
               </button>
               <button
                 type="button"
                 onClick={() => handleMobileTabSwitch("preview")}
+                title="Live Preview"
+                aria-label="Switch to Live Preview"
                 className={cn(
-                  "flex items-center gap-1.5 rounded-sm px-2.5 py-1 text-xs font-semibold transition-all cursor-pointer",
+                  "flex items-center justify-center rounded-md p-1.5 transition-all cursor-pointer",
                   mobileViewMode === "preview"
-                    ? "bg-primary text-primary-foreground shadow-2xs font-bold"
+                    ? "bg-primary text-primary-foreground shadow-2xs"
                     : "text-muted-foreground hover:text-foreground"
                 )}
               >
-                <Eye className="h-3.5 w-3.5" />
-                <span>Preview</span>
+                <Eye className="h-4 w-4" />
               </button>
             </div>
           )}
 
           {/* Right Section: Main Navbar Style (Theme Toggle + User Profile Dropdown) */}
-          <div className="flex shrink-0 items-center gap-2.5 sm:gap-3">
+          <div className="flex shrink-0 items-center gap-1.5 sm:gap-3">
             {headerActions}
             <NavbarUserMenu />
           </div>
@@ -772,64 +774,57 @@ export function UniversalEditorLayout({
                 )}
               >
                 {/* Responsive Mini-Screen Device Presets Bar (Visible on < lg screens) */}
-                <div className="flex lg:hidden w-full items-center justify-between gap-2 border-b border-border/60 bg-card/95 px-2.5 py-1.5 shadow-2xs shrink-0 overflow-x-auto">
-                  <div className="flex items-center gap-1.5 min-w-0">
-                    <span className="text-[10px] font-bold text-muted-foreground uppercase tracking-wider hidden sm:inline">Device:</span>
+                <div className="flex lg:hidden w-full items-center justify-between gap-1.5 xs:gap-2 border-b border-border/60 bg-card/95 px-2 py-1.5 shadow-2xs shrink-0 overflow-x-auto">
+                  <div className="flex items-center gap-1 min-w-0 shrink">
                     <select
                       value={selectedDeviceId}
                       onChange={(e) => handleDeviceChange(e.target.value)}
-                      className="bg-background text-xs font-semibold text-foreground outline-none cursor-pointer px-2 py-1 rounded border border-border/70 max-w-[170px] truncate"
+                      className="bg-background text-[11px] xs:text-xs font-semibold text-foreground outline-none cursor-pointer px-1.5 py-1 rounded border border-border/70 max-w-[125px] xs:max-w-[155px] sm:max-w-[200px] truncate"
                     >
-                      <option value="responsive">🌐 Fluid (Responsive)</option>
-                      <option value="desktop-fhd-1080p">🖥️ Full HD (1920 × 1080)</option>
-                      <option value="macbook-pro-14">🖥️ Desktop (1440 × 900) [Default]</option>
+                      <option value="responsive">🌐 Fluid</option>
+                      <option value="desktop-fhd-1080p">🖥️ Full HD (1920×1080)</option>
+                      <option value="macbook-pro-14">🖥️ Desktop (1440×900)</option>
 
                       <optgroup label="💻 Laptops">
-                        <option value="macbook-air-13">MacBook Air 13" (1280 × 832)</option>
-                        <option value="desktop-standard">Desktop Standard (1280 × 800)</option>
+                        <option value="macbook-air-13">MacBook Air (1280×832)</option>
+                        <option value="desktop-standard">Desktop Std (1280×800)</option>
                       </optgroup>
 
                       <optgroup label="📟 Tablets">
-                        <option value="ipad-pro-12-9">iPad Pro 12.9" (1024 × 1366)</option>
-                        <option value="ipad-air-10">iPad Air 10.9" (820 × 1180)</option>
-                        <option value="ipad-mini">iPad Mini (768 × 1024)</option>
-                        <option value="samsung-tab-s9">Galaxy Tab S9 (800 × 1280)</option>
+                        <option value="ipad-pro-12-9">iPad Pro 12.9" (1024×1366)</option>
+                        <option value="ipad-air-10">iPad Air (820×1180)</option>
+                        <option value="ipad-mini">iPad Mini (768×1024)</option>
+                        <option value="samsung-tab-s9">Tab S9 (800×1280)</option>
                       </optgroup>
 
                       <optgroup label="📱 Mobile Phones">
-                        <option value="iphone-16-pro-max">iPhone 16 Pro Max (430 × 932)</option>
-                        <option value="iphone-15-pro">iPhone 15 / 14 Pro (393 × 852)</option>
-                        <option value="iphone-13-12">iPhone 13 / 12 (390 × 844)</option>
-                        <option value="iphone-se">iPhone SE / 8 (375 × 667)</option>
-                        <option value="samsung-s24-ultra">Galaxy S24 Ultra (412 × 915)</option>
-                        <option value="google-pixel-8-pro">Pixel 8 Pro (412 × 892)</option>
+                        <option value="iphone-16-pro-max">iPhone 16 Pro Max (430×932)</option>
+                        <option value="iphone-15-pro">iPhone 15 Pro (393×852)</option>
+                        <option value="iphone-13-12">iPhone 13/12 (390×844)</option>
+                        <option value="iphone-se">iPhone SE (375×667)</option>
+                        <option value="samsung-s24-ultra">S24 Ultra (412×915)</option>
+                        <option value="google-pixel-8-pro">Pixel 8 Pro (412×892)</option>
                       </optgroup>
 
-                      {selectedDeviceId === "custom" && <option value="custom">✏️ Custom Size</option>}
+                      {selectedDeviceId === "custom" && <option value="custom">✏️ Custom</option>}
                     </select>
                   </div>
 
-                  <div className="flex items-center gap-1.5 shrink-0">
-                    <div className="flex items-center gap-1 text-[10px] font-mono font-bold text-muted-foreground bg-muted/60 px-2 py-1 rounded border border-border/50">
-                      <span>{isFluid ? "Fluid" : `${renderWidth}×${renderHeight}px`}</span>
-                    </div>
-
-                    {!isFluid && (
-                      <button
-                        type="button"
-                        onClick={() => setIsLandscape((prev) => !prev)}
-                        className="p-1 rounded border border-border/60 bg-background text-muted-foreground hover:text-foreground cursor-pointer"
-                        title="Rotate orientation"
-                      >
-                        <RotateCw className="h-3.5 w-3.5" />
-                      </button>
-                    )}
+                  <div className="flex items-center gap-1 xs:gap-1.5 shrink-0">
+                    <button
+                      type="button"
+                      onClick={() => handleDeviceChange("responsive")}
+                      title="Reset to Fluid"
+                      className="p-1 rounded border border-border/60 bg-background text-muted-foreground hover:text-foreground cursor-pointer"
+                    >
+                      <RotateCw className="h-3 w-3" />
+                    </button>
 
                     <div className="flex items-center gap-1">
                       <select
                         value={zoomScale}
                         onChange={(e) => setZoomScale(Number(e.target.value))}
-                        className="rounded border border-border/60 bg-background px-1.5 py-1 text-xs font-semibold text-foreground outline-none cursor-pointer"
+                        className="rounded border border-border/60 bg-background px-1 py-0.5 text-[11px] font-semibold text-foreground outline-none cursor-pointer"
                       >
                         <option value={100}>100%</option>
                         <option value={85}>85%</option>
@@ -843,7 +838,7 @@ export function UniversalEditorLayout({
                       type="button"
                       onClick={toggleDevMode}
                       className={cn(
-                        "inline-flex items-center gap-1 rounded-sm px-2 py-1 text-xs font-semibold transition-all cursor-pointer border select-none shrink-0",
+                        "inline-flex items-center gap-1 rounded-sm px-1.5 py-0.5 text-[11px] font-semibold transition-all cursor-pointer border select-none shrink-0",
                         isDevMode
                           ? "bg-amber-500/15 text-amber-700 dark:text-amber-300 border-amber-500/40"
                           : "bg-background text-muted-foreground border-border/60 hover:bg-muted hover:text-foreground"
@@ -851,14 +846,13 @@ export function UniversalEditorLayout({
                       title={
                         isDevMode
                           ? "Dev Mode ON: All styling & multimedia controls visible"
-                          : "Dev Mode OFF: Simple editor mode (Default styles applied)"
+                          : "Dev Mode OFF: Simple editor mode"
                       }
                     >
-                      <Code2 className="h-3.5 w-3.5 shrink-0" />
-                      <span className="hidden sm:inline">Dev Mode</span>
+                      <Code2 className="h-3 w-3 shrink-0" />
                       <span
                         className={cn(
-                          "h-2 w-2 rounded-full shrink-0 transition-colors",
+                          "h-1.5 w-1.5 rounded-full shrink-0 transition-colors",
                           isDevMode ? "bg-amber-500 animate-pulse" : "bg-muted-foreground/40"
                         )}
                       />

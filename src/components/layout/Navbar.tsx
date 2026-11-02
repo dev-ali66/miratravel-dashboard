@@ -111,13 +111,13 @@ export const NavbarBrandLogo = () => {
       return (
         <Link
           to="/"
-          className="inline-flex items-center h-full max-h-14 py-0.5 transition-opacity hover:opacity-90 shrink-0"
+          className="inline-flex items-center h-full max-h-14 py-0.5 transition-opacity hover:opacity-90 shrink-0 min-w-0"
         >
           <UniversalMultimediaPreview
             multimedia={mediaObj as any}
             fallbackAlt={brandName}
-            className="h-full w-auto max-h-14 max-w-[320px] object-contain object-left"
-            containerClassName="h-full max-h-14 max-w-[320px] flex items-center p-0"
+            className="h-full w-auto max-h-10 sm:max-h-14 max-w-[130px] xs:max-w-[160px] sm:max-w-[240px] md:max-w-[320px] object-contain object-left"
+            containerClassName="h-full max-h-10 sm:max-h-14 max-w-[130px] xs:max-w-[160px] sm:max-w-[240px] md:max-w-[320px] flex items-center p-0"
           />
         </Link>
       )
@@ -135,12 +135,12 @@ export const NavbarBrandLogo = () => {
     return (
       <Link
         to="/"
-        className="inline-flex items-center h-full max-h-14 py-0.5 transition-opacity hover:opacity-90 shrink-0"
+        className="inline-flex items-center h-full max-h-14 py-0.5 transition-opacity hover:opacity-90 shrink min-w-0"
       >
         <img
           src={getOptimizedImageUrl(mediaUrl, { width: DASHBOARD_IMAGE_WIDTHS.NAVBAR_LOGO, quality: 100 })}
           alt={brandName}
-          className="h-full w-auto max-h-14 max-w-[320px] object-contain object-left select-none pointer-events-none"
+          className="h-full w-auto max-h-9 sm:max-h-14 max-w-[110px] xs:max-w-[150px] sm:max-w-[240px] md:max-w-[320px] object-contain object-left select-none pointer-events-none"
           style={{ opacity: isNaN(safeOpacity) ? 1 : safeOpacity }}
         />
       </Link>
@@ -150,10 +150,10 @@ export const NavbarBrandLogo = () => {
   return (
     <Link
       to="/"
-      className="inline-flex items-center h-full max-h-14 py-0.5 transition-transform hover:scale-[1.02] shrink-0"
+      className="inline-flex items-center h-full max-h-14 py-0.5 transition-transform hover:scale-[1.02] shrink min-w-0"
     >
-      <div className="flex h-11 min-w-[120px] items-center justify-center gap-2 rounded-lg border border-border/80 bg-muted/60 px-3.5 shadow-2xs transition-colors hover:bg-muted">
-        <span className="font-serif text-base font-bold tracking-widest text-foreground uppercase">
+      <div className="flex h-9 sm:h-11 min-w-0 max-w-[120px] sm:min-w-[120px] items-center justify-center gap-1.5 sm:gap-2 rounded-lg border border-border/80 bg-muted/60 px-2 sm:px-3.5 shadow-2xs transition-colors hover:bg-muted truncate">
+        <span className="font-serif text-sm sm:text-base font-bold tracking-widest text-foreground uppercase truncate">
           {brandName}
         </span>
       </div>
