@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
-import { Terminal, Save, Loader2 } from "lucide-react";
 import { getSectionsForType } from "./config/storySections";
+import { EditorFormHeader } from "@/components/shared/EditorFormHeader";
 import { normalizeStoryPayload } from "./shared/normalizeStoryPayload";
 import type { StoryData } from "./config/storyTypes";
 
@@ -65,50 +65,22 @@ export function StoryForm({
 
   return (
     <div className="flex min-h-full flex-col">
-      {/* Sticky Top Header matching Journey / Location / Experience */}
-      <div className="sticky top-0 z-20 border-b border-border/60 bg-card/95 px-5 py-4 backdrop-blur">
-        <div className="flex items-center justify-between gap-4">
-          <div className="min-w-0">
-            <p className="text-[10px] font-medium tracking-[0.2em] text-muted-foreground uppercase">
-              {draft.type === "travel_ease"
-                ? "Travel Ease"
-                : draft.type === "mira_editorial"
-                ? "Mira Editorial"
-                : "Normal Story"}
-            </p>
-
-            <h2 className="mt-1 truncate text-base font-semibold">
-              {draft.title ? draft.title : "Add Story"}
-            </h2>
-          </div>
-
-          <div className="flex items-center gap-2">
-            <button
-              type="button"
-              onClick={handleConsoleLog}
-              className="flex shrink-0 items-center gap-1.5 rounded-lg border border-border/80 bg-background px-3 py-2 text-xs font-medium text-foreground transition hover:bg-muted cursor-pointer"
-              title="Inspect clean story payload sent to backend API in browser console (F12)"
-            >
-              <Terminal className="h-3.5 w-3.5 text-primary" />
-              Console Data
-            </button>
-
-            <button
-              type="button"
-              onClick={handleSave}
-              disabled={isSaving}
-              className="flex shrink-0 items-center gap-2 rounded-lg bg-primary px-4 py-2 text-xs font-medium text-primary-foreground transition hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-50 cursor-pointer"
-            >
-              {isSaving ? (
-                <Loader2 className="h-4 w-4 animate-spin" />
-              ) : (
-                <Save className="h-4 w-4" />
-              )}
-              {draft.id ? "Update" : "Create"}
-            </button>
-          </div>
-        </div>
-      </div>
+      {/* Sticky Top Header (Universal EditorFormHeader) */}
+      <EditorFormHeader
+        eyebrow={
+          draft.type === "TRAVEL_ESSENTIALS" || draft.type === "travel_essentials"
+            ? "Travel Essentials"
+            : draft.type === "MIRA_EDITORIAL" || draft.type === "mira_editorial"
+            ? "Mira Editorial"
+            : "Normal Story"
+        }
+        title={draft.title ? draft.title : "Add Story"}
+        isEditMode={Boolean(draft.id)}
+        isSaving={isSaving}
+        onSave={handleSave}
+        onConsoleData={handleConsoleLog}
+        consoleDataTitle="Inspect clean story payload sent to backend API in browser console (F12)"
+      />
 
       {/* Sections — Continuous divide-y accordion layout */}
       <div className="flex-1 divide-y divide-border/60">

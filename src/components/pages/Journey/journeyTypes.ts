@@ -185,8 +185,6 @@ export interface ItinerarySectionData {
   title?: any
   description?: any
   subtitle?: any
-  mapTitle?: any
-  mapSubtitle?: any
   items?: ItineraryChapter[]
   chapters?: ItineraryChapter[]
   chaptersList?: ItineraryChapter[]

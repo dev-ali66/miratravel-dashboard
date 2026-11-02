@@ -1,5 +1,6 @@
 import type { StoryData, StoryType } from "../config/storyTypes"
 import { normalizeBlocks } from "../sections/blocks/normalizeBlocks"
+import { normalizeFaq } from "../sections/faq/normalizeFaq"
 import { emptyStory } from "./emptyStory"
 
 export function slugify(text: string): string {
@@ -26,16 +27,14 @@ export function normalizeStoryPayload(raw: Partial<StoryData> | null | undefined
     ? [raw.category]
     : []
 
-  const rawType = (raw.type || raw.templateType || "normal_story") as StoryType
-  let storyType: StoryType = "normal_story"
-  if (["travel_ease", "mira_editorial", "normal_story"].includes(rawType)) {
-    storyType = rawType
-  } else if (rawType === "guidance") {
-    storyType = "travel_ease"
-  } else if (rawType === "long_story") {
-    storyType = "mira_editorial"
+  const rawType = String(raw.type || raw.templateType || "NORMAL_STORY").trim().toUpperCase()
+  let storyType: StoryType = "NORMAL_STORY"
+  if (rawType === "TRAVEL_ESSENTIALS" || rawType === "TRAVEL-ESSENTIALS" || rawType === "TRAVEL_EASE" || rawType === "TRAVEL-EASE" || rawType === "GUIDANCE" || rawType === "GUIDE-STORY") {
+    storyType = "TRAVEL_ESSENTIALS"
+  } else if (rawType === "MIRA_EDITORIAL" || rawType === "MIRA-EDITORIAL" || rawType === "LONG_STORY" || rawType === "LONG-STORY") {
+    storyType = "MIRA_EDITORIAL"
   } else {
-    storyType = "normal_story"
+    storyType = "NORMAL_STORY"
   }
 
   const locations = Array.isArray(raw.locations) && raw.locations.length > 0
@@ -69,6 +68,7 @@ export function normalizeStoryPayload(raw: Partial<StoryData> | null | undefined
     categories,
     hero: raw.hero || emptyStory.hero,
     blocks: Array.isArray(raw.blocks) ? normalizeBlocks(raw.blocks) : [],
+    faq: normalizeFaq(raw.faq),
     seo: raw.seo || {},
     locations,
     journeys,

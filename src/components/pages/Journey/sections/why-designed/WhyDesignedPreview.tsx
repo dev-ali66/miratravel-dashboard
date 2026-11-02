@@ -56,8 +56,9 @@ export function WhyDesignedPreview({ whyDesigned, draft }: { whyDesigned?: any; 
           <div className="flex flex-col gap-4 text-sm md:text-[15px] xl:text-base font-normal leading-6 md:leading-[27px] tracking-[1.5px]">
             <DynamicStyledTextPreview
               data={safeData.description ?? safeData.overviewText}
+              isRichText={true}
               fallbackText="Viverra blandit neque ac risus euismod tincidunt ut nec velit. Hendrerit potenti eleifend hendrerit lobortis enim duis duis rhoncus vulputate. Integer volutpat purus feugiat eros sed volutpat mauris faucibus."
-              className="text-nav-text text-sm md:text-[15px] xl:text-base font-normal leading-6 md:leading-[27px] tracking-[1.5px]"
+              className="text-nav-text text-sm md:text-[15px] xl:text-base font-normal leading-6 md:leading-[27px] tracking-[1.5px] [&_p]:mb-3 [&_p:last-child]:mb-0"
             />
 
             {/* Signature Line */}

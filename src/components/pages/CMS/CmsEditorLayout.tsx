@@ -53,11 +53,7 @@ export function CmsEditorLayout() {
         backToLabel="Back to CMS"
         icon={FileText}
         title={`Edit ${formatPageName(pageSlug)} Page`}
-        sidebarContent={
-          <div className="p-4 md:p-6">
-            <Outlet />
-          </div>
-        }
+        sidebarContent={<Outlet />}
         previewContent={renderPreview()}
         useWorkspaceScale={true}
       />

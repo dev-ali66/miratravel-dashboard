@@ -45,6 +45,15 @@ export function normalizeJourneyPayload(draft: Partial<JourneyData>): JourneyDat
           if (locId && typeof locId === "string" && locId.trim()) {
             locationIdsSet.add(locId.trim())
           }
+          const stops = day?.stops || []
+          if (Array.isArray(stops)) {
+            stops.forEach((stop: any) => {
+              const stopLocId = typeof stop?.locationId === "string" ? stop.locationId : stop?.locationId?.id || ""
+              if (stopLocId && typeof stopLocId === "string" && stopLocId.trim()) {
+                locationIdsSet.add(stopLocId.trim())
+              }
+            })
+          }
         })
       }
     })

@@ -61,6 +61,7 @@ export function useStoryPage(storySlug?: string) {
         categories,
         type: storyToEdit.type || storyToEdit.templateType || "normal_story",
         hero: storyToEdit.hero || emptyStory.hero,
+        faq: storyToEdit.faq || emptyStory.faq,
       });
     } else {
       toast.error("Story not found");

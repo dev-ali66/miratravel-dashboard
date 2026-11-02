@@ -6,6 +6,8 @@ import { HeroForm } from "../sections/hero/HeroForm";
 import { HeroPreview } from "../sections/hero/HeroPreview";
 import { BlocksForm } from "../sections/blocks/BlocksForm";
 import { BlocksPreview } from "../sections/blocks/BlocksPreview";
+import { FaqForm } from "../sections/faq/FaqForm";
+import { FaqPreview } from "../sections/faq/FaqPreview";
 import { SeoForm } from "../sections/seo/SeoForm";
 
 export type StoryFormSectionProps = {
@@ -51,6 +53,12 @@ export const STORY_SECTIONS_REGISTRY: StorySectionConfig[] = [
     previewComponent: BlocksPreview,
   },
   {
+    id: "faq",
+    label: "Frequently Asked Questions (FAQ)",
+    formComponent: FaqForm,
+    previewComponent: FaqPreview,
+  },
+  {
     id: "seo",
     label: "SEO & Metadata",
     formComponent: SeoForm,
@@ -62,6 +70,7 @@ const ALL_STORY_SECTIONS = [
   "relationships",
   "hero",
   "blocks",
+  "faq",
   "seo",
 ];
 

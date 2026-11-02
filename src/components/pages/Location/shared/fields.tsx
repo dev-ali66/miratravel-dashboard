@@ -45,7 +45,7 @@ export function FormSection({
       <button
         type="button"
         onClick={onClick}
-        className="flex w-full items-center justify-between px-4 py-3.5 text-left transition-colors hover:bg-muted/40 cursor-pointer"
+        className="flex w-full items-center justify-between px-3 py-2.5 text-left transition-colors hover:bg-muted/40 cursor-pointer"
       >
         <span className="text-sm font-semibold text-foreground">{displayTitle}</span>
 
@@ -58,7 +58,7 @@ export function FormSection({
       </button>
 
       {active && (
-        <div className="border-t border-border/40 p-4">
+        <div className="border-t border-border/40 px-2.5 py-3">
           {children}
         </div>
       )}

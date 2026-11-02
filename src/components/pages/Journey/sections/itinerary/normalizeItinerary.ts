@@ -1,5 +1,5 @@
 import { THEME_COLORS } from "@/config/theme"
-import { normalizeMultimedia, normalizeStyledField } from "@/components/pages/Journey/shared/normalizeHelpers"
+import { normalizeStyledField } from "@/components/pages/Journey/shared/normalizeHelpers"
 import { emptyItinerary } from "./emptyItinerary"
 
 export function normalizeItinerary(itinerary: any) {
@@ -15,14 +15,13 @@ export function normalizeItinerary(itinerary: any) {
 
   const normalizedChapters = rawChapters.map((chap: any, cIdx: number) => {
     const rawChapterNum = chap.chapterNumber || chap.chapter_number || `Chapter ${cIdx + 1}`
+    const { multimedia: _cm, chapter_number: _cn, ...restChap } = chap
     return {
-      ...chap,
+      ...restChap,
       chapterNumber: normalizeStyledField(rawChapterNum, `Chapter ${cIdx + 1}`, THEME_COLORS.accent),
-      chapter_number: rawChapterNum,
       title: normalizeStyledField(chap.title, "", THEME_COLORS.primary),
       subtitle: normalizeStyledField(chap.subtitle, "", THEME_COLORS.secondary),
       description: normalizeStyledField(chap.description, "", THEME_COLORS.muted),
-      multimedia: normalizeMultimedia(chap.multimedia ?? chap.thumbnail),
       days: Array.isArray(chap.days)
         ? chap.days.map((day: any, dIdx: number) => {
             const dayNum = Number(day.dayNumber || day.day || dIdx + 1)
@@ -37,32 +36,36 @@ export function normalizeItinerary(itinerary: any) {
             const dayTitle = day.title || fallbackTitle
 
             return {
-              ...day,
               dayNumber: dayNum,
               dayLabel: day.dayLabel || `Day ${dayNum}`,
               title: normalizeStyledField(dayTitle, fallbackTitle, THEME_COLORS.primary),
               subtitle: normalizeStyledField(day.subtitle, "", THEME_COLORS.secondary),
               locationId: locId,
               locationName: locName,
-              location: normalizeStyledField(locName || day.location || "", "", THEME_COLORS.secondary),
               description: normalizeStyledField(day.description, "", THEME_COLORS.navText),
-              thumbnail: typeof day.thumbnail === "string" ? day.thumbnail : (day.multimedia?.image?.url || day.image?.url || ""),
-              multimedia: normalizeMultimedia(day.multimedia ?? day.thumbnail),
-              images: Array.isArray(day.images) ? day.images : [],
-              coordinates: day.coordinates,
-              country: day.country,
+              stops: Array.isArray(day.stops)
+                ? day.stops.map((stop: any) => {
+                    const stopLocName = typeof stop.locationName === "string" ? stop.locationName : ""
+                    return {
+                      title: stop.title || "",
+                      locationId: stop.locationId || "",
+                      locationName: stopLocName,
+                      description: stop.description || "",
+                      stopNumber: stop.stopNumber,
+                      stopLabel: stop.stopLabel,
+                    }
+                  })
+                : [],
             }
           })
         : [],
     }
   })
 
-  const { chapters: _c, chaptersList: _cl, ...cleanSafe } = safe
+  const { chapters: _c, chaptersList: _cl, mapTitle: _mt, mapSubtitle: _ms, ...cleanSafe } = safe
 
   return {
     ...cleanSafe,
-    mapTitle: normalizeStyledField(safe.mapTitle ?? emptyItinerary.mapTitle, "", THEME_COLORS.primary),
-    mapSubtitle: normalizeStyledField(safe.mapSubtitle ?? emptyItinerary.mapSubtitle, "", THEME_COLORS.muted),
     badge: normalizeStyledField(safe.badge ?? emptyItinerary.badge, "", THEME_COLORS.accent),
     title: normalizeStyledField(safe.title ?? emptyItinerary.title, "", THEME_COLORS.primary),
     subtitle: normalizeStyledField(safe.subtitle ?? emptyItinerary.subtitle, "", THEME_COLORS.muted),

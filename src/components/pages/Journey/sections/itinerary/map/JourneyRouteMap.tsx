@@ -1,6 +1,7 @@
 import { THEME_COLORS } from "@/config/theme"
 import React, { useState, useMemo, useRef, useEffect, useCallback, useImperativeHandle } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
+import { cn } from "@/lib/utils";
 
 import { getStr, getStyleObj } from '@/components/pages/Journey/shared/previewHelpers';
 import { useGetLocationPages } from '@/hooks/location/useGetLocation';
@@ -93,6 +94,9 @@ export interface JourneyRouteMapProps {
     descriptionObj?: any;
     badgeObj?: any;
     className?: string;
+    showHeader?: boolean;
+    showSidebar?: boolean;
+    mapHeightClassName?: string;
 }
 
 export const JourneyRouteMap = React.forwardRef<JourneyRouteMapRef, JourneyRouteMapProps>(
@@ -106,10 +110,13 @@ export const JourneyRouteMap = React.forwardRef<JourneyRouteMapRef, JourneyRoute
         descriptionObj,
         badgeObj,
         className = '',
+        showHeader = true,
+        showSidebar = true,
+        mapHeightClassName,
     }: JourneyRouteMapProps, ref) {
-        const routeTitleObj = titleObj ?? title ?? (itinerary as any)?.mapTitle ?? itinerary?.title;
-        const routeDescObj = descriptionObj ?? description ?? (itinerary as any)?.mapSubtitle ?? itinerary?.subtitle;
-        const routeBadgeObj = badgeObj ?? (itinerary as any)?.badge;
+        const routeTitleObj = titleObj ?? title ?? itinerary?.title;
+        const routeDescObj = descriptionObj ?? description ?? itinerary?.subtitle;
+        const routeBadgeObj = badgeObj ?? itinerary?.badge;
 
         const routeTitle = getStr(routeTitleObj, 'Journey Route');
         const routeDescription = getStr(routeDescObj, 'Follow the highlights of this route on a carefully designed journey.');
@@ -401,14 +408,32 @@ export const JourneyRouteMap = React.forwardRef<JourneyRouteMapRef, JourneyRoute
 
         useEffect(() => {
             if (cameraRef.current.zoom <= 1.02) {
-                setCamera({
-                    x: baseCamera.baseX,
-                    y: baseCamera.baseY,
-                    zoom: 1.0,
+                setCamera((prev) => {
+                    if (
+                        Math.abs(prev.x - baseCamera.baseX) < 0.5 &&
+                        Math.abs(prev.y - baseCamera.baseY) < 0.5 &&
+                        Math.abs(prev.zoom - 1.0) < 0.001
+                    ) {
+                        return prev;
+                    }
+                    return {
+                        x: baseCamera.baseX,
+                        y: baseCamera.baseY,
+                        zoom: 1.0,
+                    };
                 });
             } else {
                 const clamped = clampCamera(cameraRef.current.x, cameraRef.current.y, cameraRef.current.zoom);
-                setCamera({ x: clamped.x, y: clamped.y, zoom: clamped.zoom });
+                setCamera((prev) => {
+                    if (
+                        Math.abs(prev.x - clamped.x) < 0.5 &&
+                        Math.abs(prev.y - clamped.y) < 0.5 &&
+                        Math.abs(prev.zoom - clamped.zoom) < 0.001
+                    ) {
+                        return prev;
+                    }
+                    return { x: clamped.x, y: clamped.y, zoom: clamped.zoom };
+                });
             }
         }, [baseCamera, clampCamera]);
 
@@ -1023,43 +1048,45 @@ export const JourneyRouteMap = React.forwardRef<JourneyRouteMapRef, JourneyRoute
         return (
             <section className={`w-full ${className}`}>
                 <SectionSlideTop id="journey-route" className="w-full">
-                    <div className="w-full flex flex-col gap-6 md:gap-8 lg:gap-9 xl:gap-10">
+                    <div className={cn("w-full flex flex-col", showHeader ? "gap-6 md:gap-8 lg:gap-9 xl:gap-10" : "")}>
                         {/* Header Section */}
-                        <div className="flex flex-col md:flex-row md:items-end justify-between gap-4">
-                            <div className="flex max-w-full flex-col gap-2 md:max-w-[640px]">
-                                <h2 className="font-heading text-[22px] md:text-[26px] lg:text-[28px] xl:text-[32px] font-semibold leading-tight" style={getStyleObj(routeTitleObj, THEME_COLORS.primary)}>
-                                    {routeTitle}
-                                </h2>
-                                <p className="text-sm md:text-[15px] xl:text-base font-normal leading-relaxed" style={getStyleObj(routeDescObj, THEME_COLORS.muted)}>
-                                    {routeDescription}
-                                </p>
-                            </div>
+                        {showHeader && (
+                            <div className="flex flex-col md:flex-row md:items-end justify-between gap-4">
+                                <div className="flex max-w-full flex-col gap-2 md:max-w-[640px]">
+                                    <h2 className="font-heading text-[22px] md:text-[26px] lg:text-[28px] xl:text-[32px] font-semibold leading-tight" style={getStyleObj(routeTitleObj, THEME_COLORS.primary)}>
+                                        {routeTitle}
+                                    </h2>
+                                    <p className="text-sm md:text-[15px] xl:text-base font-normal leading-relaxed" style={getStyleObj(routeDescObj, THEME_COLORS.muted)}>
+                                        {routeDescription}
+                                    </p>
+                                </div>
 
-                            {/* Top Meta Badges */}
-                            <div className="flex flex-wrap items-center gap-2 shrink-0 self-start md:self-end">
-                                {routeBadgeObj ? (
-                                    <span
-                                        className="px-2.5 py-1 rounded-full bg-muted/40 border border-border/60 text-[11px] font-semibold"
-                                        style={getStyleObj(routeBadgeObj, THEME_COLORS.primary)}
-                                    >
-                                        {getStr(routeBadgeObj, countryBadges.join(" · "))}
-                                    </span>
-                                ) : (
-                                    countryBadges.map((c, i) => (
+                                {/* Top Meta Badges */}
+                                <div className="flex flex-wrap items-center gap-2 shrink-0 self-start md:self-end">
+                                    {routeBadgeObj ? (
                                         <span
-                                            key={i}
-                                            className="px-2.5 py-1 rounded-full bg-muted/40 border border-border/60 text-[11px] font-semibold text-foreground"
+                                            className="px-2.5 py-1 rounded-full bg-muted/40 border border-border/60 text-[11px] font-semibold"
+                                            style={getStyleObj(routeBadgeObj, THEME_COLORS.primary)}
                                         >
-                                            {c}
+                                            {getStr(routeBadgeObj, countryBadges.join(" · "))}
                                         </span>
-                                    ))
-                                )}
-                                <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-muted/40 border border-border/60 text-xs text-foreground font-medium">
-                                    <span className="size-1.5 rounded-full bg-accent animate-pulse" />
-                                    <span>{stops.length} Signature Destinations</span>
+                                    ) : (
+                                        countryBadges.map((c, i) => (
+                                            <span
+                                                key={i}
+                                                className="px-2.5 py-1 rounded-full bg-muted/40 border border-border/60 text-[11px] font-semibold text-foreground"
+                                            >
+                                                {c}
+                                            </span>
+                                        ))
+                                    )}
+                                    <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-muted/40 border border-border/60 text-xs text-foreground font-medium">
+                                        <span className="size-1.5 rounded-full bg-accent animate-pulse" />
+                                        <span>{stops.length} Signature Destinations</span>
+                                    </div>
                                 </div>
                             </div>
-                        </div>
+                        )}
 
                         {/* Editorial Map Canvas Container */}
                         <motion.div
@@ -1071,7 +1098,10 @@ export const JourneyRouteMap = React.forwardRef<JourneyRouteMapRef, JourneyRoute
                             role="group"
                             aria-label="Route map"
                             onKeyDown={handleKeyDown}
-                            className="relative w-full h-[480px] md:h-[580px] lg:h-[640px] xl:h-[680px] rounded-[16px] overflow-hidden ring-1 ring-inset ring-border-light bg-clip-padding select-none [transform:translateZ(0)] focus-visible:ring-2 focus-visible:ring-accent focus-visible:outline-none"
+                            className={cn(
+                                "relative w-full rounded-[16px] overflow-hidden ring-1 ring-inset ring-border-light bg-clip-padding select-none [transform:translateZ(0)] focus-visible:ring-2 focus-visible:ring-accent focus-visible:outline-none",
+                                mapHeightClassName || "h-[480px] md:h-[580px] lg:h-[640px] xl:h-[680px]"
+                            )}
                             style={{
                                 backgroundColor: MIRA_COLORS.seaCanvas,
                                 touchAction: camera.zoom > 1.02 ? 'none' : 'pan-y',
@@ -1183,7 +1213,7 @@ export const JourneyRouteMap = React.forwardRef<JourneyRouteMapRef, JourneyRoute
                                             fill={lbl.type === 'sea' ? MIRA_COLORS.labelSea : MIRA_COLORS.labelLand}
                                             fontSize={lbl.type === 'sea' ? '12' : '11'}
                                             fontWeight={lbl.type === 'sea' ? '400' : '700'}
-                                            fontFamily="serif"
+                                            fontFamily="var(--font-heading), serif"
                                             fontStyle={lbl.type === 'sea' ? 'italic' : 'normal'}
                                             letterSpacing={lbl.type === 'sea' ? '5px' : '4px'}
                                             textAnchor="middle"
@@ -1369,7 +1399,7 @@ export const JourneyRouteMap = React.forwardRef<JourneyRouteMapRef, JourneyRoute
                                                         fill={isSelected ? MIRA_COLORS.white : MIRA_COLORS.primary}
                                                         fontSize="10"
                                                         fontWeight="700"
-                                                        fontFamily="serif"
+                                                        fontFamily="var(--font-heading), serif"
                                                         textAnchor="middle"
                                                     >
                                                         {getStopBadgeLabel(stop)}
@@ -1405,7 +1435,7 @@ export const JourneyRouteMap = React.forwardRef<JourneyRouteMapRef, JourneyRoute
                                                                 fill={MIRA_COLORS.primary}
                                                                 fontSize="11.5"
                                                                 fontWeight="600"
-                                                                fontFamily="serif"
+                                                                fontFamily="var(--font-heading), serif"
                                                                 textLength={estNameWidth > maxNameWidth ? maxNameWidth : undefined}
                                                                 lengthAdjust={estNameWidth > maxNameWidth ? 'spacingAndGlyphs' : undefined}
                                                             >
@@ -1417,7 +1447,7 @@ export const JourneyRouteMap = React.forwardRef<JourneyRouteMapRef, JourneyRoute
                                                                 fill={isStart || isEnd ? MIRA_COLORS.accent : MIRA_COLORS.gridText}
                                                                 fontSize="9"
                                                                 fontWeight="700"
-                                                                fontFamily="sans-serif"
+                                                                fontFamily="var(--font-sansation), sans-serif"
                                                                 textAnchor="end"
                                                             >
                                                                 {tag}
@@ -1470,25 +1500,84 @@ export const JourneyRouteMap = React.forwardRef<JourneyRouteMapRef, JourneyRoute
                             </div>
 
                             {/* Sidebar / Mobile Overlay */}
-                            {containerDimensions.width < 640 ? (
-                                mobileListOpen ? (
-                                    <div className="absolute left-3 top-3 z-20 w-[min(260px,calc(100%-24px))] max-h-[60%] rounded-[12px] bg-card/95 backdrop-blur-md border border-border shadow-lg flex flex-col overflow-hidden pointer-events-auto">
-                                        <div className="p-2.5 border-b border-border flex items-center justify-between">
+                            {showSidebar && (
+                                containerDimensions.width < 640 ? (
+                                    mobileListOpen ? (
+                                        <div className="absolute left-3 top-3 z-20 w-[min(260px,calc(100%-24px))] max-h-[60%] rounded-[12px] bg-card/95 backdrop-blur-md border border-border shadow-lg flex flex-col overflow-hidden pointer-events-auto">
+                                            <div className="p-2.5 border-b border-border flex items-center justify-between">
+                                                <button
+                                                    type="button"
+                                                    onClick={() => setMobileListOpen(false)}
+                                                    className="flex items-center gap-1.5 text-left cursor-pointer group"
+                                                >
+                                                    <div className="flex flex-col">
+                                                        <span className="text-[10px] font-bold uppercase tracking-[1.2px] text-subtitle">
+                                                            Itinerary Route
+                                                        </span>
+                                                        <span className="text-xs font-semibold text-brand-primary group-hover:text-accent flex items-center gap-1">
+                                                            {stops.length} Stops · {totalDays} Days
+                                                            <ChevronDownIcon className="size-3 rotate-180 transition-transform text-subtitle" />
+                                                        </span>
+                                                    </div>
+                                                </button>
+                                                <button
+                                                    type="button"
+                                                    onClick={() => setIsPlaying((p) => !p)}
+                                                    className={`flex items-center gap-1 px-2.5 py-1 rounded-full text-[11px] font-semibold transition-all cursor-pointer shadow-xs ${isPlaying
+                                                        ? 'bg-primary text-primary-foreground'
+                                                        : 'bg-card text-foreground hover:bg-muted border border-border/70'
+                                                        }`}
+                                                >
+                                                    {isPlaying ? (
+                                                        <>
+                                                            <PauseIcon className="size-2.5" />
+                                                            <span>Pause</span>
+                                                        </>
+                                                    ) : (
+                                                        <>
+                                                            <PlayIcon className="size-2.5" />
+                                                            <span>Tour</span>
+                                                        </>
+                                                    )}
+                                                </button>
+                                            </div>
+
+                                            <div className="flex-1 overflow-y-auto p-1">
+                                                {renderStopListContent()}
+                                            </div>
+
+                                            {activeStop && (
+                                                <div className="p-2 bg-card/90 border-t border-border flex items-center gap-2 shrink-0">
+                                                    <MapPinIcon className="size-3.5 text-accent shrink-0" />
+                                                    <div className="flex flex-col min-w-0">
+                                                        <span className="text-[10.5px] font-bold text-foreground truncate">
+                                                            {activeStop.name}
+                                                        </span>
+                                                        <span className="text-[9.5px] text-muted-foreground">
+                                                            {activeStopIndex === 0
+                                                                ? `${activeStop.dayLabel} · Starting departure`
+                                                                : activeStopIndex === stops.length - 1
+                                                                    ? `${activeStop.dayLabel} · Final destination`
+                                                                    : `${activeStop.dayLabel} · Stop ${(activeStopIndex ?? 0) + 1} of ${stops.length}`}
+                                                        </span>
+                                                    </div>
+                                                </div>
+                                            )}
+                                        </div>
+                                    ) : (
+                                        <div
+                                            ref={sidebarRef}
+                                            className="absolute left-3 top-3 z-20 flex items-center gap-1.5 p-1 rounded-full bg-card/95 backdrop-blur-md border border-border shadow-xs pointer-events-auto"
+                                        >
                                             <button
                                                 type="button"
-                                                onClick={() => setMobileListOpen(false)}
-                                                className="flex items-center gap-1.5 text-left cursor-pointer group"
+                                                onClick={() => setMobileListOpen(true)}
+                                                className="flex items-center gap-1.5 px-2.5 py-1 text-xs font-semibold text-brand-primary hover:text-accent transition-colors cursor-pointer"
                                             >
-                                                <div className="flex flex-col">
-                                                    <span className="text-[10px] font-bold uppercase tracking-[1.2px] text-subtitle">
-                                                        Itinerary Route
-                                                    </span>
-                                                    <span className="text-xs font-semibold text-brand-primary group-hover:text-accent flex items-center gap-1">
-                                                        {stops.length} Stops · {totalDays} Days
-                                                        <ChevronDownIcon className="size-3 rotate-180 transition-transform text-subtitle" />
-                                                    </span>
-                                                </div>
+                                                <span>Route · {stops.length} stops</span>
+                                                <ChevronDownIcon className="size-3 text-muted-foreground" />
                                             </button>
+                                            <div className="w-px h-3.5 bg-border" />
                                             <button
                                                 type="button"
                                                 onClick={() => setIsPlaying((p) => !p)}
@@ -1510,19 +1599,55 @@ export const JourneyRouteMap = React.forwardRef<JourneyRouteMapRef, JourneyRoute
                                                 )}
                                             </button>
                                         </div>
+                                    )
+                                ) : (
+                                    <div
+                                        ref={sidebarRef}
+                                        className="absolute left-3 top-3 md:left-5 md:top-5 bottom-3 md:bottom-5 z-20 w-[190px] md:w-[230px] rounded-[12px] bg-card/95 backdrop-blur-md border border-border shadow-md flex flex-col overflow-hidden pointer-events-auto"
+                                    >
+                                        <div className="p-3 border-b border-border flex items-center justify-between">
+                                            <div className="flex flex-col">
+                                                <span className="text-[10.5px] font-bold uppercase tracking-[1.5px] text-muted-foreground">
+                                                    Itinerary Route
+                                                </span>
+                                                <span className="text-xs text-foreground font-semibold">
+                                                    {stops.length} Stops · {totalDays} Days
+                                                </span>
+                                            </div>
+                                            <button
+                                                type="button"
+                                                onClick={() => setIsPlaying((p) => !p)}
+                                                className={`flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[11px] font-semibold transition-all cursor-pointer shadow-xs ${isPlaying
+                                                    ? 'bg-primary text-primary-foreground'
+                                                    : 'bg-card text-foreground hover:bg-muted border border-border/70'
+                                                    }`}
+                                            >
+                                                {isPlaying ? (
+                                                    <>
+                                                        <PauseIcon className="size-3" />
+                                                        <span>Pause</span>
+                                                    </>
+                                                ) : (
+                                                    <>
+                                                        <PlayIcon className="size-3" />
+                                                        <span>Tour</span>
+                                                    </>
+                                                )}
+                                            </button>
+                                        </div>
 
                                         <div className="flex-1 overflow-y-auto p-1">
                                             {renderStopListContent()}
                                         </div>
 
                                         {activeStop && (
-                                            <div className="p-2 bg-card/90 border-t border-border flex items-center gap-2 shrink-0">
-                                                <MapPinIcon className="size-3.5 text-accent shrink-0" />
+                                            <div className="p-2.5 bg-card/90 border-t border-border flex items-center gap-2">
+                                                <MapPinIcon className="size-4 text-accent shrink-0" />
                                                 <div className="flex flex-col min-w-0">
-                                                    <span className="text-[10.5px] font-bold text-foreground truncate">
+                                                    <span className="text-[11px] font-bold text-foreground truncate">
                                                         {activeStop.name}
                                                     </span>
-                                                    <span className="text-[9.5px] text-muted-foreground">
+                                                    <span className="text-[10px] text-muted-foreground">
                                                         {activeStopIndex === 0
                                                             ? `${activeStop.dayLabel} · Starting departure`
                                                             : activeStopIndex === stops.length - 1
@@ -1533,100 +1658,7 @@ export const JourneyRouteMap = React.forwardRef<JourneyRouteMapRef, JourneyRoute
                                             </div>
                                         )}
                                     </div>
-                                ) : (
-                                    <div
-                                        ref={sidebarRef}
-                                        className="absolute left-3 top-3 z-20 flex items-center gap-1.5 p-1 rounded-full bg-card/95 backdrop-blur-md border border-border shadow-xs pointer-events-auto"
-                                    >
-                                        <button
-                                            type="button"
-                                            onClick={() => setMobileListOpen(true)}
-                                            className="flex items-center gap-1.5 px-2.5 py-1 text-xs font-semibold text-brand-primary hover:text-accent transition-colors cursor-pointer"
-                                        >
-                                            <span>Route · {stops.length} stops</span>
-                                            <ChevronDownIcon className="size-3 text-muted-foreground" />
-                                        </button>
-                                        <div className="w-px h-3.5 bg-border" />
-                                        <button
-                                            type="button"
-                                            onClick={() => setIsPlaying((p) => !p)}
-                                            className={`flex items-center gap-1 px-2.5 py-1 rounded-full text-[11px] font-semibold transition-all cursor-pointer shadow-xs ${isPlaying
-                                                ? 'bg-primary text-primary-foreground'
-                                                : 'bg-card text-foreground hover:bg-muted border border-border/70'
-                                                }`}
-                                        >
-                                            {isPlaying ? (
-                                                <>
-                                                    <PauseIcon className="size-2.5" />
-                                                    <span>Pause</span>
-                                                </>
-                                            ) : (
-                                                <>
-                                                    <PlayIcon className="size-2.5" />
-                                                    <span>Tour</span>
-                                                </>
-                                            )}
-                                        </button>
-                                    </div>
                                 )
-                            ) : (
-                                <div
-                                    ref={sidebarRef}
-                                    className="absolute left-3 top-3 md:left-5 md:top-5 bottom-3 md:bottom-5 z-20 w-[190px] md:w-[230px] rounded-[12px] bg-card/95 backdrop-blur-md border border-border shadow-md flex flex-col overflow-hidden pointer-events-auto"
-                                >
-                                    <div className="p-3 border-b border-border flex items-center justify-between">
-                                        <div className="flex flex-col">
-                                            <span className="text-[10.5px] font-bold uppercase tracking-[1.5px] text-muted-foreground">
-                                                Itinerary Route
-                                            </span>
-                                            <span className="text-xs text-foreground font-semibold">
-                                                {stops.length} Stops · {totalDays} Days
-                                            </span>
-                                        </div>
-                                        <button
-                                            type="button"
-                                            onClick={() => setIsPlaying((p) => !p)}
-                                            className={`flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[11px] font-semibold transition-all cursor-pointer shadow-xs ${isPlaying
-                                                ? 'bg-primary text-primary-foreground'
-                                                : 'bg-card text-foreground hover:bg-muted border border-border/70'
-                                                }`}
-                                        >
-                                            {isPlaying ? (
-                                                <>
-                                                    <PauseIcon className="size-3" />
-                                                    <span>Pause</span>
-                                                </>
-                                            ) : (
-                                                <>
-                                                    <PlayIcon className="size-3" />
-                                                    <span>Tour</span>
-                                                </>
-                                            )}
-                                        </button>
-                                    </div>
-
-                                    <div className="flex-1 overflow-y-auto p-1">
-                                        {renderStopListContent()}
-                                    </div>
-
-                                    {activeStop && (
-                                        <div className="p-2.5 bg-card/90 border-t border-border flex items-center gap-2">
-                                            <MapPinIcon className="size-4 text-accent shrink-0" />
-                                            <div className="flex flex-col min-w-0">
-                                                <span className="text-[11px] font-bold text-foreground truncate">
-                                                    {activeStop.name}
-                                                </span>
-                                                <span className="text-[10px] text-muted-foreground">
-                                                    {activeStopIndex === 0
-                                                        ? `${activeStop.dayLabel} · Starting departure`
-                                                        : activeStopIndex === stops.length - 1
-                                                            ? `${activeStop.dayLabel} · Final destination`
-                                                            : `${activeStop.dayLabel} · Stop ${(activeStopIndex ?? 0) + 1} of ${stops.length}`}
-                                                </span>
-                                            </div>
-                                        </div>
-                                    )}
-                                </div>
                             )}
                         </motion.div>
                     </div>

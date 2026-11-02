@@ -143,12 +143,10 @@ export default function StoriesPage() {
 
   const formatStoryTypeLabel = (t?: string) => {
     if (!t) return "Story"
-    if (t === "travel_ease" || t === "travel-ease") return "Travel Ease"
-    if (t === "mira_editorial" || t === "mira-editorial") return "Mira Editorial"
-    if (t === "normal_story" || t === "normal-story") return "Normal Story"
-    if (t === "short_story" || t === "short-story") return "Short Story"
-    if (t === "long_story" || t === "long-story") return "Long Story"
-    if (t === "guidance" || t === "guide-story") return "Guidance"
+    const upper = String(t).toUpperCase().replace(/[-]/g, "_")
+    if (upper === "TRAVEL_ESSENTIALS" || upper === "TRAVEL_EASE" || upper === "GUIDANCE") return "Travel Essentials"
+    if (upper === "MIRA_EDITORIAL" || upper === "LONG_STORY") return "Mira Editorial"
+    if (upper === "NORMAL_STORY" || upper === "SHORT_STORY") return "Normal Story"
     return t.replace(/[-_]/g, " ")
   }
 
@@ -217,9 +215,9 @@ export default function StoriesPage() {
               setPage(1)
             }}
             options={[
-              { label: "Travel Ease", value: "travel_ease" },
-              { label: "Mira Editorial", value: "mira_editorial" },
-              { label: "Normal Story", value: "normal_story" },
+              { label: "Travel Essentials", value: "TRAVEL_ESSENTIALS" },
+              { label: "Mira Editorial", value: "MIRA_EDITORIAL" },
+              { label: "Normal Story", value: "NORMAL_STORY" },
             ]}
             allLabel="All Story Types"
             placeholder="Story Type"

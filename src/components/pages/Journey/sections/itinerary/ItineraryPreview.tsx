@@ -9,10 +9,7 @@ export function ItineraryPreview({ itinerary, draft }: { itinerary?: any; draft?
 
   const rawItinerary = itinerary || draft?.itinerary || {}
 
-  const mapTitleObj = rawItinerary.mapTitle || rawItinerary.title || emptyItinerary.mapTitle
-  const mapSubtitleObj = rawItinerary.mapSubtitle || rawItinerary.subtitle || rawItinerary.description || emptyItinerary.mapSubtitle
   const badgeObj = rawItinerary.badge || emptyItinerary.badge
-
   const itineraryTitleObj = rawItinerary.title || emptyItinerary.title
   const itinerarySubtitleObj = rawItinerary.subtitle || rawItinerary.description || emptyItinerary.subtitle
 
@@ -23,11 +20,9 @@ export function ItineraryPreview({ itinerary, draft }: { itinerary?: any; draft?
       title: itineraryTitleObj,
       subtitle: itinerarySubtitleObj,
       badge: badgeObj,
-      mapTitle: mapTitleObj,
-      mapSubtitle: mapSubtitleObj,
       chapters: chaptersList && chaptersList.length > 0 ? chaptersList : emptyItinerary.items,
     }
-  }, [rawItinerary, itineraryTitleObj, itinerarySubtitleObj, badgeObj, mapTitleObj, mapSubtitleObj])
+  }, [rawItinerary, itineraryTitleObj, itinerarySubtitleObj, badgeObj])
 
   const handleExpandedDayChange = useCallback((day: number | null) => {
     setActiveDay((prev) => (prev === day ? prev : day))
@@ -57,14 +52,17 @@ export function ItineraryPreview({ itinerary, draft }: { itinerary?: any; draft?
         </div>
 
         {/* Right Column: Route Map (sticky on desktop) */}
-        <div className="w-full lg:w-[44%] xl:w-[42%] shrink-0 lg:sticky lg:top-20 xl:top-24 self-start order-1 lg:order-2">
+        <div className="w-full lg:w-[44%] xl:w-[42%] shrink-0 lg:sticky lg:top-16 xl:top-20 self-start order-1 lg:order-2">
           <JourneyRouteMap
             itinerary={resolvedItinerary}
-            titleObj={mapTitleObj}
-            descriptionObj={mapSubtitleObj}
+            titleObj={itineraryTitleObj}
+            descriptionObj={itinerarySubtitleObj}
             badgeObj={badgeObj}
             activeDay={activeDay}
             onStopSelect={handleStopSelect}
+            showHeader={false}
+            showSidebar={false}
+            mapHeightClassName="h-[380px] sm:h-[460px] md:h-[520px] lg:h-[620px] xl:h-[660px]"
             className="!pt-0"
           />
         </div>

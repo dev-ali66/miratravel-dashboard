@@ -76,9 +76,6 @@ export function getChapterDayRange(chapter: any): string {
     const dayRangeStr = getStr(chapter.day_range);
     if (dayRangeStr) return dayRangeStr;
 
-    const subtitleStr = getStr(chapter.subtitle);
-    if (subtitleStr) return subtitleStr;
-
     if (!chapter.days || chapter.days.length === 0) {
         return '';
     }
@@ -161,24 +158,31 @@ export function deriveChaptersFromDays(days: any[]): any[] {
 export function normalizeItineraryToChapters(itinerary?: any, locationMap?: Map<string, any>): any[] {
     if (!itinerary) return [];
     const rawChapters = itinerary.chapters || itinerary.items || [];
+    let globalDayCounter = 1;
+    let globalStopCounter = 1;
     if (rawChapters.length > 0) {
         return rawChapters.map((chapter: any, idx: number) => {
             const role = chapter.narrative_role ?? narrativeRoleFor(idx, rawChapters.length);
-            const rawChapterNum = getStr(chapter.chapter_number, getStr(chapter.chapterNumber, toRomanNumeral(idx + 1)));
-            const chapterTitle = getStr(chapter.title, `Chapter ${toRomanNumeral(idx + 1)}`);
+            const chapterNum = idx + 1;
+            const roman = toRomanNumeral(chapterNum);
+            const rawTitle = getStr(chapter.title);
+            const chapterTitle = rawTitle && !/^chapter\s+[ivxlcdm0-9]+/i.test(rawTitle)
+                ? rawTitle
+                : (rawTitle || `Chapter ${roman}`);
             const chapterLocation = getStr(chapter.location_context, deriveLocationContext(chapter.days ?? [], locationMap));
             const chapterDesc = getStr(chapter.description);
 
             return {
                 ...chapter,
-                chapter_number: rawChapterNum,
+                chapter_number: chapterNum,
+                chapterNumber: chapterNum,
                 title: chapterTitle,
                 day_range: getChapterDayRange(chapter),
                 location_context: chapterLocation,
                 description: chapterDesc,
                 narrative_role: role,
-                days: (chapter.days ?? []).map((day: any, dIdx: number) => {
-                    const dayNum = Number(day.dayNumber || dIdx + 1);
+                days: (chapter.days ?? []).map((day: any) => {
+                    const dayNum = globalDayCounter++;
                     const locId = getStr(day.locationId);
                     let locName = getStr(day.locationName) || getStr(day.location);
                     if (isCuid(locName)) locName = '';
@@ -190,10 +194,43 @@ export function normalizeItineraryToChapters(itinerary?: any, locationMap?: Map<
                     }
                     const rawTitle = getStr(day.title);
                     const dayTitle = rawTitle && !isCuid(rawTitle) ? rawTitle : (locName || `Day ${dayNum}`);
+
+                    // Normalize stops within this day
+                    const rawStops = Array.isArray(day.stops) && day.stops.length > 0
+                        ? day.stops
+                        : [];
+
+                    const stops = rawStops.map((stop: any) => {
+                        const stopNum = globalStopCounter++;
+                        const stopLocId = getStr(stop.locationId);
+                        let stopLocName = getStr(stop.locationName) || getStr(stop.location);
+                        if (isCuid(stopLocName)) stopLocName = '';
+                        if (!stopLocName && locationMap && stopLocId) {
+                            const found = locationMap.get(stopLocId) || locationMap.get(stopLocId.toLowerCase());
+                            if (found) {
+                                stopLocName = found.name || found.data?.name || '';
+                            }
+                        }
+                        const rawStopTitle = getStr(stop.title);
+                        const stopTitle = rawStopTitle && !isCuid(rawStopTitle) ? rawStopTitle : (stopLocName || `Stop ${stopNum}`);
+                        return {
+                            ...stop,
+                            stopNumber: stopNum,
+                            stopLabel: `Stop ${stopNum}`,
+                            title: stopTitle,
+                            locationId: stopLocId,
+                            locationName: stopLocName,
+                            location: stopLocName,
+                            description: getStr(stop.description),
+                            thumbnail: typeof stop.thumbnail === 'string' ? stop.thumbnail : (stop.multimedia?.image?.url || stop.image?.url || ''),
+                            images: Array.isArray(stop.images) ? stop.images : [],
+                        };
+                    });
+
                     return {
                         ...day,
                         dayNumber: dayNum,
-                        dayLabel: day.dayLabel || `Day ${dayNum}`,
+                        dayLabel: `Day ${dayNum}`,
                         title: dayTitle,
                         subtitle: getStr(day.subtitle),
                         locationId: locId,
@@ -203,6 +240,7 @@ export function normalizeItineraryToChapters(itinerary?: any, locationMap?: Map<
                         stayName: getStr(day.stayName),
                         thumbnail: typeof day.thumbnail === 'string' ? day.thumbnail : (day.multimedia?.image?.url || day.image?.url || ''),
                         images: Array.isArray(day.images) ? day.images : [],
+                        stops,
                     };
                 }),
             };

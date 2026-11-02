@@ -52,7 +52,7 @@ export function JourneyPreview() {
       {/* 2. Sticky Tabs Navigation Bar (Matching Frontend Luxury Tabs Bar) */}
       <div className="w-full sticky top-0 bg-[#FFF7EF]/95 backdrop-blur-md z-30 border-b border-[#E8E2D8] shadow-2xs">
         <div className="w-full max-w-[1400px] mx-auto px-4 md:px-8 xl:px-12">
-          <nav className="flex items-center gap-6 md:gap-10 xl:gap-[70px] overflow-x-auto [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
+          <nav id="journey-tabs-nav" className="flex items-center gap-6 md:gap-10 xl:gap-[70px] overflow-x-auto [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
             {JOURNEY_TABS.map((tab) => {
               const isActive = activeTab === tab.id
               return (

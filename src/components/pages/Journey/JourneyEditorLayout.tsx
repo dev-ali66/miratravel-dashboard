@@ -26,11 +26,7 @@ export function JourneyEditorLayout() {
         icon={Compass}
         iconColor="text-amber-500"
         title={`${formatPageName(slug)} Journey`}
-        sidebarContent={
-          <div className="p-4 md:p-6">
-            <Outlet />
-          </div>
-        }
+        sidebarContent={<Outlet />}
         previewContent={<JourneyPreview />}
         useWorkspaceScale={true}
       />

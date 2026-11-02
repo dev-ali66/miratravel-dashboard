@@ -3,9 +3,9 @@ import { useState } from "react"
 import type { JourneyData } from "../../journeyTypes"
 import { FormSection } from "../../shared/fields"
 import { DynamicStyledField } from "@/components/pages/CMS/shared/FormControls"
-import { UniversalMultimediaForm } from "@/components/pages/CMS/shared/UniversalMultimediaForm"
 import { ParentLocationSelect } from "@/components/pages/Location/shared/ParentLocationSelect"
 import { Plus, Trash2, CalendarDays, BookOpen, MapPin, ChevronUp, ChevronDown } from "lucide-react"
+import { toRomanNumeral } from "./map/chapters"
 
 interface ItineraryFormProps {
   draft: JourneyData
@@ -46,7 +46,45 @@ export function ItineraryForm({
   }
 
   const syncChapters = (nextList: any[]) => {
-    updateField("itinerary.items", nextList)
+    // Re-index all days and stops sequentially across chapters based on array position
+    let globalDayCounter = 1
+    let globalStopCounter = 1
+    const reindexedList = nextList.map((chap: any) => {
+      const days = (chap.days || []).map((day: any) => {
+        const assignedDay = globalDayCounter++
+        const stops = (day.stops || []).map((stop: any) => {
+          const assignedStop = globalStopCounter++
+          return {
+            ...stop,
+            stopNumber: assignedStop,
+            stopLabel: `Stop ${assignedStop}`,
+          }
+        })
+        const {
+          thumbnail: _dt,
+          multimedia: _dm,
+          location: _dl,
+          images: _di,
+          coordinates: _dc,
+          country: _dco,
+          chapter_number: _dcn,
+          ...restDay
+        } = day
+        return {
+          ...restDay,
+          dayNumber: assignedDay,
+          dayLabel: `Day ${assignedDay}`,
+          locationName: day.locationName || "",
+          stops,
+        }
+      })
+      const { chapter_number: _cn, multimedia: _cm, ...restChap } = chap
+      return {
+        ...restChap,
+        days,
+      }
+    })
+    updateField("itinerary.items", reindexedList)
   }
 
   // Move Chapter Up/Down
@@ -56,9 +94,10 @@ export function ItineraryForm({
     const [removed] = nextList.splice(fromIdx, 1)
     nextList.splice(toIdx, 0, removed)
     syncChapters(nextList)
+    setOpenChapters({ [toIdx]: true })
   }
 
-  // Move Day/Location Stop Up/Down in Chapter
+  // Move Day Up/Down in Chapter
   const moveDayInChapter = (chapIdx: number, fromIdx: number, toIdx: number) => {
     const chap = chaptersList[chapIdx]
     const days = chap.days || []
@@ -66,6 +105,28 @@ export function ItineraryForm({
     const nextDays = [...days]
     const [removed] = nextDays.splice(fromIdx, 1)
     nextDays.splice(toIdx, 0, removed)
+    const updatedChap = { ...chap, days: nextDays }
+    const nextList = [...chaptersList]
+    nextList[chapIdx] = updatedChap
+    syncChapters(nextList)
+    setOpenStops({ [`${chapIdx}-${toIdx}`]: true })
+  }
+
+  // Move Stop Up/Down in Day
+  const moveStopInDay = (chapIdx: number, dayIdx: number, fromIdx: number, toIdx: number) => {
+    const chap = chaptersList[chapIdx]
+    const day = (chap.days || [])[dayIdx]
+    if (!day) return
+    const stops = day.stops || []
+    if (toIdx < 0 || toIdx >= stops.length) return
+    const nextStops = [...stops]
+    const [removed] = nextStops.splice(fromIdx, 1)
+    nextStops.splice(toIdx, 0, removed)
+
+    const updatedDay = { ...day, stops: nextStops }
+    const nextDays = [...(chap.days || [])]
+    nextDays[dayIdx] = updatedDay
+
     const updatedChap = { ...chap, days: nextDays }
     const nextList = [...chaptersList]
     nextList[chapIdx] = updatedChap
@@ -82,17 +143,11 @@ export function ItineraryForm({
       title: { value: `Chapter ${nextChapterNum} Title`, textColor: THEME_COLORS.primary, textOpacity: 1, backgroundColor: null, backgroundOpacity: 1 },
       subtitle: { value: `Days ${nextChapterNum} · Highlight Region`, textColor: THEME_COLORS.secondary, textOpacity: 1, backgroundColor: null, backgroundOpacity: 1 },
       description: { value: "Chapter narrative background...", textColor: THEME_COLORS.muted, textOpacity: 1, backgroundColor: null, backgroundOpacity: 1 },
-      multimedia: {
-        show: "image",
-        image: { url: "", alt: "", opacity: 100, overlayColor: THEME_COLORS.overlayBlack, overlayOpacity: 0, width: "100%", height: "auto", aspectRatio: "auto", fit: "cover" },
-        video: { url: "", alt: "", autoplay: true, loop: true, muted: true, opacity: 100, overlayColor: THEME_COLORS.overlayBlack, overlayOpacity: 0, width: "100%", height: "auto", aspectRatio: "auto", fit: "cover" },
-        color: { color: THEME_COLORS.white, opacity: 100, width: "100%", height: "100%", aspectRatio: "auto" },
-      },
       days: [
         {
-          dayNumber: 1,
           locationId: "",
           description: { value: "Detailed daily description narrative...", textColor: THEME_COLORS.navText, textOpacity: 1, backgroundColor: null, backgroundOpacity: 1 },
+          stops: [],
         },
       ],
     }
@@ -109,11 +164,10 @@ export function ItineraryForm({
   const addDayToChapter = (chapIdx: number) => {
     const chap = chaptersList[chapIdx]
     const currentDays = chap.days || []
-    const nextDayNum = currentDays.length + 1
     const newDay = {
-      dayNumber: nextDayNum,
       locationId: "",
       description: { value: "Daily narrative description...", textColor: THEME_COLORS.navText, textOpacity: 1, backgroundColor: null, backgroundOpacity: 1 },
+      stops: [],
     }
     const updatedChap = { ...chap, days: [...currentDays, newDay] }
     const updatedList = [...chaptersList]
@@ -131,6 +185,42 @@ export function ItineraryForm({
     syncChapters(updatedList)
   }
 
+  // Stop Operations inside a Day
+  const addStopToDay = (chapIdx: number, dayIdx: number) => {
+    const chap = chaptersList[chapIdx]
+    const day = (chap.days || [])[dayIdx]
+    if (!day) return
+    const currentStops = day.stops || []
+    const newStop = {
+      title: "",
+      locationId: "",
+      description: { value: "", textColor: THEME_COLORS.navText, textOpacity: 1, backgroundColor: null, backgroundOpacity: 1 },
+    }
+    const updatedDay = { ...day, stops: [...currentStops, newStop] }
+    const nextDays = [...(chap.days || [])]
+    nextDays[dayIdx] = updatedDay
+
+    const updatedChap = { ...chap, days: nextDays }
+    const nextList = [...chaptersList]
+    nextList[chapIdx] = updatedChap
+    syncChapters(nextList)
+  }
+
+  const removeStopFromDay = (chapIdx: number, dayIdx: number, stopIdx: number) => {
+    const chap = chaptersList[chapIdx]
+    const day = (chap.days || [])[dayIdx]
+    if (!day) return
+    const updatedStops = (day.stops || []).filter((_: any, i: number) => i !== stopIdx)
+    const updatedDay = { ...day, stops: updatedStops }
+    const nextDays = [...(chap.days || [])]
+    nextDays[dayIdx] = updatedDay
+
+    const updatedChap = { ...chap, days: nextDays }
+    const nextList = [...chaptersList]
+    nextList[chapIdx] = updatedChap
+    syncChapters(nextList)
+  }
+
   return (
     <FormSection
       title="Day-by-Day Itinerary Builder"
@@ -139,71 +229,43 @@ export function ItineraryForm({
       onClick={() => toggleSection("itinerary")}
     >
       <div className="flex flex-col gap-6">
-        {/* SECTION 1: ROUTE MAP HEADER CMS */}
+        {/* ITINERARY HEADER CMS */}
         <div className="rounded-md border border-border/60 bg-muted/20 p-4 space-y-4">
           <div className="flex items-center gap-2 pb-2 border-b border-border/40">
-            <MapPin className="h-4 w-4 text-primary" />
+            <CalendarDays className="h-4 w-4 text-primary" />
             <span className="text-xs font-bold uppercase tracking-wider text-foreground">
-              1. Route Map Section Header CMS
+              Itinerary Section Header CMS
             </span>
           </div>
 
           <div className="flex flex-col gap-4">
             <DynamicStyledField
               type="text"
-              label="Route Map Title"
-              fieldName="itinerary.mapTitle"
-              placeholder="e.g. Classic Albania Itinerary"
-              value={itineraryData.mapTitle}
-              onChange={(val) => updateField("itinerary.mapTitle", val)}
+              label="Country / Region Badge"
+              fieldName="itinerary.badge"
+              placeholder="e.g. ALBANIA or 12 DAYS EXCURSION"
+              value={itineraryData.badge}
+              onChange={(val) => updateField("itinerary.badge", val)}
             />
 
             <DynamicStyledField
               type="text"
-              label="Country Badge / Subtitle"
-              fieldName="itinerary.badge"
-              placeholder="e.g. Albania · Mediterranean"
-              value={itineraryData.badge}
-              onChange={(val) => updateField("itinerary.badge", val)}
+              label="Itinerary Title"
+              fieldName="itinerary.title"
+              placeholder="e.g. Day by Day Itinerary"
+              value={itineraryData.title}
+              onChange={(val) => updateField("itinerary.title", val)}
+            />
+
+            <DynamicStyledField
+              type="text"
+              label="Itinerary Subtitle / Description"
+              fieldName="itinerary.subtitle"
+              placeholder="e.g. Click on each day to reveal more details and experiences."
+              value={itineraryData.subtitle}
+              onChange={(val) => updateField("itinerary.subtitle", val)}
             />
           </div>
-
-          <DynamicStyledField
-            type="text"
-            label="Route Map Subtitle / Description"
-            fieldName="itinerary.mapSubtitle"
-            placeholder="e.g. Explore UNESCO heritage sites, Ottoman stone cities, and Riviera coastlines."
-            value={itineraryData.mapSubtitle}
-            onChange={(val) => updateField("itinerary.mapSubtitle", val)}
-          />
-        </div>
-
-        {/* SECTION 2: DAY-BY-DAY ITINERARY HEADER CMS */}
-        <div className="rounded-md border border-border/60 bg-muted/20 p-4 space-y-4">
-          <div className="flex items-center gap-2 pb-2 border-b border-border/40">
-            <CalendarDays className="h-4 w-4 text-primary" />
-            <span className="text-xs font-bold uppercase tracking-wider text-foreground">
-              2. Day-by-Day Itinerary Header CMS
-            </span>
-          </div>
-
-          <DynamicStyledField
-            type="text"
-            label="Itinerary Title"
-            fieldName="itinerary.title"
-            placeholder="e.g. Classic Albania Itinerary"
-            value={itineraryData.title}
-            onChange={(val) => updateField("itinerary.title", val)}
-          />
-
-          <DynamicStyledField
-            type="text"
-            label="Itinerary Subtitle / Description"
-            fieldName="itinerary.subtitle"
-            placeholder="e.g. Explore UNESCO heritage sites, Ottoman stone cities, and Riviera coastlines."
-            value={itineraryData.subtitle}
-            onChange={(val) => updateField("itinerary.subtitle", val)}
-          />
         </div>
 
         {/* CHAPTERS BUILDER */}
@@ -243,14 +305,14 @@ export function ItineraryForm({
                   <div className="flex items-center gap-2 min-w-0 flex-1">
                     <span className="text-xs font-extrabold text-primary uppercase tracking-widest flex items-center gap-2 truncate">
                       <span className="rounded bg-primary/10 px-2 py-0.5 shrink-0">
-                        {typeof chap.chapterNumber === "object" ? chap.chapterNumber?.value : chap.chapterNumber || `Chapter ${cIdx + 1}`}
+                        {toRomanNumeral(cIdx + 1).toUpperCase().startsWith("CHAPTER") ? toRomanNumeral(cIdx + 1) : `CHAPTER ${toRomanNumeral(cIdx + 1)}`}
                       </span>
                       <span className="truncate">
                         {typeof chap.title === "object" ? chap.title?.value : chap.title}
                       </span>
                     </span>
                     <span className="text-[11px] text-muted-foreground shrink-0 font-normal">
-                      ({(chap.days || []).length} stops)
+                      ({(chap.days || []).length} days)
                     </span>
                   </div>
 
@@ -299,29 +361,11 @@ export function ItineraryForm({
                     <div className="flex flex-col gap-3">
                       <DynamicStyledField
                         type="text"
-                        label="Chapter Label/Number"
-                        fieldName={`itinerary.items.${cIdx}.chapterNumber`}
-                        placeholder="e.g. Chapter I"
-                        value={chap.chapterNumber}
-                        onChange={(val) => updateField(`itinerary.items.${cIdx}.chapterNumber`, val)}
-                      />
-
-                      <DynamicStyledField
-                        type="text"
                         label="Chapter Title"
                         fieldName={`itinerary.items.${cIdx}.title`}
                         placeholder="e.g. Ottoman Stone & Wine Valleys"
                         value={chap.title}
                         onChange={(val) => updateField(`itinerary.items.${cIdx}.title`, val)}
-                      />
-
-                      <DynamicStyledField
-                        type="text"
-                        label="Chapter Subtitle / Day Range"
-                        fieldName={`itinerary.items.${cIdx}.subtitle`}
-                        placeholder="e.g. Days 1–3 · Tirana, Berat & Gjirokastër"
-                        value={chap.subtitle}
-                        onChange={(val) => updateField(`itinerary.items.${cIdx}.subtitle`, val)}
                       />
                     </div>
 
@@ -334,23 +378,12 @@ export function ItineraryForm({
                       onChange={(val) => updateField(`itinerary.items.${cIdx}.description`, val)}
                     />
 
-                    {/* Chapter Feature Image / Multimedia */}
-                    <div className="space-y-2 pt-1">
-                      <label className="block text-xs font-bold uppercase tracking-wider text-foreground">
-                        Chapter Feature Image / Multimedia (Left Card Media)
-                      </label>
-                      <UniversalMultimediaForm
-                        value={chap.multimedia || { show: "image", image: { url: typeof chap.thumbnail === "string" ? chap.thumbnail : "" } }}
-                        onChange={(val) => updateField(`itinerary.items.${cIdx}.multimedia`, val)}
-                      />
-                    </div>
-
-                    {/* Location Stops / Days inside Chapter */}
+                    {/* Days inside Chapter */}
                     <div className="space-y-4 pt-4 border-t border-border/30 pl-2 md:pl-4 border-l-2 border-primary/30">
                       <div className="flex flex-wrap items-center justify-between gap-2">
                         <label className="text-xs font-bold uppercase tracking-wider text-foreground flex items-center gap-1.5 min-w-0">
                           <MapPin className="h-3.5 w-3.5 text-primary shrink-0" />
-                          <span className="truncate">Location Stops & Days ({(chap.days || []).length})</span>
+                          <span className="truncate">Itinerary Days ({(chap.days || []).length})</span>
                         </label>
 
                         <button
@@ -358,13 +391,16 @@ export function ItineraryForm({
                           onClick={() => addDayToChapter(cIdx)}
                           className="flex items-center gap-1 rounded bg-secondary px-2.5 py-1 text-xs font-semibold text-secondary-foreground hover:bg-secondary/80 transition-all cursor-pointer shadow-2xs shrink-0 whitespace-nowrap"
                         >
-                          <Plus className="h-3.5 w-3.5" /> Add Stop
+                          <Plus className="h-3.5 w-3.5" /> Add Day
                         </button>
                       </div>
 
                       {(chap.days || []).map((day: any, dIdx: number) => {
                         const stopKey = `${cIdx}-${dIdx}`
                         const isStopOpen = Boolean(openStops[stopKey])
+                        // Calculate sequential day number across all prior chapters + this chapter
+                        const priorDaysCount = chaptersList.slice(0, cIdx).reduce((acc, c) => acc + (c.days?.length || 0), 0)
+                        const computedDayNum = priorDaysCount + dIdx + 1
 
                         return (
                           <div
@@ -377,7 +413,7 @@ export function ItineraryForm({
                             >
                               <span className="text-[11px] font-bold text-primary uppercase tracking-wider flex items-center gap-1.5 min-w-0 flex-1">
                                 <span className="rounded bg-primary/10 px-1.5 py-0.5 whitespace-nowrap shrink-0">
-                                  Stop {dIdx + 1} · Day {day.dayNumber || dIdx + 1}
+                                  DAY {computedDayNum}
                                 </span>
                                 {day.locationId && (
                                   <span className="text-muted-foreground font-mono text-[9px] truncate max-w-[120px]" title={`ID: ${day.locationId}`}>
@@ -392,7 +428,7 @@ export function ItineraryForm({
                                   onClick={() => moveDayInChapter(cIdx, dIdx, dIdx - 1)}
                                   disabled={dIdx === 0}
                                   className="p-1 rounded text-muted-foreground hover:text-foreground hover:bg-muted disabled:opacity-30 disabled:pointer-events-none cursor-pointer"
-                                  title="Move Stop Up"
+                                  title="Move Day Up"
                                 >
                                   <ChevronUp className="h-3.5 w-3.5" />
                                 </button>
@@ -401,7 +437,7 @@ export function ItineraryForm({
                                   onClick={() => moveDayInChapter(cIdx, dIdx, dIdx + 1)}
                                   disabled={dIdx === (chap.days || []).length - 1}
                                   className="p-1 rounded text-muted-foreground hover:text-foreground hover:bg-muted disabled:opacity-30 disabled:pointer-events-none cursor-pointer"
-                                  title="Move Stop Down"
+                                  title="Move Day Down"
                                 >
                                   <ChevronDown className="h-3.5 w-3.5" />
                                 </button>
@@ -409,7 +445,7 @@ export function ItineraryForm({
                                   type="button"
                                   onClick={() => removeDayFromChapter(cIdx, dIdx)}
                                   className="p-1 rounded text-muted-foreground hover:text-destructive hover:bg-destructive/10 cursor-pointer ml-1"
-                                  title="Remove Stop"
+                                  title="Remove Day"
                                 >
                                   <Trash2 className="h-3.5 w-3.5" />
                                 </button>
@@ -417,7 +453,7 @@ export function ItineraryForm({
                                   type="button"
                                   onClick={() => toggleStopOpen(cIdx, dIdx)}
                                   className="p-1 rounded text-muted-foreground hover:text-foreground hover:bg-muted cursor-pointer ml-1"
-                                  title={isStopOpen ? "Collapse Stop" : "Expand Stop"}
+                                  title={isStopOpen ? "Collapse Day" : "Expand Day"}
                                 >
                                   {isStopOpen ? <ChevronUp className="h-3.5 w-3.5 text-primary" /> : <ChevronDown className="h-3.5 w-3.5" />}
                                 </button>
@@ -427,19 +463,6 @@ export function ItineraryForm({
                             {isStopOpen && (
                               <div className="space-y-3 pt-1">
                                 <div className="flex flex-col gap-3">
-                                  <DynamicStyledField
-                                    type="number"
-                                    label="Day Number"
-                                    fieldName={`itinerary.items.${cIdx}.days.${dIdx}.dayNumber`}
-                                    enableStyle={false}
-                                    value={day.dayNumber ?? dIdx + 1}
-                                    onChange={(val) => {
-                                      const raw = typeof val === "object" && val !== null && "value" in val ? val.value : val
-                                      const num = raw === "" ? dIdx + 1 : Number(raw)
-                                      updateField(`itinerary.items.${cIdx}.days.${dIdx}.dayNumber`, Number.isNaN(num) ? dIdx + 1 : num)
-                                    }}
-                                  />
-
                                   <DynamicStyledField
                                     type="text"
                                     label="Day Title (Optional, defaults to Location Name)"
@@ -451,14 +474,13 @@ export function ItineraryForm({
 
                                   <ParentLocationSelect
                                     value={day.locationId || ""}
-                                    currentName={day.locationName || (typeof day.location === "string" && !day.location.startsWith("cm") ? day.location : "")}
+                                    currentName={day.locationName || ""}
                                     label="Location / Region (DB Search Picker)"
                                     noneLabel="Select Location ID..."
                                     onChange={(locId, locName) => {
                                       updateField(`itinerary.items.${cIdx}.days.${dIdx}.locationId`, locId || "")
                                       if (locName) {
                                         updateField(`itinerary.items.${cIdx}.days.${dIdx}.locationName`, locName)
-                                        updateField(`itinerary.items.${cIdx}.days.${dIdx}.location`, locName)
                                       }
                                     }}
                                   />
@@ -472,6 +494,122 @@ export function ItineraryForm({
                                   value={day.description}
                                   onChange={(val) => updateField(`itinerary.items.${cIdx}.days.${dIdx}.description`, val)}
                                 />
+
+                                {/* STOPS INSIDE THIS DAY */}
+                                <div className="space-y-3 pt-3 border-t border-border/40 pl-2 md:pl-3 border-l-2 border-primary/20">
+                                  <div className="flex items-center justify-between gap-2">
+                                    <label className="text-[11px] font-bold uppercase tracking-wider text-foreground flex items-center gap-1.5">
+                                      <MapPin className="h-3 w-3 text-primary shrink-0" />
+                                      <span>Stops / Highlights ({(day.stops || []).length})</span>
+                                    </label>
+
+                                    <button
+                                      type="button"
+                                      onClick={() => addStopToDay(cIdx, dIdx)}
+                                      className="flex items-center gap-1 rounded bg-primary/10 hover:bg-primary/20 text-primary px-2 py-0.5 text-[11px] font-semibold transition-all cursor-pointer"
+                                    >
+                                      <Plus className="h-3 w-3" /> Add Stop
+                                    </button>
+                                  </div>
+
+                                  {(day.stops || []).map((stop: any, sIdx: number) => {
+                                    // Compute global stop number across all preceding chapters, days, and current stops
+                                    let priorStopsCount = 0
+                                    for (let i = 0; i < cIdx; i++) {
+                                      const ch = chaptersList[i]
+                                      for (const d of (ch.days || [])) {
+                                        priorStopsCount += (d.stops?.length || 0)
+                                      }
+                                    }
+                                    const currentChapDays = chap.days || []
+                                    for (let j = 0; j < dIdx; j++) {
+                                      priorStopsCount += (currentChapDays[j]?.stops?.length || 0)
+                                    }
+                                    const computedStopNum = priorStopsCount + sIdx + 1
+
+                                    return (
+                                      <div
+                                        key={sIdx}
+                                        className="rounded border border-border/70 bg-card p-3 space-y-2.5 shadow-2xs"
+                                      >
+                                        <div className="flex items-center justify-between pb-1 border-b border-border/30">
+                                          <span className="text-[10px] font-bold text-accent uppercase tracking-wider flex items-center gap-1.5">
+                                            <span className="rounded bg-accent/15 px-1.5 py-0.5">
+                                              STOP {computedStopNum}
+                                            </span>
+                                            {stop.title && typeof stop.title === "string" && (
+                                              <span className="text-foreground font-medium truncate max-w-[140px]">
+                                                {stop.title}
+                                              </span>
+                                            )}
+                                          </span>
+
+                                          <div className="flex items-center gap-0.5">
+                                            <button
+                                              type="button"
+                                              onClick={() => moveStopInDay(cIdx, dIdx, sIdx, sIdx - 1)}
+                                              disabled={sIdx === 0}
+                                              className="p-1 rounded text-muted-foreground hover:text-foreground hover:bg-muted disabled:opacity-30 disabled:pointer-events-none cursor-pointer"
+                                              title="Move Stop Up"
+                                            >
+                                              <ChevronUp className="h-3 w-3" />
+                                            </button>
+                                            <button
+                                              type="button"
+                                              onClick={() => moveStopInDay(cIdx, dIdx, sIdx, sIdx + 1)}
+                                              disabled={sIdx === (day.stops || []).length - 1}
+                                              className="p-1 rounded text-muted-foreground hover:text-foreground hover:bg-muted disabled:opacity-30 disabled:pointer-events-none cursor-pointer"
+                                              title="Move Stop Down"
+                                            >
+                                              <ChevronDown className="h-3 w-3" />
+                                            </button>
+                                            <button
+                                              type="button"
+                                              onClick={() => removeStopFromDay(cIdx, dIdx, sIdx)}
+                                              className="p-1 rounded text-muted-foreground hover:text-destructive hover:bg-destructive/10 cursor-pointer ml-0.5"
+                                              title="Remove Stop"
+                                            >
+                                              <Trash2 className="h-3 w-3" />
+                                            </button>
+                                          </div>
+                                        </div>
+
+                                        <div className="flex flex-col gap-2.5">
+                                          <DynamicStyledField
+                                            type="text"
+                                            label="Stop Title (e.g. Castle Tour or Wine Tasting)"
+                                            fieldName={`itinerary.items.${cIdx}.days.${dIdx}.stops.${sIdx}.title`}
+                                            placeholder="e.g. Krujë Castle & Old Bazaar"
+                                            value={stop.title}
+                                            onChange={(val) => updateField(`itinerary.items.${cIdx}.days.${dIdx}.stops.${sIdx}.title`, val)}
+                                          />
+
+                                          <ParentLocationSelect
+                                            value={stop.locationId || ""}
+                                            currentName={stop.locationName || ""}
+                                            label="Stop Specific Location / Spot"
+                                            noneLabel="Inherit Day Location or Pick..."
+                                            onChange={(locId, locName) => {
+                                              updateField(`itinerary.items.${cIdx}.days.${dIdx}.stops.${sIdx}.locationId`, locId || "")
+                                              if (locName) {
+                                                updateField(`itinerary.items.${cIdx}.days.${dIdx}.stops.${sIdx}.locationName`, locName)
+                                              }
+                                            }}
+                                          />
+
+                                          <DynamicStyledField
+                                            type="richtext"
+                                            label="Stop Highlight / Details"
+                                            fieldName={`itinerary.items.${cIdx}.days.${dIdx}.stops.${sIdx}.description`}
+                                            placeholder="Details of this specific stop activity..."
+                                            value={stop.description}
+                                            onChange={(val) => updateField(`itinerary.items.${cIdx}.days.${dIdx}.stops.${sIdx}.description`, val)}
+                                          />
+                                        </div>
+                                      </div>
+                                    )
+                                  })}
+                                </div>
                               </div>
                             )}
                           </div>

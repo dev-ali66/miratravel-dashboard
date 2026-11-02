@@ -26,9 +26,9 @@ export function BasicInfoForm({
 
   const storyTypeOptions = useMemo(
     () => [
-      { label: "Travel Ease", value: "travel_ease" },
-      { label: "Mira Editorial", value: "mira_editorial" },
-      { label: "Normal Story", value: "normal_story" },
+      { label: "Travel Essentials", value: "TRAVEL_ESSENTIALS" },
+      { label: "Mira Editorial", value: "MIRA_EDITORIAL" },
+      { label: "Normal Story", value: "NORMAL_STORY" },
     ],
     []
   )
@@ -72,7 +72,7 @@ export function BasicInfoForm({
           fieldName="type"
           required={true}
           enableStyle={false}
-          value={draft.type || "normal_story"}
+          value={draft.type ? String(draft.type).toUpperCase() : "NORMAL_STORY"}
           options={storyTypeOptions}
           onChange={(val) => updateField("type", val as StoryType)}
         />

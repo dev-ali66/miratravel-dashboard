@@ -9,6 +9,7 @@ import {
     deriveLocationContext,
     validateChapters,
     normalizeItineraryToChapters,
+    isCuid,
 } from './chapters';
 import type { JourneyItinerary, JourneyDay, JourneyChapter } from './journey-route';
 import { getOptimizedImageUrl } from "@/lib/optimizedImage";
@@ -130,13 +131,14 @@ function DayCard({
     }, [item.locationId, item.location, locationMap]);
 
     const displayTitle = useMemo(() => {
-        if (resolvedMedia?.name) return resolvedMedia.name;
         const rawTitle = getStr(item.title);
-        if (!rawTitle || rawTitle === item.locationId || /^cmu[a-z0-9]+/i.test(rawTitle)) {
-            return item.dayNumber ? `Day ${item.dayNumber}` : `Day ${index + 1}`;
+        const cleanTitle = rawTitle && rawTitle !== item.locationId && !/^c[a-z0-9]{20,}/i.test(rawTitle) ? rawTitle : '';
+        const locName = resolvedMedia?.name || item.locationName || (!isCuid(item.location) ? item.location : '');
+        if (cleanTitle && locName && cleanTitle.toLowerCase() !== locName.toLowerCase()) {
+            return `${cleanTitle}  •  ${locName}`;
         }
-        return rawTitle;
-    }, [resolvedMedia?.name, item.title, item.locationId, item.dayNumber, index]);
+        return cleanTitle || locName || (item.dayNumber ? `Day ${item.dayNumber}` : `Day ${index + 1}`);
+    }, [resolvedMedia?.name, item.title, item.locationName, item.location, item.locationId, item.dayNumber, index]);
 
     const itemImages = item.images && item.images.length > 0
         ? item.images
@@ -450,8 +452,7 @@ export function DayByDayItinerary({
 
                                 const dayRange = getChapterDayRange(chapter);
                                 const location = chapter.location_context?.trim() || deriveLocationContext(chapter.days, locationMap);
-                                const subLineParts = [dayRange, location].filter(Boolean);
-                                const subLine = subLineParts.join('  •  ');
+                                const subLine = [dayRange, location].filter(Boolean).join('  •  ');
 
                                 const firstDay = chapter.days?.[0];
                                 const otherDays = chapter.days?.slice(1) || [];
@@ -461,7 +462,10 @@ export function DayByDayItinerary({
                                 const firstDayImage = firstDayMedia?.imageUrl || firstDay?.thumbnail || (firstDay?.images && firstDay.images.length > 0 ? firstDay.images[0] : "");
                                 const rawFirstDayTitle = getStr(firstDay?.title);
                                 const cleanFirstDayTitle = rawFirstDayTitle && !/^c[a-z0-9]{20,}/i.test(rawFirstDayTitle) ? rawFirstDayTitle : '';
-                                const firstDayTitle = firstDayMedia?.name || firstDay?.locationName || cleanFirstDayTitle || (firstDay?.dayNumber ? `Day ${firstDay.dayNumber}` : 'Day 1');
+                                const firstDayLocation = firstDayMedia?.name || firstDay?.locationName || (!isCuid(firstDay?.location) ? firstDay?.location : '');
+                                const firstDayTitle = cleanFirstDayTitle && firstDayLocation && cleanFirstDayTitle.toLowerCase() !== firstDayLocation.toLowerCase()
+                                    ? `${cleanFirstDayTitle}  •  ${firstDayLocation}`
+                                    : (cleanFirstDayTitle || firstDayLocation || (firstDay?.dayNumber ? `Day ${firstDay.dayNumber}` : 'Day 1'));
 
                                 return (
                                     <div key={chapterKey} className="flex flex-col gap-4 w-full">
@@ -508,11 +512,11 @@ export function DayByDayItinerary({
                                                 </div>
                                             </button>
 
-                                            {/* First Day of this chapter (inside Chapter card) */}
+                                            {/* Chapter Expanded Content: Narrative Overview + First Day */}
                                             <AnimatePresence initial={false}>
-                                                {isChapterExpanded && firstDay && (
+                                                {isChapterExpanded && (
                                                     <motion.div
-                                                        key={`chapter-first-day-${chapterKey}`}
+                                                        key={`chapter-body-${chapterKey}`}
                                                         initial={{ height: 0, opacity: 0 }}
                                                         animate={{
                                                             height: "auto",
@@ -524,13 +528,25 @@ export function DayByDayItinerary({
                                                             opacity: 0,
                                                             transition: { height: { duration: 0.3 }, opacity: { duration: 0.2 } },
                                                         }}
-                                                        className="overflow-hidden w-full"
+                                                        className="overflow-hidden w-full flex flex-col"
                                                     >
-                                                        <div className="w-full pt-4 md:pt-5 xl:pt-6">
-                                                            <div
-                                                                id={`day-${firstDay.dayNumber}`}
-                                                                className="w-full flex flex-col justify-start items-start px-4 md:px-[18px] lg:px-5 xl:px-[21.75px] pb-4 md:pb-[18px] lg:pb-5 xl:pb-[21.75px]"
-                                                            >
+                                                        {/* 1. Chapter Overview Narrative (Rich Text) */}
+                                                        {chapter.description && (
+                                                            <div className="w-full px-4 md:px-[18px] lg:px-5 xl:px-[21.75px] pt-4 md:pt-5 pb-3">
+                                                                <div
+                                                                    className="text-gray-600 text-sm md:text-[15px] xl:text-base font-normal leading-6 md:leading-[26px] tracking-normal md:tracking-wide [&_p]:mb-2 [&_p:last-child]:mb-0 border-b border-[#B7B6B6]/30 pb-4"
+                                                                    dangerouslySetInnerHTML={{ __html: getStr(chapter.description) }}
+                                                                />
+                                                            </div>
+                                                        )}
+
+                                                        {/* 2. First Day of this chapter */}
+                                                        {firstDay && (
+                                                            <div className="w-full pt-1 md:pt-2">
+                                                                <div
+                                                                    id={`day-${firstDay.dayNumber}`}
+                                                                    className="w-full flex flex-col justify-start items-start px-4 md:px-[18px] lg:px-5 xl:px-[21.75px] pb-4 md:pb-[18px] lg:pb-5 xl:pb-[21.75px]"
+                                                                >
                                                                 <button
                                                                     type="button"
                                                                     onClick={() => toggleExpand(firstDay.dayNumber ?? 1)}
@@ -577,9 +593,49 @@ export function DayByDayItinerary({
                                                                                         dangerouslySetInnerHTML={{ __html: getStr(firstDay.description) }}
                                                                                     />
                                                                                 )}
-                                                                                <div className="self-stretch h-64 md:h-80 xl:h-[400px] min-h-px flex flex-col justify-start items-start relative overflow-hidden shrink-0 bg-[#EDE8D8]/40 rounded-[6px]">
-                                                                                    {firstDayImage ? (
-                                                                                        firstDayMedia?.isVideo && firstDayMedia?.videoUrl ? (
+
+                                                                                {/* Stops inside Day 1 if any */}
+                                                                                {firstDay.stops && firstDay.stops.length > 0 && (
+                                                                                    <div className="w-full flex flex-col gap-3 pt-2 border-t border-[#B7B6B6]/30">
+                                                                                        <div className="text-xs font-semibold text-accent uppercase tracking-wider">
+                                                                                            Stops & Highlights
+                                                                                        </div>
+                                                                                        <div className="flex flex-col gap-2.5">
+                                                                                            {firstDay.stops.map((stop: any, sIdx: number) => {
+                                                                                                const stopMedia = resolveLocationMedia(stop.locationId || stop.location, locationMap);
+                                                                                                const rawStopTitle = getStr(stop.title);
+                                                                                                const cleanStopTitle = rawStopTitle && !/^c[a-z0-9]{20,}/i.test(rawStopTitle) ? rawStopTitle : '';
+                                                                                                const stopLoc = stopMedia?.name || stop.locationName || (!isCuid(stop.location) ? stop.location : '');
+                                                                                                const stopDisplayTitle = cleanStopTitle && stopLoc && cleanStopTitle.toLowerCase() !== stopLoc.toLowerCase()
+                                                                                                    ? `${cleanStopTitle}  •  ${stopLoc}`
+                                                                                                    : (cleanStopTitle || stopLoc || `Stop ${stop.stopNumber || sIdx + 1}`);
+
+                                                                                                return (
+                                                                                                    <div key={stop.stopNumber ?? sIdx} className="p-3 bg-white/60 border border-[#B7B6B6]/40 rounded-[6px] flex flex-col gap-1.5">
+                                                                                                        <div className="flex items-center gap-2">
+                                                                                                            <span className="text-[11px] font-bold text-accent px-1.5 py-0.5 rounded bg-accent/10">
+                                                                                                                {stop.stopLabel || `Stop ${stop.stopNumber || sIdx + 1}`}
+                                                                                                            </span>
+                                                                                                            <span className="text-xs md:text-sm font-medium text-[#191B1E]">
+                                                                                                                {stopDisplayTitle}
+                                                                                                            </span>
+                                                                                                        </div>
+                                                                                                        {stop.description && (
+                                                                                                            <div
+                                                                                                                className="text-xs md:text-sm text-[#57534E] leading-relaxed [&_p]:mb-1 [&_p:last-child]:mb-0 pl-1"
+                                                                                                                dangerouslySetInnerHTML={{ __html: getStr(stop.description) }}
+                                                                                                            />
+                                                                                                        )}
+                                                                                                    </div>
+                                                                                                );
+                                                                                            })}
+                                                                                        </div>
+                                                                                    </div>
+                                                                                )}
+
+                                                                                {firstDayImage && (
+                                                                                    <div className="self-stretch h-64 md:h-80 xl:h-[400px] min-h-px flex flex-col justify-start items-start relative overflow-hidden shrink-0 bg-[#EDE8D8]/40 rounded-[6px]">
+                                                                                        {firstDayMedia?.isVideo && firstDayMedia?.videoUrl ? (
                                                                                             <video
                                                                                                 src={firstDayMedia.videoUrl}
                                                                                                 autoPlay
@@ -594,24 +650,16 @@ export function DayByDayItinerary({
                                                                                                 alt={firstDayTitle}
                                                                                                 className="w-full h-full object-cover object-center"
                                                                                             />
-                                                                                        )
-                                                                                    ) : (
-                                                                                        <div className="w-full h-full flex flex-col items-center justify-center bg-gradient-to-b from-[#FAF8F3] via-[#F4F0E6] to-[#ECE7DC] text-[#8D6534] select-none p-6 text-center border border-[#E2DDD3]">
-                                                                                            <span className="text-xs md:text-sm font-serif tracking-[2px] uppercase opacity-75">
-                                                                                                MIRA ARCHIVE
-                                                                                            </span>
-                                                                                            <span className="text-[11px] md:text-xs text-[#5C574F]/70 mt-1">
-                                                                                                Curated imagery for {firstDayTitle}
-                                                                                            </span>
-                                                                                        </div>
-                                                                                    )}
-                                                                                </div>
+                                                                                        )}
+                                                                                    </div>
+                                                                                )}
                                                                             </div>
                                                                         </motion.div>
                                                                     )}
                                                                 </AnimatePresence>
                                                             </div>
                                                         </div>
+                                                        )}
                                                     </motion.div>
                                                 )}
                                             </AnimatePresence>
@@ -642,7 +690,10 @@ export function DayByDayItinerary({
                                                         const dayImage = itemMedia?.imageUrl || item.thumbnail || (item.images && item.images.length > 0 ? item.images[0] : null);
                                                         const rawDayTitle = getStr(item.title);
                                                         const cleanDayTitle = rawDayTitle && !/^c[a-z0-9]{20,}/i.test(rawDayTitle) ? rawDayTitle : '';
-                                                        const dayTitle = itemMedia?.name || item.locationName || cleanDayTitle || dayLabel;
+                                                        const itemLocation = itemMedia?.name || item.locationName || (!isCuid(item.location) ? item.location : '');
+                                                        const dayTitle = cleanDayTitle && itemLocation && cleanDayTitle.toLowerCase() !== itemLocation.toLowerCase()
+                                                            ? `${cleanDayTitle}  •  ${itemLocation}`
+                                                            : (cleanDayTitle || itemLocation || dayLabel);
 
                                                         return (
                                                             <div
@@ -699,9 +750,48 @@ export function DayByDayItinerary({
                                                                                             dangerouslySetInnerHTML={{ __html: getStr(item.description) }}
                                                                                         />
                                                                                     )}
-                                                                                    <div className="self-stretch h-64 md:h-80 xl:h-[400px] min-h-px flex flex-col justify-start items-start relative overflow-hidden shrink-0 bg-[#EDE8D8]/40 rounded-[6px]">
-                                                                                        {dayImage ? (
-                                                                                            itemMedia?.isVideo && itemMedia?.videoUrl ? (
+
+                                                                                    {/* Stops inside Day if any */}
+                                                                                    {item.stops && item.stops.length > 0 && (
+                                                                                        <div className="w-full flex flex-col gap-3 pt-2 border-t border-[#B7B6B6]/30">
+                                                                                            <div className="text-xs font-semibold text-accent uppercase tracking-wider">
+                                                                                                Stops & Highlights
+                                                                                            </div>
+                                                                                            <div className="flex flex-col gap-2.5">
+                                                                                                {item.stops.map((stop: any, sIdx: number) => {
+                                                                                                    const stopMedia = resolveLocationMedia(stop.locationId || stop.location, locationMap);
+                                                                                                    const rawStopTitle = getStr(stop.title);
+                                                                                                    const cleanStopTitle = rawStopTitle && !/^c[a-z0-9]{20,}/i.test(rawStopTitle) ? rawStopTitle : '';
+                                                                                                    const stopLoc = stopMedia?.name || stop.locationName || (!isCuid(stop.location) ? stop.location : '');
+                                                                                                    const stopDisplayTitle = cleanStopTitle && stopLoc && cleanStopTitle.toLowerCase() !== stopLoc.toLowerCase()
+                                                                                                        ? `${cleanStopTitle}  •  ${stopLoc}`
+                                                                                                        : (cleanStopTitle || stopLoc || `Stop ${stop.stopNumber || sIdx + 1}`);
+
+                                                                                                    return (
+                                                                                                        <div key={stop.stopNumber ?? sIdx} className="p-3 bg-white/60 border border-[#B7B6B6]/40 rounded-[6px] flex flex-col gap-1.5">
+                                                                                                            <div className="flex items-center gap-2">
+                                                                                                                <span className="text-[11px] font-bold text-accent px-1.5 py-0.5 rounded bg-accent/10">
+                                                                                                                    {stop.stopLabel || `Stop ${stop.stopNumber || sIdx + 1}`}
+                                                                                                                </span>
+                                                                                                                <span className="text-xs md:text-sm font-medium text-[#191B1E]">
+                                                                                                                    {stopDisplayTitle}
+                                                                                                                </span>
+                                                                                                            </div>
+                                                                                                            {stop.description && (
+                                                                                                                <div
+                                                                                                                    className="text-xs md:text-sm text-[#57534E] leading-relaxed [&_p]:mb-1 [&_p:last-child]:mb-0 pl-1"
+                                                                                                                    dangerouslySetInnerHTML={{ __html: getStr(stop.description) }}
+                                                                                                                />
+                                                                                                            )}
+                                                                                                        </div>
+                                                                                                    );
+                                                                                                })}
+                                                                                            </div>
+                                                                                        </div>
+                                                                                    )}
+                                                                                    {dayImage && (
+                                                                                        <div className="self-stretch h-64 md:h-80 xl:h-[400px] min-h-px flex flex-col justify-start items-start relative overflow-hidden shrink-0 bg-[#EDE8D8]/40 rounded-[6px]">
+                                                                                            {itemMedia?.isVideo && itemMedia?.videoUrl ? (
                                                                                                 <video
                                                                                                     src={itemMedia.videoUrl}
                                                                                                     autoPlay
@@ -716,18 +806,9 @@ export function DayByDayItinerary({
                                                                                                     alt={dayTitle}
                                                                                                     className="w-full h-full object-cover object-center"
                                                                                                 />
-                                                                                            )
-                                                                                        ) : (
-                                                                                            <div className="w-full h-full flex flex-col items-center justify-center bg-gradient-to-b from-[#FAF8F3] via-[#F4F0E6] to-[#ECE7DC] text-[#8D6534] select-none p-6 text-center border border-[#E2DDD3]">
-                                                                                                <span className="text-xs md:text-sm font-serif tracking-[2px] uppercase opacity-75">
-                                                                                                    MIRA ARCHIVE
-                                                                                                </span>
-                                                                                                <span className="text-[11px] md:text-xs text-[#5C574F]/70 mt-1">
-                                                                                                    Curated imagery for {dayTitle}
-                                                                                                </span>
-                                                                                            </div>
-                                                                                        )}
-                                                                                    </div>
+                                                                                            )}
+                                                                                        </div>
+                                                                                    )}
                                                                                 </div>
                                                                             </motion.div>
                                                                         )}

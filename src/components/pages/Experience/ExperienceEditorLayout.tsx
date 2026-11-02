@@ -26,11 +26,7 @@ export function ExperienceEditorLayout() {
         icon={Sparkles}
         iconColor="text-accent"
         title={`${formatPageName(slug)} Experience`}
-        sidebarContent={
-          <div className="p-4 md:p-6">
-            <Outlet />
-          </div>
-        }
+        sidebarContent={<Outlet />}
         previewContent={<ExperiencePreview />}
         useWorkspaceScale={true}
       />

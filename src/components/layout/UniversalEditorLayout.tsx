@@ -256,7 +256,7 @@ export function UniversalEditorLayout({
   // Auto Scale: If container is narrower than selected device (e.g. 1440px desktop on 390px mobile screen)
   const autoScale = useMemo(() => {
     if (isFluid || !stageWidth || typeof renderWidth !== "number") return 1
-    const availableWidth = stageWidth - 12
+    const availableWidth = stageWidth
     if (availableWidth > 0 && availableWidth < renderWidth) {
       return Math.max(0.15, availableWidth / renderWidth)
     }
@@ -789,13 +789,13 @@ export function UniversalEditorLayout({
             {/* Right: Live Preview Area */}
             <section
               className={cn(
-                "relative min-w-0 flex-1 flex-col items-center justify-start overflow-hidden bg-muted/40 p-2 md:p-3",
+                "relative min-w-0 flex-1 flex-col items-center justify-start overflow-hidden bg-muted/40 p-0",
                 mobileViewMode === "preview" ? "flex w-full" : "hidden",
                 "md:flex"
               )}
             >
               {/* Responsive Mini-Screen Device Presets Bar (Visible on < lg screens) */}
-              <div className="flex lg:hidden w-full items-center justify-between gap-2 rounded-lg border border-border/60 bg-card/95 px-2.5 py-1.5 mb-2 shadow-2xs shrink-0 overflow-x-auto">
+              <div className="flex lg:hidden w-full items-center justify-between gap-2 border-b border-border/60 bg-card/95 px-2.5 py-1.5 shadow-2xs shrink-0 overflow-x-auto">
                 <div className="flex items-center gap-1.5 min-w-0">
                   <span className="text-[10px] font-bold text-muted-foreground uppercase tracking-wider hidden sm:inline">Device:</span>
                   <select
@@ -892,7 +892,7 @@ export function UniversalEditorLayout({
               {/* Scrollable Viewport Stage Container */}
               <div
                 ref={stageRef}
-                className="relative flex h-full w-full flex-1 items-start justify-center overflow-x-auto overflow-y-hidden [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden p-1"
+                className="relative flex h-full w-full flex-1 items-start justify-center overflow-x-auto overflow-y-hidden [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden p-0"
               >
                 <div
                   className="relative flex h-full items-start justify-center"
@@ -921,11 +921,11 @@ export function UniversalEditorLayout({
                       transition: isDragging ? "none" : "width 0.2s cubic-bezier(0.4, 0, 0.2, 1), transform 0.2s ease",
                     }}
                     className={cn(
-                      "bg-background shadow-xl custom-scrollbar overflow-y-auto overflow-x-hidden block",
-                      isFluid && "w-full h-full rounded-md border border-border/60",
-                      !isFluid && activeDevice?.frameType === "phone" && "shrink-0 rounded-[44px] border-[10px] border-slate-900 dark:border-slate-800 shadow-2xl ring-1 ring-slate-950/30",
-                      !isFluid && activeDevice?.frameType === "tablet" && "shrink-0 rounded-[28px] border-[8px] border-slate-900 dark:border-slate-800 shadow-2xl ring-1 ring-slate-950/30",
-                      !isFluid && (activeDevice?.frameType === "screen" || selectedDeviceId === "custom") && "shrink-0 rounded-md border border-border/80 shadow-2xl"
+                      "bg-background custom-scrollbar overflow-y-auto overflow-x-hidden block",
+                      isFluid && "w-full h-full",
+                      !isFluid && activeDevice?.frameType === "phone" && "shrink-0 rounded-[44px] border-[10px] border-slate-900 dark:border-slate-800 shadow-2xl ring-1 ring-slate-950/30 my-4",
+                      !isFluid && activeDevice?.frameType === "tablet" && "shrink-0 rounded-[28px] border-[8px] border-slate-900 dark:border-slate-800 shadow-2xl ring-1 ring-slate-950/30 my-4",
+                      !isFluid && (activeDevice?.frameType === "screen" || selectedDeviceId === "custom") && "shrink-0 rounded-md border border-border/80 shadow-2xl my-3"
                     )}
                   >
                     {useWorkspaceScale ? (

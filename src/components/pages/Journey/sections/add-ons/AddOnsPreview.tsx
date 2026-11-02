@@ -74,7 +74,6 @@ function getFieldValue(field: any): string {
   return ""
 }
 
-// Row component for an experience linked by ID
 function DynamicExperienceRow({
   experienceId,
   index,
@@ -82,6 +81,8 @@ function DynamicExperienceRow({
   isAdded,
   onToggleExpand,
   onToggleAdd,
+  tabNavWidth,
+  containerWidth,
 }: {
   experienceId: string
   index: number
@@ -89,6 +90,8 @@ function DynamicExperienceRow({
   isAdded: boolean
   onToggleExpand: () => void
   onToggleAdd: () => void
+  tabNavWidth: number | null
+  containerWidth: number | null
 }) {
   const { data: rawExpData, isLoading } = useGetExperienceById(experienceId)
   const exp = unwrapExperienceData(rawExpData)
@@ -163,9 +166,20 @@ function DynamicExperienceRow({
     heroVideoUrl && (heroMultimedia?.show === "video" || !heroImageUrl)
   )
 
+  const cardWidth = isExpanded
+    ? (containerWidth ?? "100%")
+    : (tabNavWidth ?? "100%")
+
   return (
-    <div
-      className={`w-full border overflow-hidden bg-[#F9F6ED] transition-colors duration-200 ${
+    <motion.div
+      animate={{
+        width: cardWidth,
+      }}
+      transition={{
+        width: { duration: 0.5, ease: [0.22, 1, 0.36, 1] },
+      }}
+      style={{ willChange: "width" }}
+      className={`max-w-full border overflow-hidden bg-[#F9F6ED] transition-colors duration-200 ${
         isExpanded ? "border-black/20" : "border-black/10 hover:border-black/20"
       }`}
     >
@@ -300,21 +314,16 @@ function DynamicExperienceRow({
                     alt={detailedHeading}
                     className="w-full h-full object-cover object-center"
                   />
-                ) : (
-                  <div className="w-full h-full flex items-center justify-center bg-[#EFECE6] text-[#182D09]/30 text-sm font-heading tracking-widest uppercase">
-                    MIRA ARCHIVE
-                  </div>
-                )}
+                ) : null}
               </div>
             </div>
           </motion.div>
         )}
       </AnimatePresence>
-    </div>
+    </motion.div>
   )
 }
 
-// Row component for fallback brand items
 function BrandAddonRow({
   item,
   index,
@@ -322,6 +331,8 @@ function BrandAddonRow({
   isAdded,
   onToggleExpand,
   onToggleAdd,
+  tabNavWidth,
+  containerWidth,
 }: {
   item: typeof defaultBrandAddons[0]
   index: number
@@ -329,10 +340,23 @@ function BrandAddonRow({
   isAdded: boolean
   onToggleExpand: () => void
   onToggleAdd: () => void
+  tabNavWidth: number | null
+  containerWidth: number | null
 }) {
+  const cardWidth = isExpanded
+    ? (containerWidth ?? "100%")
+    : (tabNavWidth ?? "100%")
+
   return (
-    <div
-      className={`w-full border overflow-hidden bg-[#F9F6ED] transition-colors duration-200 ${
+    <motion.div
+      animate={{
+        width: cardWidth,
+      }}
+      transition={{
+        width: { duration: 0.5, ease: [0.22, 1, 0.36, 1] },
+      }}
+      style={{ willChange: "width" }}
+      className={`max-w-full border overflow-hidden bg-[#F9F6ED] transition-colors duration-200 ${
         isExpanded ? "border-black/20" : "border-black/10 hover:border-black/20"
       }`}
     >
@@ -390,9 +414,16 @@ function BrandAddonRow({
                   {item.detailedHeading}
                 </h4>
 
-                <p className="text-muted-foreground text-xs md:text-sm leading-relaxed mb-6">
-                  {item.description}
-                </p>
+                {typeof item.description === "string" && /<[a-z][\s\S]*>/i.test(item.description) ? (
+                  <div
+                    className="prose prose-sm max-w-none text-muted-foreground text-xs md:text-sm leading-relaxed mb-6 [&_p]:mb-2 [&_p:last-child]:mb-0"
+                    dangerouslySetInnerHTML={{ __html: item.description }}
+                  />
+                ) : (
+                  <p className="text-muted-foreground text-xs md:text-sm leading-relaxed mb-6">
+                    {item.description}
+                  </p>
+                )}
 
                 <div>
                   <button
@@ -420,7 +451,7 @@ function BrandAddonRow({
           </motion.div>
         )}
       </AnimatePresence>
-    </div>
+    </motion.div>
   )
 }
 
@@ -439,6 +470,46 @@ export function AddOnsPreview({ addOns, draft }: { addOns?: any; draft?: any }) 
 
   const [expandedId, setExpandedId] = useState<string | null>(null)
   const [addedItems, setAddedItems] = useState<Record<string, boolean>>({})
+
+  const listRef = useRef<HTMLDivElement>(null)
+  const [tabNavWidth, setTabNavWidth] = useState<number | null>(null)
+  const [containerWidth, setContainerWidth] = useState<number | null>(null)
+
+  useEffect(() => {
+    const measure = () => {
+      const navEl = document.getElementById("journey-tabs-nav")
+      const contEl = listRef.current
+      if (contEl) {
+        const cWidth = contEl.clientWidth
+        setContainerWidth((prev) => (prev !== null && Math.abs(prev - cWidth) < 2 ? prev : cWidth))
+        if (navEl) {
+          const nWidth = navEl.offsetWidth
+          // Clamp to container width on smaller screens
+          const targetNavWidth = Math.min(nWidth, cWidth)
+          setTabNavWidth((prev) => (prev !== null && Math.abs(prev - targetNavWidth) < 2 ? prev : targetNavWidth))
+        }
+      } else if (navEl) {
+        const nWidth = navEl.offsetWidth
+        setTabNavWidth((prev) => (prev !== null && Math.abs(prev - nWidth) < 2 ? prev : nWidth))
+      }
+    }
+
+    measure()
+    window.addEventListener("resize", measure)
+
+    let resizeObserver: ResizeObserver | null = null
+    if (typeof ResizeObserver !== "undefined") {
+      resizeObserver = new ResizeObserver(measure)
+      if (listRef.current) resizeObserver.observe(listRef.current)
+      const navEl = document.getElementById("journey-tabs-nav")
+      if (navEl) resizeObserver.observe(navEl)
+    }
+
+    return () => {
+      window.removeEventListener("resize", measure)
+      resizeObserver?.disconnect()
+    }
+  }, [])
 
   const toggleExpand = (id: string) => {
     setExpandedId((prev) => (prev === id ? null : id))
@@ -469,7 +540,7 @@ export function AddOnsPreview({ addOns, draft }: { addOns?: any; draft?: any }) 
       </div>
 
       {/* Add-on List: Renders live fetched experiences or default brand items */}
-      <div className="flex flex-col gap-3.5 w-full">
+      <div ref={listRef} className="flex flex-col gap-3.5 w-full">
         {hasLinkedExperiences ? (
           expIds.map((id, index) => (
             <DynamicExperienceRow
@@ -480,6 +551,8 @@ export function AddOnsPreview({ addOns, draft }: { addOns?: any; draft?: any }) 
               isAdded={Boolean(addedItems[id])}
               onToggleExpand={() => toggleExpand(id)}
               onToggleAdd={() => toggleAddItem(id)}
+              tabNavWidth={tabNavWidth}
+              containerWidth={containerWidth}
             />
           ))
         ) : (
@@ -492,6 +565,8 @@ export function AddOnsPreview({ addOns, draft }: { addOns?: any; draft?: any }) 
               isAdded={Boolean(addedItems[item.id])}
               onToggleExpand={() => toggleExpand(item.id)}
               onToggleAdd={() => toggleAddItem(item.id)}
+              tabNavWidth={tabNavWidth}
+              containerWidth={containerWidth}
             />
           ))
         )}

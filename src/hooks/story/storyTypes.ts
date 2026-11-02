@@ -84,6 +84,7 @@ export interface Story {
   authorRole?: string
   hero?: Record<string, any>
   blocks?: ArticleBlock[]
+  faq?: Record<string, any>
   seo?: Record<string, any>
   locations?: any[]
   journeys?: any[]

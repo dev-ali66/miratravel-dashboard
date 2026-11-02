@@ -11,6 +11,23 @@ export interface DerivedRouteStop {
   chapterNumber?: number | string;
 }
 
+export interface JourneyStop {
+  id?: string;
+  stopNumber?: number;
+  stopLabel?: string;
+  title?: any;
+  locationId?: string;
+  locationName?: string;
+  location?: any;
+  country?: string;
+  description?: any;
+  thumbnail?: string;
+  images?: string[];
+  multimedia?: any;
+  coordinates?: { lat: number; lng: number };
+  [key: string]: any;
+}
+
 export interface JourneyDay {
   dayNumber?: number;
   title?: any;
@@ -27,6 +44,7 @@ export interface JourneyDay {
   coordinates?: { lat: number; lng: number };
   meals?: string[];
   activities?: string[];
+  stops?: JourneyStop[];
   [key: string]: any;
 }
 
@@ -137,99 +155,108 @@ export function deriveRouteStops(itinerary?: any, locationMap?: Map<string, any>
   const days = flattenDays(itinerary);
 
   for (const day of days) {
-    let lat: number | undefined = day.coordinates?.lat;
-    let lng: number | undefined = day.coordinates?.lng;
-    let stopName = '';
+    const dayStops = Array.isArray(day.stops) && day.stops.length > 0 ? day.stops : [day];
 
-    let rawLoc = day.locationId || day.location;
-    if (Array.isArray(rawLoc)) {
-      rawLoc = rawLoc[0];
-    }
-    const locId = typeof rawLoc === 'string' ? rawLoc.trim() : (rawLoc?.id || rawLoc?.value || rawLoc?._id || undefined);
-    let resolvedLoc: any = null;
-    if (locationMap && locId && typeof locId === 'string') {
-      resolvedLoc = locationMap.get(locId) || locationMap.get(locId.toLowerCase());
-    }
+    for (const stopItem of dayStops) {
+      let lat: number | undefined = stopItem.coordinates?.lat || day.coordinates?.lat;
+      let lng: number | undefined = stopItem.coordinates?.lng || day.coordinates?.lng;
+      let stopName = '';
 
-    if (resolvedLoc) {
-      stopName = resolvedLoc.name || resolvedLoc.data?.name || '';
-      const geo = resolvedLoc.geoData || resolvedLoc.geodata || resolvedLoc.data?.geoData;
-      if (geo) {
-        if (typeof geo.latitude === 'number' && Number.isFinite(geo.latitude)) lat = geo.latitude;
-        if (typeof geo.longitude === 'number' && Number.isFinite(geo.longitude)) lng = geo.longitude;
+      let rawLoc = stopItem.locationId || stopItem.location || day.locationId || day.location;
+      if (Array.isArray(rawLoc)) {
+        rawLoc = rawLoc[0];
       }
-    }
-
-    if (!stopName || /^cmu[a-z0-9]+/i.test(stopName)) {
-      const rawTitle = getStr(day.locationName, getStr(day.location, getStr(day.title)));
-      if (rawTitle && !/^cmu[a-z0-9]+/i.test(rawTitle)) {
-        stopName = rawTitle;
+      const locId = typeof rawLoc === 'string' ? rawLoc.trim() : (rawLoc?.id || rawLoc?.value || rawLoc?._id || undefined);
+      let resolvedLoc: any = null;
+      if (locationMap && locId && typeof locId === 'string') {
+        resolvedLoc = locationMap.get(locId) || locationMap.get(locId.toLowerCase());
       }
-    }
 
-    const chapterNum = dayChapterMap.get(day.dayNumber ?? 0);
-    const dayDesc = getStr(day.description);
-
-    if (lat === undefined || lng === undefined) {
-      const fallback =
-        lookupCityCoordinates(stopName) ||
-        lookupCityCoordinates(day.locationName) ||
-        lookupCityCoordinates(getStr(day.location)) ||
-        lookupCityCoordinates(getStr(day.title)) ||
-        lookupCityCoordinates(dayDesc) ||
-        lookupCityCoordinates(String(chapterNum || ''));
-      if (fallback) {
-        lat = fallback.lat;
-        lng = fallback.lng;
-      }
-    }
-
-    // If stopName is still missing or a CUID, infer from city coordinates
-    if (!stopName || /^cmu[a-z0-9]+/i.test(stopName)) {
-      let inferred = '';
-      for (const [k] of Object.entries(CITY_COORDINATES_MAP)) {
-        if (dayDesc.toLowerCase().includes(k) || getStr(day.title).toLowerCase().includes(k)) {
-          inferred = k.charAt(0).toUpperCase() + k.slice(1);
-          break;
+      if (resolvedLoc) {
+        stopName = resolvedLoc.name || resolvedLoc.data?.name || '';
+        const geo = resolvedLoc.geoData || resolvedLoc.geodata || resolvedLoc.data?.geoData;
+        if (geo) {
+          if (typeof geo.latitude === 'number' && Number.isFinite(geo.latitude)) lat = geo.latitude;
+          if (typeof geo.longitude === 'number' && Number.isFinite(geo.longitude)) lng = geo.longitude;
         }
       }
-      stopName = inferred || (day.dayNumber ? `Day ${day.dayNumber}` : 'Stop 1');
-    }
 
-    // Resilient fallback coordinates if still undefined so route map never breaks
-    if (lat === undefined || lng === undefined) {
-      const baseLat = 41.3275;
-      const baseLng = 19.8187;
-      const dNum = day.dayNumber || 1;
-      const offset = (dNum - 1) * 0.14;
-      lat = baseLat + (offset % 0.8);
-      lng = baseLng + ((offset * 1.2) % 0.8);
-    }
-
-    const dayNum = day.dayNumber ?? 0;
-    const prevStop = stops[stops.length - 1];
-    if (prevStop && prevStop.lat === lat && prevStop.lng === lng) {
-      prevStop.dayNumbers.push(dayNum);
-      const firstDay = prevStop.dayNumbers[0];
-      const lastDay = prevStop.dayNumbers[prevStop.dayNumbers.length - 1];
-      prevStop.dayLabel = firstDay === lastDay ? `Day ${firstDay}` : `Day ${firstDay}–${lastDay}`;
-      if (stopName && (!prevStop.name || prevStop.name.startsWith('Stop ') || prevStop.name.startsWith('Day '))) {
-        prevStop.name = stopName;
+      if (!stopName || /^cmu[a-z0-9]+/i.test(stopName)) {
+        const rawTitle = getStr(stopItem.locationName, getStr(stopItem.location, getStr(stopItem.title, getStr(day.locationName, getStr(day.location, getStr(day.title))))));
+        if (rawTitle && !/^cmu[a-z0-9]+/i.test(rawTitle)) {
+          stopName = rawTitle;
+        }
       }
-    } else {
-      const chapterNum = dayChapterMap.get(dayNum);
-      const countryStr = getStr(day.country, resolvedLoc?.parent?.name || 'Albania');
 
-      stops.push({
-        id: `stop-${stops.length + 1}`,
-        name: stopName || `Stop ${stops.length + 1}`,
-        lat,
-        lng,
-        country: countryStr,
-        dayNumbers: [dayNum],
-        dayLabel: `Day ${dayNum}`,
-        ...(chapterNum !== undefined ? { chapterNumber: chapterNum } : {}),
-      });
+      const chapterNum = dayChapterMap.get(day.dayNumber ?? 0);
+      const dayDesc = getStr(stopItem.description, getStr(day.description));
+
+      if (lat === undefined || lng === undefined) {
+        const fallback =
+          lookupCityCoordinates(stopName) ||
+          lookupCityCoordinates(stopItem.locationName) ||
+          lookupCityCoordinates(getStr(stopItem.location)) ||
+          lookupCityCoordinates(getStr(stopItem.title)) ||
+          lookupCityCoordinates(day.locationName) ||
+          lookupCityCoordinates(getStr(day.location)) ||
+          lookupCityCoordinates(getStr(day.title)) ||
+          lookupCityCoordinates(dayDesc) ||
+          lookupCityCoordinates(String(chapterNum || ''));
+        if (fallback) {
+          lat = fallback.lat;
+          lng = fallback.lng;
+        }
+      }
+
+      // If stopName is still missing or a CUID, infer from city coordinates
+      if (!stopName || /^cmu[a-z0-9]+/i.test(stopName)) {
+        let inferred = '';
+        for (const [k] of Object.entries(CITY_COORDINATES_MAP)) {
+          if (dayDesc.toLowerCase().includes(k) || getStr(stopItem.title).toLowerCase().includes(k) || getStr(day.title).toLowerCase().includes(k)) {
+            inferred = k.charAt(0).toUpperCase() + k.slice(1);
+            break;
+          }
+        }
+        stopName = inferred || (stopItem.stopNumber ? `Stop ${stopItem.stopNumber}` : (day.dayNumber ? `Day ${day.dayNumber}` : `Stop ${stops.length + 1}`));
+      }
+
+      // Resilient fallback coordinates if still undefined so route map never breaks
+      if (lat === undefined || lng === undefined) {
+        const baseLat = 41.3275;
+        const baseLng = 19.8187;
+        const sNum = stopItem.stopNumber || (day.dayNumber || 1);
+        const offset = (sNum - 1) * 0.14;
+        lat = baseLat + (offset % 0.8);
+        lng = baseLng + ((offset * 1.2) % 0.8);
+      }
+
+      const dayNum = day.dayNumber ?? 0;
+      const prevStop = stops[stops.length - 1];
+      if (prevStop && prevStop.lat === lat && prevStop.lng === lng) {
+        if (!prevStop.dayNumbers.includes(dayNum)) {
+          prevStop.dayNumbers.push(dayNum);
+        }
+        const firstDay = prevStop.dayNumbers[0];
+        const lastDay = prevStop.dayNumbers[prevStop.dayNumbers.length - 1];
+        prevStop.dayLabel = firstDay === lastDay ? `Day ${firstDay}` : `Day ${firstDay}–${lastDay}`;
+        if (stopName && (!prevStop.name || prevStop.name.startsWith('Stop ') || prevStop.name.startsWith('Day '))) {
+          prevStop.name = stopName;
+        }
+      } else {
+        const chapterNum = dayChapterMap.get(dayNum);
+        const countryStr = getStr(stopItem.country, getStr(day.country, resolvedLoc?.parent?.name || 'Albania'));
+
+        stops.push({
+          id: `stop-${stops.length + 1}`,
+          name: stopName || `Stop ${stops.length + 1}`,
+          lat,
+          lng,
+          country: countryStr,
+          dayNumbers: [dayNum],
+          dayLabel: `Day ${dayNum}`,
+          ...(chapterNum !== undefined ? { chapterNumber: chapterNum } : {}),
+        });
+      }
     }
   }
 

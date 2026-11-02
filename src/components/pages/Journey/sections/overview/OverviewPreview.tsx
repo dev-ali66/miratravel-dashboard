@@ -72,19 +72,19 @@ export function OverviewPreview({ overview, draft }: { overview?: any; draft?: a
   const safeData = overview || draft?.overview || draft?.data?.overview || {}
 
   // 1. Why We Designed This Journey
-  const why = safeData.why || {}
+  const why = safeData.why || safeData.whyWeDesigned || {}
   const whyTitle = getStr(why.title, defaultOverviewData.whyTitle)
-  const rawWhyDesc = why.description
+  const rawWhyDesc = why.description ?? why.paragraphs ?? why.content ?? safeData.whyWeDesigned?.description
   const whyParagraphs = rawWhyDesc
-    ? [getStr(rawWhyDesc)]
+    ? (Array.isArray(rawWhyDesc) ? rawWhyDesc : [rawWhyDesc])
     : defaultOverviewData.whyParagraphs
 
   // 2. Journey Overview
-  const ov = safeData.overview || (safeData.title || safeData.description ? safeData : {})
+  const ov = safeData.overview || safeData.journeyOverview || (safeData.title || safeData.description ? safeData : {})
   const overviewTitle = getStr(ov.title ?? safeData.title, defaultOverviewData.overviewTitle)
-  const rawOvDesc = ov.description ?? safeData.description ?? safeData.overviewText
+  const rawOvDesc = ov.description ?? safeData.description ?? safeData.overviewText ?? ov.paragraphs ?? ov.content
   const overviewParagraphs = rawOvDesc
-    ? [getStr(rawOvDesc)]
+    ? (Array.isArray(rawOvDesc) ? rawOvDesc : [rawOvDesc])
     : defaultOverviewData.overviewParagraphs
 
   // 3. Highlights
@@ -136,11 +136,14 @@ export function OverviewPreview({ overview, draft }: { overview?: any; draft?: a
         {/* Why We Designed This Journey */}
         <div className={`flex flex-col ${TITLE_TO_CONTENT_GAP}`}>
           <h2 className={TITLE_CSS}>{whyTitle}</h2>
-          <div className="flex flex-col gap-3 md:gap-4 text-nav-text text-sm md:text-base leading-relaxed tracking-[1.5px] font-normal">
-            {whyParagraphs.map((paragraph: string, idx: number) => (
-              <p key={idx} className="whitespace-pre-line">
-                {paragraph}
-              </p>
+          <div className="flex flex-col gap-3 md:gap-4 text-nav-text text-sm md:text-[15px] xl:text-base font-normal leading-6 md:leading-[27px] tracking-[1.5px]">
+            {whyParagraphs.map((paragraph: any, idx: number) => (
+              <DynamicStyledTextPreview
+                key={idx}
+                data={paragraph}
+                isRichText={true}
+                className="text-nav-text text-sm md:text-[15px] xl:text-base font-normal leading-6 md:leading-[27px] tracking-[1.5px] [&_p]:mb-3 md:[&_p]:mb-4 [&_p:last-child]:mb-0"
+              />
             ))}
           </div>
         </div>
@@ -148,11 +151,14 @@ export function OverviewPreview({ overview, draft }: { overview?: any; draft?: a
         {/* Journey Overview Narrative */}
         <div className={`flex flex-col ${TITLE_TO_CONTENT_GAP}`}>
           <h2 className={TITLE_CSS}>{overviewTitle}</h2>
-          <div className="flex flex-col gap-3 md:gap-4 text-nav-text text-sm md:text-base leading-relaxed tracking-[1.5px] font-normal">
-            {overviewParagraphs.map((paragraph: string, idx: number) => (
-              <p key={idx} className="whitespace-pre-line">
-                {paragraph}
-              </p>
+          <div className="flex flex-col gap-3 md:gap-4 text-nav-text text-[15px] md:text-base xl:text-[18px] leading-[22px] md:leading-[24px] xl:leading-7 tracking-[0.9px] md:tracking-[1.2px] xl:tracking-[2px] font-normal">
+            {overviewParagraphs.map((paragraph: any, idx: number) => (
+              <DynamicStyledTextPreview
+                key={idx}
+                data={paragraph}
+                isRichText={true}
+                className="text-nav-text text-[15px] md:text-base xl:text-[18px] leading-[22px] md:leading-[24px] xl:leading-7 tracking-[0.9px] md:tracking-[1.2px] xl:tracking-[2px] font-normal [&_p]:mb-3 md:[&_p]:mb-4 [&_p:last-child]:mb-0 [&_h3]:text-xl md:[&_h3]:text-2xl [&_h3]:font-heading [&_h3]:font-medium [&_h3]:text-title-light [&_h3]:mb-3 [&_h3]:mt-1"
+              />
             ))}
           </div>
         </div>

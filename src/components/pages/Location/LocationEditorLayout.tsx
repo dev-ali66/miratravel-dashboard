@@ -26,11 +26,7 @@ export function LocationEditorLayout() {
         icon={LocateIcon}
         iconColor="text-accent"
         title={`${formatPageName(slug)} Location`}
-        sidebarContent={
-          <div className="p-4 md:p-6">
-            <Outlet />
-          </div>
-        }
+        sidebarContent={<Outlet />}
         previewContent={<LocationPreview />}
         useWorkspaceScale={true}
       />

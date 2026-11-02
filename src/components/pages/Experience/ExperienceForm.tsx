@@ -1,7 +1,7 @@
 import MiraLoader from "@/components/shared/MiraLoader"
 import { useEffect, useState } from "react"
-import { Loader2, Save, Terminal } from "lucide-react"
 import { useParams } from "react-router-dom"
+import { EditorFormHeader } from "@/components/shared/EditorFormHeader"
 
 import { useExperiencePage } from "@/hooks/experience/useExperiencePage"
 import { useExperienceDraft } from "./shared/ExperienceDraftContext"
@@ -67,11 +67,7 @@ export function ExperienceForm() {
   }
 
   if (!draft) {
-    return (
-      <div className="flex min-h-[400px] items-center justify-center">
-        <Loader2 className="h-5 w-5 animate-spin text-muted-foreground" />
-      </div>
-    )
+    return <MiraLoader text="Loading experience data..." className="min-h-[400px] py-16" />
   }
 
   const toggleSection = (section: string) => {
@@ -86,56 +82,25 @@ export function ExperienceForm() {
   return (
     <div className="flex min-h-full flex-col">
       {/* =================================================
-                HEADER (Sticky matching LocationForm)
+                HEADER (Universal Sticky Header)
             ================================================= */}
-      <div className="sticky top-0 z-20 border-b border-border/60 bg-card/95 px-5 py-4 backdrop-blur">
-        <div className="flex items-center justify-between gap-4">
-          <div className="min-w-0">
-            <p className="text-[10px] font-medium tracking-[0.2em] text-muted-foreground uppercase">
-              Experience
-            </p>
-
-            <h2 className="mt-1 truncate text-base font-semibold">
-              {isEditMode ? draft.name || "Edit Experience" : "Add Experience"}
-            </h2>
-          </div>
-
-          <div className="flex items-center gap-2">
-            <button
-              type="button"
-              onClick={() => {
-                const cleanPayload = normalizeExperiencePayload(draft)
-                if (!isEditMode) {
-                  delete (cleanPayload as any).id
-                  if (!cleanPayload.slug) delete (cleanPayload as any).slug
-                }
-                console.log("🧭 [CLEAN API PAYLOAD SENT TO BACKEND]:", cleanPayload)
-                toast.info("Clean experience payload logged to browser console (F12)")
-              }}
-              className="flex shrink-0 items-center gap-1.5 rounded-lg border border-border/80 bg-background px-3 py-2 text-xs font-medium text-foreground transition hover:bg-muted cursor-pointer"
-              title="Inspect clean experience payload sent to backend API in browser console (F12)"
-            >
-              <Terminal className="h-3.5 w-3.5 text-primary" />
-              Console Data
-            </button>
-
-            <button
-              type="button"
-              onClick={save}
-              disabled={isSaving}
-              className="flex shrink-0 items-center gap-2 rounded-lg bg-primary px-4 py-2 text-xs font-medium text-primary-foreground transition hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-50 cursor-pointer"
-            >
-              {isSaving ? (
-                <Loader2 className="h-4 w-4 animate-spin" />
-              ) : (
-                <Save className="h-4 w-4" />
-              )}
-
-              {isEditMode ? "Update" : "Create"}
-            </button>
-          </div>
-        </div>
-      </div>
+      <EditorFormHeader
+        eyebrow="Experience"
+        title={isEditMode ? draft.name || "Edit Experience" : "Add Experience"}
+        isEditMode={isEditMode}
+        isSaving={isSaving}
+        onSave={save}
+        onConsoleData={() => {
+          const cleanPayload = normalizeExperiencePayload(draft)
+          if (!isEditMode) {
+            delete (cleanPayload as any).id
+            if (!cleanPayload.slug) delete (cleanPayload as any).slug
+          }
+          console.log("🧭 [CLEAN API PAYLOAD SENT TO BACKEND]:", cleanPayload)
+          toast.info("Clean experience payload logged to browser console (F12)")
+        }}
+        consoleDataTitle="Inspect clean experience payload sent to backend API in browser console (F12)"
+      />
 
       {/* =================================================
                 SECTIONS — Continuous divide-y accordion layout

@@ -3,6 +3,7 @@ import type { StoryData } from "../config/storyTypes";
 import { emptyHero } from "../sections/hero/emptyHero";
 import { emptyBasicInfo } from "../sections/basic-info/emptyBasicInfo";
 import { emptyBlocks, emptyBlocksBackgroundMultimedia } from "../sections/blocks/emptyBlocks";
+import { emptyFaq } from "../sections/faq/emptyFaq";
 
 export const emptyMultimedia = {
   show: "image", // "image" | "video" | "color"
@@ -36,5 +37,6 @@ export const emptyStory: StoryData = {
   hero: emptyHero,
   blocks: emptyBlocks,
   blocksBackgroundMultimedia: emptyBlocksBackgroundMultimedia,
+  faq: emptyFaq,
 };
 

@@ -15,7 +15,8 @@ import { TermsOfServiceEditor } from "./TermsOfServiceEditor"
 import { TermsOfServicePreview } from "./TermsOfServicePreview"
 import { TermsOfServiceSkeleton } from "./TermsOfServiceSkeleton"
 import { UniversalEditorLayout } from "@/components/layout/UniversalEditorLayout"
-import { Save, Loader2, FileText, Terminal } from "lucide-react"
+import { FileText } from "lucide-react"
+import { EditorFormHeader } from "@/components/shared/EditorFormHeader"
 import { toast } from "sonner"
 
 export default function TermsOfServicePage() {
@@ -197,47 +198,17 @@ export default function TermsOfServicePage() {
       sidebarContent={
         <div className="flex min-h-full flex-col">
           {/* =================================================
-              HEADER — Exact 1:1 match with Journey/Location
+              HEADER (Universal Sticky Header)
           ================================================= */}
-          <div className="sticky top-0 z-20 border-b border-border/60 bg-card/95 px-5 py-4 backdrop-blur">
-            <div className="flex items-center justify-between gap-4">
-              <div className="min-w-0">
-                <p className="text-[10px] font-medium tracking-[0.2em] text-muted-foreground uppercase">
-                  Terms of Service
-                </p>
-
-                <h2 className="mt-1 truncate text-base font-semibold">
-                  Terms &amp; Conditions Editor
-                </h2>
-              </div>
-
-              <div className="flex items-center gap-2">
-                <button
-                  type="button"
-                  onClick={handleConsoleData}
-                  className="flex shrink-0 items-center gap-1.5 rounded-lg border border-border/80 bg-background px-3 py-2 text-xs font-medium text-foreground transition hover:bg-muted cursor-pointer"
-                  title="Inspect clean terms payload sent to backend API in browser console (F12)"
-                >
-                  <Terminal className="h-3.5 w-3.5 text-primary" />
-                  Console Data
-                </button>
-
-                <button
-                  type="button"
-                  onClick={handleSave}
-                  disabled={isSaving}
-                  className="flex shrink-0 items-center gap-2 rounded-lg bg-primary px-4 py-2 text-xs font-medium text-primary-foreground transition hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-50 cursor-pointer"
-                >
-                  {isSaving ? (
-                    <Loader2 className="h-4 w-4 animate-spin" />
-                  ) : (
-                    <Save className="h-4 w-4" />
-                  )}
-                  Save Changes
-                </button>
-              </div>
-            </div>
-          </div>
+          <EditorFormHeader
+            eyebrow="Terms of Service"
+            title="Terms & Conditions Editor"
+            saveLabel="Save Changes"
+            isSaving={isSaving}
+            onSave={handleSave}
+            onConsoleData={handleConsoleData}
+            consoleDataTitle="Inspect clean terms payload sent to backend API in browser console (F12)"
+          />
 
           {/* =================================================
               SECTIONS — Continuous divide-y accordion layout
