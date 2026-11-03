@@ -398,22 +398,6 @@ export function BlocksForm({
             )
           })}
         </div>
-
-        {/* Full Blocks Section Background Multimedia */}
-        <div className="pt-4 border-t border-border/60">
-          <UniversalMultimediaForm
-            title="Full Blocks Section Background"
-            fieldName="blocksBackgroundMultimedia"
-            imageFieldName="storyBlocksBackgroundImage"
-            videoFieldName="storyBlocksBackgroundVideo"
-            allowImage={true}
-            allowVideo={true}
-            allowColor={true}
-            defaultShow="color"
-            value={draft?.blocksBackgroundMultimedia || emptyBlocksBackgroundMultimedia}
-            onChange={(val) => updateField("blocksBackgroundMultimedia", val)}
-          />
-        </div>
       </div>
     </FormSection>
   )

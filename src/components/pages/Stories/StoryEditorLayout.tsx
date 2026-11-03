@@ -38,6 +38,7 @@ function StoryEditorInner() {
       }
       previewContent={<StoryPreview draft={draft} />}
       useWorkspaceScale={true}
+      scrollSyncMode="previewToFormOnly"
     />
   );
 }

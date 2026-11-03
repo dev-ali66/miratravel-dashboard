@@ -2,7 +2,7 @@ import { THEME_COLORS } from "@/config/theme"
 import type { StoryData } from "../config/storyTypes";
 import { emptyHero } from "../sections/hero/emptyHero";
 import { emptyBasicInfo } from "../sections/basic-info/emptyBasicInfo";
-import { emptyBlocks, emptyBlocksBackgroundMultimedia } from "../sections/blocks/emptyBlocks";
+import { emptyBlocks } from "../sections/blocks/emptyBlocks";
 import { emptyFaq } from "../sections/faq/emptyFaq";
 
 export const emptyMultimedia = {
@@ -36,7 +36,6 @@ export const emptyStory: StoryData = {
   manualRelatedStories: [],
   hero: emptyHero,
   blocks: emptyBlocks,
-  blocksBackgroundMultimedia: emptyBlocksBackgroundMultimedia,
   faq: emptyFaq,
 };
 

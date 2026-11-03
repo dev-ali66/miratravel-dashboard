@@ -14,19 +14,10 @@ export function BlocksPreview({ story }: { story: StoryData }) {
     ? story.blocks
     : emptyBlocks
 
-  const bgMultimedia = (story as any)?.blocksBackgroundMultimedia || emptyBlocksBackgroundMultimedia
-
   if (!blocks || blocks.length === 0) return null
 
   return (
-    <section className="relative w-full xl:py-[84px] lgx:py-[74px] md:py-[60px] py-10 overflow-hidden">
-      {/* Section Background Multimedia */}
-      <UniversalMultimediaPreview
-        multimedia={bgMultimedia}
-        mode="background"
-        fallbackColor={THEME_COLORS.white}
-      />
-
+    <section className="relative w-full xl:py-[84px] lgx:py-[74px] md:py-[60px] py-10 bg-background overflow-hidden">
       <div className="relative z-10 container mx-auto px-4 md:px-6 lg:px-8 max-w-[1360px] flex flex-col gap-10 md:gap-14 xl:gap-16">
         {blocks.map((block: any, idx: number) => {
           const type = block.type || "paragraph"

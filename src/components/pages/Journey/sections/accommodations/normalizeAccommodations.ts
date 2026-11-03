@@ -55,15 +55,13 @@ export function normalizeAccommodations(accommodations: any) {
 
   const normalizedStays = rawStays.map((stay: any) => ({
     locationId: stay.locationId || "",
+    locationName: normalizeStyledField(stay.locationName ?? stay.customLocationName, "", THEME_COLORS.dark),
     stayType: normalizeStyledField(stay.stayType ?? stay.subtitle, "Boutique Hotel", THEME_COLORS.accent),
     duration: normalizeStyledField(stay.duration ?? stay.stayDuration, "2 nights", THEME_COLORS.accent),
     description: normalizeStyledField(stay.description, "", THEME_COLORS.muted),
     confirmationBadge: normalizeStyledField(stay.confirmationBadge ?? stay.confirmedBy, "Personally confirmed by Mira", THEME_COLORS.accent),
     showMiraSeal: stay.showMiraSeal !== undefined ? Boolean(stay.showMiraSeal) : true,
     multimedia: normalizeMultimedia(stay.multimedia ?? stay.image),
-    amenities: Array.isArray(stay.amenities)
-      ? stay.amenities.map((a: any) => typeof a === "string" ? a : getSafeStringValue(a))
-      : [],
   }))
 
   const destinationStays = {
@@ -123,6 +121,5 @@ export function normalizeAccommodations(accommodations: any) {
     destinationStays,
     standards,
     visualReference,
-    items: normalizedStays,
   }
 }

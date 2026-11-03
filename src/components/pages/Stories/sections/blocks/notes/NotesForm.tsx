@@ -50,15 +50,23 @@ export function NotesForm({ block, onChange, index = 0 }: NotesFormProps) {
 
   return (
     <div className="flex flex-col gap-5">
-      {/* Section Detailed Description (RichText) */}
+      {/* Section Title & Subtitle */}
       <div className="flex flex-col gap-4">
         <DynamicStyledField
-          type="richtext"
-          label="Detailed Description"
-          fieldName={`blocks.${index}.description`}
-          placeholder="Explain the practical advice in detail..."
-          value={block.description || block.title || { value: "" }}
-          onChange={(val: any) => onChange({ description: val, title: val, subtitle: null })}
+          type="text"
+          label="Practical Notes Title"
+          fieldName={`blocks.${index}.title`}
+          placeholder="e.g. Practical Notes & Insider Tips"
+          value={block.title}
+          onChange={(val: any) => onChange({ title: val })}
+        />
+        <DynamicStyledField
+          type="text"
+          label="Notes Subtitle (Optional)"
+          fieldName={`blocks.${index}.subtitle`}
+          placeholder="e.g. Essential advice for travelers..."
+          value={block.subtitle}
+          onChange={(val: any) => onChange({ subtitle: val })}
         />
       </div>
 
@@ -129,7 +137,7 @@ export function NotesForm({ block, onChange, index = 0 }: NotesFormProps) {
               {/* Detailed Description */}
               <DynamicStyledField
                 type="richtext"
-                label=""
+                label="Detailed Description"
                 fieldName={`blocks.${index}.items.${itemIdx}.description`}
                 placeholder="Explain the practical advice in detail..."
                 value={item.description || { value: item.content || "" }}

@@ -33,6 +33,7 @@ export function useExperiencePage(experienceId?: string, _slug?: string) {
 
     if (experience) {
       const resolvedExperience: ExperienceData = {
+        ...emptyExperience,
         ...experience,
         name: experience.name || "",
         slug: experience.slug || "",
@@ -50,10 +51,21 @@ export function useExperiencePage(experienceId?: string, _slug?: string) {
           ? experience.places
           : (experience.placeId ? [experience.placeId] : []),
         hero: experience.hero ?? emptyExperience.hero,
+        theExperience: experience.theExperience ?? emptyExperience.theExperience,
+        highlights: experience.highlights ?? emptyExperience.highlights,
+        practicalInfo: experience.practicalInfo ?? emptyExperience.practicalInfo,
+        miraTouch: experience.miraTouch ?? emptyExperience.miraTouch,
+        enquiryCta: experience.enquiryCta ?? emptyExperience.enquiryCta,
         essence: experience.essence ?? emptyExperience.essence,
         faq: experience.faq ?? emptyExperience.faq,
         metadata: experience.metadata ?? emptyExperience.metadata,
         geoData: experience.geoData ?? emptyExperience.geoData,
+        journeys: Array.isArray(experience.journeys)
+          ? experience.journeys.map((j: any) => (typeof j === "string" ? j : j?.id)).filter(Boolean)
+          : [],
+        stories: Array.isArray(experience.stories)
+          ? experience.stories.map((s: any) => (typeof s === "string" ? s : s?.id)).filter(Boolean)
+          : [],
       }
 
       setDraft(resolvedExperience)

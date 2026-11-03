@@ -1,4 +1,4 @@
-import { Plus, Trash2, AlignLeft, AlignRight } from "lucide-react"
+import { Plus, Trash2, AlignLeft, AlignRight, Info } from "lucide-react"
 import { DynamicStyledField } from "@/components/pages/CMS/shared/FormControls"
 import { UniversalMultimediaForm } from "@/components/pages/CMS/shared/UniversalMultimediaForm"
 import { createDefaultMultimedia } from "../shared/defaultMediaHelper"
@@ -35,6 +35,20 @@ export function GuidanceForm({
 
   return (
     <div className="flex flex-col gap-5">
+      {/* Editorial Guidance Notice (Styled using theme warning tokens) */}
+      <div className="rounded-md border border-[#C8943A]/30 bg-[#FAF6F0] p-3 text-xs text-[#705C30] flex items-start gap-2.5 shadow-2xs">
+        <Info className="w-4 h-4 text-[#C8943A] shrink-0 mt-0.5" />
+        <div className="flex flex-col gap-0.5">
+          <span className="font-semibold text-[#554020] uppercase tracking-wider text-[11px]">
+            Editorial Story Guidance Block
+          </span>
+          <p className="leading-relaxed text-[11.5px] text-[#705C30]">
+            This block creates deep, narrative region and experience spotlights inside this specific story article. 
+            Overall Travel Insight category links (Accommodation, Excursions, Food &amp; Drink, Day Trips) are managed at the page level.
+          </p>
+        </div>
+      </div>
+
       {/* Media Position Controls */}
       <div className="flex items-center justify-between gap-3 pb-3 border-b border-border/40">
         <label className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">

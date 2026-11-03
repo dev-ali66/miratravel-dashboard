@@ -3,10 +3,14 @@ import { motion, AnimatePresence } from "framer-motion"
 import { THEME_COLORS } from "@/config/theme"
 import { getStr, getStyleObj } from "../../shared/previewHelpers"
 import { DynamicStyledTextPreview } from "@/components/pages/CMS/shared/DynamicStyledTextPreview"
-import { UniversalMultimediaPreview } from "@/components/pages/CMS/Home/shared/preview/UniversalMultimediaPreview"
+import {
+  UniversalMultimediaPreview,
+  type UniversalMultimediaValue,
+} from "@/components/pages/CMS/Home/shared/preview/UniversalMultimediaPreview"
 import { useGetLocationById } from "@/hooks/location/useGetLocationById"
+import { useDevMode } from "@/context/DevModeContext"
 import { getOptimizedImageUrl } from "@/lib/optimizedImage"
-import { ChevronLeft, ChevronRight } from "lucide-react"
+import { ChevronLeft, ChevronRight, Sparkles, Hotel, CheckCircle2, Image as ImageIcon, Video, Code2 } from "lucide-react"
 
 // =========================================================================
 // 1. BRAND CANONICAL DATA FOR 1:1 ACCURACY & FALLBACK
@@ -229,10 +233,10 @@ function StayCard({ stay, idx }: { stay: any; idx: number }) {
   const locData = Array.isArray(rawLocData)
     ? rawLocData[0]
     : Array.isArray(rawLocData?.data)
-    ? rawLocData.data[0]
-    : rawLocData && typeof rawLocData === "object" && "name" in rawLocData
-    ? rawLocData
-    : null
+      ? rawLocData.data[0]
+      : rawLocData && typeof rawLocData === "object" && "name" in rawLocData
+        ? rawLocData
+        : null
 
   const locHero = locData?.hero || locData?.data?.hero || {}
   const locCard = locData?.card || locData?.data?.card || {}
@@ -240,20 +244,22 @@ function StayCard({ stay, idx }: { stay: any; idx: number }) {
   const stepLabel = stay.step
     ? stay.step
     : stay.day
-    ? `DAY ${stay.day}`
-    : `0${idx + 1}`
+      ? `DAY ${stay.day}`
+      : `0${idx + 1}`
 
   const durationLabel = stay.duration
     ? getStr(stay.duration)
     : stay.nights
-    ? `${stay.nights} ${typeof stay.nights === "number" && stay.nights === 1 ? "NIGHT" : "NIGHTS"}`
-    : ""
+      ? `${stay.nights} ${typeof stay.nights === "number" && stay.nights === 1 ? "NIGHT" : "NIGHTS"}`
+      : ""
 
   const locationTitle =
+    getStr(stay.locationName) ||
+    getStr(stay.customLocationName) ||
     getStr(locData?.name) ||
     getStr(locHero.title) ||
     getStr(locCard.title) ||
-    getStr(stay.city || stay.location || stay.locationName || stay.title, `Destination ${idx + 1}`)
+    getStr(stay.city || stay.location || stay.title, `Destination ${idx + 1}`)
 
   const staySubtitle =
     getStr(stay.subtitle || stay.stayType) ||
@@ -262,27 +268,203 @@ function StayCard({ stay, idx }: { stay: any; idx: number }) {
   const confirmedText = getStr(stay.confirmationBadge || stay.confirmedBy, "Personally confirmed by Mira")
   const showMiraSeal = Boolean(stay.showMiraSeal ?? (idx % 2 === 0))
 
-  // Media resolution with clean fallback
-  const stayImgUrl =
-    stay.image?.url ||
-    (typeof stay.image === "string" ? stay.image : null) ||
-    stay.multimedia?.image?.url ||
-    locHero?.backgroundMultimedia?.image?.url ||
-    locCard?.backgroundMultimedia?.image?.url ||
+  const { isDevMode } = useDevMode()
+
+  // -------------------------------------------------------------------------
+  // Media Resolution:
+  // 1. Check if user provided an override (custom stay.multimedia or stay.image)
+  // 2. Default: Inherit Location Hero's backgroundMultimedia (image OR video)
+  // 3. Fallback: Empty placeholder with instructions (NO hardcoded stock photo!)
+  // -------------------------------------------------------------------------
+  const customOverrideImage =
+    typeof stay.multimedia?.image === "string"
+      ? stay.multimedia.image
+      : stay.multimedia?.image?.url ||
+      (typeof stay.image === "string" ? stay.image : stay.image?.url)
+
+  const customOverrideVideo =
+    typeof stay.multimedia?.video === "string"
+      ? stay.multimedia.video
+      : stay.multimedia?.video?.url
+
+  const isCustomImageActive = Boolean(customOverrideImage && customOverrideImage.trim())
+  const isCustomVideoActive = Boolean(customOverrideVideo && customOverrideVideo.trim())
+  const hasCustomMediaOverride = isCustomImageActive || isCustomVideoActive
+
+  // Location hero background multimedia (image or video)
+  const locHeroMedia = locHero?.backgroundMultimedia || locCard?.backgroundMultimedia || locData?.hero?.backgroundMultimedia
+  const locHeroShow = locHeroMedia?.show || (locHeroMedia?.video?.url ? "video" : "image")
+  const hasLocHeroVideo = Boolean(locHeroMedia?.video?.url && locHeroMedia.video.url.trim())
+  const hasLocHeroImage = Boolean(
+    (locHeroMedia?.image?.url && locHeroMedia.image.url.trim()) ||
     locData?.image ||
-    locHero?.background_image ||
-    brandAccommodationData.destinations.stays[idx % brandAccommodationData.destinations.stays.length]?.image ||
-    "https://images.unsplash.com/photo-1566073771259-6a8506099945?auto=format&fit=crop&w=1000&q=80"
+    locHero?.background_image
+  )
+  const hasLocHeroMedia = locHeroShow === "video" ? hasLocHeroVideo : (hasLocHeroImage || hasLocHeroVideo)
+
+  // Construct effective canonical multimedia object
+  const effectiveMedia = ((): UniversalMultimediaValue | null => {
+    if (hasCustomMediaOverride) {
+      if (stay.multimedia?.show === "color") {
+        return {
+          show: "color",
+          color: {
+            color: stay.multimedia?.color?.color || (typeof stay.multimedia?.color === "string" ? stay.multimedia.color : "#FFFFFF"),
+            opacity: stay.multimedia?.color?.opacity ?? 100,
+          },
+        }
+      }
+      if (stay.multimedia?.show === "video" && isCustomVideoActive) {
+        return {
+          show: "video",
+          image: {
+            url: customOverrideImage || "",
+            alt: stay.multimedia?.image?.alt || locationTitle,
+            fit: "cover" as const,
+            width: "100%",
+            height: "100%",
+          },
+          video: {
+            url: customOverrideVideo,
+            alt: stay.multimedia?.video?.alt || locationTitle,
+            autoplay: true,
+            loop: true,
+            muted: true,
+            fit: "cover" as const,
+            width: "100%",
+            height: "100%",
+          },
+        }
+      }
+      return {
+        show: "image",
+        image: {
+          url: customOverrideImage || "",
+          alt: stay.multimedia?.image?.alt || locationTitle,
+          fit: "cover" as const,
+          width: "100%",
+          height: "100%",
+        },
+        video: {
+          url: customOverrideVideo || "",
+          alt: stay.multimedia?.video?.alt || locationTitle,
+          autoplay: true,
+          loop: true,
+          muted: true,
+          fit: "cover" as const,
+          width: "100%",
+          height: "100%",
+        },
+      }
+    }
+
+    // Inherit location media (both image and video), with default show: "image"
+    const locImageUrl =
+      (locHeroMedia?.image?.url && locHeroMedia.image.url.trim()) ||
+      (typeof locData?.image === "string" ? locData.image.trim() : "") ||
+      (typeof locHero?.background_image === "string" ? locHero.background_image.trim() : "") ||
+      ""
+
+    const locVideoUrl =
+      (locHeroMedia?.video?.url && locHeroMedia.video.url.trim()) ||
+      ""
+
+    if (locImageUrl || locVideoUrl) {
+      return {
+        show: "image",
+        image: {
+          url: locImageUrl,
+          alt: locHeroMedia?.image?.alt || locHero?.title || locData?.name || locationTitle,
+          fit: "cover" as const,
+          width: "100%",
+          height: "100%",
+        },
+        video: {
+          url: locVideoUrl,
+          alt: locHeroMedia?.video?.alt || locHero?.title || locData?.name || locationTitle,
+          autoplay: locHeroMedia?.video?.autoplay ?? true,
+          loop: locHeroMedia?.video?.loop ?? true,
+          muted: locHeroMedia?.video?.muted ?? true,
+          fit: "cover" as const,
+          width: "100%",
+          height: "100%",
+        },
+        color: {
+          color: locHeroMedia?.color?.color || THEME_COLORS.white,
+          opacity: 100,
+        },
+      }
+    }
+
+    return null
+  })()
+
+  const hasMedia = Boolean(
+    effectiveMedia &&
+    ((effectiveMedia.show === "video" && effectiveMedia.video?.url) ||
+      (effectiveMedia.show === "image" && effectiveMedia.image?.url) ||
+      (effectiveMedia.show === "color" && (typeof effectiveMedia.color === "string" ? effectiveMedia.color : effectiveMedia.color?.color)))
+  )
 
   return (
-    <div className="w-full overflow-hidden bg-[#F9F6ED] grid grid-cols-1 md:grid-cols-12 group transition-[background-color] duration-500 ease-out">
-      {/* Image Container (Left 5 cols) */}
-      <div className="relative w-full min-h-[260px] md:min-h-[320px] lg:min-h-[300px] lgx:min-h-[312px] xl:min-h-[334px] md:col-span-5 overflow-hidden">
-        <img
-          src={getOptimizedImageUrl(stayImgUrl, { width: 720, quality: 100 })}
-          alt={locationTitle}
-          className="w-full h-full object-cover object-center group-hover:scale-105 transition-transform duration-700 ease-out"
-        />
+    <div className="w-full overflow-hidden bg-[#F9F6ED] grid grid-cols-1 md:grid-cols-12 group transition-[background-color] duration-500 ease-out border border-[#7A8475]/15 shadow-2xs">
+      {/* Media Container (Left 5 cols) */}
+      <div className="relative w-full min-h-[260px] md:min-h-[320px] lg:min-h-[300px] lgx:min-h-[312px] xl:min-h-[334px] md:col-span-5 overflow-hidden bg-black/5 flex items-center justify-center">
+        {hasMedia && effectiveMedia ? (
+          <>
+            {effectiveMedia.show === "color" ? (
+              <UniversalMultimediaPreview
+                multimedia={effectiveMedia}
+                className="w-full h-full min-h-[260px] md:min-h-[320px] lg:min-h-[300px] lgx:min-h-[312px] xl:min-h-[334px]"
+              />
+            ) : effectiveMedia.show === "video" && effectiveMedia.video?.url ? (
+              <UniversalMultimediaPreview
+                multimedia={effectiveMedia}
+                className="w-full h-full min-h-[260px] md:min-h-[320px] lg:min-h-[300px] lgx:min-h-[312px] xl:min-h-[334px] object-cover"
+              />
+            ) : (
+              <img
+                src={getOptimizedImageUrl(effectiveMedia.image?.url, { width: 720, quality: 100 })}
+                alt={locationTitle}
+                className="w-full h-full object-cover object-center group-hover:scale-105 transition-transform duration-700 ease-out"
+              />
+            )}
+
+            {/* Media Source Indicator Badge (Visible in Dev Mode or on subtle hover) */}
+            {isDevMode && (
+              <div className="absolute top-3 left-3 z-10 flex items-center gap-1.5 rounded bg-black/75 px-2 py-1 text-[10px] font-mono font-medium text-white backdrop-blur-xs shadow-xs">
+                {hasCustomMediaOverride ? (
+                  <>
+                    <Code2 className="h-3 w-3 text-amber-400" />
+                    <span>Custom Stay Override</span>
+                  </>
+                ) : (
+                  <>
+                    {effectiveMedia.show === "video" ? (
+                      <Video className="h-3 w-3 text-emerald-400" />
+                    ) : (
+                      <ImageIcon className="h-3 w-3 text-emerald-400" />
+                    )}
+                    <span>Inherited from Location Hero</span>
+                  </>
+                )}
+              </div>
+            )}
+          </>
+        ) : (
+          /* Instructional Empty Media Placeholder */
+          <div className="w-full h-full min-h-[260px] md:min-h-[320px] p-6 flex flex-col items-center justify-center text-center bg-white/40 border-2 border-dashed border-[#7A8475]/30 m-2 rounded">
+            <div className="flex h-11 w-11 items-center justify-center rounded-full bg-[#7A8475]/10 text-[#7A8475] mb-2.5">
+              <ImageIcon className="h-5 w-5" />
+            </div>
+            <span className="text-xs font-semibold text-foreground tracking-wide">
+              No Media Linked
+            </span>
+            <p className="text-[11px] text-muted-foreground mt-1 max-w-[220px] leading-relaxed">
+              Select a location with hero background multimedia in <span className="font-semibold text-primary">Part 2</span>, or upload a custom image/video under <span className="font-semibold text-primary">Stay #{idx + 1} Card Media</span>.
+            </p>
+          </div>
+        )}
       </div>
 
       {/* Content Container (Right 7 cols) */}
@@ -314,7 +496,11 @@ function StayCard({ stay, idx }: { stay: any; idx: number }) {
           {/* Location Title & Subtitle */}
           <div className="flex flex-col gap-1.5 pt-1">
             <h3 className="text-foreground text-2xl md:text-[28px] lg:text-[30px] font-heading font-normal tracking-[0.5px]">
-              {locationTitle}
+              {stay.locationName ? (
+                <DynamicStyledTextPreview data={stay.locationName} fallbackText={locationTitle} />
+              ) : (
+                locationTitle
+              )}
             </h3>
             {staySubtitle && (
               <span className="text-accent text-xs md:text-[13px] uppercase tracking-[1.8px] block font-medium">
@@ -353,42 +539,46 @@ export function AccommodationsPreview({ accommodations, draft }: { accommodation
 
   // 1. Philosophy Data
   const philData = safeData.philosophy || {}
-  const philBadge = getStr(philData.badge ?? safeData.philosophyBadge, brandPhil.badge)
+  const philBadge = getStr(philData.eyebrow ?? philData.badge ?? safeData.philosophyBadge, brandPhil.badge)
   const philTitle = getStr(philData.title ?? safeData.philosophyTitle, brandPhil.title)
-  const philDesc = getStr(philData.description ?? safeData.philosophyDescription, brandPhil.description)
-  const philPrinciples = Array.isArray(philData.principles) && philData.principles.length > 0
-    ? philData.principles
-    : brandPhil.principles
+  const philDesc = philData.description ?? safeData.philosophyDescription ?? brandPhil.description
+  const philPrinciples = Array.isArray(philData.items)
+    ? philData.items
+    : Array.isArray(philData.principles)
+      ? philData.principles
+      : []
 
-  // 2. Destinations & Stays Data (Falls back to brand default stays when draft has none)
-  const destData = safeData.destinations || {}
-  const staysBadge = getStr(destData.badge ?? safeData.destinationStaysBadge, brandDest.badge)
+  // 2. Destinations & Stays Data
+  const destData = safeData.destinationStays || safeData.destinations || {}
+  const staysBadge = getStr(destData.eyebrow ?? destData.badge ?? safeData.destinationStaysBadge, brandDest.badge)
   const staysTitle = getStr(destData.title ?? safeData.destinationStaysTitle, brandDest.title)
-  const staysDesc = getStr(destData.description ?? safeData.destinationStaysDescription, brandDest.description)
-  const customStays = Array.isArray(safeData.stays) && safeData.stays.length > 0
-    ? safeData.stays
-    : Array.isArray(destData.stays) && destData.stays.length > 0
-    ? destData.stays
-    : Array.isArray(safeData.destinationStays) && safeData.destinationStays.length > 0
-    ? safeData.destinationStays
-    : brandDest.stays
+  const staysDesc = destData.description ?? safeData.destinationStaysDescription ?? brandDest.description
+  const customStays = Array.isArray(destData.items)
+    ? destData.items
+    : Array.isArray(safeData.stays)
+      ? safeData.stays
+      : Array.isArray(destData.stays)
+        ? destData.stays
+        : Array.isArray(safeData.destinationStays)
+          ? safeData.destinationStays
+          : []
 
   // 3. Standards Data
   const stdData = safeData.standards || {}
-  const stdBadge = getStr(stdData.badge ?? safeData.standardsBadge, brandStd.badge)
+  const stdBadge = getStr(stdData.eyebrow ?? stdData.badge ?? safeData.standardsBadge, brandStd.badge)
   const stdTitle = getStr(stdData.title ?? safeData.standardsTitle, brandStd.title)
-  const stdDesc = getStr(stdData.description ?? safeData.standardsDescription, brandStd.description)
-  const stdList = Array.isArray(stdData.expectations) && stdData.expectations.length > 0
-    ? stdData.expectations
-    : Array.isArray(stdData.items) && stdData.items.length > 0
+  const stdDesc = stdData.description ?? safeData.standardsDescription ?? brandStd.description
+  const stdList = Array.isArray(stdData.items)
     ? stdData.items
-    : brandStd.expectations
+    : Array.isArray(stdData.expectations)
+      ? stdData.expectations
+      : []
 
   // 4. Visual Reference Data & Carousel
   const visData = safeData.visualReference || safeData.visualStory || {}
-  const visBadge = getStr(visData.badge ?? safeData.visualRefBadge, brandVis.badge)
+  const visBadge = getStr(visData.eyebrow ?? visData.badge ?? safeData.visualRefBadge, brandVis.badge)
   const visTitle = getStr(visData.title ?? safeData.visualRefTitle, brandVis.title)
-  const visDesc = getStr(visData.description ?? safeData.visualRefDescription, brandVis.description)
+  const visDesc = visData.description ?? safeData.visualRefDescription ?? brandVis.description
 
   const galleryImages: string[] = useMemo(() => {
     const list: string[] = []
@@ -400,18 +590,23 @@ export function AccommodationsPreview({ accommodations, draft }: { accommodation
         return
       }
       // Check canonical multimedia object: multimedia.image.url
-      if (item?.multimedia?.image?.url) {
-        list.push(item.multimedia.image.url)
+      if (item?.multimedia?.image?.url && typeof item.multimedia.image.url === "string" && item.multimedia.image.url.trim()) {
+        list.push(item.multimedia.image.url.trim())
         return
       }
       // Direct image object: image.url
-      if (item?.image?.url) {
-        list.push(item.image.url)
+      if (item?.image?.url && typeof item.image.url === "string" && item.image.url.trim()) {
+        list.push(item.image.url.trim())
+        return
+      }
+      // Direct image string: image
+      if (typeof item?.image === "string" && item.image.trim()) {
+        list.push(item.image.trim())
         return
       }
       // Root url: url
-      if (item?.url) {
-        list.push(item.url)
+      if (item?.url && typeof item.url === "string" && item.url.trim()) {
+        list.push(item.url.trim())
         return
       }
     }
@@ -432,18 +627,8 @@ export function AccommodationsPreview({ accommodations, draft }: { accommodation
       }
     }
 
-    // 4. Fallback to brand default if no images provided
-    if (list.length === 0) {
-      if (brandVis.featuredImage?.url) list.push(brandVis.featuredImage.url)
-      if (Array.isArray(brandVis.galleryImages)) {
-        for (const g of brandVis.galleryImages) {
-          if (g?.url) list.push(g.url)
-        }
-      }
-    }
-
     return list
-  }, [visData, brandVis])
+  }, [visData])
 
   const [activeSlide, setActiveSlide] = useState(0)
 
@@ -473,41 +658,83 @@ export function AccommodationsPreview({ accommodations, draft }: { accommodation
             </h2>
           </div>
           {philDesc && (
-            <p className="text-muted-foreground text-xs md:text-sm lg:text-[14.5px] leading-relaxed max-w-lg">
-              {philDesc}
-            </p>
+            <DynamicStyledTextPreview
+              data={philDesc}
+              isRichText={true}
+              className="text-muted-foreground text-xs md:text-sm lg:text-[14.5px] leading-relaxed max-w-lg"
+            />
           )}
         </div>
 
-        {/* 4 Principles Grid with clean architectural borders */}
-        <div className="w-full grid grid-cols-1 sm:grid-cols-2 lgx:grid-cols-4 border border-black/10">
-          {philPrinciples.map((item: any, idx: number) => {
-            const borderClasses = getPrincipleBorderClasses(idx, philPrinciples.length)
-            return (
-              <div
-                key={idx}
-                className={`p-6 sm:p-7 lg:p-8 flex flex-col justify-between gap-8 group hover:bg-[#F9F6ED]/60 transition-colors duration-300 ${borderClasses}`}
-              >
-                <div className="flex items-center justify-between">
-                  <div className="size-9 md:size-10 shrink-0">
-                    <PrincipleIcon type={item.icon || (idx === 0 ? "character" : idx === 1 ? "location" : idx === 2 ? "comfort" : "connection")} />
+        {/* Philosophy Principles: 4 Principles Grid or Instructional Empty Placeholder */}
+        {philPrinciples.length === 0 ? (
+          <div className="w-full flex flex-col items-center justify-center rounded-lg border-2 border-dashed border-[#8D6534]/30 bg-[#F9F6ED]/70 py-12 px-6 text-center">
+            <div className="flex h-12 w-12 items-center justify-center rounded-full bg-[#8D6534]/10 text-[#8D6534] mb-3">
+              <Sparkles className="h-6 w-6" />
+            </div>
+            <h4 className="text-sm font-semibold text-foreground tracking-[0.5px]">
+              No Philosophy Principle Cards Added Yet
+            </h4>
+            <p className="text-xs text-muted-foreground mt-1.5 max-w-md leading-relaxed">
+              Add your custom principle cards using <span className="font-semibold text-primary">Part 1: Accommodation Philosophy</span> in the form on the left. Click <span className="font-semibold text-primary">"+ Add Card"</span> to set up a title, description, and custom icon or multimedia image.
+            </p>
+          </div>
+        ) : (
+          <div className="w-full grid grid-cols-1 sm:grid-cols-2 lgx:grid-cols-4 border border-black/10">
+            {philPrinciples.map((item: any, idx: number) => {
+              const borderClasses = getPrincipleBorderClasses(idx, philPrinciples.length)
+              const rawMedia = item.multimedia || item.image
+              const mediaUrl = rawMedia?.image?.url || rawMedia?.url || (typeof rawMedia === "string" ? rawMedia : "")
+              const hasCustomMedia = Boolean(mediaUrl && typeof mediaUrl === "string" && mediaUrl.trim() !== "")
+
+              return (
+                <div
+                  key={idx}
+                  className={`p-6 sm:p-7 lg:p-8 flex flex-col justify-between gap-8 group hover:bg-[#F9F6ED]/60 transition-colors duration-300 ${borderClasses}`}
+                >
+                  <div className="flex items-center justify-between">
+                    <div className="size-11 md:size-12 shrink-0 flex items-center justify-center overflow-hidden rounded">
+                      {hasCustomMedia ? (
+                        <img
+                          src={getOptimizedImageUrl(mediaUrl)}
+                          alt={getStr(item.title, `Principle ${idx + 1}`)}
+                          className="w-full h-full object-contain"
+                        />
+                      ) : (
+                        <div className="size-9 md:size-10 shrink-0">
+                          <PrincipleIcon type={item.icon || item.iconType || (idx === 0 ? "character" : idx === 1 ? "location" : idx === 2 ? "comfort" : "connection")} />
+                        </div>
+                      )}
+                    </div>
+                    <span className="text-xs font-mono text-muted-foreground/60 select-none">
+                      0{idx + 1}
+                    </span>
                   </div>
-                  <span className="text-xs font-mono text-muted-foreground/60 select-none">
-                    0{idx + 1}
-                  </span>
+                  <div className="flex flex-col gap-2">
+                    <h4 className="text-foreground text-lg md:text-xl font-heading font-medium tracking-[0.5px]">
+                      {item.title ? (
+                        <DynamicStyledTextPreview data={item.title} fallbackText={`Principle ${idx + 1}`} />
+                      ) : (
+                        getStr(item.title, `Principle ${idx + 1}`)
+                      )}
+                    </h4>
+                    {item.description ? (
+                      <DynamicStyledTextPreview
+                        data={item.description}
+                        fallbackText=""
+                        className="text-muted-foreground text-xs md:text-sm leading-relaxed"
+                      />
+                    ) : (
+                      <p className="text-muted-foreground text-xs md:text-sm leading-relaxed">
+                        {getStr(item.description)}
+                      </p>
+                    )}
+                  </div>
                 </div>
-                <div className="flex flex-col gap-2">
-                  <h4 className="text-foreground text-lg md:text-xl font-heading font-medium tracking-[0.5px]">
-                    {getStr(item.title)}
-                  </h4>
-                  <p className="text-muted-foreground text-xs md:text-sm leading-relaxed">
-                    {getStr(item.description)}
-                  </p>
-                </div>
-              </div>
-            )
-          })}
-        </div>
+              )
+            })}
+          </div>
+        )}
       </section>
 
       {/* =========================================================================
@@ -528,18 +755,34 @@ export function AccommodationsPreview({ accommodations, draft }: { accommodation
               </h2>
             </div>
             {staysDesc && (
-              <p className="text-muted-foreground text-xs md:text-sm lg:text-[14.5px] leading-relaxed max-w-lg">
-                {staysDesc}
-              </p>
+              <DynamicStyledTextPreview
+                data={staysDesc}
+                isRichText={true}
+                className="text-muted-foreground text-xs md:text-sm lg:text-[14.5px] leading-relaxed max-w-lg"
+              />
             )}
           </div>
 
-          {/* Stays List */}
-          <div className="flex flex-col gap-6 md:gap-8 w-full">
-            {customStays.map((stay: any, idx: number) => (
-              <StayCard key={idx} stay={stay} idx={idx} />
-            ))}
-          </div>
+          {/* Stays List or Instructional Empty Placeholder */}
+          {customStays.length === 0 ? (
+            <div className="w-full flex flex-col items-center justify-center rounded-lg border-2 border-dashed border-[#7A8475]/40 bg-white/60 py-12 px-6 text-center shadow-2xs">
+              <div className="flex h-12 w-12 items-center justify-center rounded-full bg-[#7A8475]/15 text-[#7A8475] mb-3">
+                <Hotel className="h-6 w-6" />
+              </div>
+              <h4 className="text-sm font-semibold text-foreground tracking-[0.5px]">
+                No Destination Stays Added Yet
+              </h4>
+              <p className="text-xs text-muted-foreground mt-1.5 max-w-md leading-relaxed">
+                Add your hotel and stay properties using <span className="font-semibold text-primary">Part 2: Destination Stays (`destinationStays`)</span> in the form on the left. Click <span className="font-semibold text-primary">"+ Add Stay Card"</span> to link a location, upload property photos, and set stay details.
+              </p>
+            </div>
+          ) : (
+            <div className="flex flex-col gap-6 md:gap-8 w-full">
+              {customStays.map((stay: any, idx: number) => (
+                <StayCard key={idx} stay={stay} idx={idx} />
+              ))}
+            </div>
+          )}
         </div>
       </section>
 
@@ -559,37 +802,51 @@ export function AccommodationsPreview({ accommodations, draft }: { accommodation
               {stdTitle}
             </h2>
             {stdDesc && (
-              <p className="text-[#57534E] text-xs md:text-sm lg:text-[14.7px] xl:text-base font-normal leading-5 md:leading-[22px] xl:leading-7 tracking-normal xl:tracking-[1px]">
-                {stdDesc}
-              </p>
+              <DynamicStyledTextPreview
+                data={stdDesc}
+                isRichText={true}
+                className="text-[#57534E] text-xs md:text-sm lg:text-[14.7px] xl:text-base font-normal leading-5 md:leading-[22px] xl:leading-7 tracking-normal xl:tracking-[1px] max-w-lg"
+              />
             )}
           </div>
 
-          {/* Right Grid of Standard Items - 1 col on mobile, 3 cols from sm up */}
-          <div className="flex-1 w-full grid grid-cols-1 sm:grid-cols-3 bg-[#F9F6ED] overflow-hidden border border-[#E8E2D8]">
-            {stdList.map((item: any, idx: number) => {
-              const cols = 3
-              const isLastCol = (idx + 1) % cols === 0
-              const isLastRow = idx >= stdList.length - cols
-              const isVeryLast = idx === stdList.length - 1
-              const text = typeof item === "string" ? item : getStr(item.title ?? item.name ?? item)
+          {/* Right Grid of Standard Items or Instructional Empty Placeholder */}
+          {stdList.length === 0 ? (
+            <div className="flex-1 w-full flex flex-col items-center justify-center rounded-lg border-2 border-dashed border-[#8D6534]/30 bg-[#F9F6ED]/70 py-12 px-6 text-center">
+              <div className="flex h-12 w-12 items-center justify-center rounded-full bg-[#8D6534]/10 text-[#8D6534] mb-3">
+                <CheckCircle2 className="h-6 w-6" />
+              </div>
+              <h4 className="text-sm font-semibold text-foreground tracking-[0.5px]">
+                No Standards Added Yet
+              </h4>
+              <p className="text-xs text-muted-foreground mt-1.5 max-w-md leading-relaxed">
+                Add your quality standards using <span className="font-semibold text-primary">Part 3: Standards (`standards`)</span> in the form on the left. Click <span className="font-semibold text-primary">"+ Add Standard"</span> to list hospitality expectations for this journey.
+              </p>
+            </div>
+          ) : (
+            <div className="flex-1 w-full grid grid-cols-1 sm:grid-cols-3 bg-[#F9F6ED] overflow-hidden border border-[#E8E2D8]">
+              {stdList.map((item: any, idx: number) => {
+                const cols = 3
+                const isLastCol = (idx + 1) % cols === 0
+                const isLastRow = idx >= stdList.length - cols
+                const isVeryLast = idx === stdList.length - 1
+                const text = typeof item === "string" ? item : getStr(item.title ?? item.name ?? item)
 
-              return (
-                <div
-                  key={idx}
-                  className={`px-5 sm:px-6 md:px-7 py-5 sm:py-6 lg:py-7 flex items-center border-[#E8E2D8] ${
-                    !isVeryLast ? "border-b" : ""
-                  } ${isLastRow ? "sm:border-b-0" : "sm:border-b"} ${
-                    isLastCol ? "sm:border-r-0" : "sm:border-r"
-                  }`}
-                >
-                  <span className="text-[#4A483E] text-xs md:text-sm lg:text-[13.5px] xl:text-[15px] font-medium leading-[20px] md:leading-[22px] xl:leading-[24px]">
-                    {text}
-                  </span>
-                </div>
-              )
-            })}
-          </div>
+                return (
+                  <div
+                    key={idx}
+                    className={`px-5 sm:px-6 md:px-7 py-5 sm:py-6 lg:py-7 flex items-center border-[#E8E2D8] ${!isVeryLast ? "border-b" : ""
+                      } ${isLastRow ? "sm:border-b-0" : "sm:border-b"} ${isLastCol ? "sm:border-r-0" : "sm:border-r"
+                      }`}
+                  >
+                    <span className="text-[#4A483E] text-xs md:text-sm lg:text-[13.5px] xl:text-[15px] font-medium leading-[20px] md:leading-[22px] xl:leading-[24px]">
+                      {text}
+                    </span>
+                  </div>
+                )
+              })}
+            </div>
+          )}
         </div>
       </section>
 
@@ -610,65 +867,109 @@ export function AccommodationsPreview({ accommodations, draft }: { accommodation
             </h2>
           </div>
           {visDesc && (
-            <p className="text-[#57534E] text-xs md:text-sm lg:text-[14.7px] xl:text-base font-normal leading-5 md:leading-[22px] xl:leading-7 tracking-normal xl:tracking-[1px] max-w-lg">
-              {visDesc}
-            </p>
+            <DynamicStyledTextPreview
+              data={visDesc}
+              isRichText={true}
+              className="text-[#57534E] text-xs md:text-sm lg:text-[14.7px] xl:text-base font-normal leading-5 md:leading-[22px] xl:leading-7 tracking-normal xl:tracking-[1px] max-w-lg"
+            />
           )}
         </div>
 
-        {/* Gallery Showcase: 50% Left Featured + 50% Right 2 Stacked Images */}
-        <div className="w-full flex flex-col gap-4 md:gap-5">
-          <div className="flex flex-col lg:flex-row items-stretch gap-3 w-full">
-            {/* Featured Large Image (50% left) */}
-            <div className="w-full lg:w-1/2 min-h-[220px] sm:min-h-[320px] md:min-h-[380px] lg:h-[440px] xl:h-[480px] overflow-hidden bg-muted relative">
-              <img
-                src={getOptimizedImageUrl(galleryImages[activeSlide] || galleryImages[0], { width: 1000, quality: 100 })}
-                alt="Accommodation Featured Atmosphere"
-                className="w-full h-full object-cover object-center transition-all duration-700"
-              />
+        {/* Gallery Showcase: Option One Dynamic Adaptive Layout or Instructional Empty Placeholder */}
+        {galleryImages.length === 0 ? (
+          <div className="w-full flex flex-col items-center justify-center rounded-lg border-2 border-dashed border-[#8D6534]/30 bg-[#F9F6ED]/70 py-14 px-6 text-center shadow-2xs">
+            <div className="flex h-12 w-12 items-center justify-center rounded-full bg-[#8D6534]/10 text-[#8D6534] mb-3">
+              <ImageIcon className="h-6 w-6" />
             </div>
-
-            {/* 2 Stacked Gallery Images (50% right) */}
-            <div className="w-full lg:w-1/2 flex flex-col md:flex-row lg:flex-col gap-3 justify-between">
-              {galleryImages.slice(1, 3).map((img, i) => (
-                <div key={i} className="w-full h-[140px] sm:h-[190px] md:h-[200px] lg:h-[214px] xl:h-[234px] overflow-hidden bg-muted relative">
-                  <img
-                    src={getOptimizedImageUrl(img, { width: 800, quality: 100 })}
-                    alt={`Atmosphere Preview ${i + 1}`}
-                    className="w-full h-full object-cover object-center hover:scale-105 transition-transform duration-500"
-                  />
-                </div>
-              ))}
+            <h4 className="text-sm font-semibold text-foreground tracking-[0.5px]">
+              No Visual Reference Gallery Images Added Yet
+            </h4>
+            <p className="text-xs text-muted-foreground mt-1.5 max-w-md leading-relaxed">
+              Add showcase photos using <span className="font-semibold text-primary">Part 4: Visual Reference (`visualReference`)</span> in the form on the left. Click <span className="font-semibold text-primary">"+ Add Image"</span> to upload accommodation style and atmosphere photos.
+            </p>
+            <div className="mt-3 inline-flex items-center gap-1.5 rounded-full bg-[#8D6534]/10 px-3 py-1 text-[11px] font-medium text-[#8D6534]">
+              <span>💡 Tip: Adding 1 photo displays Full-Width, 2 photos display 50/50, and 3+ photos display the showcase layout.</span>
             </div>
           </div>
-
-          {/* Dot Pagination */}
-          {galleryImages.length > 1 && (
-            <div className="flex items-center justify-center gap-2 pt-2">
-              {galleryImages.map((_, i) => {
-                const isActive = i === activeSlide
-                return (
-                  <button
-                    key={i}
-                    type="button"
-                    onClick={() => setActiveSlide(i)}
-                    aria-label={`Go to image set ${i + 1}`}
-                    className="transition-all duration-300 shrink-0 p-1.5 -m-1.5 cursor-pointer"
-                  >
-                    <span
-                      className="block transition-all duration-300"
-                      style={
-                        isActive
-                          ? { width: 10, height: 10, borderRadius: 5, background: "#8D6534" }
-                          : { width: 8, height: 8, borderRadius: 4, background: "rgba(25, 27, 30, 0.25)" }
-                      }
+        ) : (
+          <div className="w-full flex flex-col gap-4 md:gap-5">
+            {galleryImages.length === 1 ? (
+              /* Single Image: Elegant Full Width */
+              <div className="w-full min-h-[260px] sm:min-h-[340px] md:min-h-[420px] lg:h-[480px] overflow-hidden bg-muted relative rounded-[2px] shadow-2xs">
+                <img
+                  src={getOptimizedImageUrl(galleryImages[0], { width: 1400, quality: 100 })}
+                  alt="Accommodation Featured Atmosphere"
+                  className="w-full h-full object-cover object-center transition-all duration-700"
+                />
+              </div>
+            ) : galleryImages.length === 2 ? (
+              /* Exactly 2 Images: Balanced 50/50 Side by Side */
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4 w-full">
+                {galleryImages.map((img, i) => (
+                  <div key={i} className="w-full min-h-[220px] sm:min-h-[300px] md:h-[380px] lg:h-[440px] overflow-hidden bg-muted relative rounded-[2px] shadow-2xs">
+                    <img
+                      src={getOptimizedImageUrl(img, { width: 900, quality: 100 })}
+                      alt={`Atmosphere Preview ${i + 1}`}
+                      className="w-full h-full object-cover object-center hover:scale-105 transition-transform duration-500"
                     />
-                  </button>
-                )
-              })}
-            </div>
-          )}
-        </div>
+                  </div>
+                ))}
+              </div>
+            ) : (
+              /* 3+ Images: Featured 50% Left + 2 Stacked 50% Right */
+              <div className="flex flex-col lg:flex-row items-stretch gap-3 w-full">
+                {/* Featured Large Image (50% left) */}
+                <div className="w-full lg:w-1/2 min-h-[220px] sm:min-h-[320px] md:min-h-[380px] lg:h-[440px] xl:h-[480px] overflow-hidden bg-muted relative rounded-[2px]">
+                  <img
+                    src={getOptimizedImageUrl(galleryImages[activeSlide] || galleryImages[0], { width: 1000, quality: 100 })}
+                    alt="Accommodation Featured Atmosphere"
+                    className="w-full h-full object-cover object-center transition-all duration-700"
+                  />
+                </div>
+
+                {/* Stacked Gallery Images (50% right) */}
+                <div className="w-full lg:w-1/2 flex flex-col md:flex-row lg:flex-col gap-3 justify-between">
+                  {galleryImages.slice(1, 3).map((img, i) => (
+                    <div key={i} className="w-full h-[140px] sm:h-[190px] md:h-[200px] lg:h-[214px] xl:h-[234px] overflow-hidden bg-muted relative rounded-[2px]">
+                      <img
+                        src={getOptimizedImageUrl(img, { width: 800, quality: 100 })}
+                        alt={`Atmosphere Preview ${i + 1}`}
+                        className="w-full h-full object-cover object-center hover:scale-105 transition-transform duration-500"
+                      />
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
+
+            {/* Dot Pagination */}
+            {galleryImages.length > 1 && (
+              <div className="flex items-center justify-center gap-2 pt-2">
+                {galleryImages.map((_, i) => {
+                  const isActive = i === activeSlide
+                  return (
+                    <button
+                      key={i}
+                      type="button"
+                      onClick={() => setActiveSlide(i)}
+                      aria-label={`Go to image set ${i + 1}`}
+                      className="transition-all duration-300 shrink-0 p-1.5 -m-1.5 cursor-pointer"
+                    >
+                      <span
+                        className="block transition-all duration-300"
+                        style={
+                          isActive
+                            ? { width: 10, height: 10, borderRadius: 5, background: "#8D6534" }
+                            : { width: 8, height: 8, borderRadius: 4, background: "rgba(25, 27, 30, 0.25)" }
+                        }
+                      />
+                    </button>
+                  )
+                })}
+              </div>
+            )}
+          </div>
+        )}
       </section>
     </div>
   )

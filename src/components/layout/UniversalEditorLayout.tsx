@@ -208,6 +208,7 @@ export interface UniversalEditorLayoutProps {
   sidebarContent?: React.ReactNode
   previewContent?: React.ReactNode
   useWorkspaceScale?: boolean
+  scrollSyncMode?: "bidirectional" | "previewToFormOnly" | "formToPreviewOnly" | "disabled"
   children?: React.ReactNode
 }
 
@@ -221,10 +222,11 @@ export function UniversalEditorLayout({
   sidebarContent,
   previewContent,
   useWorkspaceScale = false,
+  scrollSyncMode = "previewToFormOnly",
   children,
 }: UniversalEditorLayoutProps) {
   const navigate = useNavigate()
-  const { formRef, previewRef } = useSyncScroll()
+  const { formRef, previewRef } = useSyncScroll({ mode: scrollSyncMode })
   const { isDevMode, toggleDevMode } = useDevMode()
 
   // Viewport state (Default: 1440px Desktop / Laptop)

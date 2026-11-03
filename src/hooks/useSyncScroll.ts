@@ -1,6 +1,18 @@
 import { useEffect, useRef, useCallback } from "react"
 
-export function useSyncScroll() {
+export interface UseSyncScrollOptions {
+  /**
+   * Mode for scroll sync:
+   * - "bidirectional": scrolling preview updates form accordion, and clicking form scrolls preview (default)
+   * - "previewToFormOnly": ONLY scrolling preview updates form; clicking/interacting with form does NOT scroll preview
+   * - "formToPreviewOnly": ONLY clicking/interacting with form scrolls preview
+   * - "disabled": no scroll sync
+   */
+  mode?: "bidirectional" | "previewToFormOnly" | "formToPreviewOnly" | "disabled"
+}
+
+export function useSyncScroll(options: UseSyncScrollOptions = {}) {
+  const { mode = "previewToFormOnly" } = options
   const formRef = useRef<HTMLDivElement | null>(null)
   const previewRef = useRef<HTMLDivElement | null>(null)
   const lastActiveKeyRef = useRef<string | null>(null)
@@ -124,27 +136,31 @@ export function useSyncScroll() {
       })
     }
 
-    // Scroll preview to matching section
-    const previewEl = previewRef.current
-    if (!previewEl) return
+    // Scroll preview to matching section (ONLY if formToPreview is allowed)
+    if (mode === "bidirectional" || mode === "formToPreviewOnly") {
+      const previewEl = previewRef.current
+      if (!previewEl) return
 
-    const matchingPreviewEl = previewEl.querySelector(
-      `[data-section="${sectionKey}"]`
-    ) as HTMLElement | null
+      const matchingPreviewEl = previewEl.querySelector(
+        `[data-section="${sectionKey}"]`
+      ) as HTMLElement | null
 
-    if (matchingPreviewEl) {
-      const targetTop = getAbsoluteTop(matchingPreviewEl, previewEl)
-      const targetScrollTop = Math.max(0, targetTop - 20)
+      if (matchingPreviewEl) {
+        const targetTop = getAbsoluteTop(matchingPreviewEl, previewEl)
+        const targetScrollTop = Math.max(0, targetTop - 20)
 
-      previewEl.scrollTo({
-        top: targetScrollTop,
-        behavior: "smooth",
-      })
+        previewEl.scrollTo({
+          top: targetScrollTop,
+          behavior: "smooth",
+        })
+      }
     }
-  }, [])
+  }, [mode])
 
   // Attach event listeners
   useEffect(() => {
+    if (mode === "disabled") return
+
     let attachedFormEl: HTMLDivElement | null = null
     let attachedPreviewEl: HTMLDivElement | null = null
 
@@ -152,28 +168,34 @@ export function useSyncScroll() {
       const formEl = formRef.current
       const previewEl = previewRef.current
 
-      if (formEl && formEl !== attachedFormEl) {
-        if (attachedFormEl) {
-          attachedFormEl.removeEventListener("click", handleFormInteraction)
-          attachedFormEl.removeEventListener("focusin", handleFormInteraction)
-          attachedFormEl.removeEventListener("input", handleFormInteraction)
-          attachedFormEl.removeEventListener("change", handleFormInteraction)
-          attachedFormEl.removeEventListener("mousedown", handleFormInteraction)
+      // Listen to form interactions if bidirectional or formToPreviewOnly
+      if (mode === "bidirectional" || mode === "formToPreviewOnly") {
+        if (formEl && formEl !== attachedFormEl) {
+          if (attachedFormEl) {
+            attachedFormEl.removeEventListener("click", handleFormInteraction)
+            attachedFormEl.removeEventListener("focusin", handleFormInteraction)
+            attachedFormEl.removeEventListener("input", handleFormInteraction)
+            attachedFormEl.removeEventListener("change", handleFormInteraction)
+            attachedFormEl.removeEventListener("mousedown", handleFormInteraction)
+          }
+          formEl.addEventListener("click", handleFormInteraction)
+          formEl.addEventListener("focusin", handleFormInteraction)
+          formEl.addEventListener("input", handleFormInteraction)
+          formEl.addEventListener("change", handleFormInteraction)
+          formEl.addEventListener("mousedown", handleFormInteraction)
+          attachedFormEl = formEl
         }
-        formEl.addEventListener("click", handleFormInteraction)
-        formEl.addEventListener("focusin", handleFormInteraction)
-        formEl.addEventListener("input", handleFormInteraction)
-        formEl.addEventListener("change", handleFormInteraction)
-        formEl.addEventListener("mousedown", handleFormInteraction)
-        attachedFormEl = formEl
       }
 
-      if (previewEl && previewEl !== attachedPreviewEl) {
-        if (attachedPreviewEl) {
-          attachedPreviewEl.removeEventListener("scroll", handlePreviewScroll)
+      // Listen to preview scrolling if bidirectional or previewToFormOnly
+      if (mode === "bidirectional" || mode === "previewToFormOnly") {
+        if (previewEl && previewEl !== attachedPreviewEl) {
+          if (attachedPreviewEl) {
+            attachedPreviewEl.removeEventListener("scroll", handlePreviewScroll)
+          }
+          previewEl.addEventListener("scroll", handlePreviewScroll, { passive: true })
+          attachedPreviewEl = previewEl
         }
-        previewEl.addEventListener("scroll", handlePreviewScroll, { passive: true })
-        attachedPreviewEl = previewEl
       }
     }
 

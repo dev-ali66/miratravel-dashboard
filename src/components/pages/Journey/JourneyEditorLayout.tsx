@@ -29,6 +29,7 @@ export function JourneyEditorLayout() {
         sidebarContent={<Outlet />}
         previewContent={<JourneyPreview />}
         useWorkspaceScale={true}
+        scrollSyncMode="previewToFormOnly"
       />
     </JourneyDraftProvider>
   )

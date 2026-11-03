@@ -56,8 +56,7 @@ export function HeroPreview({ story }: StoryPreviewProps) {
 
   const heroMultimedia =
     hero.backgroundMultimedia ||
-    story?.backgroundMultimedia ||
-    story?.blocksBackgroundMultimedia
+    story?.backgroundMultimedia
 
   // Resolve Category / Metadata tags
   const getArray = (val: any): string[] => {
